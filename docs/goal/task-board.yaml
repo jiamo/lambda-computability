@@ -1,0 +1,350 @@
+version: 2
+source_protocol: docs/goal/goal-prompt.md
+active_milestone: M4
+milestone_order: ["M1", "M2", "M3", "M4"]
+tasks:
+  - id: M1-BOUNDARY-SORRY-CLOSURE
+    priority: P0
+    status: DONE_STRONG
+    track: module/boundary
+    title: "Close the remaining sorry in Start.Boundary by wiring a real succ_correct proof"
+    latest_evidence: "docs/goal/evidence/M1-BOUNDARY-SORRY-CLOSURE.md"
+    open_boundary: ""
+    milestone: M1
+    depends_on: []
+    rank: 10
+    exit_criteria:
+      - "Start/Boundary.lean contains no sorry."
+      - "EncodingBoundary.fromConcrete.succ_correct is backed by a real theorem."
+      - "lake build succeeds after the boundary adapter is closed."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "lake env lean Start/Boundary.lean"
+      - "lake build"
+
+  - id: M1-ENCODING-EXTRACTION-CLOSURE
+    priority: P0
+    status: DONE_STRONG
+    track: module/encoding
+    title: "Finish extracting the encoding helpers that modular computability still needs"
+    latest_evidence: "docs/goal/evidence/M1-ENCODING-EXTRACTION-CLOSURE.md"
+    open_boundary: ""
+    milestone: M1
+    depends_on: []
+    rank: 20
+    exit_criteria:
+      - "The encoding helpers needed by modular computability are defined outside Start/Basic.lean."
+      - "Start/Encoding.lean remains buildable as a standalone module."
+      - "lake build succeeds without regressing the monolithic development."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "lake env lean Start/Encoding.lean"
+      - "lake build"
+
+  - id: M1-COMPUTABILITY-CLOSURE
+    priority: P0
+    status: DONE_STRONG
+    track: module/computability
+    title: "Replace eval_placeholder and compute_fun_placeholder with real modular definitions"
+    latest_evidence: "docs/goal/evidence/M1-COMPUTABILITY-CLOSURE.md"
+    open_boundary: ""
+    milestone: M1
+    depends_on:
+      - M1-ENCODING-EXTRACTION-CLOSURE
+    rank: 30
+    exit_criteria:
+      - "Start/Computability.lean exports real eval and compute_fun definitions instead of placeholders."
+      - "The modular computability file builds without reintroducing unresolved placeholders."
+      - "lake build succeeds with the modular computability path present."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "lake env lean Start/Computability.lean"
+      - "lake build"
+
+  - id: M1-MODULAR-ENTRYPOINT-SWITCH
+    priority: P1
+    status: DONE_STRONG
+    track: module/integration
+    title: "Make the modular files the canonical Start entrypoint"
+    latest_evidence: "docs/goal/evidence/M1-MODULAR-ENTRYPOINT-SWITCH.md"
+    open_boundary: ""
+    milestone: M1
+    depends_on:
+      - M1-BOUNDARY-SORRY-CLOSURE
+      - M1-COMPUTABILITY-CLOSURE
+    rank: 40
+    exit_criteria:
+      - "Start.lean imports the modular split as the canonical path."
+      - "The default library target builds through the modular entrypoint."
+      - "Existing downstream usage is preserved or clearly shimmed."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "lake env lean Start.lean"
+      - "lake build"
+
+  - id: M1-BASIC-COMPAT-SHIM
+    priority: P1
+    status: DONE_STRONG
+    track: module/compatibility
+    title: "Reduce Start.Basic to a compatibility layer once the modular path is canonical"
+    latest_evidence: "docs/goal/evidence/M1-BASIC-COMPAT-SHIM.md"
+    open_boundary: ""
+    milestone: M1
+    depends_on:
+      - M1-MODULAR-ENTRYPOINT-SWITCH
+    rank: 50
+    exit_criteria:
+      - "Start/Basic.lean is no longer the primary source of truth for active modules."
+      - "The repository retains a compatibility story for theorem names and imports."
+      - "lake build succeeds after the monolith is reduced or shimmed."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "lake build"
+
+  - id: M1-LINTER-HARDENING
+    priority: P2
+    status: DONE_STRONG
+    track: quality/lint
+    title: "Ratchet down the warning surface after the modular split is canonical"
+    latest_evidence: "docs/goal/evidence/M1-LINTER-HARDENING.md"
+    open_boundary: ""
+    milestone: M1
+    depends_on:
+      - M1-MODULAR-ENTRYPOINT-SWITCH
+    rank: 60
+    exit_criteria:
+      - "There is an explicit warning-reduction strategy tied to the modular path."
+      - "At least one meaningful warning class is removed or isolated."
+      - "lake build still succeeds."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "lake build"
+
+  - id: M2-EVAL-CORRECTNESS-DISCHARGE
+    priority: P1
+    status: DONE_STRONG
+    track: theory/computability
+    title: "Prove evaluator correctness instead of assuming it"
+    latest_evidence: "docs/goal/evidence/M2-EVAL-CORRECTNESS-DISCHARGE.md"
+    open_boundary: ""
+    milestone: M2
+    depends_on: []
+    rank: 10
+    exit_criteria:
+      - "A code-level evaluator is proved correct in both directions instead of assumed: Lambda.evalCorrectnessGK."
+      - "The bridge LambdaComputable_imp_Partrec_unconditional holds with no correctness hypothesis."
+      - "lake build succeeds."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "lake build"
+
+  - id: M2-STYLE-RESIDUE
+    priority: P2
+    status: DONE_STRONG
+    track: quality/lint
+    title: "Clear the residual style warnings that need per-proof restructuring"
+    latest_evidence: "docs/goal/evidence/M2-STYLE-RESIDUE.md"
+    open_boundary: ""
+    milestone: M2
+    depends_on: []
+    rank: 20
+    exit_criteria:
+      - "The flexible and multiGoal warning classes are removed by restructuring the affected proofs."
+      - "The remaining long lines are reflowed."
+      - "lake build succeeds with no new warning classes."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "lake build"
+
+  - id: M2-AESOP-NONTERMINAL
+    priority: P2
+    status: DONE_STRONG
+    track: quality/lint
+    title: "Remove the non-terminal aesop calls that make the build emit `aesop: failed to prove the goal`"
+    latest_evidence: "docs/goal/evidence/M2-AESOP-NONTERMINAL.md"
+    open_boundary: ""
+    milestone: M2
+    depends_on: []
+    rank: 30
+    exit_criteria:
+      - "No module of the library emits `aesop: failed to prove the goal` during lake build."
+      - "Every replacement is a real restructuring; no aesop option or linter is disabled."
+      - "lake build succeeds with no new warning classes."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "lake build"
+
+  - id: M2-EVAL-NORMALIZATION-HOLDS
+    priority: P1
+    status: DONE_STRONG
+    track: theory/evaluator
+    title: "Show the main bridge carries no evaluator hypothesis (EvalNormalization discharged)"
+    latest_evidence: "docs/goal/evidence/M2-EVAL-NORMALIZATION-HOLDS.md"
+    open_boundary: ""
+    milestone: M2
+    depends_on: []
+    rank: 40
+    exit_criteria:
+      - "The evaluator is proved to return the normal form on every normalizing input."
+      - "LambdaComputable_imp_Partrec_unconditional holds with no correctness or normalization hypothesis, and the hypothesis-carrying version survives as a corollary."
+      - "lake build succeeds."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "lake build"
+
+  - id: M3-STANDARDIZATION
+    priority: P1
+    status: DONE_STRONG
+    track: theory/reduction
+    title: "Normalizing-strategy theorem: a term with a normal form is reached by a canonical strategy"
+    latest_evidence: "docs/goal/evidence/M3-STANDARDIZATION.md"
+    open_boundary: ""
+    milestone: M3
+    depends_on: []
+    rank: 10
+    exit_criteria:
+      - "A canonical reduction strategy is proved normalizing: if t reduces to a normal form u then iterating the strategy from t reaches u."
+      - "The statement is usable directly from the evaluator files."
+      - "No sorry and no new axiom."
+    required_gates:
+      - "lake build"
+
+  - id: M3-LAMBDA-PREC-COMPILER
+    priority: P1
+    status: DONE_STRONG
+    track: theory/recursion
+    title: "General primitive-recursion compiler: translate every Primrec construction into a lambda term"
+    latest_evidence: "docs/goal/evidence/M3-LAMBDA-PREC-COMPILER.md"
+    open_boundary: ""
+    milestone: M3
+    depends_on: []
+    rank: 20
+    exit_criteria:
+      - "Every constructor of Nat.Primrec is given a lambda term that computes it on Church numerals."
+      - "Total theorem: Nat.Primrec f implies a closed lambda realizer for f."
+      - "lake build succeeds, no sorry."
+    required_gates:
+      - "lake build"
+
+  - id: M3-LAMBDA-MU-CORRECTNESS
+    priority: P1
+    status: DONE_STRONG
+    track: theory/recursion
+    title: "Correctness of Lambda.mu: the lambda minimisation operator agrees with rfind"
+    latest_evidence: "docs/goal/evidence/M3-LAMBDA-MU-CORRECTNESS.md"
+    open_boundary: ""
+    milestone: M3
+    depends_on:
+      - M3-LAMBDA-PREC-COMPILER
+    rank: 21
+    exit_criteria:
+      - "Lambda.MuCorrectness is proved: with a witness, the minimisation term reduces to the Church numeral of the least witness."
+      - "Without a witness, the minimisation term reduces to no Church numeral."
+    required_gates:
+      - "lake build"
+
+  - id: M3-PARTREC-IMP-LAMBDACOMPUTABLE
+    priority: P1
+    status: DONE_STRONG
+    track: theory/recursion
+    title: "Reverse main theorem: computable implies lambda-computable (total functions)"
+    latest_evidence: "docs/goal/evidence/M3-PARTREC-IMP-LAMBDACOMPUTABLE.md"
+    open_boundary: ""
+    milestone: M3
+    depends_on:
+      - M3-LAMBDA-PREC-COMPILER
+      - M3-LAMBDA-MU-CORRECTNESS
+    rank: 22
+    exit_criteria:
+      - "The compilation follows the inductive structure of the recursive functions: an induction over the Nat.Primrec constructors, plus Kleene normal form and minimisation."
+      - "The reverse implication is closed for the class it is stated on."
+    required_gates:
+      - "lake build"
+
+  - id: M4-CHURCH-TURING-LAMBDA
+    priority: P2
+    status: DONE_STRONG
+    track: theory/capstone
+    title: "Capstone: lambda-definable if and only if recursive"
+    latest_evidence: "docs/goal/evidence/M4-CHURCH-TURING-LAMBDA.md"
+    open_boundary: ""
+    milestone: M4
+    depends_on:
+      - M2-EVAL-NORMALIZATION-HOLDS
+      - M3-PARTREC-IMP-LAMBDACOMPUTABLE
+    rank: 30
+    exit_criteria:
+      - "A single theorem states the equivalence, with no extra hypothesis, on the class of total functions."
+      - "lake build succeeds, no sorry."
+    required_gates:
+      - "lake build"
+
+  - id: M4-TM2-IMP-PARTREC
+    priority: P3
+    status: DONE_STRONG
+    track: theory/turing
+    title: "Machine side: TM2-computable implies partial recursive"
+    latest_evidence: "docs/goal/evidence/M4-TM2-IMP-PARTREC.md"
+    open_boundary: ""
+    milestone: M4
+    depends_on: []
+    rank: 40
+    exit_criteria:
+      - "Machine configurations are encoded arithmetically and the one-step transition is proved primitive recursive."
+      - "Halting time is obtained by minimisation, giving TM2-computable implies partial recursive."
+      - "The result is combined with the existing forward translation into an equivalence."
+    required_gates:
+      - "lake build"
+
+  - id: M4-SCOTT-RICE
+    priority: P3
+    status: DONE_STRONG
+    track: theory/undecidability
+    title: "Scott's theorem and Rice's theorem for the lambda calculus"
+    latest_evidence: "docs/goal/evidence/M4-SCOTT-RICE.md"
+    open_boundary: ""
+    milestone: M4
+    depends_on:
+      - M4-CHURCH-TURING-LAMBDA
+    rank: 50
+    exit_criteria:
+      - "Convertibility and convertibility-invariant sets of terms are defined."
+      - "No closed lambda term decides a non-trivial convertibility-invariant set of terms."
+      - "The code set of such a set of terms is not a computable predicate."
+      - "A concrete non-trivial instance is exhibited, so the statements are not vacuous."
+    required_gates:
+      - "lake build"
+
+  - id: M4-SMN-UNIFORM
+    priority: P3
+    status: DONE_STRONG
+    track: theory/undecidability
+    title: "Uniform s-m-n theorem for the repository's coding of terms"
+    latest_evidence: "docs/goal/evidence/M4-SMN-UNIFORM.md"
+    open_boundary: ""
+    milestone: M4
+    depends_on: []
+    rank: 60
+    exit_criteria:
+      - "A primitive recursive parameter-fixing function on codes is defined."
+      - "Its defining property is proved for every term and every parameter."
+    required_gates:
+      - "lake build"
+
+  - id: M4-SELF-INTERPRETER
+    priority: P3
+    status: DONE_STRONG
+    track: theory/lambda
+    title: "A self-interpreter (enumerator) for the lambda calculus"
+    latest_evidence: "docs/goal/evidence/M4-SELF-INTERPRETER.md"
+    open_boundary: ""
+    milestone: M4
+    depends_on:
+      - M4-CHURCH-TURING-LAMBDA
+    rank: 70
+    exit_criteria:
+      - "An environment-passing interpreter term is defined from the fixed-point combinator."
+      - "Its correctness is proved for arbitrary terms and environments, as a reduction."
+      - "A closed term E is exhibited with E (church (encode M)) reducing to M for every closed M."
+    required_gates:
+      - "lake build"
