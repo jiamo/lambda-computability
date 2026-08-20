@@ -304,6 +304,61 @@ reduction, not merely up to conversion. -/
 -- The converse fails: quoting is not lambda-definable.
 #check @Lambda.not_exists_quote
 
+/-! ## 13c. Recursion with parameters, other encodings, complexity, solvability, algorithms -/
+
+-- Kleene's recursion theorem **with parameters**: a primitive recursive `s` such that the term
+-- coded by `s y` reduces to `F ⌜s y⌝ ⌜y⌝`.
+#check @Lambda.exists_recursion_with_parameters
+
+-- The model equivalence for binary (curried) functions.
+#check @lambdaComputable2_iff_partrec₂
+#check @lambdaComputable2_iff_tm2Computable
+
+-- ... and for an arbitrary `Primcodable` input type, via its encoding.
+#check @lambdaComputableEnc_iff_tm2ComputableEnc
+
+-- Time-bounded machines: a machine running in polynomial time computes a lambda-definable
+-- function (the converse direction, a resource-preserving compilation, is not formalized).
+#check @TM2Partrec.lambdaComputable_of_tm2ComputableNatInPolyTime
+-- A bridge to Mathlib's own polynomial-time notion.
+#check @TM2Partrec.partrec_of_tm2ComputableInPolyTime
+
+-- Solvability: `Ω` is unsolvable, solvable terms reach any closed term, and solvability is
+-- undecidable.  (Böhm's separation theorem itself is *not* proved here.)
+#check @Lambda.not_solvable_omega
+#check @Lambda.exists_args_conv_of_solvable
+#check @Lambda.not_computablePred_codeSet_solvable
+
+-- A Dershowitz–Gurevich style **representation theorem**: the input-output function of a
+-- bounded-exploration sequential algorithm is partial recursive, hence lambda-definable.
+-- This is a theorem about the stated axioms, not a proof of the Church–Turing thesis.
+#check @SeqAlgorithm.Algorithm.partrec_run
+#check @SeqAlgorithm.Algorithm.lambdaComputable_run
+
+/-! ## 13d. Kolmogorov complexity
+
+Program length is the syntactic size of a closed term reducing to a Church numeral. -/
+
+#check @Lambda.kolm
+-- Lambda.kolm : ℕ → ℕ, the least size of a closed term reducing to `church s`
+
+-- Incompressible numbers exist (a counting argument).
+#check @Lambda.exists_incompressible
+-- ∀ n, ∃ s, n ≤ Lambda.kolm s
+
+-- Berry's paradox through the second recursion theorem: the relation `K s ≤ n` is undecidable,
+-- and `K` is not computable.
+#check @Lambda.not_computablePred_kolm_le
+#check @Lambda.not_computable_kolm
+
+-- Invariance: a fixed closed interpreter changes `K` by at most an additive constant, ...
+#check @Lambda.kolm_le_kolmWith
+
+-- ... and every partial recursive (equivalently, Turing machine computable) description system is
+-- bounded by `K` up to a constant — with compact binary numerals, in terms of *bit length*.
+#check @Lambda.exists_const_kolm_le_of_partrec
+#check @Lambda.exists_const_kolm_le_size_of_tm2
+
 /-! ## 14. Summary
 
 ### Fully proved (no sorry):
@@ -326,6 +381,15 @@ reduction, not merely up to conversion. -/
   and the uniform s-m-n theorem
 - A self-interpreter: a closed term `E` with `E ⌜M⌝ ↠ M` for every closed term `M`, together with
   the failure of the converse (quoting is not lambda-definable)
+- The recursion theorem with parameters, the model equivalences for binary functions and for
+  arbitrary `Primcodable` inputs, polynomial-time machine realizations, solvability theory
+  (unsolvability of `Ω`, generic reachability, undecidability of solvability) and a
+  representation theorem for bounded-exploration sequential algorithms
+- Kolmogorov complexity for the lambda calculus: existence of incompressible numbers,
+  non-computability of `K` (Berry's paradox via the second recursion theorem), the undecidability
+  of the relation `K s ≤ n`, and the invariance theorem — for interpreters (additively) and for
+  partial recursive / Turing machine description systems (in terms of bit length, via compact
+  binary numerals)
 
 ### Architecture (≈ 8000 lines):
 1. Lambda syntax + lift/subst               (De Bruijn indices)

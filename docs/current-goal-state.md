@@ -1,6 +1,6 @@
 # Current goal state
 
-- Active milestone: `M4`
+- Active milestone: `M6`
 
 | Rank | ID | Priority | Status | Depends on | Evidence | Open Boundary |
 |---:|---|---|---|---|---|---|
@@ -23,5 +23,18 @@
 | 50 | `M4-SCOTT-RICE` | `P3` | `DONE_STRONG` | M4-CHURCH-TURING-LAMBDA | docs/goal/evidence/M4-SCOTT-RICE.md |  |
 | 60 | `M4-SMN-UNIFORM` | `P3` | `DONE_STRONG` | - | docs/goal/evidence/M4-SMN-UNIFORM.md |  |
 | 70 | `M4-SELF-INTERPRETER` | `P3` | `DONE_STRONG` | M4-CHURCH-TURING-LAMBDA | docs/goal/evidence/M4-SELF-INTERPRETER.md |  |
+| 10 | `M5-RECURSION-PARAMS` | `P3` | `DONE_STRONG` | M4-SMN-UNIFORM | docs/goal/evidence/M5-RECURSION-PARAMS.md |  |
+| 20 | `M5-ENCODINGS-MULTIARG` | `P3` | `DONE_STRONG` | M4-CHURCH-TURING-LAMBDA | docs/goal/evidence/M5-ENCODINGS-MULTIARG.md |  |
+| 30 | `M5-SOLVABILITY` | `P3` | `DONE_STRONG` | M4-SCOTT-RICE | docs/goal/evidence/M5-SOLVABILITY.md |  |
+| 40 | `M5-ALGORITHM-REPRESENTATION` | `P3` | `DONE_STRONG` | M4-CHURCH-TURING-LAMBDA | docs/goal/evidence/M5-ALGORITHM-REPRESENTATION.md |  |
+| 50 | `M5-POLYTIME` | `P3` | `DONE_STRONG` | M4-TM2-IMP-PARTREC | docs/goal/evidence/M5-POLYTIME.md |  |
+| 10 | `M6-KOLMOGOROV-CORE` | `P3` | `DONE_STRONG` | M4-CHURCH-TURING-LAMBDA | docs/goal/evidence/M6-KOLMOGOROV-CORE.md |  |
+| 20 | `M6-KOLMOGOROV-BERRY` | `P3` | `DONE_STRONG` | M6-KOLMOGOROV-CORE | docs/goal/evidence/M6-KOLMOGOROV-BERRY.md |  |
+| 30 | `M6-KOLMOGOROV-INVARIANCE` | `P3` | `DONE_STRONG` | M6-KOLMOGOROV-CORE, M4-TM2-IMP-PARTREC | docs/goal/evidence/M6-KOLMOGOROV-INVARIANCE.md |  |
+| 40 | `M6-KOLMOGOROV-OMEGA` | `P3` | `TODO_NEEDS_DESIGN` | M6-KOLMOGOROV-INVARIANCE | - | The present encoding of terms is injective but not prefix-free, so the halting probability sum has no reason to converge and cannot be defined yet. Needed first: a self-delimiting coding of closed terms as bit strings with the Kraft inequality, then prefix complexity, then Omega as a convergent sum and its randomness. This is a project of its own size; nothing in milestone M6 depends on it. |
 
-Next: all tasks in the active milestone are `DONE_STRONG`.
+Next: `M6-KOLMOGOROV-OMEGA`
+
+- Title: Prefix-free programs and Chaitin's Omega
+- Status: `TODO_NEEDS_DESIGN`
+- Open boundary: The present encoding of terms is injective but not prefix-free, so the halting probability sum has no reason to converge and cannot be defined yet. Needed first: a self-delimiting coding of closed terms as bit strings with the Kraft inequality, then prefix complexity, then Omega as a convergent sum and its randomness. This is a project of its own size; nothing in milestone M6 depends on it.

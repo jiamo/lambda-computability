@@ -63,4 +63,31 @@ theorem exists_code_fixed_point {F : Lambda} (hF : Lambda.IsClosed F) :
   have h := Lambda.reduces_app_right (t1 := F) (diagTerm_app_reduces (Lambda.encode W))
   rwa [diagCode_encode W] at h
 
+/-- The fixed-point term of the second recursion theorem can be taken **closed**.  This is the
+form needed whenever the fixed point is to be used as a self-contained program. -/
+theorem exists_code_fixed_point_closed {F : Lambda} (hF : Lambda.IsClosed F) :
+    ∃ X : Lambda, Lambda.IsClosed X ∧
+      Lambda.reduces X (Lambda.app F (Lambda.church (Lambda.encode X))) := by
+  set body : Lambda := Lambda.app F (Lambda.app diagTerm (Lambda.var 0)) with hbody
+  set W : Lambda := Lambda.lam body
+  have hWclosed : Lambda.IsClosed W := by
+    refine (Lambda.IsClosedAt_zero_iff_IsClosed W).mp ?_
+    refine Lambda.IsClosedAt_lam (k := 0) ?_
+    refine Lambda.IsClosedAt_app ?_ (Lambda.IsClosedAt_app ?_ (Lambda.IsClosedAt_var 0 1 one_pos))
+    · exact Lambda.IsClosedAt_mono (Nat.zero_le 1) ((Lambda.IsClosedAt_zero_iff_IsClosed F).mpr hF)
+    · exact Lambda.IsClosedAt_mono (Nat.zero_le 1)
+        ((Lambda.IsClosedAt_zero_iff_IsClosed diagTerm).mpr diagTerm_closed)
+  refine ⟨Lambda.app W (Lambda.church (Lambda.encode W)),
+    Lambda.IsClosed_app hWclosed (Lambda.church_closed _), ?_⟩
+  have hsubst : Lambda.subst (Lambda.church (Lambda.encode W)) 0 body =
+      Lambda.app F (Lambda.app diagTerm (Lambda.church (Lambda.encode W))) := by
+    simp [hbody, Lambda.subst, hF _ _, diagTerm_closed _ _]
+  have hbeta : Lambda.reduces (Lambda.app W (Lambda.church (Lambda.encode W)))
+      (Lambda.app F (Lambda.app diagTerm (Lambda.church (Lambda.encode W)))) := by
+    rw [← hsubst]
+    exact Lambda.beta_reduces
+  refine Lambda.reduces_trans hbeta ?_
+  have h := Lambda.reduces_app_right (t1 := F) (diagTerm_app_reduces (Lambda.encode W))
+  rwa [diagCode_encode W] at h
+
 end Lambda

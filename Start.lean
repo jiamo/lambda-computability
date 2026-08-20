@@ -50,11 +50,20 @@ import Start.Undecidable
 import Start.SecondRecursion
 import Start.NormalizationUndecidable
 import Start.Scott
+import Start.Solvability
 import Start.SMN
 import Start.SelfInterpreter
+import Start.RecursionParams
 
 -- Machine side: TM2-computable implies partial recursive, and the machine equivalence
 import Start.TM2Partrec
 import Start.TM2Restrict
 import Start.TM2Forward
 import Start.TM2Capstone
+import Start.Encodings
+import Start.TM2PolyTime
+import Start.AlgorithmRepresentation
+
+-- Kolmogorov complexity
+import Start.Kolmogorov
+import Start.KolmogorovBinary

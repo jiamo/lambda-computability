@@ -1,3 +1,58 @@
+# Summary of changes for run 20a75db6-a5d0-42cb-bbea-4a022a5d2041
+我把 Kolmogorov 复杂度做成了新的里程碑 M6：先按项目规矩把它拆成任务写进任务板，然后把其中三条全部证完（机检、无 `sorry`）。
+
+**任务板（`docs/goal/task-board.yaml`，`active_milestone` 改为 M6，`scripts/goal_state.py validate` 通过，28 条任务）**
+- `M6-KOLMOGOROV-CORE`（DONE_STRONG）、`M6-KOLMOGOROV-BERRY`（DONE_STRONG）、`M6-KOLMOGOROV-INVARIANCE`（DONE_STRONG），各附证据文件 `docs/goal/evidence/M6-*.md`；
+- `M6-KOLMOGOROV-OMEGA`（TODO_NEEDS_DESIGN）：Chaitin Ω 需要前缀无关编码，如实记录了开放边界与设计路线，未虚报完成。
+
+**新模块 `Start/Kolmogorov.lean`（由 `Start.lean` 引入）**
+- `Lambda.size`：项的语法规模（节点数，De Bruijn 下标 `i` 计 `i+1`）；`size (church n) = 3n+3`。
+- `Lambda.kolm s = sInf { size t | t 闭且 t ↠ church s }`——`church s` 本身即程序，故集合非空、定义良基，`exists_program_of_kolm` 给出最短程序。
+- **不可压缩数存在** `exists_incompressible : ∀ n, ∃ s, n ≤ kolm s`。计数论证：`finite_setOf_size_le`（规模 ≤ n 的项只有有限多个）加上合流性给出的 `unique_church_reduct`，得 `finite_setOf_kolm_le`。
+- **K 不可计算**：`not_computablePred_kolm_le`（二元关系 `kolm s ≤ n` 不可判定）与推论 `not_computable_kolm`。这是 Berry 悖论走第二递归定理；为此在 `Start/SecondRecursion.lean` 补了闭项版不动点 `exists_code_fixed_point_closed`，并用 `size_le_encode : size t ≤ 2·encode t + 1` 完成规模核算（无需把项规模在码上做成可计算函数）。注意：对固定的 n，`{s | kolm s ≤ n}` 有限因而可判定，所以不可判定的只能是、也确实是那个一致的二元关系——这一点在文档里说明了，与最初按 Rice 定理的设想不同。
+- **不变性**：`kolmWith U s`（以任意闭项 `U` 作解释器）满足 `kolm s ≤ kolmWith U s + size U + 1`，恒等解释器给回 `kolm` 本身（差常数 3）；`exists_const_kolm_le_of_partrec`：任意部分递归描述系统 `V` 有常数 `c` 使 `V p = s ⟹ kolm s ≤ 3p + c`；经模型等价得图灵机版 `exists_const_kolm_le_of_tm2`。
+
+**新模块 `Start/KolmogorovBinary.lean`**：紧凑（二进制）数码 `Lambda.binNum n`——规模 `O(log n)` 的闭项且 `↠ church n`（用 `mult (church 2)` 与 `succ` 沿二进制展开构造，附闭性、正确性与规模界）。由此得对数形式的不变性：`exists_const_kolm_le_size`、`exists_const_kolm_le_size_of_partrec`、`exists_const_kolm_le_size_of_tm2`（`kolm s ≤ c·(p 的比特长度 + 1)`）。
+
+**诚实边界**（写在文件头、README、证据文件与 `docs/church-turing-discussion.md` 新增第十三节）：加性不变性成立于"节点数"这个尺度；换成比特长度只得到常数倍界，因为每个比特要花常数个节点。按比特计长的加性陈述需要以比特计长的程序尺度，前缀复杂度与 Ω 还额外需要自定界（前缀无关）编码——现有编码是单射但非前缀无关，这条留作 `M6-KOLMOGOROV-OMEGA`。
+
+**验证**：`lake build` 全量成功（8072 个任务），零错误、零 linter 警告；`Start.lean` 与 `Start/` 下无 `sorry`/`admit`；`#print axioms` 对本次所有主结果只报 `propext, Classical.choice, Quot.sound`。`README.md`、`Start/Demo.lean` 导览、`docs/current-goal-state.md` 均已更新；`ARISTOTLE_SUMMARY.md` 未改动。全部改动已提交并推送，工作区干净。
+
+# Summary of changes for run 42c874b0-61ec-4c4f-8aa2-c490b993e78f
+The five "possible next directions" from the notes and the README were added to the task board as milestone `M5` and are now all completed, machine-checked and documented.
+
+**New Lean modules (all `sorry`-free, all imported from `Start.lean`)**
+
+- `Start/RecursionParams.lean` — Kleene's recursion theorem **with parameters**: `Lambda.exists_recursion_with_parameters`, giving a primitive recursive `s` with `decode (s y) = some X` and `X ↠ F ⌜s y⌝ ⌜y⌝`.
+- `Start/Encodings.lean` — model equivalence beyond unary functions: `lambdaComputable2_iff_partrec₂`, `lambdaComputable2_iff_tm2Computable`, and, for arbitrary `Primcodable` input/output types, `LambdaComputableEnc` / `TM2ComputableEnc` with `lambdaComputableEnc_iff_partrec`, `tm2ComputableEnc_iff_partrec`, `lambdaComputableEnc_iff_tm2ComputableEnc`. The compiler in `Start/PartialCapstone.lean` was strengthened to produce a **closed** term (`lambdaComputable_of_partrec_closed`).
+- `Start/TM2PolyTime.lean` — time-bounded machine runs (`HaltsWithin`, `TM2ComputableNatInTime`, `TM2ComputableNatInPolyTime`), `lambdaComputable_of_tm2ComputableNatInPolyTime`, and bridges to Mathlib's `Turing.TM2ComputableInPolyTime`. Non-vacuity is witnessed by an explicit halting machine.
+- `Start/Solvability.lean` — `Lambda.Solvable`, its conversion-invariance, `Lambda.not_solvable_omega`, generic reachability `Lambda.exists_args_conv_of_solvable`, and undecidability (`not_decides_solvable`, `not_computablePred_codeSet_solvable`).
+- `Start/AlgorithmRepresentation.lean` — a Dershowitz–Gurevich style **representation theorem**: sequential algorithms in bounded-exploration form (`SeqAlgorithm.Algorithm`) have partial recursive input–output functions (`Algorithm.partrec_run`), hence lambda-definable and Turing-machine computable ones. Computability of the transition is *derived* (`primrec_stepProg`), not assumed; `run_doubling` shows a genuinely looping instance computing `n ↦ 2n`.
+
+**Honest scope limits** (stated in the files and the notes): Böhm's separation theorem itself is not proved — only solvability, its undecidability and generic reachability. The algorithm result is a representation theorem for the stated axioms, not a proof of the Church–Turing thesis, which is not a formalizable statement. On the complexity side only the direction *out of* polynomial-time machines is formalized; no resource-preserving compilation into machines and no lambda-side cost model.
+
+**Verification**: full `lake build` succeeds (8070 jobs) with no errors and no linter warnings; `Start.Demo` builds too. No `sorry`/`admit` anywhere in `Start.lean` or `Start/` (only prose mentions). Axiom audits on the headline results report only `propext, Classical.choice, Quot.sound` (`Lambda.not_solvable_omega` uses only `propext`).
+
+**Documentation/bookkeeping**: `docs/goal/task-board.yaml` gained milestone `M5` with five tasks, all `DONE_STRONG` and each backed by an evidence note in `docs/goal/evidence/`; `scripts/goal_state.py validate` reports "OK: 24 tasks validated". `README.md` now lists the new modules and results and has a revised "Suggested Next Steps"; `Start/Demo.lean` has a new guided-tour section; `docs/church-turing-discussion.md` gained a section 十二 covering all five items with their limits, and its earlier "still to do" entry for the representation theorem is marked done. `docs/current-goal-state.md` was re-rendered. Everything is committed and pushed.
+
+# Summary of changes for run 0d5efeda-0d94-45b1-b5a4-ee93b4cc7d80
+Correct — there are no open tasks left, and I re-verified that this session rather than taking it on trust.
+
+**Verification run just now**
+- `lake build` completes successfully (8065 jobs), with no errors and no linter warnings.
+- No `sorry`/`admit` anywhere in `Start.lean` or under `Start/` (the only textual matches are prose in comments/documentation such as `Start/Demo.lean`).
+- The task board validates: `scripts/goal_state.py validate` reports "OK: 19 tasks validated", and `next` reports the active milestone M4 as complete, with every task done and no open boundaries.
+- The working tree is clean and everything is committed and pushed; no code changes were needed.
+
+**What the library currently contains** (all machine-checked, sorry-free): the model-equivalence theorems — lambda-definable ⇔ partial recursive (`lambdaComputable_iff_partrec`), Turing-machine-computable ⇔ partial recursive (`TM2Partrec.tm2Computable_iff_partrec`), and the two models agreeing (`lambdaComputable_iff_tm2Computable`) — together with the supporting metatheory (confluence, standardization, Gross–Knuth normalization and the arithmetized evaluator, minimisation and its divergence half) and the computability-theory layer built on top: the Turing fixed-point combinator, Kleene's second recursion theorem, undecidability of convergence and of normalizability, Scott's theorem and the lambda-calculus Rice theorem, the uniform s-m-n theorem, and a lambda-level self-interpreter (with the proof that the converse, quoting, is not lambda-definable).
+
+**If you would like to keep going**, the natural remaining directions — none of them required by anything already proved — are:
+1. A Dershowitz–Gurevich style representation theorem (axioms for "algorithm" ⇒ Turing simulability). This is the one item the notes deliberately left undone; it is a large piece of work, and even finished it would be a representation theorem, not a proof of the Church–Turing thesis, which is not a formalizable statement.
+2. Further separation/solvability theory on top of the self-interpreter (e.g. Böhm's theorem, genericity of unsolvable terms).
+3. More classical recursion theory transported into the lambda setting: the recursion theorem with parameters, Rogers' isomorphism theorem, or simple/creative sets.
+
+Just tell me which, if any, you'd like next.
+
 # Summary of changes for run ca9f651f-13c2-476b-8145-22b2bced9f7b
 I picked the project up where it stood, re-verified it end to end, and closed out the one item its own notes still listed as open — a lambda-level self-interpreter.
 

@@ -119,6 +119,26 @@ The development is fully modular; `Start.lean` imports the modules below in depe
 - `Start/TM2Capstone.lean`: the binary encoding on symbol codes and the machine equivalence
   `TM2Partrec.tm2Computable_iff_partrec`
 
+### Further recursion theory, complexity and algorithms (milestone M5)
+
+- `Start/RecursionParams.lean`: Kleene's recursion theorem **with parameters**
+  (`Lambda.exists_recursion_with_parameters`) — a primitive recursive `s` with `decode (s y)
+  = some X` and `X ↠ F ⌜s y⌝ ⌜y⌝`
+- `Start/Encodings.lean`: model equivalences beyond unary functions — the curried binary form
+  (`lambdaComputable2_iff_partrec₂`, `lambdaComputable2_iff_tm2Computable`) and computability
+  over arbitrary `Primcodable` input types (`LambdaComputableEnc`, `TM2ComputableEnc` and the
+  bridges between them)
+- `Start/TM2PolyTime.lean`: time-bounded machine runs (`TM2Partrec.HaltsWithin`,
+  `TM2ComputableNatInTime`, `TM2ComputableNatInPolyTime`), the resulting partial recursiveness,
+  and bridges to Mathlib's `Turing.TM2ComputableInPolyTime`
+- `Start/Solvability.lean`: head-solvability (`Lambda.Solvable`), unsolvability of `Ω`
+  (`Lambda.not_solvable_omega`), generic reachability of solvable terms
+  (`Lambda.exists_args_conv_of_solvable`) and undecidability of solvability
+- `Start/AlgorithmRepresentation.lean`: a Dershowitz–Gurevich style *representation* theorem —
+  sequential algorithms in bounded-exploration form (`SeqAlgorithm.Algorithm`) have partial
+  recursive input-output functions (`SeqAlgorithm.Algorithm.partrec_run`), hence are
+  lambda-definable and Turing computable
+
 ### Interfaces and compatibility
 
 - `Start/Boundary.lean`: LACI-inspired interface records (`ReductionBoundary`, `EncodingBoundary`,
@@ -183,18 +203,54 @@ The development is fully modular; `Start.lean` imports the modules below in depe
     satisfies `Q M ↠ ⌜M⌝` for all closed `M`, so quoting is not lambda-definable.
 - `docs/church-turing-discussion.md` records what these results do and do not say about the
   Church–Turing thesis itself.
+- Milestone `M5` turned the former "suggested next steps" into five completed board tasks:
+  - `M5-RECURSION-PARAMS` — `Lambda.exists_recursion_with_parameters`;
+  - `M5-ENCODINGS-MULTIARG` — `lambdaComputable2_iff_partrec₂`,
+    `lambdaComputable2_iff_tm2Computable`, `lambdaComputableEnc_iff_tm2ComputableEnc`;
+  - `M5-POLYTIME` — `TM2Partrec.lambdaComputable_of_tm2ComputableNatInPolyTime` plus the
+    Mathlib bridge `TM2Partrec.partrec_of_tm2ComputableInPolyTime`;
+  - `M5-SOLVABILITY` — `Lambda.not_solvable_omega`,
+    `Lambda.exists_args_conv_of_solvable`, `Lambda.not_computablePred_codeSet_solvable`;
+  - `M5-ALGORITHM-REPRESENTATION` — `SeqAlgorithm.Algorithm.partrec_run` and
+    `SeqAlgorithm.Algorithm.lambdaComputable_run`.
+
+- Milestone `M6` adds **Kolmogorov complexity for the lambda calculus**
+  (`Start/Kolmogorov.lean`, `Start/KolmogorovBinary.lean`).  Program length is the syntactic size
+  `Lambda.size` of a closed term reducing to a Church numeral, and
+  `Lambda.kolm s = sInf {size t | t closed, t ↠ church s}`:
+  - `Lambda.exists_incompressible` — for every `n` some number has complexity at least `n`
+    (counting: `Lambda.finite_setOf_size_le` and `Lambda.finite_setOf_kolm_le`);
+  - `Lambda.not_computablePred_kolm_le` — the relation `kolm s ≤ n` is undecidable (Berry's
+    paradox, run through the closed form `Lambda.exists_code_fixed_point_closed` of Kleene's
+    second recursion theorem), and `Lambda.not_computable_kolm` — `kolm` is not computable;
+  - `Lambda.kolm_le_kolmWith` — the invariance theorem: measuring complexity through any fixed
+    closed interpreter term changes it by at most an additive constant, and the identity
+    interpreter returns `kolm` itself up to `3`;
+  - `Lambda.exists_const_kolm_le_of_partrec` / `Lambda.exists_const_kolm_le_of_tm2` — for any
+    partial recursive, equivalently Turing machine computable, description system `V` there is a
+    constant `c` with `kolm s ≤ 3 * p + c` whenever `V p = s`;
+  - `Lambda.binNum` — compact numerals of size `O(log n)` reducing to `church n`, giving the
+    logarithmic form `Lambda.exists_const_kolm_le_size`,
+    `Lambda.exists_const_kolm_le_size_of_partrec` and `Lambda.exists_const_kolm_le_size_of_tm2`:
+    complexity is bounded by a constant multiple of the *bit length* of the description.
 
 ## Suggested Next Steps
 
-The task board is empty of open work.  Natural continuations, none of which anything here
-depends on, would be:
+One board item is deliberately left open (`M6-KOLMOGOROV-OMEGA`): Chaitin's `Ω` needs a
+self-delimiting, prefix-free coding of programs before the halting probability is even a
+convergent sum — the current encoding is injective but not prefix-free.  A bit-counting program
+measure would also be needed for an invariance statement that is additive in bit lengths; in the
+node measure used here, invariance is already additive.  Other honest scope limits of milestone
+`M5`, and the natural continuations from there, are:
 
-- the Böhm-out / separation theory of solvable terms, on top of `Start/Standardization.lean` and
-  the self-interpreter `Start/SelfInterpreter.lean`;
-- complexity-aware versions of the machine translation (Mathlib's
-  `Turing.TM2ComputableInPolyTime` is untouched here);
-- extending the machine equivalence to functions of several arguments or to other input
-  encodings.
+- Böhm's separation theorem itself is **not** proved: `Start/Solvability.lean` gives solvability,
+  its undecidability and a generic reachability statement, but not the separation of two distinct
+  βη-normal forms by a common context;
+- the algorithm representation theorem is a theorem about the stated bounded-exploration axioms,
+  not a proof of the Church–Turing thesis; widening the axioms (arbitrary finite structures
+  instead of naturals in finitely many locations) is a natural next step;
+- on the complexity side, only the transfer *out of* polynomial-time machines is formalized; a
+  resource-preserving compilation *into* machines, or a cost model for the lambda side, is not.
 
 ## Task Workflow
 

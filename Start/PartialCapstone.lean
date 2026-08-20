@@ -123,6 +123,26 @@ theorem partialTerm_reduces_church {H G : Lambda} {h v : ℕ → ℕ}
     (Lambda.reduces_app_left hsearch)) ?_
   exact Lambda.reduces_trans (church_force k _) hvalue
 
+/-- The strict realizer of a partial function is a closed term. -/
+theorem partialTerm_closed {H G : Lambda} (hH : Lambda.IsClosed H) (hG : Lambda.IsClosed G) :
+    Lambda.IsClosed (partialTerm H G) := by
+  have hat : ∀ {t : Lambda}, Lambda.IsClosed t → ∀ k, Lambda.IsClosedAt t k :=
+    fun h _ s x _ => h s x
+  have hvar : Lambda.IsClosedAt (Lambda.var 0) 1 := Lambda.IsClosedAt_var 0 1 (by omega)
+  have hmu : Lambda.IsClosedAt (muParam H) 1 := hat (muParam_closed hH) 1
+  have hsearch : Lambda.IsClosedAt (Lambda.app (muParam H) (Lambda.var 0)) 1 :=
+    Lambda.IsClosedAt_app hmu hvar
+  have hforce : Lambda.IsClosedAt
+      (Lambda.app (Lambda.app (muParam H) (Lambda.var 0)) Lambda.I) 1 :=
+    Lambda.IsClosedAt_app hsearch (hat I_closed 1)
+  have harg : Lambda.IsClosedAt
+      (Lambda.app (Lambda.app Lambda.natPair' (Lambda.var 0))
+        (Lambda.app (muParam H) (Lambda.var 0))) 1 :=
+    Lambda.IsClosedAt_app (Lambda.IsClosedAt_app (hat natPair'_closed 1) hvar) hsearch
+  rw [← Lambda.IsClosedAt_zero_iff_IsClosed]
+  exact Lambda.IsClosedAt_lam
+    (Lambda.IsClosedAt_app hforce (Lambda.IsClosedAt_app (hat hG 1) harg))
+
 /-- On a diverging search the strict realizer has no weak head normal form. -/
 theorem partialTerm_not_hasWhnfEval {H G : Lambda} {h : ℕ → ℕ} (hH : Realizes H h)
     (hG : Lambda.IsClosed G) (n : ℕ) (hno : ∀ y, h (Nat.pair n y) ≠ 0) :
@@ -190,12 +210,15 @@ theorem Lambda.kleene_no_witness {f : ℕ →. ℕ} {c : Nat.Partrec.Code} (hc :
 -- The capstone
 ------------------------------------------------------------------------
 
-/-- **Every partial recursive function is lambda-computable.** -/
-theorem lambdaComputable_of_partrec {f : ℕ →. ℕ} (hf : Partrec f) : LambdaComputable f := by
+/-- **Every partial recursive function is lambda-computable, by a closed term.** -/
+theorem lambdaComputable_of_partrec_closed {f : ℕ →. ℕ} (hf : Partrec f) :
+    ∃ F : Lambda, Lambda.IsClosed F ∧ ∀ n m, f n = Part.some m ↔
+      Lambda.reduces (Lambda.app F (Lambda.church n)) (Lambda.church m) := by
   obtain ⟨c, hc⟩ := Nat.Partrec.Code.exists_code.1 (Partrec.nat_iff.1 hf)
   obtain ⟨H, hH⟩ := Lambda.exists_realizer_of_primrec (Lambda.kleeneTest_primrec c)
   obtain ⟨G, hG⟩ := Lambda.exists_realizer_of_primrec (Lambda.kleeneValue_primrec c)
-  refine ⟨Lambda.partialTerm H G, fun n m => ⟨fun hfn => ?_, fun hred => ?_⟩⟩
+  refine ⟨Lambda.partialTerm H G, Lambda.partialTerm_closed hH.1 hG.1,
+    fun n m => ⟨fun hfn => ?_, fun hred => ?_⟩⟩
   · -- convergence
     have hm : m ∈ f n := by rw [hfn]; exact Part.mem_some m
     obtain ⟨k, hk⟩ := Lambda.exists_kleene_witness hc hm
@@ -226,6 +249,11 @@ theorem lambdaComputable_of_partrec {f : ℕ →. ℕ} (hf : Partrec f) : Lambda
       exact Part.eq_some_iff.2 hval
     · exact absurd hred (Lambda.partialTerm_not_reduces_church hH hG.1 n
         (Lambda.kleene_no_witness hc (fun m' hm' => hnone ⟨m', hm'⟩)) m)
+
+/-- **Every partial recursive function is lambda-computable.** -/
+theorem lambdaComputable_of_partrec {f : ℕ →. ℕ} (hf : Partrec f) : LambdaComputable f :=
+  let ⟨F, _, hF⟩ := lambdaComputable_of_partrec_closed hf
+  ⟨F, hF⟩
 
 /-- **Church–Turing for the lambda calculus.**  A partial function on the naturals is
 lambda-definable exactly when it is partial recursive. -/

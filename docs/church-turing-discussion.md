@@ -114,8 +114,9 @@ Dershowitz–Gurevich、Gurevich 的顺序 ASM 论题、Sieg 的公理化、Mosc
    **已完成**（`Start/SelfInterpreter.lean`，见第十一节），它是更精细的分离（Böhm-out）方向的入口。
 3. ~~**Kleene 的 s-m-n 定理在本仓库编码下的一致（uniform）版本**~~——**已完成**（`Start/SMN.lean`，
    见第十节）。
-4. **一条表示定理的形式化**（Dershowitz–Gurevich 风格的"有界探索 ⇒ 可被图灵机模拟"的一个精简版本）——
-   这是唯一能把第三节的讨论从散文变成定理的做法，工作量也最大，且仍然只是表示定理。
+4. ~~**一条表示定理的形式化**（Dershowitz–Gurevich 风格的"有界探索 ⇒ 可被图灵机模拟"的一个精简版本）~~——
+   **已完成**（`Start/AlgorithmRepresentation.lean`，见第十二节）。这是唯一能把第三节的讨论从散文变成
+   定理的做法；但正如第三节与第七节所述，做完之后得到的仍然只是表示定理，而不是 CT 论题的证明。
 
 ## 十、Scott–Rice 与 s-m-n（后续补上的两条）
 
@@ -157,3 +158,106 @@ Dershowitz–Gurevich、Gurevich 的顺序 ASM 论题、Sieg 的公理化、Mosc
   原因是归约无法区分一个项与它的归约结果，而编码可以（`I` 与 `I I`）。也就是说，解释（码 → 项）
   可以 λ 定义，引号（项 → 码）不行。
 - 非空洞性检查：`Lambda.exists_self_interpreter_church`——在 `church k` 的码上，解释器还回 `church k`。
+
+## 十二、表示定理与其余四条后续方向（里程碑 M5）
+
+第九节第 4 条所说的表示定理，以及 README 中列出的其余"可能的下一步"，现在都已作为任务板里程碑 `M5`
+完成。全部无 `sorry`，公理审计只用到 `propext, Classical.choice, Quot.sound`（`Lambda.not_solvable_omega`
+只用到 `propext`）。
+
+### 1. Dershowitz–Gurevich 风格的表示定理（`Start/AlgorithmRepresentation.lean`）
+
+- `SeqAlgorithm.Algorithm`：一个"有界探索"形式的顺序算法——有限多个存放自然数的位置（`Fin size`），
+  一张有限的**带守卫的同时赋值规则**表 `List (Rule size)`，以及指定的输入、输出、停机位置。
+  状态即 `Fin size → ℕ`；一步转移 `stepProg` 取第一条守卫为真的规则并同时执行它的更新。
+- 关键的一点是：**转移的可计算性是被证明的，而不是被假设的**——`SeqAlgorithm.primrec_stepProg`
+  由规则表的有限性直接推出。这正是表示定理该有的形状：公理只谈"有界探索 + 顺序时间"，可计算性是结论。
+- `SeqAlgorithm.Algorithm.partrec_run`：算法的输入–输出部分函数（迭代转移直到停机位置非零，再读出
+  输出位置）是**部分递归的**；由本仓库的两条 capstone 立即得到
+  `Algorithm.lambdaComputable_run`（λ 可定义）与 `Algorithm.tm2Computable_run`（图灵机可计算）。
+- 非空洞性：`SeqAlgorithm.doubling` 是一个真会循环的算法，`SeqAlgorithm.run_doubling` 证明它算的是
+  `n ↦ 2n`。
+- **诚实的界限**：这是关于所述公理的表示定理，不是 CT 论题的证明。"这组公理是否恰好刻画了非形式的
+  '算法'"不是数学问题；此处的位置模型（有限多个自然数寄存器）也比 Gurevich 的一阶结构状态更窄。
+
+### 2. 带参数的递归定理（`Start/RecursionParams.lean`）
+
+`Lambda.exists_recursion_with_parameters`：对闭项 `F`，存在**原始递归**的 `s`，使得对每个 `y`，
+`decode (s y) = some X` 且 `X ↠ F ⌜s y⌝ ⌜y⌝`。即第二递归定理的不动点可以随参数原始递归地给出。
+
+### 3. 多参数与其他输入编码（`Start/Encodings.lean`）
+
+- `lambdaComputable2_iff_partrec₂`、`lambdaComputable2_iff_tm2Computable`：柯里化二元函数版本的模型等价。
+- `LambdaComputableEnc` / `TM2ComputableEnc`：对任意 `Primcodable` 的输入与输出类型，经其编码定义可计算性，
+  并证明 `lambdaComputableEnc_iff_partrec`、`tm2ComputableEnc_iff_partrec`、
+  `lambdaComputableEnc_iff_tm2ComputableEnc`。这说明第五节意义上的稳健性不依赖于"只看 ℕ → ℕ"。
+- 顺带把编译器加强为产出**闭项**（`Start/PartialCapstone.lean` 的 `lambdaComputable_of_partrec_closed`）。
+
+### 4. 复杂度敏感的机器翻译（`Start/TM2PolyTime.lean`）
+
+- `TM2Partrec.HaltsWithin`、`TM2ComputableNatInTime`、`TM2ComputableNatInPolyTime`：带时间界的机器实现；
+  `lambdaComputable_of_tm2ComputableNatInPolyTime` 把多项式时间机器搬到 λ 侧。
+- 与 mathlib 的对接：`partrec_of_tm2ComputableInPolyTime`、`haltsWithin_of_tm2ComputableInPolyTime`。
+- **界限**：只做了"从多项式时间机器出来"的方向；保资源的**反向编译**（以及 λ 侧的代价模型）没有做，
+  因此这里得到的是可计算性层面的结论，不是复杂性类的等价。
+
+### 5. 可解性理论（`Start/Solvability.lean`）
+
+- `Lambda.Solvable`：存在闭参数表使 `t` 应用之后与 `I` 可转换。`convInvariant_solvable` 说明它是
+  可转换性不变的，于是第十节的 Scott–Rice 机器直接适用。
+- `Lambda.not_solvable_omega`：`Ω` 不可解（只依赖 `propext`）。
+- `Lambda.exists_args_conv_of_solvable`：**一般可达性**——可解项可以被闭参数驱动到任意闭项。
+- `Lambda.not_decides_solvable`、`Lambda.not_computablePred_codeSet_solvable`：可解性不可判定。
+- **界限**：Böhm 分离定理本身**没有**证明。这里给出的是可解性、它的不可判定性和一条一般可达性，
+  而不是"两个不同的 βη 范式可以被同一个上下文分离"。
+
+## 十三、Kolmogorov 复杂度（里程碑 M6）
+
+算法信息论的三个前提——编码、通用机、停机不可判定——在本仓库都是已证的定理，因此 K 复杂度可以直接
+在 λ 演算内部定义并展开。程序长度取项的语法规模 `Lambda.size`（节点数，De Bruijn 下标 `i` 计 `i+1`），
+
+```
+Lambda.kolm s = sInf { size t | t 闭 且 t ↠ church s }
+```
+
+`church s` 本身就是一个程序，所以下确界的集合非空、定义良基（`Lambda.exists_program_of_kolm` 给出最短程序）。
+
+### 1. 不可压缩数存在（`Lambda.exists_incompressible`）
+
+纯计数：规模 ≤ n 的项只有有限多个（`Lambda.finite_setOf_size_le`，按变量/抽象/应用逐层覆盖），
+而由合流性（`Lambda.unique_church_reduct`）一个项至多归约到一个 Church 数码，于是复杂度 ≤ n 的自然数
+也只有有限多个（`Lambda.finite_setOf_kolm_le`）。ℕ 无限，故任意 n 都有 `n ≤ kolm s`。
+
+### 2. K 不可计算（`Lambda.not_computablePred_kolm_le`、`Lambda.not_computable_kolm`）
+
+Berry 悖论，通过第二递归定理实现。为此把 `Start/SecondRecursion.lean` 的不动点加强为**闭项**版本
+（`Lambda.exists_code_fixed_point_closed`），否则不动点不能充当"程序"。若关系 `kolm s ≤ n` 可判定，
+则"求最小的、复杂度超过 `2c+1` 的 s"是部分递归而且处处有定义（用第 1 条），于是有闭 λ 实现子 `G`；
+闭不动点 `X ↠ G ⌜X⌝` 便是某个数 m 的程序，而按构造 `kolm m > 2 · encode X + 1 ≥ size X`，矛盾。
+这里唯一需要的"规模核算"是 `Lambda.size_le_encode : size t ≤ 2 · encode t + 1`，不需要把项规模在码上
+做成可计算函数。
+
+注意陈述的形式：对**固定**的 n，`{s | kolm s ≤ n}` 是有限集，因而可判定；不可判定的是二元关系。
+
+### 3. 不变性定理
+
+- λ 内部、真正加性的版本：`Lambda.kolm_le_kolmWith`——以任意闭项 `U` 当解释器（程序是满足
+  `U p ↠ church s` 的闭项 `p`），复杂度至多下降常数 `size U + 1`；恒等解释器给回 `kolm` 本身
+  （`Lambda.kolmWith_I_le_kolm`、`Lambda.kolm_le_kolmWith_I`）。
+- 跨模型版本：任意部分递归的"描述系统" `V` 都满足 `kolm s ≤ 3p + c`（`V p = s` 时），
+  常数由 `lambdaComputable_of_partrec_closed` 的闭实现子给出；再经
+  `TM2Partrec.tm2Computable_iff_partrec` 得到图灵机版本 `Lambda.exists_const_kolm_le_of_tm2`。
+  因子 3 是**一元** Church 数码的代价（`size (church p) = 3p + 3`）。
+- 用二进制紧凑数码消掉这个因子：`Start/KolmogorovBinary.lean` 造出规模 `O(log n)` 的闭项
+  `Lambda.binNum n ↠ church n`（用 `mult (church 2)` 与 `succ` 沿二进制展开构造），于是
+  `Lambda.exists_const_kolm_le_size_of_partrec`：`kolm s ≤ c · (bit 长度 p + 1)`。
+
+### 4. 界限（诚实说明）
+
+- 就**节点数**这个尺度而言，不变性已经是加性的（`Lambda.kolm_le_kolmWith`）；就 **bit 长度**而言
+  只得到"至多相差常数倍"，因为紧凑数码的每一个 bit 都要花掉常数个节点。要得到教科书里
+  `K(s) ≤ |p| + c` 那种按比特计长的加性陈述，需要一个以比特计长的程序尺度；前缀复杂度还要求它
+  是**自定界（前缀无关）**的，而现有编码是单射但不是前缀无关的。
+- 同一个缺口挡住了 Chaitin Ω：没有前缀无关性，`Σ 2^{-|p|}` 没有理由收敛，Ω 甚至无法定义。
+  任务板上 `M6-KOLMOGOROV-OMEGA` 记录了这条开放项及其设计要求（前缀无关编码 → Kraft 不等式 →
+  前缀复杂度 → Ω）。Martin-Löf 随机性、Solovay 函数等更属于另一个量级的项目。

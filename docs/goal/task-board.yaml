@@ -1,7 +1,7 @@
 version: 2
 source_protocol: docs/goal/goal-prompt.md
-active_milestone: M4
-milestone_order: ["M1", "M2", "M3", "M4"]
+active_milestone: M6
+milestone_order: ["M1", "M2", "M3", "M4", "M5", "M6"]
 tasks:
   - id: M1-BOUNDARY-SORRY-CLOSURE
     priority: P0
@@ -346,5 +346,174 @@ tasks:
       - "An environment-passing interpreter term is defined from the fixed-point combinator."
       - "Its correctness is proved for arbitrary terms and environments, as a reduction."
       - "A closed term E is exhibited with E (church (encode M)) reducing to M for every closed M."
+    required_gates:
+      - "lake build"
+
+  - id: M5-RECURSION-PARAMS
+    priority: P3
+    status: DONE_STRONG
+    track: theory/recursion
+    title: "Kleene's recursion theorem with parameters, in the lambda setting"
+    latest_evidence: "docs/goal/evidence/M5-RECURSION-PARAMS.md"
+    open_boundary: ""
+    milestone: M5
+    depends_on:
+      - M4-SMN-UNIFORM
+    rank: 10
+    exit_criteria:
+      - "A primitive recursive function of the parameter produces the code of the fixed-point term."
+      - "For every parameter the coded term reduces to F applied to its own code and to the parameter."
+      - "lake build succeeds, no sorry."
+    required_gates:
+      - "lake build"
+
+  - id: M5-ENCODINGS-MULTIARG
+    priority: P3
+    status: DONE_STRONG
+    track: theory/lambda
+    title: "Model equivalence for multi-argument functions and arbitrary encoded data"
+    latest_evidence: "docs/goal/evidence/M5-ENCODINGS-MULTIARG.md"
+    open_boundary: ""
+    milestone: M5
+    depends_on:
+      - M4-CHURCH-TURING-LAMBDA
+    rank: 20
+    exit_criteria:
+      - "Lambda-definability of curried binary partial functions is proved equivalent to Partrec2."
+      - "Lambda-definability through Primcodable encodings is proved equivalent to Partrec for arbitrary encoded domains and codomains."
+      - "lake build succeeds, no sorry."
+    required_gates:
+      - "lake build"
+
+  - id: M5-SOLVABILITY
+    priority: P3
+    status: DONE_STRONG
+    track: theory/lambda
+    title: "Solvability: unsolvable terms, generic reachability, and undecidability of solvability"
+    latest_evidence: "docs/goal/evidence/M5-SOLVABILITY.md"
+    open_boundary: ""
+    milestone: M5
+    depends_on:
+      - M4-SCOTT-RICE
+    rank: 30
+    exit_criteria:
+      - "Solvability is defined by applying a term to a list of closed arguments."
+      - "Solvability is proved invariant under convertibility, with a solvable and an unsolvable closed witness."
+      - "A solvable closed term can be driven to any closed term, and Omega is proved unsolvable."
+      - "Solvability is proved undecidable, both lambda-internally and as a predicate on codes."
+    required_gates:
+      - "lake build"
+
+  - id: M5-ALGORITHM-REPRESENTATION
+    priority: P3
+    status: DONE_STRONG
+    track: theory/church-turing
+    title: "A Dershowitz-Gurevich style representation theorem: bounded-exploration algorithms are simulable"
+    latest_evidence: "docs/goal/evidence/M5-ALGORITHM-REPRESENTATION.md"
+    open_boundary: ""
+    milestone: M5
+    depends_on:
+      - M4-CHURCH-TURING-LAMBDA
+    rank: 40
+    exit_criteria:
+      - "Sequential algorithms are axiomatized as finitely many locations updated by a finite set of guarded rules."
+      - "The induced state transition is proved computable rather than assumed computable."
+      - "The input-output partial function of such an algorithm is proved partial recursive, lambda-definable and machine computable."
+      - "A concrete looping algorithm is exhibited, so the statements are not vacuous."
+    required_gates:
+      - "lake build"
+
+  - id: M5-POLYTIME
+    priority: P3
+    status: DONE_STRONG
+    track: theory/turing
+    title: "Complexity-sensitive machine computability: polynomial time bounded realizations"
+    latest_evidence: "docs/goal/evidence/M5-POLYTIME.md"
+    open_boundary: ""
+    milestone: M5
+    depends_on:
+      - M4-TM2-IMP-PARTREC
+    rank: 50
+    exit_criteria:
+      - "A time-bounded refinement of the machine realization record is defined."
+      - "Polynomial-time machine computability is proved to imply machine computability, hence partial recursiveness and lambda-definability."
+      - "A non-vacuity witness is exhibited."
+    required_gates:
+      - "lake build"
+
+  - id: M6-KOLMOGOROV-CORE
+    priority: P3
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "Kolmogorov complexity for the lambda calculus: definition and incompressible numbers"
+    latest_evidence: "docs/goal/evidence/M6-KOLMOGOROV-CORE.md"
+    open_boundary: ""
+    milestone: M6
+    depends_on:
+      - M4-CHURCH-TURING-LAMBDA
+    rank: 10
+    exit_criteria:
+      - "Program length is defined as the syntactic size of a closed term reducing to a Church numeral."
+      - "The complexity function is well defined: the set of program lengths is non-empty and a shortest program exists."
+      - "Only finitely many terms have a given size, and only finitely many numbers a given complexity."
+      - "For every n some number has complexity at least n."
+    required_gates:
+      - "lake build"
+
+  - id: M6-KOLMOGOROV-BERRY
+    priority: P3
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "Berry's paradox: Kolmogorov complexity is not computable"
+    latest_evidence: "docs/goal/evidence/M6-KOLMOGOROV-BERRY.md"
+    open_boundary: ""
+    milestone: M6
+    depends_on:
+      - M6-KOLMOGOROV-CORE
+    rank: 20
+    exit_criteria:
+      - "The second recursion theorem is available with a closed fixed-point term."
+      - "Term size is bounded by the code, so no computability of size on codes is assumed."
+      - "The two-argument relation K(s) <= n is proved undecidable."
+      - "Non-computability of the complexity function follows as a corollary."
+    required_gates:
+      - "lake build"
+
+  - id: M6-KOLMOGOROV-INVARIANCE
+    priority: P3
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "Invariance: interpreter independence, and optimality for machine descriptions"
+    latest_evidence: "docs/goal/evidence/M6-KOLMOGOROV-INVARIANCE.md"
+    open_boundary: ""
+    milestone: M6
+    depends_on:
+      - M6-KOLMOGOROV-CORE
+      - M4-TM2-IMP-PARTREC
+    rank: 30
+    exit_criteria:
+      - "Complexity relative to any closed interpreter term differs from K by at most an additive constant."
+      - "The identity interpreter returns K itself up to a constant."
+      - "For every partial recursive description system there is a constant bounding K by the description length."
+      - "The same bound holds for Turing machine description systems through the model equivalence."
+      - "Compact binary numerals give the bound in terms of the bit length of the description."
+    required_gates:
+      - "lake build"
+
+  - id: M6-KOLMOGOROV-OMEGA
+    priority: P3
+    status: TODO_NEEDS_DESIGN
+    track: theory/complexity
+    title: "Prefix-free programs and Chaitin's Omega"
+    latest_evidence: ""
+    open_boundary: "The present encoding of terms is injective but not prefix-free, so the halting probability sum has no reason to converge and cannot be defined yet. Needed first: a self-delimiting coding of closed terms as bit strings with the Kraft inequality, then prefix complexity, then Omega as a convergent sum and its randomness. This is a project of its own size; nothing in milestone M6 depends on it."
+    milestone: M6
+    depends_on:
+      - M6-KOLMOGOROV-INVARIANCE
+    rank: 40
+    exit_criteria:
+      - "A prefix-free coding of closed lambda terms as bit strings is defined and proved prefix-free."
+      - "Prefix complexity is defined and the Kraft inequality is proved for the halting set."
+      - "Chaitin's Omega is defined as a convergent sum and proved to lie strictly between 0 and 1."
     required_gates:
       - "lake build"
