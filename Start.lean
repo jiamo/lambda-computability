@@ -67,3 +67,5 @@ import Start.AlgorithmRepresentation
 -- Kolmogorov complexity
 import Start.Kolmogorov
 import Start.KolmogorovBinary
+import Start.Kraft
+import Start.ChaitinOmega

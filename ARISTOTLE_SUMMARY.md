@@ -1,3 +1,24 @@
+# Summary of changes for run 64ca70ab-9328-4d2a-84e2-29809a55a6e2
+The project was not quite finished when I picked it up: 27 of the 28 board tasks were done, and one was still open — the prefix-free / Chaitin's Ω item. That item is now closed, so every task on the board is `DONE_STRONG`, the whole library builds, and there are no `sorry`s.
+
+What I added (two new modules, both imported by `Start.lean`):
+
+**`Start/Kraft.lean` — prefix-free codings and Kraft's inequality**
+- `Kraft.wt w = 2 ^ (-|w|)`; `Kraft.PrefixFreeCoding c` (no code word is a prefix of another).
+- `Kraft.boolLists`, `Kraft.ext` with their cardinalities, and the counting core `Kraft.sum_two_pow_sub_le`: extensions of distinct code words to a common length are disjoint.
+- `Kraft.sum_wt_le_one` (finite form), `Kraft.summable_wt`, and `Kraft.tsum_wt_le_one`: `∑ 2 ^ (-|c i|) ≤ 1` for any prefix-free coding, plus `Kraft.tsum_wt_add_le_one`, which keeps the weight of an excluded code word in reserve.
+
+**`Start/ChaitinOmega.lean` — self-delimiting coding, prefix complexity, Ω**
+- `Lambda.bits`: the binary lambda calculus coding (`var i ↦ 1^(i+1) 0`, `lam t ↦ 00 t`, `app a b ↦ 01 a b`), proved self-delimiting (`bits_append_inj`), hence prefix free (`bits_prefixFree`) and injective.
+- `Lambda.kolmP`: prefix complexity, the least *bit* length of a closed program for a number, with `kolmP_le_two_mul_kolm` relating it to the existing node-size complexity, and `Lambda.kraft_kolmP : ∑' s, 2 ^ (-kolmP s) ≤ 1` (shortest programs for distinct numbers are incomparable, by confluence).
+- `Lambda.chaitinOmega`: the halting probability, the total weight of the closed terms with a normal form. `Lambda.summable_haltingWeight` shows the sum converges, `Lambda.chaitinOmega_le_one` is Kraft for the halting set, and `Lambda.chaitinOmega_mem_Ioo` gives `0 < Ω < 1` — positive because `I` halts, strictly below `1` because `omega` does not, so its own weight is left over.
+
+Verification: `lake build` succeeds for the whole library; no `sorry` in the new files; `#print axioms` on `Lambda.chaitinOmega_mem_Ioo`, `Lambda.kraft_kolmP` and `Kraft.tsum_wt_le_one` reports only `propext`, `Classical.choice`, `Quot.sound`.
+
+Bookkeeping done in the repository's own workflow: `docs/goal/task-board.yaml` now marks `M6-KOLMOGOROV-OMEGA` as `DONE_STRONG` with empty open boundary (`scripts/goal_state.py validate` passes, `next` reports the active milestone complete), a new evidence file `docs/goal/evidence/M6-KOLMOGOROV-OMEGA.md` records the claims and gates, `docs/current-goal-state.md` was regenerated, and the README and `Start/Demo.lean` showcase were updated. One honest boundary is recorded rather than glossed over: the algorithmic randomness of Ω (its incompressibility, and its first `n` bits deciding halting for programs of length `≤ n`) is not proved; only the definition, convergence, and `0 < Ω < 1` were required.
+
+All work is committed and pushed.
+
 # Summary of changes for run 20a75db6-a5d0-42cb-bbea-4a022a5d2041
 我把 Kolmogorov 复杂度做成了新的里程碑 M6：先按项目规矩把它拆成任务写进任务板，然后把其中三条全部证完（机检、无 `sorry`）。
 

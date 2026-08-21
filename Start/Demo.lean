@@ -359,7 +359,20 @@ Program length is the syntactic size of a closed term reducing to a Church numer
 #check @Lambda.exists_const_kolm_le_of_partrec
 #check @Lambda.exists_const_kolm_le_size_of_tm2
 
-/-! ## 14. Summary
+/-! ## 14. Prefix complexity and Chaitin's Omega -/
+
+-- The binary lambda calculus coding of terms is prefix free, ...
+#check @Lambda.bits_prefixFree
+
+-- ... so Kraft's inequality applies: prefix complexity satisfies `∑ 2 ^ (-K(s)) ≤ 1`, ...
+#check @Kraft.tsum_wt_le_one
+#check @Lambda.kraft_kolmP
+
+-- ... and the halting probability is a convergent sum lying strictly between 0 and 1.
+#check @Lambda.summable_haltingWeight
+#check @Lambda.chaitinOmega_mem_Ioo
+
+/-! ## 15. Summary
 
 ### Fully proved (no sorry):
 - Church-Rosser theorem (confluence) via Takahashi's parallel reduction
@@ -390,6 +403,8 @@ Program length is the syntactic size of a closed term reducing to a Church numer
   of the relation `K s ≤ n`, and the invariance theorem — for interpreters (additively) and for
   partial recursive / Turing machine description systems (in terms of bit length, via compact
   binary numerals)
+- A self-delimiting (prefix free) binary coding of terms with Kraft's inequality, prefix
+  complexity, and Chaitin's halting probability `Ω` as a convergent sum with `0 < Ω < 1`
 
 ### Architecture (≈ 8000 lines):
 1. Lambda syntax + lift/subst               (De Bruijn indices)

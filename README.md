@@ -234,14 +234,25 @@ The development is fully modular; `Start.lean` imports the modules below in depe
     `Lambda.exists_const_kolm_le_size_of_partrec` and `Lambda.exists_const_kolm_le_size_of_tm2`:
     complexity is bounded by a constant multiple of the *bit length* of the description.
 
+- Milestone `M6` is completed by **Kraft's inequality and Chaitin's `Ω`**
+  (`Start/Kraft.lean`, `Start/ChaitinOmega.lean`):
+  - `Lambda.bits` — the binary lambda calculus coding of a term as a bit string
+    (`var i ↦ 1^(i+1) 0`, `lam t ↦ 00 t`, `app a b ↦ 01 a b`), proved self-delimiting
+    (`Lambda.bits_append_inj`) and hence prefix free (`Lambda.bits_prefixFree`);
+  - `Kraft.tsum_wt_le_one` — Kraft's inequality `∑ 2 ^ (-|c i|) ≤ 1` for an arbitrary prefix free
+    coding `c`, by the counting argument on extensions to a common length;
+  - `Lambda.kolmP` — prefix complexity, the least *bit* length of a closed program, with
+    `Lambda.kraft_kolmP : ∑' s, 2 ^ (-kolmP s) ≤ 1` and `Lambda.kolmP_le_two_mul_kolm`;
+  - `Lambda.chaitinOmega` — the halting probability `∑ 2 ^ (-|bits t|)` over the closed terms with
+    a normal form: a convergent sum (`Lambda.summable_haltingWeight`) with
+    `Lambda.chaitinOmega_mem_Ioo : 0 < Ω < 1`.
+
 ## Suggested Next Steps
 
-One board item is deliberately left open (`M6-KOLMOGOROV-OMEGA`): Chaitin's `Ω` needs a
-self-delimiting, prefix-free coding of programs before the halting probability is even a
-convergent sum — the current encoding is injective but not prefix-free.  A bit-counting program
-measure would also be needed for an invariance statement that is additive in bit lengths; in the
-node measure used here, invariance is already additive.  Other honest scope limits of milestone
-`M5`, and the natural continuations from there, are:
+All board items are now `DONE_STRONG`.  The natural continuation on the complexity side is the
+algorithmic randomness of `Ω` — its incompressibility, and the fact that its first `n` bits decide
+the halting problem for programs of length at most `n` — which is not proved here.  Other honest
+scope limits of milestone `M5`, and the natural continuations from there, are:
 
 - Böhm's separation theorem itself is **not** proved: `Start/Solvability.lean` gives solvability,
   its undecidability and a generic reachability statement, but not the separation of two distinct
