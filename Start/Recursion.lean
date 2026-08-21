@@ -363,9 +363,7 @@ The primitive recursion term is closed if its arguments are closed.
 -/
 theorem Lambda.prec_term_closed (v s : Lambda) (hv : Lambda.IsClosed v) (hs : Lambda.IsClosed s) :
   Lambda.IsClosed (Lambda.prec_term v s) := by
-  convert Lambda.IsClosed_app _ _ using 1
-  · exact Lambda.fix_closed
-  · exact Lambda.prec_body_correct_closed v s hv hs
+  exact Lambda.IsClosed_app Lambda.fix_closed (Lambda.prec_body_correct_closed v s hv hs)
 
 /-
 Double beta reduction lemma.
@@ -524,10 +522,10 @@ theorem Lambda.prec_term_reduces_zero (v s : Lambda) (hv : Lambda.IsClosed v) (h
         have hQ_closed : Lambda.IsClosed (Lambda.prec_body_correct v s) := by
           exact Lambda.prec_body_correct_closed v s hv hs
         exact Lambda.IsClosed_app (Lambda.W_closed _ hQ_closed) (Lambda.W_closed _ hQ_closed)
-  convert Lambda.reduces_trans _ (Lambda.reduces_trans _ (Lambda.reduces_trans h_subst _)) using 1
-  · convert Lambda.reduces_app_left (Lambda.prec_term_reduces_to_Q v s hv hs) using 1
-  · convert Lambda.reduces_app_left (Lambda.Q_reduces v s hv hs) using 1
-  · convert Lambda.prec_body_inner_subst_reduces v s (Lambda.Q v s) hv hs using 1
+  exact Lambda.reduces_trans (Lambda.reduces_app_left (Lambda.prec_term_reduces_to_Q v s hv hs))
+    (Lambda.reduces_trans (Lambda.reduces_app_left (Lambda.Q_reduces v s hv hs))
+      (Lambda.reduces_trans h_subst
+        (Lambda.prec_body_inner_subst_reduces v s (Lambda.Q v s) hv hs)))
 
 /-
 The substituted inner body of the primitive recursion combinator reduces to the recursive step when
@@ -599,7 +597,7 @@ theorem Lambda.prec_body_inner_subst_succ_reduces (v s f : Lambda) (n : ℕ) (hv
     exact Lambda.isZero_succ n
   have h_pred : Lambda.reduces (Lambda.app Lambda.pred (Lambda.church (n + 1))) (Lambda.church n) :=
       by
-    convert Lambda.pred_works (n + 1) using 1
+    simpa using Lambda.pred_works (n + 1)
   have h_reduces_subst :
       Lambda.reduces
         (Lambda.app (Lambda.app s (Lambda.app Lambda.pred (Lambda.church (n + 1))))
@@ -693,8 +691,8 @@ theorem Lambda.prec_term_reduces_succ_aux (v s : Lambda) (n : ℕ) (hv : Lambda.
       exact fun t ht => Lambda.W_closed t ht
     exact Lambda.IsClosed_app (hW_closed _ hQ_closed) (hW_closed _ hQ_closed)
   refine Lambda.reduces_trans hQ ?_
-  convert Lambda.reduces_trans _ hQ' using 1
-  convert Lambda.double_beta_reduction _ _ _ ?_ using 1
+  refine Lambda.reduces_trans (Lambda.double_beta_reduction (Lambda.prec_body_inner v s)
+    (Lambda.Q v s) (Lambda.church (n + 1)) ?_) hQ'
   unfold Lambda.Q
   have hQ_closed : Lambda.IsClosed (Lambda.prec_body_correct v s) := by
     exact Lambda.prec_body_correct_closed v s hv hs
@@ -711,9 +709,7 @@ theorem Lambda.prec_works (v : ℕ) (s : Lambda) (f : ℕ → ℕ → ℕ) (n : 
       (Lambda.church (Nat.rec v f n)) := by
   induction n generalizing v s f with
   | zero =>
-      convert Lambda.prec_term_reduces_zero _ _ _ _ using 1
-      · exact Lambda.church_closed v
-      · assumption
+      exact Lambda.prec_term_reduces_zero _ _ (Lambda.church_closed v) hs_closed
   | succ n ih =>
       have h_Q_n : Lambda.reduces (Lambda.app (Lambda.Q (Lambda.church v) s) (Lambda.church n))
           (Lambda.church (Nat.rec v f n)) := by
@@ -826,7 +822,7 @@ Substitution of a closed term commutes with closure.
 -/
 theorem Lambda.subst_close_of_closed (s t : Lambda) (hs : Lambda.IsClosed s) :
   Lambda.close (Lambda.subst s 0 t) = Lambda.subst s 0 (Lambda.closeAt 1 t) := by
-    convert Lambda.closeAt_subst_closed s t 0 _ using 1 ; aesop;
+    exact Lambda.closeAt_subst_closed s t 0 hs
 
 def t_counter : Lambda := Lambda.app (Lambda.lam (Lambda.lam (Lambda.var 1))) (Lambda.var 0)
 -- #eval

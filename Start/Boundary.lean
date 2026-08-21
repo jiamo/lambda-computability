@@ -74,7 +74,7 @@ structure ComputabilityInternalizer (f : ℕ →. ℕ) where
 ------------------------------------------------------------------------
 
 /-- Build a ReductionBoundary from the concrete theorems in Start.Reduction. -/
-def ReductionBoundary.fromConcrete : ReductionBoundary where
+theorem ReductionBoundary.fromConcrete : ReductionBoundary where
   step_to_reduces := fun hs =>
     Lambda.reduces.step _ _ _ hs (Lambda.reduces.refl _)
   reduces_trans := fun h1 h2 => Lambda.reduces_trans h1 h2
@@ -85,7 +85,7 @@ def ReductionBoundary.fromConcrete : ReductionBoundary where
 ------------------------------------------------------------------------
 
 /-- Build an EncodingBoundary from the concrete theorems. -/
-def EncodingBoundary.fromConcrete : EncodingBoundary where
+theorem EncodingBoundary.fromConcrete : EncodingBoundary where
   church_closed := Lambda.church_closed
   church_normal := Lambda.church_normal
   church_injective := Lambda.church_injective

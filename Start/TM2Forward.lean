@@ -31,7 +31,7 @@ instance : Fintype K' :=
 
 /-- A reachable configuration is reached in a definite number of steps. -/
 theorem exists_iterate_of_reaches {α : Type} {f : α → Option α} {a b : α}
-    (h : Turing.Reaches f a b) : ∃ t : ℕ, (flip Bind.bind f)^[t] (some a) = some b := by
+    (h : StateTransition.Reaches f a b) : ∃ t : ℕ, (flip Bind.bind f)^[t] (some a) = some b := by
   induction h with
   | refl => exact ⟨0, rfl⟩
   | tail _ hstep ih =>
@@ -40,7 +40,8 @@ theorem exists_iterate_of_reaches {α : Type} {f : α → Option α} {a b : α}
 
 /-- Conversely, a configuration reached by iteration is reachable. -/
 theorem reaches_of_iterate {α : Type} {f : α → Option α} :
-    ∀ (t : ℕ) {a b : α}, (flip Bind.bind f)^[t] (some a) = some b → Turing.Reaches f a b := by
+    ∀ (t : ℕ) {a b : α}, (flip Bind.bind f)^[t] (some a) = some b →
+      StateTransition.Reaches f a b := by
   intro t
   induction t with
   | zero => intro a b h; rw [Option.some_inj.1 h]; exact Relation.ReflTransGen.refl
@@ -109,24 +110,26 @@ output stack, when `w` is a value of `c` on `v`. -/
 theorem exists_steps_trFinTM2 {v w : List ℕ} (h : w ∈ Code.eval c v) :
     ∃ t : ℕ, (flip Bind.bind (trFinTM2 c).step)^[t]
       (some (initList (trFinTM2 c) (trList v))) = some (haltList (trFinTM2 c) (trList w)) := by
-  have hmem : halt w ∈ Turing.eval (TM2.step tr) (init c v) := by
+  have hmem : halt w ∈ StateTransition.eval (TM2.step tr) (init c v) := by
     rw [tr_eval c v]
     exact Part.mem_map _ h
-  obtain ⟨hreach, -⟩ := Turing.mem_eval.1 hmem
+  obtain ⟨hreach, -⟩ := StateTransition.mem_eval.1 hmem
   obtain ⟨t, ht⟩ := exists_iterate_of_reaches hreach
   refine ⟨t, ?_⟩
   change (flip Bind.bind (TM2.step (trFinTM2 c).m))^[t]
       (some (initList (trFinTM2 c) (trList v))) = some (haltList (trFinTM2 c) (trList w))
-  have hmap := iterate_map_opt (codeLabels c) (mainLabel c) tr
-    (supportsStmt_tr c) t (some (initList (trFinTM2 c) (trList v)))
-  rw [Option.map_some, mapCfg_initList c v, ht] at hmap
+  have hmap : ((flip Bind.bind (TM2.step (restrict (codeLabels c) (mainLabel c) tr)))^[t]
+      (some (initList (trFinTM2 c) (trList v)))).map (mapCfg (codeLabels c)) = some (halt w) := by
+    rw [← ht, ← mapCfg_initList c v]
+    exact iterate_map_opt (codeLabels c) (mainLabel c) tr (supportsStmt_tr c) t _
   rw [show (trFinTM2 c).m = restrict (codeLabels c) (mainLabel c) tr from rfl]
   have hval : ((flip Bind.bind (TM2.step (restrict (codeLabels c) (mainLabel c) tr)))^[t]
       (some (initList (trFinTM2 c) (trList v)))).map (mapCfg (codeLabels c)) =
       some (mapCfg (codeLabels c) (haltList (trFinTM2 c) (trList w))) := by
     rw [hmap, mapCfg_haltList c w]
+    rfl
   obtain ⟨y, hy, hy'⟩ := Option.map_eq_some_iff.1 hval
-  rw [hy, mapCfg_injective _ hy']
+  exact hy.trans (congrArg some (mapCfg_injective _ hy'))
 
 /-- **The bundled machine computes the code.**  If `w` is a value of `c` on `v`, then the
 bundled machine of `c`, started with `trList v` on its input stack, halts with `trList w` on

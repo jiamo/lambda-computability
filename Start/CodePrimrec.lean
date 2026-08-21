@@ -151,7 +151,7 @@ theorem Lambda.decode_code_case1_primrec : Primrec₂ Lambda.decode_code_case1 :
       L[m.unpair.1]? |> Option.bind <| fun r1 => ( L[m.unpair.2]? |> Option.bind <| fun r2 => some (
       decode_code_case1_inner r1 r2 ) ) ) else none ) |> Option.getD <| 0 from funext fun L =>
       funext fun m => ?_ ];
-  · convert Primrec.option_getD.comp _ _;
+  · refine Primrec.option_getD.comp ?_ ?_;
     · apply_rules [ Primrec.ite, Primrec.option_bind, Primrec.option_getD ];
       · -- The length of the list is primitive recursive.
         have h_len : Primrec (fun a : List ℕ × ℕ => a.1.length) := by
@@ -180,7 +180,7 @@ theorem Lambda.decode_code_case1_primrec : Primrec₂ Lambda.decode_code_case1 :
       · -- The `List.getElem?` function is primitive recursive.
         have h_get?_primrec : Primrec₂ (fun (L : List ℕ) (i : ℕ) => L[i]?) := by
           norm_num [ Primrec₂ ];
-          convert Primrec.list_getElem? using 1;
+          exact Primrec.list_getElem?
         exact h_get?_primrec.comp ( Primrec.fst.comp Primrec.fst )
             ( Primrec.snd.comp ( Primrec.unpair.comp ( Primrec.snd.comp Primrec.fst ) ) );
       · apply_rules [ Primrec.option_some.comp, Primrec₂.comp ];
@@ -215,7 +215,7 @@ theorem Lambda.decode_code_case2_primrec : Primrec₂ Lambda.decode_code_case2 :
     · exact Primrec.const 0
   have h_get : Primrec (fun (x : List ℕ × ℕ) => x.1[x.2]?) := by
     norm_num +zetaDelta at *;
-    convert Primrec.list_getElem? using 1;
+    exact Primrec.list_getElem?
   have h_cond : Primrec (fun (x : List ℕ × ℕ) => if x.2 < x.1.length then x.1[x.2]? else none) := by
     refine Primrec.ite ?_ ?_ ?_
     · exact Primrec.nat_lt.comp Primrec.snd (Primrec.list_length.comp Primrec.fst)
@@ -392,8 +392,11 @@ theorem Lambda.lift_code_correct (t : Lambda) (n k : ℕ) :
   | app t1 t2 ih1 ih2 =>
       unfold Lambda.lift_code
       rw [Nat.strongRecOn_eq]
+      have h1 := ih1 n k
+      have h2 := ih2 n k
+      unfold Lambda.lift_code at h1 h2
       simpa [Lambda.encode, Lambda.lift, Nat.unpair_pair, Lambda.app_code] using
-        And.intro (ih1 n k) (ih2 n k)
+        And.intro h1 h2
   | lam t ih =>
       unfold Lambda.lift_code
       rw [Nat.strongRecOn_eq]
@@ -470,8 +473,11 @@ theorem Lambda.subst_code'_correct (s : Lambda) (x : ℕ) (t : Lambda) :
       intro x
       unfold Lambda.subst_code'
       rw [Nat.strongRecOn_eq]
+      have h1 := ih1 x
+      have h2 := ih2 x
+      unfold Lambda.subst_code' at h1 h2
       simpa [Lambda.encode, Nat.unpair_pair, Lambda.subst, Lambda.lift, Lambda.app_code] using
-        And.intro (ih1 x) (ih2 x)
+        And.intro h1 h2
   | lam t ih =>
       intro x
       unfold Lambda.subst_code'
@@ -546,7 +552,9 @@ theorem Lambda.lam_code_is_primrec : Primrec Lambda.lam_code := by
 /-
 `eval_ecf` is primitive recursive.
 -/
-def ECF := List ℕ × ℕ
+/-- Explicit closure format: a list of slots together with a default value.
+Declared as an `abbrev` so that it is reducible and unifies with `List ℕ × ℕ`. -/
+abbrev ECF := List ℕ × ℕ
 
 instance : Primcodable ECF := inferInstanceAs (Primcodable (List ℕ × ℕ))
 
@@ -1001,9 +1009,8 @@ theorem mk_var_ecf_primrec : Primrec₂ mk_var_ecf := by
       apply Primrec.list_map
       · exact Primrec.list_range.comp Primrec.snd
       · exact Primrec.fst.comp Primrec.fst
-    convert h_list_replicate.comp
+    exact h_list_replicate.comp
       (Primrec.pair (Lambda.var_code_primrec.comp (Primrec.pred.comp Primrec.snd)) Primrec.snd)
-          using 1
   have h_lift_slot : Primrec (fun p : ℕ × ℕ => Lambda.lift_code p.1 p.2 0) := by
     exact Lambda.lift_code_uncurried_primrec.comp
       (Primrec.pair Primrec.fst (Primrec.pair Primrec.snd (Primrec.const 0)))
@@ -1460,20 +1467,17 @@ def Lambda.step_code_case1'_inner_combined (L : List (Option ℕ)) (c1 c2 : ℕ)
 theorem Lambda.step_code_case1'_inner_combined_primrec :
     Primrec (fun x : (List (Option ℕ) × ℕ × ℕ) => Lambda.step_code_case1'_inner_combined x.1 x.2.1
         x.2.2) := by
-  convert Primrec.ite _ _ _;
-  · convert Primrec.eq.comp
+  unfold Lambda.step_code_case1'_inner_combined
+  refine Primrec.ite ?_ ?_ ?_
+  · exact Primrec.eq.comp
       ( Primrec.fst.comp ( Primrec.unpair.comp ( Primrec.fst.comp ( Primrec.snd ) ) ) )
-      ( Primrec.const 2 ) using 1;
-  · convert ( Primrec.comp ( show Primrec ( fun x : ℕ × ℕ => step_code_case1'_beta x.1 x.2 ) from ?_
-      ) ( Primrec.snd ) ) using 1;
-    exact Lambda.step_code_case1'_beta_primrec;
-  · apply_rules [ Primrec.option_bind, Primrec.list_getElem? ];
+      ( Primrec.const 2 )
+  · exact Primrec₂.comp Lambda.step_code_case1'_beta_primrec
+      ( Primrec.fst.comp Primrec.snd ) ( Primrec.snd.comp Primrec.snd )
+  · refine Primrec.option_bind ?_ ?_
     · -- The function `get?` is primitive recursive.
-      have h_get?_primrec : Primrec₂ (fun (L : List (Option ℕ)) (i : ℕ) => L[i]?) := by
-        simp +decide only [Primrec₂]
-        convert Primrec.list_getElem? using 1;
-      exact h_get?_primrec.comp ( Primrec.fst ) ( Primrec.fst.comp ( Primrec.snd ) );
-    · convert Lambda.step_code_case1_inner_primrec using 1
+      exact Primrec.list_getElem?.comp Primrec.fst ( Primrec.fst.comp Primrec.snd )
+    · exact Lambda.step_code_case1_inner_primrec
 
 theorem Lambda.step_code_case1'_eq (L : List (Option ℕ)) :
   Lambda.step_code_case1' L =
@@ -1605,8 +1609,7 @@ theorem Lambda.code_step'_primrec : Primrec Lambda.code_step' := by
     -- also primitive recursive.
     have h_some_f_primrec : Primrec (fun L : List (Option ℕ) => some (f L)) := by
       exact Primrec.option_some.comp hcode_step'_primrec;
-    convert h_some_f_primrec.comp _;
-    exact Primrec.snd;
+    exact h_some_f_primrec.comp Primrec.snd;
   · constructor <;> intro h;
     · intro h;
       exact Primrec.comp ( by assumption ) ( Primrec.snd );
@@ -1614,7 +1617,7 @@ theorem Lambda.code_step'_primrec : Primrec Lambda.code_step' := by
       · constructor <;> intro h <;> rw [ Primrec₂ ] at * <;>
           simp_all only [Option.some.injEq, forall_const, implies_true];
         · exact h.comp ( Primrec.snd );
-        · convert h.comp ( Primrec.const () |> Primrec.pair <| Primrec.id ) using 1;
+        · exact h.comp ( Primrec.const () |> Primrec.pair <| Primrec.id );
       · intros;
         unfold code_step';
         rw [ Nat.strongRecOn_eq ];

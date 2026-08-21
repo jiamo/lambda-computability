@@ -343,8 +343,10 @@ theorem Lambda.B_reduces (f g x : Lambda) (hf : Lambda.IsClosed f) (hg : Lambda.
         (Lambda.app (Lambda.var 1) (Lambda.var 0))))) = Lambda.app f (Lambda.app g x) := by
       simp +decide [ Lambda.subst ];
       unfold Lambda.IsClosed at hf hg; aesop;
-    convert Lambda.triple_beta_reduction _ _ _ _ hf hg using 1;
-    exact h_subst.symm
+    have h := Lambda.triple_beta_reduction
+      (Lambda.app (Lambda.var 2) (Lambda.app (Lambda.var 1) (Lambda.var 0))) f g x hf hg
+    rw [h_subst] at h
+    exact h
 
 /-
 Checking if Lambda.B is defined.
@@ -550,8 +552,7 @@ theorem Lambda.comp_term_reduces (F G : Lambda) (n : ℕ) (hF : Lambda.IsClosed 
             exact Lambda.lift_closed hF 1 0;
           unfold Lambda.subst; aesop;
       exact h_subst ▸ by constructor;
-    convert h_comp_term_def using 1;
-    rw [ Lambda.lift_closed hF ]
+    simpa only [Lambda.comp_term, Lambda.lift_closed hF 1 0] using h_comp_term_def
 
 
 /-

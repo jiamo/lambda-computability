@@ -38,8 +38,7 @@ theorem Lambda.eval'_partrec : Partrec Lambda.eval' := by
   have h_eval'_partrec : Partrec (fun c => PFun.fix (fun c => Part.some (step_iter' c)) c) := by
     have h_step_iter'_primrec : Primrec step_iter' := by
       exact Lambda.step_iter'_primrec
-    convert Partrec.fix _;
-    apply_rules [ Primrec.to_comp, h_step_iter'_primrec ];
+    exact Partrec.fix h_step_iter'_primrec.to_comp
   exact h_eval'_partrec
 
 theorem Lambda.code_step'_eq (n : ℕ) :
@@ -513,10 +512,12 @@ theorem Lambda.eval'_sound_aux (c c' : ℕ) (h : c' ∈ Lambda.eval' c) :
         have hstep : Lambda.step_iter' (Lambda.encode t) = Sum.inl (Lambda.encode t) := by
           unfold Lambda.step_iter'
           rw [heq]
-        rw [PFun.mem_fix_iff] at ha
-        simp only [hstep, Part.mem_some_iff] at ha
-        rcases ha with ha | ⟨a'', ha'', -⟩
-        · exact ⟨t, (Sum.inl_injective ha).symm, Lambda.reduces.refl t, hsound⟩
+        have ha' : c' ∈ PFun.fix
+            ((fun c => Lambda.step_iter' c : ℕ → ℕ ⊕ ℕ) : ℕ →. ℕ ⊕ ℕ) (Lambda.encode t) := ha
+        rw [PFun.mem_fix_iff] at ha'
+        simp only [PFun.coe_val, hstep, Part.mem_some_iff] at ha'
+        rcases ha' with ha' | ⟨a'', ha'', -⟩
+        · exact ⟨t, (Sum.inl_injective ha').symm, Lambda.reduces.refl t, hsound⟩
         · simp at ha''
 
 /-

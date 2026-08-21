@@ -221,18 +221,20 @@ theorem code_eval_dom_of_evalCode (c : Code) (v : List ℕ) {w : List ℕ}
   obtain ⟨t, cfg, ht, hl⟩ := exists_halted_of_evalCode (trFinTM2 c) h
   have hmap := iterate_map_opt (codeLabels c) (mainLabel c) tr (supportsStmt_tr c) t
     (some (initList (trFinTM2 c) (trList v)))
-  rw [Option.map_some, mapCfg_initList c v] at hmap
-  rw [show (flip Bind.bind (TM2.step (restrict (codeLabels c) (mainLabel c) tr)))^[t]
-      (some (initList (trFinTM2 c) (trList v))) =
-      (flip Bind.bind (trFinTM2 c).step)^[t]
-        (some (initList (trFinTM2 c) (trList v))) from rfl, ht, Option.map_some] at hmap
+  have e1 : Option.map (mapCfg (codeLabels c)) (some (initList (trFinTM2 c) (trList v))) =
+      some (init c v) := congrArg some (mapCfg_initList c v)
+  have e2 : (flip Bind.bind (TM2.step (restrict (codeLabels c) (mainLabel c) tr)))^[t]
+      (some (initList (trFinTM2 c) (trList v))) = some cfg := ht
+  have hmap2 : some (mapCfg (codeLabels c) cfg) =
+      (flip Bind.bind (TM2.step tr))^[t] (some (init c v)) :=
+    (congrArg (Option.map (mapCfg (codeLabels c))) e2).symm.trans (hmap.trans (congrArg _ e1))
   have hstep : TM2.step tr (mapCfg (codeLabels c) cfg) = none := by
     obtain ⟨l, var, stk⟩ := cfg
     simp only at hl
     subst hl
     rfl
-  have hmem : mapCfg (codeLabels c) cfg ∈ Turing.eval (TM2.step tr) (init c v) :=
-    Turing.mem_eval.2 ⟨reaches_of_iterate t hmap.symm, hstep⟩
+  have hmem : mapCfg (codeLabels c) cfg ∈ StateTransition.eval (TM2.step tr) (init c v) :=
+    StateTransition.mem_eval.2 ⟨reaches_of_iterate t hmap2.symm, hstep⟩
   rw [tr_eval c v] at hmem
   obtain ⟨w', hw', -⟩ := (Part.mem_map_iff _).1 hmem
   exact Part.dom_iff_mem.2 ⟨w', hw'⟩
@@ -275,6 +277,10 @@ theorem tm2ComputableNat_of_partrec {f : ℕ →. ℕ} (hf : Partrec f) : TM2Com
   have hcode : ∀ n : ℕ, Code.eval c [n] = (f n).map fun m => [m] := by
     intro n
     have h := hc (⟨[n], rfl⟩ : List.Vector ℕ 1)
+    have hh : List.Vector.head (⟨[n], rfl⟩ : List.Vector ℕ 1) = n := rfl
+    rw [hh] at h
+    have hpure : (fun m : ℕ => [m]) = (pure : ℕ → List ℕ) := rfl
+    rw [hpure]
     simpa [Part.map_eq_map] using h
   refine ⟨trFinTM2 c, trFinTM2_ΓFin c, inputCodes, outputValue, computable_inputCodes,
     computable_outputValue, fun n => ?_⟩

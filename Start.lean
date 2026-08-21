@@ -69,3 +69,9 @@ import Start.Kolmogorov
 import Start.KolmogorovBinary
 import Start.Kraft
 import Start.ChaitinOmega
+import Start.CodeArith
+import Start.LeftmostRun
+import Start.BusyBeaver
+import Start.PlainVsPrefix
+import Start.KolmogorovHalting
+import Start.OmegaUncomputable

@@ -110,12 +110,10 @@ def Lambda.eval (c : ℕ) : Part ℕ :=
   PFun.fix (fun c => Part.some (Lambda.eval_step_part c)) c
 
 theorem Lambda.eval_partrec : Partrec Lambda.eval := by
-  convert Partrec.fix _;
   -- Since `eval_step_part` is primitive recursive, its `Part.some` lifting is also primitive
   -- recursive.
-  have h_primrec : Primrec Lambda.eval_step_part := by
-    exact Lambda.eval_step_part_primrec;
-  convert h_primrec.to_comp using 1
+  have h_primrec : Primrec Lambda.eval_step_part := Lambda.eval_step_part_primrec
+  exact Partrec.fix h_primrec.to_comp
 
 
 
@@ -186,8 +184,8 @@ def Lambda.unbody_code_step_inner (L : List (Option ℕ)) (rest : ℕ) : Option 
 theorem Lambda.unbody_code_step_inner_primrec : Primrec₂ Lambda.unbody_code_step_inner := by
   rw [Primrec₂]
   unfold Lambda.unbody_code_step_inner
-  have h_get : Primrec (fun p : List (Option ℕ) × ℕ => p.1[p.2]?) := by
-    convert Primrec.list_getElem? using 1
+  have h_get : Primrec (fun p : List (Option ℕ) × ℕ => p.1[p.2]?) :=
+    Primrec.list_getElem?
   have h_map : Primrec₂ (fun (_p : List (Option ℕ) × ℕ) (res : Option ℕ) => res.map Nat.succ) := by
     rw [Primrec₂]
     simpa using (Primrec.option_map₁ Primrec.succ).comp Primrec.snd
@@ -265,19 +263,13 @@ theorem Lambda.unbody_code_step_primrec : Primrec Lambda.unbody_code_step := by
   · -- The function `unbody_code_step_inner` is primitive recursive, as given by `h_primrec`.
     have h_primrec_inner : Primrec
         (fun (L : List (Option ℕ) × ℕ) => (L.1[L.2]?).bind (fun res => res.map Nat.succ)) := by
-      convert Lambda.unbody_code_step_inner_primrec using 1;
-    convert h_primrec_inner.comp
-      ( show Primrec
-          ( fun L : List ( Option ℕ ) => ( L, Nat.unpair ( Nat.unpair L.length ).2 |> Prod.snd ) )
-        from ?_ ) using 1;
-    convert Primrec.pair Primrec.id
-      ( Primrec.comp
-        ( show Primrec ( fun x : ℕ => ( Nat.unpair ( Nat.unpair x ).2 ).2 ) from ?_ )
-        ( show Primrec ( fun L : List ( Option ℕ ) => L.length ) from ?_ ) ) using 1;
-    · exact Primrec.snd.comp
-        ( Primrec.unpair.comp ( Primrec.snd.comp ( Primrec.unpair.comp Primrec.id ) ) );
-    · exact Primrec.list_length;
-  · convert h_primrec.comp ( Primrec.list_length ) using 1;
+      exact Lambda.unbody_code_step_inner_primrec
+    exact h_primrec_inner.comp
+      (Primrec.id.pair
+        ((Primrec.snd.comp
+            (Primrec.unpair.comp (Primrec.snd.comp (Primrec.unpair.comp Primrec.id)))).comp
+          Primrec.list_length))
+  · exact h_primrec.comp Primrec.list_length
   · rename_i L
     rw [Lambda.unbody_code_step_eq_ite]
     by_cases hP : (Nat.unpair L.length).1 = 1 ∧
@@ -363,7 +355,10 @@ theorem Lambda.unchurch_code_primrec : Primrec Lambda.unchurch_code := by
 theorem Lambda.unbody_code_correct (n : ℕ) : Lambda.unbody_code (Lambda.body_code n) = some n := by
   induction n with
   | zero =>
-      simp (config := { decide := Bool.true }) 
+      change Lambda.unbody_code (Nat.pair 0 0) = some 0
+      unfold Lambda.unbody_code
+      rw [Nat.strongRecOn_eq]
+      simp
   | succ n ih =>
       have h_body_code_succ : body_code (n + 1) = app_code (Nat.pair 0 1) (body_code n) := by
         rfl

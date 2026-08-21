@@ -155,7 +155,8 @@ theorem range_map_const (n c : ℕ) : (List.range n).map (fun _ => c) = List.rep
 theorem haltInp_eq (n : ℕ) :
     haltInp n = List.map (@encG haltTM haltTM_ΓFin haltTM.k₀)
       (List.replicate n (false : haltTM.Γ haltTM.k₀)) := by
-  rw [haltInp, range_map_const, haltCode, List.map_replicate]
+  rw [haltInp, range_map_const, haltCode]
+  exact List.map_replicate.symm
 
 theorem computable_haltInp : Computable haltInp := by
   have h : Primrec fun n : ℕ => (List.range n).map fun _ => haltCode :=
@@ -197,18 +198,18 @@ end NonVacuity
 /-- **Polynomial-time computability in the sense of `Mathlib` implies partial recursiveness**, in
 the same form as `TM2Partrec.partrec_of_tm2Computable`: the code-level function of the machine is
 partial recursive and returns the codes of the encoded output. -/
-theorem partrec_of_tm2ComputableInPolyTime {α β : Type} {ea : Computability.FinEncoding α}
-    {eb : Computability.FinEncoding β} {f : α → β}
-    (h : Turing.TM2ComputableInPolyTime ea eb f) [inst : ∀ k, Fintype (h.tm.Γ k)] :
+theorem partrec_of_tm2ComputableInPolyTime {α β Γα Γβ : Type}
+    {ea : Computability.Encoding α Γα} {eb : Computability.Encoding β Γβ} {f : α → β}
+    (h : Turing.TM2ComputableInPolyTime ea.encode eb.encode f) [inst : ∀ k, Fintype (h.tm.Γ k)] :
     Partrec (evalCode h.tm) ∧ ∀ a : α,
       evalCode h.tm ((List.map h.inputAlphabet.invFun (ea.encode a)).map (encG h.tm)) =
         Part.some ((List.map h.outputAlphabet.invFun (eb.encode (f a))).map (encG h.tm)) :=
-  @partrec_of_tm2Computable α β ea eb f h.toTM2ComputableInTime.toTM2Computable inst
+  @partrec_of_tm2Computable α β Γα Γβ ea eb f h.toTM2ComputableInTime.toTM2Computable inst
 
 /-- The step bound of `Mathlib`'s polynomial-time class, read at the level of codes. -/
-theorem haltsWithin_of_tm2ComputableInPolyTime {α β : Type} {ea : Computability.FinEncoding α}
-    {eb : Computability.FinEncoding β} {f : α → β}
-    (h : Turing.TM2ComputableInPolyTime ea eb f) [∀ k, Fintype (h.tm.Γ k)] (a : α) :
+theorem haltsWithin_of_tm2ComputableInPolyTime {α β Γα Γβ : Type}
+    {ea : Computability.Encoding α Γα} {eb : Computability.Encoding β Γβ} {f : α → β}
+    (h : Turing.TM2ComputableInPolyTime ea.encode eb.encode f) [∀ k, Fintype (h.tm.Γ k)] (a : α) :
     HaltsWithin h.tm ((List.map h.inputAlphabet.invFun (ea.encode a)).map (encG h.tm))
       (h.time.eval (ea.encode a).length) :=
   haltsWithin_of_outputsInTime h.tm (h.outputsFun a)

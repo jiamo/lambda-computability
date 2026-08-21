@@ -1030,7 +1030,7 @@ theorem Lambda.not_true_reduces_false :
         (Lambda.lam (Lambda.lam (Lambda.app (Lambda.app Lambda.true (Lambda.var 0)) (Lambda.var
             1)))) := by
     unfold Lambda.not
-    simpa [Lambda.subst, Lambda.true, Lambda.K] using
+    simpa [Lambda.subst, Lambda.lift, Lambda.true, Lambda.K] using
         (Lambda.beta_reduces : Lambda.reduces (Lambda.app Lambda.not Lambda.true) _)
   have h_inner1 : Lambda.reduces (Lambda.app Lambda.true (Lambda.var 0)) (Lambda.lam (Lambda.var 1))
       := by

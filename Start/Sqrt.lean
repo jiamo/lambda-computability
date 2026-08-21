@@ -616,7 +616,7 @@ theorem Lambda.sqrt_iter_v2_works (n k : ℕ) :
 theorem Lambda.sqrt_v2_reduces_app (n : ℕ) :
   Lambda.reduces (Lambda.app Lambda.sqrt_v2 (Lambda.church n))
     (Lambda.app (Lambda.app Lambda.REC_v2 (Lambda.church n)) (Lambda.church 0)) := by
-      convert Lambda.beta_reduces using 1
+      exact Lambda.beta_reduces
 
 theorem Lambda.sqrt_v2_works (n : ℕ) :
     Lambda.reduces (Lambda.app Lambda.sqrt_v2 (Lambda.church n)) (Lambda.church (Nat.sqrt n)) := by

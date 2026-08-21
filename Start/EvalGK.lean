@@ -262,11 +262,12 @@ theorem Lambda.eval_gk_sound_aux (c c' : ℕ) (h : c' ∈ Lambda.eval_gk c) :
   intro a ha ih t hta
   by_cases hfix : Lambda.rho_code a = a
   · have hval : c' = a := by
-      have : c' ∈ PFun.fix (fun c => Part.some (Lambda.gk_step c)) a := ha
-      rw [PFun.mem_fix_iff] at this
-      rcases this with hstop | ⟨a', ha', -⟩
-      · simpa [Lambda.gk_step, hfix] using hstop
-      · simp [Lambda.gk_step, hfix] at ha'
+      have hmem : c' ∈ PFun.fix
+          ((fun c => Lambda.gk_step c : ℕ → ℕ ⊕ ℕ) : ℕ →. ℕ ⊕ ℕ) a := ha
+      rw [PFun.mem_fix_iff] at hmem
+      rcases hmem with hstop | ⟨a', ha', -⟩
+      · simpa [PFun.coe_val, Lambda.gk_step, hfix] using hstop
+      · simp [PFun.coe_val, Lambda.gk_step, hfix] at ha'
     exact ⟨t, by rw [hta, hval], Lambda.reduces.refl t⟩
   · have hstep : Sum.inr (Lambda.rho_code a) ∈
         (fun c => Part.some (Lambda.gk_step c) : ℕ →. ℕ ⊕ ℕ) a := by

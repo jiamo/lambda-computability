@@ -20,23 +20,23 @@ noncomputable section
 Unfolding lemma for PFun.fix.
 -/
 theorem PFun.fix_eq {α β} (f : α →. β ⊕ α) (a : α) :
-  PFun.fix f a = (f a).bind (Sum.elim Part.some (PFun.fix f)) := by
+  PFun.fix f a = (f a).bind (Sum.elim Part.some fun a' => PFun.fix f a') := by
     apply Part.ext; intro b; constructor
     · intro hb; rw [PFun.mem_fix_iff] at hb
       rcases hb with hb' | ⟨a', ha', hfix⟩
-      · exact Part.mem_bind_iff.mpr ⟨Sum.inl b, hb', by simp_all⟩
-      · exact Part.mem_bind_iff.mpr ⟨Sum.inr a', ha', by simpa using hfix⟩
+      · exact Part.mem_bind_iff.mpr ⟨Sum.inl b, hb', Part.mem_some b⟩
+      · exact Part.mem_bind_iff.mpr ⟨Sum.inr a', ha', hfix⟩
     · intro hb; rw [Part.mem_bind_iff] at hb
       rcases hb with ⟨s, hs, hb⟩
       cases s with
       | inl b' =>
           simp only [Sum.elim_inl, Part.mem_some_iff] at hb
           subst hb
-          exact PFun.fix_stop (by simpa using hs)
+          exact PFun.fix_stop hs
       | inr a' =>
           simp only [Sum.elim_inr] at hb
           rw [PFun.mem_fix_iff]
-          exact Or.inr ⟨a', by simpa using hs, hb⟩
+          exact Or.inr ⟨a', hs, hb⟩
 
 
 -- #check Turing.TM2Computable
@@ -159,7 +159,8 @@ theorem Lambda.add_works (n m : ℕ) :
           exact h_trans h1 h2
       exact h_trans h1 h2
     exact h_trans h1 (h_trans (Lambda.reduces_lam (Lambda.reduces_lam h2)) h3)
-  convert h_trans using 1
+  rw [Lambda.church_eq_iterate (n + m)]
+  exact h_trans
 
 /-
 Definition of multiplication in Lambda calculus.
@@ -210,8 +211,8 @@ theorem Lambda.iterate_mul_term (n m : ℕ) :
             | zero =>
                 simpa [Lambda.iterate] using h
             | succ m ihm =>
-                simp [Lambda.iterate, List.range_succ]
-                simpa using Lambda.reduces_app_right (ihm t t' h)
+                rw [Lambda.iterate_succ, Lambda.iterate_succ]
+                exact Lambda.reduces_app_right (ihm t t' h)
           exact h_split _ _ ih m
         have h_split :
             Lambda.reduces

@@ -24,8 +24,8 @@ This is a Lean 4 + mathlib study project focused on formalizing the untyped lamb
 
 ## Requirements
 
-- Lean toolchain: as pinned in `lean-toolchain` (`leanprover/lean4:v4.28.0`)
-- Dependency: `mathlib` (`v4.28.0`, see `lakefile.toml` / `lake-manifest.json`)
+- Lean toolchain: as pinned in `lean-toolchain` (`leanprover/lean4:v4.33.0`)
+- Dependency: `mathlib` (`v4.33.0`, see `lakefile.toml` / `lake-manifest.json`)
 - Build tool: `lake`
 
 It is recommended to install `elan` so the toolchain in `lean-toolchain` is selected automatically.
