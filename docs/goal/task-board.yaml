@@ -1,7 +1,7 @@
 version: 2
 source_protocol: docs/goal/goal-prompt.md
-active_milestone: M6
-milestone_order: ["M1", "M2", "M3", "M4", "M5", "M6"]
+active_milestone: M7
+milestone_order: ["M1", "M2", "M3", "M4", "M5", "M6", "M7"]
 tasks:
   - id: M1-BOUNDARY-SORRY-CLOSURE
     priority: P0
@@ -515,5 +515,260 @@ tasks:
       - "A prefix-free coding of closed lambda terms as bit strings is defined and proved prefix-free."
       - "Prefix complexity is defined and the Kraft inequality is proved for the halting set."
       - "Chaitin's Omega is defined as a convergent sum and proved to lie strictly between 0 and 1."
+    required_gates:
+      - "lake build"
+
+  - id: M7-VERIFICATION-DEBT
+    priority: P0
+    status: DONE_STRONG
+    track: infra/build
+    title: "Discharge the verification debt: consistent manifest, clean full build of every module"
+    latest_evidence: "docs/goal/evidence/M7-VERIFICATION-DEBT.md"
+    open_boundary: ""
+    milestone: M7
+    depends_on: []
+    rank: 5
+    exit_criteria:
+      - "lake-manifest.json records git dependencies pinned to the revision that matches lakefile.toml and lean-toolchain."
+      - "lake build succeeds for the whole library with no errors and no linter warnings."
+      - "Every module under Start/ is reachable from a build target: Start.lean imports the library modules, and the showcase and scratch-test modules build too."
+      - "No sorry or admit occurs in Start.lean or Start/."
+    required_gates:
+      - "lake update"
+      - "lake build"
+      - "lake build Start.Demo Start.DecodeTest"
+      - "python3 scripts/goal_state.py validate"
+
+  - id: M7-LICENSE
+    priority: P1
+    status: DONE_STRONG
+    track: infra/repo
+    title: "Add an open-source LICENSE and reference it from the README"
+    latest_evidence: "docs/goal/evidence/M7-LICENSE.md"
+    open_boundary: ""
+    milestone: M7
+    depends_on: []
+    rank: 7
+    exit_criteria:
+      - "A LICENSE file with the full Apache-2.0 text is present at the repository root."
+      - "The README states the license."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+
+  - id: M7-LEGACY-MODULE-BACKFILL
+    priority: P2
+    status: DONE_STRONG
+    track: docs/board
+    title: "Backfill the board with the modules that were developed without a dedicated task entry"
+    latest_evidence: "docs/goal/evidence/M7-LEGACY-MODULE-BACKFILL.md"
+    open_boundary: ""
+    milestone: M7
+    depends_on: []
+    rank: 8
+    exit_criteria:
+      - "Every module under Start/ is accounted for by a board task or by the backfill evidence note."
+      - "The backfill note records the headline results of Start/FixedPoint.lean, Start/Undecidable.lean, Start/NormalizationUndecidable.lean, Start/Leftmost.lean and Start/DecodeTest.lean."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+
+  - id: M7-CODE-FOLD-ARITH
+    priority: P2
+    status: DONE_STRONG
+    track: theory/arithmetization
+    title: "Arithmetize structural folds over terms: size, free variables, code bounds"
+    latest_evidence: "docs/goal/evidence/M7-CODE-FOLD-ARITH.md"
+    open_boundary: ""
+    milestone: M7
+    depends_on:
+      - M6-KOLMOGOROV-CORE
+    rank: 10
+    exit_criteria:
+      - "A generic fold over terms is computed on codes and is primitive recursive when its components are."
+      - "Syntactic size is primitive recursive on codes."
+      - "Closedness is a primitive recursive test on codes."
+      - "A monotone primitive recursive bound sends a size bound to a code bound."
+    required_gates:
+      - "lake build"
+
+  - id: M7-LEFTMOST-CLOCK
+    priority: P2
+    status: DONE_STRONG
+    track: theory/normalization
+    title: "A clock for the leftmost-outermost strategy: halting time and bounded halting tests"
+    latest_evidence: "docs/goal/evidence/M7-LEFTMOST-CLOCK.md"
+    open_boundary: ""
+    milestone: M7
+    depends_on:
+      - M7-CODE-FOLD-ARITH
+    rank: 20
+    exit_criteria:
+      - "The leftmost step is made total and arithmetized as a primitive recursive function on codes."
+      - "A term has a normal form iff some finite iterate of the total step is normal; the least such index is the halting time."
+      - "The tests is-normal and halts-within-k-steps are primitive recursive on codes."
+      - "Every term has a closed term with the same halting behaviour."
+    required_gates:
+      - "lake build"
+
+  - id: M7-BUSY-BEAVER
+    priority: P2
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "A busy beaver for the lambda calculus: uncomputability and certificates"
+    latest_evidence: "docs/goal/evidence/M7-BUSY-BEAVER.md"
+    open_boundary: ""
+    milestone: M7
+    depends_on:
+      - M7-LEFTMOST-CLOCK
+    rank: 30
+    exit_criteria:
+      - "The maximal halting time at a given code size and at a given syntactic size are well defined."
+      - "No computable function bounds the halting times, so the busy beaver functions are not computable."
+      - "Every computable function is exceeded by the busy beaver at arbitrarily large arguments."
+      - "Finite halting certificates give lower bounds on the busy beaver frontier, with a witness."
+    required_gates:
+      - "lake build"
+
+  - id: M7-KOLM-HALTING-BRIDGE
+    priority: P2
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "A halting oracle computes K, and Berry's paradox re-proves undecidability of normalization"
+    latest_evidence: "docs/goal/evidence/M7-KOLM-HALTING-BRIDGE.md"
+    open_boundary: ""
+    milestone: M7
+    depends_on:
+      - M7-LEFTMOST-CLOCK
+      - M6-KOLMOGOROV-BERRY
+    rank: 40
+    exit_criteria:
+      - "Decidability of normalization yields computability of Kolmogorov complexity."
+      - "Contraposing derives undecidability of normalization from Berry's paradox."
+      - "The equivalence of the two negative statements is recorded."
+    required_gates:
+      - "lake build"
+
+  - id: M7-PLAIN-VS-PREFIX
+    priority: P2
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "Plain versus prefix complexity, and uncomputability of the prefix measure"
+    latest_evidence: "docs/goal/evidence/M7-PLAIN-VS-PREFIX.md"
+    open_boundary: ""
+    milestone: M7
+    depends_on:
+      - M6-KOLMOGOROV-OMEGA
+    rank: 50
+    exit_criteria:
+      - "Plain complexity is bounded by prefix complexity, and prefix complexity by twice the plain one."
+      - "Prefix complexity is logarithmically bounded and admits incompressible numbers."
+      - "Prefix complexity is not computable."
+    required_gates:
+      - "lake build"
+
+  - id: M7-OMEGA-UNCOMPUTABLE
+    priority: P1
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "Chaitin's constant is not a computable real"
+    latest_evidence: "docs/goal/evidence/M7-OMEGA-UNCOMPUTABLE.md"
+    open_boundary: ""
+    milestone: M7
+    depends_on:
+      - M6-KOLMOGOROV-OMEGA
+      - M7-LEFTMOST-CLOCK
+    rank: 60
+    exit_criteria:
+      - "Computability of a real is defined by dyadic approximations from a computable function."
+      - "The stage approximations of Omega are primitive recursive dyadic rationals increasing to Omega."
+      - "A computable approximation of Omega would decide halting, so Omega is not a computable real."
+    required_gates:
+      - "lake build"
+
+  - id: M7-OMEGA-ORACLE
+    priority: P1
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "The first n bits of Omega decide halting for short programs; Omega is irrational"
+    latest_evidence: "docs/goal/evidence/M7-OMEGA-ORACLE.md"
+    open_boundary: ""
+    milestone: M7
+    depends_on:
+      - M7-OMEGA-UNCOMPUTABLE
+    rank: 70
+    exit_criteria:
+      - "The number formed by the first n binary digits of Omega is defined and characterised."
+      - "One partial recursive procedure, fed those n bits, decides halting for all programs of at most n-2 bits."
+      - "Omega is irrational."
+    required_gates:
+      - "lake build"
+
+  - id: M7-OMEGA-INCOMPRESSIBLE
+    priority: P1
+    status: DONE_STRONG
+    track: theory/randomness
+    title: "Chaitin incompressibility: the prefixes of Omega have complexity at least n - O(1)"
+    latest_evidence: "docs/goal/evidence/M7-OMEGA-INCOMPRESSIBLE.md"
+    open_boundary: ""
+    milestone: M7
+    depends_on:
+      - M7-OMEGA-ORACLE
+      - M7-PLAIN-VS-PREFIX
+    rank: 75
+    exit_criteria:
+      - "The first n bits of Omega are packaged as a single natural number."
+      - "One partial recursive procedure, fed those n bits, returns a number with no program of at most n-2 bits."
+      - "There is a constant c with n <= kolmP (omegaPrefix n) + c for every n."
+    required_gates:
+      - "lake build"
+
+  - id: M7-ML-RANDOMNESS-FRAMEWORK
+    priority: P1
+    status: DONE_STRONG
+    track: theory/randomness
+    title: "Martin-Lof tests, the uniform measure on Cantor space, and the easy half of Levin-Schnorr"
+    latest_evidence: "docs/goal/evidence/M7-ML-RANDOMNESS-FRAMEWORK.md"
+    open_boundary: ""
+    milestone: M7
+    depends_on:
+      - M7-OMEGA-INCOMPRESSIBLE
+    rank: 78
+    exit_criteria:
+      - "The uniform measure on Cantor space is defined and the measure of a cylinder is computed."
+      - "Martin-Lof tests and Martin-Lof randomness of an infinite bit sequence are defined."
+      - "No computable sequence is Martin-Lof random."
+      - "Every Martin-Lof random sequence has prefixes of prefix complexity at least n - O(1)."
+    required_gates:
+      - "lake build"
+
+  - id: M7-OMEGA-ML-RANDOM
+    priority: P1
+    status: TODO_NEEDS_DESIGN
+    track: theory/randomness
+    title: "Martin-Lof randomness of Chaitin's Omega"
+    latest_evidence: ""
+    open_boundary: "The incompressibility half is done (M7-OMEGA-INCOMPRESSIBLE) and the measure-theoretic layer is done (M7-ML-RANDOMNESS-FRAMEWORK), including the easy half of Levin-Schnorr. What is missing is the converse half: incompressibility implies randomness, which needs the Kraft-Chaitin machine existence theorem for an additively optimal prefix machine. The machine underlying kolmP - closed lambda terms under the self-delimiting bits code, with no input stream - is not additively optimal, so this route is closed and the Martin-Lof randomness of this project's Omega is open. Proving it would require rebuilding algorithmic information theory over a genuinely universal prefix machine."
+    milestone: M7
+    depends_on:
+      - M7-ML-RANDOMNESS-FRAMEWORK
+    rank: 80
+    exit_criteria:
+      - "The bit sequence of Omega is defined from the real Omega."
+      - "The bit sequence of Omega is proved Martin-Lof random."
+    required_gates:
+      - "lake build"
+
+  - id: M7-BOHM-SEPARATION
+    priority: P1
+    status: TODO_NEEDS_DESIGN
+    track: theory/lambda
+    title: "Bohm's separation theorem"
+    latest_evidence: ""
+    open_boundary: "Needs Bohm trees or at least the head-normal-form eta-expansion machinery, plus the construction of separating contexts from a difference of Bohm trees. Not started."
+    milestone: M7
+    depends_on: []
+    rank: 90
+    exit_criteria:
+      - "Bohm trees, or an equivalent finite approximation of head normal forms, are defined."
+      - "Distinct beta-eta normal forms are separated by an applicative context."
     required_gates:
       - "lake build"

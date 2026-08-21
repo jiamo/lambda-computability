@@ -75,3 +75,7 @@ import Start.BusyBeaver
 import Start.PlainVsPrefix
 import Start.KolmogorovHalting
 import Start.OmegaUncomputable
+
+import Start.OmegaOracle
+import Start.OmegaIncompressible
+import Start.MartinLof

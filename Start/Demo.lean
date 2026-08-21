@@ -372,6 +372,33 @@ Program length is the syntactic size of a closed term reducing to a Church numer
 #check @Lambda.summable_haltingWeight
 #check @Lambda.chaitinOmega_mem_Ioo
 
+-- `Ω` is not a computable real, hence irrational, ...
+#check @Lambda.not_realComputable_chaitinOmega
+#check @Lambda.irrational_chaitinOmega
+
+-- ... its first `n` bits decide the halting problem for every program of at most `n - 2` bits, ...
+#check @Lambda.chaitinOmega_prefix_decides_halting
+
+-- ... and those bits are incompressible: `K(Ω ↾ n) ≥ n - O(1)` (Chaitin's theorem).
+#check @Lambda.dodge_spec
+#check @Lambda.exists_const_le_kolmP_omegaPrefix
+
+/-! ## 14b. Martin-Löf randomness -/
+
+-- The uniform measure on Cantor space and the measure of a cylinder, ...
+#check @Lambda.cantorMeasure
+#check @Lambda.cantorMeasure_cylinder
+
+-- ... Martin-Löf tests and Martin-Löf randomness, ...
+#check @Lambda.MLTest
+#check @Lambda.MLRandom
+
+-- ... no computable sequence is random, ...
+#check @Lambda.not_mlRandom_of_computable
+
+-- ... and random sequences have incompressible prefixes (the easy half of Levin-Schnorr).
+#check @Lambda.exists_const_le_kolmP_prefix_of_mlRandom
+
 /-! ## 15. Summary
 
 ### Fully proved (no sorry):
@@ -405,6 +432,12 @@ Program length is the syntactic size of a closed term reducing to a Church numer
   binary numerals)
 - A self-delimiting (prefix free) binary coding of terms with Kraft's inequality, prefix
   complexity, and Chaitin's halting probability `Ω` as a convergent sum with `0 < Ω < 1`
+- `Ω` is not a computable real and is irrational; its first `n` bits decide the halting problem
+  for all programs of at most `n - 2` bits; and Chaitin's incompressibility theorem, that the
+  prefix complexity of those `n` bits is at least `n - O(1)`
+- The uniform measure on Cantor space, Martin-Löf tests and Martin-Löf randomness: no computable
+  sequence is random, and every random sequence has prefix complexity at least `n - O(1)` on its
+  length-`n` prefixes (the easy half of the Levin-Schnorr theorem)
 
 ### Architecture (≈ 8000 lines):
 1. Lambda syntax + lift/subst               (De Bruijn indices)

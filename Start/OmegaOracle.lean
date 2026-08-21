@@ -121,7 +121,9 @@ theorem partrec_oracleRun : Partrec fun p : ℕ × ℕ × ℕ => oracleRun p.1 p
   have htest : Computable₂ (fun (p : ℕ × ℕ × ℕ) (k : ℕ) =>
       omegaTest (prefixOracle p.1 p.2.1) p.2.2 k) :=
     ((hlt.comp (Primrec.pair hlhs hrhs)).to_comp).of_eq
-      (fun q => by simp [omegaTest, prefixOracle])
+      (fun q => by
+        simp only [omegaTest, prefixOracle]
+        exact decide_eq_decide.mpr Iff.rfl)
   have hv : Computable (fun p : ℕ × ℕ × ℕ => is_valid_code p.2.2) :=
     (Lambda.is_valid_code_primrec.comp (Primrec.snd.comp Primrec.snd)).to_comp
   have hstop : Computable₂ (fun (p : ℕ × ℕ × ℕ) (k : ℕ) =>
