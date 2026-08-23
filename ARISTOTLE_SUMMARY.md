@@ -1,3 +1,38 @@
+# Summary of changes for run cd54db65-c282-4bfc-b499-609368e066e5
+Yes — the project is finished, and I re-verified it end to end in this session rather than taking the earlier report on trust.
+
+**Verification performed now**
+- `lake build` completes successfully (8100 jobs, no errors, no linter warnings) against the pinned toolchain and Mathlib.
+- No `sorry` or `admit` anywhere in the library (`Start/` and `Start.lean`).
+- Axiom check on headline results (`KC.mlRandom_omegaSeq`, `Lambda.separable_toTerm_of_not_tagEq`, `lambdaComputable_iff_computable`) reports only `propext`, `Classical.choice`, `Quot.sound`.
+- The task board (`docs/goal/task-board.yaml`) validates: 49 tasks, all `DONE_STRONG`, with no open boundaries; `docs/current-goal-state.md` re-renders unchanged.
+
+**One loose end found and cleaned up**
+`Start/MLTestRequests.lean` was sitting inside the library directory but was not imported by `Start.lean` and did not compile on its own (several of its computability proofs exhausted the elaborator). It turned out to be a superseded first draft: the same construction — the passage from a Martin-Löf test to a Kraft–Chaitin request stream (`discovered`, `cutLength`, `covered`, `piece`, `testReq`, their computability, the total-weight bound, and `KC.mlRandom_omegaSeq`) — is carried out in full, and is proved, in `Start/OmegaURandom.lean`, which is part of the build. To leave the library tree unambiguous I moved the draft out of `Start/` to the top level alongside the other clearly-marked scratch files, added a header explaining what supersedes it and why it does not compile, and listed it (plus `Scratch.lean`) in the README's scratch-files section. No mathematical content was deleted, and nothing in the library depended on it.
+
+All changes are committed and pushed.
+
+# Summary of changes for run c18549c1-f7fd-42f8-aa68-ecfd602c7486
+Continued and finished the last open item on the project's task board, `M7-BOHM-SEPARATION` (Böhm's separation theorem).
+
+**What was already there at the start of this session:** finite Böhm trees and separation for a difference at the *root* of two trees (`Start/Bohm.lean`), plus an uncompiled draft of the "Böhm out" step in `Start/BohmOut.lean`.
+
+**What I completed:**
+
+1. `Start/BohmOut.lean` — verified and finished the Böhm-out transformation via *tagged tuples* `Gᵢ = λu₁ … u_K w. w u₁ … u_K ⟨i⟩`: a closed applicative context walks down both trees, and at the end the tag identifies the head while the number of stored arguments identifies the arity. Main results: `Lambda.separable_instTree` (the induction), `Lambda.separable_toTerm_of_bohmDiffer`, and `Lambda.separable_of_toTerm_ne` for trees with matching binder counts.
+
+2. `Start/BohmEta.lean` (new) — removed the matching-binders restriction, which was the honest boundary left by the previous work. Each node is compared *after η-expansion to the common arity* `max b₁ b₂`, and variables are named by tags rather than de Bruijn indices, so subtrees on the two sides of an η-expansion can still be compared. This gives:
+   - `Lambda.TagEq` (η-equality of Böhm trees) and `Lambda.TagDiffer` (its positive negation), proved complementary by `Lambda.tagDiffer_of_not_tagEq` and `Lambda.not_tagDiffer_of_tagEq`;
+   - `Lambda.reduces_node_eta`, the η-general descent step, and `Lambda.separable_of_tagDiffer`, the η-general Böhm-out induction;
+   - **`Lambda.separable_toTerm_of_not_tagEq`**: two closed normal forms whose Böhm trees are not η-equal are separable — one list of closed arguments sends the first term to `true` and the second to `false`.
+   - Non-vacuity checks: `Lambda.separable_I_K` (a separation of `λz. z` from `λz w. z`, whose trees have different binder counts at the root, so it is out of reach of the earlier form), `Lambda.tagEq_refl`, and a worked example showing the trees of `λz. z` and `λz w. z w` are η-equal, hence not claimed separable (which is necessary: separation is stated via β-reduction to the exact terms `true`/`false`).
+
+   Note on formalization: since the development has no term-level η-reduction relation, βη-equality of normal forms is rendered by the tree relation `TagEq` (node-wise comparison of the η-expanded trees).
+
+3. Both modules are imported by `Start.lean`. Full `lake build` succeeds (8100 jobs), there is no `sorry` anywhere in `Start/`, no linter warnings, and the headline theorems depend only on `propext`, `Classical.choice`, `Quot.sound`.
+
+4. Housekeeping: rewrote `docs/goal/evidence/M7-BOHM-SEPARATION.md`, flipped the task to `DONE_STRONG` with an empty open boundary in `docs/goal/task-board.yaml`, re-validated and re-rendered `docs/current-goal-state.md` (the whole board is now `DONE_STRONG`), and updated `README.md` and the `Start/Demo.lean` tour, which previously stated that Böhm's theorem was not proved. All work is committed and pushed.
+
 # Summary of changes for run 588078ae-614e-4aac-ba13-49d740412991
 Done — the dependency resolution is fixed and the project builds cleanly.
 

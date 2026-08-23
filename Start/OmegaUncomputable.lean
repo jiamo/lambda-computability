@@ -52,7 +52,7 @@ theorem ofNat_int_toNat (n : ℕ) :
   simp only [Equiv.intEquivNat, Equiv.trans, Equiv.symm, Equiv.coe_fn_mk,
     Equiv.natSumNatEquivNat, Equiv.intEquivNatSumNat, Equiv.boolProdNatEquivNat,
     Equiv.boolProdEquivSum, Function.comp_apply]
-  cases n.bodd <;> simp
+  cases hb : n.bodd <;> simp [hb]
 
 theorem primrec_int_toNat : Primrec (fun z : ℤ => z.toNat) := by
   have h : Primrec (fun n : ℕ => if n.bodd then 0 else n.div2) :=

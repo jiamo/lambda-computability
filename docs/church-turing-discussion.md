@@ -261,3 +261,52 @@ Berry 悖论，通过第二递归定理实现。为此把 `Start/SecondRecursion
 - 同一个缺口挡住了 Chaitin Ω：没有前缀无关性，`Σ 2^{-|p|}` 没有理由收敛，Ω 甚至无法定义。
   任务板上 `M6-KOLMOGOROV-OMEGA` 记录了这条开放项及其设计要求（前缀无关编码 → Kraft 不等式 →
   前缀复杂度 → Ω）。Martin-Löf 随机性、Solovay 函数等更属于另一个量级的项目。
+
+## 十四、停机集的度、BLC 编码桥与类型化演算（里程碑 M7 的后续）
+
+### 1. λ 停机集是 Σ₁ 完全的（`Start/HaltingComplete.lean`）
+
+早先只证了"停机不可判定"。接上 mathlib v4.33 的 `REPred` 与多一归约 `≤₀` 之后，可以把它精确地
+放进算术层级：
+
+- `Lambda.rePred_codeHasNormalForm`、`Lambda.rePred_codeConverges`——停机集是递归可枚举的；
+- `Lambda.rePred_le_codeHasNormalForm`——**任意** r.e. 谓词都多一归约到它，归约函数由部分递归函数
+  的定义域经 λ 项实现得到，并且是原始递归的（`Lambda.reduceCode_primrec`）；
+- 合起来即 `Lambda.codeHasNormalForm_sigma1_complete`：停机集 Σ₁ 完全；
+- 再由 Post 定理（`ComputablePred.computable_iff_re_compl_re'`）得
+  `Lambda.not_rePred_not_codeHasNormalForm`：补集不是 r.e.，即"停机是 r.e. 但不是 co-r.e."。
+
+### 2. BLC 位串与 De Bruijn 项之间的编码桥（`Start/BLC.lean`）
+
+库里原来只有编码方向 `Lambda.bits`（`00` 抽象、`01` 应用、`1ⁱ0` 变量）。这里补上解析器
+`Lambda.blcDecodeFull` 并证明二者互逆：
+
+`Lambda.blcDecodeFull_eq_some_iff : blcDecodeFull bs = some t ↔ bs = bits t`，
+
+由此得到显式双射 `Lambda.bitsEquiv : Lambda ≃ {bs // isBLC bs}`，以及数码与位串之间的往返
+（`Lambda.natOfBits_bitsOfNat`、`Lambda.bitsOfNat_natOfBits`）。解析器同时给出了
+`Primcodable Lambda` 实例，这正是可计算性层（如上面的 Σ₁ 完全性）需要的接口。
+
+### 3. 简单类型与 Gödel 的 System T（`Start/SimpleTypes.lean`、`Start/SystemT*.lean`）
+
+- 简单类型直接架在同一套 De Bruijn 语法上，因而合流性等无类型元理论可以直接复用：
+  `Lambda.sn_of_typing`（Tait 可归约性方法给出强正规化）、`Lambda.not_typing_omega`
+  （`omega` 不可定型——这正是"类型换终止、失去不动点"的边界）。
+- System T 把自然数与原始递归子作为真正的构造子加进来：`GodelT.sn_of_typing` 是强正规化，
+  其中类型 `nat` 上的可归约性候选由归纳族 `GodelT.RedNat` 给出，这是让递归子那一格通过的关键。
+- 进一步补上定型关系的弱化与代换引理（`GodelT.typing_weaken`、`GodelT.typing_subst`）、
+  **主语归约**（`GodelT.typing_reduces`）与闭正规形的分类，从而得到**规范性**
+  `GodelT.exists_reduces_num`：每个 `nat` 型闭项都归约到一个数码；于是每个 `nat → nat` 型闭项
+  都定义一个全函数。非空性由 `GodelT.reduces_addTm`（加法项确实算出 `m + n`）见证。
+
+### 4. 仍然开放的边界（诚实说明）
+
+- **Ω 的 Martin-Löf 随机性**与 **Levin–Schnorr 的困难方向**（不可压缩 ⇒ 随机）仍未证。它们要用
+  Kraft–Chaitin 机器存在定理，且要求底层前缀机是**加性最优**的；本项目 `kolmP` 背后的机器
+  （闭 λ 项 + 自定界编码 `bits`，没有输入流）不是加性最优的，所以这条路在现有框架内是封死的，
+  见任务板 `M7-OMEGA-ML-RANDOM`。
+- **Böhm 分离定理**未开始，需要 Böhm 树（或等价的头正规形有限逼近）与分离上下文的构造，
+  见任务板 `M7-BOHM-SEPARATION`。
+- **复杂度理论**（P/NP、Cook–Levin）没有动：现有的 `Turing.TM2ComputableInPolyTime` 缺少多项式
+  时间下的封闭性/复合机器机制，而用 `evaln` 的燃料当代价模型并不是诚实的时间复杂度模型。
+- System T 可定义函数恰为 PA 可证全函数这一刻画也未形式化：那需要 PA 及其序数分析。

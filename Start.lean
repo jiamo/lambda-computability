@@ -51,6 +51,9 @@ import Start.SecondRecursion
 import Start.NormalizationUndecidable
 import Start.Scott
 import Start.Solvability
+import Start.Bohm
+import Start.BohmOut
+import Start.BohmEta
 import Start.SMN
 import Start.SelfInterpreter
 import Start.RecursionParams
@@ -79,3 +82,18 @@ import Start.OmegaUncomputable
 import Start.OmegaOracle
 import Start.OmegaIncompressible
 import Start.MartinLof
+
+import Start.HaltingComplete
+import Start.BLC
+import Start.SimpleTypes
+import Start.SystemTSyntax
+import Start.SystemT
+import Start.SystemTCanon
+import Start.KleeneK
+import Start.KraftConverse
+import Start.StepComplexity
+import Start.BitString
+import Start.KCMachine
+import Start.KCComputable
+import Start.OmegaUIncompressible
+import Start.OmegaURandom

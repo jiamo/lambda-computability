@@ -233,8 +233,8 @@ theorem code_eval_dom_of_evalCode (c : Code) (v : List ℕ) {w : List ℕ}
     simp only at hl
     subst hl
     rfl
-  have hmem : mapCfg (codeLabels c) cfg ∈ StateTransition.eval (TM2.step tr) (init c v) :=
-    StateTransition.mem_eval.2 ⟨reaches_of_iterate t hmap2.symm, hstep⟩
+  have hmem : mapCfg (codeLabels c) cfg ∈ Turing.eval (TM2.step tr) (init c v) :=
+    Turing.mem_eval.2 ⟨reaches_of_iterate t hmap2.symm, hstep⟩
   rw [tr_eval c v] at hmem
   obtain ⟨w', hw', -⟩ := (Part.mem_map_iff _).1 hmem
   exact Part.dom_iff_mem.2 ⟨w', hw'⟩

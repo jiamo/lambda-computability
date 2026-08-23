@@ -324,10 +324,19 @@ reduction, not merely up to conversion. -/
 #check @TM2Partrec.partrec_of_tm2ComputableInPolyTime
 
 -- Solvability: `Ω` is unsolvable, solvable terms reach any closed term, and solvability is
--- undecidable.  (Böhm's separation theorem itself is *not* proved here.)
+-- undecidable.
 #check @Lambda.not_solvable_omega
 #check @Lambda.exists_args_conv_of_solvable
 #check @Lambda.not_computablePred_codeSet_solvable
+
+-- Böhm's separation theorem: the normal terms are exactly the denotations of the finite Böhm
+-- trees, and two closed normal forms whose trees are not η-equal are separated by a list of
+-- closed arguments, which sends the first term to `true` and the second to `false`.
+#check @Lambda.is_normal_iff_exists_bohmNF
+#check @Lambda.BohmNF.toTerm_injective
+#check @Lambda.separable_toTerm_of_not_tagEq
+-- The Böhm-out step, which brings a difference deep inside the two trees up to the root.
+#check @Lambda.separable_of_tagDiffer
 
 -- A Dershowitz–Gurevich style **representation theorem**: the input-output function of a
 -- bounded-exploration sequential algorithm is partial recursive, hence lambda-definable.
@@ -368,6 +377,11 @@ Program length is the syntactic size of a closed term reducing to a Church numer
 #check @Kraft.tsum_wt_le_one
 #check @Lambda.kraft_kolmP
 
+-- ... and conversely, for non-decreasing lengths Kraft's inequality is exactly the condition
+-- for a prefix free coding with those lengths to exist.
+#check @Kraft.prefixFreeCoding_kraftCode
+#check @Kraft.exists_prefixFree_iff
+
 -- ... and the halting probability is a convergent sum lying strictly between 0 and 1.
 #check @Lambda.summable_haltingWeight
 #check @Lambda.chaitinOmega_mem_Ioo
@@ -398,6 +412,52 @@ Program length is the syntactic size of a closed term reducing to a Church numer
 
 -- ... and random sequences have incompressible prefixes (the easy half of Levin-Schnorr).
 #check @Lambda.exists_const_le_kolmP_prefix_of_mlRandom
+
+/-! ## 14c. The halting set in the arithmetical hierarchy -/
+
+-- Halting is r.e., every r.e. predicate reduces to it, so it is Σ₁-complete, ...
+#check @Lambda.rePred_codeHasNormalForm
+#check @Lambda.rePred_le_codeHasNormalForm
+#check @Lambda.codeHasNormalForm_sigma1_complete
+
+-- ... in fact one-one complete, ...
+#check @Lambda.codeHasNormalForm_one_complete
+
+-- ... and by Post's theorem its complement is not r.e.
+#check @Lambda.not_rePred_not_codeHasNormalForm
+
+-- Kleene's diagonal halting set is one-one complete too, hence the two halting problems
+-- are one and the same problem.
+#check @Lambda.haltK_one_complete
+#check @Lambda.oneOneEquiv_haltK_codeHasNormalForm
+
+/-! ## 14c'. A Blum complexity measure and a diagonal hierarchy -/
+
+-- Fuel counting is a Blum complexity measure: defined exactly on the domain, decidably bounded.
+#check @Complexity.steps_dom_iff
+#check @Complexity.primrec_stepsLe
+
+-- No computable bound suffices for every computable function.
+#check @Complexity.exists_computable_not_withinFuel
+#check @Complexity.exists_computable_steps_gt
+
+/-! ## 14d. Binary lambda calculus: decoding bit strings back into terms -/
+
+-- The BLC code is invertible, giving a bijection between terms and valid bit strings.
+#check @Lambda.blcDecodeFull_eq_some_iff
+#check @Lambda.bitsEquiv
+
+/-! ## 14e. Typed calculi: simple types and Gödel's System T -/
+
+-- Simply typed terms are strongly normalizing, and `omega` is untypable.
+#check @Lambda.sn_of_typing
+#check @Lambda.not_typing_omega
+
+-- System T: strong normalization, subject reduction, and canonicity.
+#check @GodelT.sn_of_typing
+#check @GodelT.typing_reduces
+#check @GodelT.exists_reduces_num
+#check @GodelT.reduces_addTm
 
 /-! ## 15. Summary
 
@@ -432,12 +492,29 @@ Program length is the syntactic size of a closed term reducing to a Church numer
   binary numerals)
 - A self-delimiting (prefix free) binary coding of terms with Kraft's inequality, prefix
   complexity, and Chaitin's halting probability `Ω` as a convergent sum with `0 < Ω < 1`
+- The converse of Kraft's inequality for non-decreasing lengths, giving the exact
+  characterization of the realizable length sequences of a prefix free coding
 - `Ω` is not a computable real and is irrational; its first `n` bits decide the halting problem
   for all programs of at most `n - 2` bits; and Chaitin's incompressibility theorem, that the
   prefix complexity of those `n` bits is at least `n - O(1)`
 - The uniform measure on Cantor space, Martin-Löf tests and Martin-Löf randomness: no computable
   sequence is random, and every random sequence has prefix complexity at least `n - O(1)` on its
   length-`n` prefixes (the easy half of the Levin-Schnorr theorem)
+- The lambda halting set is Σ₁-complete, indeed one-one complete: it is r.e., every r.e. predicate
+  reduces to it by an injective computable function, and (by Post's theorem) its complement is
+  not r.e.; Kleene's diagonal halting set is one-one complete as well, so the two halting
+  problems are one-one equivalent
+- A decoder for the binary lambda calculus bit-string code, inverse to the encoder, and the
+  resulting bijection between terms and valid bit strings
+- A Blum complexity measure (fuel counting) on the partial recursive codes, with both Blum
+  axioms, and the diagonal result that no computable bound captures all computable functions
+- The simply typed lambda calculus over the same de Bruijn syntax: Tait strong normalization,
+  and the untypability of `omega`
+- Gödel's System T: strong normalization, weakening and substitution for the typing relation,
+  subject reduction, and canonicity — every closed term of type `nat` reduces to a numeral
+- Böhm's separation theorem: the normal terms are exactly the denotations of the finite Böhm
+  trees, faithfully, and two closed normal forms whose Böhm trees are not η-equal are separated
+  by a single list of closed arguments (the Böhm-out transformation via tagged tuples)
 
 ### Architecture (≈ 8000 lines):
 1. Lambda syntax + lift/subst               (De Bruijn indices)

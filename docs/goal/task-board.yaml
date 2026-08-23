@@ -742,11 +742,11 @@ tasks:
 
   - id: M7-OMEGA-ML-RANDOM
     priority: P1
-    status: TODO_NEEDS_DESIGN
+    status: DONE_STRONG
     track: theory/randomness
     title: "Martin-Lof randomness of Chaitin's Omega"
-    latest_evidence: ""
-    open_boundary: "The incompressibility half is done (M7-OMEGA-INCOMPRESSIBLE) and the measure-theoretic layer is done (M7-ML-RANDOMNESS-FRAMEWORK), including the easy half of Levin-Schnorr. What is missing is the converse half: incompressibility implies randomness, which needs the Kraft-Chaitin machine existence theorem for an additively optimal prefix machine. The machine underlying kolmP - closed lambda terms under the self-delimiting bits code, with no input stream - is not additively optimal, so this route is closed and the Martin-Lof randomness of this project's Omega is open. Proving it would require rebuilding algorithmic information theory over a genuinely universal prefix machine."
+    latest_evidence: "docs/goal/evidence/M7-OMEGA-ML-RANDOM.md"
+    open_boundary: ""
     milestone: M7
     depends_on:
       - M7-ML-RANDOMNESS-FRAMEWORK
@@ -759,16 +759,138 @@ tasks:
 
   - id: M7-BOHM-SEPARATION
     priority: P1
-    status: TODO_NEEDS_DESIGN
+    status: DONE_STRONG
     track: theory/lambda
     title: "Bohm's separation theorem"
-    latest_evidence: ""
-    open_boundary: "Needs Bohm trees or at least the head-normal-form eta-expansion machinery, plus the construction of separating contexts from a difference of Bohm trees. Not started."
+    latest_evidence: "docs/goal/evidence/M7-BOHM-SEPARATION.md"
+    open_boundary: ""
     milestone: M7
     depends_on: []
     rank: 90
     exit_criteria:
       - "Bohm trees, or an equivalent finite approximation of head normal forms, are defined."
       - "Distinct beta-eta normal forms are separated by an applicative context."
+    required_gates:
+      - "lake build"
+
+  - id: M7-HALTING-SIGMA1-COMPLETE
+    priority: P1
+    status: DONE_STRONG
+    track: theory/computability
+    title: "Sigma-1 completeness of the lambda halting set"
+    latest_evidence: "docs/goal/evidence/M7-HALTING-SIGMA1-COMPLETE.md"
+    open_boundary: ""
+    milestone: M7
+    depends_on: []
+    rank: 82
+    exit_criteria:
+      - "The lambda halting set is proved r.e. in the sense of mathlib's REPred."
+      - "Every r.e. predicate many-one reduces to the lambda halting set."
+      - "The complement of the lambda halting set is proved not r.e."
+    required_gates:
+      - "lake build"
+
+  - id: M7-BLC-BRIDGE
+    priority: P1
+    status: DONE_STRONG
+    track: theory/encoding
+    title: "Binary lambda calculus bit strings and the bridge to the de Bruijn encoding"
+    latest_evidence: "docs/goal/evidence/M7-BLC-BRIDGE.md"
+    open_boundary: ""
+    milestone: M7
+    depends_on: []
+    rank: 84
+    exit_criteria:
+      - "A parser turns BLC bit strings back into de Bruijn terms."
+      - "The parser inverts the bit-string coding exactly."
+      - "The terms are in explicit bijection with the valid BLC bit strings."
+    required_gates:
+      - "lake build"
+
+  - id: M7-STLC-SN
+    priority: P1
+    status: DONE_STRONG
+    track: theory/types
+    title: "Simply typed lambda calculus and Tait strong normalization"
+    latest_evidence: "docs/goal/evidence/M7-STLC-SN.md"
+    open_boundary: ""
+    milestone: M7
+    depends_on: []
+    rank: 86
+    exit_criteria:
+      - "Simple types and a typing relation over the existing de Bruijn syntax are defined."
+      - "Every typable term is proved strongly normalizing."
+      - "The looping term omega is proved untypable."
+    required_gates:
+      - "lake build"
+
+  - id: M7-SYSTEM-T
+    priority: P1
+    status: DONE_STRONG
+    track: theory/types
+    title: "Godel's System T: strong normalization, subject reduction, canonicity"
+    latest_evidence: "docs/goal/evidence/M7-SYSTEM-T.md"
+    open_boundary: ""
+    milestone: M7
+    depends_on:
+      - M7-STLC-SN
+    rank: 88
+    exit_criteria:
+      - "System T syntax, typing, and the beta and iota reduction rules are defined."
+      - "Every typable System T term is proved strongly normalizing."
+      - "Reduction preserves types."
+      - "Every closed term of type nat reduces to a numeral."
+    required_gates:
+      - "lake build"
+
+  - id: M7-KLEENE-K-BRIDGE
+    priority: P1
+    status: DONE_STRONG
+    track: theory/computability
+    title: "Kleene's diagonal halting set K is one-one complete, and equivalent to lambda halting"
+    latest_evidence: "docs/goal/evidence/M7-KLEENE-K-BRIDGE.md"
+    open_boundary: ""
+    milestone: M7
+    depends_on:
+      - M7-HALTING-SIGMA1-COMPLETE
+    rank: 83
+    exit_criteria:
+      - "The diagonal halting set of the partial recursive codes is defined and proved r.e."
+      - "Every r.e. predicate reduces to it by an injective computable function."
+      - "It is one-one equivalent to the lambda halting set."
+    required_gates:
+      - "lake build"
+
+  - id: M7-KRAFT-CONVERSE
+    priority: P1
+    status: DONE_STRONG
+    track: theory/randomness
+    title: "The converse of Kraft's inequality for non-decreasing code lengths"
+    latest_evidence: "docs/goal/evidence/M7-KRAFT-CONVERSE.md"
+    open_boundary: ""
+    milestone: M7
+    depends_on: []
+    rank: 79
+    exit_criteria:
+      - "For a monotone length sequence satisfying the Kraft inequality, a prefix free coding with exactly those lengths is constructed."
+      - "The construction is proved prefix free."
+      - "Kraft's inequality and its converse are combined into an exact characterization."
+    required_gates:
+      - "lake build"
+
+  - id: M7-STEP-COMPLEXITY
+    priority: P1
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "A Blum complexity measure on the partial recursive codes, and a diagonal hierarchy result"
+    latest_evidence: "docs/goal/evidence/M7-STEP-COMPLEXITY.md"
+    open_boundary: ""
+    milestone: M7
+    depends_on: []
+    rank: 92
+    exit_criteria:
+      - "A fuel-counting complexity measure is defined for the partial recursive codes."
+      - "The two Blum axioms are proved for it."
+      - "For every computable bound there is a total computable function that no code computes within that bound."
     required_gates:
       - "lake build"

@@ -61,17 +61,17 @@ theorem haltTime_le_bbTime {t : Lambda} {n : ℕ} (hn : Lambda.encode t ≤ n)
     (ht : HasNormalForm t) : haltTime t ≤ bbTime n := by
   classical
   have hmem : t ∈ (finite_setOf_encode_le n).toFinset := by
-    simp only [Set.Finite.mem_toFinset, Set.mem_ofPred_eq]
+    simp only [Set.Finite.mem_toFinset, Set.mem_setOf_eq]
     exact hn
   have hle := Finset.le_sup (f := fun t => if HasNormalForm t then haltTime t else 0) hmem
-  rw [if_pos ht] at hle
+  simp only [if_pos ht] at hle
   exact hle
 
 theorem bbTime_mono : Monotone bbTime := by
   intro m n hmn
   refine Finset.sup_mono ?_
   intro t ht
-  simp only [Set.Finite.mem_toFinset, Set.mem_ofPred_eq] at ht ⊢
+  simp only [Set.Finite.mem_toFinset, Set.mem_setOf_eq] at ht ⊢
   omega
 
 /-- The busy beaver indexed by syntactic size. -/
