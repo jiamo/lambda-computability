@@ -100,7 +100,6 @@ theorem primrec_accStep : Primrec₂ accStep := by
       (if (addPow z.2.2 p.1).1 ≤ 2 ^ (addPow z.2.2 p.1).2 then addPow z.2.2 p.1 else z.2.2
         : ℕ × ℕ) := Primrec.ite hcond haddp hihy
   refine (Primrec.option_casesOn hreq hih hg).of_eq fun z => ?_
-  change _ = accStep z.1 z.2
   unfold accStep
   cases reqAt z.1 z.2.1 with
   | none => rfl

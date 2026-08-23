@@ -168,6 +168,7 @@ theorem ofN_toN (c : tm.Cfg) : ofN tm (toN tm c) = c := by
   | mk l v S =>
     simp only [ofN, toN, decStk_encStk, Equiv.symm_apply_apply, Option.map_map,
       Equiv.symm_comp_self, Option.map_id_fun, id_eq]
+    rfl
 
 /-! ## Primitive recursiveness of the concrete stack operations -/
 
@@ -368,8 +369,8 @@ theorem primrec_nstep : Primrec (nstep tm) := by
   refine h.of_eq fun p => ?_
   obtain ⟨l, v, S⟩ := p
   cases l with
-  | none => simp [nstep, ofN, Turing.FinTM2.step, TM2.step]
-  | some a => simp [nstep, ofN, Turing.FinTM2.step, TM2.step, nStepAux]
+  | none => simp only [nstep, ofN, Turing.FinTM2.step, TM2.step]; rfl
+  | some a => simp only [nstep, ofN, Turing.FinTM2.step, TM2.step, nStepAux]; rfl
 
 /-! ## Step-indexed iteration -/
 
@@ -399,8 +400,8 @@ theorem nrun_toN (c : tm.Cfg) (t : ℕ) :
   | succ t ih =>
       rw [nrun, ih, Function.iterate_succ_apply']
       cases h : (flip Bind.bind tm.step)^[t] (some c) with
-      | none => simp [flip]
-      | some d => simp [flip, nstep_toN]
+      | none => simp only [flip]; rfl
+      | some d => simp only [flip]; exact nstep_toN tm d
 
 theorem nrun_none_mono {p : NCfg tm} {t t' : ℕ} (h : nrun tm p t = none) (hle : t ≤ t') :
     nrun tm p t' = none := by
@@ -478,7 +479,9 @@ theorem nrun_succ_eq_none_of_out {p : NCfg tm} {t : ℕ} {w : List ℕ}
         simp only at hc
         subst hc
         rfl
-      simp [nstep, Turing.FinTM2.step, hstep]
+      change Option.map (toN tm) (TM2.step tm.m (ofN tm c)) = none
+      rw [hstep]
+      rfl
 
 /-- The partial function on symbol codes computed by the machine: run the machine from the
 initial configuration determined by the input codes and, at the first halting time, read off
@@ -574,21 +577,21 @@ end Setup
 bundled machine with finite stack alphabets computes `f`, then the code-level partial function
 of that machine is partial recursive and returns, on the codes of the encoded input, the codes
 of the encoded output. -/
-theorem partrec_of_tm2Computable {α β : Type}
-    {ea : Computability.FinEncoding α} {eb : Computability.FinEncoding β} {f : α → β}
+theorem partrec_of_tm2Computable {α β αΓ βΓ : Type}
+    {ea : α → List αΓ} {eb : β → List βΓ} {f : α → β}
     (h : Turing.TM2Computable ea eb f)
     [∀ k, Fintype (h.tm.Γ k)] :
     Partrec (evalCode h.tm) ∧ ∀ a : α,
-      evalCode h.tm ((List.map h.inputAlphabet.invFun (ea.encode a)).map (encG h.tm)) =
-        Part.some ((List.map h.outputAlphabet.invFun (eb.encode (f a))).map (encG h.tm)) :=
+      evalCode h.tm ((List.map h.inputAlphabet.invFun (ea a)).map (encG h.tm)) =
+        Part.some ((List.map h.outputAlphabet.invFun (eb (f a))).map (encG h.tm)) :=
   ⟨partrec_evalCode h.tm, fun a => evalCode_of_outputs h.tm (h.outputsFun a)⟩
 
 /-- The finiteness hypothesis of the development is satisfiable: it holds for the identity
 machine of `Turing.idComputable`, so the theorems above are not vacuous. -/
-example {α : Type} (ea : Computability.FinEncoding α) :
-    letI : ∀ k, Fintype ((Turing.idComputable ea).tm.Γ k) := fun _ => ea.ΓFin
+example {α αΓ : Type} [Fintype αΓ] (ea : α → List αΓ) :
+    letI : ∀ k, Fintype ((Turing.idComputable ea).tm.Γ k) := fun _ => inferInstanceAs (Fintype αΓ)
     Partrec (evalCode (Turing.idComputable ea).tm) :=
-  letI : ∀ k, Fintype ((Turing.idComputable ea).tm.Γ k) := fun _ => ea.ΓFin
+  letI : ∀ k, Fintype ((Turing.idComputable ea).tm.Γ k) := fun _ => inferInstanceAs (Fintype αΓ)
   partrec_evalCode _
 
 end

@@ -1,7 +1,7 @@
 version: 2
 source_protocol: docs/goal/goal-prompt.md
-active_milestone: M7
-milestone_order: ["M1", "M2", "M3", "M4", "M5", "M6", "M7"]
+active_milestone: M8
+milestone_order: ["M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8"]
 tasks:
   - id: M1-BOUNDARY-SORRY-CLOSURE
     priority: P0
@@ -893,4 +893,40 @@ tasks:
       - "The two Blum axioms are proved for it."
       - "For every computable bound there is a total computable function that no code computes within that bound."
     required_gates:
+      - "lake build"
+
+  - id: M7-LEVIN-SCHNORR
+    priority: P1
+    status: DONE_STRONG
+    track: theory/randomness
+    title: "The Levin-Schnorr theorem for the Kraft-Chaitin universal prefix machine"
+    latest_evidence: "docs/goal/evidence/M7-LEVIN-SCHNORR.md"
+    open_boundary: ""
+    milestone: M7
+    depends_on: []
+    rank: 95
+    exit_criteria:
+      - "Incompressibility of all prefixes for the universal prefix machine implies Martin-Lof randomness."
+      - "Martin-Lof randomness implies incompressibility of all prefixes for the universal prefix machine."
+      - "The two halves are combined into an iff, and the randomness of Omega is a corollary of the converse half."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "lake build"
+
+  - id: M8-KU-OPTIMAL
+    priority: P1
+    status: DONE_STRONG
+    track: theory/randomness
+    title: "The Kraft-Chaitin universal prefix machine is optimal for the lambda prefix machine"
+    latest_evidence: "docs/goal/evidence/M8-KU-OPTIMAL.md"
+    open_boundary: ""
+    milestone: M8
+    depends_on: []
+    rank: 96
+    exit_criteria:
+      - "The programs of the lambda prefix machine are turned into a total computable stream of Kraft-Chaitin requests."
+      - "The total weight of that stream is at most one."
+      - "KU is bounded by the lambda prefix complexity up to an additive constant."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
       - "lake build"

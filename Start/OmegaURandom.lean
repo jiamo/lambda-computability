@@ -143,7 +143,7 @@ theorem discovered_mem_strings {T : MLTest} {c j : ℕ} {σ : List Bool}
   · rw [if_pos hen] at h
     have hσ : (Encodable.decode (α := List Bool) j.unpair.1).getD [] = σ := by
       simpa using h
-    refine Set.mem_setOf.2 ⟨j.unpair.2, ?_⟩
+    refine Set.mem_ofPred.2 ⟨j.unpair.2, ?_⟩
     rw [← hσ]
     exact hen
   · rw [if_neg hen] at h
@@ -584,7 +584,7 @@ theorem exists_piece_prefix {T : MLTest} {X : ℕ → Bool} {k : ℕ}
   classical
   set c := 2 * k + 2 with hc
   obtain ⟨σ, hσ, hXσ⟩ := mem_openOf.1 h
-  obtain ⟨s, hs⟩ := Set.mem_setOf.1 hσ
+  obtain ⟨s, hs⟩ := Set.mem_ofPred.1 hσ
   have hdisc₀ : discovered T c (Nat.pair (Encodable.encode σ) s) = some σ := by
     unfold discovered
     rw [Nat.unpair_pair]
@@ -632,9 +632,13 @@ theorem exists_piece_prefix {T : MLTest} {X : ℕ → Bool} {k : ℕ}
 -- The theorem
 ------------------------------------------------------------------------
 
-/-- **Chaitin's `Ω` is Martin-Löf random.** -/
-theorem mlRandom_omegaSeq : MLRandom omegaSeq := by
-  obtain ⟨c₀, hc₀⟩ := exists_const_le_KU_omegaPrefix
+/-- **The converse half of the Levin–Schnorr theorem.**  A sequence all of whose prefixes are
+incompressible for the universal prefix machine `KC.U` is Martin-Löf random.  Given a test `T`,
+the Kraft–Chaitin theorem applied to the request stream `KC.testReq T` compresses a prefix of
+every sequence caught by a deep enough level of `T`. -/
+theorem mlRandom_of_exists_const_le_KU {X : ℕ → Bool}
+    (h : ∃ c : ℕ, ∀ n : ℕ, n ≤ KU (Encodable.encode (prefixList X n)) + c) : MLRandom X := by
+  obtain ⟨c₀, hc₀⟩ := h
   intro T
   obtain ⟨c₁, hc₁⟩ := exists_const_KU_le (computable_testReq T) (sum_wtOpt_testReq_le T)
   refine ⟨2 * (c₀ + c₁ + 1) + 2, fun hmem => ?_⟩
@@ -642,5 +646,9 @@ theorem mlRandom_omegaSeq : MLRandom omegaSeq := by
   have h1 := hc₁ i (N - (c₀ + c₁ + 1)) _ hreq
   have h2 := hc₀ N
   omega
+
+/-- **Chaitin's `Ω` is Martin-Löf random.** -/
+theorem mlRandom_omegaSeq : MLRandom omegaSeq :=
+  mlRandom_of_exists_const_le_KU exists_const_le_KU_omegaPrefix
 
 end KC

@@ -413,6 +413,19 @@ Program length is the syntactic size of a closed term reducing to a Church numer
 -- ... and random sequences have incompressible prefixes (the easy half of Levin-Schnorr).
 #check @Lambda.exists_const_le_kolmP_prefix_of_mlRandom
 
+-- For the Kraft-Chaitin universal prefix machine both halves hold, so Martin-Löf randomness
+-- *is* incompressibility of all prefixes (the Levin-Schnorr theorem), ...
+#check @KC.exists_const_le_KU_prefix_of_mlRandom
+#check @KC.mlRandom_of_exists_const_le_KU
+#check @KC.mlRandom_iff_exists_const_le_KU
+
+-- ... and the bit sequence of Chaitin's `Ω` is Martin-Löf random.
+#check @KC.mlRandom_omegaSeq
+
+-- The Kraft-Chaitin machine is optimal for the lambda prefix machine: `KU` is below the
+-- lambda prefix complexity up to an additive constant.
+#check @KC.exists_const_KU_le_kolmP
+
 /-! ## 14c. The halting set in the arithmetical hierarchy -/
 
 -- Halting is r.e., every r.e. predicate reduces to it, so it is Σ₁-complete, ...

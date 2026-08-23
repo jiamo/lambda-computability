@@ -1,3 +1,32 @@
+# Summary of changes for run 988d1de1-ccb4-4c96-b2a9-31b171749fd3
+The project now builds cleanly on Lean/Mathlib **v4.33.0** and has been extended with one new result.
+
+**1. The v4.33.0 migration you reported is complete.** All the errors and warnings in your build log are gone:
+- `Turing.Reaches` / `Turing.eval` / `Turing.mem_eval` were renamed to `StateTransition.Reaches` / `StateTransition.eval` / `StateTransition.mem_eval` in `Start/TM2Forward.lean` and `Start/TM2Capstone.lean`.
+- The residual goals in `Start/TM2Forward.lean` and `Start/TM2Partrec.lean` (places where `rw`/`simp` no longer close the goal by themselves) were discharged with explicit `rfl` / `change` / `exact` steps.
+- `Turing.TM2Computable` and `TM2ComputableInPolyTime` now take raw encoding functions instead of the deprecated `Computability.FinEncoding`; `Start/TM2Partrec.lean` and `Start/TM2PolyTime.lean` were updated accordingly (including the `idComputable` example, which now uses `inferInstanceAs (Fintype _)`).
+- Deprecations cleared: `push_neg` → `push Not` (`Start/BohmOut.lean`, `Start/BohmEta.lean`, `Start/OmegaUIncompressible.lean`), `Set.mem_setOf(_eq)` → `Set.mem_ofPred(_eq)`, and the unused-tactic line in `Start/KCComputable.lean`.
+- `lean-toolchain` is `leanprover/lean4:v4.33.0` and `lakefile.toml` pins Mathlib to the matching tag.
+
+A full `lake build` completes successfully (8782 jobs) with **no errors and no warnings**, and `Start/` contains no `sorry` and no `axiom`.
+
+**2. New mathematics: the universal prefix machine is optimal for the lambda prefix machine.** New file `Start/KUOptimal.lean` (imported by `Start.lean`) connects the two prefix complexities of the library, which previously stood side by side:
+- `KC.lamReq` turns the programs of the lambda prefix machine into a total computable stream of Kraft–Chaitin requests — the request `(|bits t|, m)` for each closed term `t` whose leftmost run reaches the Church numeral of `m`, issued exactly once (`KC.computable_lamReq`, `KC.exists_lamReq_of_isProgramFor`).
+- `KC.sum_wtOpt_lamReq_le` bounds its total weight by one, via Kraft's inequality for the prefix-free coding `Lambda.bits`.
+- `KC.exists_const_KU_le_kolmP : ∃ c, ∀ s, KU s ≤ Lambda.kolmP s + c` — optimality.
+- `KC.exists_const_le_kolmP_prefix_of_exists_const_le_KU` transports `KU`-incompressibility of a sequence's prefixes to `Lambda.kolmP`.
+
+All of these depend only on `propext`, `Classical.choice`, `Quot.sound`. Only this direction of the comparison is proved; the opposite bound is not expected to hold with these definitions (a lambda program spends two bits per syntax-tree node, while a `U`-program is an arbitrary bit string), and that boundary is written down explicitly rather than glossed over.
+
+**3. Documentation and bookkeeping brought up to date.**
+- `README.md`: headline-theorem block, content map, related-work table and roadmap all updated for the Levin–Schnorr theorem and the new optimality result; the roadmap row for Levin–Schnorr now states the precise remaining gap instead of an outdated claim. Badges updated to 51/51.
+- `Start/Demo.lean`: `#check` added for the new theorem.
+- Task board: new task `M8-KU-OPTIMAL` with evidence note `docs/goal/evidence/M8-KU-OPTIMAL.md`; the boundary paragraph of `docs/goal/evidence/M7-LEVIN-SCHNORR.md` corrected now that half of the `KU`/`kolmP` comparison exists. `python3 scripts/goal_state.py validate` reports "OK: 51 tasks validated" and `docs/current-goal-state.md` has been re-rendered.
+
+The other roadmap directions (Cook–Levin/NP-completeness, Schnorr randomness and Solovay tests, Gentzen consistency and ordinal analysis, reverse mathematics, and bridges to other Lean libraries) remain **not implemented**; they are documented as open in the README roadmap table.
+
+Everything is committed and pushed.
+
 # Summary of changes for run cd54db65-c282-4bfc-b499-609368e066e5
 Yes — the project is finished, and I re-verified it end to end in this session rather than taking the earlier report on trust.
 

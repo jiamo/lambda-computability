@@ -89,7 +89,7 @@ theorem finite_setOf_size_le (n : ℕ) : {t : Lambda | size t ≤ n}.Finite := b
             ((fun p : Lambda × Lambda => Lambda.app p.1 p.2) ''
               ({t : Lambda | size t ≤ m} ×ˢ {t : Lambda | size t ≤ m})) := by
         intro t ht
-        simp only [Set.mem_setOf_eq] at ht
+        simp only [Set.mem_ofPred_eq] at ht
         cases t with
         | var i =>
             exact Or.inl (Or.inl ⟨i, by simpa [size] using ht, rfl⟩)
@@ -99,11 +99,11 @@ theorem finite_setOf_size_le (n : ℕ) : {t : Lambda | size t ≤ n}.Finite := b
             refine Or.inr ⟨(a, b), ⟨?_, ?_⟩, rfl⟩
             · have := size_pos b
               simp only [size] at ht
-              simp only [Set.mem_setOf_eq]
+              simp only [Set.mem_ofPred_eq]
               omega
             · have := size_pos a
               simp only [size] at ht
-              simp only [Set.mem_setOf_eq]
+              simp only [Set.mem_ofPred_eq]
               omega
       exact Set.Finite.subset
         (((Set.finite_Iic m).image _ |>.union (ih.image _)).union ((ih.prod ih).image _)) hsub
@@ -155,7 +155,7 @@ theorem finite_setOf_kolm_le (n : ℕ) : {s : ℕ | kolm s ≤ n}.Finite := by
   intro s hs
   obtain ⟨t, ht, hsize⟩ := exists_program_of_kolm s
   refine ⟨t, ?_, valOf_eq ht.2⟩
-  simp only [Set.mem_setOf_eq, hsize]
+  simp only [Set.mem_ofPred_eq, hsize]
   exact hs
 
 /-- **Incompressible numbers exist**: for every `n` there is an `s` whose shortest program has

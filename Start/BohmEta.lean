@@ -416,12 +416,12 @@ theorem tagDiffer_of_not_tagEq_aux : ∀ (n : ℕ) {base : ℕ} {τ₁ τ₂ : �
               ¬ TagEq (base + (b₁ + e₁)) (argEnvOf base τ₁ b₁ e₁ as₁ r) (argTreeOf as₁ r)
                 (argEnvOf base τ₂ b₂ e₂ as₂ r) (argTreeOf as₂ r) := by
             by_contra hc
-            push_neg at hc
+            push Not at hc
             exact hne (TagEq.node hmin hm hhead hlen (fun r hr => hc r hr))
           obtain ⟨r, hr, hrne⟩ := hex
           have hone : r < as₁.length ∨ r < as₂.length := by
             by_contra hc
-            push_neg at hc
+            push Not at hc
             refine hrne ?_
             have h1 : argTreeOf as₁ r = .node 0 0 [] := by rw [argTreeOf, dif_neg (by omega)]
             have h2 : argTreeOf as₂ r = .node 0 0 [] := by rw [argTreeOf, dif_neg (by omega)]

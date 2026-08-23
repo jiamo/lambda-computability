@@ -132,7 +132,7 @@ theorem stageOk_iff {n a : ℕ} (ha : 1 ≤ a) (T : ℕ) :
 
 theorem exists_stageOk {n : ℕ} (hn : 1 ≤ omegaBits n) : ∃ T, stageOk n (omegaBits n) T = true := by
   by_contra hcon
-  push_neg at hcon
+  push Not at hcon
   have hle : ∀ T, ∑ t ∈ Finset.range T, omegaW t ≤ ((omegaBits n : ℝ) - 1) / 2 ^ n := by
     intro T
     by_contra hlt
@@ -149,7 +149,7 @@ theorem le_length_of_stageOk {n T t m L x : ℕ} (hn : 1 ≤ omegaBits n)
     (hT : stageOk n (omegaBits n) T = true) (ht : T ≤ t) (hs : slot t = some (m, L, x)) :
     n ≤ L := by
   by_contra hcon
-  push_neg at hcon
+  push Not at hcon
   have hw : omegaW t = wt L := by unfold omegaW; rw [hs]
   have hnotmem : t ∉ Finset.range T := by simp; omega
   have hsum := summable_omegaW.sum_le_tsum (insert t (Finset.range T))
@@ -225,7 +225,7 @@ theorem exists_mem_dodge {n : ℕ} (hn : 1 ≤ omegaBits n) :
       have := Nat.rfind_spec hT₀
       simpa [Nat.unpair_pair] using this
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     obtain ⟨σ, hlen, hmem⟩ := KU_spec (dodgeMax n T₀ + 1)
     obtain ⟨t, hslot⟩ := mem_U_iff.1 hmem
     have hσn : σ.length < n := by omega

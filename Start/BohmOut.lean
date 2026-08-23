@@ -1000,7 +1000,7 @@ theorem bohmDiffer_of_ne {x y : BohmNF} (hsb : BohmSameBinders x y) (hne : x ≠
           have hex : ∃ (r : ℕ) (hr₁ : r < as₁.length) (hr₂ : r < as₂.length),
               (as₁[r]'hr₁) ≠ (as₂[r]'hr₂) := by
             by_contra hc
-            push_neg at hc
+            push Not at hc
             exact hne (by rw [List.ext_getElem hl (fun r h₁' h₂' => hc r h₁' h₂')])
           obtain ⟨r, hr₁, hr₂, hrne⟩ := hex
           exact .arg hr₁ hr₂ hl (ih r hr₁ hr₂ hrne)

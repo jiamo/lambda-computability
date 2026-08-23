@@ -28,14 +28,18 @@ Two theorems are proved about the notion.
 ## What is *not* proved here
 
 The converse half of Levin–Schnorr — incompressibility implies Martin-Löf randomness — is **not**
-proved, and it is not available for this machine.  It rests on the Kraft–Chaitin machine
-existence theorem applied to an *additively optimal* prefix machine, and the machine underlying
-`Lambda.kolmP` (closed lambda terms under the self-delimiting code `Lambda.bits`, with no input
-stream) is not additively optimal: writing `ℓ` arbitrary payload bits into a lambda term costs
-strictly more than `ℓ + O(1)` bits.  Consequently
+proved for `Lambda.kolmP`, and it is not available for this machine.  It rests on the
+Kraft–Chaitin machine existence theorem applied to an *additively optimal* prefix machine, and
+the machine underlying `Lambda.kolmP` (closed lambda terms under the self-delimiting code
+`Lambda.bits`, with no input stream) is not additively optimal: writing `ℓ` arbitrary payload
+bits into a lambda term costs strictly more than `ℓ + O(1)` bits.  Consequently
 `Lambda.exists_const_le_kolmP_omegaPrefix` (Chaitin incompressibility for `Ω`, proved in
-`Start/OmegaIncompressible.lean`) does **not** yield `MLRandom` for the bit sequence of `Ω`, and
-the Martin-Löf randomness of this project's `Ω` remains open here.
+`Start/OmegaIncompressible.lean`) does **not** yield `MLRandom` for the bit sequence of `Ω`.
+
+Both halves *are* proved for the Kraft–Chaitin universal prefix machine `KC.U`, which is
+additively optimal: see `Start/LevinSchnorr.lean` for the equivalence
+`KC.mlRandom_iff_exists_const_le_KU` and `Start/OmegaURandom.lean` for its corollary
+`KC.mlRandom_omegaSeq`, the Martin-Löf randomness of that machine's `Ω`.
 -/
 
 import Start.OmegaIncompressible
@@ -72,7 +76,7 @@ def cylinder (σ : List Bool) : Set (ℕ → Bool) := {X | ∀ i, (h : i < σ.le
 theorem cylinder_eq_pi (σ : List Bool) :
     cylinder σ = (↑(Finset.range σ.length) : Set ℕ).pi fun i => {σ.getD i Bool.false} := by
   ext X
-  simp only [cylinder, Set.mem_pi, Set.mem_setOf_eq, Finset.coe_range, Set.mem_Iio,
+  simp only [cylinder, Set.mem_pi, Set.mem_ofPred_eq, Finset.coe_range, Set.mem_Iio,
     Set.mem_singleton_iff]
   exact ⟨fun h i hi => by simp [List.getD_eq_getElem?_getD, List.getElem?_eq_getElem hi, h i hi],
     fun h i hi => by simpa [List.getD_eq_getElem?_getD, List.getElem?_eq_getElem hi] using h i hi⟩
@@ -241,7 +245,7 @@ theorem prefixEnter_computable {X : ℕ → Bool} (h : Computable X) :
 theorem openOf_prefixEnter (X : ℕ → Bool) (c : ℕ) :
     openOf {σ | ∃ j, prefixEnter X c σ j = Bool.true} = cylinder (prefixList X c) := by
   ext Y
-  simp only [mem_openOf, prefixEnter, Set.mem_setOf_eq, decide_eq_true_eq]
+  simp only [mem_openOf, prefixEnter, Set.mem_ofPred_eq, decide_eq_true_eq]
   refine ⟨?_, fun hY => ⟨prefixList X c, ⟨0, by simp⟩, hY⟩⟩
   rintro ⟨σ, ⟨j, rfl⟩, hY⟩
   exact cylinder_mono (prefixList_prefix (Nat.le_add_right c j)) hY

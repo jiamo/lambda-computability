@@ -97,3 +97,5 @@ import Start.KCMachine
 import Start.KCComputable
 import Start.OmegaUIncompressible
 import Start.OmegaURandom
+import Start.LevinSchnorr
+import Start.KUOptimal
