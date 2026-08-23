@@ -233,6 +233,18 @@ Public Lean 4 developments in this area, and how they relate (repository file li
 - **Böhm's separation theorem** — finite Böhm trees of normal forms (`Start/Bohm.lean`), the
   Böhm-out transformation (`Start/BohmOut.lean`), and the separation theorem for trees that are
   not η-equal (`Start/BohmEta.lean`).
+- **Denotational semantics** — two models of the untyped calculus.  Scott's *graph model*
+  `D = Set Tok` is a reflexive object (the Scott-continuous function space is a retract of `D`,
+  `Start/GraphModel.lean`); interpreting terms in it validates β and gives a semantic proof that
+  `Ω` is not convertible to `I`, hence that the β-calculus is consistent, without using
+  confluence (`Start/GraphModelSemantics.lean`).  Scott's **`D∞`** is built as the inverse limit
+  of the tower `D₀ = Bool`, `Dₙ₊₁ = [Dₙ →𝒄 Dₙ]` with its embedding-projection pairs
+  (`Start/ScottTower.lean`, `Start/ScottDinf.lean`, `Start/ScottPsi.lean`), and the isomorphism
+  `D∞ ≅ [D∞ →𝒄 D∞]` is proved in `Start/ScottDinfIso.lean`; because it is an isomorphism and
+  not just a retraction, the induced interpretation is extensional and validates η as well as β
+  (`Start/ScottDinfModel.lean`).  In `D∞` the diverging term `Ω` denotes the least element, so
+  `Ω` and `I` are not βη-convertible: the **λη calculus is consistent**, again by a purely
+  semantic argument (`Start/ScottDinfOmega.lean`).
 
 `Start/Demo.lean` is a guided tour with `#check`s of the headline statements.
 
@@ -284,6 +296,7 @@ material gets to them:
 | Schnorr randomness, Solovay tests | Deeper randomness notions, not covered by the Martin-Löf framework here | `Start/MartinLof.lean` |
 | Cook–Levin: SAT is NP-complete | The definitions of `P`, `NP`, `≤ₘᵖ` and NP-completeness are in place (`Start/ComplexityClasses.lean`), but no language is proved NP-complete; that needs an encoding of formulas and a tableau construction | `Start/ComplexityClasses.lean`, `Start/TM2PolyTime.lean` |
 | Cobham's theorem, and a link to machine-level polynomial time | Would connect `Start/ComplexityClasses.lean` (Cobham axioms) to `Start/TM2PolyTime.lean` (bounded TM2 machines) and to mathlib's `Computable` | `Start/ComplexityClasses.lean`, `Start/TM2PolyTime.lean` |
+| Adequacy and full abstraction for the models | The two models are built and proved sound (`Start/GraphModelSemantics.lean`, `Start/ScottDinfModel.lean`), but nothing says that equal denotations imply convertibility, and the local structure of `D∞` is not identified | `Start/ScottDinfModel.lean`, `Start/Bohm.lean` |
 | Gentzen consistency, ordinal analysis up to `ε₀` | Proof theory beyond strong normalization | `Start/SystemT.lean`, `Start/SystemTCanon.lean` |
 | Reverse mathematics (Big Five calibration) | Would connect this development to the reverse-mathematics libraries | `Start/HaltingComplete.lean`, `Start/MartinLof.lean` |
 | Bridge to `algorithmic-randomness`: lambda-term randomness ⟺ program-code randomness | Makes the AIT results above reusable outside this repo (the `cslib` representation bridge is now done — `Start/Representation.lean`) | `Start/Kolmogorov.lean` |

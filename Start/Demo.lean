@@ -472,6 +472,32 @@ Program length is the syntactic size of a closed term reducing to a Church numer
 #check @GodelT.exists_reduces_num
 #check @GodelT.reduces_addTm
 
+/-! ## 14f. Denotational semantics: the graph model and Scott's `D∞` -/
+
+-- Scott's graph model is a reflexive object: the continuous function space is a retract of `D`.
+#check @GraphModel.appD_graph
+#check @GraphModel.graph_appD_ne
+
+-- Soundness of the interpretation, and a semantic consistency proof for the beta calculus.
+#check @GraphModel.denot_conv
+#check @GraphModel.denot_omega
+#check @GraphModel.not_conv_omega_I
+
+-- Scott's `D∞`: every element is the supremum of its finite approximations, and `D∞` is
+-- isomorphic to its own space of continuous self-maps.
+#check @ScottDinf.ωSup_thetaChain
+#check @ScottDinf.dinfOrderIso
+#check @ScottDinf.dinf_nontrivial
+
+-- The induced model of the lambda calculus is extensional: it validates beta *and* eta.
+#check @ScottDinf.ddenot_conv
+#check @ScottDinf.ddenot_eta
+
+-- `Ω` denotes the least element, so `Ω` and `I` are not βη-convertible: the λη calculus is
+-- consistent, again by a purely semantic argument.
+#check @ScottDinf.ddenot_omega
+#check @ScottDinf.not_convBE_omega_I
+
 /-! ## 15. Summary
 
 ### Fully proved (no sorry):
@@ -528,6 +554,11 @@ Program length is the syntactic size of a closed term reducing to a Church numer
 - Böhm's separation theorem: the normal terms are exactly the denotations of the finite Böhm
   trees, faithfully, and two closed normal forms whose Böhm trees are not η-equal are separated
   by a single list of closed arguments (the Böhm-out transformation via tagged tuples)
+- Denotational semantics: Scott's graph model as a reflexive object, with soundness of beta and
+  a semantic consistency proof (`Ω` is not convertible to `I`); and Scott's `D∞` as the inverse
+  limit of the tower `D₀ = Bool`, `Dₙ₊₁ = [Dₙ →𝒄 Dₙ]`, with the isomorphism
+  `D∞ ≅ [D∞ →𝒄 D∞]` and an extensional model of the lambda calculus validating beta and eta;
+  in that model `Ω` denotes the least element, so the λη calculus is consistent
 
 ### Architecture (≈ 8000 lines):
 1. Lambda syntax + lift/subst               (De Bruijn indices)

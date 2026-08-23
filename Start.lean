@@ -105,3 +105,16 @@ import Start.Representation
 
 -- Complexity classes: P, NP, polynomial-time many-one reductions, NP-completeness
 import Start.ComplexityClasses
+
+-- Denotational semantics: Scott's graph model as a reflexive object, and soundness of beta
+import Start.GraphModel
+import Start.GraphModelSemantics
+
+-- Scott's D-infinity: the inverse limit of the tower D0 = Bool, D(n+1) = [Dn -> Dn],
+-- the isomorphism D-infinity = [D-infinity -> D-infinity], and the induced lambda-eta model
+import Start.ScottTower
+import Start.ScottDinf
+import Start.ScottPsi
+import Start.ScottDinfIso
+import Start.ScottDinfModel
+import Start.ScottDinfOmega

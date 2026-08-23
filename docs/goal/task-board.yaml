@@ -987,3 +987,43 @@ tasks:
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "lake build"
+
+  - id: M9-GRAPH-MODEL
+    priority: P1
+    status: DONE_STRONG
+    track: theory/semantics
+    title: "Scott's graph model: a reflexive object and a model of the beta calculus"
+    latest_evidence: "docs/goal/evidence/M9-GRAPH-MODEL.md"
+    open_boundary: ""
+    milestone: M9
+    depends_on: []
+    rank: 130
+    exit_criteria:
+      - "A domain D with a continuous retraction of its Scott-continuous function space is constructed."
+      - "Lambda terms are interpreted in D and the interpretation is continuous in every variable."
+      - "The semantic beta rule holds and beta conversion preserves denotations."
+      - "The model is nontrivial: the denotation of Omega is the least element, so Omega is not convertible to I."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "lake build"
+
+  - id: M9-SCOTT-DINF
+    priority: P1
+    status: DONE_STRONG
+    track: theory/semantics
+    title: "Scott's D-infinity: the inverse limit and the isomorphism with its own function space"
+    latest_evidence: "docs/goal/evidence/M9-SCOTT-DINF.md"
+    open_boundary: ""
+    milestone: M9
+    depends_on:
+      - M9-GRAPH-MODEL
+    rank: 140
+    exit_criteria:
+      - "The tower D0 = Bool, D(n+1) = [Dn -> Dn] with its embedding-projection pairs is constructed."
+      - "The inverse limit D-infinity is an omega-cpo in which every element is the supremum of its finite approximations."
+      - "The isomorphism D-infinity = [D-infinity -> D-infinity] is proved, and D-infinity has more than one element."
+      - "Lambda terms are interpreted in D-infinity, and the interpretation validates both beta and eta."
+      - "The diverging term Omega denotes the least element, and the lambda-eta calculus is proved consistent semantically."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "lake build"
