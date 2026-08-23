@@ -1,3 +1,25 @@
+# Summary of changes for run 930f128c-081a-4433-96b9-0c555584c431
+Both remaining gaps are now closed, with everything building under `lake build` and no `sorry` anywhere in the `Start` library.
+
+**1. Adequacy / 完备性 for Gödel's System T** (finished and verified from the previous session's work)
+
+- `Start/SystemTConfluence.lean`: congruence and substitution lemmas for reduction, local confluence, Newman's lemma, confluence for typable terms, and uniqueness of numeral normal forms.
+- `Start/SystemTDenot.lean`: a set-theoretic denotational semantics (`tyDen`, `Env`, typing derivations as data, `eval`, `denot`), a logical relation, and the headline results:
+  - `adequacy` — a closed term of type `nat` reduces to the numeral of its denotation;
+  - `denot_eq_iff_joins` — at base type, equal denotations ⟺ reduction to a common numeral;
+  - `obsEq_of_denot_eq` and `denot_eq_iff_obsEq_nat` — equal denotations imply observational equivalence, and at base type the three notions coincide.
+  - Boundary documented in the module docstring: full abstraction at higher types is not claimed, and `denot` evaluates a canonically chosen derivation (Curry-style typing is not unique), with irrelevance proved at base type.
+
+**2. Curry–Howard–Lambek: STLC ⟺ CCC**
+
+- `Start/Stlc.lean`: intrinsically typed simply typed lambda calculus with a unit type, binary products and function types; renamings, substitutions and their laws; βη-conversion (`Conv`) with compatibility under substitution.
+- `Start/StlcCcc.lean`: the syntactic category (types as objects, one-variable terms modulo conversion as morphisms, substitution as composition) — `Stlc.category`; the unit type is terminal and the product type is a binary product, giving `Stlc.cartesianMonoidal`; the exponential functor and the currying bijection `Hom (X × Y) Z ≃ Hom Y (X ⇒ Z)` by β and η, whose naturality yields the adjunction `- ⊗ X ⊣ X ⇒ -` and hence `Stlc.monoidalClosed`. (In this Mathlib version "cartesian closed" is `CartesianMonoidalCategory` + `MonoidalClosed`; both instances are provided.)
+- `Start/CccModel.lean`: the converse direction — types as objects and terms as morphisms in an arbitrary cartesian closed category, the substitution lemma (`tmMor_sub`: substitution is composition), soundness `tmMor_conv` (convertible terms have equal interpretations), and the resulting functor `interpFunctor` out of the syntactic category, together with lemmas showing it preserves the terminal object, products with projections and pairing, and the exponentials with currying. Boundary documented: strict freeness (uniqueness of the structure-preserving functor) is not claimed.
+
+`#print axioms` on all headline results reports only `propext`, `Classical.choice`, `Quot.sound`.
+
+Housekeeping: the three new modules are imported by `Start.lean`; `README.md` and the `Start/Demo.lean` guided tour were extended with the new results; two task-board entries (`M9-SYSTEMT-ADEQUACY`, `M9-STLC-CCC`) with evidence files were added, `python3 scripts/goal_state.py validate` passes (58 tasks) and `docs/current-goal-state.md` was regenerated. All changes are committed and pushed.
+
 # Summary of changes for run 6b7e3b4f-9c55-4ff5-abc6-07bd07dae966
 ## What I did
 

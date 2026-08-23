@@ -498,6 +498,48 @@ Program length is the syntactic size of a closed term reducing to a Church numer
 #check @ScottDinf.ddenot_omega
 #check @ScottDinf.not_convBE_omega_I
 
+/-! ## 14g. Adequacy for Goedel's System T -/
+
+-- Reduction is confluent, so a typable term reduces to at most one numeral.
+#check @GodelT.confluence_of_typing
+#check @GodelT.eq_of_reduces_num_of_typing
+
+-- The set-theoretic denotational semantics, and adequacy: a closed term of type `nat` reduces to
+-- the numeral of its denotation.
+#check @GodelT.denot
+#check @GodelT.adequacy
+
+-- Hence at base type, equal denotations, convertibility and observational equivalence coincide.
+#check @GodelT.denot_eq_iff_joins
+#check @GodelT.obsEq_of_denot_eq
+#check @GodelT.denot_eq_iff_obsEq_nat
+
+/-! ## 14h. Curry-Howard-Lambek: STLC and cartesian closed categories -/
+
+-- The syntactic category: types as objects, terms with one free variable modulo beta-eta
+-- conversion as morphisms, substitution as composition.
+#check @Stlc.category
+#check @Stlc.comp_def
+
+-- It has finite products, and the function type is an exponential: it is cartesian closed.
+#check @Stlc.isTerminalUnit
+#check @Stlc.prodCone
+#check @Stlc.cartesianMonoidal
+#check @Stlc.curryEquiv
+#check @Stlc.monoidalClosed
+
+-- Conversely, every cartesian closed category is a model: terms become morphisms, substitution
+-- becomes composition, conversion is sound, and the interpretation is functorial.
+#check @Stlc.tmMor
+#check @Stlc.tmMor_sub
+#check @Stlc.tmMor_conv
+#check @Stlc.interpFunctor
+
+-- That functor preserves the cartesian closed structure.
+#check @Stlc.interpFunctor_map_projFst
+#check @Stlc.interpFunctor_map_pairHom
+#check @Stlc.interpFunctor_map_curryHom
+
 /-! ## 15. Summary
 
 ### Fully proved (no sorry):
@@ -559,6 +601,13 @@ Program length is the syntactic size of a closed term reducing to a Church numer
   limit of the tower `D₀ = Bool`, `Dₙ₊₁ = [Dₙ →𝒄 Dₙ]`, with the isomorphism
   `D∞ ≅ [D∞ →𝒄 D∞]` and an extensional model of the lambda calculus validating beta and eta;
   in that model `Ω` denotes the least element, so the λη calculus is consistent
+- Confluence of System T reduction, its set-theoretic denotational semantics, and adequacy: a
+  closed term of type `nat` reduces to the numeral of its denotation, so at base type equality of
+  denotations, convertibility and observational equivalence coincide
+- Curry-Howard-Lambek: the syntactic category of the simply typed lambda calculus (types as
+  objects, terms modulo beta-eta conversion as morphisms) is cartesian closed, and conversely
+  every cartesian closed category interprets the calculus soundly, giving a functor out of the
+  syntactic category
 
 ### Architecture (≈ 8000 lines):
 1. Lambda syntax + lift/subst               (De Bruijn indices)

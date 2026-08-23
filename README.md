@@ -230,6 +230,18 @@ Public Lean 4 developments in this area, and how they relate (repository file li
   syntax, with Tait strong normalization and the untypability of `omega`
   (`Start/SimpleTypes.lean`); and Gödel's System T with strong normalization, subject reduction
   and canonicity (`Start/SystemTSyntax.lean`, `Start/SystemT.lean`, `Start/SystemTCanon.lean`).
+  Reduction in System T is confluent (`Start/SystemTConfluence.lean`), and the set-theoretic
+  denotational semantics of System T is **adequate**: a closed term of type `nat` reduces to the
+  numeral of its denotation, so at base type equality of denotations, convertibility and
+  observational equivalence all coincide (`Start/SystemTDenot.lean`).
+- **Curry–Howard–Lambek** — an intrinsically typed simply typed lambda calculus with a unit type,
+  binary products and function types, with its substitution calculus and βη-conversion
+  (`Start/Stlc.lean`).  Its *syntactic category* — types as objects, terms with one free variable
+  modulo conversion as morphisms, substitution as composition — has finite products and an
+  exponential, i.e. it is **cartesian closed** (`Start/StlcCcc.lean`).  Conversely, every
+  cartesian closed category interprets the calculus, conversion is sound for that interpretation,
+  and the interpretation assembles into a functor out of the syntactic category
+  (`Start/CccModel.lean`).
 - **Böhm's separation theorem** — finite Böhm trees of normal forms (`Start/Bohm.lean`), the
   Böhm-out transformation (`Start/BohmOut.lean`), and the separation theorem for trees that are
   not η-equal (`Start/BohmEta.lean`).
@@ -296,7 +308,7 @@ material gets to them:
 | Schnorr randomness, Solovay tests | Deeper randomness notions, not covered by the Martin-Löf framework here | `Start/MartinLof.lean` |
 | Cook–Levin: SAT is NP-complete | The definitions of `P`, `NP`, `≤ₘᵖ` and NP-completeness are in place (`Start/ComplexityClasses.lean`), but no language is proved NP-complete; that needs an encoding of formulas and a tableau construction | `Start/ComplexityClasses.lean`, `Start/TM2PolyTime.lean` |
 | Cobham's theorem, and a link to machine-level polynomial time | Would connect `Start/ComplexityClasses.lean` (Cobham axioms) to `Start/TM2PolyTime.lean` (bounded TM2 machines) and to mathlib's `Computable` | `Start/ComplexityClasses.lean`, `Start/TM2PolyTime.lean` |
-| Adequacy and full abstraction for the models | The two models are built and proved sound (`Start/GraphModelSemantics.lean`, `Start/ScottDinfModel.lean`), but nothing says that equal denotations imply convertibility, and the local structure of `D∞` is not identified | `Start/ScottDinfModel.lean`, `Start/Bohm.lean` |
+| Adequacy and full abstraction for the *untyped* models | Adequacy is proved for the typed setting of System T (`Start/SystemTDenot.lean`), but for the untyped models the two constructions are only proved sound (`Start/GraphModelSemantics.lean`, `Start/ScottDinfModel.lean`): nothing says that equal denotations imply convertibility, and the local structure of `D∞` is not identified | `Start/ScottDinfModel.lean`, `Start/Bohm.lean` |
 | Gentzen consistency, ordinal analysis up to `ε₀` | Proof theory beyond strong normalization | `Start/SystemT.lean`, `Start/SystemTCanon.lean` |
 | Reverse mathematics (Big Five calibration) | Would connect this development to the reverse-mathematics libraries | `Start/HaltingComplete.lean`, `Start/MartinLof.lean` |
 | Bridge to `algorithmic-randomness`: lambda-term randomness ⟺ program-code randomness | Makes the AIT results above reusable outside this repo (the `cslib` representation bridge is now done — `Start/Representation.lean`) | `Start/Kolmogorov.lean` |

@@ -1027,3 +1027,43 @@ tasks:
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "lake build"
+
+  - id: M9-SYSTEMT-ADEQUACY
+    priority: P1
+    status: DONE_STRONG
+    track: theory/semantics
+    title: "Adequacy for Goedel's System T: semantic equality at base type implies convertibility and observational equivalence"
+    latest_evidence: "docs/goal/evidence/M9-SYSTEMT-ADEQUACY.md"
+    open_boundary: ""
+    milestone: M9
+    depends_on: []
+    rank: 150
+    exit_criteria:
+      - "Reduction of System T is confluent, and a typable term reduces to at most one numeral."
+      - "A set-theoretic denotational semantics of System T is defined for typable terms."
+      - "Adequacy holds: a closed term of type nat reduces to the numeral of its denotation."
+      - "At base type, equality of denotations is equivalent to convertibility and to observational equivalence."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "lake build"
+
+  - id: M9-STLC-CCC
+    priority: P1
+    status: DONE_STRONG
+    track: theory/semantics
+    title: "Curry-Howard-Lambek: the simply typed lambda calculus and cartesian closed categories"
+    latest_evidence: "docs/goal/evidence/M9-STLC-CCC.md"
+    open_boundary: ""
+    milestone: M9
+    depends_on:
+      - M9-SCOTT-DINF
+    rank: 160
+    exit_criteria:
+      - "An intrinsically typed simply typed lambda calculus with unit, products and functions is defined, with substitution laws and beta-eta conversion."
+      - "The syntactic category (types as objects, terms modulo conversion as morphisms) is a category with finite products."
+      - "The function type is an exponential, so the syntactic category is cartesian closed."
+      - "Any cartesian closed category interprets the calculus, and conversion is sound for the interpretation."
+      - "The interpretation assembles into a functor from the syntactic category."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "lake build"

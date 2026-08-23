@@ -89,6 +89,11 @@ import Start.SimpleTypes
 import Start.SystemTSyntax
 import Start.SystemT
 import Start.SystemTCanon
+import Start.SystemTConfluence
+import Start.SystemTDenot
+import Start.Stlc
+import Start.StlcCcc
+import Start.CccModel
 import Start.KleeneK
 import Start.KraftConverse
 import Start.StepComplexity
