@@ -99,3 +99,9 @@ import Start.OmegaUIncompressible
 import Start.OmegaURandom
 import Start.LevinSchnorr
 import Start.KUOptimal
+
+-- Representation bridges: de Bruijn <-> locally nameless (cslib) <-> BLC
+import Start.Representation
+
+-- Complexity classes: P, NP, polynomial-time many-one reductions, NP-completeness
+import Start.ComplexityClasses

@@ -125,6 +125,16 @@ Lambda.separable_toTerm_of_not_tagEq :
 
 -- Binary lambda calculus: terms are in bijection with the valid BLC bit strings.
 Lambda.bitsEquiv : Lambda ≃ { bs // Lambda.isBLC bs = true }
+
+-- The de Bruijn terms of this library and the locally nameless terms of `cslib`
+-- are the same calculus: the closed terms correspond, and beta-reduction is
+-- carried across in both directions, so each library's confluence theorem
+-- implies the other's.
+Lambda.closedEquiv : { t : Lambda // Lambda.freeMax t = 0 } ≃ { M : Lambda.LNTerm // M.LC ∧ M.fv = ∅ }
+Lambda.confluence_of_cslib : Lambda.Confluence
+Lambda.cslib_confluence_of_lambda :
+    ∀ (D : ℕ) (M M₁ M₂ : Lambda.LNTerm), Term.LcAt 0 M = true → (∀ a ∈ M.fv, a < D) →
+      (M ↠βᶠ M₁) → (M ↠βᶠ M₂) → ∃ M₃, (M₁ ↠βᶠ M₃) ∧ (M₂ ↠βᶠ M₃)
 ```
 
 ### Types, proof theory and complexity
@@ -143,6 +153,15 @@ Complexity.exists_computable_steps_gt :
     ∀ {t : ℕ → ℕ}, Computable t →
       ∃ f, Computable f ∧ ∀ c : Nat.Partrec.Code,
         (∀ x : ℕ, c.eval x = Part.some (f x)) → ∃ x, ¬ Complexity.StepsLe c x (t x)
+
+-- P, NP, polynomial-time many-one reductions and NP-completeness over binary
+-- words, with polynomial time for functions defined by Cobham's axioms.
+Complexity.inNP_of_inP : ∀ {L : Complexity.Language}, Complexity.InP L → Complexity.InNP L
+Complexity.InNP.of_reduction :
+    ∀ {L₁ L₂ : Complexity.Language},
+      Complexity.PolyManyOne L₁ L₂ → Complexity.InNP L₂ → Complexity.InNP L₁
+Complexity.peqNP_of_npComplete_of_inP :
+    ∀ {L : Complexity.Language}, Complexity.NPComplete L → Complexity.InP L → Complexity.PeqNP
 ```
 
 ## Related work, and what is specific to this project
@@ -152,7 +171,7 @@ Public Lean 4 developments in this area, and how they relate (repository file li
 
 | Project | What it covers | Relation to this library |
 | --- | --- | --- |
-| [`leanprover/cslib`](https://github.com/leanprover/cslib) | Lambda calculus in **locally nameless** style (β/η confluence, standardization, strong normalization), STLC, Fsub, automata, CCS, linear logic | Same metatheory, different representation: here everything is **de Bruijn**, and the development continues into computability and AIT, which `Cslib/Languages/LambdaCalculus/` does not cover (no Böhm trees, no Kolmogorov complexity, no `Ω`) |
+| [`leanprover/cslib`](https://github.com/leanprover/cslib) | Lambda calculus in **locally nameless** style (β/η confluence, standardization, strong normalization), STLC, Fsub, automata, CCS, linear logic | Same metatheory, different representation: here everything is **de Bruijn**, and the development continues into computability and AIT, which `Cslib/Languages/LambdaCalculus/` does not cover (no Böhm trees, no Kolmogorov complexity, no `Ω`). `cslib` is a dependency of this repo, and `Start/Representation.lean` proves the two representations equivalent, transporting confluence in both directions (see [`docs/representations.md`](docs/representations.md)) |
 | [`cameronfreer/algorithmic-randomness`](https://github.com/cameronfreer/algorithmic-randomness) | Algorithmic randomness over **program codes**: prefix machines, Kraft–Chaitin, Levin–Schnorr, Schnorr/Kurtz randomness, martingales | Complementary: the AIT here is defined through **lambda terms** (`Lambda.kolm`, `Lambda.kolmP`, `Lambda.chaitinOmega`), so the two developments meet at the level of statements rather than definitions; here the lambda complexity is compared with a machine-based one only in this repo's own terms (`KC.exists_const_KU_le_kolmP`), and no bridge to that repo's definitions is formalized on either side |
 | [`a9lim/blam`](https://github.com/a9lim/blam) | Computational experiments in binary lambda calculus (censuses, BBλ, Ω/K measurements) | Numerical/experimental rather than a formalization; `Start/BLC.lean` proves the BLC decoder correct and gives the bijection `Lambda ≃ {bs // isBLC bs}` |
 | `Mathlib.Computability` | Partial recursive functions, `Nat.Partrec.Code`, TM0/TM1/TM2, `Turing.PartrecToTM2` | Used as the base: the equivalences above are stated against mathlib's `Partrec`, `Computable`, `REPred` and `Turing.FinTM2`, not against a private notion of computability |
@@ -197,10 +216,16 @@ Public Lean 4 developments in this area, and how they relate (repository file li
   (`Start/KleeneK.lean`).
 - **Binary lambda calculus** — a decoder for the BLC bit-string code and the resulting
   bijection between terms and valid bit strings (`Start/BLC.lean`).
+- **Representation bridges** — de Bruijn ⟺ locally nameless (`cslib`) ⟺ BLC: mutually inverse
+  translations, substitution/reduction preservation in both directions, and confluence
+  transported each way (`Start/Representation.lean`, note in
+  [`docs/representations.md`](docs/representations.md)).
 - **Complexity** — a Blum complexity measure (fuel counting) on the partial recursive codes,
   with both Blum axioms, and the diagonal result that no computable bound captures every
   computable function (`Start/StepComplexity.lean`); polynomial-time bounded machines in
-  `Start/TM2PolyTime.lean`.
+  `Start/TM2PolyTime.lean`; and the classes `P` and `NP` over binary words with polynomial-time
+  many-one reductions and NP-completeness (`Start/ComplexityClasses.lean`) — Cook–Levin is *not*
+  formalized, so no language is proved NP-complete there.
 - **Typed calculi and proof theory** — the simply typed lambda calculus over the same de Bruijn
   syntax, with Tait strong normalization and the untypability of `omega`
   (`Start/SimpleTypes.lean`); and Gödel's System T with strong normalization, subject reduction
@@ -227,6 +252,16 @@ lake build           # builds the `Start` library
 
 `lake exe cache get` is what keeps `lake build` from recompiling Mathlib itself.
 
+The Lake package is called `lambda_computability` (matching the repository name; Lake package
+names must be Lean identifiers, hence the underscore).  The Lean library target is `Start`, so
+`import Start.…` is unaffected.
+
+## Releases
+
+Library versions (`version` in `lakefile.toml`, currently `0.1.0`) are independent of the Lean
+toolchain version, and releases are cut by hand.  See [`docs/RELEASING.md`](docs/RELEASING.md)
+for the policy and [`docs/release-notes/`](docs/release-notes) for the notes of each release.
+
 ## Task board and evidence
 
 `docs/goal/task-board.yaml` (rendered to `docs/current-goal-state.md`) tracks every result with an
@@ -247,10 +282,11 @@ material gets to them:
 | --- | --- | --- |
 | Levin–Schnorr for the lambda-calculus complexity `Lambda.kolmP` | Both halves are proved for the universal prefix machine `KC.KU` (`Start/LevinSchnorr.lean`), and `KU s ≤ kolmP s + c` is proved (`Start/KUOptimal.lean`); the opposite comparison, which is what would transfer the equivalence to `kolmP`, is not formalized and is not expected in that form | `Start/KUOptimal.lean`, `Start/LevinSchnorr.lean` |
 | Schnorr randomness, Solovay tests | Deeper randomness notions, not covered by the Martin-Löf framework here | `Start/MartinLof.lean` |
-| Cook–Levin and NP-completeness | Complexity theory is essentially absent from the Lean ecosystem | `Start/TM2PolyTime.lean`, `Start/StepComplexity.lean` |
+| Cook–Levin: SAT is NP-complete | The definitions of `P`, `NP`, `≤ₘᵖ` and NP-completeness are in place (`Start/ComplexityClasses.lean`), but no language is proved NP-complete; that needs an encoding of formulas and a tableau construction | `Start/ComplexityClasses.lean`, `Start/TM2PolyTime.lean` |
+| Cobham's theorem, and a link to machine-level polynomial time | Would connect `Start/ComplexityClasses.lean` (Cobham axioms) to `Start/TM2PolyTime.lean` (bounded TM2 machines) and to mathlib's `Computable` | `Start/ComplexityClasses.lean`, `Start/TM2PolyTime.lean` |
 | Gentzen consistency, ordinal analysis up to `ε₀` | Proof theory beyond strong normalization | `Start/SystemT.lean`, `Start/SystemTCanon.lean` |
 | Reverse mathematics (Big Five calibration) | Would connect this development to the reverse-mathematics libraries | `Start/HaltingComplete.lean`, `Start/MartinLof.lean` |
-| Bridges to other formalizations: de Bruijn ⟺ locally nameless (`cslib`), lambda-term randomness ⟺ program-code randomness (`algorithmic-randomness`) | Makes the results above reusable outside this repo | `Start/Syntax.lean`, `Start/Kolmogorov.lean` |
+| Bridge to `algorithmic-randomness`: lambda-term randomness ⟺ program-code randomness | Makes the AIT results above reusable outside this repo (the `cslib` representation bridge is now done — `Start/Representation.lean`) | `Start/Kolmogorov.lean` |
 
 ## License
 
@@ -264,7 +300,11 @@ in `Start/` depends on them: `temp.lean`, `temp2.lean` (earlier monolithic draft
 `check_subst.lean` (standalone `Primrec`/substitution checks), `MLTestRequests.lean` (a first
 draft superseded by `Start/OmegaURandom.lean`) and `Scratch.lean`.
 
----
+## Provenance and status
+
+The library compiles with `lake build` on the pinned toolchain, contains no `sorry` and no
+`axiom` in `Start/`, and its headline results depend only on `propext`, `Classical.choice` and
+`Quot.sound`.
 
 This project was edited by [Aristotle](https://aristotle.harmonic.fun).  To cite Aristotle, tag
 `@Aristotle-Harmonic` on GitHub PRs/issues, or add it as a commit co-author:

@@ -1,4 +1,4 @@
-name = "start"
+name = "lambda_computability"
 version = "0.1.0"
 keywords = ["math"]
 defaultTargets = ["Start"]
@@ -20,3 +20,8 @@ rev = "v4.33.0"
 
 [[lean_lib]]
 name = "Start"
+
+[[require]]
+name = "cslib"
+git = "https://github.com/leanprover/cslib.git"
+rev = "v4.33.0"

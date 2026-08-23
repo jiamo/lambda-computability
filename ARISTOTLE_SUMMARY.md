@@ -1,3 +1,39 @@
+# Summary of changes for run ead5e583-0a40-4924-9748-906547862a54
+两项任务都推进了；任务 1 已完整完成，任务 2 完成了结构性理论层（Cook–Levin 未做，见下)。整个项目 `lake build` 通过（8798 jobs，无错误无 linter 警告），`Start/` 下没有任何 `sorry`。
+
+## 1. 表示等价性:De Bruijn ⟺ locally-nameless ⟺ BLC(已完成)
+
+新文件 `Start/Representation.lean`(已被 `Start.lean` 导入)。cslib 已作为 Lake 依赖(tag v4.33.0),桥接的是 `Cslib.LambdaCalculus.LocallyNameless.Untyped`。
+
+- **翻译函数**:`Lambda.toLN` / `Lambda.ofLN`。采用 **de Bruijn levels** 的规范化翻译:自由索引直接解释为原子 `0,…,D-1`,不需要名字环境,并使原子 `D` 对任何在大小为 `D` 的上下文中读取的项都是规范新鲜的 —— 这正是能双向使用 cslib 那条余有限量化的 ξ 规则的关键。
+- **互逆性与封闭项双射**:`ofLN_toLN`、`toLN_ofLN`、`closedEquiv : {t // freeMax t = 0} ≃ {M // M.LC ∧ M.fv = ∅}`,并配套 `lcAt_toLN`、`lc_toLN`、`fv_toLN`、`freeMax_ofLN`。
+- **替换/归约保持**:`toLN_lift`、`toLN_subst`、`toLN_subst_zero`(de Bruijn 的 subst 恰是 cslib 的 opening)、`toLN_open_fvar`;单步正向模拟 `step_toLN` 与**反向反射** `reflect_step`,以及多步版 `reduces_toLN`、`reflect_reduces`。因为有反射,两侧归约是"同一个关系",不只是互相模拟。
+- **合流双向互证**:`confluence_of_cslib : Lambda.Confluence`(由 cslib 的 `Term.confluent_fullBeta` 导出,是本库 `Lambda.confluence_theorem` 的独立证明)与 `cslib_confluence_of_lambda`(反向transport)。
+- **三种表示**:与 `Start/BLC.lean` 的 `bitsEquiv` 复合得到 `closedBitsEquiv`。
+- **note**:`docs/representations.md`("三种表示一致性"说明,含方法、关键引理与未做部分),证据文件 `docs/goal/evidence/M9-REPRESENTATION-BRIDGE.md`,任务板新增 M9-REPRESENTATION-BRIDGE,README 相应更新。
+- 已验证公理只依赖 `propext, Classical.choice, Quot.sound`。
+- 边界:只处理 β(不含 η、类型系统),原子类型固定为 ℕ,`cslib_confluence_of_lambda` 显式携带原子上界 `D`。
+
+## 2. 复杂度理论(第 1–4 步完成;第 5–6 步 Cook–Levin/3SAT 等**未做**)
+
+新文件 `Start/ComplexityClasses.lean`(已导入 `Start.lean`),语言取 `List Bool`。
+
+- **多项式时间函数**按 **Cobham 公理**定义(`Cob` 语法 + `Cob.eval` 语义:空串、投影、两个后继、smash、复合、notation 上的有界递归)。这样"对复合封闭"是构造子而非定理,正是 P/NP/≤ₘᵖ 结构定理所需。证明了 `Cob.polyLen`:Cobham 函数输出长度被输入长度的多项式界住。为了说明这个类真的能用,证明了**串接可定义**:`Cob.eval_concat : concat.eval [x,y] = x ++ y`(用 smash 造出界 `1^{(|x|+1)(|y|+1)}`),另有 not/and/or/tail/headTrue 等小工具。
+- **类与归约**:`InP`、`InNP`(证书式:多项式长度见证 + 验证器本身拒绝过长见证,这是使该类对归约封闭的标准规范化)、`PolyManyOne`(记号 `≤ₘᵖ`)、`NPHard`、`NPComplete`、`PeqNP`。
+- **已证结构定理**:`inNP_of_inP`(P ⊆ NP)、`polyManyOne_refl/trans`、`InP.of_reduction`、`InNP.of_reduction`(此处用到多项式输出长度界与多项式复合)、`NPHard.of_reduction`、`peqNP_of_npComplete_of_inP` 与 `inP_of_peqNP`、`InP.compl/inter/union`、`InNP.union`、`bruteForce_decides`(NP 语言由显式穷举搜索判定)、非空性 `inP_univ/inP_empty/inP_nonempty`。
+- **诚实的边界(已写进模块文档、证据文件与 README)**:Cook–Levin **未形式化**,没有任何语言被证明是 NP-完备的,因此 `NPHard` 未知是否非空,`PeqNP` 既未证明也未否证;Cobham 定理(Cobham 类 = 多项式时间图灵机可计算)未形式化;与 mathlib `Computable`/`Start/TM2PolyTime.lean` 之间没有建立联系。另外我刻意避免了"P 中语言可判定"这类命题——在 Lean 里 `Nonempty (DecidablePred L)` 对任意 `L` 经典地成立,那样的陈述是空洞的,所以改为给出显式的 `bruteForce` 函数。
+- 证据文件 `docs/goal/evidence/M9-COMPLEXITY-CLASSES.md`,任务板新增 M9-COMPLEXITY-CLASSES(DONE_STRONG)与 M9-COOK-LEVIN(TODO_NEEDS_DESIGN,写明还缺什么);`docs/current-goal-state.md` 已重新生成,`scripts/goal_state.py validate` 通过(54 tasks)。
+- 关于 mathlib 的 complexity theory PR 撞车风险:我无法在此环境访问 Zulip/GitHub 讨论,只能提示这一点仍需你自行确认。
+
+## 需要你手动做的事(无法从这里完成)
+
+`docs/RELEASING.md` 里列的 GitHub 侧操作:删除误建的 `v4.33.0` release 与 tag、创建 `v0.1.0`、设置仓库描述与 topics。
+
+## 关于 README 开头那段署名
+
+仓库源文件 `README.md` 里该段只出现在结尾的 "Provenance and status" 一节;你看到它出现在最开头,是因为交付时会自动在文件顶部再插入一次。源文件本身已按你的要求调整过了。
+
+
 # Summary of changes for run 988d1de1-ccb4-4c96-b2a9-31b171749fd3
 The project now builds cleanly on Lean/Mathlib **v4.33.0** and has been extended with one new result.
 

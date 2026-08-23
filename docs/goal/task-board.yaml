@@ -1,7 +1,7 @@
 version: 2
 source_protocol: docs/goal/goal-prompt.md
-active_milestone: M8
-milestone_order: ["M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8"]
+active_milestone: M9
+milestone_order: ["M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9"]
 tasks:
   - id: M1-BOUNDARY-SORRY-CLOSURE
     priority: P0
@@ -927,6 +927,63 @@ tasks:
       - "The programs of the lambda prefix machine are turned into a total computable stream of Kraft-Chaitin requests."
       - "The total weight of that stream is at most one."
       - "KU is bounded by the lambda prefix complexity up to an additive constant."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "lake build"
+
+  - id: M9-REPRESENTATION-BRIDGE
+    priority: P1
+    status: DONE_STRONG
+    track: theory/syntax
+    title: "De Bruijn, locally nameless (cslib) and BLC are the same calculus"
+    latest_evidence: "docs/goal/evidence/M9-REPRESENTATION-BRIDGE.md"
+    open_boundary: ""
+    milestone: M9
+    depends_on: []
+    rank: 100
+    exit_criteria:
+      - "Mutually inverse translations between the de Bruijn terms of this library and the locally nameless terms of cslib are defined, and closed terms of the two representations are in bijection."
+      - "The translation intertwines substitution with opening, and a beta step on one side is exactly a full beta step on the other, in both directions."
+      - "Confluence is transported both ways between cslib's confluent_fullBeta and this library's confluence_theorem."
+      - "The de Bruijn, locally nameless and BLC representations of closed terms are combined into a single chain of bijections."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "lake build"
+
+  - id: M9-COMPLEXITY-CLASSES
+    priority: P1
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "P, NP, polynomial-time many-one reductions and NP-completeness over binary words"
+    latest_evidence: "docs/goal/evidence/M9-COMPLEXITY-CLASSES.md"
+    open_boundary: ""
+    milestone: M9
+    depends_on: []
+    rank: 110
+    exit_criteria:
+      - "A class of polynomial-time computable functions on binary words is defined, and its outputs are proved polynomially bounded in the input length."
+      - "The classes P and NP are defined, NP in certificate style with a polynomially bounded witness."
+      - "Polynomial-time many-one reducibility is defined and proved to be a preorder, and NP-hardness and NP-completeness are defined."
+      - "P is contained in NP, both classes are closed downwards under reductions, and an NP-complete language lies in P exactly when P equals NP."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "lake build"
+
+  - id: M9-COOK-LEVIN
+    priority: P2
+    status: TODO_NEEDS_DESIGN
+    track: theory/complexity
+    title: "Cook-Levin: SAT is NP-complete"
+    latest_evidence: ""
+    open_boundary: "Not started. Needs an encoding of Boolean formulas as binary words, a polynomial-time evaluator for that encoding to place SAT in NP, and a polynomial-time tableau construction turning an arbitrary NP verifier into a formula. The structural theory it plugs into is M9-COMPLEXITY-CLASSES."
+    milestone: M9
+    depends_on:
+      - M9-COMPLEXITY-CLASSES
+    rank: 120
+    exit_criteria:
+      - "Boolean formulas and satisfiability are encoded as a language over binary words."
+      - "SAT is proved to be in NP."
+      - "Every language in NP reduces to SAT in polynomial time."
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "lake build"
