@@ -110,6 +110,15 @@ import Start.Representation
 
 -- Complexity classes: P, NP, polynomial-time many-one reductions, NP-completeness
 import Start.ComplexityClasses
+-- SAT as a language of binary words, and the proof that it is in NP
+import Start.Sat
+-- Boolean circuits and the Tseitin transformation into CNF
+import Start.Tseitin
+-- Cook-Levin: what is proved, and the compilation step that remains
+import Start.CookLevin
+
+-- Kolmogorov complexity is independent of the representation of lambda terms
+import Start.KolmogorovRepresentation
 
 -- Denotational semantics: Scott's graph model as a reflexive object, and soundness of beta
 import Start.GraphModel

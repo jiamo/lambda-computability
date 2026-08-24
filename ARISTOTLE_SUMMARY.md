@@ -1,3 +1,26 @@
+# Summary of changes for run e27042b6-87c3-4bab-9995-71cbdee352aa
+## What I did
+
+Work continued on the last board item, `M9-COOK-LEVIN`. The whole project builds and contains no `sorry`; every new theorem depends only on the standard axioms (`propext`, `Classical.choice`, `Quot.sound`).
+
+**1. SAT is in NP — proved (`Start/Sat.lean`, new, imported by `Start.lean`).**
+- CNFs (clauses of signed-index literals) and their truth value under an assignment word.
+- An encoding of CNFs as binary words by a prefix-free token code read from the right (`1` = tick, `0 1` / `0 0 1` = negative / positive literal, `0 0 0` = clause separator), with a *total, junk-tolerant* decoder, so every word denotes a CNF; `decode_encCnf` proves decoding inverts encoding.
+- `SAT` as a language of words, plus non-vacuity (`SAT_encCnf`, `SAT_encCnf_nil`, `not_SAT_encCnf_empty_clause`).
+- An evaluator automaton that reads the token code while evaluating it against an assignment, proved to simulate the decoder, and its implementation as an explicit polynomial-time (Cobham) term by bounded recursion on notation (`eval_satMachine`), together with the verifier `satVerifier` and the witness-truncation lemmas that give the polynomial witness bound. Result: **`Complexity.Sat.inNP_SAT`**.
+- Reusable polynomial-time gadgets (conditional, dropping `|u|` bits, iterated tail, bit access, Boolean combinators).
+
+**2. Boolean circuits and the Tseitin translation — proved (`Start/Tseitin.lean`, new).** Straight-line circuits, their evaluator, circuit satisfiability, and the translation into CNF with one variable per gate and per input. Main results: **`csat_iff_sat_toCnf`** (the translation preserves satisfiability, both directions proved from the canonical assignment and from an arbitrary satisfying assignment) and `length_toCnf_le` (linear size).
+
+**3. Cook–Levin, and the precise remaining gap (`Start/CookLevin.lean`, new).** NP-*hardness* of SAT is **not** proved. What is proved: the only missing ingredient is the compilation of an arbitrary polynomial-time verifier into a Boolean circuit family whose formula is emitted by a polynomial-time term. That statement is isolated as `Complexity.CircuitCompilable`, and from it **`npComplete_SAT_of_circuitCompilable`** (SAT is NP-complete) and `peqNP_iff_inP_SAT_of_circuitCompilable` follow, using the Tseitin translation. The hypothesis is never assumed — it occurs only as an antecedent. Unconditionally, `polyManyOne_SAT_of_inP` shows every language in P reduces to SAT.
+
+Why hardness is not finished: because polynomial time for functions is defined syntactically (Cobham-style) rather than by machines, compiling a verifier means a structural recursion over the term (fixed-width value blocks with presence bits, unary multiplication for the smash function, unrolling of bounded recursion), and on top of that the formula emitter must itself be a polynomial-time term with unary index arithmetic. That is a very large development; rather than leave holes, the boundary is documented precisely and the conditional theorem makes the gap formal.
+
+**4. Earlier work registered and documented.** The representation-invariance results for Kolmogorov complexity (exact equality of the de Bruijn and locally nameless measures, the identity `|bits t| = size t + nodes t`, and the proof that the factor two between the size and bit measures does *not* improve to an additive constant) are now recorded on the board as a completed item with its own evidence note.
+
+**5. Project bookkeeping.** New evidence notes `docs/goal/evidence/M9-COOK-LEVIN.md` and `docs/goal/evidence/M9-KOLMOGOROV-REPRESENTATION.md`; the task board updated (`M9-COOK-LEVIN` now partial with an explicit open boundary, new item for the Kolmogorov work), re-rendered `docs/current-goal-state.md`, and the board validator passes. The README's overview and roadmap were updated to match. All work is committed and pushed.
+
+
 # Summary of changes for run 930f128c-081a-4433-96b9-0c555584c431
 Both remaining gaps are now closed, with everything building under `lake build` and no `sorry` anywhere in the `Start` library.
 

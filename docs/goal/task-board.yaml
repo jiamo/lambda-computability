@@ -969,13 +969,32 @@ tasks:
       - "python3 scripts/goal_state.py validate"
       - "lake build"
 
+  - id: M9-KOLMOGOROV-REPRESENTATION
+    priority: P1
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "Kolmogorov complexity is invariant under the choice of term representation"
+    latest_evidence: "docs/goal/evidence/M9-KOLMOGOROV-REPRESENTATION.md"
+    open_boundary: ""
+    milestone: M9
+    depends_on:
+      - M9-REPRESENTATION-BRIDGE
+    rank: 115
+    exit_criteria:
+      - "Kolmogorov complexity is defined for the locally nameless representation and proved equal, with no additive constant, to the de Bruijn one."
+      - "The BLC code length of a term is computed exactly in terms of its size and its number of nodes."
+      - "The two-sided bound between the size measure and the bit measure is shown not to improve to an additive constant."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "lake build"
+
   - id: M9-COOK-LEVIN
     priority: P2
-    status: TODO_NEEDS_DESIGN
+    status: BACKEND_PARTIAL
     track: theory/complexity
     title: "Cook-Levin: SAT is NP-complete"
-    latest_evidence: ""
-    open_boundary: "Not started. Needs an encoding of Boolean formulas as binary words, a polynomial-time evaluator for that encoding to place SAT in NP, and a polynomial-time tableau construction turning an arbitrary NP verifier into a formula. The structural theory it plugs into is M9-COMPLEXITY-CLASSES."
+    latest_evidence: "docs/goal/evidence/M9-COOK-LEVIN.md"
+    open_boundary: "Two of the three exit criteria are met: CNFs are encoded as binary words with a total junk-tolerant decoder (Start/Sat.lean), and SAT is proved to be in NP with an explicit Cobham verifier (Complexity.Sat.inNP_SAT). The Tseitin translation from Boolean circuits to CNF is formalized and proved to preserve satisfiability and to have linear size (Start/Tseitin.lean). What is missing is the compilation step: turning an arbitrary Cobham verifier into a circuit family, together with a Cobham term that emits the resulting formula. That step is stated explicitly as Complexity.CircuitCompilable in Start/CookLevin.lean, and Complexity.npComplete_SAT_of_circuitCompilable proves that it is all that is missing; the hypothesis is nowhere assumed. Unconditionally, every language in P reduces to SAT (Complexity.polyManyOne_SAT_of_inP), but NPHard is still not known to be inhabited."
     milestone: M9
     depends_on:
       - M9-COMPLEXITY-CLASSES

@@ -224,8 +224,13 @@ Public Lean 4 developments in this area, and how they relate (repository file li
   with both Blum axioms, and the diagonal result that no computable bound captures every
   computable function (`Start/StepComplexity.lean`); polynomial-time bounded machines in
   `Start/TM2PolyTime.lean`; and the classes `P` and `NP` over binary words with polynomial-time
-  many-one reductions and NP-completeness (`Start/ComplexityClasses.lean`) — Cook–Levin is *not*
-  formalized, so no language is proved NP-complete there.
+  many-one reductions and NP-completeness (`Start/ComplexityClasses.lean`).  **SAT is in NP**:
+  CNFs are encoded as binary words and an explicit Cobham verifier evaluates them
+  (`Start/Sat.lean`), and the **Tseitin translation** from Boolean circuits to CNF is proved to
+  preserve satisfiability and to have linear size (`Start/Tseitin.lean`).  NP-*hardness* of SAT is
+  not formalized: the missing compilation of an arbitrary verifier into a circuit family is
+  isolated as an explicit hypothesis, from which NP-completeness of SAT does follow
+  (`Start/CookLevin.lean`), so no language is proved NP-complete outright.
 - **Typed calculi and proof theory** — the simply typed lambda calculus over the same de Bruijn
   syntax, with Tait strong normalization and the untypability of `omega`
   (`Start/SimpleTypes.lean`); and Gödel's System T with strong normalization, subject reduction
@@ -306,7 +311,7 @@ material gets to them:
 | --- | --- | --- |
 | Levin–Schnorr for the lambda-calculus complexity `Lambda.kolmP` | Both halves are proved for the universal prefix machine `KC.KU` (`Start/LevinSchnorr.lean`), and `KU s ≤ kolmP s + c` is proved (`Start/KUOptimal.lean`); the opposite comparison, which is what would transfer the equivalence to `kolmP`, is not formalized and is not expected in that form | `Start/KUOptimal.lean`, `Start/LevinSchnorr.lean` |
 | Schnorr randomness, Solovay tests | Deeper randomness notions, not covered by the Martin-Löf framework here | `Start/MartinLof.lean` |
-| Cook–Levin: SAT is NP-complete | The definitions of `P`, `NP`, `≤ₘᵖ` and NP-completeness are in place (`Start/ComplexityClasses.lean`), but no language is proved NP-complete; that needs an encoding of formulas and a tableau construction | `Start/ComplexityClasses.lean`, `Start/TM2PolyTime.lean` |
+| Cook–Levin: SAT is NP-complete | SAT is encoded and proved to be in NP (`Start/Sat.lean`) and the Tseitin translation of circuits into CNF is proved (`Start/Tseitin.lean`); what is missing is the compilation of an arbitrary Cobham verifier into a circuit family together with a polynomial-time emitter of the resulting formula, stated as `Complexity.CircuitCompilable` and proved to be the only remaining gap (`Start/CookLevin.lean`) | `Start/CookLevin.lean`, `Start/Tseitin.lean`, `Start/Sat.lean` |
 | Cobham's theorem, and a link to machine-level polynomial time | Would connect `Start/ComplexityClasses.lean` (Cobham axioms) to `Start/TM2PolyTime.lean` (bounded TM2 machines) and to mathlib's `Computable` | `Start/ComplexityClasses.lean`, `Start/TM2PolyTime.lean` |
 | Adequacy and full abstraction for the *untyped* models | Adequacy is proved for the typed setting of System T (`Start/SystemTDenot.lean`), but for the untyped models the two constructions are only proved sound (`Start/GraphModelSemantics.lean`, `Start/ScottDinfModel.lean`): nothing says that equal denotations imply convertibility, and the local structure of `D∞` is not identified | `Start/ScottDinfModel.lean`, `Start/Bohm.lean` |
 | Gentzen consistency, ordinal analysis up to `ε₀` | Proof theory beyond strong normalization | `Start/SystemT.lean`, `Start/SystemTCanon.lean` |
