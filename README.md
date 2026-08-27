@@ -144,6 +144,10 @@ Lambda.cslib_confluence_of_lambda :
 Lambda.sn_of_typing :
     ∀ {Γ : List Lambda.Ty} {t : Lambda} {A : Lambda.Ty}, Lambda.Typing Γ t A → t.SN
 
+-- Strong normalization for System F, by Girard's reducibility candidates.
+SystemF.sn_of_typing :
+    ∀ {Γ : List SystemF.FTy} {t : Lambda} {A : SystemF.FTy}, SystemF.Typing Γ t A → t.SN
+
 -- Canonicity for Gödel's System T: every closed term of type nat reduces to a numeral.
 GodelT.exists_reduces_num :
     ∀ {t : GodelT.Tm}, GodelT.Typing [] t GodelT.Ty.nat → ∃ n, GodelT.reduces t (GodelT.num n)
@@ -227,14 +231,55 @@ Public Lean 4 developments in this area, and how they relate (repository file li
   many-one reductions and NP-completeness (`Start/ComplexityClasses.lean`).  **SAT is in NP**:
   CNFs are encoded as binary words and an explicit Cobham verifier evaluates them
   (`Start/Sat.lean`), and the **Tseitin translation** from Boolean circuits to CNF is proved to
-  preserve satisfiability and to have linear size (`Start/Tseitin.lean`).  NP-*hardness* of SAT is
-  not formalized: the missing compilation of an arbitrary verifier into a circuit family is
-  isolated as an explicit hypothesis, from which NP-completeness of SAT does follow
-  (`Start/CookLevin.lean`), so no language is proved NP-complete outright.
+  preserve satisfiability and to have linear size (`Start/Tseitin.lean`).  Every Cobham term is
+  compiled into a Boolean circuit of polynomial size, which gives `P ⊆ P/poly` and, for every
+  language in NP, a polynomial-size circuit family satisfiable exactly on the language
+  (`Start/CobhamCircuit.lean`, `Start/CobhamBRec.lean`, `Start/PolyCircuit.lean`).  NP-*hardness*
+  of SAT is not formalized: what is missing is uniformity of that family.  The dependence on the
+  instance has been removed — the acceptance circuits read the instance off their own input
+  (`Start/PinnedCircuit.lean`), the instance is written into the formula by unit clauses
+  (`Start/PinnedCnf.lean`) and those are emitted by an explicit Cobham term
+  (`Start/CobhamPin.lean`) — so what is left as an explicit hypothesis is the usual P-uniformity
+  of a *length-indexed* circuit family, from which NP-completeness of SAT does follow
+  (`Start/CookLevinUniform.lean`); no language is proved NP-complete outright.  On the other side,
+  the reduction to SAT is unconditional for every language decided by a P-uniform circuit family
+  (`Start/UniformDecide.lean`), a class that contains every regular language
+  (`Start/UniformAuto.lean`) and every symmetric language whose count predicate is decided in
+  unary by a Cobham term — majority, exactly half, count divisible by `k`
+  (`Start/UniformMaj.lean`, `Start/UniformSym.lean`).  Both are subsumed by the language of any
+  automaton with *polynomially many* states whose number of states, transition function and
+  acceptance predicate are computed in unary by Cobham terms (`Start/UniformState.lean`,
+  `Start/UniformStateCode.lean`), and both earlier families are derived from it
+  (`Start/UniformStateSubsume.lean`); a further instance decides whether the binary value of a word is
+  divisible by its length plus one, a language that is neither regular nor symmetric
+  (`Start/UniformStateInst.lean`).  The Cook–Levin tableau itself is formalized: the space–time
+  diagram of a cellular automaton run on a Cobham-computable width and time is a P-uniform circuit
+  family (`Start/UniformCA.lean`, `Start/UniformCACode.lean`), and so is the language of a one-tape
+  deterministic Turing machine with finitely many states under the same bounds
+  (`Start/UniformTM.lean`).  A further loop rule stacks polynomially many copies of a P-uniform
+  *stage* circuit over a P-uniform base, each copy rewired to the outputs of the copy below — the
+  shape the unrolling of a bounded recursion has — and proves the stack P-uniform
+  (`Start/UniformIterate.lean`), the gates of a copy being read off the description of the stage by
+  a Cobham term (`Start/UniformSelect.lean`).  The compiler itself is in place for the whole
+  non-recursive fragment of the Cobham algebra: every term built from projections, the empty
+  word, appending a bit, concatenation and composition is turned into a P-uniform circuit family
+  computing it, together with a polynomial length bound
+  (`Start/UniformSigCompile.lean`, `Start/UniformSigFlat.lean`), leaving bounded recursion
+  (`Cob.bRec`) as the only shape for which the device must still be produced by hand.
 - **Typed calculi and proof theory** — the simply typed lambda calculus over the same de Bruijn
   syntax, with Tait strong normalization and the untypability of `omega`
-  (`Start/SimpleTypes.lean`); and Gödel's System T with strong normalization, subject reduction
-  and canonicity (`Start/SystemTSyntax.lean`, `Start/SystemT.lean`, `Start/SystemTCanon.lean`).
+  (`Start/SimpleTypes.lean`); **System F**, the polymorphic lambda calculus in Curry style over
+  the same terms, with Girard's reducibility candidates and strong normalization
+  (`Start/SystemF.lean`), the substitution lemmas and subject reduction with its generation lemma
+  (`Start/SystemFSubst.lean`, `Start/SystemFSR.lean`), and the polymorphic Church numerals,
+  self-application — typable in System F but not in the simply typed calculus — and unique normal
+  forms (`Start/SystemFChurch.lean`), with the Church-style presentation and its strong
+  normalization by erasure, together with its subject reduction (`Start/SystemFC.lean`,
+  `Start/SystemFCSR.lean`) and the confluence of its annotated reduction, both β and type-β, by
+  parallel reduction (`Start/SystemFCSubst.lean`, `Start/SystemFCConfluence.lean`); and Gödel's
+  System T with strong
+  normalization, subject reduction and canonicity (`Start/SystemTSyntax.lean`, `Start/SystemT.lean`,
+  `Start/SystemTCanon.lean`).
   Reduction in System T is confluent (`Start/SystemTConfluence.lean`), and the set-theoretic
   denotational semantics of System T is **adequate**: a closed term of type `nat` reduces to the
   numeral of its denotation, so at base type equality of denotations, convertibility and
@@ -247,6 +292,65 @@ Public Lean 4 developments in this area, and how they relate (repository file li
   cartesian closed category interprets the calculus, conversion is sound for that interpretation,
   and the interpretation assembles into a functor out of the syntactic category
   (`Start/CccModel.lean`).
+- **Dependent types: `λΠ` and locally cartesian closed categories** — the layer above
+  Curry–Howard–Lambek, where a type may depend on a term.  The calculus `λΠ` is formalized as a
+  pure type system: raw syntax with a full parallel-substitution calculus and **Church–Rosser**
+  for β (`Start/LambdaPi.lean`), and the typing judgement with weakening, the substitution lemma,
+  the five inversion lemmas, validity, context conversion and **subject reduction**
+  (`Start/LambdaPiTyping.lean`, `Start/LambdaPiBound.lean`).  The calculus is then normalized:
+  types are unique up to conversion and the terms split into kinds, families and objects
+  (`Start/LambdaPiUnique.lean`); forgetting the dependency sends a type to its **skeleton**, a
+  simple type, which depends only on the type variables and is therefore invariant under
+  conversion (`Start/LambdaPiSkeleton.lean`); a dependent derivation erases to a simply typed one
+  over the skeletons (`Start/LambdaPiSimple.lean`); and Tait's reducibility method, in the Kripke
+  form that the type annotations force, gives **strong normalization** for `λΠ`
+  (`LambdaPi.Typing.sn`, `Start/LambdaPiSN.lean`).  Reading the calculus as a logic, this yields
+  **consistency**: in the context declaring a type variable `α : ∗` no term has type `α`
+  (`LambdaPi.not_typing_var_zero`, `Start/LambdaPiConsistent.lean`).  Termination and confluence
+  together make the calculus effective: a verified reduction strategy computes the normal form of
+  a strongly normalizing term, so conversion of typable terms is **decidable**
+  (`Start/LambdaPiNormalize.lean`), and the type-inference algorithm — written as a function that
+  returns a type *together with a derivation*, hence sound by construction, and proved complete —
+  decides typability and type checking (`LambdaPi.infer`, `LambdaPi.decidableTyping`,
+  `Start/LambdaPiInfer.lean`).  Its **syntactic category** —
+  objects
+  the well-formed contexts, morphisms the well-typed substitutions modulo conversion — has a
+  terminal object, and its context-extension squares are **pullbacks**
+  (`Start/LambdaPiCat.lean`), which is the universal property that "a substitution into `A :: Γ`
+  is a substitution into `Γ` plus a term of `A`".  On the semantic side, `Start/Cwa.lean` defines
+  categories with attributes and their Π-structures, `Start/CwaType.lean` builds the standard
+  model of families of types, `Start/Lccc.lean` packages Mathlib's chosen pullbacks and
+  exponentiable morphisms into an explicit `LocallyCartesianClosed` class with the adjoint chain
+  `Σ_f ⊣ f* ⊣ Π_f`, and `Start/LcccType.lean` proves that `Type u` is locally cartesian closed
+  with an explicit dependent product and **identifies that categorical Π with the type-theoretic
+  one** of the standard model.  The syntax of `λΠ` itself is a category with attributes with a
+  weak Π-structure, and the η-law is proved to fail there (`Start/LambdaPiCwa.lean`).  On the
+  semantic side the coherence problem is solved: types are presented by **local universes**, which
+  makes substitution strictly functorial, so every category with pullbacks is a category with
+  attributes and no slice object is lost (`Start/CwaLocalUniverse.lean`).  That strictified model
+  also carries **both quantifiers**: for a locally cartesian closed category, the dependent product
+  is built generically — its base is the pushforward classifying the pair `(A, B)`, its total space
+  the pushforward of the display map of the generic `B` — so it is *strictly* stable under
+  substitution, and abstraction and application are the two legs of one bijection, hence satisfy
+  **β and η** (`Cwa.piStructOfLccc`); the dependent sum comes with it (`Cwa.sigmaStructOfLccc`), and
+  `Type u` is an instance (`Start/CwaPi.lean`, `Start/CwaPiType.lean`).  Abstraction and
+  application of that dependent product are natural in the context, so the model also validates
+  the substitution law `(λ b)[σ] = λ (b[σ⁺])` (`LuTy.lam_sub`, `Start/CwaPiSub.lean`).  Since the
+  types of `λΠ` are the *terms of the sort `∗`* rather than all the types of a model,
+  `Start/CwaSmall.lean` extracts from a model with a universe its **small fragment**
+  (`Cwa.Universe.smallCwa`): the category with attributes whose types are the codes, with its
+  inclusion into the ambient model, the restriction of universe-preserving comparisons to it, and
+  — when the universe is closed under products naturally — its own dependent product
+  (`Cwa.Universe.smallWeakPi`).  Both sides supply an instance: the model presented by a universe
+  object, whose types in a context are the maps into it (`CwaUniv.smallTyEquivHom`), and the small
+  fragment of the syntactic model of `λΠ` (`LambdaPiUniv.smallSyntacticPi`), for which the code of
+  a product is proved stable under substitution (`LambdaPiUniv.codeQ_sub`).  That small fragment
+  is then compared with the model whose types are the small types of the calculus, and the two are
+  found to be **the same model**: the identity on contexts is a morphism of categories with
+  attributes in each direction (`LambdaPiUniv.smallToCwa` and `LambdaPiUniv.cwaToSmall`), acting on
+  types by the bijection between the terms of `∗` and the small types, and the two composites are
+  the identity, so the two syntactic models are isomorphic in the category of models
+  (`LambdaPiUniv.smallModelIso`, `Start/LambdaPiSmallCompare.lean`).
 - **Böhm's separation theorem** — finite Böhm trees of normal forms (`Start/Bohm.lean`), the
   Böhm-out transformation (`Start/BohmOut.lean`), and the separation theorem for trees that are
   not η-equal (`Start/BohmEta.lean`).
@@ -262,13 +366,64 @@ Public Lean 4 developments in this area, and how they relate (repository file li
   (`Start/ScottDinfModel.lean`).  In `D∞` the diverging term `Ω` denotes the least element, so
   `Ω` and `I` are not βη-convertible: the **λη calculus is consistent**, again by a purely
   semantic argument (`Start/ScottDinfOmega.lean`).
+- **Adequacy of the graph model** — the interpretation in the graph model is not merely sound: a
+  term whose denotation contains a token, in any environment, has a **head normal form**
+  (`Start/GraphAdequacy.lean`, by a computability argument on the tokens), and conversely a head
+  normal form has a nonempty denotation, so for a closed term `⟦t⟧ρ = ∅` exactly when `t` has no
+  head normal form.  For closed terms this coincides with unsolvability
+  (`Start/HnfSolvable.lean`: a closed head normal form is solvable, by the substitution calculus
+  of `Start/Bohm.lean`), so the least element of the model is precisely the unsolvable terms; and
+  denotational equality implies **observational equivalence** at head normalization
+  (`Start/GraphObs.lean`); the converse fails, see below.
+- **Adequacy of `D∞`** — the same holds for the inverse limit.  Every head normalizable term has a
+  denotation different from the least element in a suitable environment (`Start/DinfHnf.lean`),
+  and conversely a term whose denotation is not the least element, in any environment, has a head
+  normal form (`ScottDinf.hasHnf_of_ddenot_ne_botDinf`, `Start/DinfAdequacy.lean`).  The proof is
+  the classical computability argument, carried out along the *tower* — `ScottDinf.RelD n z t`
+  relates a stage-`n` value to a term, is compatible with the embedding–projection pairs and
+  closed under suprema of chains, and the fundamental lemma `ScottDinf.realD_substEnv` shows the
+  interpretation preserves it.  Hence `⟦t⟧ρ = ⊥` in every environment exactly when `t` has no head
+  normal form, for a closed term exactly when it is unsolvable, and denotational equality implies
+  observational equivalence at head normalization (`ScottDinf.obsEqHnf_of_ddenot_eq`).
+- **Full abstraction fails for the graph model** (`Start/GraphNotFullyAbstract.lean`) — the
+  identity `λx. x` and its eta-expansion `λx. λy. x y` have different graph denotations, the graph
+  model not being extensional, but no context distinguishes them, because `D∞` validates eta and
+  is adequate.  So the inclusion of denotational into observational equality is strict there
+  (`GraphNotFullyAbstract.graph_not_fully_abstract`), and `D∞` identifies strictly more terms than
+  the graph model.  For `D∞` itself full abstraction is not claimed.
+- **The approximation theorem for the graph model** (`Start/GraphApprox.lean`,
+  `Start/GraphApproxTheorem.lean`) — the direct approximant `ω(M)` keeps the abstraction prefix
+  and the variable head of `M` and erases everything under a head redex to `Ω`.  The denotation
+  of a term is exactly the union of the denotations of the direct approximants of its reducts,
+  `⟦M⟧ρ = ⋃ {⟦ω(M')⟧ρ : M ↠ M'}` (`GraphModel.denot_eq_iUnion_denot_direct`): no information of
+  a term is invisible to all of its finite approximants.  The easy inclusion is monotonicity of
+  the denotation for the approximation order; the hard one is a Kripke-style computability
+  argument on the tokens, whose fundamental lemma `GraphModel.arealAux_substEnv` carries two
+  environments, one for the free variables of the term and one for the target context of the
+  substitution.
+- **Head reduction** — the head strategy (weak head steps, allowed under a leading abstraction)
+  is defined in `Start/HeadReduction.lean` and proved deterministic and *normalizing*: a term has
+  a head normal form exactly when the strategy terminates on it
+  (`Lambda.hasHnf_iff_hasHeadEval`), by standardization for weak head reduction and confluence.
+  This yields the structural laws that arbitrary reductions do not give: head divergence is
+  preserved by substitution (`Lambda.hasHnf_of_hasHnf_subst`) and head normalizability of an
+  application is inherited by its function part (`Lambda.HasHnf.app_left`).  Hence a purely
+  syntactic proof that every solvable term has a head normal form (`Start/HeadSolvable.lean`),
+  which makes Wadsworth's characterization of closed solvable terms independent of the graph
+  model.
 
 `Start/Demo.lean` is a guided tour with `#check`s of the headline statements.
 
 ## Building
 
-The project pins Lean `v4.33.0` (`lean-toolchain`) and Mathlib `v4.33.0` (`lakefile.toml` and
-`lake-manifest.json`).  These three must agree: if they do not, `lake` re-resolves the
+> **Note on the pinned toolchain.**  The library is built against Lean `v4.33.0` and the matching
+> Mathlib (commit `db584cd6`, tag `v4.33.0`), which is what `lean-toolchain`, `lakefile.toml` and
+> `lake-manifest.json` pin.  All of `Start/` compiles on that toolchain, including the two modules
+> that depend on `cslib` (`Start/Representation.lean` and `Start/KolmogorovRepresentation.lean`),
+> whose pinned revision needs Lean `v4.33` features.
+
+The project pins Lean `v4.33.0` (`lean-toolchain`) and Mathlib `v4.33.0`
+(`lakefile.toml` and `lake-manifest.json`).  These three must agree: if they do not, `lake` re-resolves the
 dependencies on every invocation and starts compiling all of Mathlib from source, which never
 finishes in reasonable time.
 
@@ -294,8 +449,9 @@ for the policy and [`docs/release-notes/`](docs/release-notes) for the notes of 
 ## Task board and evidence
 
 `docs/goal/task-board.yaml` (rendered to `docs/current-goal-state.md`) tracks every result with an
-evidence note in `docs/goal/evidence/`, including the honest boundary of each claim.  All 51 tasks
-are `DONE_STRONG`.  Validate and re-render with:
+evidence note in `docs/goal/evidence/`, including the honest boundary of each claim.  Of the 60
+tasks, 58 are `DONE_STRONG`; the two `BACKEND_PARTIAL` ones (`M9-COOK-LEVIN` and
+`M9-LAMBDAPI-LCCC`) carry an explicit open boundary.  Validate and re-render with:
 
 ```bash
 python3 scripts/goal_state.py validate
@@ -311,9 +467,9 @@ material gets to them:
 | --- | --- | --- |
 | Levin–Schnorr for the lambda-calculus complexity `Lambda.kolmP` | Both halves are proved for the universal prefix machine `KC.KU` (`Start/LevinSchnorr.lean`), and `KU s ≤ kolmP s + c` is proved (`Start/KUOptimal.lean`); the opposite comparison, which is what would transfer the equivalence to `kolmP`, is not formalized and is not expected in that form | `Start/KUOptimal.lean`, `Start/LevinSchnorr.lean` |
 | Schnorr randomness, Solovay tests | Deeper randomness notions, not covered by the Martin-Löf framework here | `Start/MartinLof.lean` |
-| Cook–Levin: SAT is NP-complete | SAT is encoded and proved to be in NP (`Start/Sat.lean`) and the Tseitin translation of circuits into CNF is proved (`Start/Tseitin.lean`); what is missing is the compilation of an arbitrary Cobham verifier into a circuit family together with a polynomial-time emitter of the resulting formula, stated as `Complexity.CircuitCompilable` and proved to be the only remaining gap (`Start/CookLevin.lean`) | `Start/CookLevin.lean`, `Start/Tseitin.lean`, `Start/Sat.lean` |
+| Cook–Levin: SAT is NP-complete | SAT is encoded and proved to be in NP (`Start/Sat.lean`), the Tseitin translation of circuits into CNF is proved (`Start/Tseitin.lean`), and every Cobham verifier is compiled into a polynomial-size circuit family (`Start/PolyCircuit.lean`); what is missing is P-uniformity of that family, i.e. an explicit polynomial-time emitter of the description of the `n`-th circuit, from which NP-completeness of SAT does follow (`Start/CookLevinUniform.lean`); the reduction to SAT is unconditional for the P-uniformly decidable languages, which include the regular languages, the uniform symmetric languages (`Start/UniformSym.lean`) and, more generally, the languages of automata with polynomially many Cobham-computable states (`Start/UniformStateCode.lean`), the Cook–Levin tableau of a cellular automaton or a one-tape Turing machine (`Start/UniformCACode.lean`, `Start/UniformTM.lean`), and the stack of polynomially many copies of a P-uniform stage circuit (`Start/UniformIterate.lean`) | `Start/CookLevinUniform.lean`, `Start/CookLevin.lean`, `Start/Tseitin.lean`, `Start/UniformSym.lean`, `Start/UniformStateCode.lean` |
 | Cobham's theorem, and a link to machine-level polynomial time | Would connect `Start/ComplexityClasses.lean` (Cobham axioms) to `Start/TM2PolyTime.lean` (bounded TM2 machines) and to mathlib's `Computable` | `Start/ComplexityClasses.lean`, `Start/TM2PolyTime.lean` |
-| Adequacy and full abstraction for the *untyped* models | Adequacy is proved for the typed setting of System T (`Start/SystemTDenot.lean`), but for the untyped models the two constructions are only proved sound (`Start/GraphModelSemantics.lean`, `Start/ScottDinfModel.lean`): nothing says that equal denotations imply convertibility, and the local structure of `D∞` is not identified | `Start/ScottDinfModel.lean`, `Start/Bohm.lean` |
+| Full abstraction for the untyped models | Adequacy is proved for the typed setting of System T (`Start/SystemTDenot.lean`) and, for the untyped calculus, for both the graph model (`Start/GraphAdequacy.lean`, `Start/HnfSolvable.lean`, `Start/GraphObs.lean`) and `D∞` (`Start/DinfAdequacy.lean`); for the graph model full abstraction is now *disproved* (`Start/GraphNotFullyAbstract.lean`: the identity and its eta-expansion are observationally equivalent but have different graph denotations); the approximation theorem for the graph model is proved (`Start/GraphApproxTheorem.lean`: a denotation is the union of the denotations of the direct approximants of the reducts); for `D∞` full abstraction is still open, and would need the corresponding approximation theorem there | `Start/GraphNotFullyAbstract.lean`, `Start/GraphApprox.lean`, `Start/GraphApproxTheorem.lean`, `Start/DinfAdequacy.lean`, `Start/GraphObs.lean` |
 | Gentzen consistency, ordinal analysis up to `ε₀` | Proof theory beyond strong normalization | `Start/SystemT.lean`, `Start/SystemTCanon.lean` |
 | Reverse mathematics (Big Five calibration) | Would connect this development to the reverse-mathematics libraries | `Start/HaltingComplete.lean`, `Start/MartinLof.lean` |
 | Bridge to `algorithmic-randomness`: lambda-term randomness ⟺ program-code randomness | Makes the AIT results above reusable outside this repo (the `cslib` representation bridge is now done — `Start/Representation.lean`) | `Start/Kolmogorov.lean` |

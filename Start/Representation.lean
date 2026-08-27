@@ -18,7 +18,7 @@ Main results:
   locally nameless terms;
 * `Lambda.step_toLN`, `Lambda.reflect_step` — a step in one representation is exactly a step in
   the other;
-* `Lambda.confluence_of_cslib` — `cslib`'s `confluent_fullBeta` transported to this library's
+* `Lambda.confluence_of_cslib` — `cslib`'s `confluence_beta` transported to this library's
   reduction, and `Lambda.cslib_confluence_of_lambda` — this library's `confluence_theorem`
   transported to `cslib`'s reduction.
 -/
@@ -26,6 +26,7 @@ Main results:
 import Start.CodeArith
 import Start.BLC
 import Cslib.Languages.LambdaCalculus.LocallyNameless.Untyped.FullBetaConfluence
+import Cslib.Languages.LambdaCalculus.LocallyNameless.Untyped.LcAt
 
 set_option maxRecDepth 4000
 set_option relaxedAutoImplicit false
@@ -163,7 +164,7 @@ theorem toLN_subst_zero (D : ℕ) (s t : Lambda) :
 /-! ### Local closure and free atoms -/
 
 /-- Translations are locally closed at the depth they are translated at. -/
-theorem lcAt_toLN (D : ℕ) : ∀ (d : ℕ) (t : Lambda), Term.LcAt d (toLN D d t) = Bool.true := by
+theorem lcAt_toLN (D : ℕ) : ∀ (d : ℕ) (t : Lambda), Term.LcAt d (toLN D d t) := by
   intro d t
   induction t generalizing d with
   | var i =>
@@ -231,7 +232,7 @@ theorem ofLN_toLN (D : ℕ) : ∀ (d : ℕ) (t : Lambda), freeMax t ≤ d + D �
       simp [toLN, ih (d + 1) (by omega)]
 
 /-- `Lambda.toLN` undoes `Lambda.ofLN` on locally closed terms whose atoms are levels. -/
-theorem toLN_ofLN (D : ℕ) : ∀ (d : ℕ) (M : LNTerm), Term.LcAt d M = Bool.true →
+theorem toLN_ofLN (D : ℕ) : ∀ (d : ℕ) (M : LNTerm), Term.LcAt d M →
     (∀ a ∈ M.fv, a < D) → toLN D d (ofLN D d M) = M := by
   intro d M
   induction M generalizing d with
@@ -257,7 +258,7 @@ theorem toLN_ofLN (D : ℕ) : ∀ (d : ℕ) (M : LNTerm), Term.LcAt d M = Bool.t
       exact ih (d + 1) hlc (by intro a ha; exact hfv a (by simpa [Term.fv] using ha))
 
 /-- The de Bruijn indices of a back-translation are bounded. -/
-theorem freeMax_ofLN (D : ℕ) : ∀ (d : ℕ) (M : LNTerm), Term.LcAt d M = Bool.true →
+theorem freeMax_ofLN (D : ℕ) : ∀ (d : ℕ) (M : LNTerm), Term.LcAt d M →
     (∀ a ∈ M.fv, a < D) → freeMax (ofLN D d M) ≤ d + D := by
   intro d M
   induction M generalizing d with
@@ -287,7 +288,7 @@ theorem freeMax_ofLN (D : ℕ) : ∀ (d : ℕ) (M : LNTerm), Term.LcAt d M = Boo
 def closedEquiv : {t : Lambda // freeMax t = 0} ≃ {M : LNTerm // M.LC ∧ M.fv = ∅} where
   toFun t := ⟨toLN 0 0 t.1, lc_toLN 0 t.1, fv_toLN_closed t.1 t.2⟩
   invFun M := ⟨ofLN 0 0 M.1, by
-    have hlc : Term.LcAt 0 M.1 = Bool.true := (Term.lcAt_iff_LC _).2 M.2.1
+    have hlc : Term.LcAt 0 M.1 := (Term.lcAt_iff_LC _).2 M.2.1
     have hfv : ∀ a ∈ M.1.fv, a < 0 := by
       intro a ha
       rw [M.2.2] at ha
@@ -420,6 +421,80 @@ theorem reduces_toLN {t t' : Lambda} (h : Lambda.reduces t t') (D : ℕ) (hD : f
       have h1 : freeMax t₂ ≤ D := le_trans (freeMax_step_le hs) hD
       exact Relation.ReflTransGen.head (step_toLN hs D hD) (ih h1)
 
+/-- Opening a term can only add the atoms of the term that is inserted. -/
+theorem fv_openRec_subset : ∀ (M S : LNTerm) (k : ℕ), (M⟦k ↝ S⟧).fv ⊆ M.fv ∪ S.fv := by
+  intro M
+  induction M with
+  | bvar i => intro S k; by_cases h : k = i <;> simp [Term.openRec, h]
+  | fvar x => intro S k; simp [Term.openRec]
+  | app l r ihl ihr =>
+      intro S k y hy
+      simp only [Term.openRec, Term.fv, Finset.mem_union] at hy ⊢
+      rcases hy with hy | hy
+      · have := ihl S k hy
+        simp only [Finset.mem_union] at this
+        tauto
+      · have := ihr S k hy
+        simp only [Finset.mem_union] at this
+        tauto
+  | abs m ih => intro S k; simpa [Term.openRec, Term.fv] using ih S (k + 1)
+
+/-- Opening a term keeps all of its atoms. -/
+theorem fv_subset_openRec : ∀ (M S : LNTerm) (k : ℕ), M.fv ⊆ (M⟦k ↝ S⟧).fv := by
+  intro M
+  induction M with
+  | bvar i => intro S k; simp [Term.openRec]
+  | fvar x => intro S k; simp [Term.openRec]
+  | app l r ihl ihr =>
+      intro S k y hy
+      simp only [Term.openRec, Term.fv, Finset.mem_union] at hy ⊢
+      exact hy.imp (fun h => ihl S k h) (fun h => ihr S k h)
+  | abs m ih => intro S k; simpa [Term.openRec, Term.fv] using ih S (k + 1)
+
+/-- **A β-step introduces no new atoms.** -/
+theorem fullBeta_fv_subset {M N : LNTerm} (h : M ⭢βᶠ N) : N.fv ⊆ M.fv := by
+  induction h with
+  | base hb =>
+      cases hb with
+      | beta hM hN =>
+          rename_i M₀ N₀
+          simpa [Term.fv, Term.open'] using fv_openRec_subset M₀ N₀ 0
+  | appL hlc _ ih =>
+      intro y hy
+      simp only [Term.fv, Finset.mem_union] at hy ⊢
+      exact hy.imp id (fun h => ih h)
+  | appR hlc _ ih =>
+      intro y hy
+      simp only [Term.fv, Finset.mem_union] at hy ⊢
+      exact hy.imp (fun h => ih h) id
+  | abs xs hcof ih =>
+      rename_i M₀ N₀
+      intro y hy
+      obtain ⟨x, hx⟩ := Cslib.HasFresh.fresh_exists (xs ∪ M₀.fv ∪ N₀.fv)
+      simp only [Finset.mem_union, not_or] at hx
+      obtain ⟨⟨hxs, hxM⟩, hxN⟩ := hx
+      have h1 : y ∈ (N₀ ^ Term.fvar x).fv := fv_subset_openRec N₀ (Term.fvar x) 0 hy
+      have h2 : y ∈ (M₀ ^ Term.fvar x).fv := ih x hxs h1
+      have h3 := fv_openRec_subset M₀ (Term.fvar x) 0 h2
+      simp only [Finset.mem_union, Term.fv, Finset.mem_singleton] at h3
+      rcases h3 with h3 | h3
+      · exact h3
+      · exact absurd (h3 ▸ hy) hxN
+
+/-- A translation is an abstraction exactly when the source term is. -/
+theorem toLN_eq_abs {D d : ℕ} {t : Lambda} {M : LNTerm} (h : toLN D d t = Term.abs M) :
+    ∃ u, t = Lambda.lam u ∧ toLN D (d + 1) u = M := by
+  cases t with
+  | var i =>
+      exfalso
+      rw [toLN_var] at h
+      split at h <;> cases h
+  | app a b => exact absurd h (by rw [toLN_app]; exact fun hh => by cases hh)
+  | lam u =>
+      rw [toLN_lam] at h
+      injection h with h'
+      exact ⟨u, rfl, h'⟩
+
 /-- **Reflection**: every `cslib` β-step out of a translated term is the translation of a
 de Bruijn β-step. -/
 theorem reflect_step : ∀ (t : Lambda) (D : ℕ) (N : LNTerm), freeMax t ≤ D →
@@ -429,47 +504,42 @@ theorem reflect_step : ∀ (t : Lambda) (D : ℕ) (N : LNTerm), freeMax t ≤ D 
   | var i =>
       intro D N _ hstep
       simp only [toLN, Nat.not_lt_zero, if_false] at hstep
-      exact absurd hstep (by rintro (_ | _ | _ | _); rename_i h; cases h)
+      cases hstep with
+      | base hb => cases hb
   | app a b iha ihb =>
       intro D N hD hstep
       simp only [freeMax_app, max_le_iff] at hD
       rw [toLN_app] at hstep
+      generalize hA : toLN D 0 a = A at hstep
       cases hstep with
-      | base hbeta =>
-          cases a with
-          | var i =>
-              exfalso
-              simp only [toLN, Nat.not_lt_zero, if_false] at hbeta
-              cases hbeta
-          | app c d =>
-              exfalso
-              simp only [toLN_app] at hbeta
-              cases hbeta
-          | lam u =>
-              simp only [toLN_lam] at hbeta
-              cases hbeta with
-              | beta =>
-                  exact ⟨Lambda.subst b 0 u, (toLN_subst_zero D b u).symm ▸ rfl,
-                    Lambda.step.beta u b⟩
+      | base hb =>
+          cases hb with
+          | beta hlcM hlcN =>
+              rename_i M
+              obtain ⟨u, rfl, hMu⟩ := toLN_eq_abs hA
+              subst hMu
+              exact ⟨Lambda.subst b 0 u, toLN_subst_zero D b u, Lambda.step.beta u b⟩
       | appL hlc hxi =>
           obtain ⟨b', hb', hstepb⟩ := ihb D _ hD.2 hxi
-          exact ⟨Lambda.app a b', by rw [toLN_app, hb'], Lambda.step.app_right a b b' hstepb⟩
+          exact ⟨Lambda.app a b', by rw [toLN_app, hb', hA],
+            Lambda.step.app_right a b b' hstepb⟩
       | appR hlc hxi =>
+          subst hA
           obtain ⟨a', ha', hstepa⟩ := iha D _ hD.1 hxi
-          exact ⟨Lambda.app a' b, by rw [toLN_app, ha'], Lambda.step.app_left a a' b hstepa⟩
+          exact ⟨Lambda.app a' b, by rw [toLN_app, ha'],
+            Lambda.step.app_left a a' b hstepa⟩
   | lam u ih =>
       intro D N hD hstep
       simp only [freeMax_lam] at hD
       have hu : freeMax u ≤ 1 + D := by omega
       rw [toLN_lam] at hstep
       cases hstep with
-      | base hbeta => cases hbeta
+      | base hb => cases hb
       | abs xs hcof =>
           rename_i N₀
           -- the atoms of `N₀` are among those of the source
           have hsub : N₀.fv ⊆ (toLN D 1 u).fv := by
-            have := Term.FullBeta.step_not_fv (M := Term.abs (toLN D 1 u)) (N := Term.abs N₀)
-              (Term.Xi.abs xs hcof)
+            have := fullBeta_fv_subset (Term.Xi.abs xs hcof)
             simpa [Term.fv] using this
           have hDu : D ∉ (toLN D 1 u).fv := by
             intro hmem
@@ -545,7 +615,7 @@ theorem confluence_of_cslib : Lambda.Confluence := by
 `Lambda.confluence_theorem`** — the transport in the other direction, for terms that are locally
 closed and whose atoms lie below `D`. -/
 theorem cslib_confluence_of_lambda (D : ℕ) (M M₁ M₂ : LNTerm)
-    (hlc : Term.LcAt 0 M = Bool.true) (hfv : ∀ a ∈ M.fv, a < D)
+    (hlc : Term.LcAt 0 M) (hfv : ∀ a ∈ M.fv, a < D)
     (h₁ : M ↠βᶠ M₁) (h₂ : M ↠βᶠ M₂) : ∃ M₃, (M₁ ↠βᶠ M₃) ∧ (M₂ ↠βᶠ M₃) := by
   have hM : toLN D 0 (ofLN D 0 M) = M := toLN_ofLN D 0 M hlc hfv
   have hfree : freeMax (ofLN D 0 M) ≤ D := by

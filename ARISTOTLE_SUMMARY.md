@@ -1,3 +1,200 @@
+# Summary of changes for run fee6a6b0-1516-48b9-b2a7-33ebfd9c1455
+继续完成了项目中此前明确标记为未解决的一个数学缺口:Scott 图模型的**逼近定理**。
+
+## 新增内容:`Start/GraphApproxTheorem.lean`(已加入 `Start.lean`)
+
+此前 `Start/GraphApprox.lean` 只证明了逼近定理的"容易的一半"(所有归约项的直接逼近式的指称都包含在项的指称中),反方向被明确记为未解决。现在两个方向都证明了:
+
+- `GraphModel.exists_reduct_mem_denot_direct` — `⟦M⟧ρ` 中的每个 token 都已经属于某个归约项 `M'` 的直接逼近式的指称 `⟦ω(M')⟧ρ`;
+- `GraphModel.denot_eq_iUnion_denot_direct` — **逼近定理**:`⟦M⟧ρ = ⋃ {⟦ω(M')⟧ρ : M ↠ M'}`;
+- `GraphModel.exists_reduct_denot_direct_sup` — 逼近式构成有向族,故上式的并确为上确界;
+- `GraphModel.denot_subset_of_approx_reducts` / `denot_eq_of_approx_reducts` — 推论:逼近式(Böhm 树)之间的语法支配关系蕴涵语义包含关系,互相支配的两项被模型等同。
+
+证明方法:Kripke 式可计算性(逻辑关系)论证,形式上与 `Start/GraphAdequacy.lean` 的充分性证明相同,但携带逼近式信息。谓词 `ARealAux b ρ t` 按 token 的大小递归定义;`AReal` 把它对环境的弱化封闭。与充分性证明不同的是,这里语义环境必须与语法环境同步弱化,因此基本引理 `arealAux_substEnv` 同时涉及两个环境:一个解释项的自由变元,一个解释代换的目标语境。两个语法性的辅助结果支撑该论证:直接逼近式沿归约只增不减(`denot_direct_reduces_mono`,注意由于 `Ω` 在此是普通项而非常量,逼近序 `Lambda.Approx` 并不传递,所以链接是在指称层面完成的),以及由合流性把有限多个归约项合并为一个(`exists_reduct_lset_subset`)。
+
+## 验证
+
+- `lake build` 全量成功(8940 个作业),**零错误、零警告**;
+- `Start/` 下无 `sorry`/`admit`;
+- `#print axioms` 对两个主要结果仅报告 `propext, Classical.choice, Quot.sound`;
+- `python3 scripts/goal_state.py validate` → OK: 67 tasks validated。
+
+## 文档
+
+更新了 `README.md`(语义章节新增逼近定理条目,并修订了 open questions 表中关于完全抽象的一行)、`docs/goal/evidence/M9-UNTYPED-FULL-ABSTRACTION.md`(新增一节说明证明结构)、`docs/goal/task-board.yaml` 中该任务的 open_boundary,并重新生成了 `docs/current-goal-state.md`。同时提交了上一阶段遗留的、关于恢复 Lean v4.33.0 工具链的文档改动。
+
+## 仍然未解决
+
+`D∞` 的完全抽象(Wadsworth 定理)仍未证明;经典证明所需的 `D∞` 版逼近定理本文未涉及。这一点已如实记录在任务板与证据文档中。
+
+所有改动均已提交并推送。
+
+# Summary of changes for run 3ddf95eb-7afb-4056-a71a-369c94723917
+I picked up the in-progress work and completed it, then extended it with a stronger result. Everything is committed and pushed; the full library builds cleanly (`lake build`, 8242 jobs) with no `sorry` in any library file, and all new results check with `#print axioms` against only the standard axioms (`propext`, `Classical.choice`, `Quot.sound`).
+
+**Finished the in-progress module `Start/LambdaPiSmallCompare.lean`.** The project had two syntactic models of the dependent calculus λΠ built on the same category of contexts: the model of `Start/LambdaPiCwa.lean`, whose types in a context are the *small types*, and the small fragment of the model of `Start/LambdaPiFull.lean`, whose types are the *terms of the sort* `∗`. The new module compares them:
+
+- `LambdaPiUniv.smallToCwa` — a morphism of categories with attributes from the small fragment to the model of small types: the identity on contexts, and on types the bijection between the terms of `∗` and the small types. The hard part, compatibility with the action of a substitution on extended contexts, is proved by showing that both sides act at every variable as the lifting `up` of the calculus.
+- `LambdaPiUniv.smallToCwa_tyMap_bijective` — its action on types is a bijection in every context.
+
+**Went further than the handoff plan and proved the two models isomorphic.**
+
+- `LambdaPiUniv.cwaToSmall` — the comparison in the other direction, coding a small type as a term of `∗`.
+- `LambdaPiUniv.smallToCwa_comp_cwaToSmall` and `LambdaPiUniv.cwaToSmall_comp_smallToCwa` — both composites are the identity morphism.
+- `LambdaPiUniv.smallModelIso` — consequently the two syntactic models are isomorphic objects of the category of models of a dependent type theory. To state this I added one general, reusable extensionality lemma, `Cwa.heq_iso_ext`, to `Start/CwaCat.lean`.
+
+**Bookkeeping.** The module is now imported by `Start.lean`. The task board, its evidence file for the λΠ / locally-cartesian-closed task, the rendered goal-state document and the README were all updated to describe the new comparison and to sharpen the boundary statement: what remains unclaimed there is the interpretation of the syntax into an arbitrary model (initiality) and any comparison between the syntax and an arbitrary model — the new isomorphism relates the two *syntactic* models to one another. The project's own validation gate (`scripts/goal_state.py validate`) reports 66 tasks validated. The Properties table has been updated with the new definitions and theorems, plus two earlier lemmas about the restriction of universe-preserving comparisons that had not been registered.
+
+Two items on the board remain open by design and are documented as such: the initiality/interpretation theorem for λΠ, and full abstraction for the untyped calculus. Both are large developments in their own right rather than loose ends.
+
+# Summary of changes for run 9c09982e-35ce-45db-9ab2-ac1339945fc3
+I continued the formalization work on the project's one substantively open complexity-theory item (the Cook–Levin milestone), completing an increment that was left half-finished, and then extended it.
+
+**What is new, all building with no `sorry` and no linter warnings:**
+
+- `Start/UniformLayerPad.lean` — the layer and grid rules for P-uniform circuit descriptions with a *parameter word of their own*: the gate-writing Cobham term receives an arbitrary Cobham-computed word `pw n` in place of `1^n`, so a gate token need only be of length linear in the gate identifier and in `|pw n|`. This is what makes long tokens (references to gates whose identifiers are polynomial in `n`) admissible.
+- `Start/UniformSelect.lean` — `selTokTerm`, a Cobham term that, from the code of a circuit and a gate identifier in unary, writes the token of that gate (`eval_selTokTerm_lt`). This is the first rule here that emits gates it is *given*, rather than gates computed by arithmetic on the identifier.
+- `Start/UniformIterate.lean` — `iterC B D w k`, the stack of `k` copies of a stage circuit `B` over a base `D`, each copy's inputs rewired to the topmost `w` gates below; it is well formed (`wf_iterC`), its top `w` gates carry the `k`-th iterate of the stage's step function (`state_iterC`), and its output is read off that state (`out_iterC_state`). The main result **`codeUniform_iterC`** shows the stack is P-uniform whenever the stage and base are and the number of copies and the width are Cobham-computable in unary — the loop rule whose body is itself a circuit family, which is the shape the unrolling of a bounded recursion has.
+- `Start/UniformIterLang.lean` — the same rule packaged as a statement about languages: `pUniformDecidable_iterLang` and `polyManyOne_SAT_iterLang`.
+- `Start/UniformIterateInst.lean` — a non-vacuity instance whose stage really grows with the instance: a shift register with an accumulator of `n + 2` wires, proved to shift correctly (`stateC_sreg`) and to output the disjunction of all input bits after `n` copies (`out_sregC`), giving `pUniformDecidable_someOne_of_iter` and `polyManyOne_SAT_someOne_of_iter`.
+
+**Verification.** The full library target builds cleanly (`Start.lean` now imports the five new modules); a search confirms no `sorry` in the new files; and the new results depend only on `propext`, `Classical.choice`, `Quot.sound`.
+
+**Documentation.** I extended the Cook–Levin evidence file with a section on unrolling a loop whose body is a circuit and refreshed its Boundary section, updated the corresponding task-board entry and re-rendered `docs/current-goal-state.md` (the board validator passes), and updated `README.md`. `ARISTOTLE_SUMMARY.md` was left untouched.
+
+**What remains open** (unchanged in substance): there is still no compiler turning an arbitrary Cobham term into a stage circuit together with a number of copies, so no language is known to be P-uniformly decidable merely from being in P, and `NPHard` is still not known to be inhabited. The new iteration rule supplies the structural ingredient such a compiler needs for bounded recursion.
+
+All work is committed and pushed.
+
+# Summary of changes for run c2b99bc0-89bb-49b6-a91f-970f5ff82543
+## What I did
+
+I continued the open work on the Cook–Levin task, generalising the project's P-uniform circuit results from finite automata and symmetric languages to **automata with polynomially many states**, and then derived the two earlier families back as instances.
+
+### New Lean files (all compile, no `sorry`, no warnings)
+
+- **`Start/UniformState.lean`** — for an automaton with `M` states on inputs of length `n`, builds the circuit `CircCode.stGrid`: `M` columns (one per state), one block of `2M + 4` rows per input bit, then an acceptance row. Inside the block of bit `t` the one-hot vector of the state is recomputed from the previous one: for each target state a conjunction row selects, per source state, the constant `true`, the bit, its negation or the constant `false`, and an accumulator row takes the disjunction. Proves the one-hot bits really record the state (`lval_st_state`) and that the grid accepts exactly the automaton's language (`out_stGrid`).
+- **`Start/UniformStateCode.lean`** — writes the description of that grid with a single Cobham term (`CircCode.stBlkT`, `eval_stBlkT`), bounds the size of every gate (`length_encGate_stT`), and concludes that the family is P-uniform (`codeUniform_stGrid`). Main results: `pUniformDecidable_stateLang` — **the language of a uniform poly-state automaton is decided by a P-uniform circuit family** — and `polyManyOne_SAT_stateLang`, its unconditional polynomial-time reduction to SAT. The uniformity hypothesis is packaged as `StateUniform`: the state count, both branches of the transition function and the acceptance predicate are computed in unary by Cobham terms.
+- **`Start/UniformStateSubsume.lean`** — derives the two earlier families from the new rule: `pUniformDecidable_autoLang_of_state` (a finite automaton has finite transition and acceptance tables, selected by `Cob.tableSel`) and `pUniformDecidable_symLang_of_state` (a symmetric language is the language of the counting automaton, whose state is the number of `true` bits read so far, capped at the input length).
+- **`Start/UniformStateInst.lean`** — a new instance that is neither regular nor symmetric: the words whose binary value, most significant bit first, is divisible by their length plus one (`BinDivLang`). The automaton keeps the value read so far modulo `n + 1`, so it has `n + 1` states; `pUniformDecidable_binDiv` and `polyManyOne_SAT_binDiv` conclude.
+
+All four modules are imported from `Start.lean`; the full `lake build` succeeds, the project contains no `sorry`, and the new theorems depend only on `propext`, `Classical.choice` and `Quot.sound`.
+
+### Bookkeeping
+
+Updated the task board's open boundary for the Cook–Levin task, re-rendered `docs/current-goal-state.md`, extended `docs/goal/evidence/M9-COOK-LEVIN.md` with a section on the new construction, and updated `README.md`. `python3 scripts/goal_state.py validate` reports OK on all 60 tasks. Everything is committed and pushed.
+
+### What remains open
+
+The Cook–Levin task stays partial: the missing piece is still the compiler itself — a P-uniform circuit family for an *arbitrary* Cobham term — so no language in `P` is yet known to be P-uniformly decidable in general. The new rule enlarges the class that is known unconditionally, but only to one-way machines with polynomially many states. The other partial task (λΠ and locally cartesian closed categories) is untouched; its open boundary is the biequivalence between models of λΠ and LCCCs, which is beyond its stated exit criteria.
+
+# Summary of changes for run 9b991d9b-3ec0-4a87-9e98-c2246b077ee3
+I picked up the project where the previous session left off and carried the open Cook–Levin line forward. The project builds cleanly and all gates pass.
+
+**State of the project**
+- `lake build` completes successfully (8174 jobs), with zero errors and zero warnings.
+- `python3 scripts/goal_state.py validate` reports `OK: 60 tasks validated`.
+- There is no `sorry`, no `axiom`, and no `@[implemented_by]` anywhere in `Start/`. Spot-checked new results with `#print axioms`: they depend only on `propext`, `Classical.choice`, `Quot.sound`.
+
+**New work this session**
+
+1. `Start/UniformBool.lean` — *Boolean combinations of P-uniform circuit families.* This completes the algebra of P-uniform circuit descriptions with the one connection that was missing: joining the **outputs** of two circuits by a single gate.
+   - `Tseitin.stackC` (one circuit on top of another, references relocated), with `out_stackC`;
+   - `Tseitin.negC`, `conjC`, `disjC`, with their semantics (`out_negC`, `out_conjC`, `out_disjC`) and well-formedness (`wf_negC`, `wf_conjC`, `wf_disjC`);
+   - two general tools — `exists_lenTerm` (a Cobham term writing the gate count of a P-uniform family in unary) and `codeUniform_gate` (a one-gate family is P-uniform when its tag is constant and its fields are unary Cobham functions);
+   - `codeUniform_negC`, `codeUniform_conjC`, `codeUniform_disjC`: **the Boolean combinations of P-uniform families are P-uniform.**
+
+2. `Start/UniformDecide.lean` — *languages decided by P-uniform families, and their unconditional reduction to SAT.*
+   - `Tseitin.Pinned` and `PUniformDecidable L`: some P-uniform family of well-formed, nonempty circuits decides `L` on the inputs that present a word of length `n`.
+   - `polyManyOne_SAT_of_pUniformDecidable`: **every P-uniformly decidable language reduces to SAT in polynomial time** — the Cook–Levin reduction with no hypothesis left over.
+   - Closure: `PUniformDecidable.not`, `.and`, `.or`, `.congr`, plus the two constants `pUniformDecidable_true` / `pUniformDecidable_false`.
+   - Two nontrivial inhabitants, so none of this is vacuous: `AllOnes` (all bits `true`), decided by `allOnesC` built from the conjunction circuits; and `SomeOne` (at least one bit `true`), decided by `someOneC` built from the block-loop family. Hence `polyManyOne_SAT_allOnes` and `polyManyOne_SAT_someOne`, both unconditional.
+   - `npHard_SAT_of_pUniformDecidable` / `npComplete_SAT_of_pUniformDecidable`: SAT is NP-hard, hence NP-complete, as soon as every language in NP is decided by a P-uniform family — a second non-vacuous conditional form, stated about languages rather than verifiers.
+
+3. Both modules were added to the `Start` aggregate, and the goal-state documentation was brought up to date: the `M9-COOK-LEVIN` evidence file gained a section on the new results, its task-board boundary was rewritten accordingly, and `docs/current-goal-state.md` was re-rendered.
+
+**What remains open.** The two `BACKEND_PARTIAL` items are unchanged in status, because their residual content is genuinely open here: for `M9-COOK-LEVIN`, the explicit compiler turning a Cobham verifier into a description-writing term (so `NPHard` is still not known to be inhabited); for `M9-LAMBDAPI-LCCC`, the interpretation of the syntactic category with attributes into an arbitrary strictified model. What this session changed for the former is that the *reduction* half of Cook–Levin is now available unconditionally, so only the construction of the deciding family is still missing.
+
+The Properties table has been updated with the new deliverables and their verified statuses.
+
+# Summary of changes for run 4f57ff8f-3e4d-449b-81a2-76028142dd61
+## What I did this session
+
+I continued the Lean formalization from where the previous run left off. The build gate (`lake build`) and the project's own gate (`python3 scripts/goal_state.py validate`, 60 tasks) both pass, the whole library compiles with **no errors and no warnings**, and there is no `sorry` anywhere in the `Start` library.
+
+All of the new work targets the one remaining gap in the Cook–Levin task: turning circuit families into families whose *descriptions* are produced in polynomial time (P-uniformity).
+
+### New: a nontrivial P-uniform family (`Start/UniformAnd.lean`)
+
+`CircCode.andCirc n` is built from two layers — `n` input gates, and above them `n` conjunction gates accumulating the running conjunction. Proved:
+
+* `CircCode.wf_andCirc` — the circuits are well formed;
+* `CircCode.out_andCirc` — the output is the conjunction of the first `n` input bits;
+* `codeUniform_andCirc` — a single Cobham term writes the description of `andCirc n` from any word of length `n`.
+
+So the P-uniformity predicate is inhabited by a linear-size family that decides a nontrivial language, not just by the previously available chain of negations.
+
+### New: relocation and stacking (`Start/UniformShift.lean`)
+
+Concatenating descriptions is not concatenating circuits — gates are numbered from the bottom of the list, so putting `C` above `D` shifts every identifier of `C`. `Tseitin.reloc d C` repairs this by raising every gate reference by `d`. Proved:
+
+* `Tseitin.vals_reloc_append`, `Tseitin.out_reloc_append`, `Tseitin.wf_reloc_append` — semantics and well-formedness survive stacking;
+* `CircCode.eval_relocTerm` — relocation is a Cobham function *of the description*: one term, run over the code with the shift in unary as parameter, rewrites every token;
+* `codeUniform_reloc` and `codeUniform_stack` — **two P-uniform families may be written into one circuit.**
+
+### New: composition (`Start/UniformCompose.lean`)
+
+`Tseitin.reroute d e C` relocates `C` and additionally rewires its circuit inputs, so input `i` of `C` becomes a reference to gate `i + e` of the circuit underneath. Proved:
+
+* `Tseitin.vals_reroute_append`, `Tseitin.out_reroute_append`, `Tseitin.wf_reroute_append` — the composite runs the upper circuit on the values of the lower one (under an explicit input-range condition, `Tseitin.inpsLt`);
+* `CircCode.eval_rerouteTerm` — rewiring is again a Cobham function of the description, with the two shifts packed into one parameter word;
+* `codeUniform_reroute` and `codeUniform_compose` — **two P-uniform families may be composed.**
+
+Both operations are exercised on concrete families: the conjunction circuits placed beside the negation chain (`CircCode.andOverNeg`, with `out_andOverNeg` and `codeUniform_andOverNeg`) and fed by it (`CircCode.andAfterNeg`, with `out_andAfterNeg` and `codeUniform_andAfterNeg`).
+
+### Documentation
+
+`Start.lean` imports the three new modules. `docs/goal/evidence/M9-COOK-LEVIN.md` gained two sections describing the new families and the two composition operations, and the task board's `open_boundary` for that task was updated (it stays within the project's length limit); `docs/current-goal-state.md` was regenerated. `ARISTOTLE_SUMMARY.md` was left untouched.
+
+## What is still open
+
+The project is not fully closed. Two of the sixty tasks remain partial, and I did not change their status:
+
+* **M9-COOK-LEVIN.** NP-hardness of SAT is still derived from the hypothesis `Complexity.PUniformAcceptFamilies`, which is nowhere assumed. Closing it means turning the existing chain of *existence* lemmas that compiles Cobham verifiers into circuits (`Start/CircuitBuild.lean`, `Start/WordCircuit.lean`, `Start/CobhamCircuit.lean`, `Start/CobhamBRec.lean`) into an explicit code-emitting compiler. The work above supplies the algebra such a compiler needs — constants, concatenation, layers, relocation, stacking, composition — but not the compiler itself.
+* **M9-LAMBDAPI-LCCC.** The biequivalence between models of λΠ and locally cartesian closed categories (an interpretation functor into an arbitrary strictified model, plus an inverse comparison) is still not claimed. I did not work on it this session; it is a large development in its own right.
+
+Existing scratch files at the repository root (`temp.lean`, `temp2.lean`, and similar) still contain `sorry`s; they are not part of the `Start` library target and I left them as they were.
+
+
+# Summary of changes for run 35036ebb-213a-4dcb-8df3-4bd73ff82afd
+## What I did
+
+I continued the one substantially open item on the project's task board, **M9-COOK-LEVIN**, and closed the largest part of its gap.
+
+Previously the library had SAT ∈ NP and the Tseitin translation from circuits to CNF, but the *compilation step* — turning an arbitrary polynomial-time (Cobham) verifier into a Boolean circuit — was only stated as a hypothesis (`Complexity.CircuitCompilable`). That step is now formalized.
+
+### New results (all sorry-free, no extra axioms beyond `propext`, `Classical.choice`, `Quot.sound`)
+
+* **`Complexity.Tseitin.cobCompiles`** (`Start/CobhamBRec.lean`) — **every Cobham term is computed by Boolean circuits of polynomial size.** The compiler handles projections, the empty word, the two successors, the smash function, composition and bounded recursion on notation. The hard case is bounded recursion: the recursion argument is unknown at compile time, so the step is unrolled once per position and multiplexed against the value carried over; this is affordable because, in the chosen word representation, dropping a prefix costs no gates at all.
+* **`Complexity.Tseitin.exists_decideCircuit`** (`Start/PolyCircuit.lean`) — **P ⊆ P/poly**: for every polynomial-time term there is a monotone polynomial size bound and, for each length bound `N`, a well-formed circuit deciding it on all words of length ≤ `N`.
+* **`Complexity.Tseitin.exists_npCircuitFamily`** — for every language in NP, a family of well-formed circuits of size polynomial in the instance length, satisfiable exactly on the language.
+* **`Complexity.npHard_SAT_of_uniform` / `npComplete_SAT_of_uniform`** (`Start/CookLevin.lean`) — SAT is NP-hard, hence NP-complete, under the strictly weaker remaining hypothesis `Complexity.UniformlyGenerated`: that the description of such a circuit family is itself produced from the instance by a Cobham term. The circuits and their size bound are no longer assumed.
+
+### Files
+
+New: `Start/CobhamCircuit.lean` (compilation statement, base cases, composition), `Start/CobhamBRec.lean` (bounded recursion), `Start/PolyCircuit.lean` (application layer), building on the earlier `Start/CircuitBuild.lean` and `Start/WordCircuit.lean`. All are imported from `Start.lean`, build cleanly and produce no linter warnings. `Start/CookLevin.lean` keeps its original statements unchanged and gains the weaker-hypothesis versions. The task board (`docs/goal/task-board.yaml`), the evidence file `docs/goal/evidence/M9-COOK-LEVIN.md` and `docs/current-goal-state.md` were updated; `python3 scripts/goal_state.py validate` passes.
+
+### What still remains
+
+* **Cook–Levin: uniformity only.** The circuits are obtained by chaining existence lemmas, so no explicit function from instance to circuit is defined, and nothing yet says its Tseitin translation is the value of a Cobham term. Supplying that means turning the chain into an explicit compiler and writing the clause emitter as nested bounded recursions — a large further project. `NPHard Sat.SAT` is therefore still not proved outright.
+* **M9-LAMBDAPI-LCCC** is unchanged; see the caveat below.
+
+### Build caveat
+
+The environment used here provided Lean 4.28 with a matching prebuilt Mathlib, while the project pins Lean/Mathlib 4.33. I temporarily retargeted `lean-toolchain` in order to build at all, and have **restored the project's own pin (`leanprover/lean4:v4.33.0`) and the original `lake-manifest.json`** in the final commit. Everything I wrote was checked under 4.28. Four pre-existing files depend on 4.33-only APIs and could not be compiled here — `Start/Lccc.lean`, `Start/CwaType.lean`, `Start/TM2Partrec.lean`, `Start/TM2Forward.lean` — so I left them untouched; this is why M9-LAMBDAPI-LCCC saw no work. Apart from those four (and a lint file in a dependency), the whole library builds with no errors, no `sorry`, and no warnings.
+
+All work is committed and pushed.
+
 # Summary of changes for run e27042b6-87c3-4bab-9995-71cbdee352aa
 ## What I did
 

@@ -18,6 +18,7 @@ identifies the head while the number of stored arguments identifies the arity.
 
 import Start.Bohm
 import Start.SelfInterpreter
+import Start.FreeVars
 
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
@@ -25,81 +26,6 @@ set_option autoImplicit false
 noncomputable section
 
 namespace Lambda
-
-/-! ## Structural closedness helpers -/
-
-theorem freeBelow_mono : ∀ {t : Lambda} {k l : ℕ}, k ≤ l → freeBelow k t → freeBelow l t := by
-  intro t
-  induction t with
-  | var n => intro k l hkl h; exact lt_of_lt_of_le h hkl
-  | app a b iha ihb => intro k l hkl h; exact ⟨iha hkl h.1, ihb hkl h.2⟩
-  | lam t ih => intro k l hkl h; exact ih (Nat.succ_le_succ hkl) h
-
-theorem freeBelow_lift : ∀ {t : Lambda} {k : ℕ}, freeBelow k t → ∀ j,
-    freeBelow (k + 1) (Lambda.lift 1 j t) := by
-  intro t
-  induction t with
-  | var n =>
-      intro k h j
-      by_cases hn : n < j
-      · simp only [Lambda.lift, if_pos hn]
-        exact Nat.lt_succ_of_lt h
-      · simp only [Lambda.lift, if_neg hn]
-        exact Nat.succ_lt_succ h
-  | app a b iha ihb => intro k h j; exact ⟨iha h.1 j, ihb h.2 j⟩
-  | lam t ih => intro k h j; exact ih (k := k + 1) h (j + 1)
-
-theorem isClosedAt_of_freeBelow :
-    ∀ {t : Lambda} {k : ℕ}, freeBelow k t → Lambda.IsClosedAt t k := by
-  intro t
-  induction t with
-  | var n =>
-      intro k h
-      exact Lambda.IsClosedAt_var n k h
-  | app a b iha ihb => intro k h; exact Lambda.IsClosedAt_app (iha h.1) (ihb h.2)
-  | lam t ih => intro k h; exact Lambda.IsClosedAt_lam (ih h)
-
-theorem isClosed_of_freeBelow_zero {t : Lambda} (h : freeBelow 0 t) : Lambda.IsClosed t :=
-  (Lambda.IsClosedAt_zero_iff_IsClosed t).1 (isClosedAt_of_freeBelow h)
-
-theorem freeBelow_lamN_iff : ∀ (n : ℕ) {t : Lambda} {k : ℕ},
-    freeBelow k (lamN n t) ↔ freeBelow (k + n) t := by
-  intro n
-  induction n with
-  | zero => intro t k; simp
-  | succ n ih =>
-      intro t k
-      rw [lamN_succ]
-      change freeBelow (k + 1) (lamN n t) ↔ _
-      rw [ih (k := k + 1), show k + 1 + n = k + (n + 1) from by omega]
-
-theorem freeBelow_lamN (n : ℕ) {t : Lambda} {k : ℕ} (h : freeBelow (k + n) t) :
-    freeBelow k (lamN n t) := (freeBelow_lamN_iff n).2 h
-
-theorem freeBelow_appList_iff : ∀ (l : List Lambda) {t : Lambda} {k : ℕ},
-    freeBelow k (appList t l) ↔ freeBelow k t ∧ ∀ a ∈ l, freeBelow k a := by
-  intro l
-  induction l with
-  | nil => intro t k; simp [appList]
-  | cons a l ih =>
-      intro t k
-      rw [appList_cons, ih]
-      constructor
-      · rintro ⟨⟨ht, ha⟩, hl⟩
-        refine ⟨ht, ?_⟩
-        intro b hb
-        rcases List.mem_cons.1 hb with rfl | hb
-        · exact ha
-        · exact hl b hb
-      · rintro ⟨ht, hl⟩
-        exact ⟨⟨ht, hl a List.mem_cons_self⟩,
-          fun b hb => hl b (List.mem_cons_of_mem a hb)⟩
-
-theorem freeBelow_appList (l : List Lambda) {t : Lambda} {k : ℕ} (ht : freeBelow k t)
-    (hl : ∀ a ∈ l, freeBelow k a) : freeBelow k (appList t l) :=
-  (freeBelow_appList_iff l).2 ⟨ht, hl⟩
-
-/-! ## Parallel substitution by closed terms -/
 
 /-- The environment substituting `ρ (j - k)` for the free variable `j ≥ k`, and leaving the
 variables `< k` (those bound by the `k` enclosing abstractions) alone. -/

@@ -483,6 +483,25 @@ Program length is the syntactic size of a closed term reducing to a Church numer
 #check @GraphModel.denot_omega
 #check @GraphModel.not_conv_omega_I
 
+-- Adequacy: a nonempty denotation means a head normal form, and for a closed term the least
+-- element is reached exactly by the unsolvable terms.
+#check @GraphModel.hasHnf_of_mem_denot
+#check @GraphModel.denot_ne_empty_iff_hasHnf
+#check @Lambda.solvable_iff_hasHnf
+#check @GraphModel.denot_ne_empty_iff_solvable
+
+-- Hence denotational equality implies observational equivalence at head normalization.
+#check @GraphModel.obsEqHnf_of_denot_eq
+
+-- Head reduction: the head strategy is normalizing, which gives the structural laws of head
+-- normalizability and a syntactic proof that solvable terms have a head normal form.
+#check @Lambda.hstep
+#check @Lambda.isHnf_iff_no_hstep
+#check @Lambda.hasHnf_iff_hasHeadEval
+#check @Lambda.hasHnf_of_hasHnf_subst
+#check @Lambda.HasHnf.app_left
+#check @Lambda.hasHnf_of_solvable
+
 -- Scott's `D∞`: every element is the supremum of its finite approximations, and `D∞` is
 -- isomorphic to its own space of continuous self-maps.
 #check @ScottDinf.ωSup_thetaChain
@@ -497,6 +516,12 @@ Program length is the syntactic size of a closed term reducing to a Church numer
 -- consistent, again by a purely semantic argument.
 #check @ScottDinf.ddenot_omega
 #check @ScottDinf.not_convBE_omega_I
+
+-- Conversely, in `D∞` a head normalizable term is somewhere different from the least element,
+-- so a term denoting `⊥` in every environment has no head normal form and is unsolvable.
+#check @ScottDinf.exists_ddenot_ne_botDinf_of_hasHnf
+#check @ScottDinf.not_hasHnf_of_ddenot_eq_botDinf
+#check @ScottDinf.not_solvable_of_ddenot_eq_botDinf
 
 /-! ## 14g. Adequacy for Goedel's System T -/
 
@@ -597,10 +622,18 @@ Program length is the syntactic size of a closed term reducing to a Church numer
   trees, faithfully, and two closed normal forms whose Böhm trees are not η-equal are separated
   by a single list of closed arguments (the Böhm-out transformation via tagged tuples)
 - Denotational semantics: Scott's graph model as a reflexive object, with soundness of beta and
-  a semantic consistency proof (`Ω` is not convertible to `I`); and Scott's `D∞` as the inverse
+  a semantic consistency proof (`Ω` is not convertible to `I`); its adequacy — a term with a
+  nonempty denotation has a head normal form, for closed terms the least element is exactly the
+  unsolvable terms, and denotational equality implies observational equivalence at head
+  normalization; and Scott's `D∞` as the inverse
   limit of the tower `D₀ = Bool`, `Dₙ₊₁ = [Dₙ →𝒄 Dₙ]`, with the isomorphism
   `D∞ ≅ [D∞ →𝒄 D∞]` and an extensional model of the lambda calculus validating beta and eta;
-  in that model `Ω` denotes the least element, so the λη calculus is consistent
+  in that model `Ω` denotes the least element, so the λη calculus is consistent, and conversely
+  every head normalizable term is somewhere different from the least element
+- Head reduction: the head strategy is deterministic and normalizing — a term has a head normal
+  form exactly when the strategy terminates on it — whence head divergence is stable under
+  substitution, head normalizability of an application is inherited by its function part, and
+  every solvable term has a head normal form, syntactically
 - Confluence of System T reduction, its set-theoretic denotational semantics, and adequacy: a
   closed term of type `nat` reduces to the numeral of its denotation, so at base type equality of
   denotations, convertibility and observational equivalence coincide

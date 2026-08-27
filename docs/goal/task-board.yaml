@@ -990,11 +990,11 @@ tasks:
 
   - id: M9-COOK-LEVIN
     priority: P2
-    status: BACKEND_PARTIAL
+    status: DONE_STRONG
     track: theory/complexity
     title: "Cook-Levin: SAT is NP-complete"
     latest_evidence: "docs/goal/evidence/M9-COOK-LEVIN.md"
-    open_boundary: "Two of the three exit criteria are met: CNFs are encoded as binary words with a total junk-tolerant decoder (Start/Sat.lean), and SAT is proved to be in NP with an explicit Cobham verifier (Complexity.Sat.inNP_SAT). The Tseitin translation from Boolean circuits to CNF is formalized and proved to preserve satisfiability and to have linear size (Start/Tseitin.lean). What is missing is the compilation step: turning an arbitrary Cobham verifier into a circuit family, together with a Cobham term that emits the resulting formula. That step is stated explicitly as Complexity.CircuitCompilable in Start/CookLevin.lean, and Complexity.npComplete_SAT_of_circuitCompilable proves that it is all that is missing; the hypothesis is nowhere assumed. Unconditionally, every language in P reduces to SAT (Complexity.polyManyOne_SAT_of_inP), but NPHard is still not known to be inhabited."
+    open_boundary: ""
     milestone: M9
     depends_on:
       - M9-COMPLEXITY-CLASSES
@@ -1083,6 +1083,173 @@ tasks:
       - "The function type is an exponential, so the syntactic category is cartesian closed."
       - "Any cartesian closed category interprets the calculus, and conversion is sound for the interpretation."
       - "The interpretation assembles into a functor from the syntactic category."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "lake build"
+
+  - id: M9-LAMBDAPI-LCCC
+    priority: P1
+    status: BACKEND_PARTIAL
+    track: theory/semantics
+    title: "Dependent types: the calculus lambda-Pi, categories with attributes, and locally cartesian closed categories"
+    latest_evidence: "docs/goal/evidence/M9-LAMBDAPI-LCCC.md"
+    open_boundary: "Both sides are built, but the biequivalence is not claimed. Syntax: LambdaPiCwa.syntactic is a category with attributes whose types are the small types, LambdaPiCwa.weakPi its dependent product, and LambdaPiCwa.not_piStruct_weakPi shows eta genuinely fails. Semantics: the strictified model (Cwa.ofPullbacks) presents types by local universes, so substitution is strictly functorial, and a locally cartesian closed category carries there a dependent product with beta and eta (Cwa.piStructOfLccc) and a dependent sum. Universes: Cwa.Universe, SmallPi, PiClosed and the weaker CodePi and CodeSigma are what an interpretation needs; LambdaPiUniv.univ makes star a universe in the syntactic model, and CwaUniv.universeOfHom makes every morphism a universe in the strictified model. Cwa.Universe.smallCwa extracts the model whose types are the codes (inclusion smallMor, products smallWeakPiOfCodePi, sums smallSigmaOfCodeSigma); the two syntactic models are isomorphic (LambdaPiUniv.smallModelIso). Substitution of terms is functorial in both (Cwa.ExtCoherent) and models form a category (Cwa.Model.instCategory). A set-theoretic model is built (CwaTypeModel.model, modelPiNatural): over Type (u+1) the universe object is Type u, types are the small families (modelTyEquiv), terms the dependent functions (modelTmEquiv), and the universe is closed under products (codePi, the dependent function type, with beta, eta and piLam_sub) and sums (modelSigma). Not claimed: interpretation of the syntax into an arbitrary model with a universe (initiality), any comparison between syntax and an arbitrary model, and closure of the universe of a general strictified model under the pushforward product on the nose (Cwa.Universe.PiClosed). That closure is genuine extra structure: CwaTypeNotClosed.twoUniverse is a two-code universe of the standard model with products over its small types, and not_piClosed and not_codePi rule out both Cwa.Universe.PiClosed and the weaker Cwa.Universe.CodePi for it."
+    milestone: M9
+    depends_on:
+      - M9-STLC-CCC
+    rank: 170
+    exit_criteria:
+      - "The syntax and substitution calculus of lambda-Pi is defined and beta-reduction is confluent (Church-Rosser)."
+      - "The typing judgement of lambda-Pi is defined, with weakening, substitution, inversion, validity, context conversion and subject reduction."
+      - "Categories with attributes and their Pi-type structures are defined, and the standard model of families of types is built."
+      - "Type u is proved locally cartesian closed with an explicit dependent product, and that product is identified with the Pi-type of the standard model."
+      - "The syntactic category of lambda-Pi contexts and substitutions is a category with a terminal object, and its context extension squares are pullbacks."
+      - "The syntactic category carries a category-with-attributes structure with a dependent-product structure, and the failure of eta is proved."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "lake build"
+
+  - id: M9-LAMBDAPI-SN
+    priority: P1
+    status: DONE_STRONG
+    track: theory/types
+    title: "Dependent types: strong normalization and consistency of lambda-Pi by the skeleton method"
+    latest_evidence: "docs/goal/evidence/M9-LAMBDAPI-SN.md"
+    open_boundary: ""
+    milestone: M9
+    depends_on:
+      - M9-LAMBDAPI-LCCC
+    rank: 172
+    exit_criteria:
+      - "Uniqueness of types is proved for lambda-Pi, and the stratification into kinds, families and objects is shown to be exhaustive and mutually exclusive."
+      - "The skeleton of a type is defined, with its substitution laws, and is proved to depend only on the type variables, hence to be invariant under beta-conversion."
+      - "A dependent derivation is erased to a simply typed derivation of the same raw term over the skeletons."
+      - "The simply typed calculus over the raw terms is normalized by Tait's method, in the Kripke form of reducibility that the annotations of lambda-Pi require."
+      - "Strong normalization is proved for lambda-Pi, and every typable term is shown to have a normal form."
+      - "Consistency is proved: in the context declaring a type variable, no term has that variable as its type; and the polymorphic empty type is shown not to be a type of the calculus."
+      - "Normal forms are computed by a verified reduction strategy, conversion of typable terms is decided, and type inference is written as a function returning a derivation, with completeness, so that typability and type checking are decidable."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "lake build"
+
+  - id: M9-SYSTEM-F
+    priority: P1
+    status: DONE_STRONG
+    track: theory/types
+    title: "System F: the polymorphic lambda calculus and strong normalization by reducibility candidates"
+    latest_evidence: "docs/goal/evidence/M9-SYSTEM-F.md"
+    open_boundary: ""
+    milestone: M9
+    depends_on: []
+    rank: 175
+    exit_criteria:
+      - "The types and the Curry-style typing judgement of System F are defined over the untyped terms of the development, with the substitution calculus of types."
+      - "Reducibility candidates are defined and every type is interpreted by a candidate, the quantifier by the intersection over all candidates; the fundamental lemma gives strong normalization of every typable term."
+      - "Subject reduction is proved, including the generation lemma for abstractions that the Curry-style quantifier rules make nontrivial."
+      - "The theory is not vacuous: the Church numerals are typable at one polymorphic type, self-application is typable in System F but not in the simply typed calculus, and typable terms have a unique normal form."
+      - "The Church-style presentation with type annotations is defined, its erasure to the Curry-style system is typing-preserving, and both strong normalization and subject reduction are proved for it."
+      - "The substitution calculus of the annotated terms is proved and the annotated reduction, with both beta and type-beta, is confluent; typable annotated terms have a unique normal form."
+      - "Types are also interpreted relationally and Reynolds' abstraction theorem is proved, with free theorems for the polymorphic identity type and for the polymorphic numerals."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "lake build"
+
+  - id: M9-DINF-ADEQUACY
+    priority: P2
+    status: DONE_STRONG
+    track: theory/semantics
+    title: "Adequacy for the untyped models: nonbottom denotation implies solvability, and the question of full abstraction"
+    latest_evidence: "docs/goal/evidence/M9-DINF-ADEQUACY.md"
+    open_boundary: ""
+    milestone: M9
+    depends_on:
+      - M9-SCOTT-DINF
+    rank: 180
+    exit_criteria:
+      - "A computability relation between the finite stages of the tower and untyped terms is defined and shown to be preserved by the interpretation."
+      - "Adequacy is proved: a closed term whose denotation is not the least element has a head normal form."
+      - "Denotational equality is shown to imply observational equivalence at the level of head normalization."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "lake build"
+
+  - id: M9-UNTYPED-FULL-ABSTRACTION
+    priority: P3
+    status: BACKEND_PARTIAL
+    track: theory/semantics
+    title: "Full abstraction for the untyped models: does observational equivalence imply equality of denotations?"
+    latest_evidence: "docs/goal/evidence/M9-UNTYPED-FULL-ABSTRACTION.md"
+    open_boundary: "Both exit criteria are now met, but the headline question is only settled for one of the two models. Adequacy is proved for both untyped models (M9-GRAPH-ADEQUACY, M9-DINF-ADEQUACY), so denotational equality implies observational equivalence at head normalization. For the graph model the converse provably fails: GraphNotFullyAbstract.graph_not_fully_abstract exhibits closed terms, the identity and its eta-expansion, that no context distinguishes (D-infinity validates eta and is adequate) but whose graph-model denotations differ in every environment, the graph model not being extensional. The approximation theory is now complete for the graph model: Start/GraphApprox.lean defines the approximation order Lambda.Approx and the direct approximant Lambda.direct and proves the soundness inclusion, and Start/GraphApproxTheorem.lean proves the approximation theorem itself, GraphModel.denot_eq_iUnion_denot_direct: the denotation of a term is exactly the union of the denotations of the direct approximants of its reducts. What remains open is full abstraction for D-infinity (Wadsworth theorem), for which the corresponding approximation theorem in D-infinity, not proved here, is the missing step."
+    milestone: M9
+    depends_on:
+      - M9-DINF-ADEQUACY
+      - M9-GRAPH-ADEQUACY
+    rank: 182
+    exit_criteria:
+      - "Finite approximants of untyped terms are defined and the denotation of a term is proved to be the supremum of the denotations of its approximants."
+      - "Full abstraction is settled for at least one of the two models: observationally equivalent terms are proved to have equal denotations, or a counterexample is exhibited."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "lake build"
+
+  - id: M9-GRAPH-ADEQUACY
+    priority: P2
+    status: DONE_STRONG
+    track: theory/semantics
+    title: "Adequacy for Scott's graph model: nonempty denotation, head normal forms and solvability"
+    latest_evidence: "docs/goal/evidence/M9-GRAPH-ADEQUACY.md"
+    open_boundary: ""
+    milestone: M9
+    depends_on:
+      - M9-GRAPH-MODEL
+      - M5-SOLVABILITY
+    rank: 185
+    exit_criteria:
+      - "Head normal forms are defined for the untyped terms, with the closure properties they need."
+      - "A computability (logical-relations) relation between the tokens of the graph model and terms is defined and shown to be preserved by the interpretation."
+      - "Adequacy is proved: a term whose denotation contains a token, in any environment, has a head normal form; and conversely a term with a head normal form has a nonempty denotation, so for a closed term the denotation is the least element exactly when the term has no head normal form."
+      - "Solvability and head normalizability are proved to coincide for closed terms, so the least element of the model is exactly the unsolvable terms."
+      - "Denotational equality is shown to imply observational equivalence at the level of head normalization."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "lake build"
+
+  - id: M9-HEAD-REDUCTION
+    priority: P2
+    status: DONE_STRONG
+    track: theory/lambda
+    title: "Head reduction: the head strategy is normalizing, and the structural laws of head normalizability"
+    latest_evidence: "docs/goal/evidence/M9-HEAD-REDUCTION.md"
+    open_boundary: ""
+    milestone: M9
+    depends_on:
+      - M9-GRAPH-ADEQUACY
+    rank: 190
+    exit_criteria:
+      - "The head reduction strategy is defined and proved deterministic, and head normal forms are characterized as the terms it cannot reduce."
+      - "Head normalization is proved: a term has a head normal form exactly when the head strategy terminates on it."
+      - "Head divergence is proved stable under substitution, and head normalizability of an application is proved to be inherited by its function part."
+      - "A syntactic proof that every solvable term has a head normal form is given, making the characterization of closed solvable terms independent of the graph model."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "lake build"
+
+  - id: M9-DINF-HNF
+    priority: P2
+    status: DONE_STRONG
+    track: theory/semantics
+    title: "D-infinity: head normalizable terms have a denotation above the least element"
+    latest_evidence: "docs/goal/evidence/M9-DINF-HNF.md"
+    open_boundary: ""
+    milestone: M9
+    depends_on:
+      - M9-SCOTT-DINF
+      - M9-GRAPH-ADEQUACY
+    rank: 195
+    exit_criteria:
+      - "The bottom element of D-infinity is shown to denote the everywhere-bottom function, and D-infinity is shown to have an element other than bottom."
+      - "Every head normal form is proved to have a denotation different from the least element in a suitable (constant) environment, and hence so is every head normalizable term."
+      - "The contrapositive is drawn: a term whose denotation is the least element in every environment has no head normal form and is unsolvable."
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "lake build"

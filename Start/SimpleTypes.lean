@@ -21,8 +21,8 @@ Two corollaries record that the theorem has content: every typable term has a no
 (`Lambda.not_typing_omega`), so the untyped calculus is strictly larger.
 -/
 
-import Start.SelfInterpreter
 import Start.NormalizationUndecidable
+import Start.ParallelSubst
 
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
@@ -198,56 +198,6 @@ theorem red_lam {A B : Ty} {s : Lambda}
   intro u hu
   have hsns : SN s := sn_of_sn_subst (cr1 B (h _ (red_var A 0)))
   exact red_app_lam_aux A B s hsns h u (cr1 A hu) hu
-
-------------------------------------------------------------------------
--- Parallel substitution: composition with a single substitution
-------------------------------------------------------------------------
-
-/-- Extend an environment with a new term at index `0`, shifting the rest. -/
-def envScons (v : Lambda) (u : ℕ → Lambda) : ℕ → Lambda
-  | 0 => v
-  | k + 1 => u k
-
-/-- Substituting into a parallel substitution amounts to composing the environments. -/
-theorem subst_substEnv (v : Lambda) :
-    ∀ (t : Lambda) (k : ℕ) (u w : ℕ → Lambda),
-      (∀ j, w j = Lambda.subst (Lambda.lift k 0 v) k (u j)) →
-      Lambda.subst (Lambda.lift k 0 v) k (substEnv u t) = substEnv w t := by
-  intro t
-  induction t with
-  | var j => intro k u w hw; simp only [substEnv, hw j]
-  | app a b iha ihb =>
-      intro k u w hw
-      simp only [substEnv, Lambda.subst, iha k u w hw, ihb k u w hw]
-  | lam t ih =>
-      intro k u w hw
-      have hlift : Lambda.lift 1 0 (Lambda.lift k 0 v) = Lambda.lift (k + 1) 0 v := by
-        rw [Nat.add_comm k 1, Lambda.lift_add]
-      have hstep : ∀ j, envCons w j
-          = Lambda.subst (Lambda.lift (k + 1) 0 v) (k + 1) (envCons u j) := by
-        intro j
-        cases j with
-        | zero => simp [envCons, Lambda.subst]
-        | succ j =>
-            simp only [envCons, hw j]
-            rw [← hlift, Lambda.lift_subst (u j) (Lambda.lift k 0 v) 1 0 k (Nat.zero_le k)]
-      have := ih (k + 1) (envCons u) (envCons w) hstep
-      simp only [substEnv, Lambda.subst, hlift]
-      exact congrArg Lambda.lam this
-
-theorem subst_zero_substEnv (v : Lambda) (t : Lambda) (u : ℕ → Lambda) :
-    Lambda.subst v 0 (substEnv (envCons u) t) = substEnv (envScons v u) t := by
-  have key : ∀ j, envScons v u j
-      = Lambda.subst (Lambda.lift 0 0 v) 0 (envCons u j) := by
-    intro j
-    rw [Lambda.lift_zero]
-    cases j with
-    | zero => simp [envCons, envScons, Lambda.subst]
-    | succ j =>
-        simp only [envCons, envScons]
-        exact (Lambda.subst_lift (u j) v 0).symm
-  have h := subst_substEnv v t 0 (envCons u) (envScons v u) key
-  rwa [Lambda.lift_zero] at h
 
 ------------------------------------------------------------------------
 -- The fundamental lemma, and strong normalization

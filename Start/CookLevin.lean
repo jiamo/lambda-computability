@@ -22,10 +22,19 @@ Main results:
 * `Complexity.polyManyOne_SAT_of_inP` — every language in `P` reduces to SAT (unconditionally);
 * `Complexity.npHard_SAT_of_circuitCompilable`,
   `Complexity.npComplete_SAT_of_circuitCompilable` — SAT is NP-hard, hence NP-complete, as soon as
-  Cobham verifiers are uniformly circuit-compilable.
+  Cobham verifiers are uniformly circuit-compilable;
+* `Complexity.npHard_SAT_of_uniform`, `Complexity.npComplete_SAT_of_uniform` — the same
+  conclusions from the weaker hypothesis that a *given* circuit family is uniformly generated.
+
+Since `Start/PolyCircuit.lean` builds, for every language in `NP`, a well-formed circuit family of
+polynomial size that is satisfiable exactly on the language
+(`Complexity.Tseitin.exists_npCircuitFamily`), the part of `Complexity.CircuitCompilable` that is
+still missing is *uniformity* alone: that the description of such a circuit — equivalently of its
+Tseitin translation — is itself the value of a Cobham term at the instance.  That is what
+`Complexity.UniformlyGenerated` isolates.
 -/
 
-import Start.Tseitin
+import Start.PolyCircuit
 
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
@@ -99,6 +108,36 @@ are uniformly circuit-compilable.  The `InNP` half is unconditional. -/
 theorem npComplete_SAT_of_circuitCompilable (H : ∀ v : Cob, CircuitCompilable v) :
     NPComplete Sat.SAT :=
   ⟨Sat.inNP_SAT, npHard_SAT_of_circuitCompilable H⟩
+
+/-! ### The remaining gap is uniformity alone -/
+
+/-- A family of circuits is **uniformly generated** when the Tseitin translation of `cc x` is the
+value at `x` of a single Cobham (polynomial-time) term. -/
+def UniformlyGenerated (cc : Word → Tseitin.Circuit) : Prop :=
+  ∃ gen : Cob, ∀ x, gen.eval [x] = Sat.encCnf (Tseitin.toCnf (cc x))
+
+/-- **SAT is NP-hard as soon as verifier circuit families are uniformly generated.**  This
+strengthens `Complexity.npHard_SAT_of_circuitCompilable`: the existence of the circuits, and their
+polynomial size, are now supplied by `Complexity.Tseitin.exists_npCircuitFamily`, so the only
+hypothesis left is uniformity. -/
+theorem npHard_SAT_of_uniform
+    (H : ∀ (v : Cob) (cc : Word → Tseitin.Circuit), (∀ x, Tseitin.wf (cc x)) →
+      (∀ x, Tseitin.csat (cc x) ↔ ∃ w : Word, v.eval [x, w] ≠ []) → UniformlyGenerated cc) :
+    NPHard Sat.SAT := by
+  intro L hL
+  obtain ⟨cc, -, -, hwf, -, hcsat⟩ := Tseitin.exists_npCircuitFamily hL
+  obtain ⟨v, -, -, -, -, hacc⟩ := hL
+  obtain ⟨gen, hgen⟩ := H v cc hwf fun x => by rw [hcsat x, hacc x]
+  refine ⟨gen, fun x => ?_⟩
+  rw [← hcsat x, Tseitin.csat_iff_sat_toCnf (cc x) (hwf x), hgen x, Sat.SAT_encCnf]
+
+/-- **Cook–Levin, modulo uniformity**: SAT is NP-complete as soon as verifier circuit families are
+uniformly generated. -/
+theorem npComplete_SAT_of_uniform
+    (H : ∀ (v : Cob) (cc : Word → Tseitin.Circuit), (∀ x, Tseitin.wf (cc x)) →
+      (∀ x, Tseitin.csat (cc x) ↔ ∃ w : Word, v.eval [x, w] ≠ []) → UniformlyGenerated cc) :
+    NPComplete Sat.SAT :=
+  ⟨Sat.inNP_SAT, npHard_SAT_of_uniform H⟩
 
 /-- Under the same hypothesis, `P = NP` is equivalent to `SAT ∈ P`. -/
 theorem peqNP_iff_inP_SAT_of_circuitCompilable (H : ∀ v : Cob, CircuitCompilable v) :
