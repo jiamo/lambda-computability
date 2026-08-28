@@ -90,7 +90,7 @@ theorem elTy_sub {E U : C} (p : E ⟶ U) {Γ Δ : C} (σ : Δ ⟶ Γ)
     rw [codeOf_tmCast, codeOf_tmSub]
     exact Category.comp_id _
   simp only [elTy, LuTy.sub, h]
-  rfl
+  try rfl
 
 /-- **Every morphism of `C` is a universe of small types in the strictified model.**  A code in
 context `Γ` is a map `Γ ⟶ 𝒰`, and it decodes to the family it classifies; substitution acts by

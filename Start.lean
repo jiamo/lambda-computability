@@ -54,6 +54,8 @@ import Start.Solvability
 import Start.Bohm
 import Start.BohmOut
 import Start.BohmEta
+import Start.HeadSpine
+import Start.TagFail
 import Start.SMN
 import Start.SelfInterpreter
 import Start.RecursionParams
@@ -67,8 +69,14 @@ import Start.Encodings
 import Start.TM2PolyTime
 import Start.AlgorithmRepresentation
 
+-- Size explosion / reasonable cost models
+import Start.TermSize
+import Start.SizeExplosion
+
 -- Kolmogorov complexity
+import Start.KolmogorovDef
 import Start.Kolmogorov
+import Start.KolmogorovCond
 import Start.KolmogorovBinary
 import Start.Kraft
 import Start.ChaitinOmega
@@ -272,8 +280,27 @@ import Start.DinfAdequacy
 import Start.GraphNotFullyAbstract
 import Start.GraphApprox
 import Start.GraphApproxTheorem
+import Start.DinfApprox
+import Start.DinfEtaLimit
+import Start.DinfApply
+import Start.DinfBohmEta
+import Start.DinfNormalFullAbstraction
+import Start.DinfWadsworth
+import Start.DinfWadsworthSharp
+import Start.ApproxShape
+import Start.HeadSpine
+import Start.TagFail
+import Start.DinfSpine
+import Start.DinfTagBelow
+import Start.DinfTagBelowSound
 import Start.CwaCodePi
 import Start.CwaUnivNotClosed
 import Start.CwaTypeModel
 import Start.CwaCodeSigma
 import Start.CwaTypeModelSigma
+import Start.CircuitShift
+import Start.KolmogorovPair
+import Start.ReducesIn
+import Start.LevinKt
+import Start.LevinSearch
+import Start.Capstones

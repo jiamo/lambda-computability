@@ -128,24 +128,65 @@ theorem isProgramFor_ofLN {M : LNTerm} {s : ℕ} (h : IsProgramForLN M s) :
   rw [← hchurch]
   exact hredt
 
+/-! ### The measure as a description system -/
+
+/-- **The locally nameless measure as a description system** (`Start/DescriptionSystem.lean`): the
+programs are the locally nameless terms, their size is `Lambda.sizeLN`, and a program describes
+`s` when it is closed and β-reduces to the translated Church numeral. -/
+def kolmLNSystem : Complexity.DescSystem LNTerm ℕ where
+  size := sizeLN
+  Outputs := IsProgramForLN
+
+theorem kolmLN_eq_kolmLNSystem_K (s : ℕ) : kolmLN s = kolmLNSystem.K s := rfl
+
+theorem describes_kolmLNSystem (s : ℕ) : kolmLNSystem.Describes s :=
+  ⟨toLN 0 0 (church s), isProgramForLN_toLN (isProgramFor_church s)⟩
+
+/-- Neither translation ever grows a term — for closed terms `Lambda.sizeLN_toLN` gives equality,
+and an open variable is sent to the atom `0`, which is smaller still. -/
+theorem sizeLN_toLN_le : ∀ (d : ℕ) (t : Lambda), sizeLN (toLN 0 d t) ≤ size t := by
+  intro d t
+  induction t generalizing d with
+  | var i => by_cases h : i < d <;> simp [toLN, h, size]
+  | app a b iha ihb =>
+      have := iha d
+      have := ihb d
+      simp only [toLN, sizeLN_app, size]
+      omega
+  | lam u ihu =>
+      have := ihu (d + 1)
+      simp only [toLN, sizeLN_abs, size]
+      omega
+
+/-- Reading a de Bruijn program as a locally nameless one is a translation of description systems
+at no cost.
+
+There is no translation in the other direction: `Lambda.ofLN 0 d` sends an atom to the de Bruijn
+index `d`, so under `d` binders it can grow a term, and it is only on the *closed* terms — the
+ones with no atoms at all, which is what a program is — that it preserves the size.  The second
+half of `Lambda.kolmLN_eq_kolm` therefore goes through the shortest program directly. -/
+def toLNTranslation : Complexity.DescSystem.Translation kolmSystem kolmLNSystem where
+  map := toLN 0 0
+  cost := 0
+  outputs := isProgramForLN_toLN
+  size_le := fun t => by simpa [kolmSystem, kolmLNSystem] using sizeLN_toLN_le 0 t
+
 /-- **Kolmogorov complexity is the same in the de Bruijn and in the locally nameless
 representation** — not merely up to an additive constant, but on the nose. -/
 theorem kolmLN_eq_kolm (s : ℕ) : kolmLN s = kolm s := by
-  apply le_antisymm
-  · obtain ⟨t, ht, hsize⟩ := exists_program_of_kolm s
-    have hfree : freeMax t = 0 := (isClosed_iff_freeMax_eq_zero t).1 ht.1
-    refine Nat.sInf_le ⟨toLN 0 0 t, isProgramForLN_toLN ht, ?_⟩
-    rw [sizeLN_toLN 0 0 t (by omega), hsize]
-  · have hne : {n | ∃ M : LNTerm, IsProgramForLN M s ∧ sizeLN M = n}.Nonempty :=
-      ⟨sizeLN (toLN 0 0 (church s)), toLN 0 0 (church s),
-        isProgramForLN_toLN (isProgramFor_church s), rfl⟩
-    obtain ⟨M, hM, hsize⟩ := Nat.sInf_mem hne
+  refine le_antisymm ?_ ?_
+  · have h := Complexity.DescSystem.K_le_add_cost toLNTranslation (describes_kolmSystem s)
+    have hc : toLNTranslation.cost = 0 := rfl
+    rw [hc, Nat.add_zero, ← kolm_eq_kolmSystem_K, ← kolmLN_eq_kolmLNSystem_K] at h
+    exact h
+  · obtain ⟨M, hM, hsize⟩ :=
+      Complexity.DescSystem.exists_outputs_size_eq_K (describes_kolmLNSystem s)
     have hprog := isProgramFor_ofLN hM
     have hfree : freeMax (ofLN 0 0 M) = 0 := (isClosed_iff_freeMax_eq_zero _).1 hprog.1
     calc kolm s ≤ size (ofLN 0 0 M) := kolm_le_of_isProgramFor hprog
       _ = sizeLN (toLN 0 0 (ofLN 0 0 M)) := (sizeLN_toLN 0 0 _ (by omega)).symm
       _ = sizeLN M := by rw [toLN_ofLN_closed hM.1 hM.2.1]
-      _ = kolmLN s := hsize
+      _ = kolmLN s := by rw [kolmLN_eq_kolmLNSystem_K]; exact hsize
 
 /-- The bit measure, read in the locally nameless representation, is the bit measure. -/
 theorem kolmLN_le_kolmP (s : ℕ) : kolmLN s ≤ kolmP s := by

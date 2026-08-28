@@ -1,6 +1,6 @@
 # Current goal state
 
-- Active milestone: `M9`
+- Active milestone: `M10`
 
 | Rank | ID | Priority | Status | Depends on | Evidence | Open Boundary |
 |---:|---|---|---|---|---|---|
@@ -67,13 +67,12 @@
 | 172 | `M9-LAMBDAPI-SN` | `P1` | `DONE_STRONG` | M9-LAMBDAPI-LCCC | docs/goal/evidence/M9-LAMBDAPI-SN.md |  |
 | 175 | `M9-SYSTEM-F` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M9-SYSTEM-F.md |  |
 | 180 | `M9-DINF-ADEQUACY` | `P2` | `DONE_STRONG` | M9-SCOTT-DINF | docs/goal/evidence/M9-DINF-ADEQUACY.md |  |
-| 182 | `M9-UNTYPED-FULL-ABSTRACTION` | `P3` | `BACKEND_PARTIAL` | M9-DINF-ADEQUACY, M9-GRAPH-ADEQUACY | docs/goal/evidence/M9-UNTYPED-FULL-ABSTRACTION.md | Both exit criteria are now met, but the headline question is only settled for one of the two models. Adequacy is proved for both untyped models (M9-GRAPH-ADEQUACY, M9-DINF-ADEQUACY), so denotational equality implies observational equivalence at head normalization. For the graph model the converse provably fails: GraphNotFullyAbstract.graph_not_fully_abstract exhibits closed terms, the identity and its eta-expansion, that no context distinguishes (D-infinity validates eta and is adequate) but whose graph-model denotations differ in every environment, the graph model not being extensional. The approximation theory is now complete for the graph model: Start/GraphApprox.lean defines the approximation order Lambda.Approx and the direct approximant Lambda.direct and proves the soundness inclusion, and Start/GraphApproxTheorem.lean proves the approximation theorem itself, GraphModel.denot_eq_iUnion_denot_direct: the denotation of a term is exactly the union of the denotations of the direct approximants of its reducts. What remains open is full abstraction for D-infinity (Wadsworth theorem), for which the corresponding approximation theorem in D-infinity, not proved here, is the missing step. |
+| 182 | `M9-UNTYPED-FULL-ABSTRACTION` | `P3` | `DONE_STRONG` | M9-DINF-ADEQUACY, M9-GRAPH-ADEQUACY | docs/goal/evidence/M9-UNTYPED-FULL-ABSTRACTION.md |  |
 | 185 | `M9-GRAPH-ADEQUACY` | `P2` | `DONE_STRONG` | M9-GRAPH-MODEL, M5-SOLVABILITY | docs/goal/evidence/M9-GRAPH-ADEQUACY.md |  |
 | 190 | `M9-HEAD-REDUCTION` | `P2` | `DONE_STRONG` | M9-GRAPH-ADEQUACY | docs/goal/evidence/M9-HEAD-REDUCTION.md |  |
 | 195 | `M9-DINF-HNF` | `P2` | `DONE_STRONG` | M9-SCOTT-DINF, M9-GRAPH-ADEQUACY | docs/goal/evidence/M9-DINF-HNF.md |  |
+| 200 | `M10-COMPLEXITY-DESCSYSTEM` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M10-COMPLEXITY-DESCSYSTEM.md |  |
+| 210 | `M10-LEVIN-KT` | `P1` | `DONE_STRONG` | M10-COMPLEXITY-DESCSYSTEM | docs/goal/evidence/M10-LEVIN-KT.md |  |
+| 220 | `M10-CAPSTONE-REGISTRY` | `P0` | `DONE_STRONG` | M10-LEVIN-KT | docs/goal/evidence/M10-CAPSTONE-REGISTRY.md |  |
 
-Next: `M9-LAMBDAPI-LCCC`
-
-- Title: Dependent types: the calculus lambda-Pi, categories with attributes, and locally cartesian closed categories
-- Status: `BACKEND_PARTIAL`
-- Open boundary: Both sides are built, but the biequivalence is not claimed. Syntax: LambdaPiCwa.syntactic is a category with attributes whose types are the small types, LambdaPiCwa.weakPi its dependent product, and LambdaPiCwa.not_piStruct_weakPi shows eta genuinely fails. Semantics: the strictified model (Cwa.ofPullbacks) presents types by local universes, so substitution is strictly functorial, and a locally cartesian closed category carries there a dependent product with beta and eta (Cwa.piStructOfLccc) and a dependent sum. Universes: Cwa.Universe, SmallPi, PiClosed and the weaker CodePi and CodeSigma are what an interpretation needs; LambdaPiUniv.univ makes star a universe in the syntactic model, and CwaUniv.universeOfHom makes every morphism a universe in the strictified model. Cwa.Universe.smallCwa extracts the model whose types are the codes (inclusion smallMor, products smallWeakPiOfCodePi, sums smallSigmaOfCodeSigma); the two syntactic models are isomorphic (LambdaPiUniv.smallModelIso). Substitution of terms is functorial in both (Cwa.ExtCoherent) and models form a category (Cwa.Model.instCategory). A set-theoretic model is built (CwaTypeModel.model, modelPiNatural): over Type (u+1) the universe object is Type u, types are the small families (modelTyEquiv), terms the dependent functions (modelTmEquiv), and the universe is closed under products (codePi, the dependent function type, with beta, eta and piLam_sub) and sums (modelSigma). Not claimed: interpretation of the syntax into an arbitrary model with a universe (initiality), any comparison between syntax and an arbitrary model, and closure of the universe of a general strictified model under the pushforward product on the nose (Cwa.Universe.PiClosed). That closure is genuine extra structure: CwaTypeNotClosed.twoUniverse is a two-code universe of the standard model with products over its small types, and not_piClosed and not_codePi rule out both Cwa.Universe.PiClosed and the weaker Cwa.Universe.CodePi for it.
+Next: all tasks in the active milestone are `DONE_STRONG`.

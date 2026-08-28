@@ -26,7 +26,9 @@ for.
   `Start/Standardization.lean`.
 * `Start/DecodeTest.lean` — a small standalone check of the decoding equations
   (`Lambda.decode_eq`, `Lambda.encode_of_decode`); not imported by `Start.lean`, but built
-  by the M7-VERIFICATION-DEBT gate.
+  by the M7-VERIFICATION-DEBT gate.  *(Deleted since: it duplicated the declarations of
+  `Start/KolmogorovHalting.lean`, so it could never enter the import closure.  The documented
+  versions are the ones in `Start.KolmogorovHalting`.)*
 * `Start/Demo.lean` — the guided tour of the development; likewise built explicitly.
 
 Every other module under `Start/` is named in the exit criteria or the evidence note of some

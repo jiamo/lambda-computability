@@ -50,6 +50,10 @@ universe u v
 
 open CategoryTheory Limits
 
+/-- Equal morphisms of the category of types agree pointwise. -/
+theorem types_hom_congr_fun.{w} {X Y : Type w} {f g : X ⟶ Y} (h : f = g) (x : X) : f x = g x :=
+  congrFun (congrArg (fun k : X ⟶ Y => (k : X → Y)) h) x
+
 /-! ### Terms of the strictified model are sections of the generic family -/
 
 namespace CwaUniv
@@ -179,7 +183,7 @@ theorem fam_sub (σ : Δ ⟶ Γ) (a : Cwa.Tm amb Γ (un.U Γ)) :
 /-- Reindexing a point of a total space along a substitution. -/
 noncomputable abbrev sigShift (σ : Δ ⟶ Γ) (a : Cwa.Tm amb Γ (un.U Γ)) :
     sigObj (fam (un.sub σ a)) ⟶ sigObj (fam a) :=
-  ↾fun z => (⟨σ z.1, cast (types_congr_hom (fam_sub σ a) z.1) z.2⟩ : sigObj (fam a))
+  ↾fun z => (⟨σ z.1, cast (types_hom_congr_fun (fam_sub σ a) z.1) z.2⟩ : sigObj (fam a))
 
 /-- **The action of a substitution on the extended context, computed on total spaces.** -/
 theorem extIso_extHom (σ : Δ ⟶ Γ) (a : Cwa.Tm amb Γ (un.U Γ)) :
@@ -194,7 +198,7 @@ theorem extIso_extHom (σ : Δ ⟶ Γ) (a : Cwa.Tm amb Γ (un.U Γ)) :
   refine (LuTy.isPullback_gen (un.El a)).hom_ext ?_ ?_
   · rw [Category.assoc, Category.assoc, e1, extIso_hom_gen]
     refine ConcreteCategory.hom_ext _ _ fun z => ?_
-    exact (sigma_cast_eta (⟨_, z.2⟩ : Eob.{u}) (types_congr_hom (fam_sub σ a) z.1)).symm
+    exact (sigma_cast_eta (⟨_, z.2⟩ : Eob.{u}) (types_hom_congr_fun (fam_sub σ a) z.1)).symm
   · rw [Category.assoc, Category.assoc, e2, extIso_hom_disp]
     rfl
 
@@ -202,8 +206,8 @@ theorem extIso_extHom (σ : Δ ⟶ Γ) (a : Cwa.Tm amb Γ (un.U Γ)) :
 theorem extHom_apply (σ : Δ ⟶ Γ) (a : Cwa.Tm amb Γ (un.U Γ))
     (z : sigObj (fam (un.sub σ a))) :
     (un.extHom σ a) ((extIso (un.sub σ a)).hom z)
-      = (extIso a).hom ⟨σ z.1, cast (types_congr_hom (fam_sub σ a) z.1) z.2⟩ := by
-  have h := types_congr_hom (extIso_extHom σ a) z
+      = (extIso a).hom ⟨σ z.1, cast (types_hom_congr_fun (fam_sub σ a) z.1) z.2⟩ := by
+  have h := types_hom_congr_fun (extIso_extHom σ a) z
   simp only [types_comp_apply] at h
   exact h
 
@@ -212,11 +216,11 @@ theorem extHom_apply (σ : Δ ⟶ Γ) (a : Cwa.Tm amb Γ (un.U Γ))
 /-- **Sections of the generic family are dependent functions.** -/
 def famSectionEquiv (c : Γ ⟶ Uob.{u}) :
     {f : Γ ⟶ Eob.{u} // f ≫ genHom = c} ≃ ∀ x : Γ, c x where
-  toFun f := fun x => cast (types_congr_hom f.2 x) (f.1 x).2
+  toFun f := fun x => cast (types_hom_congr_fun f.2 x) (f.1 x).2
   invFun g := ⟨↾fun x => ⟨c x, g x⟩, rfl⟩
   left_inv f := by
     refine Subtype.ext (ConcreteCategory.hom_ext _ _ fun x => ?_)
-    have h : (f.1 x).1 = c x := types_congr_hom f.2 x
+    have h : (f.1 x).1 = c x := types_hom_congr_fun f.2 x
     exact sigma_cast_eta (f.1 x) h
   right_inv g := by funext x; rfl
 
@@ -270,7 +274,7 @@ noncomputable def piTmEquiv (a : Cwa.Tm amb Γ (un.U Γ))
     (b : Cwa.Tm amb (amb.ext Γ (un.El a)) (un.U (amb.ext Γ (un.El a)))) :
     Cwa.Tm amb Γ (un.El (piCode a b))
       ≃ ∀ x : Γ, (y : fam a x) → fam b ((extIso a).hom ⟨x, y⟩) :=
-  (elTmEquiv (piCode a b)).trans (Equiv.cast (by rw [fam_piCode]; rfl))
+  (elTmEquiv (piCode a b)).trans (Equiv.cast (by rw [fam_piCode]; try rfl))
 
 /-- **The code of a product is stable under substitution.** -/
 theorem piCode_sub (σ : Δ ⟶ Γ) (a : Cwa.Tm amb Γ (un.U Γ))
@@ -280,11 +284,11 @@ theorem piCode_sub (σ : Δ ⟶ Γ) (a : Cwa.Tm amb Γ (un.U Γ))
   rw [fam_sub]
   simp only [fam_piCode]
   refine ConcreteCategory.hom_ext _ _ fun x => ?_
-  refine pi_type_congr (types_congr_hom (fam_sub σ a) x).symm fun y => ?_
-  set y' : fam (un.sub σ a) x := cast (types_congr_hom (fam_sub σ a) x).symm y
+  refine pi_type_congr (types_hom_congr_fun (fam_sub σ a) x).symm fun y => ?_
+  set y' : fam (un.sub σ a) x := cast (types_hom_congr_fun (fam_sub σ a) x).symm y
   have hb : fam (un.sub (un.extHom σ a) b) = un.extHom σ a ≫ fam b :=
     fam_sub (un.extHom σ a) b
-  have h1 := types_congr_hom hb ((extIso (un.sub σ a)).hom ⟨x, y'⟩)
+  have h1 := types_hom_congr_fun hb ((extIso (un.sub σ a)).hom ⟨x, y'⟩)
   have h2 := extHom_apply σ a ⟨x, y'⟩
   simp only [types_comp_apply] at h1
   rw [h1, h2]
@@ -307,7 +311,7 @@ noncomputable def piApp (a : Cwa.Tm amb Γ (un.U Γ))
     (f : Cwa.Tm amb Γ (un.El (piCode a b))) :
     Cwa.Tm amb (amb.ext Γ (un.El a)) (un.El b) :=
   (elTmEquiv b).symm fun w =>
-    cast (congrArg (fun w' => fam b w') (types_congr_hom (extIso a).inv_hom_id w))
+    cast (congrArg (fun w' => fam b w') (types_hom_congr_fun (extIso a).inv_hom_id w))
       ((piTmEquiv a b) f ((extIso a).inv w).1 ((extIso a).inv w).2)
 
 /-- **β** for the product of codes. -/
@@ -317,7 +321,7 @@ theorem piApp_piLam (a : Cwa.Tm amb Γ (un.U Γ))
   refine (elTmEquiv b).injective ?_
   refine funext fun w => ?_
   rw [piApp, piLam, Equiv.apply_symm_apply, Equiv.apply_symm_apply]
-  exact cast_dep (fun w' => (elTmEquiv b) x w') (types_congr_hom (extIso a).inv_hom_id w)
+  exact cast_dep (fun w' => (elTmEquiv b) x w') (types_hom_congr_fun (extIso a).inv_hom_id w)
 
 /-- **η** for the product of codes: a term of the product code is its own η-expansion. -/
 theorem piLam_piApp (a : Cwa.Tm amb Γ (un.U Γ))
@@ -329,7 +333,7 @@ theorem piLam_piApp (a : Cwa.Tm amb Γ (un.U Γ))
   rw [piApp]
   simp only [Equiv.apply_symm_apply]
   exact cast_dep (fun z : sigObj (fam a) => (piTmEquiv a b) f z.1 z.2)
-    (types_congr_hom (extIso a).hom_inv_id (⟨p, y⟩ : sigObj (fam a)))
+    (types_hom_congr_fun (extIso a).hom_inv_id (⟨p, y⟩ : sigObj (fam a)))
 
 /-! #### Substitution -/
 
@@ -360,14 +364,14 @@ theorem fam_piCode_apply (a : Cwa.Tm amb Γ (un.U Γ))
     (b : Cwa.Tm amb (amb.ext Γ (un.El a)) (un.U (amb.ext Γ (un.El a)))) (p : Γ) :
     (fam (piCode a b)) p = ((y : fam a p) → fam b ((extIso a).hom ⟨p, y⟩)) := by
   rw [fam_piCode]
-  rfl
+  try rfl
 
 theorem fam_piCode_fun (a : Cwa.Tm amb Γ (un.U Γ))
     (b : Cwa.Tm amb (amb.ext Γ (un.El a)) (un.U (amb.ext Γ (un.El a)))) :
     (fun p => (fam (piCode a b)) p)
       = fun p => ((y : fam a p) → fam b ((extIso a).hom ⟨p, y⟩)) := by
   rw [fam_piCode]
-  rfl
+  try rfl
 
 /-- **An abstraction is the dependent function it abstracts**, read through the identification of
 the family named by the product code with the dependent function type. -/
@@ -396,7 +400,7 @@ theorem codeOf_model_tmSub (σ : Δ ⟶ Γ) {a : model.Ty Γ} (x : Cwa.Tm model 
 /-- **Substituting in a term precomposes the dependent function it denotes.** -/
 theorem elTmEquiv_model_tmSub (σ : Δ ⟶ Γ) (a : model.Ty Γ) (x : Cwa.Tm model Γ a) (d : Δ) :
     (elTmEquiv (un.sub σ a)) (Cwa.tmSub (T := model) σ x) d
-      = cast (types_congr_hom (fam_sub σ a) d).symm ((elTmEquiv a) x (σ d)) := by
+      = cast (types_hom_congr_fun (fam_sub σ a) d).symm ((elTmEquiv a) x (σ d)) := by
   have hx : codeOf x ≫ genHom = fam a := ((tmSectionEquiv (un.El a)) x).2
   have hpf : (σ ≫ codeOf x) ≫ genHom = fam (un.sub σ a) :=
     Eq.trans (Category.assoc _ _ _)
@@ -440,7 +444,7 @@ theorem piLam_sub (σ : Δ ⟶ Γ) (a : Cwa.Tm amb Γ (un.U Γ))
   refine Eq.trans (cast_cast _ _ _)
     (Eq.trans (cast_cast _ _ _) (Eq.trans (cast_cast _ _ _) ?_))
   set hA : fam a (σ p) = fam (un.sub σ a) p :=
-    (types_congr_hom (fam_sub σ a) p).symm with hAdef
+    (types_hom_congr_fun (fam_sub σ a) p).symm with hAdef
   have hstep : ∀ y : fam a (σ p),
       (un.extHom σ a) ((extIso (un.sub σ a)).hom ⟨p, cast hA y⟩)
         = (extIso a).hom ⟨σ p, y⟩ := by
@@ -451,7 +455,7 @@ theorem piLam_sub (σ : Δ ⟶ Γ) (a : Cwa.Tm amb Γ (un.U Γ))
   have hB : ∀ y : fam a (σ p), fam b ((extIso a).hom ⟨σ p, y⟩)
       = fam (un.sub (un.extHom σ a) b) ((extIso (un.sub σ a)).hom ⟨p, cast hA y⟩) := by
     intro y
-    exact ((types_congr_hom (fam_sub (un.extHom σ a) b)
+    exact ((types_hom_congr_fun (fam_sub (un.extHom σ a) b)
       ((extIso (un.sub σ a)).hom ⟨p, cast hA y⟩)).trans
       (congrArg (fun w => fam b w) (hstep y))).symm
   have hg : ∀ y : fam a (σ p),

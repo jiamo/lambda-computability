@@ -517,6 +517,22 @@ Program length is the syntactic size of a closed term reducing to a Church numer
 #check @ScottDinf.ddenot_omega
 #check @ScottDinf.not_convBE_omega_I
 
+-- `D∞` identifies a term with its *infinite* η-expansion: `J = Θ (λ j x y. x (j y))` denotes the
+-- identity, although the two are not β-convertible.
+#check @ScottDinf.eq_dId_of_eta_fixpoint
+#check @ScottDinf.ddenot_Jterm_eq_ddenot_id
+#check @ScottDinf.obsEqHnf_Jterm_id
+#check @ScottDinf.not_conv_Jterm_I
+
+-- **Wadsworth's theorem**: two closed terms are observationally equivalent, by head
+-- normalisation, exactly when they have the same denotation in `D∞`.  Equivalently, the `D∞`
+-- order between closed terms is the absence of a finite failure witness `Lambda.TagFail`.
+#check @ScottDinf.obsEqHnf_iff_ddenot_eq
+#check @ScottDinf.tagBelowSound
+#check @ScottDinf.ddenot_le_iff_not_tagFail_unconditional
+#check @ScottDinf.le_ddenot_of_not_tagFail_approx
+#check @ScottDinf.le_ddenot_of_not_tagFail_var
+
 -- Conversely, in `D∞` a head normalizable term is somewhere different from the least element,
 -- so a term denoting `⊥` in every environment has no head normal form and is unsolvable.
 #check @ScottDinf.exists_ddenot_ne_botDinf_of_hasHnf
@@ -630,6 +646,9 @@ Program length is the syntactic size of a closed term reducing to a Church numer
   `D∞ ≅ [D∞ →𝒄 D∞]` and an extensional model of the lambda calculus validating beta and eta;
   in that model `Ω` denotes the least element, so the λη calculus is consistent, and conversely
   every head normalizable term is somewhere different from the least element
+- Wadsworth's theorem: `D∞` is fully abstract for the untyped calculus — two closed terms are
+  observationally equivalent, by head normalisation, exactly when they have the same denotation;
+  while the graph model is not fully abstract
 - Head reduction: the head strategy is deterministic and normalizing — a term has a head normal
   form exactly when the strategy terminates on it — whence head divergence is stable under
   substitution, head normalizability of an application is inherited by its function part, and

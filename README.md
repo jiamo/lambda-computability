@@ -18,7 +18,7 @@ Kolmogorov complexity, Chaitin's `Ω`, Martin-Löf randomness and Böhm's separa
 ![Lean](https://img.shields.io/badge/Lean-v4.33.0-blue)
 ![Mathlib](https://img.shields.io/badge/Mathlib-v4.33.0-blue)
 ![sorry-free](https://img.shields.io/badge/sorry--free-yes-brightgreen)
-![tasks](https://img.shields.io/badge/task%20board-51%2F51%20DONE__STRONG-brightgreen)
+![tasks](https://img.shields.io/badge/task%20board-68%2F70%20DONE__STRONG-brightgreen)
 
 Everything below is proved in `Start/`; the whole library compiles with `lake build`, contains no
 `sorry` and no `axiom`, and the headline results depend only on `propext`, `Classical.choice` and
@@ -166,6 +166,11 @@ Complexity.InNP.of_reduction :
       Complexity.PolyManyOne L₁ L₂ → Complexity.InNP L₂ → Complexity.InNP L₁
 Complexity.peqNP_of_npComplete_of_inP :
     ∀ {L : Complexity.Language}, Complexity.NPComplete L → Complexity.InP L → Complexity.PeqNP
+
+-- Cook–Levin: SAT is NP-hard, hence NP-complete; so P = NP iff SAT is in P.
+Complexity.npHard_SAT : Complexity.NPHard Complexity.Sat.SAT
+Complexity.npComplete_SAT : Complexity.NPComplete Complexity.Sat.SAT
+Complexity.peqNP_iff_inP_SAT : Complexity.PeqNP ↔ Complexity.InP Complexity.Sat.SAT
 ```
 
 ## Related work, and what is specific to this project
@@ -234,14 +239,19 @@ Public Lean 4 developments in this area, and how they relate (repository file li
   preserve satisfiability and to have linear size (`Start/Tseitin.lean`).  Every Cobham term is
   compiled into a Boolean circuit of polynomial size, which gives `P ⊆ P/poly` and, for every
   language in NP, a polynomial-size circuit family satisfiable exactly on the language
-  (`Start/CobhamCircuit.lean`, `Start/CobhamBRec.lean`, `Start/PolyCircuit.lean`).  NP-*hardness*
-  of SAT is not formalized: what is missing is uniformity of that family.  The dependence on the
-  instance has been removed — the acceptance circuits read the instance off their own input
+  (`Start/CobhamCircuit.lean`, `Start/CobhamBRec.lean`, `Start/PolyCircuit.lean`).  **SAT is
+  NP-hard, and NP-complete** — `Complexity.npHard_SAT`, `Complexity.npComplete_SAT` and hence
+  `Complexity.peqNP_iff_inP_SAT` (`P = NP` iff SAT is in `P`) — unconditionally
+  (`Start/CookLevinNPHard.lean`); the missing uniformity of the acceptance families is supplied
+  there by `Complexity.stdUniformAcceptFamilies`, built from the segment decoder of
+  `Start/UniformSegDec.lean` and the verifier compiler of `Start/UniformSigAll.lean`.  The route
+  to it was incremental, and the intermediate implications are kept: the dependence on the
+  instance was removed first — the acceptance circuits read the instance off their own input
   (`Start/PinnedCircuit.lean`), the instance is written into the formula by unit clauses
   (`Start/PinnedCnf.lean`) and those are emitted by an explicit Cobham term
-  (`Start/CobhamPin.lean`) — so what is left as an explicit hypothesis is the usual P-uniformity
-  of a *length-indexed* circuit family, from which NP-completeness of SAT does follow
-  (`Start/CookLevinUniform.lean`); no language is proved NP-complete outright.  On the other side,
+  (`Start/CobhamPin.lean`), which reduced the problem to the usual P-uniformity of a
+  *length-indexed* circuit family (`Start/CookLevinUniform.lean`, `Start/CookLevinBound.lean`).
+  On the other side,
   the reduction to SAT is unconditional for every language decided by a P-uniform circuit family
   (`Start/UniformDecide.lean`), a class that contains every regular language
   (`Start/UniformAuto.lean`) and every symmetric language whose count predicate is decided in
@@ -390,7 +400,7 @@ Public Lean 4 developments in this area, and how they relate (repository file li
   model not being extensional, but no context distinguishes them, because `D∞` validates eta and
   is adequate.  So the inclusion of denotational into observational equality is strict there
   (`GraphNotFullyAbstract.graph_not_fully_abstract`), and `D∞` identifies strictly more terms than
-  the graph model.  For `D∞` itself full abstraction is not claimed.
+  the graph model.
 - **The approximation theorem for the graph model** (`Start/GraphApprox.lean`,
   `Start/GraphApproxTheorem.lean`) — the direct approximant `ω(M)` keeps the abstraction prefix
   and the variable head of `M` and erases everything under a head redex to `Ω`.  The denotation
@@ -401,6 +411,49 @@ Public Lean 4 developments in this area, and how they relate (repository file li
   argument on the tokens, whose fundamental lemma `GraphModel.arealAux_substEnv` carries two
   environments, one for the free variables of the term and one for the target context of the
   substitution.
+- **The approximation theorem for `D∞`** (`Start/DinfApprox.lean`) — the same statement in the
+  order-theoretic form the continuous model calls for: `⟦M⟧ρ` is the least upper bound of
+  `{⟦ω(M')⟧ρ : M ↠ M'}` (`ScottDinf.isLUB_ddenot_direct`).  The computability relation is indexed
+  by the finite levels of the inverse limit; each level is finite, so a supremum along a chain is
+  attained there, and confluence merges the finitely many reducts the different levels produce.
+- **Full abstraction of `D∞` on closed normal forms** (`Start/DinfApply.lean`,
+  `Start/DinfBohmEta.lean`, `Start/DinfNormalFullAbstraction.lean`) — the finite case of
+  Wadsworth's theorem.  `D∞` is extensional (`ScottDinf.dinf_ext_dappN`), which lets two
+  denotations be compared by feeding them a common stack of arguments; a size induction mirroring
+  the η-general Böhm-out descent then shows that η-equal Böhm trees have the same denotation
+  (`ScottDinf.ddenot_toTerm_eq_of_tagEq`).  Conversely separable terms are distinguished by the
+  context `X a₁ … aₖ Ω I` (`ScottDinf.not_obsEqHnf_of_separable`).  With Böhm's theorem in its
+  η-general form this gives `ScottDinf.obsEqHnf_iff_ddenot_eq_normal`: for closed β-normal forms,
+  observational equivalence and equality of `D∞` denotations coincide, and hence
+  `ScottDinf.obsEqHnf_iff_ddenot_eq_of_normalizes` for every closed term that has a normal form.
+  The general case needs a separation argument for the finite approximants `ω(M')`, which contain
+  `Ω`; `Start/DinfWadsworth.lean` makes that gap precise, proving that contexts are monotone in
+  their hole (`ScottDinf.ddenot_fill_mono`) and reducing full abstraction to a separation
+  principle `ScottDinf.SeparatesApprox`, which the next item discharges.
+- **Wadsworth's theorem** (`Start/HeadSpine.lean`, `Start/TagFail.lean`, `Start/ApproxShape.lean`,
+  `Start/DinfSpine.lean`, `Start/DinfTagBelow.lean`, `Start/DinfTagBelowSound.lean`) — two closed
+  terms are observationally equivalent, by head normalisation, exactly when they have the same
+  denotation in `D∞` (`ScottDinf.obsEqHnf_iff_ddenot_eq`).  `Lambda.TagFail` is a *finite failure
+  witness* for the comparison of two arbitrary terms, and `Lambda.sepDiv_of_tagFail` is the
+  Böhm-out that turns such a witness into closed arguments on which the first term head-converges
+  and the second head-diverges; the converse, `ScottDinf.tagBelowSound`, says that absence of a
+  witness implies the `D∞` inequality, so the order between closed terms *is* the absence of a
+  failure witness (`ScottDinf.ddenot_le_iff_not_tagFail_unconditional`).  Its proof splits at the
+  approximation theorem: a finite approximant is put below a term by a size induction on the shape
+  of the approximant (`Lambda.approx_direct_shape`,
+  `ScottDinf.le_ddenot_of_not_tagFail_approx`), whose only non-structural case — a variable
+  against a possibly *infinite* η-expansion of it — is settled level by level in the inverse limit
+  (`ScottDinf.le_ddenot_of_not_tagFail_var`).
+- **The infinite η-expansion of the identity** (`Start/DinfEtaLimit.lean`) — the reason no relation
+  generated by *finite* witnesses can decide the `D∞` order.  Let `J = Θ (λ j x y. x (j y))`, so
+  that `J ↠ λx y. x (J y)` (`ScottDinf.Jterm_reduces`): unfolding, `J` is the identity η-expanded
+  infinitely often.  `ScottDinf.eq_dId_of_eta_fixpoint` characterises the identity of `D∞` by the
+  two η-limit equations `x · y · z = y · (x · z)` and `x · ⊥ = ⊥`, by two simultaneous inductions
+  over the levels of the inverse limit; applied to `J` it gives `⟦J⟧ = ⟦I⟧`
+  (`ScottDinf.ddenot_Jterm_eq_ddenot_id`), hence `ScottDinf.obsEqHnf_Jterm_id` and
+  `ScottDinf.obsEqHnf_app_Jterm` (`J M` is indistinguishable from `M`).  The identification is not
+  a β-conversion: the graph model, sound for β and not extensional, separates the two
+  (`ScottDinf.not_conv_Jterm_I`).
 - **Head reduction** — the head strategy (weak head steps, allowed under a leading abstraction)
   is defined in `Start/HeadReduction.lean` and proved deterministic and *normalizing*: a term has
   a head normal form exactly when the strategy terminates on it
@@ -416,9 +469,10 @@ Public Lean 4 developments in this area, and how they relate (repository file li
 
 ## Building
 
-> **Note on the pinned toolchain.**  The library is built against Lean `v4.33.0` and the matching
-> Mathlib (commit `db584cd6`, tag `v4.33.0`), which is what `lean-toolchain`, `lakefile.toml` and
-> `lake-manifest.json` pin.  All of `Start/` compiles on that toolchain, including the two modules
+> **Note on the pinned toolchain.**  The library is built against Lean `v4.33.0` and a matching
+> Mathlib checkout supplied at `.lake/packages/mathlib`; it is verified against Mathlib commit
+> `6f1ef4e5dd`, the latest revision on that toolchain (the first one, `db584cd6`, leaves a few
+> modules failing).  All of `Start/` compiles on that toolchain, including the two modules
 > that depend on `cslib` (`Start/Representation.lean` and `Start/KolmogorovRepresentation.lean`),
 > whose pinned revision needs Lean `v4.33` features.
 
@@ -449,9 +503,9 @@ for the policy and [`docs/release-notes/`](docs/release-notes) for the notes of 
 ## Task board and evidence
 
 `docs/goal/task-board.yaml` (rendered to `docs/current-goal-state.md`) tracks every result with an
-evidence note in `docs/goal/evidence/`, including the honest boundary of each claim.  Of the 60
-tasks, 58 are `DONE_STRONG`; the two `BACKEND_PARTIAL` ones (`M9-COOK-LEVIN` and
-`M9-LAMBDAPI-LCCC`) carry an explicit open boundary.  Validate and re-render with:
+evidence note in `docs/goal/evidence/`, including the honest boundary of each claim.  Of the 70
+tasks, 68 are `DONE_STRONG`; the two `BACKEND_PARTIAL` ones (`M9-LAMBDAPI-LCCC` and
+`M9-UNTYPED-FULL-ABSTRACTION`) carry an explicit open boundary.  Validate and re-render with:
 
 ```bash
 python3 scripts/goal_state.py validate
@@ -467,9 +521,8 @@ material gets to them:
 | --- | --- | --- |
 | Levin–Schnorr for the lambda-calculus complexity `Lambda.kolmP` | Both halves are proved for the universal prefix machine `KC.KU` (`Start/LevinSchnorr.lean`), and `KU s ≤ kolmP s + c` is proved (`Start/KUOptimal.lean`); the opposite comparison, which is what would transfer the equivalence to `kolmP`, is not formalized and is not expected in that form | `Start/KUOptimal.lean`, `Start/LevinSchnorr.lean` |
 | Schnorr randomness, Solovay tests | Deeper randomness notions, not covered by the Martin-Löf framework here | `Start/MartinLof.lean` |
-| Cook–Levin: SAT is NP-complete | SAT is encoded and proved to be in NP (`Start/Sat.lean`), the Tseitin translation of circuits into CNF is proved (`Start/Tseitin.lean`), and every Cobham verifier is compiled into a polynomial-size circuit family (`Start/PolyCircuit.lean`); what is missing is P-uniformity of that family, i.e. an explicit polynomial-time emitter of the description of the `n`-th circuit, from which NP-completeness of SAT does follow (`Start/CookLevinUniform.lean`); the reduction to SAT is unconditional for the P-uniformly decidable languages, which include the regular languages, the uniform symmetric languages (`Start/UniformSym.lean`) and, more generally, the languages of automata with polynomially many Cobham-computable states (`Start/UniformStateCode.lean`), the Cook–Levin tableau of a cellular automaton or a one-tape Turing machine (`Start/UniformCACode.lean`, `Start/UniformTM.lean`), and the stack of polynomially many copies of a P-uniform stage circuit (`Start/UniformIterate.lean`) | `Start/CookLevinUniform.lean`, `Start/CookLevin.lean`, `Start/Tseitin.lean`, `Start/UniformSym.lean`, `Start/UniformStateCode.lean` |
 | Cobham's theorem, and a link to machine-level polynomial time | Would connect `Start/ComplexityClasses.lean` (Cobham axioms) to `Start/TM2PolyTime.lean` (bounded TM2 machines) and to mathlib's `Computable` | `Start/ComplexityClasses.lean`, `Start/TM2PolyTime.lean` |
-| Full abstraction for the untyped models | Adequacy is proved for the typed setting of System T (`Start/SystemTDenot.lean`) and, for the untyped calculus, for both the graph model (`Start/GraphAdequacy.lean`, `Start/HnfSolvable.lean`, `Start/GraphObs.lean`) and `D∞` (`Start/DinfAdequacy.lean`); for the graph model full abstraction is now *disproved* (`Start/GraphNotFullyAbstract.lean`: the identity and its eta-expansion are observationally equivalent but have different graph denotations); the approximation theorem for the graph model is proved (`Start/GraphApproxTheorem.lean`: a denotation is the union of the denotations of the direct approximants of the reducts); for `D∞` full abstraction is still open, and would need the corresponding approximation theorem there | `Start/GraphNotFullyAbstract.lean`, `Start/GraphApprox.lean`, `Start/GraphApproxTheorem.lean`, `Start/DinfAdequacy.lean`, `Start/GraphObs.lean` |
+| Full abstraction for the untyped models | Adequacy is proved for the typed setting of System T (`Start/SystemTDenot.lean`) and, for the untyped calculus, for both the graph model (`Start/GraphAdequacy.lean`, `Start/HnfSolvable.lean`, `Start/GraphObs.lean`) and `D∞` (`Start/DinfAdequacy.lean`); for the graph model full abstraction is now *disproved* (`Start/GraphNotFullyAbstract.lean`: the identity and its eta-expansion are observationally equivalent but have different graph denotations); the approximation theorem for the graph model is proved (`Start/GraphApproxTheorem.lean`: a denotation is the union of the denotations of the direct approximants of the reducts); the approximation theorem for `D∞` is proved as well (`Start/DinfApprox.lean`: a denotation is the least upper bound of the denotations of the direct approximants of the reducts), and full abstraction of `D∞` is proved for arbitrary closed terms — Wadsworth's theorem, `ScottDinf.obsEqHnf_iff_ddenot_eq` in `Start/DinfTagBelowSound.lean`, the normal-form case being `Start/DinfNormalFullAbstraction.lean` | `Start/GraphNotFullyAbstract.lean`, `Start/GraphApprox.lean`, `Start/GraphApproxTheorem.lean`, `Start/DinfApprox.lean`, `Start/DinfBohmEta.lean`, `Start/DinfNormalFullAbstraction.lean`, `Start/TagFail.lean`, `Start/ApproxShape.lean`, `Start/DinfTagBelow.lean`, `Start/DinfTagBelowSound.lean`, `Start/DinfAdequacy.lean`, `Start/GraphObs.lean` |
 | Gentzen consistency, ordinal analysis up to `ε₀` | Proof theory beyond strong normalization | `Start/SystemT.lean`, `Start/SystemTCanon.lean` |
 | Reverse mathematics (Big Five calibration) | Would connect this development to the reverse-mathematics libraries | `Start/HaltingComplete.lean`, `Start/MartinLof.lean` |
 | Bridge to `algorithmic-randomness`: lambda-term randomness ⟺ program-code randomness | Makes the AIT results above reusable outside this repo (the `cslib` representation bridge is now done — `Start/Representation.lean`) | `Start/Kolmogorov.lean` |

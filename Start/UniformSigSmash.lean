@@ -362,7 +362,7 @@ theorem wf_smashBase (M : ℕ) : wf (smashBase M) := by
 
 theorem inpsLt_smashBase (M : ℕ) : inpsLt (2 * (2 * M)) (smashBase M) := by
   have h := inpsLt_inpLayer_append (C := ([] : Circuit)) (idx := fun c => c) (w := 2 * (2 * M))
-    (fun g hg => absurd hg (by simp)) (4 * M) (fun c hc => by omega)
+    (fun g hg => absurd hg (by simp)) (4 * M) (fun c hc => by show c < 2 * (2 * M); omega)
   simpa [smashBase] using h
 
 theorem wf_smashC (M : ℕ) : wf (smashC M) := by
@@ -635,7 +635,7 @@ theorem codeUniform_smashGrid {m : ℕ → ℕ} {mT : Cob}
     (gblk := CircCode.smBlkT mT)
     (padT := Cob.catL [.comp .smash [Cob.proj 0, Cob.constT (List.replicate 1 true)],
       Cob.constT [false], mT, mT, mT, mT])
-    (fun n => by omega) ?_ ?_ ?_ ?_ ?_
+    (fun n => by show 0 < 2 * m n + 1; omega) ?_ ?_ ?_ ?_ ?_
   · intro x
     simp only [Cob.eval_comp, List.map_cons, List.map_nil, Cob.eval_smash, Cob.eval_catL,
       List.flatten_cons, List.flatten_nil, List.append_nil, Cob.eval_constT, hm x,

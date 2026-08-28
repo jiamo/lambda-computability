@@ -1,7 +1,7 @@
 version: 2
 source_protocol: docs/goal/goal-prompt.md
-active_milestone: M9
-milestone_order: ["M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9"]
+active_milestone: M10
+milestone_order: ["M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10"]
 tasks:
   - id: M1-BOUNDARY-SORRY-CLOSURE
     priority: P0
@@ -1175,11 +1175,12 @@ tasks:
 
   - id: M9-UNTYPED-FULL-ABSTRACTION
     priority: P3
-    status: BACKEND_PARTIAL
+    status: DONE_STRONG
     track: theory/semantics
     title: "Full abstraction for the untyped models: does observational equivalence imply equality of denotations?"
     latest_evidence: "docs/goal/evidence/M9-UNTYPED-FULL-ABSTRACTION.md"
-    open_boundary: "Both exit criteria are now met, but the headline question is only settled for one of the two models. Adequacy is proved for both untyped models (M9-GRAPH-ADEQUACY, M9-DINF-ADEQUACY), so denotational equality implies observational equivalence at head normalization. For the graph model the converse provably fails: GraphNotFullyAbstract.graph_not_fully_abstract exhibits closed terms, the identity and its eta-expansion, that no context distinguishes (D-infinity validates eta and is adequate) but whose graph-model denotations differ in every environment, the graph model not being extensional. The approximation theory is now complete for the graph model: Start/GraphApprox.lean defines the approximation order Lambda.Approx and the direct approximant Lambda.direct and proves the soundness inclusion, and Start/GraphApproxTheorem.lean proves the approximation theorem itself, GraphModel.denot_eq_iUnion_denot_direct: the denotation of a term is exactly the union of the denotations of the direct approximants of its reducts. What remains open is full abstraction for D-infinity (Wadsworth theorem), for which the corresponding approximation theorem in D-infinity, not proved here, is the missing step."
+    open_boundary: ""
+
     milestone: M9
     depends_on:
       - M9-DINF-ADEQUACY
@@ -1253,3 +1254,68 @@ tasks:
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "lake build"
+
+  - id: M10-COMPLEXITY-DESCSYSTEM
+    priority: P1
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "One description system for the six Kolmogorov-style complexity measures"
+    terminal_statement: "Complexity.K_le_add_cost : forall (T : Translation S1 S2 f) (x), S2.K (f x) <= S1.K x + T.cost"
+    latest_evidence: "docs/goal/evidence/M10-COMPLEXITY-DESCSYSTEM.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on: []
+    rank: 200
+    exit_criteria:
+      - "A description system (programs, size, output relation) is defined, with its complexity, the two directions of the infimum, translations, invariance, optimality and subadditivity proved once."
+      - "kolm, kolmCond, kolmWith and KU are exhibited as instances and identified with the abstract complexity."
+      - "kolmP and kolmLN, whose definitions come later in the import order, are exhibited as instances where they are defined (Lambda.kolmPSystem, Lambda.kolmLNSystem), and kolmLN_eq_kolm uses the generic invariance theorem."
+      - "The abstraction deletes code: kolmWith and its invariance theorems move out of Start/Kolmogorov.lean and kolm_le_kolmWith becomes an instance of the generic invariance theorem."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.DescriptionSystem Start.KolmogorovMachines"
+
+  - id: M10-LEVIN-KT
+    priority: P1
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "Levin complexity Kt, its invariance theorem, and the optimality of universal search"
+    terminal_statement: "Complexity.levin_optimal : run p t = some a -> V a -> exists s, s <= 8 * 2 ^ p * t and levinSearch verifies within s"
+    latest_evidence: "docs/goal/evidence/M10-LEVIN-KT.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-COMPLEXITY-DESCSYSTEM
+    rank: 210
+    exit_criteria:
+      - "The step-counting reduction reducesIn is a module of its own, with the API a time measure needs."
+      - "Kt is defined as the complexity of the description system of timed programs, and related to plain Kolmogorov complexity in both directions."
+      - "The invariance theorem for Kt is proved as an instance of the generic invariance theorem."
+      - "Levin universal search is defined for an arbitrary step-indexed run and verifier, proved sound and complete, and proved optimal up to a factor depending only on the program."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.ReducesIn Start.LevinKt Start.LevinSearch"
+
+  - id: M10-CAPSTONE-REGISTRY
+    priority: P0
+    status: DONE_STRONG
+    track: infra/registry
+    title: "Register every terminal statement in Start/Capstones.lean and enforce the two mechanical gates"
+    terminal_statement: "Start/Capstones.lean type-checks a #check for every terminal module of the library"
+    latest_evidence: "docs/goal/evidence/M10-CAPSTONE-REGISTRY.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-LEVIN-KT
+    rank: 220
+    exit_criteria:
+      - "Start/Capstones.lean exists, compiles, and #check-s the headline statement of every terminal module."
+      - "Every Start module is in the import closure of Start.lean, apart from consumers of the whole library."
+      - "scripts/check_closure.py enforces both gates and exits 0."
+      - "The two orphan modules that did not compile, Start/KolmogorovPair.lean and Start/CircuitShift.lean, are repaired."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.Capstones"

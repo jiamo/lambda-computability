@@ -148,6 +148,19 @@ theorem exists_program_of_kolmP (s : ℕ) :
   Nat.sInf_mem (s := {n | ∃ t : Lambda, IsProgramFor t s ∧ (bits t).length = n})
     ⟨(bits (Lambda.church s)).length, Lambda.church s, isProgramFor_church s, rfl⟩
 
+/-- **Prefix complexity as a description system** (`Start/DescriptionSystem.lean`): the programs
+are the closed lambda terms and a program describes `s` when it reduces to `church s`, exactly as
+in `Lambda.kolmSystem`; only the size differs, being the length of the self-delimiting code
+instead of the syntactic size. -/
+def kolmPSystem : Complexity.DescSystem Lambda ℕ where
+  size := fun t => (bits t).length
+  Outputs := IsProgramFor
+
+theorem kolmP_eq_kolmPSystem_K (s : ℕ) : kolmP s = kolmPSystem.K s := rfl
+
+theorem describes_kolmPSystem (s : ℕ) : kolmPSystem.Describes s :=
+  ⟨Lambda.church s, isProgramFor_church s⟩
+
 /-- A code word is at most twice as long as the syntactic size of the term it encodes. -/
 theorem bits_length_le_two_mul_size : ∀ t : Lambda, (bits t).length ≤ 2 * size t := by
   intro t

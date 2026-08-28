@@ -65,9 +65,11 @@ nontrivial check that the class is usable and not just formally defined.
 
 ## Boundary
 
-* **Cook–Levin is not formalized**, and no language is proved NP-complete.  `NPHard` is therefore
-  not known to be inhabited, and `PeqNP` is neither proved nor refuted.  What is here is the
-  structural theory such a proof would plug into.
+* Cook–Levin is **not** part of this module: it is `M9-COOK-LEVIN`, and it is proved there
+  (`Complexity.npHard_SAT`, `Complexity.npComplete_SAT` in `Start/CookLevinNPHard.lean`), so
+  `NPHard` *is* inhabited and `Complexity.peqNP_iff_inP_SAT` holds.  What this module contributes
+  is the structural theory that proof plugs into; on its own it proves no language NP-complete,
+  and `PeqNP` is of course neither proved nor refuted anywhere here.
 * **Cobham's theorem is not formalized**: `Cob` is *defined* by the Cobham axioms, and its
   coincidence with polynomial-time Turing machine computability is not proved.  Nothing in the
   module depends on that coincidence.

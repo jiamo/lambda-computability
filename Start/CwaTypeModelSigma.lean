@@ -59,7 +59,7 @@ theorem fam_sigCode_apply (a : Cwa.Tm amb Γ (un.U Γ))
     (b : Cwa.Tm amb (amb.ext Γ (un.El a)) (un.U (amb.ext Γ (un.El a)))) (x : Γ) :
     (fam (sigCode a b)) x = ((y : fam a x) × fam b ((extIso a).hom ⟨x, y⟩)) := by
   rw [fam_sigCode]
-  rfl
+  try rfl
 
 /-- **The code of a sum is stable under substitution.** -/
 theorem sigCode_sub (σ : Δ ⟶ Γ) (a : Cwa.Tm amb Γ (un.U Γ))
@@ -69,11 +69,11 @@ theorem sigCode_sub (σ : Δ ⟶ Γ) (a : Cwa.Tm amb Γ (un.U Γ))
   rw [fam_sub]
   simp only [fam_sigCode]
   refine ConcreteCategory.hom_ext _ _ fun x => ?_
-  refine sigma_type_congr (types_congr_hom (fam_sub σ a) x).symm fun y => ?_
-  set y' : fam (un.sub σ a) x := cast (types_congr_hom (fam_sub σ a) x).symm y
+  refine sigma_type_congr (types_hom_congr_fun (fam_sub σ a) x).symm fun y => ?_
+  set y' : fam (un.sub σ a) x := cast (types_hom_congr_fun (fam_sub σ a) x).symm y
   have hb : fam (un.sub (un.extHom σ a) b) = un.extHom σ a ≫ fam b :=
     fam_sub (un.extHom σ a) b
-  have h1 := types_congr_hom hb ((extIso (un.sub σ a)).hom ⟨x, y'⟩)
+  have h1 := types_hom_congr_fun hb ((extIso (un.sub σ a)).hom ⟨x, y'⟩)
   have h2 := extHom_apply σ a ⟨x, y'⟩
   simp only [types_comp_apply] at h1
   rw [h1, h2]

@@ -69,8 +69,7 @@ theorem wf_shiftCirc_append {D : Circuit} (hD : wf D) :
   | cons g C ih =>
       rintro ⟨hg, hC⟩
       refine ⟨?_, ih hC⟩
-      have hlen : (shiftCirc D.length C ++ D).length = C.length + D.length := by simp
-      rw [hlen]
+      simp only [List.append_eq, List.length_append, List.length_map]
       cases g with
       | inp i => trivial
       | cst b => trivial
@@ -141,16 +140,12 @@ def uB1 : Cob := .comp (.app true) [.comp Cob.tail [uFldB]]
   simp only [uA1, Cob.eval_comp, List.map_cons, List.map_nil, Cob.eval_tail, eval_uFldA,
     List.tail_replicate, Cob.eval_app, List.getD_cons_zero, ← List.replicate_succ]
   congr 1
-  rw [fldA]
-  omega
 
 @[simp] theorem eval_uB1 (y u p : Word) :
     uB1.eval [y, u, p] = List.replicate (fldB y + 1) true := by
   simp only [uB1, Cob.eval_comp, List.map_cons, List.map_nil, Cob.eval_tail, eval_uFldB,
     List.tail_replicate, Cob.eval_app, List.getD_cons_zero, ← List.replicate_succ]
   congr 1
-  rw [fldB]
-  omega
 
 /-- The term rewriting the token of a gate with its references increased by the parameter. -/
 def sblkT (s : ℕ) (b : Bool) : Cob :=
@@ -184,22 +179,26 @@ theorem eval_sblkT (y : Word) (k : ℕ) (s : ℕ) (b : Bool) (c : ℕ) :
         · simp [sblkT, sblk, gblk, emits]
         · rw [show sblkT 3 false = _ from rfl, sblk, gblk, if_pos (by simp [emits]),
             show readGate 3 y = Gate.inp (fldA y) from rfl]
-          simp [shiftGate, encGate, tag, fld1, fld2, List.replicate_succ]
+          simp [sblkT, Cob.eval_catL, Cob.eval_constT, shiftGate, encGate, tag, fld1, fld2,
+            List.replicate_succ]
         · rw [show sblkT 4 false = _ from rfl, sblk, gblk, if_pos (by simp [emits]),
             show readGate 4 y = Gate.cst false from rfl]
-          simp [shiftGate]
+          simp [sblkT, Cob.eval_constT, shiftGate]
         · rw [show sblkT 5 false = _ from rfl, sblk, gblk, if_pos (by simp [emits]),
             show readGate 5 y = Gate.cst true from rfl]
-          simp [shiftGate]
+          simp [sblkT, Cob.eval_constT, shiftGate]
         · rw [show sblkT 6 false = _ from rfl, sblk, gblk, if_pos (by simp [emits]),
             show readGate 6 y = Gate.neg (fldA y) from rfl]
-          simp [shiftGate, encGate, tag, fld1, fld2, List.replicate_succ, List.replicate_add]
+          simp [sblkT, Cob.eval_catL, Cob.eval_constT, shiftGate, encGate, tag, fld1, fld2,
+            List.replicate_succ, List.replicate_add, -List.replicate_append_replicate]
         · rw [show sblkT 7 false = _ from rfl, sblk, gblk, if_pos (by simp [emits]),
             show readGate 7 y = Gate.conj (fldA y) (fldB y) from rfl]
-          simp [shiftGate, encGate, tag, fld1, fld2, List.replicate_succ, List.replicate_add]
+          simp [sblkT, Cob.eval_catL, Cob.eval_constT, shiftGate, encGate, tag, fld1, fld2,
+            List.replicate_succ, List.replicate_add, -List.replicate_append_replicate]
         · rw [show sblkT 8 false = _ from rfl, sblk, gblk, if_pos (by simp [emits]),
             show readGate 8 y = Gate.disj (fldA y) (fldB y) from rfl]
-          simp [shiftGate, encGate, tag, fld1, fld2, List.replicate_succ, List.replicate_add]
+          simp [sblkT, Cob.eval_catL, Cob.eval_constT, shiftGate, encGate, tag, fld1, fld2,
+            List.replicate_succ, List.replicate_add, -List.replicate_append_replicate]
       · obtain ⟨n, rfl⟩ : ∃ n, s = n + 9 := ⟨s - 9, by omega⟩
         simp [sblkT, sblk, gblk, emits]
 
@@ -213,15 +212,14 @@ theorem length_sblk (y : Word) (k s : ℕ) (b : Bool) (c : ℕ) :
         simp only [shiftGate, fld1] <;>
         first
           | omega
-          | exact Nat.add_le_add_right (by simpa [h] using fld1_readGate_le y s) k
-          | exact le_trans (by simpa [h] using fld1_readGate_le y s) (Nat.le_add_right _ _)
+          | exact Nat.add_le_add_right (by simpa [h, fld1] using fld1_readGate_le y s) k
+          | exact le_trans (by simpa [h, fld1] using fld1_readGate_le y s) (Nat.le_add_right _ _)
     have h2 : fld2 (shiftGate k (readGate s y)) ≤ y.length + k := by
       cases h : readGate s y <;>
         simp only [shiftGate, fld2] <;>
         first
           | omega
-          | exact Nat.add_le_add_right (by simpa [h] using fld2_readGate_le y s) k
-          | exact le_trans (by simpa [h] using fld2_readGate_le y s) (Nat.le_add_right _ _)
+          | exact Nat.add_le_add_right (by simpa [h, fld2] using fld2_readGate_le y s) k
     have h3 : tag (shiftGate k (readGate s y)) ≤ 6 := (tag_le _).2
     simp only [List.length_replicate]
     omega

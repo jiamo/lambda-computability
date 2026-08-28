@@ -70,7 +70,7 @@ is a family `Γ → Type u`, and context extension is the sigma type. -/
 precisely that the section does not move the base point. -/
 theorem tm_base {Γ : Type u} {A : Γ → Type u} (a : families.Tm Γ A) (x : Γ) :
     (a.1 x).1 = x := by
-  simpa using ConcreteCategory.congr_hom a.2 x
+  simpa using congrFun (congrArg (fun f : Γ ⟶ Γ => (f : Γ → Γ)) a.2) x
 
 /-- **Terms of the standard model are dependent functions.** -/
 def secEquiv {Γ : Type u} (A : Γ → Type u) : families.Tm Γ A ≃ ∀ x, A x where

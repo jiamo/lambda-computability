@@ -23,10 +23,9 @@ This module proves, from theory already in the repository:
   relation were decidable one could compute, from a number `c`, some `s` whose complexity exceeds
   `2 * c + 1`; a self-referential term `X` computing that value from its own code `c = encode X`
   would then be a program for `s` of size `≤ 2 * encode X + 1 < kolm s`.
-* Invariance.  `Lambda.kolm_le_kolmWith` — measuring complexity relative to any closed "interpreter"
-  term `U` (programs are terms `p` with `U p ↠ church s`) changes `K` by at most the additive
-  constant `size U + 1`, and `Lambda.kolmWith_I_le_kolm` / `Lambda.kolm_le_kolmWith_I` show the
-  identity interpreter gives back `K` itself up to `3`.
+* Invariance.  Complexity relative to a closed "interpreter" term is treated in
+  `Start/KolmogorovMachines.lean` (`Lambda.kolm_le_kolmWith`), as an instance of the generic
+  invariance estimate for description systems.
   `Lambda.exists_const_kolm_le_of_partrec` — for every partial recursive
   "description system" `V` there is a constant `c` with `kolm s ≤ 3 * p + c` whenever `V p = s`; the
   factor `3` is the size cost of the *unary* Church numeral for `p` (a compact numeral encoding is
@@ -36,6 +35,8 @@ This module proves, from theory already in the repository:
 -/
 
 import Start.SecondRecursion
+import Start.KolmogorovDef
+import Start.KolmogorovMachines
 import Start.TM2Capstone
 import Mathlib.Computability.Halting
 
@@ -45,34 +46,6 @@ set_option autoImplicit false
 noncomputable section
 
 namespace Lambda
-
-------------------------------------------------------------------------
--- Size of a term
-------------------------------------------------------------------------
-
-/-- Syntactic size of a term: the number of syntax nodes, where a de Bruijn index `i` counts as
-`i + 1` (writing the index costs something).  This is the "program length" used for `K`. -/
-def size : Lambda → ℕ
-  | Lambda.var i => i + 1
-  | Lambda.app a b => size a + size b + 1
-  | Lambda.lam t => size t + 1
-
-@[simp] theorem size_var (i : ℕ) : size (Lambda.var i) = i + 1 := rfl
-@[simp] theorem size_app (a b : Lambda) : size (Lambda.app a b) = size a + size b + 1 := rfl
-@[simp] theorem size_lam (t : Lambda) : size (Lambda.lam t) = size t + 1 := rfl
-
-theorem size_pos (t : Lambda) : 0 < size t := by
-  cases t <;> simp [size]
-
-theorem size_iterate (n : ℕ) :
-    size (Lambda.iterate (Lambda.var 1) (Lambda.var 0) n) = 3 * n + 1 := by
-  induction n with
-  | zero => simp [Lambda.iterate_zero]
-  | succ n ih => rw [Lambda.iterate_succ]; simp [ih]; omega
-
-theorem size_church (n : ℕ) : size (Lambda.church n) = 3 * n + 3 := by
-  rw [Lambda.church_eq_iterate]
-  simp [size_iterate]
 
 /-- Only finitely many terms have size at most `n`. -/
 theorem finite_setOf_size_le (n : ℕ) : {t : Lambda | size t ≤ n}.Finite := by
@@ -107,31 +80,6 @@ theorem finite_setOf_size_le (n : ℕ) : {t : Lambda | size t ≤ n}.Finite := b
               omega
       exact Set.Finite.subset
         (((Set.finite_Iic m).image _ |>.union (ih.image _)).union ((ih.prod ih).image _)) hsub
-
-------------------------------------------------------------------------
--- Programs and the complexity function
-------------------------------------------------------------------------
-
-/-- `t` is a *program* for `s`: a closed term reducing to the Church numeral of `s`. -/
-def IsProgramFor (t : Lambda) (s : ℕ) : Prop :=
-  Lambda.IsClosed t ∧ Lambda.reduces t (Lambda.church s)
-
-theorem isProgramFor_church (s : ℕ) : IsProgramFor (Lambda.church s) s :=
-  ⟨Lambda.church_closed s, Lambda.reduces.refl _⟩
-
-/-- **Kolmogorov complexity** of a natural number in the lambda calculus: the least size of a
-closed term reducing to its Church numeral. -/
-def kolm (s : ℕ) : ℕ := sInf {n | ∃ t : Lambda, IsProgramFor t s ∧ size t = n}
-
-theorem kolm_le_of_isProgramFor {t : Lambda} {s : ℕ} (h : IsProgramFor t s) : kolm s ≤ size t :=
-  Nat.sInf_le ⟨t, h, rfl⟩
-
-theorem exists_program_of_kolm (s : ℕ) : ∃ t : Lambda, IsProgramFor t s ∧ size t = kolm s :=
-  Nat.sInf_mem (s := {n | ∃ t : Lambda, IsProgramFor t s ∧ size t = n})
-    ⟨size (Lambda.church s), Lambda.church s, isProgramFor_church s, rfl⟩
-
-theorem kolm_le_church (s : ℕ) : kolm s ≤ 3 * s + 3 := by
-  simpa [size_church] using kolm_le_of_isProgramFor (isProgramFor_church s)
 
 ------------------------------------------------------------------------
 -- Incompressible numbers exist
@@ -245,52 +193,14 @@ theorem not_computable_kolm : ¬ Computable kolm := by
   have hle : Computable fun q : ℕ × ℕ => decide (q.1 ≤ q.2) :=
     hprim.to_comp.of_eq (fun q => by simp)
   refine not_computablePred_kolm_le (ComputablePred.computable_iff.mpr
-    ⟨fun p : ℕ × ℕ => decide (kolm p.1 ≤ p.2), ?_, by funext p; simp⟩)
+    ⟨fun p : ℕ × ℕ => decide (kolm p.1 ≤ p.2), ?_,
+      by funext p; exact propext decide_eq_true_iff.symm⟩)
   exact (hle.comp (Computable.pair (hK.comp Computable.fst) Computable.snd)).of_eq
-    (fun p => by simp)
+    (fun _ => decide_eq_decide.mpr Iff.rfl)
 
 ------------------------------------------------------------------------
 -- Invariance
 ------------------------------------------------------------------------
-
-/-- Complexity relative to a closed "interpreter" term `U`: the least size of a closed term `p`
-with `U p ↠ church s`. -/
-def kolmWith (U : Lambda) (s : ℕ) : ℕ :=
-  sInf {n | ∃ p : Lambda, Lambda.IsClosed p ∧ size p = n ∧
-    Lambda.reduces (Lambda.app U p) (Lambda.church s)}
-
-theorem kolmWith_le {U p : Lambda} {s : ℕ} (hp : Lambda.IsClosed p)
-    (h : Lambda.reduces (Lambda.app U p) (Lambda.church s)) : kolmWith U s ≤ size p :=
-  Nat.sInf_le ⟨p, hp, rfl, h⟩
-
-/-- **Invariance theorem.**  Interpreting programs through a fixed closed term `U` can only lower
-the complexity by at most the constant `size U + 1`. -/
-theorem kolm_le_kolmWith {U : Lambda} (hU : Lambda.IsClosed U) (s : ℕ)
-    (h : ∃ p : Lambda, Lambda.IsClosed p ∧ Lambda.reduces (Lambda.app U p) (Lambda.church s)) :
-    kolm s ≤ kolmWith U s + size U + 1 := by
-  obtain ⟨p, hpc, hpsize, hpred⟩ :=
-    Nat.sInf_mem (s := {n | ∃ p : Lambda, Lambda.IsClosed p ∧ size p = n ∧
-        Lambda.reduces (Lambda.app U p) (Lambda.church s)})
-      (let ⟨p, hpc, hpred⟩ := h; ⟨size p, p, hpc, rfl, hpred⟩)
-  have hprog : IsProgramFor (Lambda.app U p) s := ⟨Lambda.IsClosed_app hU hpc, hpred⟩
-  have hle := kolm_le_of_isProgramFor hprog
-  have hk : kolmWith U s = size p := hpsize.symm
-  simp only [size_app] at hle
-  omega
-
-/-- The identity interpreter gives back `K`, up to its own constant: `kolmWith I` is below `K`. -/
-theorem kolmWith_I_le_kolm (s : ℕ) : kolmWith Lambda.I s ≤ kolm s := by
-  obtain ⟨t, ht, hsize⟩ := exists_program_of_kolm s
-  have : Lambda.reduces (Lambda.app Lambda.I t) (Lambda.church s) :=
-    Lambda.reduces_trans (Lambda.I_works t) ht.2
-  simpa [hsize] using kolmWith_le (U := Lambda.I) ht.1 this
-
-/-- ... and `K` is below `kolmWith I` plus a constant, so the two measures agree up to `3`. -/
-theorem kolm_le_kolmWith_I (s : ℕ) : kolm s ≤ kolmWith Lambda.I s + 3 := by
-  have hI : size Lambda.I = 2 := rfl
-  have := kolm_le_kolmWith (U := Lambda.I) Lambda.I_closed s
-    ⟨Lambda.church s, Lambda.church_closed s, Lambda.I_works _⟩
-  omega
 
 /-- **Invariance for arbitrary computable description systems.**  If `V` is partial recursive,
 thought of as decoding a description `p` into the number `V p`, then lambda-calculus complexity is

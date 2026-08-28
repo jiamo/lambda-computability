@@ -228,7 +228,7 @@ theorem litVal_shiftLit (k : ℕ) (σ : Word) (l : Lit) :
       Nat.add_comm]
   cases s
   · simp only [litVal, shiftLit, hget]
-    rfl
+    try rfl
   · simp only [litVal, shiftLit, hget]
 
 theorem clauseVal_map_shiftLit (k : ℕ) (σ : Word) (C : Clause) :

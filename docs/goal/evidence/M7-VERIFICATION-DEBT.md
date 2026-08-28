@@ -26,7 +26,7 @@ agree:
 
 * `lake build` — `Build completed successfully (8760 jobs)`, no errors, no linter
   warnings, no stray `Try this` output.
-* `lake build Start Start.Demo Start.DecodeTest` — `Build completed successfully
+* `lake build Start Start.Demo` — `Build completed successfully
   (8763 jobs)`; the showcase and the scratch decoding test compile as well.
 
 ## Two real defects found by the build

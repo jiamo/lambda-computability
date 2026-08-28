@@ -82,7 +82,7 @@ theorem exists_inputSigAt (C : Circuit) (hC : wf C) (off N : ℕ) :
         refine ⟨D', D.length, e, hw, by omega, hh.congr fun x => ?_⟩
         simp only [inWordAt]
         rw [inWord_bit N i (x.drop off), getD_drop_add]
-        rfl)
+        try rfl)
   refine ⟨C₃, pws, bws, e₁.trans (e₂.trans e₃), w₃, ?_, hlenp, hlenb,
     fun x => length_inWordAt_le off N x, fun i hi => (hpw i hi).mono e₃, fun i hi => hbw i hi⟩
   have h₁ := e₁.length_le

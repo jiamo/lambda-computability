@@ -21,11 +21,13 @@ all imported by
 `Start.lean`.  They build
 without `sorry` and without linter warnings.
 
-Two of the three exit criteria are met unconditionally: Boolean formulas and satisfiability are
-encoded as a language over binary words, and **SAT is proved to be in NP**.  The third — that
-every language in `NP` reduces to SAT — is *not* proved; what is proved is that it follows from a
-single precisely stated compilation hypothesis, together with the Tseitin translation, which is
-formalized in full.
+All three exit criteria are met unconditionally: Boolean formulas and satisfiability are encoded
+as a language over binary words, **SAT is proved to be in NP**, and **every language in `NP`
+reduces to SAT in polynomial time** (`Complexity.npHard_SAT`, `Complexity.npComplete_SAT` in
+`Start/CookLevinNPHard.lean`).  The sections below follow the order in which the argument was
+built, so the earlier ones still describe the last step as a hypothesis; the section *The general
+decoder, and Cook–Levin* is where that hypothesis is discharged, and the historical boundary
+bullets at the end are marked as superseded.
 
 ## Formulas as a language over binary words (first exit criterion)
 
