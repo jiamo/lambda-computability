@@ -38,6 +38,7 @@ import Start.DinfTagBelowSound
 import Start.DinfEtaLimit
 import Start.GraphNotFullyAbstract
 import Start.InfiniteBohmTree
+import Start.ScottKoymans
 import Start.IntersectionNormalization
 import Start.KolmogorovPair
 import Start.ChaitinIncompleteness
@@ -54,6 +55,8 @@ import Start.LevinSearch
 import Start.OracleCone
 import Start.LimitLemma
 import Start.PostTheoremTwo
+import Start.ArithHierarchyProper
+import Start.ArithBounded
 import Start.OracleJoin
 import Start.OracleUniversal
 import Start.PostIncomplete
@@ -419,6 +422,50 @@ the direct approximants of its reducts.  Böhm tree equality is an equivalence r
 #check @Lambda.exists_bohmEq_not_conv
 #check @Lambda.bohmEq_between_beta_and_graph
 
+/-! ## λ-models and reflexive objects: the Scott–Koymans correspondence
+
+`Start/LambdaModel.lean`: the Meyer–Scott axioms of a λ-model, and everything derived from them
+— the lifting and substitution lemmas, soundness for β, the combinatory structure, and
+extensionality as the validity of η.  `Start/LambdaModelInstances.lean` exhibits the three models
+this library builds — the graph model `𝒫ω`, the inverse limit `D∞` and the filter model of the
+intersection type system — as instances of that one definition, so their theories are entries in
+the lattice above.
+
+`Start/KaroubiLambda.lean`: the **Karoubi envelope** of a λ-model — objects the idempotents
+`a ∘ a = a`, morphisms the elements absorbed on both sides — is a cartesian closed category, and
+the object `D = λz. z` is **reflexive** in it: `D ⇒ D` is a retract of `D`.
+
+`Start/ReflexiveCcc.lean`: conversely, a reflexive object in an arbitrary cartesian closed
+category interprets the untyped terms as morphisms `X ⟶ D` in environments of generalized
+elements, and that interpretation is natural in the stage and sound for β-conversion.
+`Start/ReflexiveType.lean` is the case of the category of sets, where the interpretation is a
+λ-model on the nose, and `Start/ScottKoymans.lean` puts the two directions together and reads off
+the λ-theory of a reflexive object.
+-/
+
+#check @Lambda.LambdaModel
+#check @Lambda.LambdaModel.interp_subst
+#check @Lambda.LambdaModel.interp_conv
+#check @Lambda.LambdaModel.interp_eta_of_extensional
+#check @Lambda.LambdaModel.theory
+#check @GraphModel.model
+#check @GraphModel.theory_model_eq
+#check @ScottDinf.model
+#check @ScottDinf.theory_model_eq
+#check @Inter.typeSet_eq_model_interp
+#check @Lambda.SetReflexive.toModel
+#check @Lambda.LambdaModel.karoubiCartesianMonoidal
+#check @Lambda.LambdaModel.karoubiMonoidalClosed
+#check @Lambda.LambdaModel.reflexive_dRet
+#check @Lambda.LambdaModel.toReflexiveObject
+#check @ReflexiveCcc.ReflexiveObject
+#check @ReflexiveCcc.ReflexiveObject.interp
+#check @ReflexiveCcc.ReflexiveObject.interp_reindex
+#check @ReflexiveCcc.ReflexiveObject.interp_beta
+#check @ReflexiveCcc.ReflexiveObject.interp_conv
+#check @ReflexiveCcc.ReflexiveObject.interp_eta_of_iso
+#check @ReflexiveCcc.ReflexiveObject.theory
+
 /-! ## Degrees of unsolvability and recursive inseparability
 
 `Start/OracleUniversal.lean`: the relativised enumeration theorem — the partial function
@@ -449,6 +496,20 @@ co-r.e. ones.
 `Start/PostTheoremTwo.lean`: **Post's theorem at level two** — a predicate is `Δ⁰₂` exactly when it
 is the pointwise limit of a computable sequence of guesses, hence (by the limit lemma) exactly
 when it is decidable from `∅'`.
+
+`Start/ArithHierarchyProper.lean`: **the arithmetical hierarchy is proper**.  Every level `n + 1`
+has a universal predicate — at level one the numbering of the r.e. sets, and one level up by
+negating and prefixing an existential quantifier — and the diagonal complement of a universal
+`Σ⁰ₙ₊₁` predicate is `Π⁰ₙ₊₁` but not `Σ⁰ₙ₊₁`.  Hence no level equals its own dual, no level is
+closed under complement, and each of the three families `Σ⁰ₙ`, `Π⁰ₙ`, `Δ⁰ₙ` grows strictly with
+`n`.  The union of the levels — the arithmetical predicates — has no universal predicate at all.
+
+`Start/ArithBounded.lean`: **bounded quantifiers do not raise the level**.  For a computable
+bound `b`, each of `Σ⁰ₙ` and `Π⁰ₙ` is closed under `∀ y < b x` and `∃ y < b x`.  The level-zero
+case is a primitive recursion over the bound; the induction step uses the collection principle —
+finitely many witnesses below a bound can be packed into a single coded list — to pull a bounded
+universal quantifier past an existential one, while a bounded existential is absorbed directly
+into the outermost existential quantifier.
 
 `Start/Inseparable.lean`: the two halves of the diagonal are disjoint recursively enumerable sets
 that no decidable set separates.
@@ -498,6 +559,28 @@ recursively isomorphic to `K` is creative, and any two creative sets are recursi
 #check @Lambda.Arith.LimitComputablePred
 #check @Lambda.Arith.deltaAt_two_iff_limitComputablePred
 #check @Lambda.Arith.deltaAt_two_iff_turingReducible_haltingOracle
+#check @Lambda.Arith.UnivSigma
+#check @Lambda.Arith.UnivPi
+#check @Lambda.Arith.univSigma_one
+#check @Lambda.Arith.exists_univSigma
+#check @Lambda.Arith.UnivSigma.not_sigmaAt_diag
+#check @Lambda.Arith.exists_piAt_not_sigmaAt
+#check @Lambda.Arith.exists_sigmaAt_not_piAt
+#check @Lambda.Arith.sigmaAt_ne_piAt
+#check @Lambda.Arith.exists_sigmaAt_not_deltaAt
+#check @Lambda.Arith.sigmaAt_proper
+#check @Lambda.Arith.piAt_proper
+#check @Lambda.Arith.deltaAt_proper
+#check @Lambda.Arith.Arithmetical
+#check @Lambda.Arith.exists_arithmetical_not_sigmaAt
+#check @Lambda.Arith.not_exists_univ_arithmetical
+#check @Lambda.Arith.computablePred_ball_lt
+#check @Lambda.Arith.computablePred_bex_lt
+#check @Lambda.Arith.exists_code_of_ball_exists
+#check @Lambda.Arith.SigmaAt.ball_lt
+#check @Lambda.Arith.SigmaAt.bex_lt
+#check @Lambda.Arith.PiAt.ball_lt
+#check @Lambda.Arith.PiAt.bex_lt
 #check @Lambda.Inseparable.diag_disjoint
 #check @Lambda.Inseparable.rePred_leftDiag
 #check @Lambda.Inseparable.rePred_rightDiag

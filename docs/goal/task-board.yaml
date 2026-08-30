@@ -1830,3 +1830,74 @@ tasks:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
       - "lake build Start.PostTheoremTwo"
+
+  - id: M10-ARITH-HIERARCHY-PROPER
+    priority: P1
+    status: DONE_STRONG
+    track: theory/computability
+    title: "The arithmetical hierarchy is proper: universal predicates and diagonalisation at every level"
+    terminal_statement: "Lambda.Arith.sigmaAt_proper : for every n there is a predicate that is Sigma at level n plus two but not Sigma at level n plus one"
+    latest_evidence: "docs/goal/evidence/M10-ARITH-HIERARCHY-PROPER.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-ARITH-HIERARCHY
+    rank: 335
+    exit_criteria:
+      - "Universality for a level is defined for both the Sigma and the Pi side."
+      - "A universal Sigma predicate at level one is exhibited from the numbering of the r.e. sets, and proved universal."
+      - "Negation is proved to carry a universal Sigma predicate to a universal Pi predicate, and one existential quantifier to carry a universal Pi predicate at level n to a universal Sigma predicate at level n plus one, so every level has a universal predicate."
+      - "The diagonal complement of a universal Sigma predicate is proved to be Pi at that level and not Sigma at that level."
+      - "The separations are derived: no level equals its dual or is closed under complement, Delta is properly contained in Sigma and in Pi at each level, and the Sigma, Pi and Delta families grow strictly."
+      - "The arithmetical predicates are defined as the union of the levels, proved closed under complement and computable substitution, proved not exhausted by any level, and proved to have no universal predicate."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.ArithHierarchyProper"
+
+  - id: M10-ARITH-BOUNDED
+    priority: P1
+    status: DONE_STRONG
+    track: theory/computability
+    title: "Bounded quantifiers do not raise the level of the arithmetical hierarchy"
+    terminal_statement: "Lambda.Arith.SigmaAt.ball_lt : a predicate Sigma at level n stays Sigma at level n after a universal quantifier bounded by a computable function"
+    latest_evidence: "docs/goal/evidence/M10-ARITH-BOUNDED.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-ARITH-HIERARCHY
+    rank: 336
+    exit_criteria:
+      - "Bounded conjunction and disjunction of a Bool test are defined by recursion on the bound, characterized, and proved computable."
+      - "The level-zero case is proved: computable predicates are closed under both bounded quantifiers with a computable bound."
+      - "A computable predicate is proved to sit at every level, on both the Sigma and the Pi side."
+      - "The collection principle is proved: if every argument below a bound has a witness, a single number codes a list of witnesses for all of them."
+      - "The closure of every level under both bounded quantifiers is proved by a single induction on the level, using collection for the bounded universal quantifier and absorption into the outermost quantifier for the bounded existential one."
+      - "The four closure theorems are stated as named wrappers on the Sigma and Pi sides."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.ArithBounded"
+
+  - id: M10-LAMBDA-MODEL-REFLEXIVE
+    priority: P1
+    status: DONE_STRONG
+    track: theory/untyped
+    title: "Lambda-models and reflexive objects: the Scott-Koymans correspondence"
+    terminal_statement: "Lambda.LambdaModel.reflexive_dRet : dLam M >> dApp M = id (expRet (dRet M) (dRet M)) in the cartesian closed Karoubi envelope of any lambda-model"
+    latest_evidence: "docs/goal/evidence/M10-LAMBDA-MODEL-REFLEXIVE.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-LAMBDA-THEORY-LATTICE
+    rank: 340
+    exit_criteria:
+      - "Lambda-models are defined by the Meyer-Scott axioms, and the lifting and substitution lemmas, soundness for beta, the combinatory structure and the equivalence of extensionality with eta are derived from those axioms alone."
+      - "The graph model, Dinf and the filter model are exhibited as instances, and the theory of a lambda-model is identified with the entries of the lattice of lambda-theories."
+      - "The Karoubi envelope of a lambda-model is proved to be a cartesian closed category, with a terminal object, binary products and exponentials."
+      - "The object D = lambda z. z is proved reflexive in that category: D => D is a retract of D."
+      - "A reflexive object in an arbitrary cartesian closed category is proved to interpret the untyped terms naturally in the stage and soundly for beta-conversion, with eta valid when the retraction is an isomorphism, and the equations it validates are proved to form a lambda-theory."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.LambdaModel Start.LambdaModelInstances Start.KaroubiLambda Start.ReflexiveCcc Start.ScottKoymans"

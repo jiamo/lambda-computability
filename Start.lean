@@ -309,6 +309,13 @@ import Start.FilterModel
 import Start.IntersectionNormalization
 import Start.LambdaTheory
 import Start.InfiniteBohmTree
+import Start.LambdaModel
+import Start.LambdaModelInstances
+import Start.LambdaModelComb
+import Start.ReflexiveType
+import Start.KaroubiLambda
+import Start.ReflexiveCcc
+import Start.ScottKoymans
 import Start.CwaCodePi
 import Start.CwaUnivNotClosed
 import Start.CwaTypeModel
@@ -346,6 +353,8 @@ import Start.JumpApprox
 import Start.LimitLemma
 import Start.ArithHierarchy
 import Start.PostTheoremTwo
+import Start.ArithHierarchyProper
+import Start.ArithBounded
 import Start.Inseparable
 import Start.MyhillIso
 import Start.CreativeIso

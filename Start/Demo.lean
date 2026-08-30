@@ -573,6 +573,29 @@ Program length is the syntactic size of a closed term reducing to a Church numer
 #check @Lambda.Arith.deltaAt_two_iff_limitComputablePred
 #check @Lambda.Arith.deltaAt_two_iff_turingReducible_haltingOracle
 
+-- The hierarchy is proper: every level `n + 1` has a universal predicate, whose diagonal
+-- complement separates the level from its dual, so the three families grow strictly.
+#check @Lambda.Arith.UnivSigma
+#check @Lambda.Arith.exists_univSigma
+#check @Lambda.Arith.UnivSigma.not_sigmaAt_diag
+#check @Lambda.Arith.sigmaAt_ne_piAt
+#check @Lambda.Arith.sigmaAt_proper
+#check @Lambda.Arith.piAt_proper
+#check @Lambda.Arith.deltaAt_proper
+
+-- The union of the levels, the arithmetical predicates, has no universal predicate.
+#check @Lambda.Arith.Arithmetical
+#check @Lambda.Arith.exists_arithmetical_not_sigmaAt
+#check @Lambda.Arith.not_exists_univ_arithmetical
+
+-- Bounded quantifiers, with a computable bound, do not raise the level.
+#check @Lambda.Arith.computablePred_ball_lt
+#check @Lambda.Arith.exists_code_of_ball_exists
+#check @Lambda.Arith.SigmaAt.ball_lt
+#check @Lambda.Arith.SigmaAt.bex_lt
+#check @Lambda.Arith.PiAt.ball_lt
+#check @Lambda.Arith.PiAt.bex_lt
+
 /-! ## 14c'. A Blum complexity measure and a diagonal hierarchy -/
 
 -- Fuel counting is a Blum complexity measure: defined exactly on the domain, decidably bounded.
@@ -724,6 +747,39 @@ Program length is the syntactic size of a closed term reducing to a Church numer
 #check @Lambda.exists_bohmEq_not_conv
 #check @Lambda.bohmEq_between_beta_and_graph
 
+/-! ## 14f'''. λ-models and reflexive objects -/
+
+-- A λ-model in the sense of Meyer and Scott: an applicative structure with a compositional,
+-- β-satisfying, weakly extensional interpretation.  Soundness and the λ-theory of a model come
+-- from the axioms alone.
+#check @Lambda.LambdaModel
+#check @Lambda.LambdaModel.interp_conv
+#check @Lambda.LambdaModel.theory
+
+-- The three models this library builds are instances of that one definition, and their theories
+-- are the entries `Th(𝒫ω)` and `Th(D∞)` of the lattice above.
+#check @GraphModel.model
+#check @GraphModel.theory_model_eq
+#check @ScottDinf.model
+#check @ScottDinf.theory_model_eq
+#check @Inter.typeSet_eq_model_interp
+
+-- Scott–Koymans, one direction: the Karoubi envelope of a λ-model — idempotents as objects — is
+-- a cartesian closed category in which `D = λz. z` is a reflexive object, `D ⇒ D` a retract
+-- of `D`.
+#check @Lambda.LambdaModel.karoubiMonoidalClosed
+#check @Lambda.LambdaModel.reflexive_dRet
+#check @Lambda.LambdaModel.toReflexiveObject
+
+-- The other direction: a reflexive object in any cartesian closed category interprets untyped
+-- terms as morphisms in environments of generalized elements, soundly for β; in the category of
+-- sets that interpretation is a λ-model.
+#check @ReflexiveCcc.ReflexiveObject
+#check @ReflexiveCcc.ReflexiveObject.interp_beta
+#check @ReflexiveCcc.ReflexiveObject.interp_conv
+#check @ReflexiveCcc.ReflexiveObject.theory
+#check @Lambda.SetReflexive.toModel
+
 /-! ## 14g. Adequacy for Goedel's System T -/
 
 -- Reduction is confluent, so a typable term reduces to at most one numeral.
@@ -846,6 +902,10 @@ Program length is the syntactic size of a closed term reducing to a Church numer
 - The lattice of λ-theories: `B ⊊ Th(𝒫ω) ⊊ Th(D∞) = H*` on closed terms, with the infinite Böhm
   tree — the directed set of the direct approximants of the reducts — giving a theory strictly
   above β-conversion and below the theory of the graph model
+- λ-models and the Scott–Koymans correspondence: the graph model, `D∞` and the filter model are
+  three instances of the Meyer–Scott axioms; the Karoubi envelope of any λ-model is a cartesian
+  closed category with a reflexive object, and conversely a reflexive object in any cartesian
+  closed category interprets the untyped calculus soundly for β
 - Head reduction: the head strategy is deterministic and normalizing — a term has a head normal
   form exactly when the strategy terminates on it — whence head divergence is stable under
   substitution, head normalizability of an application is inherited by its function part, and
@@ -872,6 +932,11 @@ Program length is the syntactic size of a closed term reducing to a Church numer
   quantifier — bottoming out at the computable, r.e. and co-r.e. predicates; and Post's theorem at
   level two: `Δ⁰₂` is exactly the limit computable predicates, hence exactly the predicates
   decidable from `∅'`
+- The properness of the arithmetical hierarchy: every level `n + 1` has a universal predicate,
+  whose diagonal complement is `Π⁰ₙ₊₁` but not `Σ⁰ₙ₊₁`, so `Σ⁰ₙ₊₁ ≠ Π⁰ₙ₊₁` and each of `Σ⁰ₙ`,
+  `Π⁰ₙ`, `Δ⁰ₙ` grows strictly with `n`, while the union of the levels has no universal predicate
+- The closure of every level of the arithmetical hierarchy under bounded quantification with a
+  computable bound, via the collection principle
 
 ### Architecture (≈ 8000 lines):
 1. Lambda syntax + lift/subst               (De Bruijn indices)

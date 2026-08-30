@@ -18,7 +18,7 @@ Kolmogorov complexity, Chaitin's `Ω`, Martin-Löf randomness and Böhm's separa
 ![Lean](https://img.shields.io/badge/Lean-v4.33.0-blue)
 ![Mathlib](https://img.shields.io/badge/Mathlib-v4.33.0-blue)
 ![sorry-free](https://img.shields.io/badge/sorry--free-yes-brightgreen)
-![tasks](https://img.shields.io/badge/task%20board-91%2F92%20DONE__STRONG-brightgreen)
+![tasks](https://img.shields.io/badge/task%20board-93%2F94%20DONE__STRONG-brightgreen)
 
 Everything below is proved in `Start/`; the whole library compiles with `lake build`, contains no
 `sorry` and no `axiom`, and the headline results depend only on `propext`, `Classical.choice` and
@@ -167,6 +167,27 @@ Lambda.Arith.deltaAt_two_iff_turingReducible_haltingOracle :
       ∃ A, (∀ x, P x ↔ A x = Bool.true) ∧
         TuringReducible (Lambda.Oracle.oracleFun A)
           (Lambda.Oracle.oracleFun Lambda.Oracle.haltingOracle)
+
+-- The hierarchy is proper: every level has a universal predicate, no level equals its
+-- dual, and all three families grow strictly.
+Lambda.Arith.exists_univSigma : ∀ (n : ℕ), ∃ U, Lambda.Arith.UnivSigma (n + 1) U
+Lambda.Arith.sigmaAt_ne_piAt :
+    ∀ (n : ℕ), ¬∀ (P : ℕ → Prop), Lambda.Arith.SigmaAt (n + 1) P ↔ Lambda.Arith.PiAt (n + 1) P
+Lambda.Arith.sigmaAt_proper :
+    ∀ (n : ℕ), ∃ P, Lambda.Arith.SigmaAt (n + 2) P ∧ ¬Lambda.Arith.SigmaAt (n + 1) P
+Lambda.Arith.deltaAt_proper :
+    ∀ (n : ℕ), ∃ P, Lambda.Arith.DeltaAt (n + 2) P ∧ ¬Lambda.Arith.DeltaAt (n + 1) P
+Lambda.Arith.not_exists_univ_arithmetical :
+    ¬∃ T, Lambda.Arith.Arithmetical T ∧
+      ∀ (P : ℕ → Prop), Lambda.Arith.Arithmetical P → ∃ e, ∀ (x : ℕ), P x ↔ T (Nat.pair e x)
+
+-- Bounded quantifiers do not raise the level.
+Lambda.Arith.SigmaAt.ball_lt :
+    ∀ {n : ℕ} {Q : ℕ → Prop}, Lambda.Arith.SigmaAt n Q → ∀ {b : ℕ → ℕ}, Computable b →
+      Lambda.Arith.SigmaAt n fun x => ∀ y < b x, Q (Nat.pair x y)
+Lambda.Arith.PiAt.bex_lt :
+    ∀ {n : ℕ} {Q : ℕ → Prop}, Lambda.Arith.PiAt n Q → ∀ {b : ℕ → ℕ}, Computable b →
+      Lambda.Arith.PiAt n fun x => ∃ y < b x, Q (Nat.pair x y)
 ```
 
 ### Algorithmic information theory
@@ -359,7 +380,13 @@ Public Lean 4 developments in this area, and how they relate (repository file li
   closure properties, bottoming out at the computable, r.e. and co-r.e. predicates
   (`Start/ArithHierarchy.lean`); and **Post's theorem at level two**: `Δ⁰₂` is exactly the class
   of limit computable predicates, hence exactly the predicates decidable from `∅′`
-  (`Start/PostTheoremTwo.lean`).
+  (`Start/PostTheoremTwo.lean`).  The hierarchy is **proper**: every level `n + 1` carries a
+  universal predicate, whose diagonal complement is `Π⁰ₙ₊₁` but not `Σ⁰ₙ₊₁`, so no level equals
+  its dual or is closed under complement and all three families grow strictly; the union of the
+  levels, the arithmetical predicates, has no universal predicate
+  (`Start/ArithHierarchyProper.lean`).  Every level is closed under **bounded** quantification
+  with a computable bound, proved by one induction using the collection principle
+  (`Start/ArithBounded.lean`).
 - **Binary lambda calculus** — a decoder for the BLC bit-string code and the resulting
   bijection between terms and valid bit strings (`Start/BLC.lean`).
 - **Representation bridges** — de Bruijn ⟺ locally nameless (`cslib`) ⟺ BLC: mutually inverse
@@ -642,6 +669,25 @@ Public Lean 4 developments in this area, and how they relate (repository file li
   (`Inter.properTypable_iff_hasNormalForm`): a term is typable without `ω` exactly when it has a
   β-normal form — proved through the approximation theorem rather than by reducibility — and the
   inclusion is strict (`Inter.exists_typable_not_properTypable`, witnessed by `x Ω`).
+
+- **λ-models and the Scott–Koymans correspondence** (`Start/LambdaModel.lean`,
+  `Start/LambdaModelInstances.lean`, `Start/KaroubiLambda.lean`, `Start/ReflexiveCcc.lean`,
+  `Start/ReflexiveType.lean`, `Start/ScottKoymans.lean`) — the definition the three models above
+  are instances of.  A **λ-model** (`Lambda.LambdaModel`) is an applicative structure with an
+  interpretation `⟦t⟧ρ` satisfying the Meyer–Scott axioms, and from those four axioms alone come
+  the lifting and substitution lemmas, soundness for β (`interp_conv`), the combinatory structure
+  and the identification of extensionality with η.  The graph model, `D∞` and the filter model
+  are instances (`GraphModel.model`, `ScottDinf.model`, `Inter.typeSet_eq_model_interp`), and
+  their theories are the entries `Th(𝒫ω)`, `Th(D∞)` of the lattice above
+  (`Lambda.LambdaModel.theory`).  Categorically: the **Karoubi envelope** of a λ-model — objects
+  the idempotents `a ∘ a = a`, morphisms the elements they absorb — is a cartesian closed
+  category (`Lambda.LambdaModel.karoubiMonoidalClosed`) in which `D = λz. z` is a **reflexive
+  object**, `D ⇒ D` a retract of `D` (`Lambda.LambdaModel.reflexive_dRet`).  Conversely a
+  reflexive object in *any* cartesian closed category interprets the untyped terms as morphisms
+  in environments of generalized elements, naturally in the stage and soundly for β
+  (`ReflexiveCcc.ReflexiveObject.interp_conv`), with an isomorphism `D ≅ (D ⇒ D)` validating η;
+  in the category of sets that interpretation is a λ-model on the nose
+  (`Lambda.SetReflexive.toModel`).
 
 `Start/Demo.lean` is a guided tour with `#check`s of the headline statements.
 

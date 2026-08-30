@@ -1,3 +1,31 @@
+# Summary of changes for run 8eaa6a91-ba2f-458b-9943-07bb656ad45d
+I continued and completed the outstanding piece of work in the project.
+
+## New module: `Start/ArithBounded.lean`
+
+Bounded quantifiers do not raise the level of the arithmetical hierarchy of `Start/ArithHierarchy.lean`. The module builds with no `sorry`, no `axiom` and no linter warnings, and its results depend only on `propext`, `Classical.choice` and `Quot.sound`.
+
+What it proves:
+
+- `Lambda.Arith.allLt` / `Lambda.Arith.exLt` — bounded conjunction and disjunction of a `Bool` test, defined by recursion on the bound, with characterizations (`allLt_eq_true_iff`, `exLt_eq_true_iff`) and computability uniform in the test (`computable_allLt`, `computable_exLt`).
+- `Lambda.Arith.computablePred_ball_lt` / `computablePred_bex_lt` — the level‑zero case: the computable predicates are closed under `∀ y < b x` and `∃ y < b x` for computable `b`.
+- `Lambda.Arith.sigmaAt_of_computablePred` / `piAt_of_computablePred` — a computable predicate sits at every level, on both sides.
+- `Lambda.Arith.exists_code_of_ball_exists` — the **collection principle**: if every argument below a bound has a witness, one number codes a list of witnesses for all of them.
+- `Lambda.Arith.sigmaAt_bounded_closure` — the main induction on the level, proving both bounded‑quantifier cases at once: collection pulls a bounded universal quantifier past the inner existential one, while a bounded existential is absorbed into the outermost existential quantifier; the `Π` halves follow by de Morgan.
+- `Lambda.Arith.SigmaAt.ball_lt`, `SigmaAt.bex_lt`, `PiAt.ball_lt`, `PiAt.bex_lt` — the four closure theorems in usable form.
+
+## Integration
+
+The module is imported from `Start.lean` and `Start/Capstones.lean` (with a prose entry and `#check`s), advertised in `Start/Demo.lean`, and described in `README.md` (headline‑theorem block, survey bullet, task badge now 93/94). A new task‑board entry `M10-ARITH-BOUNDED` (`DONE_STRONG`) with `docs/goal/evidence/M10-ARITH-BOUNDED.md` was added and `docs/current-goal-state.md` re-rendered. Both project gates pass: `scripts/goal_state.py validate` reports `OK: 95 tasks validated` and `scripts/check_closure.py` reports `OK: 300 modules, all in the import closure and all registered`.
+
+All work is committed and pushed.
+
+## Notes
+
+- Verification was carried out against the Mathlib available in this environment; the repository itself continues to ship its own pinned Lean/Mathlib configuration, which is unchanged by this work.
+- The one task on the board that is not `DONE_STRONG` remains `M9-LAMBDAPI-LCCC`, whose documented open boundary is the biequivalence between models of λΠ and locally cartesian closed categories. Its modules could not be compiled with the Mathlib available here, so I did not attempt to change them; its status and open boundary are left exactly as they were.
+
+
 # Summary of changes for run 341c9fba-973c-470f-850b-3bd5ff7d823d
 The library is now finished: the whole project builds cleanly, contains no `sorry`, and both project gates pass.
 
