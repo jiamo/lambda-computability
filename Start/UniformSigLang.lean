@@ -196,7 +196,7 @@ theorem codeUniform_oddInpLayer :
   set A : Cob := .comp Cob.dropU [nT, .proj 1] with hA
   set B : Cob := .comp Cob.dropU [A, .proj 1] with hB
   refine codeUniform_inpLayer (idx := fun n c => 2 * min c n + 1) (S := fun n => 2 * n + 1)
-    (fun n c => by show 2 * min c n + 1 ≤ 2 * n + 1 + c; have h := Nat.min_le_right c n; omega)
+    (fun n c => by have h := Nat.min_le_right c n; omega)
     (mT := Cob.unary (.proj 0)) (sT := Cob.catL [Cob.unary (.proj 0), Cob.unary (.proj 0),
       Cob.constT [true]])
     (idxT := Cob.catL [B, B, Cob.constT [true]]) (fun x => by simp) ?_ ?_

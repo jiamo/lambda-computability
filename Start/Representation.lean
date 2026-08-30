@@ -238,8 +238,8 @@ theorem toLN_ofLN (D : ℕ) : ∀ (d : ℕ) (M : LNTerm), Term.LcAt d M →
   induction M generalizing d with
   | bvar i =>
       intro hlc _
-      simp only [Term.LcAt, decide_eq_true_eq] at hlc
-      simp [hlc]
+      have hlc' : i < d := by simpa [Term.LcAt] using hlc
+      simp [hlc']
   | fvar a =>
       intro _ hfv
       have ha : a < D := hfv a (by simp [Term.fv])
@@ -248,9 +248,11 @@ theorem toLN_ofLN (D : ℕ) : ∀ (d : ℕ) (M : LNTerm), Term.LcAt d M →
       omega
   | app l r ihl ihr =>
       intro hlc hfv
-      simp only [Term.LcAt, Bool.and_eq_true] at hlc
+      have hlc' : Term.LcAt d l ∧ Term.LcAt d r := by
+        simpa [Term.LcAt, Bool.and_eq_true] using hlc
       simp only [ofLN_app, toLN, Term.app.injEq]
-      refine ⟨ihl d hlc.1 ?_, ihr d hlc.2 ?_⟩ <;> intro a ha <;> exact hfv a (by simp [Term.fv, ha])
+      refine ⟨ihl d hlc'.1 ?_, ihr d hlc'.2 ?_⟩ <;> intro a ha <;>
+        exact hfv a (by simp [Term.fv, ha])
   | abs m ih =>
       intro hlc hfv
       simp only [Term.LcAt] at hlc
@@ -264,7 +266,7 @@ theorem freeMax_ofLN (D : ℕ) : ∀ (d : ℕ) (M : LNTerm), Term.LcAt d M →
   induction M generalizing d with
   | bvar i =>
       intro hlc _
-      simp only [Term.LcAt, decide_eq_true_eq] at hlc
+      have hlc' : i < d := by simpa [Term.LcAt] using hlc
       simp only [ofLN_bvar, freeMax_var]
       omega
   | fvar a =>
@@ -274,9 +276,11 @@ theorem freeMax_ofLN (D : ℕ) : ∀ (d : ℕ) (M : LNTerm), Term.LcAt d M →
       omega
   | app l r ihl ihr =>
       intro hlc hfv
-      simp only [Term.LcAt, Bool.and_eq_true] at hlc
+      have hlc' : Term.LcAt d l ∧ Term.LcAt d r := by
+        simpa [Term.LcAt, Bool.and_eq_true] using hlc
       simp only [ofLN_app, freeMax_app, max_le_iff]
-      refine ⟨ihl d hlc.1 ?_, ihr d hlc.2 ?_⟩ <;> intro a ha <;> exact hfv a (by simp [Term.fv, ha])
+      refine ⟨ihl d hlc'.1 ?_, ihr d hlc'.2 ?_⟩ <;> intro a ha <;>
+        exact hfv a (by simp [Term.fv, ha])
   | abs m ih =>
       intro hlc hfv
       simp only [Term.LcAt] at hlc

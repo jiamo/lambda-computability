@@ -9,6 +9,9 @@ whole lambda-calculus formalization, including the boundary/interface records.
 import Start.Tactics
 import Start.Syntax
 import Start.Reduction
+import Start.LambdaEta
+import Start.LambdaBetaEta
+import Start.LambdaEtaPostpone
 import Start.Church
 import Start.Encoding
 
@@ -50,6 +53,9 @@ import Start.Undecidable
 import Start.SecondRecursion
 import Start.NormalizationUndecidable
 import Start.Scott
+import Start.ScottCurry
+import Start.RiceCreative
+import Start.CreativeCodeSets
 import Start.Solvability
 import Start.Bohm
 import Start.BohmOut
@@ -112,6 +118,10 @@ import Start.Stlc
 import Start.StlcCcc
 import Start.CccModel
 import Start.KleeneK
+import Start.PostSimple
+import Start.PostIncomplete
+import Start.PostCreative
+import Start.RiceShapiro
 import Start.KraftConverse
 import Start.StepComplexity
 import Start.BitString
@@ -198,6 +208,7 @@ import Start.ScottDinfOmega
 -- Dependent type theory: the calculus lambda-Pi, its syntactic category, categories with
 -- attributes, and the locally cartesian closed structure of Type
 import Start.LambdaPi
+import Start.LambdaPiEta
 import Start.LambdaPiTyping
 import Start.LambdaPiBound
 import Start.LambdaPiUnique
@@ -293,6 +304,11 @@ import Start.TagFail
 import Start.DinfSpine
 import Start.DinfTagBelow
 import Start.DinfTagBelowSound
+import Start.IntersectionTypes
+import Start.FilterModel
+import Start.IntersectionNormalization
+import Start.LambdaTheory
+import Start.InfiniteBohmTree
 import Start.CwaCodePi
 import Start.CwaUnivNotClosed
 import Start.CwaTypeModel
@@ -300,7 +316,37 @@ import Start.CwaCodeSigma
 import Start.CwaTypeModelSigma
 import Start.CircuitShift
 import Start.KolmogorovPair
+import Start.ChaitinIncompleteness
+import Start.KolmogorovApprox
 import Start.ReducesIn
 import Start.LevinKt
 import Start.LevinSearch
+import Start.CwaVar
+import Start.LambdaPiInterp
+import Start.LambdaPiInterpFun
+import Start.LambdaPiInterpSub
+import Start.LambdaPiInterpConv
+import Start.LambdaPiInterpTotal
+import Start.LambdaPiInterpHom
+import Start.LambdaPiSyntacticModel
+import Start.LambdaPiInitial
+import Start.LambdaPiInitialUniv
+import Start.OracleSegment
+import Start.OracleMachine
+import Start.OracleSim
+import Start.OracleJump
+import Start.OracleSound
+import Start.OracleForcing
+import Start.KleenePost
+import Start.OracleJoin
+import Start.OracleUniversal
+import Start.OracleCone
+import Start.JumpSigmaOne
+import Start.JumpApprox
+import Start.LimitLemma
+import Start.ArithHierarchy
+import Start.PostTheoremTwo
+import Start.Inseparable
+import Start.MyhillIso
+import Start.CreativeIso
 import Start.Capstones

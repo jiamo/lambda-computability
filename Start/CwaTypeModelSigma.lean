@@ -68,7 +68,7 @@ theorem sigCode_sub (σ : Δ ⟶ Γ) (a : Cwa.Tm amb Γ (un.U Γ))
   refine code_ext ?_
   rw [fam_sub]
   simp only [fam_sigCode]
-  refine ConcreteCategory.hom_ext _ _ fun x => ?_
+  refine types_hom_ext fun x => ?_
   refine sigma_type_congr (types_hom_congr_fun (fam_sub σ a) x).symm fun y => ?_
   set y' : fam (un.sub σ a) x := cast (types_hom_congr_fun (fam_sub σ a) x).symm y
   have hb : fam (un.sub (un.extHom σ a) b) = un.extHom σ a ≫ fam b :=
@@ -122,7 +122,7 @@ theorem pairIso_disp (a : Cwa.Tm amb Γ (un.U Γ))
     calc LuTy.disp (un.El c) w
         = LuTy.disp (un.El c) ((extIso c).hom ((extIso c).inv w)) := by rw [e]
       _ = ((extIso c).inv w).1 := hdisp c _
-  refine ConcreteCategory.hom_ext _ _ fun s => ?_
+  refine types_hom_ext fun s => ?_
   simp only [types_comp_apply, pairIso, Iso.trans_hom, Iso.symm_hom]
   rw [hdisp (sigCode a b), hinv b s, hinv a]
   rfl

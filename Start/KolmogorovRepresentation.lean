@@ -200,19 +200,8 @@ theorem kolmLN_eq_kolm_and_kolmP_bounds (s : ℕ) :
 
 /-! ### The bit measure against the size measure -/
 
-/-- The number of syntax nodes of a term (a de Bruijn index counts as one node, however large). -/
-def nodes : Lambda → ℕ
-  | Lambda.var _ => 1
-  | Lambda.app a b => nodes a + nodes b + 1
-  | Lambda.lam t => nodes t + 1
-
-@[simp] theorem nodes_var (i : ℕ) : nodes (Lambda.var i) = 1 := rfl
-
-@[simp] theorem nodes_app (a b : Lambda) : nodes (Lambda.app a b) = nodes a + nodes b + 1 := rfl
-
-@[simp] theorem nodes_lam (t : Lambda) : nodes (Lambda.lam t) = nodes t + 1 := rfl
-
-theorem nodes_pos (t : Lambda) : 0 < nodes t := by cases t <;> simp
+/- The node measure `Lambda.nodes` and its basic lemmas live in `Start/TermSize.lean`, next to
+the size measure it is compared with here. -/
 
 /-- **The BLC code length of a term is its size plus its number of nodes.**  This is the exact
 form of the comparison between the two cost measures. -/

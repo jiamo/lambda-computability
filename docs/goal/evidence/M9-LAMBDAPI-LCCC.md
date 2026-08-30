@@ -5,7 +5,10 @@
 Modules `Start/LambdaPi.lean`, `Start/LambdaPiTyping.lean`, `Start/LambdaPiBound.lean`,
 `Start/LambdaPiCat.lean`, `Start/LambdaPiCwa.lean`, `Start/Cwa.lean`, `Start/CwaType.lean`,
 `Start/Lccc.lean`, `Start/LcccType.lean`, `Start/CwaCodePi.lean`, `Start/CwaTypeModel.lean`,
-`Start/CwaCodeSigma.lean` and `Start/CwaTypeModelSigma.lean`, all imported by `Start.lean`.  They build without `sorry` and without
+`Start/CwaCodeSigma.lean`, `Start/CwaTypeModelSigma.lean`, `Start/LambdaPiInterp.lean`,
+`Start/LambdaPiInterpFun.lean`, `Start/LambdaPiInterpSub.lean`, `Start/LambdaPiInterpConv.lean`,
+`Start/LambdaPiInterpTotal.lean`, `Start/LambdaPiInterpHom.lean` and `Start/LambdaPiInitial.lean`,
+all imported by `Start.lean`.  They build without `sorry` and without
 linter warnings.
 
 This is the layer above `M9-STLC-CCC`.  There the correspondence was "simply typed lambda
@@ -490,25 +493,93 @@ pairing isomorphism is the associativity of the total spaces (**`CwaTypeModel.pa
 **`CwaTypeModel.modelSigma`**: *the universe of small types is closed under dependent sums*, and
 the set-theoretic model has them.
 
+## Initiality: the syntax is interpreted in every model — `Start/LambdaPiInterp.lean`,
+`Start/LambdaPiInterpFun.lean`, `Start/LambdaPiInterpSub.lean`, `Start/LambdaPiInterpConv.lean`,
+`Start/LambdaPiInterpTotal.lean`, `Start/LambdaPiInterpHom.lean`, `Start/LambdaPiInitial.lean`
+
+**`LambdaPi.Model C`** is what a category of contexts must carry to interpret `λΠ`: a category with
+attributes with coherent substitution of terms, a universe `Un` of small types, dependent products
+over the small types with abstraction and application natural in the context, codes for those
+products and a terminal object for the empty context.
+
+Because a *raw* expression need not denote anything, the interpretation is defined as a pair of
+relations by mutual induction on the syntax: **`LambdaPi.TyI s t A`** ("the expression `t` denotes
+the type `A`") and **`LambdaPi.TmI s t A x`** ("`t` denotes the term `x` of type `A`"), where `s` is
+a *semantic context* (`LambdaPi.SemCtx`), the list of types by which the object was built, which is
+what reading de Bruijn indices requires.  Those relations are then shown to be a partial function
+that is total on derivations:
+
+* **`LambdaPi.functional_of_piInj`** — a model whose product former is injective
+  (`LambdaPi.Model.PiInj`) interprets *single-valuedly*.  The hypothesis is needed for the
+  application rule only: `λΠ` writes applications without annotation, so `f g` does not record the
+  domain of the type of `f`, and two derivations could otherwise name the same semantic product by
+  different codes.  A calculus with annotated applications would not need it;
+* **`LambdaPi.TyI.ren`, `TmI.ren`, `TyI.subst`, `TmI.subst`, `TyI.inst`, `TmI.inst`** — the
+  interpretation commutes with renaming, with parallel substitution and with instantiation of the
+  last variable, the semantic side being substitution along a morphism of contexts.  The model laws
+  used are exactly the naturality laws: Beck–Chevalley for the product, naturality of abstraction
+  and of application, and stability of the codes;
+* **`LambdaPi.Step.interp_preserves`, `Red.interp_preserves`, `TyI.conv_eq`, `TmI.conv_eq`** —
+  β-reduction preserves what an expression denotes, hence convertible expressions denote the same
+  thing (pass to a common reduct by Church–Rosser, then use functionality).  This is what the
+  conversion rule of the typing judgement needs;
+* **`LambdaPi.Typing.interp_total`** with **`TyI.total`, `TmI.total`, `CtxI.total`** — the
+  interpretation is *total on derivations*, by induction on the derivation;
+* **`LambdaPi.interp_exists_unique`** — putting the two halves together: a derivable term denotes
+  **exactly one** term of the model, of exactly one type;
+* **`LambdaPi.subI_exists_unique`** — and a well-typed substitution from `Δ` to `Γ` is carried by
+  exactly one morphism between the interpreting objects.  The categorical ingredient, proved along
+  the way, is **`Cwa.hom_eq_of_val_sub_var`**: a morphism into an extended context is determined by
+  its composite with the display map together with the value it gives to the generic term.
+
+`Start/LambdaPiInitial.lean` chooses the interpretation once and for all — `LambdaPiInitial.obj` and
+`sem` by recursion on the context, `tyMap` on types — and assembles it:
+
+* **`LambdaPiInitial.functor : LambdaPiCat.Ob ⥤ C`** — the interpretation *is a functor* on the
+  syntactic category; preservation of identities and of composites is exactly the uniqueness of the
+  interpretation of a substitution;
+* **`LambdaPiInitial.tyMap_sub`** — the interpretation of a type is stable under substitution, on
+  the nose, and **`homMap_dispQ`**, **`homMap_extendQ`** identify the display maps and the action on
+  extended contexts;
+* **`LambdaPiInitial.mor : Cwa.Mor LambdaPiFull.syntactic M.T`** — **the comparison morphism of
+  categories with attributes** out of the syntactic model, for any model with injective products.
+  Its action on terms and the compatibility of that action with substitution come for free from
+  `Start/CwaMor.lean`.
+
+A morphism of categories with attributes only compares the *types* of the two models, and the types
+of `λΠ` are the terms of the sort `∗`; `Start/LambdaPiInitialUniv.lean` therefore checks that the
+comparison respects the rest of the structure of a model of `λΠ`:
+
+* **`LambdaPiInitial.tmMap_spec`** — the missing half of `tyMap_spec`: the term of the model that
+  the comparison assigns to a term of the syntactic model is what the representative of that term
+  denotes.  It is proved from the uniqueness of the interpretation of a *substitution*, a term
+  being a section of the display map;
+* **`LambdaPiInitial.mor_preservesUniverse`** — **the comparison preserves the universe**
+  (`Cwa.Mor.PreservesUniverse`): the sort `∗` is carried to the universe of the model
+  (`tyMap_uQ`) and a decoded code to the decoding of its image (`tyMap_elQ`);
+* **`LambdaPiInitial.mor_preservesSmallPi`** — **it preserves the dependent products over the small
+  types** (`Cwa.Mor.PreservesSmallPi`), by `tyMap_piQ`;
+* **`LambdaPiInitial.mor_preservesPiClosed`** — **it preserves the codes for those products**
+  (`Cwa.Mor.PreservesPiClosed`), by `codeMap_codeQ`.
+
+So the comparison morphism compares the syntactic model with an arbitrary model *as models of
+`λΠ`*, and not merely as categories with attributes.
+
 ## Boundary
 
 What is **not** claimed is the *equivalence* between models of `λΠ` and locally cartesian closed
-categories.  All the structure the two sides need is now in place — the syntactic category with
-attributes with all types, its universe `∗` closed under the product, the strictified semantic model
-with its Π- and Σ-structures and its universes, and morphisms of models (`Cwa.Mor`) — but:
+categories.  Both sides are built, and the syntax is now compared with an arbitrary model, but:
 
-* no **interpretation** of the syntax into an arbitrary model with a universe is built.  That is the
-  initiality theorem: a partial interpretation of raw terms defined by recursion, proved total on
-  derivable judgements, invariant under conversion and natural in substitution.  It is a development
-  of its own size and is not attempted here;
-* no comparison in the inverse direction, between an arbitrary model and the syntax, is proved, so
+* no comparison in the inverse direction, from an arbitrary model back to the syntax, is proved, so
   the biequivalence itself is not formalized.  (The isomorphism `LambdaPiUniv.smallModelIso` above
-  compares the two *syntactic* models with one another, not syntax with semantics);
+  compares the two *syntactic* models with one another);
+* the interpretation is built for models with injective products (`LambdaPi.Model.PiInj`), which is
+  the price of unannotated application, as explained above;
 * the universe of a *general* strictified model is still not shown to be closed under the
   pushforward product (`Cwa.Universe.PiClosed`).  For the code of a product to decode to the
   pushforward on the nose, the generic product data would have to be the universe object itself;
   this is a further requirement on the universe object, not a consequence of local cartesian
-  closure.  What is now proved is the corresponding closure for the standard model
+  closure.  What is proved is the corresponding closure for the standard model
   (`CwaTypeModel.codePi`), in the weaker but sufficient sense of `Cwa.Universe.CodePi`.
 
 ## Closure under the product is genuine extra structure

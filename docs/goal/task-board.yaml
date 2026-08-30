@@ -1093,7 +1093,7 @@ tasks:
     track: theory/semantics
     title: "Dependent types: the calculus lambda-Pi, categories with attributes, and locally cartesian closed categories"
     latest_evidence: "docs/goal/evidence/M9-LAMBDAPI-LCCC.md"
-    open_boundary: "Both sides are built, but the biequivalence is not claimed. Syntax: LambdaPiCwa.syntactic is a category with attributes whose types are the small types, LambdaPiCwa.weakPi its dependent product, and LambdaPiCwa.not_piStruct_weakPi shows eta genuinely fails. Semantics: the strictified model (Cwa.ofPullbacks) presents types by local universes, so substitution is strictly functorial, and a locally cartesian closed category carries there a dependent product with beta and eta (Cwa.piStructOfLccc) and a dependent sum. Universes: Cwa.Universe, SmallPi, PiClosed and the weaker CodePi and CodeSigma are what an interpretation needs; LambdaPiUniv.univ makes star a universe in the syntactic model, and CwaUniv.universeOfHom makes every morphism a universe in the strictified model. Cwa.Universe.smallCwa extracts the model whose types are the codes (inclusion smallMor, products smallWeakPiOfCodePi, sums smallSigmaOfCodeSigma); the two syntactic models are isomorphic (LambdaPiUniv.smallModelIso). Substitution of terms is functorial in both (Cwa.ExtCoherent) and models form a category (Cwa.Model.instCategory). A set-theoretic model is built (CwaTypeModel.model, modelPiNatural): over Type (u+1) the universe object is Type u, types are the small families (modelTyEquiv), terms the dependent functions (modelTmEquiv), and the universe is closed under products (codePi, the dependent function type, with beta, eta and piLam_sub) and sums (modelSigma). Not claimed: interpretation of the syntax into an arbitrary model with a universe (initiality), any comparison between syntax and an arbitrary model, and closure of the universe of a general strictified model under the pushforward product on the nose (Cwa.Universe.PiClosed). That closure is genuine extra structure: CwaTypeNotClosed.twoUniverse is a two-code universe of the standard model with products over its small types, and not_piClosed and not_codePi rule out both Cwa.Universe.PiClosed and the weaker Cwa.Universe.CodePi for it."
+    open_boundary: "Both sides are built, but the biequivalence is not claimed. Syntax: LambdaPiCwa.syntactic is a category with attributes whose types are the small types, LambdaPiCwa.weakPi its dependent product, and LambdaPiCwa.not_piStruct_weakPi shows eta fails. Semantics: the strictified model (Cwa.ofPullbacks) presents types by local universes, so substitution is strictly functorial, and a locally cartesian closed category carries there a dependent product with beta and eta (Cwa.piStructOfLccc) and a sum. Universes: Cwa.Universe, SmallPi, PiClosed and the weaker CodePi and CodeSigma are what an interpretation needs; LambdaPiUniv.univ makes star a universe in the syntactic model, and CwaUniv.universeOfHom makes every morphism a universe in the strictified model. Cwa.Universe.smallCwa extracts the model whose types are the codes, and the two syntactic models are isomorphic (LambdaPiUniv.smallModelIso). Models are a category (Cwa.Model.instCategory). A set-theoretic model is built (CwaTypeModel.model): over Type (u+1) the universe object is Type u, types are the small families, terms the dependent functions, closed under products (codePi) and sums (modelSigma). Initiality is proved: LambdaPi.interp_exists_unique interprets every derivable judgement in an arbitrary model with injective products, uniquely; LambdaPiInitial.mor packages it as a morphism of categories with attributes out of the syntactic model, with object part LambdaPiInitial.functor, and that morphism preserves the universe, the products over it and their codes (mor_preservesUniverse, mor_preservesSmallPi, mor_preservesPiClosed), comparing them as models of lambda-Pi. Not claimed: the biequivalence between models of lambda-Pi and locally cartesian closed categories, and closure of the universe of a general strictified model under the pushforward product on the nose (Cwa.Universe.PiClosed) - genuine extra structure, ruled out for a two-code universe of the standard model by CwaTypeNotClosed.not_piClosed and not_codePi."
     milestone: M9
     depends_on:
       - M9-STLC-CCC
@@ -1319,3 +1319,514 @@ tasks:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
       - "lake build Start.Capstones"
+
+  - id: M10-INTERSECTION-FILTER
+    priority: P1
+    status: DONE_STRONG
+    track: theory/untyped
+    title: "Intersection types and the filter model: typable = nonempty denotation = has a head normal form"
+    terminal_statement: "Inter.deriv_iff_mem_denot : Deriv G M s <-> s in GraphModel.denot M (basisEnv G)"
+    latest_evidence: "docs/goal/evidence/M10-INTERSECTION-FILTER.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-CAPSTONE-REGISTRY
+    rank: 230
+    exit_criteria:
+      - "The strict intersection type assignment system is defined, with generation lemmas and weakening."
+      - "The type set of a term is proved equal to its denotation in the graph model, so the graph model is the filter model."
+      - "Subject reduction and subject expansion follow, and typability is proved equivalent to head normalisability and to solvability."
+      - "The Coppo-Dezani normalisation theorem is proved: omega-free typability is equivalent to having a beta-normal form, and the inclusion is strict."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.IntersectionTypes Start.FilterModel Start.IntersectionNormalization"
+
+  - id: M10-LAMBDA-THEORY-LATTICE
+    priority: P1
+    status: DONE_STRONG
+    track: theory/untyped
+    title: "The lattice of lambda-theories: B < Th(graph) < Th(Dinf) = H*, and infinite Boehm trees"
+    terminal_statement: "Lambda.LambdaTheory.theory_chain : LtClosed beta graph and LtClosed graph dinf and LeClosed dinf hstar and LeClosed hstar dinf"
+    latest_evidence: "docs/goal/evidence/M10-LAMBDA-THEORY-LATTICE.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-INTERSECTION-FILTER
+    rank: 240
+    exit_criteria:
+      - "Lambda-theories are defined as context-closed equivalence relations containing beta-conversion, with beta, the graph model, Dinf and observational equivalence as instances."
+      - "The chain B < Th(graph) < Th(Dinf) = H* is proved on closed terms, both inclusions strict."
+      - "Omega and Omega I are proved not beta-convertible, which is what makes the first inclusion strict."
+      - "The infinite Boehm tree is defined as the set of direct approximants of the reducts, the approximation order is proved transitive on direct approximants, and Boehm tree equality is proved to sit strictly above beta-conversion and below the theory of the graph model."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.LambdaTheory Start.InfiniteBohmTree"
+
+  - id: M10-POST-SIMPLE-INCOMPLETE
+    priority: P1
+    status: DONE_STRONG
+    track: theory/computability
+    title: "Post's problem for many-one reducibility: a simple set, neither computable nor complete"
+    terminal_statement: "Lambda.Post.exists_rePred_not_computable_not_manyOneComplete : exists p, REPred p and not ComputablePred p and not (forall q, REPred q -> q <=0 p)"
+    latest_evidence: "docs/goal/evidence/M10-POST-SIMPLE-INCOMPLETE.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-CAPSTONE-REGISTRY
+    rank: 250
+    exit_criteria:
+      - "Post's simple set is defined from the standard numbering of the partial recursive functions and proved recursively enumerable."
+      - "Its complement is proved infinite, by the counting bound that at most n numbers below 2n belong to it."
+      - "It is proved to meet every infinite r.e. set, so its complement is immune, and it is therefore not computable."
+      - "Productive sets are defined, the complement of the halting set is proved productive, and productivity of a complement is proved to travel along a many-one reduction."
+      - "A productive set is proved to contain an infinite r.e. subset, so the simple set is not many-one complete."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.PostSimple Start.PostIncomplete"
+
+  - id: M10-MYHILL-CREATIVE
+    priority: P1
+    status: DONE_STRONG
+    track: theory/computability
+    title: "Creative sets and Myhill's theorem: a productive complement forces many-one completeness"
+    terminal_statement: "Lambda.Post.Creative.manyOneEquiv_haltK : Creative C -> ManyOneEquiv C HaltK"
+    latest_evidence: "docs/goal/evidence/M10-MYHILL-CREATIVE.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-POST-SIMPLE-INCOMPLETE
+    rank: 251
+    exit_criteria:
+      - "The recursion theorem with parameters is proved in the form used here: for partial recursive G there is a computable h with W (h x) equal to the domain of G (h x) x."
+      - "Creative sets are defined as r.e. sets with productive complement, and the halting set is proved creative."
+      - "A productive set is proved not to be recursively enumerable, so no creative set is computable."
+      - "Myhill's theorem is proved: if the complement of C is productive then every r.e. set many-one reduces to C."
+      - "Hence every creative set is many-one complete, many-one equivalent to the halting set, and not simple; Post's simple set is proved not creative."
+      - "The converse is proved as well, so an r.e. set is creative exactly when it is many-one complete."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.PostCreative"
+
+  - id: M10-RICE-SHAPIRO
+    priority: P1
+    status: DONE_STRONG
+    track: theory/computability
+    title: "The Rice-Shapiro theorem: an r.e. extensional class is generated by its finite members"
+    terminal_statement: "Lambda.Post.rice_shapiro : REPred A -> Extensional A -> (A e <-> exists d, W d finite and W d subset of W e and A d)"
+    latest_evidence: "docs/goal/evidence/M10-RICE-SHAPIRO.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-MYHILL-CREATIVE
+    rank: 252
+    exit_criteria:
+      - "Stage-by-stage acceptance is defined and proved primitive recursive, monotone in the stage and bounded by the stage."
+      - "A uniformly computable family of semi-decision tests is proved to name a computable family of r.e. sets."
+      - "An r.e. extensional class of indices is proved upward closed."
+      - "A member of an r.e. extensional class is proved to have a finite subset in the class."
+      - "The Rice-Shapiro theorem is assembled from the two halves, and the classes of indices of the empty set and of the total functions are proved not to be r.e."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.RiceShapiro"
+
+  - id: M10-CHAITIN-INCOMPLETENESS
+    priority: P1
+    status: DONE_STRONG
+    track: theory/information
+    title: "Chaitin's incompleteness theorem: a sound r.e. system proves only finitely many complexity lower bounds"
+    terminal_statement: "Lambda.chaitin_incompleteness : REPred (fun q => S q.1 q.2) -> (forall x n, S x n -> n < kolm x) -> exists c, forall x n, S x n -> n < c"
+    latest_evidence: "docs/goal/evidence/M10-CHAITIN-INCOMPLETENESS.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-RICE-SHAPIRO
+    rank: 253
+    exit_criteria:
+      - "An r.e. predicate is proved to be of the form 'some stage of a primitive recursive test succeeds', the converse of the existing sufficient condition."
+      - "An r.e. relation is proved to admit a partial recursive selection function which halts whenever a witness exists and returns only witnesses."
+      - "A partial recursive function is proved to raise Kolmogorov complexity by at most an additive constant."
+      - "A linear function of the bit length is proved to be eventually dominated, so the estimate bounds its argument."
+      - "Chaitin's theorem is proved: for a sound r.e. system of assertions 'kolm x > n' the thresholds n are bounded."
+      - "Hence there is a threshold about which the system proves nothing although the assertion is true for some argument."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.ChaitinIncompleteness"
+
+  - id: M10-KOLM-UPPER-SEMICOMPUTABLE
+    priority: P1
+    status: DONE_STRONG
+    track: theory/information
+    title: "Kolmogorov complexity is upper semicomputable: an r.e. graph and a computable decreasing approximation"
+    terminal_statement: "Lambda.kolm_eq_iInf_kolmAt : kolm s = iInf (fun k => kolmAt s k), with Lambda.primrec_kolmAt : Primrec2 kolmAt and Lambda.rePred_kolm_le : REPred (fun q => kolm q.1 <= q.2)"
+    latest_evidence: "docs/goal/evidence/M10-KOLM-UPPER-SEMICOMPUTABLE.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-CHAITIN-INCOMPLETENESS
+    rank: 254
+    exit_criteria:
+      - "A time-bounded program test is defined and proved primitive recursive, correct, and stable in the number of steps."
+      - "The relation 'kolm s is at most n' is proved recursively enumerable."
+      - "The complementary relation 'n is less than kolm s' is proved not to be recursively enumerable."
+      - "A stagewise approximation of Kolmogorov complexity is defined and proved primitive recursive."
+      - "The approximation is proved to be above the complexity, non-increasing in the stage, and equal to it from some stage on."
+      - "Kolmogorov complexity is proved to be the pointwise infimum of the approximations."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.KolmogorovApprox"
+
+  - id: M10-TOOLCHAIN-V433-RESTORE
+    priority: P0
+    status: DONE_STRONG
+    track: infra/toolchain
+    title: "Restore the documented Lean v4.33.0 toolchain and bring every module forward to its Mathlib and cslib APIs"
+    latest_evidence: "docs/goal/evidence/M10-TOOLCHAIN-V433-RESTORE.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-KOLM-UPPER-SEMICOMPUTABLE
+    rank: 255
+    exit_criteria:
+      - "lean-toolchain pins leanprover/lean4:v4.33.0, and lakefile.toml and lake-manifest.json agree on the Mathlib and cslib checkouts."
+      - "The Turing machine modules use the state transition namespace and the encoding functions of the current Mathlib."
+      - "The categories with attributes modules use the bundled morphisms of the category of types."
+      - "The representation bridge uses the congruence closure presentation of cslib's full beta reduction and its Bool valued local closure."
+      - "lake build reports no error and no warning, and no module contains sorry."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build"
+
+  - id: M10-LAMBDAPI-ETA
+    priority: P1
+    status: DONE_STRONG
+    track: theory/types
+    title: "Eta for lambda-Pi: eta reduction is confluent and terminating, but beta-eta on raw terms is not confluent"
+    terminal_statement: "LambdaPi.not_church_rosser_betaEta : there is no common beta-eta reduct for the two reducts of the term lam star (app (lam box (var 0)) (var 0)), together with LambdaPi.EtaRed.church_rosser and LambdaPi.betaEtaConv_lam_annot"
+    latest_evidence: "docs/goal/evidence/M10-LAMBDAPI-ETA.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M9-LAMBDAPI-LCCC
+    rank: 256
+    exit_criteria:
+      - "Eta reduction of lambda-Pi is defined with its congruence rules, and is proved stable under renaming."
+      - "An eta step under a renaming is reflected back through the renaming, via a factorisation lemma for renamings."
+      - "Eta reduction strictly decreases the size of a term, so every term has an eta normal form."
+      - "Eta reduction is proved strongly confluent, hence confluent, on all raw terms."
+      - "Beta-eta conversion is proved to identify two abstractions that differ only in the domain annotation."
+      - "Beta-eta reduction on raw terms is proved not to be confluent, by an explicit term with two distinct beta-eta normal reducts."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.LambdaPiEta"
+
+  - id: M10-LAMBDA-BETAETA
+    priority: P1
+    status: DONE_STRONG
+    track: theory/lambda
+    title: "Beta-eta for the untyped calculus: eta terminates, beta and eta commute, and beta-eta is Church-Rosser"
+    terminal_statement: "Lambda.betaEta_church_rosser : any two beta-eta reduction sequences out of a term can be joined, together with Lambda.reduces_etaReduces_commute and Lambda.betaEtaConv.common_reduct"
+    latest_evidence: "docs/goal/evidence/M10-LAMBDA-BETAETA.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-LAMBDAPI-ETA
+    rank: 257
+    exit_criteria:
+      - "Eta reduction of the untyped calculus is defined with its congruence rules and proved stable under lifting."
+      - "An eta step under a lifting is reflected back through the lifting, via a factorisation lemma for liftings."
+      - "Eta reduction strictly decreases the number of syntax nodes, so every term has an eta normal form."
+      - "Eta reduction is proved strongly confluent, hence confluent."
+      - "Eta reduction is proved substitutive, and a beta step is reflected through a lifting."
+      - "Beta reduction and eta reduction are proved to commute."
+      - "Beta-eta reduction is proved confluent by the Hindley-Rosen argument, and beta-eta convertible terms are proved to have a common reduct."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.LambdaBetaEta"
+
+  - id: M10-LAMBDA-ETAPOSTPONE
+    priority: P1
+    status: DONE_STRONG
+    track: theory/lambda
+    title: "Eta postponement: beta-eta reduction of untyped terms is beta reduction followed by eta reduction"
+    terminal_statement: "Lambda.betaEtaReduces_iff : betaEtaReduces t u if and only if there is an m with reduces t m and etaReduces m u, together with Lambda.etaReduces_postpone"
+    latest_evidence: "docs/goal/evidence/M10-LAMBDA-ETAPOSTPONE.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-LAMBDA-BETAETA
+    rank: 258
+    exit_criteria:
+      - "A parallel eta reduction is defined, related to one-step and many-step eta reduction in both directions."
+      - "Parallel eta reduction is proved stable under lifting and under substitution on both sides."
+      - "A term whose function part parallel-eta-reduces to an abstraction is proved to beta-reduce to the corresponding substitution instance."
+      - "The local postponement diagram is proved: a parallel eta step followed by a beta step is beta steps followed by a parallel eta step."
+      - "Eta postponement is proved for arbitrary eta and beta reduction sequences."
+      - "Beta-eta reduction is proved equal to the composite of beta reduction and eta reduction, in that order."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.LambdaEtaPostpone"
+
+  - id: M10-SCOTT-CURRY
+    priority: P1
+    status: DONE_STRONG
+    track: theory/computability
+    title: "The Scott-Curry theorem: convertibility-invariant sets of lambda terms have recursively inseparable code sets"
+    terminal_statement: "Lambda.scott_curry_codeSet : the code sets of two convertibility-invariant sets of lambda terms, each with a closed member, are recursively inseparable"
+    latest_evidence: "docs/goal/evidence/M10-SCOTT-CURRY.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M9-KOLMOGOROV-REPRESENTATION
+    rank: 260
+    exit_criteria:
+      - "Recursive inseparability is defined for sets of numbers."
+      - "A computable predicate on numbers is shown to be decided by a closed lambda term on Church numerals."
+      - "The Scott-Curry theorem is proved: no computable predicate separates the codes of one convertibility-invariant set from the codes of another, when each has a closed member."
+      - "The theorem is restated as recursive inseparability of the two code sets."
+      - "Scott's theorem, and with it Rice's theorem for the lambda calculus, is derived as the special case in which the second set is the complement of the first."
+      - "A concrete instance is given: for m not equal to n, the codes of the terms convertible with church m and with church n are disjoint and recursively inseparable."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.ScottCurry"
+
+  - id: M10-RICE-CREATIVE
+    priority: P1
+    status: DONE_STRONG
+    track: theory/computability
+    title: "Rice's theorem in effective form: convertibility-invariant sets of solvable terms have code sets many-one above the halting problem"
+    terminal_statement: "Lambda.manyOneReducible_haltK_codeSet : if A is convertibility-invariant, inhabited and contains no unsolvable term then HaltK reduces many-one to CodeSet A"
+    latest_evidence: "docs/goal/evidence/M10-RICE-CREATIVE.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-SCOTT-CURRY
+    rank: 262
+    exit_criteria:
+      - "A total computable step-indexed test for the diagonal halting set is defined and shown to characterise it."
+      - "The searching term built from that test is proved to reduce to a Church numeral when the machine halts and to have no head normal form otherwise."
+      - "The term of the reduction is proved to reduce to the chosen member of the set when the machine halts and to be unsolvable otherwise, with a primitive recursive code."
+      - "Rice's theorem in effective form is proved: the diagonal halting set reduces many-one to the code set of any convertibility-invariant set that is inhabited and contains no unsolvable term."
+      - "The complement of such a code set is proved not recursively enumerable, and the code set is proved creative when it is recursively enumerable."
+      - "Solvability and convertibility with a Church numeral are given as instances."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.RiceCreative"
+
+  - id: M10-CREATIVE-CODESETS
+    priority: P1
+    status: DONE_STRONG
+    track: theory/computability
+    title: "Creative code sets: convertibility with a Church numeral, normalization and convergence are creative, hence many-one equivalent to Kleene's K"
+    terminal_statement: "Lambda.creative_codeSet_conv_church : the set of codes of the terms convertible with church m is creative"
+    latest_evidence: "docs/goal/evidence/M10-CREATIVE-CODESETS.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-RICE-CREATIVE
+    rank: 264
+    exit_criteria:
+      - "Convertibility with a normal term is proved to be reduction to it."
+      - "Convertibility with a Church numeral is characterised by the leftmost run reaching that numeral."
+      - "The code set of the terms convertible with a Church numeral is proved recursively enumerable by a primitive recursive stage test."
+      - "That code set is proved creative, many-one equivalent to the diagonal halting set, and not simple."
+      - "The lambda-calculus halting set and the set of codes converging to a numeral are proved creative and many-one equivalent to each other and to the diagonal halting set."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.CreativeCodeSets"
+
+  - id: M10-TOOLCHAIN-V428-REPIN
+    priority: P0
+    status: DONE_STRONG
+    track: infra/toolchain
+    title: "Build against the pinned Lean v4.28.0 toolchain: bring every module back to its Mathlib and cslib APIs"
+    latest_evidence: "docs/goal/evidence/M10-TOOLCHAIN-V428-REPIN.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-TOOLCHAIN-V433-RESTORE
+    rank: 270
+    exit_criteria:
+      - "lake-manifest.json records the cslib checkout that lakefile.toml requires, so lake build starts."
+      - "The Turing machine modules use the Turing namespace and the finite encodings of the pinned Mathlib."
+      - "The categories with attributes modules use the plain function morphisms of the category of types."
+      - "The representation bridge uses the pinned cslib presentation of full beta reduction."
+      - "lake build reports no error and no warning, and no module contains sorry."
+      - "Every module is in the import closure and registered in Start/Capstones.lean."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build"
+
+  - id: M10-MYHILL-ISO
+    priority: P1
+    status: DONE_STRONG
+    track: theory/computability
+    title: "Myhill's isomorphism theorem: one-one equivalent sets of numbers are recursively isomorphic"
+    terminal_statement: "Lambda.Myhill.recIso_iff_oneOneEquiv : RecIso A B ↔ OneOneEquiv A B"
+    latest_evidence: "docs/goal/evidence/M10-MYHILL-ISO.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-CREATIVE-CODESETS
+    rank: 272
+    exit_criteria:
+      - "A generic chase through a finite partial map is defined and proved to return the first value that leaves a given finite list."
+      - "The chase from a point outside the domain of a stage is proved to escape the range of that stage within one more step than the stage is long."
+      - "Both extension steps are defined and proved to preserve the invariant: injective in both directions and membership preserving."
+      - "The union of the stages is proved to be a bijection of the natural numbers that carries one set onto the other."
+      - "The bijection is proved computable, so one-one equivalence implies recursive isomorphism."
+      - "The converse is proved, using that the inverse of a computable bijection of the natural numbers is computable."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.MyhillIso"
+
+  - id: M10-CREATIVE-ISO
+    priority: P1
+    status: DONE_STRONG
+    track: theory/computability
+    title: "Creative sets are one-one complete, hence recursively isomorphic to Kleene's K"
+    terminal_statement: "Lambda.Post.Creative.recIso_haltK : Creative C → Myhill.RecIso C HaltK"
+    latest_evidence: "docs/goal/evidence/M10-CREATIVE-ISO.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-MYHILL-ISO
+    rank: 280
+    exit_criteria:
+      - "A chase through the indices of the r.e. sets is defined, using the production function and the adjunction of a single element, and proved to produce pairwise distinct elements of the productive set."
+      - "The chase is proved to escape any finite list within one more step than the list is long, and to be computable."
+      - "A productive set is proved to have an injective computable production function."
+      - "The recursion theorem with parameters is proved with an injective indexing."
+      - "Myhill's theorem is strengthened to a one-one reduction, so every creative set is one-one complete and one-one equivalent to K."
+      - "With Myhill's isomorphism theorem, every creative set is proved recursively isomorphic to K, and any two creative sets to each other."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.CreativeIso"
+
+  - id: M10-TOOLCHAIN-V433-RETURN
+    priority: P0
+    status: DONE_STRONG
+    track: infra/toolchain
+    title: "Return to the Lean v4.33.0 toolchain and bring every module forward to the current Mathlib and cslib APIs"
+    latest_evidence: "docs/goal/evidence/M10-TOOLCHAIN-V433-RETURN.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-TOOLCHAIN-V428-REPIN
+    rank: 290
+    exit_criteria:
+      - "lean-toolchain pins leanprover/lean4:v4.33.0, and lakefile.toml and lake-manifest.json agree on the Mathlib and cslib checkouts."
+      - "The relative recursiveness modules use the bundled predicate of the current Mathlib, with its closure rules transported from the numeric inductive predicate."
+      - "The representation bridge uses the congruence closure presentation of cslib's full beta reduction and its Bool valued local closure."
+      - "The Turing machine, category with attributes and lambda-Pi modules use the current Mathlib namespaces and bundled morphisms."
+      - "lake build reports no error and no warning, and no module contains sorry."
+      - "Every module is in the import closure and registered in Start/Capstones.lean."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build"
+
+  - id: M10-JUMP-SIGMA-ONE
+    priority: P1
+    status: DONE_STRONG
+    track: theory/computability
+    title: "The Turing jump is Sigma-1 hard, uniformly in the oracle"
+    terminal_statement: "Lambda.Oracle.exists_index_repred : REPred P → ∃ k, Computable k ∧ ∀ A x, (P x ↔ Jump A (k x))"
+    latest_evidence: "docs/goal/evidence/M10-JUMP-SIGMA-ONE.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-TOOLCHAIN-V433-RETURN
+    rank: 300
+    exit_criteria:
+      - "A machine that ignores its oracle and runs a fixed partial recursive function is defined, with a computable index for it."
+      - "Every recursively enumerable predicate is proved to be the domain of a partial recursive function."
+      - "One computable reduction is proved to witness Sigma-1 hardness of the jump simultaneously for every oracle."
+      - "Every recursively enumerable predicate is proved decidable relative to the jump of any oracle, in particular relative to the halting oracle."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.JumpSigmaOne"
+
+  - id: M10-LIMIT-LEMMA
+    priority: P1
+    status: DONE_STRONG
+    track: theory/computability
+    title: "Shoenfield's limit lemma: limit computable is the same as computable from the halting oracle"
+    terminal_statement: "Lambda.Oracle.limitComputable_iff_turingReducible_haltingOracle : LimitComputable A ↔ oracleFun A ≤ᵀ oracleFun haltingOracle"
+    latest_evidence: "docs/goal/evidence/M10-LIMIT-LEMMA.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-JUMP-SIGMA-ONE
+    rank: 310
+    exit_criteria:
+      - "A primitive recursive stagewise approximation of the halting oracle is defined and proved monotone and eventually correct on every finite initial segment."
+      - "A reduction to the halting oracle run against the approximation is proved to give guesses that settle on the true value."
+      - "The converse is proved: the question whether a guess still changes is Sigma-1, hence decidable from the halting oracle."
+      - "The two directions are combined into the limit lemma, and the consequences for r.e. sets and for the second jump are recorded."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.LimitLemma"
+
+  - id: M10-ARITH-HIERARCHY
+    priority: P1
+    status: DONE_STRONG
+    track: theory/computability
+    title: "The arithmetical hierarchy and its structural theory"
+    terminal_statement: "Lambda.Arith.sigmaAt_one_iff : SigmaAt 1 P ↔ REPred P"
+    latest_evidence: "docs/goal/evidence/M10-ARITH-HIERARCHY.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-POST-SIMPLE-INCOMPLETE
+    rank: 320
+    exit_criteria:
+      - "The alternating quantifier prefix over a computable matrix is defined and proved to dualise, giving the classes Sigma, Pi and Delta at each level."
+      - "Substituting a computable function into the base argument is proved to stay in the class, and the inclusions of Sigma and Pi at level n into Delta at level n plus one are proved."
+      - "Each level is proved closed under conjunction and disjunction, and the successor levels under their own quantifier."
+      - "Level zero is proved to be the computable predicates, Sigma one the recursively enumerable ones, Pi one the co-r.e. ones and Delta one the computable ones."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.ArithHierarchy"
+
+  - id: M10-POST-THEOREM-TWO
+    priority: P1
+    status: DONE_STRONG
+    track: theory/computability
+    title: "Post's theorem at level two: Delta-2 is limit computability, hence decidability from the halting oracle"
+    terminal_statement: "Lambda.Arith.deltaAt_two_iff_limitComputablePred : DeltaAt 2 P ↔ LimitComputablePred P"
+    latest_evidence: "docs/goal/evidence/M10-POST-THEOREM-TWO.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-ARITH-HIERARCHY
+      - M10-LIMIT-LEMMA
+    rank: 330
+    exit_criteria:
+      - "Limit computability is stated for predicates and proved to give both a Sigma-2 and a Pi-2 definition."
+      - "A computable stagewise guess is defined that compares the least unrefuted witness on the two sides, and its computability is proved."
+      - "The guess is proved to settle on the correct answer, using that the true side keeps its least witness while every candidate on the other side is eventually refuted."
+      - "The two directions are combined, and with the limit lemma Delta-2 is identified with the predicates decidable from the halting oracle."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.PostTheoremTwo"

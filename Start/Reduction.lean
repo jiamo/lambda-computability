@@ -242,6 +242,15 @@ theorem Lambda.step_p_imp_reduces {t t' : Lambda} (h : Lambda.step_p t t') :
           (Lambda.reduces.refl _)
       exact Lambda.reduces_trans h_app1 (Lambda.reduces_trans h_app2 h_beta)
 
+/-- Reduction is preserved by lifting. -/
+theorem Lambda.reduces_lift {t t' : Lambda} (h : Lambda.reduces t t') (n k : ℕ) :
+    Lambda.reduces (Lambda.lift n k t) (Lambda.lift n k t') := by
+  induction h with
+  | refl t => exact Lambda.reduces.refl _
+  | step _ _ _ hs _ ih =>
+      exact Lambda.reduces_trans
+        (Lambda.step_p_imp_reduces (Lambda.step_p_lift (Lambda.step_imp_step_p hs) n k)) ih
+
 ------------------------------------------------------------------------
 -- Strip lemma and confluence
 ------------------------------------------------------------------------

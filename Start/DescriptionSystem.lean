@@ -70,7 +70,7 @@ theorem K_eq_zero_of_not_describes {M : DescSystem P α} {x : α} (h : ¬ M.Desc
     M.K x = 0 := by
   have : {n | ∃ p : P, M.Outputs p x ∧ M.size p = n} = ∅ := by
     ext n
-    simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
+    simp only [Set.mem_empty_iff_false, iff_false]
     rintro ⟨p, hp, -⟩
     exact h ⟨p, hp⟩
   simp [K, this]

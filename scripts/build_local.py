@@ -16,20 +16,15 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PKGS = "/mathlib/.lake/packages"
-LEAN_PATH = ":".join([
-    f"{PKGS}/Cli/.lake/build/lib/lean",
-    f"{PKGS}/batteries/.lake/build/lib/lean",
-    f"{PKGS}/Qq/.lake/build/lib/lean",
-    f"{PKGS}/aesop/.lake/build/lib/lean",
-    f"{PKGS}/proofwidgets/.lake/build/lib/lean",
-    f"{PKGS}/importGraph/.lake/build/lib/lean",
-    f"{PKGS}/LeanSearchClient/.lake/build/lib/lean",
-    f"{PKGS}/plausible/.lake/build/lib/lean",
-    "/mathlib/.lake/build/lib/lean",
-    os.path.join(ROOT, ".lake/build/lib/lean"),
-])
-LEAN = os.environ.get("LEAN_BIN", "/root/.elan/toolchains/leanprover--lean4---v4.28.0/bin/lean")
+PKGS = os.path.join(ROOT, ".lake/packages")
+LEAN_PATH = ":".join(
+    [f"{PKGS}/{pkg}/.lake/build/lib/lean"
+     for pkg in ("Cli", "batteries", "Qq", "aesop", "proofwidgets", "importGraph",
+                 "LeanSearchClient", "plausible", "mathlib", "cslib")]
+    + [os.path.join(ROOT, ".lake/build/lib/lean")]
+)
+# `lean` from `PATH`; `elan` selects the toolchain named in `lean-toolchain`.
+LEAN = os.environ.get("LEAN_BIN", "lean")
 BUILD = os.path.join(ROOT, ".lake/build/lib/lean")
 
 IMPORT_RE = re.compile(r"^\s*import\s+([A-Za-z_][\w.]*)", re.M)

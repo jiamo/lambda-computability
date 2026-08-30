@@ -33,6 +33,22 @@ def size : Lambda → ℕ
 theorem size_pos (t : Lambda) : 0 < size t := by
   cases t <;> simp [size]
 
+/-- The number of syntax nodes of a term (a de Bruijn index counts as one node, however large).
+Unlike `Lambda.size` this measure is invariant under lifting, which is what the metatheory of
+η-reduction needs (`Start/LambdaEta.lean`). -/
+def nodes : Lambda → ℕ
+  | Lambda.var _ => 1
+  | Lambda.app a b => nodes a + nodes b + 1
+  | Lambda.lam t => nodes t + 1
+
+@[simp] theorem nodes_var (i : ℕ) : nodes (Lambda.var i) = 1 := rfl
+
+@[simp] theorem nodes_app (a b : Lambda) : nodes (Lambda.app a b) = nodes a + nodes b + 1 := rfl
+
+@[simp] theorem nodes_lam (t : Lambda) : nodes (Lambda.lam t) = nodes t + 1 := rfl
+
+theorem nodes_pos (t : Lambda) : 0 < nodes t := by cases t <;> simp
+
 theorem size_iterate (n : ℕ) :
     size (Lambda.iterate (Lambda.var 1) (Lambda.var 0) n) = 3 * n + 1 := by
   induction n with

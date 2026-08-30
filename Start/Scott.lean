@@ -160,10 +160,17 @@ def CodeSet (A : Lambda → Prop) (c : ℕ) : Prop := ∃ t : Lambda, Lambda.dec
   · intro h
     exact ⟨t, decode_encode t, h⟩
 
-/-- From a computable characteristic function for `CodeSet A` we can build a closed lambda term
-that decides `A`. -/
-theorem exists_decider_of_computablePred {A : Lambda → Prop} (h : ComputablePred (CodeSet A)) :
-    ∃ F : Lambda, Lambda.IsClosed F ∧ Decides F A := by
+/-- `F` *decides the set of numbers* `C` when, applied to a Church numeral, it reduces to `true`
+on the elements of `C` and to `false` outside it. -/
+def DecidesCode (F : Lambda) (C : ℕ → Prop) : Prop :=
+  ∀ n : ℕ,
+    (C n → Lambda.reduces (Lambda.app F (Lambda.church n)) Lambda.true) ∧
+    (¬ C n → Lambda.reduces (Lambda.app F (Lambda.church n)) Lambda.false)
+
+/-- A computable predicate on numbers is decided, in the sense of `DecidesCode`, by a closed
+lambda term: run a realizer of its characteristic function and test the result for zero. -/
+theorem exists_code_decider_of_computablePred {C : ℕ → Prop} (h : ComputablePred C) :
+    ∃ F : Lambda, Lambda.IsClosed F ∧ DecidesCode F C := by
   obtain ⟨f, hf, hfe⟩ := ComputablePred.computable_iff.mp h
   have hg : Computable fun c : ℕ => cond (f c) 0 1 :=
     hf.cond (Computable.const 0) (Computable.const 1)
@@ -174,42 +181,47 @@ theorem exists_decider_of_computablePred {A : Lambda → Prop} (h : ComputablePr
       (IsClosedAt_of_IsClosed Lambda.isZero_closed 1)
       (Lambda.IsClosedAt_app (IsClosedAt_of_IsClosed hF₀.1 1)
         (Lambda.IsClosedAt_var 0 1 (by omega))))
-  · intro X
+  · intro n
     have hbeta : Lambda.reduces
         (Lambda.app (Lambda.lam (Lambda.app Lambda.isZero (Lambda.app F₀ (Lambda.var 0))))
-          (Lambda.church (Lambda.encode X)))
-        (Lambda.app Lambda.isZero
-          (Lambda.app F₀ (Lambda.church (Lambda.encode X)))) := by
-      have hsubst : Lambda.subst (Lambda.church (Lambda.encode X)) 0
+          (Lambda.church n))
+        (Lambda.app Lambda.isZero (Lambda.app F₀ (Lambda.church n))) := by
+      have hsubst : Lambda.subst (Lambda.church n) 0
           (Lambda.app Lambda.isZero (Lambda.app F₀ (Lambda.var 0))) =
-          Lambda.app Lambda.isZero (Lambda.app F₀ (Lambda.church (Lambda.encode X))) := by
+          Lambda.app Lambda.isZero (Lambda.app F₀ (Lambda.church n)) := by
         simp [Lambda.subst, Lambda.isZero_closed _ _, hF₀.1 _ _]
       rw [← hsubst]
       exact Lambda.beta_reduces
-    have hval : Lambda.reduces (Lambda.app F₀ (Lambda.church (Lambda.encode X)))
-        (Lambda.church (cond (f (Lambda.encode X)) 0 1)) := hF₀.2 _
+    have hval : Lambda.reduces (Lambda.app F₀ (Lambda.church n))
+        (Lambda.church (cond (f n) 0 1)) := hF₀.2 _
     have hred : Lambda.reduces
         (Lambda.app (Lambda.lam (Lambda.app Lambda.isZero (Lambda.app F₀ (Lambda.var 0))))
-          (Lambda.church (Lambda.encode X)))
-        (Lambda.app Lambda.isZero
-          (Lambda.church (cond (f (Lambda.encode X)) 0 1))) :=
+          (Lambda.church n))
+        (Lambda.app Lambda.isZero (Lambda.church (cond (f n) 0 1))) :=
       Lambda.reduces_trans hbeta (Lambda.reduces_app_right hval)
-    have hiff : f (Lambda.encode X) = Bool.true ↔ A X := by
-      rw [← codeSet_encode A X, hfe]
+    have hiff : f n = Bool.true ↔ C n := by rw [hfe]
     constructor
-    · intro hAX
-      have hfx : f (Lambda.encode X) = Bool.true := hiff.2 hAX
+    · intro hCn
+      have hfx : f n = Bool.true := hiff.2 hCn
       rw [hfx] at hred
       simp only [cond_true] at hred
       exact Lambda.reduces_trans hred Lambda.isZero_zero
-    · intro hAX
-      have hfx : f (Lambda.encode X) = Bool.false := by
-        by_cases hb : f (Lambda.encode X) = Bool.true
-        · exact absurd (hiff.1 hb) hAX
+    · intro hCn
+      have hfx : f n = Bool.false := by
+        by_cases hb : f n = Bool.true
+        · exact absurd (hiff.1 hb) hCn
         · simpa using hb
       rw [hfx] at hred
       simp only [cond_false] at hred
       exact Lambda.reduces_trans hred (Lambda.isZero_succ 0)
+
+/-- From a computable characteristic function for `CodeSet A` we can build a closed lambda term
+that decides `A`. -/
+theorem exists_decider_of_computablePred {A : Lambda → Prop} (h : ComputablePred (CodeSet A)) :
+    ∃ F : Lambda, Lambda.IsClosed F ∧ Decides F A := by
+  obtain ⟨F, hFclosed, hF⟩ := exists_code_decider_of_computablePred h
+  refine ⟨F, hFclosed, fun X => ⟨fun hAX => (hF (Lambda.encode X)).1 ((codeSet_encode A X).2 hAX),
+    fun hAX => (hF (Lambda.encode X)).2 fun hc => hAX ((codeSet_encode A X).1 hc)⟩⟩
 
 /-- **Rice's theorem for the lambda calculus.**  If a set of lambda terms is invariant under
 convertibility and has a closed member and a closed non-member, then the set of codes of its

@@ -116,7 +116,7 @@ theorem theta_add_le_of_forall_dappN {q : ℕ} : ∀ (j : ℕ) {x v : Dinf},
       · intro i hi
         by_cases hij : i = j
         · subst hij
-          rw [if_pos rfl]
+          simp only [if_pos]
           exact theta_psiFun _ z
         · simp only [if_neg hij]
           exact hA i (by omega)

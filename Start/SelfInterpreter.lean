@@ -147,13 +147,8 @@ theorem substEnv_of_isClosed {M : Lambda} (h : Lambda.IsClosed M) (u : ℕ → L
 -- Reduction is preserved by lifting
 ------------------------------------------------------------------------
 
-theorem reduces_lift {t t' : Lambda} (h : Lambda.reduces t t') (n k : ℕ) :
-    Lambda.reduces (Lambda.lift n k t) (Lambda.lift n k t') := by
-  induction h with
-  | refl t => exact Lambda.reduces.refl _
-  | step _ _ _ hs _ ih =>
-      exact Lambda.reduces_trans
-        (Lambda.step_p_imp_reduces (Lambda.step_p_lift (Lambda.step_imp_step_p hs) n k)) ih
+/- `Lambda.reduces_lift` lives in `Start/Reduction.lean`, next to the parallel-reduction lemmas
+it is proved from. -/
 
 ------------------------------------------------------------------------
 -- A two-way branch on "is the numeral zero?"

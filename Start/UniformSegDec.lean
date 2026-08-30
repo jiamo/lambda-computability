@@ -252,8 +252,7 @@ theorem wf_segFlags (off N : ℕ) : wf (segFlags off N) := by
 theorem inpsLt_segFlags (off N : ℕ) : inpsLt (off + 2 * N) (segFlags off N) := by
   have h := inpsLt_inpLayer_append (C := []) (idx := fun c => off + 2 * min c N)
     (w := off + 2 * N) (fun g hg => absurd hg (by simp)) N
-    (fun c hc => by show off + 2 * min c N < off + 2 * N
-                    have : min c N ≤ c := Nat.min_le_left _ _; omega)
+    (fun c hc => by have : min c N ≤ c := Nat.min_le_left _ _; omega)
   simpa [segFlags] using h
 
 theorem wf_segPres (off N : ℕ) : wf (segPres off N) := by

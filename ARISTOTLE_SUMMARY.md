@@ -1,3 +1,100 @@
+# Summary of changes for run 341c9fba-973c-470f-850b-3bd5ff7d823d
+The library is now finished: the whole project builds cleanly, contains no `sorry`, and both project gates pass.
+
+**What was left open, and what I did**
+
+1. **`Start/ArithHierarchy.lean` — the arithmetical hierarchy (was the last module with holes: 11 `sorry`s, and it was not yet in the import closure).** All of them are now proved:
+   - `rePred_of_exists_computable`, `sigmaAt_one_iff` (Σ⁰₁ = the r.e. predicates), `piAt_one_iff` (Π⁰₁ = the co-r.e. predicates), `deltaAt_one_iff` (Δ⁰₁ = the computable predicates);
+   - `computablePred_and`, `computablePred_or`, and `sigmaAt_closure` — closure of every level under conjunction and disjunction, by one induction whose step derives the dual Π-closure from the induction hypothesis by de Morgan — with `SigmaAt.and/.or`, `PiAt.and/.or`;
+   - `SigmaAt.exists` and `PiAt.forall` — Σ⁰ₙ₊₁ is closed under existential and Π⁰ₙ₊₁ under universal quantification.
+   To avoid duplicating a proof, `Lambda.Post.exists_test_of_rePred` was moved from `Start/ChaitinIncompleteness.lean` to `Start/PostSimple.lean`, next to the numbering of the r.e. sets it is proved from; the Chaitin module still obtains it by import.
+
+2. **New module `Start/PostTheoremTwo.lean` — Post's theorem at level two**, joining the hierarchy with the previously proved Shoenfield limit lemma:
+   - a limit is both a Σ⁰₂ and a Π⁰₂ statement (`deltaAt_two_of_limitComputablePred`);
+   - conversely, a computable stagewise guess (bounded conjunction `allB`, bounded least witness `leastB`, `aliveUpTo`, `bestWitness`, `twoGuess`) that compares the least so-far-unrefuted witness on the two sides is proved computable and proved to settle on the correct answer (`limitComputablePred_of_deltaAt_two`);
+   - `deltaAt_two_iff_limitComputablePred` : `Δ⁰₂ ↔ limit computable`, and with the limit lemma `deltaAt_two_iff_turingReducible_haltingOracle` : `Δ⁰₂` is exactly the class of predicates decidable from `∅′`.
+
+3. **Integration and documentation.** Both modules are imported by `Start.lean` and registered in `Start/Capstones.lean` (prose plus `#check`s); the guided tour `Start/Demo.lean` gained a section on relative computability, the jump, the hierarchy and level-two Post; `README.md` gained a headline-theorem block and map entries for the oracle/jump/hierarchy material (and its task badge and counts were refreshed); four task entries with evidence notes were added to `docs/goal/task-board.yaml` / `docs/goal/evidence/` (covering the jump, the limit lemma, the hierarchy and level-two Post), and `docs/current-goal-state.md` was re-rendered.
+
+**Verification**
+- `lake build`: "Build completed successfully (9011 jobs)", no error and no warning.
+- A search for `sorry`/`admit` over `Start/` and `Start.lean` returns nothing (the only textual matches are prose).
+- `python3 scripts/goal_state.py validate` — OK, 92 tasks; `python3 scripts/check_closure.py` — OK, 291 modules, all in the import closure and all registered.
+- Axiom audit of the new headline results (`sigmaAt_one_iff`, `deltaAt_one_iff`, `SigmaAt.exists`, `PiAt.forall`, `SigmaAt.and`, `deltaAt_two_iff_limitComputablePred`, `deltaAt_two_iff_turingReducible_haltingOracle`): only `propext`, `Classical.choice`, `Quot.sound`.
+
+All work is committed and pushed.
+
+# Summary of changes for run baff7410-e8a1-4f93-afe7-9d04e8ac9fdf
+I picked up the in-flight work and carried the library to a complete, clean state.
+
+**Repaired the build setup.** The dependency manifest no longer matched the lakefile (the local Mathlib/cslib checkouts), so nothing could be built at all; it is refreshed and the full `lake build` now succeeds (8323 jobs, 0 errors, 0 warnings, no linter messages).
+
+**Finished the in-flight Myhill isomorphism module.** `Start/MyhillIso.lean` — one-one equivalent sets of numbers are recursively isomorphic (`Lambda.Myhill.recIso_iff_oneOneEquiv`), by the back-and-forth construction with a computable chase — was proved but only half integrated. It is now covered by an evidence note (`docs/goal/evidence/M10-MYHILL-ISO.md`), listed in the guided tour (`Start/Demo.lean`) and in `README.md`, and the task board validates again.
+
+**Added a new completed result: the classification of the creative sets** (`Start/CreativeIso.lean`, new module, sorry-free):
+- `Lambda.Post.exists_injective_productive` — a productive set has an *injective* computable production function. This is the missing ingredient, obtained by a chase: apply the production function, adjoin unusable values to the current r.e. set and repeat; the values produced are pairwise distinct, so the chase escapes any finite list of previously used values within one more step than the list is long, and it is computable.
+- `Lambda.Post.exists_recursion_index_inj` — the recursion theorem with parameters, with an injective indexing.
+- `Lambda.Post.oneOneReducible_of_productive_compl` — Myhill's theorem in one-one form: if the complement of `C` is productive, every r.e. set reduces to `C` by an injective computable function.
+- `Lambda.Post.Creative.oneOneComplete`, `Lambda.Post.Creative.oneOneEquiv_haltK`, `Lambda.Post.creative_iff_oneOneComplete` — every creative set is one-one complete and one-one equivalent to Kleene's `K`.
+- `Lambda.Post.Creative.recIso_haltK`, `Lambda.Post.Creative.recIso`, `Lambda.Post.creative_iff_recIso_haltK` — combining with Myhill's isomorphism theorem: a set is creative **exactly when** it is recursively isomorphic to `K`, and any two creative sets are recursively isomorphic.
+- Concrete instances for the lambda calculus: the code sets for normalization, for convergence to a Church numeral, and for convertibility with a Church numeral are each recursively isomorphic to `K`.
+
+**Integration and verification.** The new module is imported by `Start.lean`, registered in `Start/Capstones.lean`, listed in `Start/Demo.lean`, recorded on the task board as `M10-CREATIVE-ISO` with evidence in `docs/goal/evidence/M10-CREATIVE-ISO.md`, and described in `README.md`; `docs/current-goal-state.md` was re-rendered. Gates: `lake build` (whole library) and `lake build Start.Demo` succeed with no error or warning; `scripts/goal_state.py validate` reports 87 tasks validated; `scripts/check_closure.py` reports 286 modules, all in the import closure and registered; a search for `sorry`/`admit` under `Start/` finds none; and `#print axioms` on all the new headline results gives only `propext`, `Classical.choice`, `Quot.sound`.
+
+The single remaining non-`DONE_STRONG` board entry is the pre-existing, explicitly declared open boundary (`M9-LAMBDAPI-LCCC`, the biequivalence between models of λΠ and locally cartesian closed categories), which I did not attempt. All work is committed and pushed.
+
+# Summary of changes for run 123ddebc-33bf-4e83-be8d-5dce65b6c751
+Continued the Lean library and left it building cleanly end to end.
+
+**Finished the in-flight work (effective Rice theorem).** `Start/RiceCreative.lean` is now fully integrated: imported by `Start.lean`, registered in the capstone/closure gate `Start/Capstones.lean`, listed in `Start/Demo.lean`, given a task-board entry with an evidence note (`docs/goal/evidence/M10-RICE-CREATIVE.md`), and reflected in `README.md` (badge and task counts). Its headline results — a convertibility-invariant, inhabited class of lambda terms containing no unsolvable term has a code set with `HaltK ≤₀ CodeSet A` (`Lambda.manyOneReducible_haltK_codeSet`), a non-r.e. complement (`Lambda.not_rePred_compl_codeSet`), and creativity when r.e. (`Lambda.creative_codeSet`) — build without `sorry` and depend only on `propext`, `Classical.choice`, `Quot.sound`.
+
+**Added a new module, `Start/CreativeCodeSets.lean`,** supplying the enumerability half that the effective Rice theorem left open, and reading off the classification:
+- `Lambda.reduces_of_conv_normal` — convertibility with a normal term is reduction to it;
+- `Lambda.conv_church_iff_exists_nstep` — convertibility with a Church numeral is exactly the leftmost run reaching that numeral, giving a primitive recursive stage test (`Lambda.convChurchTest`, `Lambda.convChurchTest_primrec`);
+- `Lambda.rePred_codeSet_conv_church` — that code set is recursively enumerable;
+- `Lambda.creative_codeSet_conv_church`, `Lambda.manyOneEquiv_codeSet_conv_church_haltK`, `Lambda.not_simple_codeSet_conv_church` — it is creative, many-one equivalent to Kleene's `K`, and not simple;
+- `Lambda.creative_codeHasNormalForm`, `Lambda.creative_codeConverges` and the corresponding many-one equivalences, including `Lambda.manyOneEquiv_codeHasNormalForm_codeConverges`.
+
+The module is wired into `Start.lean`, `Start/Capstones.lean`, `Start/Demo.lean`, the task board (`M10-CREATIVE-CODESETS`) with evidence at `docs/goal/evidence/M10-CREATIVE-CODESETS.md`, and the README; `docs/current-goal-state.md` was re-rendered.
+
+**Verification:** full `lake build` succeeds with 0 errors and 0 warnings (8994 jobs); `scripts/check_closure.py` reports 273 modules, all in the import closure and registered; `scripts/goal_state.py validate` reports 84 tasks validated (83 `DONE_STRONG`, the single `BACKEND_PARTIAL` entry being the pre-existing declared open boundary); no `sorry` occurs anywhere under `Start/` (only two prose mentions in a documentation comment); axiom audits of the new results show only `propext`, `Classical.choice`, `Quot.sound`.
+
+All work is committed and pushed.
+
+# Summary of changes for run 1162cc76-77d1-4e6e-823a-67a21b855520
+## State of the project
+
+The library is complete, builds cleanly and is `sorry`-free.
+
+**Verification run in this session (all green):**
+- `lake build` → "Build completed successfully (8977 jobs)", **0 errors, 0 warnings**.
+- No `sorry` or `admit` anywhere under `Start/` (the only matches are the English word "admits" in prose).
+- Gates: `python3 scripts/goal_state.py validate` → "OK: 78 tasks validated"; `python3 scripts/check_closure.py` → "OK: 256 modules, all in the import closure and all registered".
+- Axiom audit on headline results (`Lambda.kolm_eq_iInf_kolmAt`, `LambdaPiCwa.not_piStruct_weakPi`, `CwaTypeNotClosed.not_piClosed`) → each depends only on `propext`, `Classical.choice`, `Quot.sound`.
+- The CI workflows (`.github/workflows/`) contain no hard-coded toolchain version; they pick up `lean-toolchain`, which is now `leanprover/lean4:v4.33.0`. No stale references remained to fix.
+- Working tree clean; `main` is pushed to `origin` (nothing left uncommitted).
+
+**About the earlier toolchain question.** The copy of the project received here carried `lean-toolchain = leanprover/lean4:v4.28.0` from its very first commit, while `README.md`, the release notes and the evidence documents all described Lean `v4.33.0`. An earlier session had retargeted the pin to 4.28 so the project would build in a 4.28 environment, and rewrote several modules against the older Mathlib/`cslib` APIs. As you asked, the project has been moved back to **Lean v4.33.0**: the toolchain pin, the dependency checkouts (Mathlib at `6f1ef4e5dd`, `cslib` at `3951377e…`) and `lake-manifest.json` were restored, the affected modules were ported forward to the current APIs (Turing-machine `StateTransition` names, the encoding arguments that replaced the deprecated `FinEncoding`, bundled `TypeCat` homs, the new `cslib` β-reduction/`LcAt` interface), and all deprecation and linter warnings were cleared. The build result above is on that restored toolchain. The migration is recorded on the task board as `M10-TOOLCHAIN-V433-RESTORE` with evidence in `docs/goal/evidence/M10-TOOLCHAIN-V433-RESTORE.md`.
+
+**What remains open, stated plainly.** Of the 78 tracked tasks, exactly one is not marked done: `M9-LAMBDAPI-LCCC` ("dependent types: λΠ, categories with attributes, locally cartesian closed categories"). All of its own exit criteria are met and evidenced — the syntax and metatheory of λΠ, its syntactic category with attributes and weak Π-structure (including the proof that η genuinely fails), the strictified model, the locally-cartesian-closed dependent product, universes with small products and product codes, the set-theoretic model, and the negative result that closure of a general universe under the pushforward product is genuine extra structure. What is *not* claimed, and is recorded in the task's open boundary, is **initiality**: an interpretation of the raw syntax into an arbitrary model with a universe, and hence any comparison between the syntax and an arbitrary model. I examined this again in detail rather than assuming the earlier assessment. Beyond its sheer size (a partial interpretation of raw syntax together with semantic renaming, substitution and conversion-soundness lemmas), there is a specific obstruction in this presentation: λΠ's application is unannotated, so the semantic value of `app f u` must recover the domain/codomain from the semantic type of `f`, which an arbitrary model's Π-former does not determine — even the "at most one interpretation" half is therefore entangled with the full conversion-soundness argument rather than separable as a cheap first step. Rather than start a development that could not be finished cleanly and would leave `sorry`s in a library whose defining property is that it has none, I left the boundary documented honestly and the project in its verified, complete state.
+
+
+# Summary of changes for run bcd42189-9012-44ff-9669-268610d9b59e
+Continued the project by completing and integrating a new development: **Kolmogorov complexity is upper semicomputable**.
+
+New module `Start/KolmogorovApprox.lean` (sorry-free, warning-free, axioms limited to `propext`, `Classical.choice`, `Quot.sound`):
+
+- `Lambda.progBy` — the time-bounded program test ("code `c` is a closed term whose leftmost-outermost run reaches the Church numeral of `s` within `k` steps"), proved primitive recursive (`progBy_primrec`), correct (`progBy_encode_iff`, `exists_isProgramFor_of_progBy`, `exists_progBy_of_isProgramFor`) and stable in the number of steps (`progBy_mono`).
+- `Lambda.rePred_kolm_le` — the relation `K s ≤ n` is recursively enumerable.
+- `Lambda.not_rePred_lt_kolm` — the complementary relation `n < K s` is *not* recursively enumerable (via the previously proved Chaitin incompleteness theorem plus the existence of incompressible numbers). Together with the existing `not_computablePred_kolm_le` this pins down the exact effective content of `K`: r.e. from above, not decidable, not r.e. from below.
+- `Lambda.minAt` / `Lambda.kolmAt` — the stagewise approximation, proved primitive recursive (`primrec_minAt`, `primrec_kolmAt`), above `K` (`kolm_le_kolmAt`), non-increasing in the stage (`kolmAt_antitone`), exact from some stage on (`exists_kolmAt_eq_kolm`, `kolmAt_eventually_eq_kolm`), and hence `Lambda.kolm_eq_iInf_kolmAt : kolm s = ⨅ k, kolmAt s k`.
+
+Supporting change: `Start/PostSimple.lean`'s sufficient condition for recursive enumerability (`Post.rePred_of_exists_test`) was generalized from predicates on `ℕ` to any `Primcodable` domain, so that it applies to pairs; all existing users still compile.
+
+Integration and project gates: the module is imported by `Start.lean` and registered in `Start/Capstones.lean` (with prose and `#check`s), mentioned in the guided tour `Start/Demo.lean` and in `README.md` (badge and counts updated to 76/77), and recorded on the task board as `M10-KOLM-UPPER-SEMICOMPUTABLE` with evidence in `docs/goal/evidence/M10-KOLM-UPPER-SEMICOMPUTABLE.md`; `docs/current-goal-state.md` was regenerated. Verified: `python3 scripts/goal_state.py validate` (77 tasks OK), `python3 scripts/check_closure.py` (256 modules OK) and a full `lake build` with 0 errors and 0 warnings; no `sorry` remains in the new file. Everything is committed and pushed.
+
+The only board item still not `DONE_STRONG` is the pre-existing `M9-LAMBDAPI-LCCC` (λΠ initiality / universes closed under pushforward product / η for λΠ), which was left untouched.
+
 # Summary of changes for run 3c2af0af-7c6f-4d54-b64a-1e22e12dcc83
 I continued the project by closing its main remaining open boundary: **full abstraction of Scott's `D∞` for the untyped λ-calculus (Wadsworth's theorem), now proved unconditionally.**
 

@@ -54,6 +54,10 @@ open CategoryTheory Limits
 theorem types_hom_congr_fun.{w} {X Y : Type w} {f g : X ⟶ Y} (h : f = g) (x : X) : f x = g x :=
   congrFun (congrArg (fun k : X ⟶ Y => (k : X → Y)) h) x
 
+/-- Morphisms of the category of types that agree pointwise are equal. -/
+theorem types_hom_ext.{w} {X Y : Type w} {f g : X ⟶ Y} (h : ∀ x : X, f x = g x) : f = g :=
+  ConcreteCategory.hom_ext f g h
+
 /-! ### Terms of the strictified model are sections of the generic family -/
 
 namespace CwaUniv
@@ -197,7 +201,7 @@ theorem extIso_extHom (σ : Δ ⟶ Γ) (a : Cwa.Tm amb Γ (un.U Γ)) :
     rw [extHom_disp, ← Category.assoc, extIso_hom_disp]
   refine (LuTy.isPullback_gen (un.El a)).hom_ext ?_ ?_
   · rw [Category.assoc, Category.assoc, e1, extIso_hom_gen]
-    refine ConcreteCategory.hom_ext _ _ fun z => ?_
+    refine types_hom_ext fun z => ?_
     exact (sigma_cast_eta (⟨_, z.2⟩ : Eob.{u}) (types_hom_congr_fun (fam_sub σ a) z.1)).symm
   · rw [Category.assoc, Category.assoc, e2, extIso_hom_disp]
     rfl
@@ -219,7 +223,7 @@ def famSectionEquiv (c : Γ ⟶ Uob.{u}) :
   toFun f := fun x => cast (types_hom_congr_fun f.2 x) (f.1 x).2
   invFun g := ⟨↾fun x => ⟨c x, g x⟩, rfl⟩
   left_inv f := by
-    refine Subtype.ext (ConcreteCategory.hom_ext _ _ fun x => ?_)
+    refine Subtype.ext (types_hom_ext fun x => ?_)
     have h : (f.1 x).1 = c x := types_hom_congr_fun f.2 x
     exact sigma_cast_eta (f.1 x) h
   right_inv g := by funext x; rfl
@@ -283,7 +287,7 @@ theorem piCode_sub (σ : Δ ⟶ Γ) (a : Cwa.Tm amb Γ (un.U Γ))
   refine code_ext ?_
   rw [fam_sub]
   simp only [fam_piCode]
-  refine ConcreteCategory.hom_ext _ _ fun x => ?_
+  refine types_hom_ext fun x => ?_
   refine pi_type_congr (types_hom_congr_fun (fam_sub σ a) x).symm fun y => ?_
   set y' : fam (un.sub σ a) x := cast (types_hom_congr_fun (fam_sub σ a) x).symm y
   have hb : fam (un.sub (un.extHom σ a) b) = un.extHom σ a ≫ fam b :=
