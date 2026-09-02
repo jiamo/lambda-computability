@@ -30,6 +30,33 @@ import Start.MyhillIso
 import Start.CircuitShift
 import Start.CobhamShift
 import Start.CookLevinNPHard
+import Start.CwaBiInitial
+import Start.CwaStrictFunctor
+import Start.CwaStrictSection
+import Start.CwaStrictRigid
+import Start.CwaTwoCellUniv
+import Start.LambdaPiTypeUnique
+import Start.AssemblyCcc
+import Start.AssemblyLimits
+import Start.AssemblyColimits
+import Start.AssemblyNNO
+import Start.AssemblyKleene
+import Start.AssemblyKleeneBool
+import Start.AssemblySubobject
+import Start.AssemblyImage
+import Start.AssemblyRegular
+import Start.AssemblyGlobalSections
+import Start.Modest
+import Start.ModestEquiv
+import Start.ModestCcc
+import Start.ModestColimits
+import Start.ModestImage
+import Start.ModestNNO
+import Start.ModestReflect
+import Start.PERNNO
+import Start.PERSystemF
+import Start.PCAKleene
+import Start.PCATotal
 import Start.CwaPiType
 import Start.CwaTypeModelSigma
 import Start.CwaUnivMorLocal
@@ -50,6 +77,9 @@ import Start.LambdaPiEta
 import Start.LambdaPiInfer
 import Start.LambdaPiInitial
 import Start.LambdaPiInitialUniv
+import Start.LambdaPiInterpTransport
+import Start.LambdaPiSelfIso
+import Start.LambdaPiSelfMor
 import Start.LevinKt
 import Start.LevinSearch
 import Start.OracleCone
@@ -57,6 +87,8 @@ import Start.LimitLemma
 import Start.PostTheoremTwo
 import Start.ArithHierarchyProper
 import Start.ArithBounded
+import Start.ArithComplete
+import Start.ArithIndexSets
 import Start.OracleJoin
 import Start.OracleUniversal
 import Start.PostIncomplete
@@ -317,6 +349,10 @@ the *annotated* terms of `λΠ`.
 
 `Start/LambdaPiConsistent.lean`: `λΠ` is consistent — the empty context types no variable.
 
+`Start/LambdaPiTypeUnique.lean`: `λΠ` is a **functional** pure type system — two types of the same
+term are convertible, so a term is typed by at most one sort, and convertible types of the
+syntactic model are equal.
+
 `Start/LambdaPiInfer.lean`: type checking and type inference for `λΠ` are decidable, as running
 `Decidable` instances.
 
@@ -333,6 +369,24 @@ domain annotation, and Nederpelt's term `λ(x : ∗). ((λ(y : □). y) x)` has 
 reducts.  This is why the conversion of the calculus is β-only, and why η can enter only through
 the *typed* conversion of a model.
 
+`Start/LambdaPiModelHom.lean`, `Start/CwaMorVal.lean`, `Start/LambdaPiInterpTransport.lean`:
+**the interpretation is natural in the model** — a morphism of models of `λΠ` (a morphism of the
+underlying categories with attributes preserving the universe, the products over the small types,
+their codes, abstraction and application) carries the interpretation in the source to the
+interpretation in the target, for types, for terms and hence for contexts.
+
+`Start/LambdaPiCtxConv.lean`, `Start/LambdaPiSelfIso.lean`, `Start/LambdaPiSelfMor.lean`: **the
+syntax of `λΠ` interprets itself by the identity** — a conversion of contexts is an isomorphism of
+the syntactic category, the object interpreting a context is isomorphic to that context, and the
+self-interpretation is isomorphic, as a morphism of categories with attributes, to the identity
+(`LambdaPiSelf.selfIso`).  Transported along the naturality of the interpretation, this gives the
+existence half of bi-initiality: every morphism of *models of `λΠ`* out of the syntactic model is
+isomorphic to the canonical interpretation (`LambdaPiSelf.isoModelHom`), and between two such
+1-cells there is exactly one 2-cell (`LambdaPiSelf.nonempty_unique_twoCell_modelHom`).  The
+restriction to structure-preserving 1-cells is necessary:
+`LambdaPiBiInitial.not_biInitial_syntacticCModel` shows the syntactic model is not bi-initial among
+all coherent models.
+
 `Start/CwaPiType.lean`, `Start/CwaTypeModelSigma.lean`, `Start/CwaUnivMorLocal.lean`: the
 set-theoretic models — the local-universe model of `Type u` has a natural Π-structure, the
 universe of small types is closed under dependent sums, and every morphism of a category with
@@ -344,6 +398,9 @@ pullbacks is a universe in the strictified model.
 #check @LambdaPi.betaEtaConv_lam_annot
 #check @LambdaPi.not_church_rosser_betaEta
 #check @LambdaPi.not_typing_var_zero
+#check @LambdaPi.Typing.conv_type
+#check @LambdaPi.Typing.srt_unique
+#check @LambdaPiFull.tyMk_eq_of_conv
 #check @LambdaPi.decidableTypable
 #check @LambdaPi.decidableTyping
 #check @LambdaPi.interp_exists_unique
@@ -352,6 +409,15 @@ pullbacks is a universe in the strictified model.
 #check @LambdaPiInitial.mor_preservesUniverse
 #check @LambdaPiInitial.mor_preservesSmallPi
 #check @LambdaPiInitial.mor_preservesPiClosed
+#check @LambdaPi.ModelHom
+#check @LambdaPi.ModelHom.varVal_map
+#check @LambdaPi.TyI.map
+#check @LambdaPi.TmI.map
+#check @LambdaPi.CtxI.map
+#check @LambdaPiSelf.objIso
+#check @LambdaPiSelf.selfIso
+#check @LambdaPiSelf.isoModelHom
+#check @LambdaPiSelf.nonempty_unique_twoCell_modelHom
 #check @LcccType.luNaturalPiStruct
 #check @CwaTypeModel.codeSigma
 #check @CwaTypeModel.modelSigma
@@ -511,6 +577,26 @@ finitely many witnesses below a bound can be packed into a single coded list —
 universal quantifier past an existential one, while a bounded existential is absorbed directly
 into the outermost existential quantifier.
 
+`Start/ArithComplete.lean`: **completeness at a level of the hierarchy**.  Every level is closed
+downwards under many-one reducibility, so it makes sense to call a predicate complete for a level
+when it lies in the level and every predicate of the level reduces to it.  The universal
+predicates of `Start/ArithHierarchyProper.lean` are complete — hard already for *one-one*
+reducibility, by the reduction `x ↦ ⟨e, x⟩` — so every level `n + 1` has complete predicates on
+both the `Σ` and the `Π` side.  Complementation exchanges the two notions, completeness travels
+upwards along reductions, and any two complete predicates for a level are many-one equivalent.
+On the negative side a `Σ⁰ₙ₊₁`-complete predicate is not `Π⁰ₙ₊₁`, not `Δ⁰ₙ₊₁` and not `Σ⁰ₙ`, and in
+particular is never computable.  At level one this recovers the halting problem: the set of codes
+of terms with a normal form is `Σ⁰₁`-complete, and its complement `Π⁰₁`-complete.  Finally the
+union of all levels has no complete predicate at all.
+
+`Start/ArithIndexSets.lean`: **totality is `Π⁰₂`-complete**.  The set of indices whose partial
+recursive function is total is `Π⁰₂` — "for every argument there is a halting stage" — and hard
+for `Π⁰₂` already under one-one reducibility: a `Π⁰₂` predicate `∀ y, Q ⟨x, y⟩` with `Q`
+recursively enumerable is reduced by the s-m-n theorem to the totality of the function that
+searches for the enumeration of `⟨x, y⟩`.  Hence totality is not `Σ⁰₂`, not `Δ⁰₂`, neither
+recursively enumerable nor co-recursively-enumerable, and its complement is `Σ⁰₂`-complete.  The
+halting problem reduces to it but not conversely, so totality is strictly harder than halting.
+
 `Start/Inseparable.lean`: the two halves of the diagonal are disjoint recursively enumerable sets
 that no decidable set separates.
 
@@ -581,6 +667,43 @@ recursively isomorphic to `K` is creative, and any two creative sets are recursi
 #check @Lambda.Arith.SigmaAt.bex_lt
 #check @Lambda.Arith.PiAt.ball_lt
 #check @Lambda.Arith.PiAt.bex_lt
+#check @Lambda.Arith.SigmaAt.of_manyOne
+#check @Lambda.Arith.PiAt.of_manyOne
+#check @Lambda.Arith.DeltaAt.of_manyOne
+#check @Lambda.Arith.SigmaComplete
+#check @Lambda.Arith.PiComplete
+#check @Lambda.Arith.UnivSigma.oneOne_hard
+#check @Lambda.Arith.UnivSigma.sigmaComplete
+#check @Lambda.Arith.UnivPi.piComplete
+#check @Lambda.Arith.exists_sigmaComplete
+#check @Lambda.Arith.exists_piComplete
+#check @Lambda.Arith.exists_sigmaOneOneComplete
+#check @Lambda.Arith.exists_piOneOneComplete
+#check @Lambda.Arith.SigmaComplete.compl
+#check @Lambda.Arith.PiComplete.compl
+#check @Lambda.Arith.SigmaComplete.of_manyOne
+#check @Lambda.Arith.SigmaComplete.manyOneEquiv
+#check @Lambda.Arith.SigmaComplete.not_piAt
+#check @Lambda.Arith.SigmaComplete.not_deltaAt
+#check @Lambda.Arith.SigmaComplete.not_sigmaAt_lower
+#check @Lambda.Arith.PiComplete.not_sigmaAt
+#check @Lambda.Arith.SigmaComplete.not_computablePred
+#check @Lambda.Arith.sigmaComplete_one_codeHasNormalForm
+#check @Lambda.Arith.sigmaComplete_one_codeConverges
+#check @Lambda.Arith.piComplete_one_not_codeHasNormalForm
+#check @Lambda.Arith.not_exists_arithmetical_complete
+#check @Lambda.Arith.Tot
+#check @Lambda.Arith.piAt_two_tot
+#check @Lambda.Arith.piAt_two_le_one_tot
+#check @Lambda.Arith.tot_piComplete
+#check @Lambda.Arith.notTot_sigmaComplete
+#check @Lambda.Arith.not_sigmaAt_two_tot
+#check @Lambda.Arith.not_deltaAt_two_tot
+#check @Lambda.Arith.not_rePred_tot
+#check @Lambda.Arith.not_rePred_compl_tot
+#check @Lambda.Arith.not_computablePred_tot
+#check @Lambda.Arith.haltK_le_tot
+#check @Lambda.Arith.not_manyOne_tot_haltK
 #check @Lambda.Inseparable.diag_disjoint
 #check @Lambda.Inseparable.rePred_leftDiag
 #check @Lambda.Inseparable.rePred_rightDiag
@@ -599,3 +722,323 @@ recursively isomorphic to `K` is creative, and any two creative sets are recursi
 #check @Lambda.Post.creative_iff_oneOneComplete
 #check @Lambda.Post.creative_iff_recIso_haltK
 #check @Lambda.recIso_codeSet_conv_church_haltK
+
+/-!
+### The 2-category of models, and the rigidity of the interpretation of `λΠ`
+
+`Start/CwaTwoCell.lean`, `Start/CwaBicat.lean` and `Start/CwaBiInitial.lean` add the second
+dimension to the models of a dependent type theory: 2-cells between morphisms, the strict
+2-category they form, bi-initial objects of a bicategory, and the rigidity of the 2-cells out of
+the syntactic model of `λΠ` — a 2-cell is determined by its component at the empty context, so
+there is at most one 2-cell into a morphism sending the empty context to a terminal object.
+
+`Start/CwaTwoCellUniv.lean` shows that a 2-cell transports the whole structure an interpretation
+of `λΠ` has to respect: the action on terms and on codes, and hence preservation of the universe,
+of the dependent products over the small types and of their codes.  The consequence is a
+**necessary condition** for a 1-cell out of the syntactic model to be the canonical
+interpretation: any 1-cell isomorphic to it preserves the universe and sends the empty context to
+a terminal object.
+-/
+
+#check @Cwa.TwoCell
+#check @Cwa.morCategory
+#check @Cwa.TwoCell.whisker_exchange
+#check @Cwa.TwoCell.isIso_of_isIso_nat
+#check @Cwa.TwoCell.app_ext
+#check @Cwa.CModel.instBicategory
+#check @Cwa.CModel.instStrict
+#check @CategoryTheory.Bicategory.BiInitial
+#check @CategoryTheory.Bicategory.BiInitial.nonempty_iso
+#check @CategoryTheory.Bicategory.BiInitial.nonempty_equiv
+#check @LambdaPiBiInitial.app_eq_of_app_empty
+#check @LambdaPiBiInitial.subsingleton_twoCell
+#check @LambdaPiBiInitial.nonempty_iso_mor_iff
+#check @Cwa.TwoCell.tmMap_eq
+#check @Cwa.TwoCell.codeMap_eq
+#check @Cwa.TwoCell.preservesUniverse
+#check @Cwa.TwoCell.preservesSmallPi
+#check @Cwa.TwoCell.preservesPiClosed
+#check @LambdaPiBiInitial.preservesUniverse_of_twoCell
+#check @LambdaPiBiInitial.isTerminal_empty_of_iso
+#check @LambdaPiBiInitial.iso_mor_necessary
+
+/-!
+### Strictification is a functor
+
+`Start/CwaStrictFunctor.lean` closes the gap between the two halves of the strictification: a
+category with pullbacks is a model of a dependent type theory (`Cwa.ofPullbacks`) and a
+pullback-preserving functor is a morphism of the resulting models
+(`Cwa.morOfPullbackPreserving`), and these two constructions agree with identities and composites
+— the comparison isomorphism of an extended context is the canonical map between two pullbacks,
+hence the identity for the identity functor and a composite for a composite.  Categories with
+pullbacks and pullback-preserving functors are therefore a category (`Cwa.PbCat`) and
+strictification an honest functor from it to the category of models (`Cwa.strictification`).
+This is the 1-categorical skeleton of the passage from locally cartesian closed categories to
+models of `λΠ`.
+-/
+
+#check @Cwa.luExtIso_id
+#check @Cwa.luExtIso_comp
+#check @Cwa.morOfPreservesPullbacks_id
+#check @Cwa.morOfPreservesPullbacks_comp
+#check @Cwa.PbCat.instCategory
+#check @Cwa.strictification
+
+/-!
+### Strictification is a strict section, and it is rigid in the 2-dimensional direction
+
+`Start/CwaStrictSection.lean` reads off the category of contexts of a model functorially
+(`Cwa.Model.ctx`) and proves that the round trip through strictification is the underlying-category
+functor of `Cwa.PbCat` *on the nose* (`Cwa.strictification_comp_ctx`).  Strictification is
+therefore faithful, and it reflects isomorphisms: a pullback-preserving functor whose induced
+morphism of models is invertible is already an isomorphism of categories with pullbacks, because
+the underlying functor of the inverse morphism is a strict two-sided inverse, hence half of an
+equivalence, hence preserves pullbacks.
+
+`Start/CwaStrictRigid.lean` shows that the passage cannot be made 2-functorial for the 2-cells of
+`Start/CwaTwoCell.lean`.  A type of a strictified model is a whole local universe, so a 2-cell
+between strictified morphisms must carry the local universe of an identity map to that of the
+other morphism; this forces the two functors to agree on objects and pins the component of the
+2-cell down to the transport along that equality.  Hom-categories of strictified morphisms are
+thus discrete, while the natural transformation `Cwa.coyonedaConst` between two
+pullback-preserving endofunctors of `Type` admits no 2-cell at all between the induced morphisms
+of models.
+-/
+
+#check @Cwa.Model.ctx
+#check @Cwa.PbCat.toCat
+#check @Cwa.strictification_comp_ctx
+#check @Cwa.strictification_faithful
+#check @Cwa.strictification_reflects_iso
+#check @Cwa.twoCell_strict_obj_eq
+#check @Cwa.twoCell_strict_nat_app
+#check @Cwa.subsingleton_twoCell_strict
+#check @Cwa.twoCell_strict_self_nat
+#check @Cwa.isEmpty_twoCell_id_coyoneda
+
+/-!
+### Realizability: partial combinatory algebras and assemblies
+
+`Start/PCA.lean` defines partial combinatory algebras and proves combinatory completeness:
+bracket abstraction turns any applicative expression into an element of the algebra.
+`Start/PCATotal.lean` records that every total combinatory algebra — in particular every λ-model
+of `Start/LambdaModel.lean` — is one, and `Start/PCAKleene.lean` builds Kleene's first algebra
+`K₁`, the natural numbers under Turing application, using the s-m-n theorem.
+
+`Start/Assembly.lean` and `Start/AssemblyCcc.lean` build the category of assemblies over an
+arbitrary PCA and show it is cartesian closed: sets with realizers, tracked maps as morphisms,
+Church pairs as products and tracked function spaces as exponentials.
+
+`Start/AssemblyLimits.lean` adds equalizers, hence all finite limits, and
+`Start/AssemblyNNO.lean` a **natural numbers object**: the assembly of natural numbers realized
+by the Church numerals satisfies Lawvere's universal property.
+
+`Start/AssemblyColimits.lean` adds the finite colimits: the empty assembly is initial, the
+coproduct is the disjoint union with a boolean tag stored alongside the realizer — the copairing
+reads the tag, selects one of the two trackers and applies it, so no branch is evaluated
+speculatively — and the coequalizer is the quotient of the codomain carrying the realizers of its
+representatives.  So `Asm(A)` is finitely complete and finitely cocomplete.
+
+`Start/AssemblySubobject.lean` classifies the sub-assemblies: the assembly of propositions, on
+which every element of the algebra realizes everything, receives from each predicate `P` on `X` a
+characteristic map, and the sub-assembly cut out by `P` is the pullback of `true` along it — the
+unique map with that property.  This is a classifier for the *regular* subobjects, the ones whose
+realizers are inherited from the ambient assembly, not for every mono: `Asm(A)` is not a topos.
+
+`Start/AssemblyImage.lean` identifies the monomorphisms with the injections and the epimorphisms
+with the surjections, and factors every morphism through its **image**: the set-theoretic image,
+where a point is realized by the realizers of its preimages.  That first factor is a *strong*
+epimorphism — in a square against a mono the diagonal filler is computed by the tracker of the
+top map — so `Asm(A)` has strong epi-mono factorizations and images.  The image is not in general
+the sub-assembly of the codomain on the image set: a point of the image is realized only by the
+realizers it inherits from its preimages, which is why the classifier above sees only the regular
+subobjects.
+
+`Start/AssemblyRegular.lean` identifies those strong epimorphisms computationally: they are the
+morphisms that **lift realizers**, i.e. for which a single element of the algebra turns a realizer
+of a point of the codomain into a realizer of one of its preimages.  Lifting combinators are
+transported along the explicit pullback — the sub-assembly of the product where the two maps
+agree — by applying the tracker of the base map, lifting, and pairing with the realizer one
+started from.  So strong epimorphisms are stable under pullback and `Asm(A)` is a regular
+category.
+
+`Start/AssemblyGlobalSections.lean` relates assemblies to bare sets: forgetting the realizers is
+left adjoint to the indiscrete assembly, in which everything realizes everything; the indiscrete
+functor is fully faithful, the carrier of an assembly is its set of global sections — the maps out
+of the terminal assembly — and the classifier above is the indiscrete assembly on `Prop`.
+
+`Start/AssemblyKleene.lean` specialises all of this to Kleene's first algebra, where a number
+realizes itself.  The morphisms of that standard numbers assembly are **exactly the computable
+functions** — one direction is the s-m-n theorem, the other reads a tracker as a code — and the
+diagonal function `n ↦ φₙ(n) + 1` is not among them, so the global sections functor is not full
+and `Asm(K₁)` is not the category of sets.  The function object of that assembly therefore has the
+computable functions as its elements and their indices as its realizers, and out of the product of
+two copies of it the tracked maps are exactly the computable functions of two arguments, Church
+pairing and the two projection combinators being computable.
+Iterating a tracked endomorphism is itself partial recursive, so the standard numbers assembly is
+a natural numbers object; since a natural numbers object is unique up to isomorphism, it is
+isomorphic to the Church numeral one, which is the effective interconversion of numbers and
+numerals.
+
+`Start/AssemblyKleeneBool.lean` adds the booleans of `Asm(K₁)`, `true` realized by `1` and `false`
+by `0`, and the same analysis of their maps: a boolean-valued function of the numbers is tracked
+exactly when it is computable, so a predicate on the numbers has a characteristic morphism into
+the booleans exactly when it is a **computable predicate**.  Self-halting is not computable — the
+machine that diverges exactly when a putative decision procedure says "halts" refutes it on its
+own index — so it has no characteristic boolean map, in either polarity: unlike the object of
+propositions above, the booleans of `Asm(K₁)` classify no sub-assembly cut out by an undecidable
+predicate — and self-halting *is* recursively enumerable, a predicate being recursively
+enumerable exactly when it is the domain of convergence of an element of `K₁`.  The booleans are
+nevertheless the coproduct `1 + 1`: the tag of a boolean can be read off
+effectively, so the two points `false` and `true` exhibit the booleans as a coproduct of two
+copies of the terminal assembly.
+-/
+
+#check @Realizability.PCA
+#check @Realizability.PCA.lam_app
+#check @Realizability.PCA.lam_lam_app
+#check @Realizability.PCA.pairComb_app
+#check @Realizability.TCA.toPCA
+#check @Realizability.Lambda.lambdaModelPCA
+#check @Realizability.Kleene.instPCANat
+#check @Realizability.Kleene.k1_app
+#check @Realizability.Assembly
+#check @Realizability.Assembly.instCategory
+#check @Realizability.Assembly.isTerminalUnitAsm
+#check @Realizability.Assembly.prodFanIsLimit
+#check @Realizability.Assembly.curryEquiv
+#check @Realizability.Assembly.instClosed
+#check @Realizability.Assembly.monoidalClosed
+#check @Realizability.Assembly.eqForkIsLimit
+#check @Realizability.Assembly.instHasFiniteLimits
+#check @Realizability.Assembly.isInitialEmptyAsm
+#check @Realizability.Assembly.coprodCofanIsColimit
+#check @Realizability.Assembly.coeqCoforkIsColimit
+#check @Realizability.Assembly.instHasFiniteColimits
+#check @Realizability.Assembly.isNNO_natAsm
+#check @Realizability.Assembly.propAsm
+#check @Realizability.Assembly.homPropEquiv
+#check @Realizability.Assembly.isPullback_subAsm
+#check @Realizability.Assembly.mono_iff_injective
+#check @Realizability.Assembly.epi_iff_surjective
+#check @Realizability.Assembly.strongEpi_imageFactor
+#check @Realizability.Assembly.instHasImages
+#check @Realizability.Assembly.strongEpi_iff_liftsRealizers
+#check @Realizability.Assembly.isPullback_pbAsm
+#check @Realizability.Assembly.strongEpi_of_isPullback
+#check @Realizability.Assembly.exists_unique_charMap
+#check @Realizability.Assembly.gammaNablaAdj
+#check @Realizability.Assembly.nablaFullyFaithful
+#check @Realizability.Assembly.globalSectionsEquiv
+#check @Realizability.Kleene.natK1
+#check @Realizability.Kleene.tracked_natK1_iff
+#check @Realizability.Kleene.natK1EndEquiv
+#check @Realizability.Kleene.exists_not_tracked_natK1
+#check @Realizability.Kleene.not_full_gammaFunctor
+#check @Realizability.Kleene.tracked_prod_natK1_iff
+#check @Realizability.Kleene.realizes_expAsm_natK1
+#check @Realizability.Kleene.expAsmNatK1Equiv
+#check @Realizability.Kleene.isNNO_natK1
+#check @Realizability.Kleene.natK1IsoNatAsm
+#check @Realizability.Kleene.boolK1
+#check @Realizability.Kleene.tracked_boolK1_iff
+#check @Realizability.Kleene.boolHomEquiv
+#check @Realizability.Kleene.exists_charBool_iff
+#check @Realizability.Kleene.not_computable_selfHalt
+#check @Realizability.Kleene.no_charBool_selfHalt
+#check @Realizability.Kleene.boolK1_not_classifier
+#check @Realizability.Kleene.rePred_iff_exists_index
+#check @Realizability.Kleene.not_computablePred_selfHalt
+#check @Realizability.Kleene.boolK1IsoCoprod
+#check @Realizability.Kleene.boolCofanIsColimit
+#check @CategoryTheory.Limits.IsNNO.iso
+
+/-!
+### PERs, modest sets and the PER model of System F
+
+`Start/PER.lean` defines partial equivalence relations over a PCA, their function space and the
+intersection of an *arbitrary* family — the ingredient impredicative quantification needs.
+`Start/Modest.lean` shows the cartesian closed structure of `Asm(A)` restricts to modest
+assemblies, the assemblies presented by PERs.
+
+`Start/ModestEquiv.lean` turns that dictionary into an equivalence of categories: PERs with the
+tracked maps of their quotients are the same thing as the modest assemblies, and under the
+equivalence the arrow PER is the exponential of the two assemblies.  `Start/ModestCcc.lean` draws
+the categorical consequence: the modest assemblies, hence the PERs, form a cartesian closed
+category in their own right.  `Start/ModestColimits.lean` completes that with the remaining
+finite (co)limits: sub-assemblies and quotients of modest assemblies are modest, and so are
+coproducts as soon as the algebra has more than one element — which is exactly when its two
+boolean tags are distinguishable — so the modest assemblies, hence the PERs, are finitely
+complete and finitely cocomplete.
+
+`Start/ModestImage.lean` restricts the regular structure of `Asm(A)` to the subcategory: the image
+of a modest assembly is modest, because a realizer of a point of the image realizes a preimage of
+it and modesty of the domain determines that preimage.  Since the subcategory is full, the
+diagonal fillers and the pullbacks of `Asm(A)` stay inside it, so the modest assemblies — hence
+the PERs — have images and are a regular category, with the same computational description of the
+strong epimorphisms.
+
+`Start/ModestReflect.lean` goes back the other way: identifying the elements of an assembly that
+share a realizer makes it modest, universally so, because a morphism into a modest assembly cannot
+separate two such elements — its tracker computes a single value on the common realizer.  The
+quotient is therefore left adjoint to the inclusion, and the modest assemblies, equivalently the
+PERs, are a **reflective** subcategory of the assemblies.
+
+`Start/ModestNNO.lean` adds the last piece of first-order structure: the assembly of natural
+numbers of `Start/AssemblyNNO.lean` is itself modest once the algebra has more than one element.
+A realizer of `n` must send the tagging combinator `λx. pair k x` and the base point `k` to the
+tower of `n` nested pairs over `k`, and those towers are pairwise distinct, so no element can
+realize two different numbers.  The modest assemblies therefore have a natural numbers object,
+the same one as `Asm(A)`.  `Start/PERNNO.lean` carries it over to the partial equivalence
+relations, through the general observation that an equivalence of categories preserves natural
+numbers objects: a recursion datum is pulled back along the counit isomorphism, solved on the
+other side, and pushed forward again.
+
+`Start/PERSystemF.lean` is the payoff: over any λ-model, System F types are interpreted by PERs,
+`∀` by the intersection over all PERs, and every typable term is related to itself — a semantic
+model of System F, independent of the reducibility-candidate argument of `Start/SystemF.lean`.
+-/
+
+#check @Realizability.PER
+#check @Realizability.PER.arrow
+#check @Realizability.PER.iInter
+#check @Realizability.PER.modest_toAsm
+#check @Realizability.Assembly.modest_unitAsm
+#check @Realizability.Assembly.Modest.prod
+#check @Realizability.Assembly.Modest.exp
+#check @Realizability.Assembly.toPER
+#check @Realizability.PER.tracked_iff
+#check @Realizability.Assembly.toPERIso
+#check @Realizability.PER.toModestFullyFaithful
+#check @Realizability.perEquivModest
+#check @Realizability.PER.arrowIso
+#check @Realizability.Assembly.Modest.of_iso
+#check @Realizability.Modest.instMonoidalClosed
+#check @Realizability.PER.instMonoidalClosed
+#check @Realizability.PER.toModestArrowIso
+#check @Realizability.PCA.k_ne_kI
+#check @Realizability.Assembly.Modest.coprod
+#check @Realizability.Assembly.Modest.coeq
+#check @Realizability.Modest.instHasFiniteLimits
+#check @Realizability.Modest.instHasFiniteColimits
+#check @Realizability.PER.instHasFiniteLimits
+#check @Realizability.PER.instHasFiniteColimits
+#check @Realizability.Assembly.Modest.image
+#check @Realizability.Modest.instHasImages
+#check @Realizability.Modest.strongEpi_iff_liftsRealizers
+#check @Realizability.Modest.strongEpi_of_isPullback
+#check @Realizability.Assembly.modest_modestQuot
+#check @Realizability.Assembly.modestLift_uniq
+#check @Realizability.Modest.reflectorAdj
+#check @Realizability.Modest.instReflective
+#check @Realizability.PER.reflectorAdj
+#check @Realizability.PCA.k_ne_pairEl_k
+#check @Realizability.Assembly.modest_natAsm
+#check @Realizability.Modest.isNNO_natModest
+#check @CategoryTheory.Limits.IsNNO.ofEquivalence
+#check @Realizability.PER.isNNO_natPER
+#check @SystemF.Per.tyPer
+#check @SystemF.Per.tyPer_tyInst
+#check @SystemF.Per.sound
+#check @SystemF.Per.dom_interp_of_typing
+#check @SystemF.Per.dom_interp_idTy

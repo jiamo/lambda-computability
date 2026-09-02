@@ -596,6 +596,36 @@ Program length is the syntactic size of a closed term reducing to a Church numer
 #check @Lambda.Arith.PiAt.ball_lt
 #check @Lambda.Arith.PiAt.bex_lt
 
+-- Every level is closed downwards under many-one reducibility, and the universal predicates are
+-- complete for their level -- hard already for one-one reducibility.
+#check @Lambda.Arith.SigmaAt.of_manyOne
+#check @Lambda.Arith.SigmaComplete
+#check @Lambda.Arith.UnivSigma.sigmaComplete
+#check @Lambda.Arith.exists_sigmaComplete
+#check @Lambda.Arith.exists_sigmaOneOneComplete
+#check @Lambda.Arith.SigmaComplete.compl
+#check @Lambda.Arith.SigmaComplete.manyOneEquiv
+
+-- A complete predicate for a level escapes the dual level, the lower levels, and computability;
+-- at level one this is the halting problem, and the union of the levels has no complete predicate.
+#check @Lambda.Arith.SigmaComplete.not_piAt
+#check @Lambda.Arith.SigmaComplete.not_sigmaAt_lower
+#check @Lambda.Arith.SigmaComplete.not_computablePred
+#check @Lambda.Arith.sigmaComplete_one_codeHasNormalForm
+#check @Lambda.Arith.piComplete_one_not_codeHasNormalForm
+#check @Lambda.Arith.not_exists_arithmetical_complete
+
+-- The concrete complete predicate at level two: the index set of the total functions.
+#check @Lambda.Arith.Tot
+#check @Lambda.Arith.piAt_two_tot
+#check @Lambda.Arith.piAt_two_le_one_tot
+#check @Lambda.Arith.tot_piComplete
+#check @Lambda.Arith.notTot_sigmaComplete
+#check @Lambda.Arith.not_rePred_tot
+#check @Lambda.Arith.not_rePred_compl_tot
+#check @Lambda.Arith.haltK_le_tot
+#check @Lambda.Arith.not_manyOne_tot_haltK
+
 /-! ## 14c'. A Blum complexity measure and a diagonal hierarchy -/
 
 -- Fuel counting is a Blum complexity measure: defined exactly on the domain, decidably bounded.
@@ -937,6 +967,28 @@ Program length is the syntactic size of a closed term reducing to a Church numer
   `Π⁰ₙ`, `Δ⁰ₙ` grows strictly with `n`, while the union of the levels has no universal predicate
 - The closure of every level of the arithmetical hierarchy under bounded quantification with a
   computable bound, via the collection principle
+- Naturality of the interpretation of `λΠ` in the model: a morphism of models transports the
+  interpretation of every raw expression, so types, terms and contexts denoted in one model are
+  denoted, by their images, in the other
+- Realizability over a partial combinatory algebra: the assemblies form a cartesian closed
+  category with all finite limits, and the naturals with the Curry numerals as realizers are a
+  natural numbers object in it; and the sub-assemblies of an assembly are classified by the
+  assembly of propositions, each being the pullback of `true` along a unique characteristic map;
+  forgetting the realizers is left adjoint to the indiscrete assembly, and the carrier of an
+  assembly is its set of global sections
+- Modest sets are partial equivalence relations: PERs with the tracked maps of their quotients
+  form a category equivalent to the full subcategory of the modest assemblies, and the arrow PER
+  is the exponential of the assemblies the two PERs present; both categories are cartesian closed
+- Realizability over Kleene's first algebra: in the standard assembly of natural numbers, where a
+  number realizes itself, the tracked functions are exactly the computable ones, the diagonal
+  function is not tracked, and the assembly is a natural numbers object, hence isomorphic to the
+  one realized by the Curry numerals
+- Booleans over Kleene's first algebra: the maps of the numbers into the standard booleans are
+  exactly the computable boolean-valued functions, so a predicate on the numbers has a
+  characteristic boolean map exactly when it is decidable; self-halting has none, so the booleans
+  classify no sub-assembly there, though they are the coproduct of two copies of the
+  terminal assembly; a predicate is recursively enumerable exactly when it is the domain of
+  convergence of an element of the algebra, and self-halting is one
 
 ### Architecture (≈ 8000 lines):
 1. Lambda syntax + lift/subst               (De Bruijn indices)

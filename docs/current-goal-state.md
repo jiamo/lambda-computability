@@ -98,6 +98,41 @@
 | 330 | `M10-POST-THEOREM-TWO` | `P1` | `DONE_STRONG` | M10-ARITH-HIERARCHY, M10-LIMIT-LEMMA | docs/goal/evidence/M10-POST-THEOREM-TWO.md |  |
 | 335 | `M10-ARITH-HIERARCHY-PROPER` | `P1` | `DONE_STRONG` | M10-ARITH-HIERARCHY | docs/goal/evidence/M10-ARITH-HIERARCHY-PROPER.md |  |
 | 336 | `M10-ARITH-BOUNDED` | `P1` | `DONE_STRONG` | M10-ARITH-HIERARCHY | docs/goal/evidence/M10-ARITH-BOUNDED.md |  |
+| 337 | `M10-ARITH-COMPLETE` | `P1` | `DONE_STRONG` | M10-ARITH-HIERARCHY-PROPER | docs/goal/evidence/M10-ARITH-COMPLETE.md |  |
+| 338 | `M10-ARITH-INDEX-SETS` | `P1` | `DONE_STRONG` | M10-ARITH-COMPLETE | docs/goal/evidence/M10-ARITH-INDEX-SETS.md |  |
 | 340 | `M10-LAMBDA-MODEL-REFLEXIVE` | `P1` | `DONE_STRONG` | M10-LAMBDA-THEORY-LATTICE | docs/goal/evidence/M10-LAMBDA-MODEL-REFLEXIVE.md |  |
+| 350 | `M10-CWA-BICATEGORY` | `P1` | `DONE_WEAK` | M10-LAMBDA-MODEL-REFLEXIVE | docs/goal/evidence/M10-CWA-BICATEGORY.md | The sufficiency half is now proved for the morphisms of models of lambda-Pi (M10-LAMBDAPI-SELF-INITIAL): every such 1-cell out of the syntax is isomorphic to the canonical interpretation, and between two of them there is exactly one 2-cell. What is still not claimed is bi-initiality in the 2-category of all coherent models - it is in fact false there (not_biInitial_syntacticCModel), a model need not have any types and the empty context need not be terminal - and the pseudofunctors relating models with Pi to locally cartesian closed categories, with their inverse up to equivalence, are not constructed. One half of that last item is now settled negatively (M10-CWA-STRICT-RIGID): with these strict morphisms and these 2-cells the strictification of a category with pullbacks cannot be made 2-functorial at all, since Cwa.isEmpty_twoCell_id_coyoneda exhibits a natural transformation of pullback-preserving endofunctors of Type inducing no 2-cell whatsoever, so any such pseudofunctor must weaken either the morphisms or the 2-cells. |
+| 355 | `M10-LAMBDAPI-SELF-INITIAL` | `P1` | `DONE_STRONG` | M10-CWA-BICATEGORY | docs/goal/evidence/M10-LAMBDAPI-SELF-INITIAL.md |  |
+| 356 | `M10-CWA-STRICT-FUNCTOR` | `P1` | `DONE_STRONG` | M10-CWA-BICATEGORY | docs/goal/evidence/M10-CWA-STRICT-FUNCTOR.md |  |
+| 360 | `M10-PCA-KLEENE` | `P1` | `DONE_STRONG` | M10-LAMBDA-MODEL-REFLEXIVE | docs/goal/evidence/M10-PCA-KLEENE.md |  |
+| 370 | `M10-ASSEMBLY-CCC` | `P1` | `DONE_STRONG` | M10-PCA-KLEENE | docs/goal/evidence/M10-ASSEMBLY-CCC.md |  |
+| 380 | `M10-PER-SYSTEMF` | `P1` | `DONE_STRONG` | M10-ASSEMBLY-CCC | docs/goal/evidence/M10-PER-SYSTEMF.md |  |
+| 390 | `M10-LAMBDAPI-INTERP-NATURAL` | `P1` | `DONE_STRONG` | M10-CWA-BICATEGORY | docs/goal/evidence/M10-LAMBDAPI-INTERP-NATURAL.md |  |
+| 400 | `M10-ASSEMBLY-NNO` | `P1` | `DONE_STRONG` | M10-ASSEMBLY-CCC | docs/goal/evidence/M10-ASSEMBLY-NNO.md |  |
+| 410 | `M10-ASSEMBLY-SUBOBJECT` | `P1` | `DONE_STRONG` | M10-ASSEMBLY-NNO | docs/goal/evidence/M10-ASSEMBLY-SUBOBJECT.md |  |
+| 420 | `M10-ASSEMBLY-GLOBAL-SECTIONS` | `P1` | `DONE_STRONG` | M10-ASSEMBLY-SUBOBJECT | docs/goal/evidence/M10-ASSEMBLY-GLOBAL-SECTIONS.md |  |
+| 430 | `M10-MODEST-PER-EQUIV` | `P1` | `DONE_STRONG` | M10-ASSEMBLY-GLOBAL-SECTIONS | docs/goal/evidence/M10-MODEST-PER-EQUIV.md |  |
+| 440 | `M10-MODEST-CCC` | `P1` | `DONE_STRONG` | M10-MODEST-PER-EQUIV | docs/goal/evidence/M10-MODEST-CCC.md |  |
+| 450 | `M10-MANIFEST-CLOSURE-REPAIR` | `P0` | `DONE_STRONG` | M10-TOOLCHAIN-V433-RETURN | docs/goal/evidence/M10-MANIFEST-CLOSURE-REPAIR.md |  |
+| 460 | `M10-CWA-TWOCELL-UNIV` | `P1` | `DONE_STRONG` | M10-CWA-BICATEGORY | docs/goal/evidence/M10-CWA-TWOCELL-UNIV.md |  |
+| 470 | `M10-LAMBDAPI-TYPE-UNIQUE` | `P1` | `DONE_STRONG` | M9-LAMBDAPI-LCCC | docs/goal/evidence/M10-LAMBDAPI-TYPE-UNIQUE.md |  |
+| 480 | `M10-TOOLCHAIN-V433-FINAL` | `P0` | `DONE_STRONG` | M10-TOOLCHAIN-V428-REPIN | docs/goal/evidence/M10-TOOLCHAIN-V433-FINAL.md |  |
+| 490 | `M10-CWA-STRICT-SECTION` | `P1` | `DONE_STRONG` | M10-CWA-STRICT-FUNCTOR | docs/goal/evidence/M10-CWA-STRICT-SECTION.md |  |
+| 500 | `M10-CWA-STRICT-RIGID` | `P1` | `DONE_STRONG` | M10-CWA-STRICT-SECTION, M10-CWA-BICATEGORY | docs/goal/evidence/M10-CWA-STRICT-RIGID.md |  |
+| 510 | `M10-ASSEMBLY-COLIMITS` | `P1` | `DONE_STRONG` | M10-ASSEMBLY-CCC | docs/goal/evidence/M10-ASSEMBLY-COLIMITS.md |  |
+| 520 | `M10-MODEST-COLIMITS` | `P1` | `DONE_STRONG` | M10-MODEST-CCC, M10-ASSEMBLY-COLIMITS | docs/goal/evidence/M10-MODEST-COLIMITS.md |  |
+| 530 | `M10-MODEST-REFLECTIVE` | `P1` | `DONE_STRONG` | M10-MODEST-COLIMITS | docs/goal/evidence/M10-MODEST-REFLECTIVE.md |  |
+| 540 | `M10-MODEST-NNO` | `P1` | `DONE_STRONG` | M10-MODEST-COLIMITS, M10-ASSEMBLY-NNO | docs/goal/evidence/M10-MODEST-NNO.md |  |
+| 550 | `M10-PER-NNO` | `P1` | `DONE_STRONG` | M10-MODEST-NNO | docs/goal/evidence/M10-PER-NNO.md |  |
+| 560 | `M10-ASSEMBLY-IMAGE` | `P1` | `DONE_STRONG` | M10-ASSEMBLY-COLIMITS | docs/goal/evidence/M10-ASSEMBLY-IMAGE.md |  |
+| 570 | `M10-ASSEMBLY-REGULAR` | `P1` | `DONE_STRONG` | M10-ASSEMBLY-IMAGE | docs/goal/evidence/M10-ASSEMBLY-REGULAR.md |  |
+| 580 | `M10-MODEST-IMAGE` | `P1` | `DONE_STRONG` | M10-ASSEMBLY-REGULAR, M10-MODEST-COLIMITS | docs/goal/evidence/M10-MODEST-IMAGE.md |  |
+| 585 | `M10-MANIFEST-RESTORE-V433` | `P0` | `DONE_STRONG` | M10-MANIFEST-CLOSURE-REPAIR | docs/goal/evidence/M10-MANIFEST-RESTORE-V433.md |  |
+| 590 | `M10-ASM-KLEENE-NNO` | `P1` | `DONE_STRONG` | M10-ASSEMBLY-NNO, M10-PCA-KLEENE | docs/goal/evidence/M10-ASM-KLEENE-NNO.md |  |
+| 595 | `M10-ASM-KLEENE-BOOL` | `P1` | `DONE_STRONG` | M10-ASM-KLEENE-NNO | docs/goal/evidence/M10-ASM-KLEENE-BOOL.md |  |
 
-Next: all tasks in the active milestone are `DONE_STRONG`.
+Next: `M10-CWA-BICATEGORY`
+
+- Title: Two-cells between morphisms of categories with attributes, and the bicategory of models
+- Status: `DONE_WEAK`
+- Open boundary: The sufficiency half is now proved for the morphisms of models of lambda-Pi (M10-LAMBDAPI-SELF-INITIAL): every such 1-cell out of the syntax is isomorphic to the canonical interpretation, and between two of them there is exactly one 2-cell. What is still not claimed is bi-initiality in the 2-category of all coherent models - it is in fact false there (not_biInitial_syntacticCModel), a model need not have any types and the empty context need not be terminal - and the pseudofunctors relating models with Pi to locally cartesian closed categories, with their inverse up to equivalence, are not constructed. One half of that last item is now settled negatively (M10-CWA-STRICT-RIGID): with these strict morphisms and these 2-cells the strictification of a category with pullbacks cannot be made 2-functorial at all, since Cwa.isEmpty_twoCell_id_coyoneda exhibits a natural transformation of pullback-preserving endofunctors of Type inducing no 2-cell whatsoever, so any such pseudofunctor must weaken either the morphisms or the 2-cells.

@@ -1879,6 +1879,56 @@ tasks:
       - "python3 scripts/check_closure.py"
       - "lake build Start.ArithBounded"
 
+  - id: M10-ARITH-COMPLETE
+    priority: P1
+    status: DONE_STRONG
+    track: theory/computability
+    title: "Completeness at a level of the arithmetical hierarchy"
+    terminal_statement: "Lambda.Arith.exists_sigmaOneOneComplete : every level n + 1 of the arithmetical hierarchy has a predicate that lies in the level and to which every predicate of the level reduces one-one"
+    latest_evidence: "docs/goal/evidence/M10-ARITH-COMPLETE.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-ARITH-HIERARCHY-PROPER
+    rank: 337
+    exit_criteria:
+      - "Each of the classes Sigma, Pi and Delta at a level is proved closed downwards under many-one reducibility."
+      - "Completeness for a level is defined on the Sigma and the Pi side."
+      - "A universal predicate for a level is proved hard for the level already for one-one reducibility, and therefore complete."
+      - "The existence of complete predicates, and of one-one complete predicates, is proved for every level n + 1 on both sides."
+      - "Complementation is proved to exchange Sigma-completeness and Pi-completeness, completeness is proved to travel upwards along reductions, and any two complete predicates for a level are proved many-one equivalent."
+      - "The negative half is proved: a complete predicate for level n + 1 is not in the dual class, not Delta at the level, not in the class one level down, and not computable."
+      - "The halting set of the lambda calculus is proved Sigma-complete at level one and its complement Pi-complete at level one."
+      - "The union of the levels is proved to have no complete predicate."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.ArithComplete"
+
+  - id: M10-ARITH-INDEX-SETS
+    priority: P1
+    status: DONE_STRONG
+    track: theory/computability
+    title: "The index set of the total functions is complete at level two of the arithmetical hierarchy"
+    terminal_statement: "Lambda.Arith.tot_piComplete : the set of indices whose partial recursive function is total lies in Pi at level two and every Pi predicate of that level many-one reduces to it"
+    latest_evidence: "docs/goal/evidence/M10-ARITH-INDEX-SETS.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-ARITH-COMPLETE
+    rank: 338
+    exit_criteria:
+      - "The index set of the total functions is defined as membership of every number in the r.e. set of an index."
+      - "It is proved to lie at level two on the Pi side, by putting a universal quantifier in front of the universal Sigma predicate of level one."
+      - "It is proved hard for that level already under one-one reducibility, the reduction being the s-m-n function applied to a code for a partial recursive function whose domain is the matrix."
+      - "Completeness at level two is stated, and the complement is deduced to be complete on the Sigma side."
+      - "It is deduced that totality is not Sigma at level two, not Delta at level two, neither recursively enumerable nor co-recursively-enumerable, and not computable."
+      - "The halting problem is proved to reduce to totality, and totality is proved not to reduce to the halting problem."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.ArithIndexSets"
+
   - id: M10-LAMBDA-MODEL-REFLEXIVE
     priority: P1
     status: DONE_STRONG
@@ -1901,3 +1951,657 @@ tasks:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
       - "lake build Start.LambdaModel Start.LambdaModelInstances Start.KaroubiLambda Start.ReflexiveCcc Start.ScottKoymans"
+
+  - id: M10-CWA-BICATEGORY
+    priority: P1
+    status: DONE_WEAK
+    track: theory/typetheory
+    title: "Two-cells between morphisms of categories with attributes, and the bicategory of models"
+    terminal_statement: "Cwa.CModel.instBicategory : Bicategory CModel, together with LambdaPiBiInitial.subsingleton_twoCell_mor and LambdaPiBiInitial.nonempty_iso_mor_iff : the hom-category out of the syntactic lambda-Pi model into a model with injective Pi is a preorder, and any two interpretations are isomorphic exactly when the empty context is terminal"
+    latest_evidence: "docs/goal/evidence/M10-CWA-BICATEGORY.md"
+    open_boundary: "The sufficiency half is now proved for the morphisms of models of lambda-Pi (M10-LAMBDAPI-SELF-INITIAL): every such 1-cell out of the syntax is isomorphic to the canonical interpretation, and between two of them there is exactly one 2-cell. What is still not claimed is bi-initiality in the 2-category of all coherent models - it is in fact false there (not_biInitial_syntacticCModel), a model need not have any types and the empty context need not be terminal - and the pseudofunctors relating models with Pi to locally cartesian closed categories, with their inverse up to equivalence, are not constructed. One half of that last item is now settled negatively (M10-CWA-STRICT-RIGID): with these strict morphisms and these 2-cells the strictification of a category with pullbacks cannot be made 2-functorial at all, since Cwa.isEmpty_twoCell_id_coyoneda exhibits a natural transformation of pullback-preserving endofunctors of Type inducing no 2-cell whatsoever, so any such pseudofunctor must weaken either the morphisms or the 2-cells."
+    milestone: M10
+    depends_on:
+      - M10-LAMBDA-MODEL-REFLEXIVE
+    rank: 350
+    exit_criteria:
+      - "A notion of 2-cell between morphisms of categories with attributes is defined, with vertical composition, identities, and left and right whiskering satisfying the exchange law."
+      - "Morphisms between two extensionally coherent models form a category, and coherent models form a strict bicategory in mathlib's sense."
+      - "A 2-cell whose underlying natural transformation is invertible is itself invertible."
+      - "Bi-initiality is defined as contractibility of every hom-category, and is proved to force any two bi-initial objects to be equivalent."
+      - "For the syntactic model of lambda-Pi, 2-cells out of it are proved to be determined by their component at the empty context, hence unique, and two interpretations into a model with injective Pi are proved isomorphic precisely when the image of the empty context is terminal."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.CwaTwoCell Start.CwaBicat Start.CwaBiInitial"
+
+  - id: M10-LAMBDAPI-SELF-INITIAL
+    priority: P1
+    status: DONE_STRONG
+    track: theory/semantics
+    title: "The syntax of lambda-Pi interprets itself by the identity, and is bi-initial among its models"
+    terminal_statement: "LambdaPiSelf.isoModelHom : every morphism of models of lambda-Pi out of the syntactic model is isomorphic, as a morphism of categories with attributes, to the canonical interpretation; LambdaPiSelf.nonempty_unique_twoCell_modelHom : between two such 1-cells there is exactly one 2-cell"
+    latest_evidence: "docs/goal/evidence/M10-LAMBDAPI-SELF-INITIAL.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-CWA-BICATEGORY
+    rank: 355
+    exit_criteria:
+      - "A morphism of the syntactic category is proved to be determined by its representative substitution, and a morphism carrying a substitution is proved to be that substitution up to conversion."
+      - "The comparison between the self-interpretation of the syntax and the identity is proved natural, compatible with the action on types and with the comparisons of extended contexts, hence a 2-cell, and that 2-cell is invertible."
+      - "Every morphism of models of lambda-Pi out of the syntactic model is proved isomorphic to the canonical interpretation of initiality."
+      - "Between the 1-cells underlying two morphisms of models out of the syntax there is proved to be exactly one 2-cell."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.LambdaPiSelfMor"
+
+  - id: M10-CWA-STRICT-FUNCTOR
+    priority: P1
+    status: DONE_STRONG
+    track: theory/semantics
+    title: "Strictification is a functor from categories with pullbacks to models"
+    terminal_statement: "Cwa.strictification : the functor from the category of categories with pullbacks and pullback-preserving functors to the category of models of a dependent type theory, sending a category to its local-universe strictification"
+    latest_evidence: "docs/goal/evidence/M10-CWA-STRICT-FUNCTOR.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-CWA-BICATEGORY
+    rank: 356
+    exit_criteria:
+      - "The comparison isomorphism of extended contexts induced by the identity functor is proved to be the identity."
+      - "The comparison isomorphism induced by a composite of pullback-preserving functors is proved to be the composite of the two comparisons."
+      - "The morphism of strictified models induced by a functor is proved to send the identity functor to the identity morphism and a composite to the composite."
+      - "Categories with pullbacks and pullback-preserving functors are given a category structure, and strictification is packaged as a functor from it to the category of models."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.CwaStrictFunctor"
+
+  - id: M10-PCA-KLEENE
+    priority: P1
+    status: DONE_STRONG
+    track: theory/realizability
+    title: "Partial combinatory algebras, combinatory completeness, and Kleene's first algebra"
+    terminal_statement: "Realizability.PCA.lam_app : for every bracket abstraction, ((lam n e rho) a) = e evaluated in the environment updated at n, together with Realizability.Kleene.instPCANat : PCA Nat via partial recursive application"
+    latest_evidence: "docs/goal/evidence/M10-PCA-KLEENE.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-LAMBDA-MODEL-REFLEXIVE
+    rank: 360
+    exit_criteria:
+      - "Partial combinatory algebras are defined with a partial application, the k and s combinators, and the Kleene-inequality axioms."
+      - "Combinatory completeness is proved: bracket abstraction of an arbitrary expression is total and satisfies the beta-rule."
+      - "Pairing, projections, identity and composition combinators are derived from combinatory completeness alone."
+      - "Total combinatory algebras are shown to be partial combinatory algebras, and every lambda-model is exhibited as one."
+      - "Kleene's first algebra is constructed on the natural numbers from the partial evaluation of codes, with explicit codes for k and s."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.PCA Start.PCATotal Start.PCAKleene"
+
+  - id: M10-ASSEMBLY-CCC
+    priority: P1
+    status: DONE_STRONG
+    track: theory/realizability
+    title: "The category of assemblies over a partial combinatory algebra is cartesian closed"
+    terminal_statement: "Realizability.Assembly.monoidalClosed : MonoidalClosed (Assembly A) together with Realizability.Assembly.cartesianMonoidal, for an arbitrary partial combinatory algebra A"
+    latest_evidence: "docs/goal/evidence/M10-ASSEMBLY-CCC.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-PCA-KLEENE
+    rank: 370
+    exit_criteria:
+      - "Assemblies over a partial combinatory algebra and tracked maps between them are defined and shown to form a category."
+      - "The one-point assembly is proved terminal and the product assembly is proved to be a binary product, giving chosen finite products."
+      - "The exponential assembly is defined by the realizers that track a function, and made functorial."
+      - "Currying and uncurrying are realized by explicit combinators and proved mutually inverse and natural, so that the category of assemblies is cartesian closed."
+      - "Modest assemblies are proved closed under the terminal object, binary products and exponentials."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.Assembly Start.AssemblyCcc Start.Modest"
+
+  - id: M10-PER-SYSTEMF
+    priority: P1
+    status: DONE_STRONG
+    track: theory/realizability
+    title: "The partial equivalence relation model of System F"
+    terminal_statement: "SystemF.Per.sound : if Gamma proves t : A then the interpretation of t under related substitutions is related in the partial equivalence relation interpreting A, where universal types are interpreted as the intersection over all partial equivalence relations"
+    latest_evidence: "docs/goal/evidence/M10-PER-SYSTEMF.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-ASSEMBLY-CCC
+    rank: 380
+    exit_criteria:
+      - "Partial equivalence relations over a partial combinatory algebra are defined, with their quotient, the arrow construction, and closure under intersections of arbitrary families."
+      - "Every partial equivalence relation yields a modest assembly, and every modest assembly a partial equivalence relation."
+      - "System F types are interpreted as partial equivalence relations over an arbitrary lambda-model, with universal quantification interpreted impredicatively as the intersection over all partial equivalence relations."
+      - "The interpretation is proved stable under type renaming, shifting, substitution and instantiation."
+      - "Soundness is proved: a derivable typing judgement is interpreted by related elements, so every closed well-typed term denotes an element of the partial equivalence relation of its type."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.PER Start.PERSystemF"
+
+  - id: M10-LAMBDAPI-INTERP-NATURAL
+    priority: P1
+    status: DONE_STRONG
+    track: theory/typetheory
+    title: "The interpretation of lambda-Pi is natural in the model"
+    terminal_statement: "LambdaPi.TmI.map and LambdaPi.TyI.map : if an expression denotes a term, resp. a type, of a model M in a semantic context s, then it denotes the image of that term, resp. type, in the image of s under any morphism of models H : ModelHom M N"
+    latest_evidence: "docs/goal/evidence/M10-LAMBDAPI-INTERP-NATURAL.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-CWA-BICATEGORY
+    rank: 390
+    exit_criteria:
+      - "A morphism of models of lambda-Pi is defined: a morphism of the underlying categories with attributes preserving the universe and its decoding, the products over the small types, the codes for those products, abstraction and application, and sending the interpretation of the empty context to a terminal object."
+      - "The image of a semantic context is constructed, together with the comparison of the image of its object with the object built by iterated extension in the target."
+      - "The action of a morphism of categories with attributes on values is defined and proved to commute with substitution and to carry the generic term to the generic term."
+      - "The image of a semantic context is proved to read its de Bruijn variables as the images of what they read in the source."
+      - "The universe, the decoding of a code and a dependent product are proved to be carried to the universe, the decoding of the image of the code and the dependent product of the images."
+      - "The interpretation of a type and the interpretation of a term are proved to commute with a morphism of models, by mutual induction on the interpretation relations, and hence so is the interpretation of a syntactic context."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.CwaMorVal Start.LambdaPiModelHom Start.LambdaPiInterpTransport"
+
+  - id: M10-ASSEMBLY-NNO
+    priority: P1
+    status: DONE_STRONG
+    track: theory/realizability
+    title: "Finite limits and a natural numbers object in the category of assemblies"
+    terminal_statement: "Realizability.Assembly.isNNO_natAsm : the assembly of natural numbers realized by the Church numerals, with its zero and successor maps, satisfies Lawvere's universal property, in the category of assemblies over an arbitrary partial combinatory algebra, which also has all finite limits (Realizability.Assembly.instHasFiniteLimits)"
+    latest_evidence: "docs/goal/evidence/M10-ASSEMBLY-NNO.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-ASSEMBLY-CCC
+    rank: 400
+    exit_criteria:
+      - "The sub-assembly of a predicate and the equalizer of two tracked maps are constructed, and the equalizer fork is proved to be a limit, so that the category of assemblies has equalizers, all finite limits and pullbacks."
+      - "Lawvere's notion of natural numbers object is stated for a category with a terminal object."
+      - "Church numerals in a partial combinatory algebra are defined and proved to compute iteration, and the assembly of natural numbers they realize is constructed."
+      - "Zero and successor are realized by explicit combinators and are tracked maps of assemblies."
+      - "Iteration is realized uniformly, and the universal property is proved: for every base point and endomorphism there is a unique tracked map commuting with zero and successor."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.AssemblyLimits Start.AssemblyNNO"
+
+  - id: M10-ASSEMBLY-SUBOBJECT
+    priority: P1
+    status: DONE_STRONG
+    track: theory/realizability
+    title: "A classifier for the sub-assemblies of an assembly"
+    terminal_statement: "Realizability.Assembly.exists_unique_charMap : for every predicate P on an assembly X over a partial combinatory algebra there is a unique map X to the assembly of propositions making the sub-assembly cut out by P the pullback of true, so sub-assemblies (equivalently regular subobjects) are classified"
+    latest_evidence: "docs/goal/evidence/M10-ASSEMBLY-SUBOBJECT.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-ASSEMBLY-NNO
+    rank: 410
+    exit_criteria:
+      - "The assembly of propositions is defined, with every element of the algebra realizing every proposition, and every function into it is proved tracked."
+      - "The characteristic map of a predicate and the point picking out True are defined, and morphisms into the assembly of propositions are proved to be exactly the predicates on the carrier."
+      - "The square built from the inclusion of the sub-assembly and the characteristic map is proved to commute and to be a pullback."
+      - "The characteristic map is proved to be the unique map making that square a pullback."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.AssemblySubobject"
+
+  - id: M10-ASSEMBLY-GLOBAL-SECTIONS
+    priority: P1
+    status: DONE_STRONG
+    track: theory/realizability
+    title: "Global sections and the indiscrete assembly"
+    terminal_statement: "Realizability.Assembly.gammaNablaAdj : the functor sending an assembly to its carrier is left adjoint to the functor sending a set to the indiscrete assembly on it, that functor is fully faithful, and the carrier of an assembly is its set of global sections (Realizability.Assembly.globalSectionsEquiv)"
+    latest_evidence: "docs/goal/evidence/M10-ASSEMBLY-GLOBAL-SECTIONS.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-ASSEMBLY-SUBOBJECT
+    rank: 420
+    exit_criteria:
+      - "The indiscrete assembly on a set is defined and every function into it is proved tracked, so that the classifier of the sub-assemblies is the indiscrete assembly on the propositions."
+      - "The global-sections functor and the indiscrete-assembly functor are defined."
+      - "The adjunction between them is constructed from the bijection between maps of assemblies into an indiscrete assembly and functions on the carrier."
+      - "The indiscrete-assembly functor is proved fully faithful."
+      - "Morphisms out of the terminal assembly are proved to be exactly the elements of the carrier."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.AssemblyGlobalSections"
+
+  - id: M10-MODEST-PER-EQUIV
+    priority: P1
+    status: DONE_STRONG
+    track: theory/realizability
+    title: "Modest sets are partial equivalence relations: an equivalence of categories"
+    terminal_statement: "Realizability.perEquivModest : the category of PERs over a partial combinatory algebra, with the tracked maps of their quotients as morphisms, is equivalent to the full subcategory of the modest assemblies, and Realizability.PER.arrowIso identifies the arrow PER with the exponential of the two assemblies"
+    latest_evidence: "docs/goal/evidence/M10-MODEST-PER-EQUIV.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-ASSEMBLY-GLOBAL-SECTIONS
+    rank: 430
+    exit_criteria:
+      - "Tracked functions between the quotients of two PERs are defined, and proved to be exactly the tracked maps between the assemblies the PERs present."
+      - "PERs and their tracked maps form a category."
+      - "The comparison functor from PERs to the full subcategory of the modest assemblies is defined and proved fully faithful."
+      - "A modest assembly is proved isomorphic to the assembly of the PER it presents, so the comparison functor is essentially surjective and is an equivalence of categories."
+      - "The arrow PER is proved to present the exponential of the two assemblies."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.ModestEquiv"
+
+  - id: M10-MODEST-CCC
+    priority: P1
+    status: DONE_STRONG
+    track: theory/realizability
+    title: "The modest sets, and hence the PERs, form a cartesian closed category"
+    terminal_statement: "Realizability.Modest.instMonoidalClosed : MonoidalClosed (ModestCat A), the full subcategory of the modest assemblies over a partial combinatory algebra is cartesian closed, and Realizability.PER.instMonoidalClosed : so is the equivalent category of PERs"
+    latest_evidence: "docs/goal/evidence/M10-MODEST-CCC.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-MODEST-PER-EQUIV
+    rank: 440
+    exit_criteria:
+      - "Modesty is proved invariant under isomorphism of assemblies."
+      - "The terminal assembly and the product of two modest assemblies are proved terminal and a product in the full subcategory of the modest assemblies, which is therefore cartesian monoidal with finite products."
+      - "The exponential of two modest assemblies is proved exponentiable in that subcategory, so the modest assemblies form a cartesian closed category."
+      - "The category of PERs is proved to have finite products and to be cartesian closed, by transport along the equivalence with the modest assemblies."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.ModestCcc"
+
+  - id: M10-MANIFEST-CLOSURE-REPAIR
+    priority: P0
+    status: DONE_STRONG
+    track: infra/toolchain
+    title: "Repair the lake manifest and the import closure so that the library builds from a fresh checkout"
+    latest_evidence: "docs/goal/evidence/M10-MANIFEST-CLOSURE-REPAIR.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-TOOLCHAIN-V433-RETURN
+    rank: 450
+    exit_criteria:
+      - "lake-manifest.json records the cslib dependency that lakefile.toml requires, so lake build starts from a fresh checkout."
+      - "The manifest pins Mathlib at the revision of the v4.33.0 tag that lean-toolchain names."
+      - "lake build reports no error and no warning, and no module contains sorry."
+      - "Every module is in the import closure of Start.lean and registered in Start/Capstones.lean."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build"
+
+  - id: M10-CWA-TWOCELL-UNIV
+    priority: P1
+    status: DONE_STRONG
+    track: theory/typetheory
+    title: "Two-cells transport the structure of a model of lambda-Pi, and the necessary conditions for a one-cell out of the syntax"
+    terminal_statement: "Cwa.TwoCell.preservesUniverse, Cwa.TwoCell.preservesSmallPi and Cwa.TwoCell.preservesPiClosed : preservation of the universe, of the dependent products over the small types and of their codes is invariant under 2-cells, together with LambdaPiBiInitial.iso_mor_necessary : a 1-cell out of the syntactic model of lambda-Pi isomorphic to the canonical interpretation preserves the universe and sends the empty context to a terminal object"
+    latest_evidence: "docs/goal/evidence/M10-CWA-TWOCELL-UNIV.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-CWA-BICATEGORY
+    rank: 460
+    exit_criteria:
+      - "A 2-cell is proved to transport the action of a morphism of categories with attributes on terms, and hence on the codes of a preserved universe."
+      - "Universe preservation is proved invariant under 2-cells, and the comparison of the contexts extended by a decoded type is proved to be transported by a 2-cell."
+      - "Preservation of the dependent products over the small types, and preservation of their codes for a universe whose codes are stable under substitution, are proved invariant under 2-cells."
+      - "A 1-cell out of the syntactic model of lambda-Pi isomorphic to the canonical interpretation is proved to preserve the universe and to send the empty context to a terminal object, the hypothesis of the isomorphism criterion of Start/CwaBiInitial.lean."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.CwaTwoCellUniv"
+
+  - id: M10-LAMBDAPI-TYPE-UNIQUE
+    priority: P1
+    status: DONE_STRONG
+    track: theory/types
+    title: "lambda-Pi is a functional pure type system: types are unique up to conversion"
+    terminal_statement: "LambdaPi.Typing.conv_type : two types of the same term are convertible, with LambdaPi.Typing.srt_unique : a term is typed by at most one sort, and LambdaPiFull.tyMk_eq_of_conv : convertible types of the syntactic model are equal"
+    latest_evidence: "docs/goal/evidence/M10-LAMBDAPI-TYPE-UNIQUE.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M9-LAMBDAPI-LCCC
+    rank: 470
+    exit_criteria:
+      - "Context lookup is proved deterministic."
+      - "Two types of the same term are proved convertible, by structural induction on the term using the inversion lemmas and the injectivity of the product former."
+      - "A term is proved to be typed by at most one sort, so no term is both a type and a kind."
+      - "Convertible types of the syntactic model are proved equal, so the sort recorded alongside a type is redundant."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.LambdaPiTypeUnique"
+
+  - id: M10-TOOLCHAIN-V433-FINAL
+    priority: P0
+    status: DONE_STRONG
+    track: infra/toolchain
+    title: "Return the build to the documented Lean v4.33.0 toolchain, with Mathlib and cslib fetched as pinned git dependencies"
+    latest_evidence: "docs/goal/evidence/M10-TOOLCHAIN-V433-FINAL.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-TOOLCHAIN-V428-REPIN
+    rank: 480
+    exit_criteria:
+      - "lean-toolchain pins leanprover/lean4:v4.33.0, and lakefile.toml and lake-manifest.json agree on the Mathlib and cslib revisions, which are fetched as git dependencies rather than local checkouts."
+      - "Every module that had been moved back to the v4.28.0 APIs is brought forward again: the Turing machine modules, the categories with attributes modules, the oracle simulation bridge and the representation bridge."
+      - "lake build reports no error and no warning, and no module contains sorry."
+      - "README.md describes the dependency resolution that lakefile.toml actually performs."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build"
+
+  - id: M10-CWA-STRICT-SECTION
+    priority: P1
+    status: DONE_STRONG
+    track: theory/types
+    title: "Strictification is a strict section of the category-of-contexts functor, and it reflects isomorphisms"
+    terminal_statement: "Cwa.strictification_comp_ctx : the composite of strictification with the category-of-contexts functor is the underlying-category functor of PbCat on the nose, with Cwa.strictification_faithful and Cwa.strictification_reflects_iso"
+    latest_evidence: "docs/goal/evidence/M10-CWA-STRICT-SECTION.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-CWA-STRICT-FUNCTOR
+    rank: 490
+    exit_criteria:
+      - "The category of contexts of a model of a dependent type theory is a functor Cwa.Model to Cat, and the underlying category of a category with pullbacks is a functor PbCat to Cat."
+      - "The round trip PbCat to Cwa.Model to Cat is proved equal, not merely isomorphic, to the underlying-category functor."
+      - "Strictification is proved faithful."
+      - "Strictification is proved to reflect isomorphisms: a pullback-preserving functor whose induced morphism of models is invertible is an isomorphism of categories with pullbacks."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.CwaStrictSection"
+
+  - id: M10-CWA-STRICT-RIGID
+    priority: P1
+    status: DONE_STRONG
+    track: theory/types
+    title: "Strictification is rigid in the 2-dimensional direction: no 2-functor to the bicategory of models"
+    terminal_statement: "Cwa.subsingleton_twoCell_strict : there is at most one 2-cell between two strictified morphisms, and Cwa.isEmpty_twoCell_id_coyoneda : a natural transformation of pullback-preserving endofunctors of Type that is induced by no 2-cell at all"
+    latest_evidence: "docs/goal/evidence/M10-CWA-STRICT-RIGID.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-CWA-STRICT-SECTION
+      - M10-CWA-BICATEGORY
+    rank: 500
+    exit_criteria:
+      - "A 2-cell between strictified morphisms is proved to force the two functors to agree on objects."
+      - "The component of such a 2-cell is proved to be the transport along that equality, so a 2-cell from a strictified morphism to itself is the identity."
+      - "Hom-sets of 2-cells between strictified morphisms are proved to be subsingletons."
+      - "An explicit natural transformation between pullback-preserving endofunctors of Type is exhibited for which the set of 2-cells between the induced morphisms of models is empty, so strictification is not 2-functorial for these 2-cells."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.CwaStrictRigid"
+
+  - id: M10-ASSEMBLY-COLIMITS
+    priority: P1
+    status: DONE_STRONG
+    track: theory/realizability
+    title: "Finite colimits in the category of assemblies"
+    terminal_statement: "Realizability.Assembly.instHasFiniteColimits : the category of assemblies over a partial combinatory algebra has all finite colimits, built from the initial assembly, the tagged coproduct and the quotient coequalizer"
+    latest_evidence: "docs/goal/evidence/M10-ASSEMBLY-COLIMITS.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-ASSEMBLY-CCC
+    rank: 510
+    exit_criteria:
+      - "The empty assembly is proved initial."
+      - "The disjoint union with a boolean tag stored alongside the realizer is proved to be the binary coproduct, the copairing being tracked by the combinator that reads the tag, selects one of the two trackers and applies it to the payload."
+      - "The quotient of the codomain by the relation generated by two morphisms, with the realizers of the representatives, is proved to be their coequalizer."
+      - "The category of assemblies is concluded to have all finite coproducts, all coequalizers, all finite colimits and all pushouts."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.AssemblyColimits"
+
+  - id: M10-MODEST-COLIMITS
+    priority: P1
+    status: DONE_STRONG
+    track: theory/realizability
+    title: "The modest sets, and the PERs, are finitely complete and finitely cocomplete"
+    terminal_statement: "Realizability.Modest.instHasFiniteColimits and Realizability.PER.instHasFiniteColimits : the modest assemblies and the partial equivalence relations have all finite colimits over an algebra with more than one element, together with Realizability.Modest.instHasFiniteLimits and Realizability.PER.instHasFiniteLimits"
+    latest_evidence: "docs/goal/evidence/M10-MODEST-COLIMITS.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-MODEST-CCC
+      - M10-ASSEMBLY-COLIMITS
+    rank: 520
+    exit_criteria:
+      - "A sub-assembly of a modest assembly is proved modest, so the modest assemblies have equalizers and all finite limits."
+      - "A coequalizer of a modest assembly is proved modest, so the modest assemblies have coequalizers."
+      - "The two boolean combinators of a partial combinatory algebra with more than one element are proved distinct, and a coproduct of modest assemblies is proved modest under that hypothesis."
+      - "The modest assemblies are concluded to have all finite colimits, and the same is transported to the partial equivalence relations along the equivalence of categories."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.ModestColimits"
+
+  - id: M10-MODEST-REFLECTIVE
+    priority: P1
+    status: DONE_STRONG
+    track: theory/realizability
+    title: "The modest sets, and the PERs, are a reflective subcategory of the assemblies"
+    terminal_statement: "Realizability.Modest.reflectorAdj : the quotient of an assembly by sharing a realizer is left adjoint to the inclusion of the modest assemblies, with Realizability.Modest.instReflective and Realizability.PER.reflectorAdj"
+    latest_evidence: "docs/goal/evidence/M10-MODEST-REFLECTIVE.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-MODEST-COLIMITS
+    rank: 530
+    exit_criteria:
+      - "The quotient of an assembly by the relation of sharing a realizer is proved to be an assembly and to be modest."
+      - "A morphism into a modest assembly is proved to identify elements that share a realizer, so it factors through the quotient, and the factorization is proved unique."
+      - "The quotient is made a functor and proved left adjoint to the inclusion of the modest assemblies, which is therefore a reflective subcategory."
+      - "The adjunction is transported along the equivalence with the PERs."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.ModestReflect"
+
+  - id: M10-MODEST-NNO
+    priority: P1
+    status: DONE_STRONG
+    track: theory/realizability
+    title: "The modest sets have a natural numbers object"
+    terminal_statement: "Realizability.Modest.isNNO_natModest : over an algebra with more than one element the assembly of natural numbers is modest (Realizability.Assembly.modest_natAsm) and is a natural numbers object in the full subcategory of the modest assemblies"
+    latest_evidence: "docs/goal/evidence/M10-MODEST-NNO.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-MODEST-COLIMITS
+      - M10-ASSEMBLY-NNO
+    rank: 540
+    exit_criteria:
+      - "An algebra in which k applied to k returns k is proved to be a subsingleton, so that over a nontrivial algebra k is not a Church pair whose first component is k."
+      - "The tower of nested pairs over k is defined, proved to be the value of the iterated tagging combinator, and proved injective in its height."
+      - "The assembly of natural numbers is proved modest over an algebra with more than one element."
+      - "The natural numbers, zero and successor are transported to the full subcategory of the modest assemblies and proved to satisfy Lawvere's universal property there."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.ModestNNO"
+
+  - id: M10-PER-NNO
+    priority: P1
+    status: DONE_STRONG
+    track: theory/realizability
+    title: "An equivalence of categories preserves natural numbers objects, and the PERs have one"
+    terminal_statement: "CategoryTheory.Limits.IsNNO.ofEquivalence and Realizability.PER.isNNO_natPER : an equivalence of categories carries a natural numbers object to a natural numbers object, so the partial equivalence relations over an algebra with more than one element have one"
+    latest_evidence: "docs/goal/evidence/M10-PER-NNO.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-MODEST-NNO
+    rank: 550
+    exit_criteria:
+      - "An equivalence of categories is proved to send a natural numbers object to a natural numbers object, using that the image of a terminal object is terminal and that a recursion datum can be transported along the counit isomorphism."
+      - "The natural numbers, zero and successor are transported from the modest assemblies to the partial equivalence relations along the equivalence of categories."
+      - "The partial equivalence relations are concluded to have a natural numbers object."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.PERNNO"
+
+  - id: M10-ASSEMBLY-IMAGE
+    priority: P1
+    status: DONE_STRONG
+    track: theory/realizability
+    title: "Monos, epis and image factorizations in the category of assemblies"
+    terminal_statement: "Realizability.Assembly.instHasImages : the assemblies have strong epi-mono factorizations and images, with Realizability.Assembly.mono_iff_injective, Realizability.Assembly.epi_iff_surjective and Realizability.Assembly.strongEpi_imageFactor"
+    latest_evidence: "docs/goal/evidence/M10-ASSEMBLY-IMAGE.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-ASSEMBLY-COLIMITS
+    rank: 560
+    exit_criteria:
+      - "A morphism of assemblies is proved to be a monomorphism exactly when it is injective."
+      - "A morphism of assemblies is proved to be an epimorphism exactly when it is surjective, using the assembly of propositions."
+      - "Every morphism is factored through the assembly on its set-theoretic image, realized by the realizers of the preimages, by a surjection followed by a mono."
+      - "The first factor is proved to have the left lifting property against every monomorphism, hence to be a strong epimorphism, so the assemblies have strong epi-mono factorizations and images."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.AssemblyImage"
+
+  - id: M10-ASSEMBLY-REGULAR
+    priority: P1
+    status: DONE_STRONG
+    track: theory/realizability
+    title: "The strong epimorphisms of Asm(A) lift realizers, and the assemblies are a regular category"
+    terminal_statement: "Realizability.Assembly.strongEpi_iff_liftsRealizers and Realizability.Assembly.strongEpi_of_isPullback : a morphism of assemblies is a strong epimorphism exactly when a single element of the algebra turns a realizer of a point of the codomain into a realizer of one of its preimages, and strong epimorphisms are stable under pullback"
+    latest_evidence: "docs/goal/evidence/M10-ASSEMBLY-REGULAR.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-ASSEMBLY-IMAGE
+    rank: 570
+    exit_criteria:
+      - "Lifting realizers is defined and proved to imply surjectivity."
+      - "A morphism that lifts realizers is proved to have an invertible second image factor, hence to be a strong epimorphism, and conversely a strong epimorphism is proved to lift realizers."
+      - "The pullback of two morphisms is computed explicitly as the sub-assembly of the product on which they agree, and proved to be a pullback."
+      - "A lifting combinator is transported along a pullback, so strong epimorphisms are proved stable under pullback and the assemblies form a regular category."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.AssemblyRegular"
+
+  - id: M10-MODEST-IMAGE
+    priority: P1
+    status: DONE_STRONG
+    track: theory/realizability
+    title: "The image of a modest assembly is modest, and the modest sets are a regular category"
+    terminal_statement: "Realizability.Modest.instHasImages and Realizability.Modest.strongEpi_of_isPullback : the modest assemblies have strong epi-mono factorizations and images, computed as in Asm(A), and their strong epimorphisms are stable under pullback"
+    latest_evidence: "docs/goal/evidence/M10-MODEST-IMAGE.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-ASSEMBLY-REGULAR
+      - M10-MODEST-COLIMITS
+    rank: 580
+    exit_criteria:
+      - "The image of a morphism with modest domain is proved modest."
+      - "A monomorphism of modest assemblies is proved injective, and the image factorization of Asm(A) is proved to restrict to the full subcategory, its first factor being a strong epimorphism there."
+      - "The modest assemblies are concluded to have strong epi-mono factorizations and images."
+      - "The explicit pullback is proved modest and to be a pullback in the subcategory, and strong epimorphisms are proved stable under pullback."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.ModestImage"
+
+  - id: M10-MANIFEST-RESTORE-V433
+    priority: P0
+    status: DONE_STRONG
+    track: infra/toolchain
+    title: "Restore the pinned dependency resolution so that the library builds again"
+    latest_evidence: "docs/goal/evidence/M10-MANIFEST-RESTORE-V433.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-MANIFEST-CLOSURE-REPAIR
+    rank: 585
+    exit_criteria:
+      - "lake-manifest.json records exactly the dependencies lakefile.toml requires, with cslib present."
+      - "The dependencies resolve to the revisions the pinned toolchain leanprover/lean4:v4.33.0 requires, Mathlib at the v4.33.0 tag."
+      - "A full lake build of the library succeeds with no error and no warning."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build"
+
+  - id: M10-ASM-KLEENE-NNO
+    priority: P1
+    status: DONE_STRONG
+    track: theory/realizability
+    title: "The standard numbers assembly over Kleene's first algebra: its maps are the computable functions, and it is a natural numbers object"
+    terminal_statement: "Realizability.Kleene.tracked_natK1_iff : a function of natural numbers is tracked in K1 exactly when it is computable, and Realizability.Kleene.isNNO_natK1 : the standard numbers assembly is a natural numbers object, hence isomorphic to the Church numeral one"
+    latest_evidence: "docs/goal/evidence/M10-ASM-KLEENE-NNO.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-ASSEMBLY-NNO
+      - M10-PCA-KLEENE
+    rank: 590
+    exit_criteria:
+      - "The standard assembly of natural numbers over Kleene's first algebra, in which a number realizes itself, is defined and proved modest."
+      - "A function of natural numbers is proved tracked in that assembly exactly when it is computable, and the endomorphisms of the assembly are put in bijection with the computable functions."
+      - "A function of natural numbers that is not tracked is exhibited, so the global sections functor is proved not full."
+      - "Church pairing and the two projection combinators of K1 are proved computable, and a function of two arguments is proved tracked out of the product assembly exactly when it is computable."
+      - "The function object of the standard numbers assembly is described: its elements are the computable functions and its realizers are their indices."
+      - "Iteration of a tracked endomorphism is proved partial recursive, and the standard numbers assembly is proved to be a natural numbers object."
+      - "A natural numbers object is proved unique up to isomorphism, and the standard numbers assembly is concluded isomorphic to the Church numeral one."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.AssemblyKleene"
+
+  - id: M10-ASM-KLEENE-BOOL
+    priority: P1
+    status: DONE_STRONG
+    track: theory/realizability
+    title: "Booleans and decidable predicates over Kleene's first algebra: the booleans of Asm(K1) do not classify all sub-assemblies"
+    terminal_statement: "Realizability.Kleene.exists_charBool_iff : a predicate on the numbers has a characteristic morphism into the standard booleans exactly when it is a computable predicate, and Realizability.Kleene.boolK1_not_classifier : self-halting has no such characteristic map, of either polarity"
+    latest_evidence: "docs/goal/evidence/M10-ASM-KLEENE-BOOL.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-ASM-KLEENE-NNO
+    rank: 595
+    exit_criteria:
+      - "Every partial recursive function of one variable is proved to be Turing application of a fixed index."
+      - "The standard assembly of booleans over Kleene's first algebra, true realized by 1 and false by 0, is defined and proved modest."
+      - "A boolean-valued function of natural numbers is proved tracked out of the standard numbers assembly exactly when it is computable, and the morphisms are put in bijection with the computable boolean-valued functions."
+      - "A predicate on the numbers is proved to have a characteristic morphism into the booleans exactly when it is a computable predicate."
+      - "Self-halting is proved undecidable, in both polarities, by the diagonal argument on the index of the machine that diverges exactly when the decision procedure answers yes."
+      - "It is concluded that self-halting has no characteristic morphism into the booleans, so the booleans of Asm(K1) do not classify all sub-assemblies of the numbers."
+      - "A predicate on the numbers is proved recursively enumerable exactly when it is the domain of convergence of an element of K1, and self-halting is proved to be such a predicate, hence semidecidable but undecidable."
+      - "The booleans are proved isomorphic to the coproduct of two copies of the terminal assembly, and their two points are proved to exhibit them as that coproduct."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.AssemblyKleeneBool"
