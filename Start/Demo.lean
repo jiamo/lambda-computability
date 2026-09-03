@@ -989,6 +989,11 @@ Program length is the syntactic size of a closed term reducing to a Church numer
   classify no sub-assembly there, though they are the coproduct of two copies of the
   terminal assembly; a predicate is recursively enumerable exactly when it is the domain of
   convergence of an element of the algebra, and self-halting is one
+- Projective assemblies: the objects projective for the covers of `Asm(A)` are exactly the
+  assemblies isomorphic to partitioned ones — those whose points have a single realizer — and
+  every assembly is covered by one, so the category has enough regular projectives; over Kleene's
+  first algebra the standard numbers assembly is regular projective but not projective, the
+  diagonal function having no lift along the epimorphism onto the indiscrete assembly
 
 ### Architecture (≈ 8000 lines):
 1. Lambda syntax + lift/subst               (De Bruijn indices)

@@ -242,6 +242,7 @@ import Start.CwaCat
 import Start.CwaStrictFunctor
 import Start.CwaStrictSection
 import Start.CwaStrictRigid
+import Start.CwaStrictFull
 import Start.CwaTwoCell
 import Start.CwaBicat
 import Start.CwaBiInitial
@@ -391,6 +392,7 @@ import Start.AssemblyRegular
 import Start.AssemblyGlobalSections
 import Start.AssemblyKleene
 import Start.AssemblyKleeneBool
+import Start.AssemblyProjective
 import Start.PER
 import Start.Modest
 import Start.ModestEquiv

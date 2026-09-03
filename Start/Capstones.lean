@@ -34,6 +34,7 @@ import Start.CwaBiInitial
 import Start.CwaStrictFunctor
 import Start.CwaStrictSection
 import Start.CwaStrictRigid
+import Start.CwaStrictFull
 import Start.CwaTwoCellUniv
 import Start.LambdaPiTypeUnique
 import Start.AssemblyCcc
@@ -42,6 +43,7 @@ import Start.AssemblyColimits
 import Start.AssemblyNNO
 import Start.AssemblyKleene
 import Start.AssemblyKleeneBool
+import Start.AssemblyProjective
 import Start.AssemblySubobject
 import Start.AssemblyImage
 import Start.AssemblyRegular
@@ -817,6 +819,44 @@ of models.
 #check @Cwa.isEmpty_twoCell_id_coyoneda
 
 /-!
+### How far strictification is from an equivalence: fullness
+
+`Start/CwaStrictFull.lean` settles the remaining 1-categorical question about the comparison
+between models of a dependent type theory and categories with pullbacks: is strictification
+*full*?  The answer has two halves.
+
+On the underlying functors it is.  A morphism of models out of a strictified category carries the
+extension square of a local universe to a pullback (`Cwa.isPullback_map_extend`), and *every*
+pullback square is isomorphic to one of those, because a morphism `p : Y ⟶ Γ` is presented by the
+local universe `LuTy.ofHom p`.  Hence the functor on contexts of an arbitrary morphism of
+strictified models preserves pullbacks with no hypothesis at all
+(`Cwa.Mor.map_isPullback`, `Cwa.Mor.preservesLimitsOfShape_fnc`), so it is already a morphism of
+`Cwa.PbCat` (`Cwa.exists_pbCatHom_fnc`).
+
+On types it is not.  What a morphism of models chooses is a *presentation* of a type, and that is
+pinned down only up to isomorphism over the base (`Cwa.tyMapCompareIso`,
+`Cwa.tyMapCompareIso_hom_disp`).  In the indiscrete category on two objects (`Cwa.Chaotic`) every
+hom-set is a singleton, so replacing the total space of every local universe by the other object
+of the category is a morphism of models over the identity functor (`Cwa.chaoticSwapMor`) which no
+functor induces: `Cwa.not_full_strictification`.
+
+So the honest 1-categorical statement is that strictification is faithful, reflects isomorphisms,
+is full on the underlying functors and full up to a canonical isomorphism of presentations — but
+not full on the nose.  Any equivalence with locally cartesian closed categories has to be stated
+up to isomorphism of types, just as the failure of 2-functoriality in `Start/CwaStrictRigid.lean`
+already indicated for the 2-cells.
+-/
+
+#check @Cwa.isPullback_map_extend
+#check @Cwa.Mor.map_isPullback
+#check @Cwa.Mor.preservesLimitsOfShape_fnc
+#check @Cwa.exists_pbCatHom_fnc
+#check @Cwa.tyMapCompareIso
+#check @Cwa.tyMapCompareIso_hom_disp
+#check @Cwa.chaoticSwapMor
+#check @Cwa.not_full_strictification
+
+/-!
 ### Realizability: partial combinatory algebras and assemblies
 
 `Start/PCA.lean` defines partial combinatory algebras and proves combinatory completeness:
@@ -892,6 +932,20 @@ enumerable exactly when it is the domain of convergence of an element of `K₁`.
 nevertheless the coproduct `1 + 1`: the tag of a boolean can be read off
 effectively, so the two points `false` and `true` exhibit the booleans as a coproduct of two
 copies of the terminal assembly.
+
+`Start/AssemblyProjective.lean` identifies the objects that are projective for those covers.  An
+assembly is **partitioned** when each of its points has exactly one realizer; such an assembly is
+projective for the morphisms that lift realizers, because a map out of it is lifted by composing
+its tracker with the lifting combinator — this is the constructive content of the axiom of choice
+in realizability.  Every assembly is covered by a partitioned one, namely by the pairs `(a, x)`
+with `a` a realizer of `x`, so `Asm(A)` has enough regular projectives; and conversely a regular
+projective is a retract of that cover, hence isomorphic to a partitioned assembly, so the regular
+projectives are exactly the assemblies isomorphic to partitioned ones, a class closed under
+binary products.  Projectivity for *all*
+epimorphisms is strictly stronger and fails already over `K₁`: the standard numbers assembly is
+partitioned, hence regular projective, but the identity map onto the indiscrete assembly on the
+numbers is an epimorphism that does not lift realizers, and along it the non-computable diagonal
+function has no lift.
 -/
 
 #check @Realizability.PCA
@@ -951,6 +1005,14 @@ copies of the terminal assembly.
 #check @Realizability.Kleene.not_computablePred_selfHalt
 #check @Realizability.Kleene.boolK1IsoCoprod
 #check @Realizability.Kleene.boolCofanIsColimit
+#check @Realizability.Assembly.Partitioned
+#check @Realizability.Assembly.Partitioned.regularProjective
+#check @Realizability.Assembly.exists_partitioned_cover
+#check @Realizability.Assembly.regularProjective_iff
+#check @Realizability.Assembly.RegularProjective.prod
+#check @Realizability.Kleene.regularProjective_natK1
+#check @Realizability.Kleene.not_projective_natK1
+#check @Realizability.Kleene.not_liftsRealizers_natToNabla
 #check @CategoryTheory.Limits.IsNNO.iso
 
 /-!
