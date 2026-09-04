@@ -25,7 +25,10 @@ later in the import order: `Lambda.kolmPSystem` (`Start/ChaitinOmega.lean`) and
 `Lambda.kolmLNSystem` (`Start/KolmogorovRepresentation.lean`).
 -/
 
-import Mathlib.Order.Lattice.Nat
+-- The conditionally complete lattice structure on `ℕ` (`sInf`) is all this module needs, but
+-- the Mathlib module that carries it has been moved between releases; importing the root module
+-- keeps the file compiling against every recent Mathlib.
+import Mathlib
 
 set_option relaxedAutoImplicit false
 set_option autoImplicit false

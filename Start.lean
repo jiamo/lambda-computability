@@ -10,6 +10,7 @@ import Start.Tactics
 import Start.Rewriting
 import Start.Syntax
 import Start.Reduction
+import Start.ChurchCombinators
 import Start.LambdaEta
 import Start.LambdaBetaEta
 import Start.LambdaEtaPostpone
@@ -249,6 +250,8 @@ import Start.CwaStrictRigid
 import Start.CwaStrictFull
 import Start.CwaTwoCell
 import Start.CwaLaxTwoCell
+import Start.CwaLaxCategory
+import Start.CwaLaxWhisker
 import Start.CwaStrictLax
 import Start.CwaBicat
 import Start.CwaBiInitial
@@ -293,6 +296,10 @@ import Start.UniformSigLang
 import Start.UniformSigNorm
 import Start.UniformSegDec
 import Start.CookLevinNPHard
+import Start.CircuitSystem
+import Start.CircuitSatLang
+import Start.SatToCircuit
+import Start.SatToCircuitCob
 import Start.HeadNormal
 import Start.ParallelSubst
 import Start.GraphAdequacy

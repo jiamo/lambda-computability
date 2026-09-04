@@ -7,6 +7,7 @@ depends on the syntax and reduction layers.
 
 import Start.Syntax
 import Start.Reduction
+import Start.ChurchCombinators
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 

@@ -1959,7 +1959,7 @@ tasks:
     title: "Two-cells between morphisms of categories with attributes, and the bicategory of models"
     terminal_statement: "Cwa.CModel.instBicategory : Bicategory CModel, together with LambdaPiBiInitial.subsingleton_twoCell_mor and LambdaPiBiInitial.nonempty_iso_mor_iff : the hom-category out of the syntactic lambda-Pi model into a model with injective Pi is a preorder, and any two interpretations are isomorphic exactly when the empty context is terminal"
     latest_evidence: "docs/goal/evidence/M10-CWA-BICATEGORY.md"
-    open_boundary: "The sufficiency half is now proved for the morphisms of models of lambda-Pi (M10-LAMBDAPI-SELF-INITIAL): every such 1-cell out of the syntax is isomorphic to the canonical interpretation, and between two of them there is exactly one 2-cell; the existence half is proved too (M10-LAMBDAPI-MODELHOM), the interpretation itself being a morphism of models, so the syntactic model is bi-initial among the models of lambda-Pi with injective products (LambdaPiInitial.biInitial_syntacticModel). What is still not claimed is bi-initiality in the 2-category of all coherent models - it is in fact false there (not_biInitial_syntacticCModel), a model need not have any types and the empty context need not be terminal - and the pseudofunctors relating models with Pi to locally cartesian closed categories, with their inverse up to equivalence, are not constructed. One half of that last item is now settled negatively (M10-CWA-STRICT-RIGID): with these strict morphisms and these 2-cells the strictification of a category with pullbacks cannot be made 2-functorial at all, since Cwa.isEmpty_twoCell_id_coyoneda exhibits a natural transformation of pullback-preserving endofunctors of Type inducing no 2-cell whatsoever, so any such pseudofunctor must weaken either the morphisms or the 2-cells; that weakening is now carried out (M10-CWA-LAX-TWOCELL): with lax 2-cells, whose comparison of types is a map over the base rather than an equality, strictification is 2-functorial and the offending natural transformation does induce a lax 2-cell. The 1-dimensional half is now settled as well (M10-CWA-STRICT-FULL): strictification is full on the underlying functors but not full on the nose, so the comparison with locally cartesian closed categories must be taken up to isomorphism of types as well as up to weakened 2-cells."
+    open_boundary: "The sufficiency half is now proved for the morphisms of models of lambda-Pi (M10-LAMBDAPI-SELF-INITIAL): every such 1-cell out of the syntax is isomorphic to the canonical interpretation, and between two of them there is exactly one 2-cell; the existence half is proved too (M10-LAMBDAPI-MODELHOM), the interpretation itself being a morphism of models, so the syntactic model is bi-initial among the models of lambda-Pi with injective products (LambdaPiInitial.biInitial_syntacticModel). What is still not claimed is bi-initiality in the 2-category of all coherent models - it is in fact false there (not_biInitial_syntacticCModel), a model need not have any types and the empty context need not be terminal - and the pseudofunctors relating models with Pi to locally cartesian closed categories, with their inverse up to equivalence, are not constructed. One half of that last item is now settled negatively (M10-CWA-STRICT-RIGID): with these strict morphisms and these 2-cells the strictification of a category with pullbacks cannot be made 2-functorial at all, since Cwa.isEmpty_twoCell_id_coyoneda exhibits a natural transformation of pullback-preserving endofunctors of Type inducing no 2-cell whatsoever, so any such pseudofunctor must weaken either the morphisms or the 2-cells; that weakening is now carried out (M10-CWA-LAX-TWOCELL): with lax 2-cells, whose comparison of types is a map over the base rather than an equality, strictification is 2-functorial and the offending natural transformation does induce a lax 2-cell. The 1-dimensional half is now settled as well (M10-CWA-STRICT-FULL): strictification is full on the underlying functors but not full on the nose, so the comparison with locally cartesian closed categories must be taken up to isomorphism of types as well as up to weakened 2-cells. The lax 2-cells form hom-categories (M10-CWA-LAX-CATEGORY); horizontal composition for them is still not built."
     milestone: M10
     depends_on:
       - M10-LAMBDA-MODEL-REFLEXIVE
@@ -2404,6 +2404,52 @@ tasks:
       - "python3 scripts/check_closure.py"
       - "lake build Start.CwaLaxTwoCell Start.CwaStrictLax"
 
+  - id: M10-CWA-LAX-CATEGORY
+    priority: P1
+    status: DONE_STRONG
+    track: theory/types
+    title: "The lax 2-cells between morphisms of models form a category"
+    terminal_statement: "Cwa.laxMorCategory : the morphisms of categories with attributes T to S and the lax 2-cells between them form a category; Cwa.laxInclusion : the hom-category of strict 2-cells maps to it by a functor, injective on 2-cells (Cwa.TwoCell.toLax_injective)"
+    latest_evidence: "docs/goal/evidence/M10-CWA-LAX-CATEGORY.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-CWA-LAX-TWOCELL
+    rank: 507
+    exit_criteria:
+      - "The substituted map of extended contexts is proved functorial: it carries identities to identities, composites to composites and transports to transports."
+      - "Substituting along the identity, and along a composite, is computed in terms of the transports along tySub_id and tySub_comp."
+      - "A lax 2-cell is proved to be determined by its natural transformation and its comparison, up to the transport along the equality of the natural transformations."
+      - "Vertical composition of lax 2-cells is proved unital and associative, and the morphisms with the lax 2-cells are assembled into a category."
+      - "The passage from a strict 2-cell to a lax one is proved to preserve identities and vertical composition, hence to be a functor, and to be injective."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.CwaLaxCategory"
+
+  - id: M10-CWA-LAX-WHISKER
+    priority: P1
+    status: DONE_STRONG
+    track: theory/types
+    title: "Whiskering of lax 2-cells by a morphism of models"
+    terminal_statement: "Cwa.LaxTwoCell.whiskerLeft and Cwa.LaxTwoCell.whiskerRight : a lax 2-cell is whiskered by a morphism of categories with attributes on either side, functorially in the 2-cell (Cwa.LaxTwoCell.whiskerLeft_id, whiskerLeft_vcomp, whiskerRight_id, whiskerRight_vcomp)"
+    latest_evidence: "docs/goal/evidence/M10-CWA-LAX-WHISKER.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-CWA-LAX-CATEGORY
+    rank: 509
+    exit_criteria:
+      - "The image under a morphism of models of a map of extended contexts over the base is defined and proved to lie over the base."
+      - "That image is proved functorial and to carry transports to transports."
+      - "A morphism of models is proved to carry the substituted map of extended contexts to the substituted map of the image, up to the transports identifying the image of a substituted type."
+      - "A lax 2-cell is whiskered by a morphism of models on the left and on the right."
+      - "Both whiskerings are proved to preserve the identity lax 2-cell and vertical composition."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.CwaLaxWhisker"
+
   - id: M10-ASSEMBLY-COLIMITS
     priority: P1
     status: DONE_STRONG
@@ -2800,3 +2846,73 @@ tasks:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
       - "lake build"
+
+  - id: M11-REDUCTION-SPLIT
+    priority: P2
+    status: DONE_STRONG
+    track: theory/consolidation
+    title: "Split the Church encodings out of the confluence module"
+    terminal_statement: "Start/Reduction.lean : the confluence of beta reduction only, with the Church numerals, the combinators and LambdaComputable moved to Start/ChurchCombinators.lean and every client importing both"
+    latest_evidence: "docs/goal/evidence/M11-REDUCTION-SPLIT.md"
+    open_boundary: ""
+    milestone: M11
+    depends_on:
+      - M11-REWRITING-MIGRATE
+    rank: 720
+    exit_criteria:
+      - "The Church numerals, the combinators I, K, S, pair, fst, snd, succ, fix and LambdaComputable are defined in a module of their own."
+      - "Start/Reduction.lean keeps the confluence development and nothing else."
+      - "Every module that used the moved declarations imports the new module, and no public name changes."
+      - "Both project gates still pass and the library still builds."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.ChurchCombinators"
+      - "lake build Start.Reduction"
+
+  - id: M11-REDUCESIN-GENERALIZE
+    priority: P2
+    status: DONE_STRONG
+    track: theory/consolidation
+    title: "Derive the step-counted beta reduction from a counted closure of the rewriting interface"
+    terminal_statement: "Rewriting.StarN : the counted reflexive-transitive closure of an arbitrary relation, with Lambda.reducesIn_iff_starN bridging the step-counting beta reduction to it and every lemma of Start/ReducesIn.lean derived through that bridge"
+    latest_evidence: "docs/goal/evidence/M11-REDUCESIN-GENERALIZE.md"
+    open_boundary: ""
+    milestone: M11
+    depends_on:
+      - M11-REWRITING-INTERFACE
+    rank: 730
+    exit_criteria:
+      - "The counted closure of an arbitrary relation is defined in the rewriting interface, with the single step, transitivity with added counts, the tail step, monotonicity, the image along a map, and the equivalence with the uncounted closure."
+      - "The step-counting beta reduction is proved equal to the counted closure of the beta step."
+      - "Every lemma of Start/ReducesIn.lean is derived from the interface through that bridge, with no public name changed."
+      - "Both project gates still pass and the clients of Start/ReducesIn.lean still build."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.ReducesIn"
+      - "lake build Start.SizeExplosion"
+
+  - id: M11-CIRCUIT-SAT-NPC
+    priority: P1
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "CIRCUIT-SAT as a language, and its NP-completeness"
+    terminal_statement: "Complexity.npComplete_CSAT : the words whose gate system is satisfiable form an NP-complete language, with Complexity.polyManyOne_CSAT_SAT and Complexity.polyManyOne_SAT_CSAT the two polynomial-time reductions"
+    latest_evidence: "docs/goal/evidence/M11-CIRCUIT-SAT-NPC.md"
+    open_boundary: ""
+    milestone: M11
+    depends_on: []
+    rank: 740
+    exit_criteria:
+      - "The equation semantics of a gate system is defined for an arbitrary list of gates and proved to agree with circuit satisfiability on well-formed circuits and with the satisfiability of the Tseitin translation on all of them."
+      - "The language CIRCUIT-SAT is defined by reading gates off an arbitrary word, and proved to be circuit satisfiability on codes of well-formed circuits."
+      - "CIRCUIT-SAT is proved to reduce to SAT by the Tseitin term, hence to be in NP."
+      - "A circuit is built from a word by the scan that evaluates the encoded CNF, proved well formed, and proved satisfiable exactly when the word is in SAT."
+      - "The map from a word to the code of that circuit is proved to be a Cobham term, so SAT reduces to CIRCUIT-SAT."
+      - "CIRCUIT-SAT is concluded NP-hard, hence NP-complete."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.CircuitSatLang"
+      - "lake build Start.SatToCircuitCob"

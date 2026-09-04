@@ -529,4 +529,66 @@ theorem confluent_of_newman (ht : Terminating r) (hlc : LocallyConfluent r) : Co
   intro a b c hab hac
   exact confluent_of_sn hlc (ht a) hab hac
 
+/-! ### Counted reductions
+
+The *time* refinement of `Star`: a reduction together with its number of steps.  A client that
+counts steps of its own reduction relation (`Start/ReducesIn.lean` counts β-steps of the untyped
+λ-calculus) keeps its own inductive definition and bridges to `StarN` with one lemma, exactly as
+for `Star`. -/
+
+/-- `StarN r n a b`: `a` reduces to `b` in exactly `n` steps of `r`. -/
+inductive StarN (r : α → α → Prop) : ℕ → α → α → Prop
+  | refl (a : α) : StarN r 0 a a
+  | step {n : ℕ} {a b c : α} : r a b → StarN r n b c → StarN r (n + 1) a c
+
+/-- A single step is a reduction of length one. -/
+theorem StarN.single {a b : α} (h : r a b) : StarN r 1 a b := StarN.step h (StarN.refl b)
+
+/-- Forgetting the step count. -/
+theorem StarN.toStar {n : ℕ} {a b : α} (h : StarN r n a b) : Star r a b := by
+  induction h with
+  | refl a => exact Star.refl a
+  | step hstep _ ih => exact Star.head hstep ih
+
+/-- Step counts add along composition. -/
+theorem StarN.trans {m n : ℕ} {a b c : α} (h₁ : StarN r m a b) (h₂ : StarN r n b c) :
+    StarN r (m + n) a c := by
+  induction h₁ with
+  | refl a => simpa using h₂
+  | @step m' _ _ _ hstep _ ih =>
+      have : StarN r (m' + n + 1) _ c := StarN.step hstep (ih h₂)
+      simpa [Nat.succ_add] using this
+
+/-- Appending one step at the end. -/
+theorem StarN.tail {n : ℕ} {a b c : α} (h : StarN r n a b) (hbc : r b c) : StarN r (n + 1) a c :=
+  h.trans (StarN.single hbc)
+
+/-- Every reduction has a step count. -/
+theorem exists_starN_of_star {a b : α} (h : Star r a b) : ∃ n : ℕ, StarN r n a b := by
+  induction h with
+  | refl => exact ⟨0, StarN.refl a⟩
+  | tail _ hbc ih =>
+      obtain ⟨n, hn⟩ := ih
+      exact ⟨n + 1, hn.tail hbc⟩
+
+/-- `Star` is `StarN` with the step count forgotten. -/
+theorem star_iff_exists_starN {a b : α} : Star r a b ↔ ∃ n : ℕ, StarN r n a b :=
+  ⟨exists_starN_of_star, fun ⟨_, h⟩ => h.toStar⟩
+
+/-- A counted reduction along a larger relation, with the same count. -/
+theorem StarN.mono {r' : α → α → Prop} (h : ∀ a b, r a b → r' a b) {n : ℕ} {a b : α}
+    (hab : StarN r n a b) : StarN r' n a b := by
+  induction hab with
+  | refl a => exact StarN.refl a
+  | step hstep _ ih => exact StarN.step (h _ _ hstep) ih
+
+/-- The image of a counted reduction under a map that turns steps into steps — this is what gives
+the congruence rules of a syntactic reduction relation their step counts. -/
+theorem StarN.map {β : Type*} {s : β → β → Prop} (f : α → β)
+    (hf : ∀ a b : α, r a b → s (f a) (f b)) {n : ℕ} {a b : α} (hab : StarN r n a b) :
+    StarN s n (f a) (f b) := by
+  induction hab with
+  | refl a => exact StarN.refl (f a)
+  | step hstep _ ih => exact StarN.step (hf _ _ hstep) ih
+
 end Rewriting

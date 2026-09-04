@@ -12,6 +12,7 @@ Extracted from `Start/Basic.lean` as part of the modular split.
 import Start.Tactics
 import Start.Syntax
 import Start.Reduction
+import Start.ChurchCombinators
 import Start.Encoding
 import Mathlib.Computability.Partrec
 import Mathlib.Computability.PartrecCode

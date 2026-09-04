@@ -8,6 +8,7 @@ depending on internal proof details.
 
 import Start.Syntax
 import Start.Reduction
+import Start.ChurchCombinators
 import Start.Church
 import Start.EvalSound
 import Start.Arithmetic

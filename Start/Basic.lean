@@ -35,6 +35,7 @@ The later modules (`Start.WeakHead`, `Start.Standardization`, `Start.Divergence`
 import Start.Tactics
 import Start.Syntax
 import Start.Reduction
+import Start.ChurchCombinators
 import Start.Church
 import Start.Encoding
 import Start.CodeOps

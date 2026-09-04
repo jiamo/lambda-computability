@@ -1,13 +1,14 @@
 /-
-Reduction theory: single-step, parallel, multi-step reduction.
-Diamond property, strip lemma, confluence (Church-Rosser).
-Church numerals, combinators, LambdaComputable.
-Extracted from Start/Basic.lean following LACI-style modularization.
+Reduction theory of the untyped λ-calculus: single-step, parallel and multi-step reduction,
+the full development, the diamond property, the strip lemma and confluence (Church–Rosser).
+
+Extracted from `Start/Basic.lean` following LACI-style modularization.  The Church numerals,
+the standard combinators and `LambdaComputable`, which used to live here as well, are in
+`Start/ChurchCombinators.lean`: they are encodings rather than part of the confluence argument.
 -/
 
 import Start.Rewriting
 import Start.Syntax
-import Mathlib.Computability.Partrec
 
 set_option maxRecDepth 4000
 
@@ -54,17 +55,6 @@ theorem Lambda.step_imp_step_p {t t' : Lambda} (h : Lambda.step t t') : Lambda.s
   | app_left t1 t1' t2 h ih => exact Lambda.step_p.app t1 t1' t2 t2 ih (Lambda.step_p_refl t2)
   | app_right t1 t2 t2' h ih => exact Lambda.step_p.app t1 t1 t2 t2' (Lambda.step_p_refl t1) ih
   | lam t t' h ih => exact Lambda.step_p.lam t t' ih
-
-------------------------------------------------------------------------
--- Church numerals
-------------------------------------------------------------------------
-
-/-- Church numeral for n -/
-def Lambda.church (n : ℕ) : Lambda :=
-  let f := Lambda.var 1
-  let x := Lambda.var 0
-  let body := (List.range n).foldl (fun t _ => Lambda.app f t) x
-  Lambda.lam (Lambda.lam body)
 
 ------------------------------------------------------------------------
 -- Reflexive-transitive closure
@@ -301,42 +291,5 @@ theorem Lambda.confluence_theorem : Lambda.Confluence := by
       Lambda.step_imp_step_p (fun h => Lambda.reduces_iff_star.1 (Lambda.step_p_imp_reduces h))
       (Lambda.reduces_iff_star.1 h1) (Lambda.reduces_iff_star.1 h2)
   exact ⟨t3, Lambda.reduces_iff_star.2 h3, Lambda.reduces_iff_star.2 h4⟩
-
-------------------------------------------------------------------------
--- Computability definition
-------------------------------------------------------------------------
-
-/-- A partial function f : ℕ →. ℕ is Lambda-computable if there exists a term F such that
-    for all n, if f(n) is defined and equals m, then F (church n) reduces to (church m). -/
-def LambdaComputable (f : ℕ →. ℕ) : Prop :=
-  ∃ F : Lambda, ∀ n m, f n = Part.some m ↔ Lambda.reduces (Lambda.app F (Lambda.church n))
-      (Lambda.church m)
-
-------------------------------------------------------------------------
--- Standard combinators
-------------------------------------------------------------------------
-
-def Lambda.I : Lambda := Lambda.lam (Lambda.var 0)
-def Lambda.K : Lambda := Lambda.lam (Lambda.lam (Lambda.var 1))
-def Lambda.S : Lambda :=
-  Lambda.lam (Lambda.lam (Lambda.lam (Lambda.app (Lambda.app (Lambda.var 2) (Lambda.var 0))
-      (Lambda.app (Lambda.var 1) (Lambda.var 0)))))
-
-def Lambda.pair : Lambda :=
-  Lambda.lam (Lambda.lam (Lambda.lam (Lambda.app (Lambda.app (Lambda.var 0) (Lambda.var 2))
-      (Lambda.var 1))))
-def Lambda.fst : Lambda :=
-  Lambda.lam (Lambda.app (Lambda.var 0) (Lambda.lam (Lambda.lam (Lambda.var 1))))
-def Lambda.snd : Lambda :=
-  Lambda.lam (Lambda.app (Lambda.var 0) (Lambda.lam (Lambda.lam (Lambda.var 0))))
-
-def Lambda.succ : Lambda :=
-  Lambda.lam (Lambda.lam (Lambda.lam (Lambda.app (Lambda.var 1) (Lambda.app (Lambda.app (Lambda.var
-      2) (Lambda.var 1)) (Lambda.var 0)))))
-
-/-- Y combinator: λ f. (λ x. f (x x)) (λ x. f (x x)) -/
-def Lambda.fix : Lambda :=
-  let omega := Lambda.lam (Lambda.app (Lambda.var 1) (Lambda.app (Lambda.var 0) (Lambda.var 0)))
-  Lambda.lam (Lambda.app omega omega)
 
 end

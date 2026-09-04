@@ -13,6 +13,7 @@ Extracted from `Start/Basic.lean` as part of the modular split.
 import Start.Tactics
 import Start.Syntax
 import Start.Reduction
+import Start.ChurchCombinators
 import Start.Church
 import Start.Encoding
 import Start.CodeOps

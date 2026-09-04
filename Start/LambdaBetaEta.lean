@@ -23,6 +23,7 @@ fail to be confluent: there the abstraction carries a domain annotation which β
 
 import Start.LambdaEta
 import Start.Reduction
+import Start.ChurchCombinators
 
 set_option relaxedAutoImplicit false
 set_option autoImplicit false

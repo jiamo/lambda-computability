@@ -30,12 +30,15 @@ import Start.MyhillIso
 import Start.CircuitShift
 import Start.CobhamShift
 import Start.CookLevinNPHard
+import Start.SatToCircuitCob
 import Start.CwaBiInitial
 import Start.CwaLcccOfPi
 import Start.CwaStrictFunctor
 import Start.CwaStrictSection
 import Start.CwaStrictRigid
 import Start.CwaStrictLax
+import Start.CwaLaxCategory
+import Start.CwaLaxWhisker
 import Start.CwaStrictFull
 import Start.CwaTwoCellUniv
 import Start.LambdaPiTypeUnique
@@ -265,10 +268,15 @@ program's running time.
 #check @Complexity.levinSearch_sound
 #check @Complexity.levin_optimal
 
-/-! ## Complexity: `SAT` is `NP`-complete, and P-uniform circuits
+/-! ## Complexity: `SAT` and `CIRCUIT-SAT` are `NP`-complete, and P-uniform circuits
 
 `Start/CookLevinNPHard.lean` is the Cook–Levin theorem in the form the library uses: `SAT` is
 `NP`-hard, hence `NP`-complete, and `P = NP` iff `SAT ∈ P`.
+
+`Start/CircuitSystem.lean`, `Start/CircuitSatLang.lean`, `Start/SatToCircuit.lean` and
+`Start/SatToCircuitCob.lean` add a second `NP`-complete problem, `CIRCUIT-SAT`, with reductions in
+both directions: the Tseitin translation reduces it to `SAT`, and the circuit built by the same
+right-to-left scan that evaluates a `CNF` reduces `SAT` to it.
 
 The remaining modules feed the reduction: renumbering variables of an encoded `CNF`
 (`Start/CobhamShift.lean`, `Start/CircuitShift.lean`), and the P-uniformity of the circuit
@@ -279,6 +287,12 @@ finite-state machines and Turing machines.
 #check @Complexity.npHard_SAT
 #check @Complexity.npComplete_SAT
 #check @Complexity.peqNP_iff_inP_SAT
+#check @Complexity.CSAT_encCirc_wf
+#check @Complexity.polyManyOne_CSAT_SAT
+#check @Complexity.Sat.csat_satC_iff
+#check @Complexity.Sat.eval_satCircTerm
+#check @Complexity.polyManyOne_SAT_CSAT
+#check @Complexity.npComplete_CSAT
 #check @Complexity.Sat.SAT_eval_shiftTerm
 #check @Complexity.Sat.decode_eval_shiftTerm
 #check @Complexity.CircCode.eval_shiftCircTerm
@@ -872,6 +886,26 @@ natural transformation of pullback-preserving functors induces a lax 2-cell
 `Cwa.laxTwoCellOfNatTrans_comp`), so strictification is 2-functorial for the lax 2-cells; in
 particular `Cwa.coyonedaConst`, which admits no strict 2-cell, does induce a lax one
 (`Cwa.nonempty_laxTwoCell_id_coyoneda`).
+
+`Start/CwaLaxCategory.lean` checks that the lax 2-cells really organize the morphisms of models
+into a category: vertical composition of lax 2-cells is associative and unital
+(`Cwa.LaxTwoCell.vcomp_assoc`, `Cwa.LaxTwoCell.id_vcomp`, `Cwa.LaxTwoCell.vcomp_id`), so the
+morphisms `T ⟶ S` and the lax 2-cells between them form a category (`Cwa.laxMorCategory`), and the
+passage from a strict 2-cell to a lax one is an injective functor out of the hom-category of
+strict 2-cells (`Cwa.laxInclusion`, `Cwa.TwoCell.toLax_injective`).  The proofs run through the
+functoriality of the substituted map of extended contexts (`Cwa.subOver_id`, `Cwa.subOver_comp`,
+`Cwa.subOver_subOver`), which is the lax replacement for the composition of the canonical maps
+`Cwa.substCompare_comp` used by the strict 2-cells.
+
+`Start/CwaLaxWhisker.lean` adds the horizontal direction: a lax 2-cell is whiskered by a morphism
+of models on either side (`Cwa.LaxTwoCell.whiskerLeft`, `Cwa.LaxTwoCell.whiskerRight`), and both
+whiskerings are functorial in the 2-cell (`Cwa.LaxTwoCell.whiskerLeft_id`,
+`Cwa.LaxTwoCell.whiskerLeft_vcomp`, `Cwa.LaxTwoCell.whiskerRight_id`,
+`Cwa.LaxTwoCell.whiskerRight_vcomp`).  Whiskering on the right transports the comparison through
+the morphism, which works because a morphism of models carries the substituted map of extended
+contexts to the substituted map of the image (`Cwa.morOver_subOver`).  The interchange law is not
+claimed: for lax 2-cells it would ask the comparison of one 2-cell to be natural in the component
+of the other, which is not part of the data.
 -/
 
 #check @Cwa.Model.ctx
@@ -891,6 +925,20 @@ particular `Cwa.coyonedaConst`, which admits no strict 2-cell, does induce a lax
 #check @Cwa.laxTwoCellOfNatTrans_id
 #check @Cwa.laxTwoCellOfNatTrans_comp
 #check @Cwa.nonempty_laxTwoCell_id_coyoneda
+#check @Cwa.subOver_comp
+#check @Cwa.subOver_subOver
+#check @Cwa.LaxTwoCell.id_vcomp
+#check @Cwa.LaxTwoCell.vcomp_id
+#check @Cwa.LaxTwoCell.vcomp_assoc
+#check @Cwa.laxMorCategory
+#check @Cwa.laxInclusion
+#check @Cwa.TwoCell.toLax_injective
+#check @Cwa.morOver
+#check @Cwa.morOver_subOver
+#check @Cwa.LaxTwoCell.whiskerLeft
+#check @Cwa.LaxTwoCell.whiskerRight
+#check @Cwa.LaxTwoCell.whiskerLeft_vcomp
+#check @Cwa.LaxTwoCell.whiskerRight_vcomp
 
 /-!
 ### How far strictification is from an equivalence: fullness
