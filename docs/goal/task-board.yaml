@@ -1,7 +1,7 @@
 version: 2
 source_protocol: docs/goal/goal-prompt.md
 active_milestone: M10
-milestone_order: ["M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10"]
+milestone_order: ["M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10", "M11"]
 tasks:
   - id: M1-BOUNDARY-SORRY-CLOSURE
     priority: P0
@@ -1959,7 +1959,7 @@ tasks:
     title: "Two-cells between morphisms of categories with attributes, and the bicategory of models"
     terminal_statement: "Cwa.CModel.instBicategory : Bicategory CModel, together with LambdaPiBiInitial.subsingleton_twoCell_mor and LambdaPiBiInitial.nonempty_iso_mor_iff : the hom-category out of the syntactic lambda-Pi model into a model with injective Pi is a preorder, and any two interpretations are isomorphic exactly when the empty context is terminal"
     latest_evidence: "docs/goal/evidence/M10-CWA-BICATEGORY.md"
-    open_boundary: "The sufficiency half is now proved for the morphisms of models of lambda-Pi (M10-LAMBDAPI-SELF-INITIAL): every such 1-cell out of the syntax is isomorphic to the canonical interpretation, and between two of them there is exactly one 2-cell. What is still not claimed is bi-initiality in the 2-category of all coherent models - it is in fact false there (not_biInitial_syntacticCModel), a model need not have any types and the empty context need not be terminal - and the pseudofunctors relating models with Pi to locally cartesian closed categories, with their inverse up to equivalence, are not constructed. One half of that last item is now settled negatively (M10-CWA-STRICT-RIGID): with these strict morphisms and these 2-cells the strictification of a category with pullbacks cannot be made 2-functorial at all, since Cwa.isEmpty_twoCell_id_coyoneda exhibits a natural transformation of pullback-preserving endofunctors of Type inducing no 2-cell whatsoever, so any such pseudofunctor must weaken either the morphisms or the 2-cells. The 1-dimensional half is now settled as well (M10-CWA-STRICT-FULL): strictification is full on the underlying functors but not full on the nose, so the comparison with locally cartesian closed categories must be taken up to isomorphism of types as well as up to weakened 2-cells."
+    open_boundary: "The sufficiency half is now proved for the morphisms of models of lambda-Pi (M10-LAMBDAPI-SELF-INITIAL): every such 1-cell out of the syntax is isomorphic to the canonical interpretation, and between two of them there is exactly one 2-cell; the existence half is proved too (M10-LAMBDAPI-MODELHOM), the interpretation itself being a morphism of models, so the syntactic model is bi-initial among the models of lambda-Pi with injective products (LambdaPiInitial.biInitial_syntacticModel). What is still not claimed is bi-initiality in the 2-category of all coherent models - it is in fact false there (not_biInitial_syntacticCModel), a model need not have any types and the empty context need not be terminal - and the pseudofunctors relating models with Pi to locally cartesian closed categories, with their inverse up to equivalence, are not constructed. One half of that last item is now settled negatively (M10-CWA-STRICT-RIGID): with these strict morphisms and these 2-cells the strictification of a category with pullbacks cannot be made 2-functorial at all, since Cwa.isEmpty_twoCell_id_coyoneda exhibits a natural transformation of pullback-preserving endofunctors of Type inducing no 2-cell whatsoever, so any such pseudofunctor must weaken either the morphisms or the 2-cells; that weakening is now carried out (M10-CWA-LAX-TWOCELL): with lax 2-cells, whose comparison of types is a map over the base rather than an equality, strictification is 2-functorial and the offending natural transformation does induce a lax 2-cell. The 1-dimensional half is now settled as well (M10-CWA-STRICT-FULL): strictification is full on the underlying functors but not full on the nose, so the comparison with locally cartesian closed categories must be taken up to isomorphism of types as well as up to weakened 2-cells."
     milestone: M10
     depends_on:
       - M10-LAMBDA-MODEL-REFLEXIVE
@@ -1996,6 +1996,30 @@ tasks:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
       - "lake build Start.LambdaPiSelfMor"
+
+  - id: M10-LAMBDAPI-MODELHOM
+    priority: P1
+    status: DONE_STRONG
+    track: theory/semantics
+    title: "The interpretation of lambda-Pi is a morphism of models, and the syntax is bi-initial"
+    terminal_statement: "LambdaPiInitial.modelHom : the comparison morphism out of the syntactic model of lambda-Pi is a LambdaPi.ModelHom into any model with injective products; LambdaPiInitial.biInitial_syntacticModel : such a morphism exists and between the 1-cells underlying any two of them there is exactly one 2-cell"
+    latest_evidence: "docs/goal/evidence/M10-LAMBDAPI-MODELHOM.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-LAMBDAPI-SELF-INITIAL
+    rank: 357
+    exit_criteria:
+      - "The section defined by the generic argument is proved to undo the action of the display map on extended contexts."
+      - "Applying the weakening of a function to the generic argument is proved to return the generic application, as a value."
+      - "The raw term obtained by applying the shift of a term to the variable 0 is proved to denote the generic application of what that term denotes."
+      - "Application is proved to be preserved by the comparison morphism out of the syntactic model."
+      - "The comparison morphism is packaged as a morphism of models of lambda-Pi, so the syntax is weakly initial."
+      - "Bi-initiality of the syntactic model among the models with injective products is stated and proved: existence of a morphism of models together with contractibility of the hom-category."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.LambdaPiInitialApp Start.LambdaPiInitialModelHom"
 
   - id: M10-CWA-STRICT-FUNCTOR
     priority: P1
@@ -2356,6 +2380,30 @@ tasks:
       - "python3 scripts/check_closure.py"
       - "lake build Start.CwaStrictRigid"
 
+  - id: M10-CWA-LAX-TWOCELL
+    priority: P1
+    status: DONE_STRONG
+    track: theory/types
+    title: "Lax 2-cells between morphisms of models, for which strictification is 2-functorial"
+    terminal_statement: "Cwa.laxTwoCellOfNatTrans, Cwa.laxTwoCellOfNatTrans_id and Cwa.laxTwoCellOfNatTrans_comp : a natural transformation of pullback-preserving functors induces, functorially, a lax 2-cell between the morphisms of models it induces; Cwa.nonempty_laxTwoCell_id_coyoneda : the natural transformation admitting no strict 2-cell admits a lax one"
+    latest_evidence: "docs/goal/evidence/M10-CWA-LAX-TWOCELL.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-CWA-STRICT-RIGID
+    rank: 505
+    exit_criteria:
+      - "A map of extended contexts over a context is substituted along a morphism by the universal property of the extension square, with its two defining equations."
+      - "Lax 2-cells are defined, with the equality of types of a 2-cell replaced by a comparison map over the base, and are proved to be determined by their natural transformation and their comparison."
+      - "Every strict 2-cell is exhibited as a lax one, and lax 2-cells are given identities and vertical composition."
+      - "A natural transformation of pullback-preserving functors is proved to induce a lax 2-cell between the induced morphisms of models."
+      - "That passage is proved functorial: the identity induces the identity lax 2-cell and a composite the vertical composite."
+      - "The natural transformation of M10-CWA-STRICT-RIGID, which admits no strict 2-cell, is exhibited as inducing a lax one."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.CwaLaxTwoCell Start.CwaStrictLax"
+
   - id: M10-ASSEMBLY-COLIMITS
     priority: P1
     status: DONE_STRONG
@@ -2656,3 +2704,99 @@ tasks:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
       - "lake build Start.CwaStrictFull"
+
+  - id: M10-LAMBDAPI-ETA-POSTPONE
+    priority: P1
+    status: DONE_STRONG
+    track: theory/types
+    title: "Eta postponement for lambda-Pi, and strong normalization of beta-eta on typable terms"
+    terminal_statement: "LambdaPi.betaEtaRed_iff : beta-eta reduction of lambda-Pi is beta reduction followed by eta reduction, and LambdaPi.Typing.betaEta_sn : a typable term admits no infinite beta-eta reduction"
+    latest_evidence: "docs/goal/evidence/M10-LAMBDAPI-ETA-POSTPONE.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-LAMBDAPI-ETA
+      - M9-LAMBDAPI-SN
+    rank: 605
+    exit_criteria:
+      - "Parallel eta reduction of lambda-Pi is defined, with reflexivity, the inclusion of one-step eta, and the inclusion into eta reduction."
+      - "Parallel eta reduction is proved stable under renaming and under substitution on both sides."
+      - "A term whose parallel eta reduct is an abstraction is proved to make an application beta reduce, in at least one step, to a substitution instance of a term that parallel eta reduces to the body."
+      - "Local postponement is proved: a parallel eta step followed by a beta step is at least one beta step followed by a parallel eta step."
+      - "Beta-eta reduction is proved to factor as beta reduction followed by eta reduction."
+      - "A beta strongly normalizing term is proved beta-eta strongly normalizing, by an outer induction on beta accessibility and an inner induction on the size."
+      - "Strong normalization of beta-eta for typable terms is concluded, together with the existence of a beta-eta normal form."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.LambdaPiEtaPostpone"
+
+  - id: M10-LAMBDAPI-ETA-CONFLUENT
+    priority: P1
+    status: DONE_STRONG
+    track: theory/types
+    title: "Church-Rosser for lambda-Pi modulo the domain annotations"
+    terminal_statement: "LambdaPi.betaEtaConv_iff_join : two raw terms are beta-eta convertible exactly when their annotation erasures have a common beta-eta reduct, with LambdaPi.erased_betaEta_church_rosser : beta-eta reduction is confluent on erased terms"
+    latest_evidence: "docs/goal/evidence/M10-LAMBDAPI-ETA-CONFLUENT.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-LAMBDAPI-ETA-POSTPONE
+    rank: 610
+    exit_criteria:
+      - "Erasure of the domain annotations is defined, together with the predicate of being erased, and proved to commute with renaming, substitution and instantiation."
+      - "Erasedness is proved preserved by beta and by eta reduction."
+      - "Beta and eta are proved to strongly commute on erased terms, with eta steps on one side and at most one beta step on the other."
+      - "Beta and eta are concluded to commute on erased terms, and beta-eta reduction to be confluent there, using eta postponement."
+      - "Every raw term is proved beta-eta convertible to its erasure, using congruence of beta-eta conversion and the fact that conversion forgets the annotation."
+      - "Two raw terms are proved beta-eta convertible exactly when their erasures have a common beta-eta reduct."
+      - "Distinct sorts are proved not beta-eta convertible, a sort is proved never beta-eta convertible to a product, and products are proved injective in both arguments for beta-eta conversion."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.LambdaPiEtaConfluent"
+
+  - id: M11-REWRITING-INTERFACE
+    priority: P2
+    status: DONE_STRONG
+    track: theory/consolidation
+    title: "One abstract rewriting interface, replacing the per-calculus confluence combinators"
+    terminal_statement: "Start/Rewriting.lean : for an arbitrary relation, the reflexive-transitive closure and the generated conversion, with diamond implies confluence, strong commutation implies commutation, Hindley-Rosen for the union, postponement, Newman, and termination from a measure"
+    latest_evidence: "docs/goal/evidence/M11-REWRITING-INTERFACE.md"
+    open_boundary: ""
+    milestone: M11
+    depends_on: []
+    rank: 700
+    exit_criteria:
+      - "The reflexive-transitive closure and the generated conversion of an arbitrary relation are defined, with transitivity, the head and single-step inclusions, and the splitting of a nonempty reduction at the head."
+      - "The diamond property is proved to imply the strip lemma and confluence of the closure, and confluence is proved to imply that conversion is joinability."
+      - "Strong commutation is proved to imply commutation of the closures, and two confluent commuting relations are proved to have a confluent union."
+      - "Local postponement is proved to imply postponement of the closures."
+      - "A relation that strictly decreases a natural-number measure is proved terminating, and termination is proved to transfer to a union along postponement."
+      - "Newman's lemma is proved."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.Rewriting"
+
+  - id: M11-REWRITING-MIGRATE
+    priority: P2
+    status: DONE_STRONG
+    track: theory/consolidation
+    title: "Migrate the calculi onto the abstract rewriting interface"
+    terminal_statement: "Each of LambdaPiEtaConfluent, LambdaPiEtaPostpone, LambdaBetaEta, LambdaEtaPostpone, SystemTConfluence, SystemFCConfluence, Reduction and LambdaPi obtains its generic rewriting lemmas from Start/Rewriting.lean through a single bridging lemma, with every public name and every gate unchanged"
+    latest_evidence: "docs/goal/evidence/M11-REWRITING-MIGRATE.md"
+    open_boundary: ""
+    milestone: M11
+    depends_on:
+      - M11-REWRITING-INTERFACE
+    rank: 710
+    exit_criteria:
+      - "Each client module proves one bridging lemma identifying its own inductive closure with the closure of the interface."
+      - "The generic confluence, commutation, postponement and termination lemmas of the client modules are replaced by instances of the interface, one module at a time."
+      - "Every public declaration name of the client modules is preserved, so that no downstream module changes."
+      - "The whole library still builds with no error and no linter warning, and both project gates still pass."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build"

@@ -13,6 +13,8 @@ type presented by `p` with that classifying map.  Because substitution in the st
 acts on the classifying map alone, decoding is stable under substitution *on the nose* — the
 coherence problem does not reappear.
 
+* `CwaUniv.tmSectionEquiv` — in the strictified model of any category with pullbacks, a term is a
+  section of the generic family of the presentation, i.e. its code;
 * `CwaUniv.uTy` — the type of codes: the local universe `p₀ : 𝒰 ⟶ ⊤` with the unique classifying
   map, so that its terms are exactly the maps `Γ ⟶ 𝒰` (`CwaUniv.codeOf`);
 * `CwaUniv.universeOfHom` — **every morphism of a category with pullbacks and a terminal object is
@@ -61,6 +63,22 @@ theorem codeOf_tmCast {Γ : C} {A A' : LuTy Γ} (h : A = A')
     codeOf (Cwa.tmCast h a) = codeOf a ≫ eqToHom (congrArg LuTy.total h) := by
   cases h
   simp [codeOf]
+
+/-- **A term of the strictified model is a section of the generic family**: it is determined by
+its code, a map into the total space of the presentation lying over the classifying map. -/
+noncomputable def tmSectionEquiv {Γ : C} (A : LuTy Γ) :
+    Cwa.Tm (Cwa.ofPullbacks C) Γ A ≃ {f : Γ ⟶ A.total // f ≫ A.proj = A.cls} where
+  toFun a := ⟨codeOf a, by
+    rw [codeOf, Category.assoc, ← LuTy.disp_cls, ← Category.assoc, a.2, Category.id_comp]⟩
+  invFun f := ⟨pullback.lift (𝟙 Γ) f.1 (by rw [Category.id_comp, f.2]), pullback.lift_fst _ _ _⟩
+  left_inv a := by
+    refine Subtype.ext (pullback.hom_ext ?_ ?_)
+    · exact (pullback.lift_fst _ _ _).trans a.2.symm
+    · exact pullback.lift_snd _ _ _
+  right_inv f := Subtype.ext (pullback.lift_snd _ _ _)
+
+@[simp] theorem tmSectionEquiv_apply_coe {Γ : C} (A : LuTy Γ)
+    (a : Cwa.Tm (Cwa.ofPullbacks C) Γ A) : ((tmSectionEquiv A) a : Γ ⟶ A.total) = codeOf a := rfl
 
 variable [HasTerminal C]
 

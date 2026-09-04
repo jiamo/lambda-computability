@@ -191,30 +191,50 @@ theorem etaPar_postpone_step : ∀ {t v : Lambda}, etaPar t v → ∀ {w : Lambd
       refine ⟨Lambda.lam (Lambda.app (Lambda.lift 1 0 m₁) (Lambda.var 0)), ?_, etaPar.eta hm₂⟩
       exact Lambda.reduces_lam (Lambda.reduces_app_left (Lambda.reduces_lift hm₁ 1 0))
 
-/-- A parallel η-step followed by a β-reduction is a β-reduction followed by a parallel η-step. -/
+/-- **Bridge to the abstract rewriting interface** (`Start/Rewriting.lean`): η-reduction is the
+reflexive–transitive closure of an η-step. -/
+theorem etaReduces_iff_star {t u : Lambda} :
+    etaReduces t u ↔ Rewriting.Star etaStep t u := by
+  constructor
+  · intro h
+    induction h with
+    | refl => exact Rewriting.Star.refl t
+    | tail _ hs ih => exact ih.tail hs
+  · intro h
+    induction h with
+    | refl => exact etaReduces.refl t
+    | tail _ hs ih => exact ih.tail hs
+
+/-- A parallel η-step followed by a β-reduction is a β-reduction followed by a parallel η-step;
+an instance of `Rewriting.postpone_par_star`. -/
 theorem etaPar_postpone_reduces : ∀ {v w : Lambda}, Lambda.reduces v w → ∀ {t : Lambda},
     etaPar t v → ∃ m, Lambda.reduces t m ∧ etaPar m w := by
-  intro v w h
-  induction h with
-  | refl v => intro t ht; exact ⟨t, Lambda.reduces.refl t, ht⟩
-  | step _ v₁ _ hs _ ih =>
-      intro t ht
-      obtain ⟨m₁, hm₁, hm₂⟩ := etaPar_postpone_step ht hs
-      obtain ⟨m, hm, hmw⟩ := ih hm₂
-      exact ⟨m, Lambda.reduces_trans hm₁ hm, hmw⟩
+  intro v w h t ht
+  obtain ⟨m, hm, hmw⟩ :=
+    Rewriting.postpone_par_star
+      (fun k₁ k₂ => by
+        obtain ⟨m, hm, hmw⟩ := etaPar_postpone_step k₁ k₂
+        exact ⟨m, Lambda.reduces_iff_star.1 hm, hmw⟩)
+      (Lambda.reduces_iff_star.1 h) ht
+  exact ⟨m, Lambda.reduces_iff_star.2 hm, hmw⟩
 
 /-- **η-postponement**: an η-reduction followed by a β-reduction can be rearranged into a
-β-reduction followed by an η-reduction. -/
+β-reduction followed by an η-reduction.  An instance of `Rewriting.postpones_of_par`, with
+parallel η-reduction as the parallel relation. -/
 theorem etaReduces_postpone : ∀ {t v : Lambda}, etaReduces t v → ∀ {w : Lambda},
     Lambda.reduces v w → ∃ m, Lambda.reduces t m ∧ etaReduces m w := by
-  intro t v h
-  induction h with
-  | refl => intro w hw; exact ⟨w, hw, etaReduces.refl w⟩
-  | @tail v₀ v _ hs ih =>
-      intro w hw
-      obtain ⟨m₁, hm₁, hm₂⟩ := etaPar_postpone_reduces hw hs.toEtaPar
-      obtain ⟨m, hm, hmm₁⟩ := ih hm₁
-      exact ⟨m, hm, hmm₁.trans hm₂.toEtaReduces⟩
+  have hpost : Rewriting.Postpones etaStep Lambda.step :=
+    Rewriting.postpones_of_par (p := etaPar) etaStep.toEtaPar
+      (fun h => etaReduces_iff_star.1 h.toEtaReduces)
+      (fun k₁ k₂ => by
+        obtain ⟨m, hm, hmw⟩ := etaPar_postpone_step k₁ k₂
+        exact ⟨m, Lambda.reduces_iff_star.1 hm, hmw⟩)
+  intro t v h w hw
+  obtain ⟨m, hm, hmw⟩ :=
+    Rewriting.postpone_par_star (p := Rewriting.Star etaStep)
+      (fun k₁ k₂ => hpost k₁ k₂)
+      (Lambda.reduces_iff_star.1 hw) (etaReduces_iff_star.1 h)
+  exact ⟨m, Lambda.reduces_iff_star.2 hm, etaReduces_iff_star.2 hmw⟩
 
 /-! ### βη-reduction factors as β then η -/
 

@@ -5,6 +5,7 @@ Church numerals, combinators, LambdaComputable.
 Extracted from Start/Basic.lean following LACI-style modularization.
 -/
 
+import Start.Rewriting
 import Start.Syntax
 import Mathlib.Computability.Partrec
 
@@ -80,6 +81,22 @@ theorem Lambda.reduces_trans {t1 t2 t3 : Lambda} (h1 : Lambda.reduces t1 t2) (h2
   induction h1 with
   | refl => exact h2
   | step t1 t2 t2' h_step _ ih => exact Lambda.reduces.step t1 t2 t3 h_step (ih h2)
+
+/-- **Bridge to the abstract rewriting interface** (`Start/Rewriting.lean`): `reduces` is the
+reflexive–transitive closure of `step`.  Everything generic about reduction — the strip lemma,
+confluence, Church–Rosser — is obtained from the interface through this one lemma. -/
+theorem Lambda.reduces_iff_star {t u : Lambda} :
+    Lambda.reduces t u ↔ Rewriting.Star Lambda.step t u := by
+  constructor
+  · intro h
+    induction h with
+    | refl t => exact Rewriting.Star.refl t
+    | step _ _ _ hs _ ih => exact Rewriting.Star.head hs ih
+  · intro h
+    induction h with
+    | refl => exact Lambda.reduces.refl t
+    | tail _ hbc ih => exact Lambda.reduces_trans ih (Lambda.reduces.step _ _ _ hbc
+        (Lambda.reduces.refl _))
 
 ------------------------------------------------------------------------
 -- Parallel reduction lemmas
@@ -260,34 +277,30 @@ theorem Lambda.step_p_confluence {t t1 t2 : Lambda} (h1 : Lambda.step_p t t1) (h
     ∃ t3, Lambda.step_p t1 t3 ∧ Lambda.step_p t2 t3 :=
   Lambda.step_p_diamond h1 h2
 
-/-- Strip lemma. -/
+/-- Strip lemma, an instance of `Rewriting.strip_of_between`: parallel reduction sits between
+`step` and `reduces` and has the diamond property. -/
 theorem Lambda.strip_lemma {t t1 t2 : Lambda} (hp : Lambda.step_p t t1) (hr : Lambda.reduces t t2) :
     ∃ t3, Lambda.reduces t1 t3 ∧ Lambda.step_p t2 t3 := by
-  induction hr generalizing t1 with
-  | refl =>
-      exact ⟨t1, Lambda.reduces.refl t1, hp⟩
-  | step t t' t2 hs hr' ih =>
-      have hp' := Lambda.step_imp_step_p hs
-      obtain ⟨u, hu1, hu2⟩ := Lambda.step_p_diamond hp hp'
-      obtain ⟨t3, ht3_red, ht3_p⟩ := ih (t1 := u) hu2
-      exact ⟨t3, Lambda.reduces_trans (Lambda.step_p_imp_reduces hu1) ht3_red, ht3_p⟩
+  obtain ⟨t3, h1, h2⟩ :=
+    Rewriting.strip_of_between (fun _ _ _ h₁ h₂ => Lambda.step_p_diamond h₁ h₂)
+      Lambda.step_imp_step_p (fun h => Lambda.reduces_iff_star.1 (Lambda.step_p_imp_reduces h))
+      hp (Lambda.reduces_iff_star.1 hr)
+  exact ⟨t3, Lambda.reduces_iff_star.2 h1, h2⟩
 
 def Lambda.Confluence : Prop :=
   ∀ {t t1 t2 : Lambda}, Lambda.reduces t t1 → Lambda.reduces t t2 → ∃ t3, Lambda.reduces t1 t3 ∧
       Lambda.reduces t2 t3
 
-/-- Confluence of Lambda calculus (Church-Rosser theorem). -/
+/-- Confluence of Lambda calculus (Church-Rosser theorem), an instance of
+`Rewriting.confluent_of_diamond_of_between`. -/
 theorem Lambda.confluence_theorem : Lambda.Confluence := by
   unfold Lambda.Confluence
   intro t t1 t2 h1 h2
-  induction h1 generalizing t2 with
-  | refl =>
-      exact ⟨t2, h2, Lambda.reduces.refl t2⟩
-  | step t t' t1 hs hr ih =>
-      have hp := Lambda.step_imp_step_p hs
-      obtain ⟨u, hu_red, hu_p⟩ := Lambda.strip_lemma hp h2
-      obtain ⟨t3, ht3_1, ht3_2⟩ := ih (t2 := u) hu_red
-      exact ⟨t3, ht3_1, Lambda.reduces_trans (Lambda.step_p_imp_reduces hu_p) ht3_2⟩
+  obtain ⟨t3, h3, h4⟩ :=
+    Rewriting.confluent_of_diamond_of_between (fun _ _ _ h₁ h₂ => Lambda.step_p_diamond h₁ h₂)
+      Lambda.step_imp_step_p (fun h => Lambda.reduces_iff_star.1 (Lambda.step_p_imp_reduces h))
+      (Lambda.reduces_iff_star.1 h1) (Lambda.reduces_iff_star.1 h2)
+  exact ⟨t3, Lambda.reduces_iff_star.2 h3, Lambda.reduces_iff_star.2 h4⟩
 
 ------------------------------------------------------------------------
 -- Computability definition

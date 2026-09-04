@@ -31,9 +31,11 @@ import Start.CircuitShift
 import Start.CobhamShift
 import Start.CookLevinNPHard
 import Start.CwaBiInitial
+import Start.CwaLcccOfPi
 import Start.CwaStrictFunctor
 import Start.CwaStrictSection
 import Start.CwaStrictRigid
+import Start.CwaStrictLax
 import Start.CwaStrictFull
 import Start.CwaTwoCellUniv
 import Start.LambdaPiTypeUnique
@@ -76,12 +78,16 @@ import Start.LambdaBetaEta
 import Start.LambdaEtaPostpone
 import Start.LambdaPiConsistent
 import Start.LambdaPiEta
+import Start.LambdaPiEtaPostpone
+import Start.LambdaPiEtaConfluent
+import Start.Rewriting
 import Start.LambdaPiInfer
 import Start.LambdaPiInitial
 import Start.LambdaPiInitialUniv
 import Start.LambdaPiInterpTransport
 import Start.LambdaPiSelfIso
 import Start.LambdaPiSelfMor
+import Start.LambdaPiInitialModelHom
 import Start.LevinKt
 import Start.LevinSearch
 import Start.OracleCone
@@ -371,6 +377,39 @@ domain annotation, and Nederpelt's term `λ(x : ∗). ((λ(y : □). y) x)` has 
 reducts.  This is why the conversion of the calculus is β-only, and why η can enter only through
 the *typed* conversion of a model.
 
+`Start/LambdaPiEtaPostpone.lean`: **η can be postponed** — a βη-reduction of `λΠ` is always a
+β-reduction followed by an η-reduction (`LambdaPi.betaEtaRed_iff`).  The proof contracts a whole
+tower of η-expansions at once, through a parallel η-reduction, which is what repairs the local
+diagram that one-step η fails.  Together with β-strong normalization and the fact that an η-step
+shrinks a term, postponement gives **strong normalization of `βη`** on typable terms
+(`LambdaPi.Typing.betaEta_sn`), so every typable term has a βη-normal form.
+
+`Start/LambdaPiEtaConfluent.lean`: the failure of confluence above is *only* about the domain
+annotations.  Erasing every annotation to a fixed dummy sort (`LambdaPi.eraseAnn`), β and η
+strongly commute — the critical case, a β-redex directly under an η-redex, is exactly the one
+Nederpelt's term refutes for arbitrary annotations — hence `βη` is confluent on erased terms
+(`LambdaPi.erased_betaEta_church_rosser`).  Since every term is βη-convertible to its erasure,
+two raw terms are βη-convertible exactly when their erasures have a common βη-reduct
+(`LambdaPi.betaEtaConv_iff_join`): **Church–Rosser holds for `λΠ` modulo annotations**.  The
+consequences the conversion rule needs follow for the η-extended conversion as well: distinct
+sorts stay distinct, no sort is convertible to a product, and products are injective in both
+arguments.
+
+`Start/Rewriting.lean`: the confluence combinators of all the calculi, proved once for an
+arbitrary relation `r : α → α → Prop`.  The reflexive–transitive closure `Rewriting.Star`, the
+transitive closure, the union and the generated conversion, with the closure API; the diamond
+property implies the strip lemma and confluence (`Rewriting.confluent_of_diamond`); for a
+confluent relation conversion is joinability (`Rewriting.conv_iff_joins_of_confluent`); strong
+commutation implies commutation of the closures (`Rewriting.commute_of_stronglyCommute`) and two
+confluent commuting relations have a confluent union — **Hindley–Rosen**
+(`Rewriting.confluent_alt_of_commute`); local postponement through a parallel relation implies
+postponement, so that a mixed reduction factors as `r*` then `s*`
+(`Rewriting.star_alt_iff_of_postpones`); a relation decreasing a natural-number measure terminates,
+and termination transfers to a union along postponement (`Rewriting.sn_alt_of_postponesPlus`); and
+**Newman's lemma**, that a terminating locally confluent relation is confluent
+(`Rewriting.confluent_of_newman`).  A calculus keeps its own inductive closure and needs only a
+bridging lemma `Red t u ↔ Star Step t u` to use all of this.
+
 `Start/LambdaPiModelHom.lean`, `Start/CwaMorVal.lean`, `Start/LambdaPiInterpTransport.lean`:
 **the interpretation is natural in the model** — a morphism of models of `λΠ` (a morphism of the
 underlying categories with attributes preserving the universe, the products over the small types,
@@ -384,10 +423,25 @@ self-interpretation is isomorphic, as a morphism of categories with attributes, 
 (`LambdaPiSelf.selfIso`).  Transported along the naturality of the interpretation, this gives the
 existence half of bi-initiality: every morphism of *models of `λΠ`* out of the syntactic model is
 isomorphic to the canonical interpretation (`LambdaPiSelf.isoModelHom`), and between two such
-1-cells there is exactly one 2-cell (`LambdaPiSelf.nonempty_unique_twoCell_modelHom`).  The
-restriction to structure-preserving 1-cells is necessary:
+1-cells there is exactly one 2-cell (`LambdaPiSelf.nonempty_unique_twoCell_modelHom`).
+
+`Start/LambdaPiInitialApp.lean`, `Start/LambdaPiInitialModelHom.lean`: **the interpretation is
+itself a morphism of models** — application is preserved (`LambdaPiInitial.tmMap_appQ`), the last
+clause a morphism of models asks for, so the comparison morphism out of the syntax is a
+`LambdaPi.ModelHom` (`LambdaPiInitial.modelHom`).  With the contractibility above, the syntactic
+model is **bi-initial** among the models of `λΠ` with injective products
+(`LambdaPiInitial.biInitial_syntacticModel`).  The restriction to structure-preserving 1-cells is
+necessary:
 `LambdaPiBiInitial.not_biInitial_syntacticCModel` shows the syntactic model is not bi-initial among
 all coherent models.
+
+`Start/CwaLcccOfPi.lean`: **the converse of the strictification** — a natural Π-structure on the
+local-universe model `Cwa.ofPullbacks C` of a category with pullbacks makes `C` locally cartesian
+closed (`LcccPullbacks.ofNaturalPiStruct`), so for a category with pullbacks and binary products
+the two structures are equivalent (`Cwa.nonempty_naturalPiStruct_ofPullbacks_iff`).  A morphism is
+a type, a slice object over its domain is a type over the extended context, and the display map of
+their dependent product is the pushforward; naturality of the transposition is the substitution law
+of abstraction.
 
 `Start/CwaPiType.lean`, `Start/CwaTypeModelSigma.lean`, `Start/CwaUnivMorLocal.lean`: the
 set-theoretic models — the local-universe model of `Type u` has a natural Π-structure, the
@@ -420,6 +474,9 @@ pullbacks is a universe in the strictified model.
 #check @LambdaPiSelf.selfIso
 #check @LambdaPiSelf.isoModelHom
 #check @LambdaPiSelf.nonempty_unique_twoCell_modelHom
+#check @LambdaPiInitial.tmMap_appQ
+#check @LambdaPiInitial.modelHom
+#check @LambdaPiInitial.biInitial_syntacticModel
 #check @LcccType.luNaturalPiStruct
 #check @CwaTypeModel.codeSigma
 #check @CwaTypeModel.modelSigma
@@ -805,6 +862,16 @@ other morphism; this forces the two functors to agree on objects and pins the co
 thus discrete, while the natural transformation `Cwa.coyonedaConst` between two
 pullback-preserving endofunctors of `Type` admits no 2-cell at all between the induced morphisms
 of models.
+
+`Start/CwaLaxTwoCell.lean` and `Start/CwaStrictLax.lean` carry out the weakening this forces.  A
+**lax 2-cell** replaces the equality of types of a 2-cell by a map of extended contexts over the
+base; a strict 2-cell is the special case of the transport (`Cwa.TwoCell.toLax`), and lax 2-cells
+still have identities and vertical composition.  For them the 2-dimensional structure survives: a
+natural transformation of pullback-preserving functors induces a lax 2-cell
+(`Cwa.laxTwoCellOfNatTrans`), functorially (`Cwa.laxTwoCellOfNatTrans_id`,
+`Cwa.laxTwoCellOfNatTrans_comp`), so strictification is 2-functorial for the lax 2-cells; in
+particular `Cwa.coyonedaConst`, which admits no strict 2-cell, does induce a lax one
+(`Cwa.nonempty_laxTwoCell_id_coyoneda`).
 -/
 
 #check @Cwa.Model.ctx
@@ -817,6 +884,13 @@ of models.
 #check @Cwa.subsingleton_twoCell_strict
 #check @Cwa.twoCell_strict_self_nat
 #check @Cwa.isEmpty_twoCell_id_coyoneda
+#check @Cwa.LaxTwoCell
+#check @Cwa.TwoCell.toLax
+#check @Cwa.LaxTwoCell.vcomp
+#check @Cwa.laxTwoCellOfNatTrans
+#check @Cwa.laxTwoCellOfNatTrans_id
+#check @Cwa.laxTwoCellOfNatTrans_comp
+#check @Cwa.nonempty_laxTwoCell_id_coyoneda
 
 /-!
 ### How far strictification is from an equivalence: fullness
@@ -1104,3 +1178,28 @@ model of System F, independent of the reducibility-candidate argument of `Start/
 #check @SystemF.Per.sound
 #check @SystemF.Per.dom_interp_of_typing
 #check @SystemF.Per.dom_interp_idTy
+#check @LambdaPi.EtaPar
+#check @LambdaPi.betaEtaRed_iff
+#check @LambdaPi.Typing.betaEta_sn
+#check @LambdaPi.Typing.hasBetaEtaNormalForm
+#check @LambdaPi.erased_step_eta_comm
+#check @LambdaPi.erased_betaEta_church_rosser
+#check @LambdaPi.betaEtaConv_eraseAnn
+#check @LambdaPi.betaEtaConv_iff_join
+#check @LambdaPi.betaEtaConv_sort_inj
+#check @LambdaPi.not_betaEtaConv_sort_pi
+#check @LambdaPi.betaEtaConv_pi_inv
+#check @Rewriting.Star
+#check @Rewriting.Conv
+#check @Rewriting.confluent_of_diamond
+#check @Rewriting.conv_iff_joins_of_confluent
+#check @Rewriting.commute_of_stronglyCommute
+#check @Rewriting.confluent_alt_of_commute
+#check @Rewriting.postpones_of_par
+#check @Rewriting.star_alt_iff_of_postpones
+#check @Rewriting.terminating_of_measure
+#check @Rewriting.sn_alt_of_postponesPlus
+#check @Rewriting.confluent_of_newman
+#check @LuTy.homOverEquivTm
+#check @LcccPullbacks.ofNaturalPiStruct
+#check @Cwa.nonempty_naturalPiStruct_ofPullbacks_iff

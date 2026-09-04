@@ -16,6 +16,7 @@ This file supplies that missing piece, by the classical route:
   is the form in which confluence is used by the adequacy proof of `Start/SystemTDenot.lean`.
 -/
 
+import Start.Rewriting
 import Start.SystemTCanon
 
 set_option relaxedAutoImplicit false
@@ -301,27 +302,34 @@ theorem local_confluence {t u : Tm} (h1 : step t u) :
 -- Newman's lemma
 ------------------------------------------------------------------------
 
-theorem SN.reduces {t u : Tm} (h : SN t) (hr : reduces t u) : SN u := by
-  induction hr with
-  | refl _ => exact h
-  | step hs _ ih => exact ih (h.step hs)
+/-- **Bridge to the abstract rewriting interface** (`Start/Rewriting.lean`): `reduces` is the
+reflexive–transitive closure of `step`, and `SN` is its notion of strong normalization. -/
+theorem reduces_iff_star {t u : Tm} : reduces t u ↔ Rewriting.Star step t u := by
+  constructor
+  · intro h
+    induction h with
+    | refl t => exact Rewriting.Star.refl t
+    | step hs _ ih => exact Rewriting.Star.head hs ih
+  · intro h
+    induction h with
+    | refl => exact reduces.refl t
+    | tail _ hbc ih => exact ih.trans (reduces.step hbc (reduces.refl _))
 
-/-- **Newman's lemma**: a strongly normalizing term is confluent. -/
+theorem SN.reduces {t u : Tm} (h : SN t) (hr : reduces t u) : SN u :=
+  Rewriting.SN.star h (reduces_iff_star.1 hr)
+
+/-- **Newman's lemma**: a strongly normalizing term is confluent.  An instance of
+`Rewriting.confluent_of_sn`, whose hypothesis is exactly `local_confluence`. -/
 theorem confluence {t : Tm} (h : SN t) :
     ∀ {u v : Tm}, reduces t u → reduces t v → ∃ w, reduces u w ∧ reduces v w := by
-  induction h with
-  | intro t _ ih =>
-      intro u v hu hv
-      cases hu with
-      | refl _ => exact ⟨v, hv, reduces.refl _⟩
-      | @step _ t1 _ hs1 hr1 =>
-          cases hv with
-          | refl _ => exact ⟨u, reduces.refl _, reduces.step hs1 hr1⟩
-          | @step _ t2 _ hs2 hr2 =>
-              obtain ⟨w0, hw01, hw02⟩ := local_confluence hs1 hs2
-              obtain ⟨w1, hw11, hw12⟩ := ih t1 hs1 hr1 hw01
-              obtain ⟨w2, hw21, hw22⟩ := ih t2 hs2 hr2 (hw02.trans hw12)
-              exact ⟨w2, hw11.trans hw22, hw21⟩
+  intro u v hu hv
+  obtain ⟨w, hw₁, hw₂⟩ :=
+    Rewriting.confluent_of_sn
+      (fun _ _ _ h₁ h₂ => by
+        obtain ⟨w, hw₁, hw₂⟩ := local_confluence h₁ h₂
+        exact ⟨w, reduces_iff_star.1 hw₁, reduces_iff_star.1 hw₂⟩)
+      h (reduces_iff_star.1 hu) (reduces_iff_star.1 hv)
+  exact ⟨w, reduces_iff_star.2 hw₁, reduces_iff_star.2 hw₂⟩
 
 /-- Confluence for typable terms: they are all strongly normalizing. -/
 theorem confluence_of_typing {Γ : List Ty} {t : Tm} {A : Ty} (h : Typing Γ t A)

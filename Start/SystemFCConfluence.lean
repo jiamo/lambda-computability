@@ -20,6 +20,7 @@ another type substitution (`SystemFC.substTyTm_instTyTm`).
   by confluence and the strong normalization theorem `SystemFC.sn_of_typingC`.
 -/
 
+import Start.Rewriting
 import Start.SystemFCSubst
 
 set_option relaxedAutoImplicit false
@@ -267,25 +268,37 @@ theorem reducesC_of_pstep {t t' : FTm} (h : pstep t t') : reducesC t t' := by
 
 /-! ### Confluence -/
 
-/-- The strip lemma. -/
+/-- **Bridge to the abstract rewriting interface** (`Start/Rewriting.lean`): `reducesC` is the
+reflexive–transitive closure of `step`. -/
+theorem reducesC_iff_star {t u : FTm} : reducesC t u ↔ Rewriting.Star step t u := by
+  constructor
+  · intro h
+    induction h with
+    | refl t => exact Rewriting.Star.refl t
+    | step hs _ ih => exact Rewriting.Star.head hs ih
+  · intro h
+    induction h with
+    | refl => exact reducesC.refl t
+    | tail _ hbc ih => exact reducesC_trans ih (reducesC_one hbc)
+
+/-- The strip lemma, an instance of `Rewriting.strip_of_between`. -/
 theorem strip_lemma {t t1 t2 : FTm} (hp : pstep t t1) (hr : reducesC t t2) :
     ∃ t3, reducesC t1 t3 ∧ pstep t2 t3 := by
-  induction hr generalizing t1 with
-  | refl => exact ⟨t1, reducesC.refl t1, hp⟩
-  | step hs _ ih =>
-      obtain ⟨u, hu1, hu2⟩ := pstep_diamond hp (pstep_of_step hs)
-      obtain ⟨t3, h1, h2⟩ := ih hu2
-      exact ⟨t3, reducesC_trans (reducesC_of_pstep hu1) h1, h2⟩
+  obtain ⟨t3, h1, h2⟩ :=
+    Rewriting.strip_of_between (fun _ _ _ h₁ h₂ => pstep_diamond h₁ h₂)
+      pstep_of_step (fun h => reducesC_iff_star.1 (reducesC_of_pstep h))
+      hp (reducesC_iff_star.1 hr)
+  exact ⟨t3, reducesC_iff_star.2 h1, h2⟩
 
-/-- **Church-Rosser for Church-style System F.** -/
+/-- **Church-Rosser for Church-style System F**, an instance of
+`Rewriting.confluent_of_diamond_of_between`. -/
 theorem confluence {t t1 t2 : FTm} (h1 : reducesC t t1) (h2 : reducesC t t2) :
     ∃ t3, reducesC t1 t3 ∧ reducesC t2 t3 := by
-  induction h1 generalizing t2 with
-  | refl => exact ⟨t2, h2, reducesC.refl t2⟩
-  | @step a b c hs _ ih =>
-      obtain ⟨u, hu1, hu2⟩ := strip_lemma (pstep_of_step hs) h2
-      obtain ⟨t3, h3, h4⟩ := ih hu1
-      exact ⟨t3, h3, reducesC_trans (reducesC_of_pstep hu2) h4⟩
+  obtain ⟨t3, h3, h4⟩ :=
+    Rewriting.confluent_of_diamond_of_between (fun _ _ _ h₁ h₂ => pstep_diamond h₁ h₂)
+      pstep_of_step (fun h => reducesC_iff_star.1 (reducesC_of_pstep h))
+      (reducesC_iff_star.1 h1) (reducesC_iff_star.1 h2)
+  exact ⟨t3, reducesC_iff_star.2 h3, reducesC_iff_star.2 h4⟩
 
 /-- A term is normal when no step applies to it. -/
 def NormalC (t : FTm) : Prop := ∀ u, ¬ step t u

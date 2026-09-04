@@ -23,8 +23,6 @@ nose* — no lifting is needed, and the coherence problem does not reappear.
 
 Main definitions and results:
 
-* `CwaUniv.tmSectionEquiv` — in the strictified model of any category with pullbacks, a term is a
-  section of the generic family of the presentation, i.e. its code;
 * `CwaTypeModel.extIso` — the extended context of a code is the total space of the family it
   names, and `CwaTypeModel.extIso_extHom` computes the action of a substitution on it;
 * `CwaTypeModel.elTmEquiv` — the terms of a code are the dependent functions;
@@ -58,27 +56,11 @@ theorem types_hom_congr_fun.{w} {X Y : Type w} {f g : X ⟶ Y} (h : f = g) (x : 
 theorem types_hom_ext.{w} {X Y : Type w} {f g : X ⟶ Y} (h : ∀ x : X, f x = g x) : f = g :=
   ConcreteCategory.hom_ext f g h
 
-/-! ### Terms of the strictified model are sections of the generic family -/
+/-! ### Transport of the generic element -/
 
 namespace CwaUniv
 
 variable {C : Type u} [Category.{v} C] [HasPullbacks C]
-
-/-- **A term of the strictified model is a section of the generic family**: it is determined by
-its code, a map into the total space of the presentation lying over the classifying map. -/
-noncomputable def tmSectionEquiv {Γ : C} (A : LuTy Γ) :
-    Cwa.Tm (Cwa.ofPullbacks C) Γ A ≃ {f : Γ ⟶ A.total // f ≫ A.proj = A.cls} where
-  toFun a := ⟨codeOf a, by
-    rw [codeOf, Category.assoc, ← LuTy.disp_cls, ← Category.assoc, a.2, Category.id_comp]⟩
-  invFun f := ⟨pullback.lift (𝟙 Γ) f.1 (by rw [Category.id_comp, f.2]), pullback.lift_fst _ _ _⟩
-  left_inv a := by
-    refine Subtype.ext (pullback.hom_ext ?_ ?_)
-    · exact (pullback.lift_fst _ _ _).trans a.2.symm
-    · exact pullback.lift_snd _ _ _
-  right_inv f := Subtype.ext (pullback.lift_snd _ _ _)
-
-@[simp] theorem tmSectionEquiv_apply_coe {Γ : C} (A : LuTy Γ)
-    (a : Cwa.Tm (Cwa.ofPullbacks C) Γ A) : ((tmSectionEquiv A) a : Γ ⟶ A.total) = codeOf a := rfl
 
 omit [HasPullbacks C] in
 /-- Transport of the generic element along an equality of presentations. -/

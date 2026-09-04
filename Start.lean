@@ -7,6 +7,7 @@ whole lambda-calculus formalization, including the boundary/interface records.
 
 -- Core layers
 import Start.Tactics
+import Start.Rewriting
 import Start.Syntax
 import Start.Reduction
 import Start.LambdaEta
@@ -216,6 +217,8 @@ import Start.LambdaPiUnique
 import Start.LambdaPiSkeleton
 import Start.LambdaPiSimple
 import Start.LambdaPiSN
+import Start.LambdaPiEtaPostpone
+import Start.LambdaPiEtaConfluent
 import Start.LambdaPiConsistent
 import Start.LambdaPiNormalize
 import Start.LambdaPiInfer
@@ -228,6 +231,7 @@ import Start.Lccc
 import Start.LcccType
 import Start.CwaPi
 import Start.CwaPiSub
+import Start.CwaLcccOfPi
 import Start.CwaPiType
 import Start.LambdaPiCwa
 import Start.CwaUniverse
@@ -244,6 +248,8 @@ import Start.CwaStrictSection
 import Start.CwaStrictRigid
 import Start.CwaStrictFull
 import Start.CwaTwoCell
+import Start.CwaLaxTwoCell
+import Start.CwaStrictLax
 import Start.CwaBicat
 import Start.CwaBiInitial
 import Start.CwaUnivMorLocal
@@ -347,11 +353,13 @@ import Start.LambdaPiInterpHom
 import Start.LambdaPiSyntacticModel
 import Start.LambdaPiInitial
 import Start.LambdaPiInitialUniv
+import Start.LambdaPiInitialApp
 import Start.LambdaPiInitialNatural
 import Start.LambdaPiSelfInterp
 import Start.LambdaPiCtxConv
 import Start.LambdaPiSelfIso
 import Start.LambdaPiSelfMor
+import Start.LambdaPiInitialModelHom
 import Start.CwaTwoCellUniv
 import Start.CwaMorVal
 import Start.LambdaPiModelHom
