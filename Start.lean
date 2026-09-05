@@ -252,9 +252,15 @@ import Start.CwaTwoCell
 import Start.CwaLaxTwoCell
 import Start.CwaLaxCategory
 import Start.CwaLaxWhisker
+import Start.CwaLaxRigid
+import Start.CwaLaxInterchange
 import Start.CwaStrictLax
+import Start.CwaStrictLaxWhisker
+import Start.PbCatBicat
 import Start.CwaBicat
+import Start.CwaLaxBicat
 import Start.CwaBiInitial
+import Start.CwaLaxBiInitial
 import Start.CwaUnivMorLocal
 import Start.CwaSmall
 import Start.LambdaPiSmallCompare
@@ -300,6 +306,8 @@ import Start.CircuitSystem
 import Start.CircuitSatLang
 import Start.SatToCircuit
 import Start.SatToCircuitCob
+import Start.ThreeSat
+import Start.NPInter
 import Start.HeadNormal
 import Start.ParallelSubst
 import Start.GraphAdequacy

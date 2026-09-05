@@ -1093,7 +1093,7 @@ tasks:
     track: theory/semantics
     title: "Dependent types: the calculus lambda-Pi, categories with attributes, and locally cartesian closed categories"
     latest_evidence: "docs/goal/evidence/M9-LAMBDAPI-LCCC.md"
-    open_boundary: "Both sides are built, but the biequivalence is not claimed. Syntax: LambdaPiCwa.syntactic is a category with attributes whose types are the small types, LambdaPiCwa.weakPi its dependent product, and LambdaPiCwa.not_piStruct_weakPi shows eta fails. Semantics: the strictified model (Cwa.ofPullbacks) presents types by local universes, so substitution is strictly functorial, and a locally cartesian closed category carries there a dependent product with beta and eta (Cwa.piStructOfLccc). Universes: Cwa.Universe, SmallPi, PiClosed, CodePi and CodeSigma are what an interpretation needs; LambdaPiUniv.univ makes star a universe in the syntactic model and CwaUniv.universeOfHom makes every morphism one in the strictified model. Cwa.Universe.smallCwa extracts the model whose types are the codes, and the two syntactic models are isomorphic (LambdaPiUniv.smallModelIso). A set-theoretic model is built (CwaTypeModel.model): over Type (u+1) the universe is Type u, types the small families, terms the dependent functions, closed under products (codePi) and sums (modelSigma). Initiality is proved: LambdaPi.interp_exists_unique interprets every derivable judgement uniquely in any model with injective products, and LambdaPiInitial.mor packages it as a morphism of categories with attributes out of the syntax preserving the universe, its products and their codes (mor_preservesUniverse, mor_preservesSmallPi, mor_preservesPiClosed). Not claimed: the biequivalence with locally cartesian closed categories, and closure of the universe of a general strictified model under the pushforward product on the nose (Cwa.Universe.PiClosed) - extra structure, ruled out for a two-code universe of the standard model by CwaTypeNotClosed.not_piClosed and not_codePi. Its 1-categorical shadow is settled by M10-CWA-STRICT-FULL: strictification is full on underlying functors (Cwa.exists_pbCatHom_fnc) but not on the nose (Cwa.not_full_strictification), so the comparison is only up to isomorphism of types."
+    open_boundary: "Both sides are built, but the biequivalence is not claimed. Syntax: LambdaPiCwa.syntactic is a category with attributes whose types are the small types, LambdaPiCwa.weakPi its dependent product, and LambdaPiCwa.not_piStruct_weakPi shows eta fails. Semantics: the strictified model (Cwa.ofPullbacks) presents types by local universes, so substitution is strictly functorial, and a locally cartesian closed category carries there a dependent product with beta and eta (Cwa.piStructOfLccc). Universes: Cwa.Universe, SmallPi, PiClosed, CodePi and CodeSigma are what an interpretation needs; LambdaPiUniv.univ makes star a universe in the syntactic model and CwaUniv.universeOfHom makes every morphism one in the strictified model, and the two syntactic models are isomorphic (LambdaPiUniv.smallModelIso). A set-theoretic model is built (CwaTypeModel.model). Initiality is proved: LambdaPi.interp_exists_unique interprets every derivable judgement uniquely in any model with injective products, and LambdaPiInitial.mor packages it as a morphism of categories with attributes out of the syntax preserving the universe, its products and their codes. Not claimed: the biequivalence with locally cartesian closed categories, and closure of the universe of a general strictified model under the pushforward product on the nose - ruled out for a two-code universe of the standard model by CwaTypeNotClosed.not_piClosed. Its 1-categorical shadow is settled by M10-CWA-STRICT-FULL: strictification is full on underlying functors (Cwa.exists_pbCatHom_fnc) but not on the nose (Cwa.not_full_strictification), so the comparison is only up to isomorphism of types. Its 2-categorical shadow is settled by M10-CWA-LAX-BICAT: with lax 2-cells both sides are strict bicategories and strictification is compatible with whiskering in both dimensions, but it is still not packaged as a pseudofunctor, so the biequivalence remains out of reach."
     milestone: M9
     depends_on:
       - M9-STLC-CCC
@@ -1959,7 +1959,7 @@ tasks:
     title: "Two-cells between morphisms of categories with attributes, and the bicategory of models"
     terminal_statement: "Cwa.CModel.instBicategory : Bicategory CModel, together with LambdaPiBiInitial.subsingleton_twoCell_mor and LambdaPiBiInitial.nonempty_iso_mor_iff : the hom-category out of the syntactic lambda-Pi model into a model with injective Pi is a preorder, and any two interpretations are isomorphic exactly when the empty context is terminal"
     latest_evidence: "docs/goal/evidence/M10-CWA-BICATEGORY.md"
-    open_boundary: "The sufficiency half is now proved for the morphisms of models of lambda-Pi (M10-LAMBDAPI-SELF-INITIAL): every such 1-cell out of the syntax is isomorphic to the canonical interpretation, and between two of them there is exactly one 2-cell; the existence half is proved too (M10-LAMBDAPI-MODELHOM), the interpretation itself being a morphism of models, so the syntactic model is bi-initial among the models of lambda-Pi with injective products (LambdaPiInitial.biInitial_syntacticModel). What is still not claimed is bi-initiality in the 2-category of all coherent models - it is in fact false there (not_biInitial_syntacticCModel), a model need not have any types and the empty context need not be terminal - and the pseudofunctors relating models with Pi to locally cartesian closed categories, with their inverse up to equivalence, are not constructed. One half of that last item is now settled negatively (M10-CWA-STRICT-RIGID): with these strict morphisms and these 2-cells the strictification of a category with pullbacks cannot be made 2-functorial at all, since Cwa.isEmpty_twoCell_id_coyoneda exhibits a natural transformation of pullback-preserving endofunctors of Type inducing no 2-cell whatsoever, so any such pseudofunctor must weaken either the morphisms or the 2-cells; that weakening is now carried out (M10-CWA-LAX-TWOCELL): with lax 2-cells, whose comparison of types is a map over the base rather than an equality, strictification is 2-functorial and the offending natural transformation does induce a lax 2-cell. The 1-dimensional half is now settled as well (M10-CWA-STRICT-FULL): strictification is full on the underlying functors but not full on the nose, so the comparison with locally cartesian closed categories must be taken up to isomorphism of types as well as up to weakened 2-cells. The lax 2-cells form hom-categories (M10-CWA-LAX-CATEGORY); horizontal composition for them is still not built."
+    open_boundary: "What remains open is only the comparison with locally cartesian closed categories: the pseudofunctors relating models with Pi to locally cartesian closed categories, with an inverse up to equivalence, are not constructed, and no biequivalence is claimed. The rest is settled. The strict 2-cells give a strict bicategory of coherent models (Cwa.CModel.instBicategory), and out of the syntax of lambda-Pi they are rigid, so the syntactic model is bi-initial among the models of lambda-Pi with injective products (LambdaPiInitial.biInitial_syntacticModel) but not among all coherent models (not_biInitial_syntacticCModel), since a model need not have any types. With the strict 2-cells, strictification of a category with pullbacks cannot be made 2-functorial at all (M10-CWA-STRICT-RIGID, Cwa.isEmpty_twoCell_id_coyoneda), and it is full on the underlying functors but not on the nose (M10-CWA-STRICT-FULL), so a comparison has to weaken both the morphisms and the 2-cells. That weakening is now complete. With the lax 2-cells (M10-CWA-LAX-TWOCELL) the offending natural transformation does induce a 2-cell; a lax 2-cell is in fact exactly a natural transformation of the functors on contexts (M10-CWA-LAX-RIGID, Cwa.LaxTwoCell.equivNatTrans), so the interchange law holds in full generality (M10-CWA-LAX-INTERCHANGE) and the coherent models with lax 2-cells form a strict bicategory (M10-CWA-LAX-BICAT, Cwa.LaxCModel.instBicategory), alongside the 2-category of categories with pullbacks (Cwa.PbCat.instBicategory), strictification carrying whiskering to whiskering in both dimensions. The earlier reading of this boundary - that horizontal composition of lax 2-cells is missing and that interchange cannot even be stated with the present notion of lax 2-cell - is withdrawn as mistaken. Bi-initiality in the lax 2-category is stated in M10-CWA-LAX-BIINITIAL."
     milestone: M10
     depends_on:
       - M10-LAMBDA-MODEL-REFLEXIVE
@@ -2450,6 +2450,95 @@ tasks:
       - "python3 scripts/check_closure.py"
       - "lake build Start.CwaLaxWhisker"
 
+  - id: M10-CWA-LAX-RIGID
+    priority: P1
+    status: DONE_STRONG
+    track: theory/types
+    title: "A lax 2-cell is exactly a natural transformation"
+    terminal_statement: "Cwa.LaxTwoCell.equivNatTrans : between two morphisms of models the lax 2-cells are in bijection with the natural transformations of the underlying functors on contexts; the comparison a lax 2-cell carries is uniquely determined by its natural transformation (Cwa.LaxTwoCell.cmp_eq, Cwa.LaxTwoCell.ext_of_nat) and every natural transformation carries one (Cwa.LaxTwoCell.ofNat)"
+    latest_evidence: "docs/goal/evidence/M10-CWA-LAX-RIGID.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-CWA-LAX-CATEGORY
+    rank: 511
+    exit_criteria:
+      - "The comparison of a lax 2-cell is proved to be the map into the extension pullback of the target determined by its two prescribed projections."
+      - "Two lax 2-cells with the same natural transformation are proved equal."
+      - "Every natural transformation of the functors on contexts is proved to underlie a lax 2-cell, and the two constructions are proved mutually inverse."
+      - "Existence and uniqueness of lax 2-cells are reduced to existence and uniqueness of natural transformations."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.CwaLaxRigid"
+
+  - id: M10-CWA-LAX-INTERCHANGE
+    priority: P1
+    status: DONE_STRONG
+    track: theory/types
+    title: "The interchange law for lax 2-cells"
+    terminal_statement: "Cwa.LaxTwoCell.whisker_exchange : whiskering a lax 2-cell on the left and one on the right commute, for arbitrary lax 2-cells on both sides, with the mixed cases in which one side is a strict 2-cell (Cwa.LaxTwoCell.whisker_exchange_strict_left, whisker_exchange_strict_right) as corollaries"
+    latest_evidence: "docs/goal/evidence/M10-CWA-LAX-INTERCHANGE.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-CWA-LAX-RIGID
+      - M10-CWA-LAX-WHISKER
+    rank: 512
+    exit_criteria:
+      - "The interchange law is stated for the whiskerings of M10-CWA-LAX-WHISKER and proved for arbitrary lax 2-cells on both sides."
+      - "The mixed case in which one of the two 2-cells is a strict 2-cell embedded into the lax ones is recorded separately."
+      - "Whiskering is computed on the lax 2-cell attached to a natural transformation."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.CwaLaxInterchange"
+
+  - id: M10-CWA-LAX-BICAT
+    priority: P1
+    status: DONE_STRONG
+    track: theory/types
+    title: "The bicategory of models with lax 2-cells, and strictification as a map of bicategories"
+    terminal_statement: "Cwa.LaxCModel.instBicategory and Cwa.LaxCModel.instStrict : the coherent models with the lax 2-cells form a strict bicategory in mathlib's sense; Cwa.PbCat.instBicategory : the categories with pullbacks and the pullback-preserving functors form one too; Cwa.laxTwoCellOfNatTrans_whiskerLeft and Cwa.laxTwoCellOfNatTrans_whiskerRight : strictification carries whiskering to whiskering"
+    latest_evidence: "docs/goal/evidence/M10-CWA-LAX-BICAT.md"
+    open_boundary: ""
+    milestone: M10
+    depends_on:
+      - M10-CWA-LAX-INTERCHANGE
+    rank: 513
+    exit_criteria:
+      - "The coherent models with the lax 2-cells are assembled into a mathlib Bicategory, and it is proved strict."
+      - "A 2-cell of that bicategory is proved to be determined by its natural transformation, and invertible as soon as that transformation is."
+      - "The categories with pullbacks and the pullback-preserving functors are assembled into a strict bicategory whose 2-cells are the natural transformations."
+      - "Strictification is proved to carry whiskering of natural transformations on either side to whiskering of lax 2-cells, up to the transports along its preservation of composition."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.CwaLaxBicat Start.PbCatBicat Start.CwaStrictLaxWhisker"
+
+  - id: M10-CWA-LAX-BIINITIAL
+    priority: P1
+    status: DONE_WEAK
+    track: theory/semantics
+    title: "Bi-initiality in the lax 2-category of models"
+    terminal_statement: "Cwa.LaxCModel.biInitial_iff : bi-initiality in the lax 2-category is a condition on the functors on contexts alone; LambdaPiLaxBiInitial.not_biInitial_laxSyntacticCModel : the syntactic model of lambda-Pi is not bi-initial there either"
+    latest_evidence: "docs/goal/evidence/M10-CWA-LAX-BIINITIAL.md"
+    open_boundary: "The uniqueness clause for the models of lambda-Pi with injective products is not claimed. Both existence clauses hold (LambdaPiLaxBiInitial.nonempty_hom_lax and nonempty_laxTwoCell_modelHom), and by the classification of lax 2-cells uniqueness asks exactly that two interpretation functors out of the syntax admit at most one natural transformation (LambdaPiLaxBiInitial.subsingleton_laxTwoCell_iff_natTrans). The rigidity argument for strict 2-cells does not settle it: it forces the component at an extended context from the component at the base using the compatibility of a strict 2-cell with the types, which a bare natural transformation does not have, so the term component at an extension is unconstrained by naturality alone. Neither uniqueness nor a counterexample is proved."
+    milestone: M10
+    depends_on:
+      - M10-CWA-LAX-BICAT
+      - M10-CWA-BICATEGORY
+    rank: 514
+    exit_criteria:
+      - "Bi-initiality in the lax 2-category is characterised in terms of the functors on contexts."
+      - "The models of lambda-Pi and the syntactic model are exhibited as objects of the lax 2-category."
+      - "The syntactic model of lambda-Pi is proved not to be bi-initial in the lax 2-category of all coherent models."
+      - "For the models with injective products, the existence of a 1-cell and of a lax 2-cell between any two 1-cells out of the syntax is proved, and the outstanding uniqueness clause is reduced to a statement about natural transformations."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.CwaLaxBiInitial"
+
   - id: M10-ASSEMBLY-COLIMITS
     priority: P1
     status: DONE_STRONG
@@ -2916,3 +3005,46 @@ tasks:
       - "python3 scripts/check_closure.py"
       - "lake build Start.CircuitSatLang"
       - "lake build Start.SatToCircuitCob"
+
+  - id: M11-THREE-SAT-NPC
+    priority: P1
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "Bounded-width satisfiability: k-SAT as a language, and its NP-completeness"
+    terminal_statement: "Complexity.npComplete_KSAT : for every k at least three, the words that decode to a satisfiable CNF of width at most k form an NP-complete language, with Complexity.polyManyOne_CSAT_KSAT the reduction out of CIRCUIT-SAT and Complexity.Sat.inP_KCnfWord the polynomial-time width check; Complexity.npComplete_ThreeSAT is the case of 3-SAT"
+    latest_evidence: "docs/goal/evidence/M11-THREE-SAT-NPC.md"
+    open_boundary: ""
+    milestone: M11
+    depends_on:
+      - M11-CIRCUIT-SAT-NPC
+    rank: 750
+    exit_criteria:
+      - "The Tseitin translation is proved to produce only clauses of at most three literals."
+      - "Being the code of a CNF of width at most w is proved to be decided by a finite-state automaton simulating the token decoder, hence by a Cobham term, so the language of such codes is in P."
+      - "NP is proved closed under intersection with P, and k-SAT is concluded to be in NP."
+      - "CIRCUIT-SAT is proved to reduce to k-SAT by the Tseitin term for every k at least three, so k-SAT is NP-hard, hence NP-complete, and 3-SAT in particular."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.ThreeSat"
+
+  - id: M11-NP-INTERSECTION
+    priority: P2
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "NP is closed under intersection"
+    terminal_statement: "Complexity.InNP.inter : the intersection of two languages in NP is in NP, the witness being the pairing Complexity.pairW of the two witnesses, whose projections Complexity.fstOf and Complexity.sndOf are Cobham terms"
+    latest_evidence: "docs/goal/evidence/M11-NP-INTERSECTION.md"
+    open_boundary: ""
+    milestone: M11
+    depends_on: []
+    rank: 760
+    exit_criteria:
+      - "A self-delimiting pairing of words is defined and its two projections are proved to undo it."
+      - "The two projections are proved to be finite-state transductions of an arbitrary word, hence Cobham terms."
+      - "The length of an arbitrary word is bounded in terms of the lengths of its two projections, so the witness bound stays polynomial."
+      - "The intersection of two NP languages is proved to be in NP."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.NPInter"

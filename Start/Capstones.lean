@@ -31,6 +31,8 @@ import Start.CircuitShift
 import Start.CobhamShift
 import Start.CookLevinNPHard
 import Start.SatToCircuitCob
+import Start.ThreeSat
+import Start.NPInter
 import Start.CwaBiInitial
 import Start.CwaLcccOfPi
 import Start.CwaStrictFunctor
@@ -39,6 +41,11 @@ import Start.CwaStrictRigid
 import Start.CwaStrictLax
 import Start.CwaLaxCategory
 import Start.CwaLaxWhisker
+import Start.CwaLaxInterchange
+import Start.CwaLaxBicat
+import Start.PbCatBicat
+import Start.CwaStrictLaxWhisker
+import Start.CwaLaxBiInitial
 import Start.CwaStrictFull
 import Start.CwaTwoCellUniv
 import Start.LambdaPiTypeUnique
@@ -278,6 +285,15 @@ program's running time.
 both directions: the Tseitin translation reduces it to `SAT`, and the circuit built by the same
 right-to-left scan that evaluates a `CNF` reduces `SAT` to it.
 
+`Start/ThreeSat.lean` adds a third: **`k`-SAT** for every `k ≥ 3`, the words that decode to a
+satisfiable `CNF` of width at most `k`.  The Tseitin translation has width three, so the term that
+reduces `CIRCUIT-SAT` to `SAT` reduces it to `k`-SAT as well; membership in `NP` needs the
+finite-state check that a word codes a `CNF` of that width.
+
+`Start/NPInter.lean` closes `NP` under intersection: the witness is the pairing of the two
+witnesses — the first component with every bit doubled, the marker `10`, then the second — whose
+projections are finite-state transductions, hence Cobham terms.
+
 The remaining modules feed the reduction: renumbering variables of an encoded `CNF`
 (`Start/CobhamShift.lean`, `Start/CircuitShift.lean`), and the P-uniformity of the circuit
 families produced by the various devices — cellular automata, iterated stages, flat Cobham terms,
@@ -293,6 +309,15 @@ finite-state machines and Turing machines.
 #check @Complexity.Sat.eval_satCircTerm
 #check @Complexity.polyManyOne_SAT_CSAT
 #check @Complexity.npComplete_CSAT
+#check @Complexity.Tseitin.length_le_three_of_mem_toCnf
+#check @Complexity.Sat.inP_KCnfWord
+#check @Complexity.Sat.inNP_KSAT
+#check @Complexity.polyManyOne_CSAT_KSAT
+#check @Complexity.npComplete_KSAT
+#check @Complexity.npComplete_ThreeSAT
+#check @Complexity.fstOf_pairW
+#check @Complexity.sndOf_pairW
+#check @Complexity.InNP.inter
 #check @Complexity.Sat.SAT_eval_shiftTerm
 #check @Complexity.Sat.decode_eval_shiftTerm
 #check @Complexity.CircCode.eval_shiftCircTerm
@@ -903,9 +928,29 @@ whiskerings are functorial in the 2-cell (`Cwa.LaxTwoCell.whiskerLeft_id`,
 `Cwa.LaxTwoCell.whiskerLeft_vcomp`, `Cwa.LaxTwoCell.whiskerRight_id`,
 `Cwa.LaxTwoCell.whiskerRight_vcomp`).  Whiskering on the right transports the comparison through
 the morphism, which works because a morphism of models carries the substituted map of extended
-contexts to the substituted map of the image (`Cwa.morOver_subOver`).  The interchange law is not
-claimed: for lax 2-cells it would ask the comparison of one 2-cell to be natural in the component
-of the other, which is not part of the data.
+contexts to the substituted map of the image (`Cwa.morOver_subOver`).
+
+`Start/CwaLaxRigid.lean` then removes what looked like the obstruction to the interchange law.  The
+comparison carried by a lax 2-cell is *not* data: it is the map into the pullback prescribed by the
+two laws, so a lax 2-cell is determined by its natural transformation (`Cwa.LaxTwoCell.ext_of_nat`)
+and every natural transformation of the functors on contexts underlies exactly one
+(`Cwa.LaxTwoCell.ofNat`, `Cwa.LaxTwoCell.equivNatTrans`).  The interchange law is therefore the
+interchange law for natural transformations (`Cwa.LaxTwoCell.whisker_exchange` in
+`Start/CwaLaxInterchange.lean`), for two arbitrary lax 2-cells and not merely when one of them is
+strict.
+
+With it, `Start/CwaLaxBicat.lean` assembles the **2-category of models with the lax 2-cells**
+(`Cwa.LaxCModel.instBicategory`, strict by `Cwa.LaxCModel.instStrict`), whose 2-cells are exactly
+the natural transformations (`Cwa.LaxCModel.homEquivNatTrans`).  `Start/PbCatBicat.lean` gives the
+matching 2-category of categories with pullbacks, and `Start/CwaStrictLaxWhisker.lean` proves that
+strictification carries whiskering to whiskering (`Cwa.laxTwoCellOfNatTrans_whiskerLeft`,
+`Cwa.laxTwoCellOfNatTrans_whiskerRight`), so it is 2-functorial for the lax 2-cells in both
+dimensions.  Finally `Start/CwaLaxBiInitial.lean` states bi-initiality in the lax 2-category and
+reduces it to a question about the functors on contexts (`Cwa.LaxCModel.biInitial_iff`); the
+syntactic model of `λΠ` is not bi-initial there either
+(`LambdaPiLaxBiInitial.not_biInitial_laxSyntacticCModel`), for the same reason as in the strict
+case, and for the models with injective products the two existence clauses hold while the
+uniqueness clause is reduced to the uniqueness of natural transformations and is not claimed.
 -/
 
 #check @Cwa.Model.ctx
@@ -939,6 +984,19 @@ of the other, which is not part of the data.
 #check @Cwa.LaxTwoCell.whiskerRight
 #check @Cwa.LaxTwoCell.whiskerLeft_vcomp
 #check @Cwa.LaxTwoCell.whiskerRight_vcomp
+#check @Cwa.LaxTwoCell.ext_of_nat
+#check @Cwa.LaxTwoCell.ofNat
+#check @Cwa.LaxTwoCell.equivNatTrans
+#check @Cwa.LaxTwoCell.whisker_exchange
+#check @Cwa.PbCat.instBicategory
+#check @Cwa.LaxCModel.instBicategory
+#check @Cwa.LaxCModel.instStrict
+#check @Cwa.LaxCModel.homEquivNatTrans
+#check @Cwa.laxTwoCellOfNatTrans_whiskerLeft
+#check @Cwa.laxTwoCellOfNatTrans_whiskerRight
+#check @Cwa.LaxCModel.biInitial_iff
+#check @LambdaPiLaxBiInitial.not_biInitial_laxSyntacticCModel
+#check @LambdaPiLaxBiInitial.nonempty_laxTwoCell_modelHom
 
 /-!
 ### How far strictification is from an equivalence: fullness

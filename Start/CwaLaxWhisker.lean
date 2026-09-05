@@ -26,8 +26,12 @@ Main results:
 * `Cwa.LaxTwoCell.whiskerRight_id`, `Cwa.LaxTwoCell.whiskerRight_vcomp` — whiskering on the right
   is functorial in the 2-cell.
 
-The interchange law is *not* claimed: for lax 2-cells it would ask the comparison of one 2-cell to
-be natural in the component of the other, which is not part of the data.
+The interchange law is not proved *here*, and at the time this module was written it was expected
+to fail, on the ground that it would ask the comparison of one lax 2-cell to be natural in the
+component of the other, which is not part of the data.  That expectation was wrong: the comparison
+of a lax 2-cell is *determined* by its natural transformation (`Start/CwaLaxRigid.lean`), and the
+interchange law does hold in full generality — `Cwa.LaxTwoCell.whisker_exchange` in
+`Start/CwaLaxInterchange.lean`, whence the bicategory `Start/CwaLaxBicat.lean`.
 -/
 
 import Start.CwaLaxCategory

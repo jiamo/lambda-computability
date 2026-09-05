@@ -613,3 +613,22 @@ requirements on the universe
 object of a model, independent of local cartesian closure of the ambient category — which is why
 `CwaTypeModel.codePi` has to be verified for the specific universe of small types rather than
 derived from the product structure.
+
+## Update (the 2-categorical shadow of the comparison)
+
+The comparison with locally cartesian closed categories is still not a biequivalence, and the
+obstruction analysed in `M10-CWA-STRICT-RIGID` and `M10-CWA-STRICT-FULL` is unchanged: with strict
+morphisms and strict 2-cells, strictification is not 2-functorial at all and is not full on the
+nose.  What has changed is the two-dimensional side of the weakening it forces.  With the lax
+2-cells the comparison of types is a map over the base rather than an equality, and that datum
+turns out to be *uniquely determined* by the underlying natural transformation
+(`M10-CWA-LAX-RIGID`, `Cwa.LaxTwoCell.equivNatTrans`).  Hence the interchange law holds
+(`M10-CWA-LAX-INTERCHANGE`), both sides of the comparison are strict bicategories
+(`M10-CWA-LAX-BICAT`: `Cwa.LaxCModel.instBicategory` and `Cwa.PbCat.instBicategory`), and
+strictification carries whiskering to whiskering on either side
+(`Cwa.laxTwoCellOfNatTrans_whiskerLeft`, `Cwa.laxTwoCellOfNatTrans_whiskerRight`) as well as
+identities and vertical composition.
+
+Still missing, and the reason this task stays open: strictification is not packaged as a mathlib
+`Pseudofunctor` between those two bicategories, no functor is built in the opposite direction, and
+no biequivalence is claimed.

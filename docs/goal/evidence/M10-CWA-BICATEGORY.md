@@ -82,3 +82,23 @@ syntax interprets itself by the identity (`LambdaPiSelf.selfIso`) and transporti
 naturality 2-cell of `Start/LambdaPiInitialNatural.lean`.  What remains open is the bicategorical
 statement for arbitrary coherent models — false as stated, by
 `not_biInitial_syntacticCModel` — and the pseudofunctors to locally cartesian closed categories.
+
+## Update (the lax 2-category)
+
+The weakening the boundary above calls for has since been carried out in full.  `M10-CWA-LAX-RIGID`
+shows that the comparison a lax 2-cell carries is *uniquely determined* by its natural
+transformation, so that a lax 2-cell between two morphisms of models is exactly a natural
+transformation of the functors on contexts (`Cwa.LaxTwoCell.equivNatTrans`).  This refutes the
+earlier reading, recorded in `Start/CwaLaxWhisker.lean` and in the evidence of
+`M10-CWA-LAX-WHISKER`, that the interchange law cannot even be stated for the present notion of
+lax 2-cell and that the definition would have to be enlarged first: the law holds for arbitrary
+lax 2-cells on both sides (`M10-CWA-LAX-INTERCHANGE`, `Cwa.LaxTwoCell.whisker_exchange`), the
+mixed case in which one side is a strict 2-cell being a corollary rather than the best available
+result.  Consequently the coherent models with lax 2-cells do form a strict bicategory
+(`M10-CWA-LAX-BICAT`, `Cwa.LaxCModel.instBicategory`), as do the categories with pullbacks
+(`Cwa.PbCat.instBicategory`), and strictification carries whiskering to whiskering in both
+dimensions.  Bi-initiality in the lax 2-category, which had never been stateable, is treated in
+`M10-CWA-LAX-BIINITIAL`.
+
+What remains open here is unchanged: the pseudofunctors between models with Π and locally
+cartesian closed categories, and the biequivalence.
