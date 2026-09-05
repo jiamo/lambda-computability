@@ -49,8 +49,12 @@ all pass; the full `lake build` reports no error and no linter warning.
 
 ## Boundary
 
-The interchange law is **not** claimed, and is not expected to hold on the nose: for lax 2-cells
-it would ask the comparison of one 2-cell to be natural in the component of the other, which is
-not part of the data of a lax 2-cell.  Consequently no bicategory of models with lax 2-cells is
-assembled here; what is proved is that whiskering on either side is defined and functorial in the
-2-cell.
+The interchange law is not proved in this task, and when this evidence was first written it was
+expected to fail, on the ground that it would ask the comparison of one 2-cell to be natural in
+the component of the other, which is not part of the data of a lax 2-cell.  **That expectation was
+wrong**, and is superseded by `M10-CWA-LAX-RIGID` and `M10-CWA-LAX-INTERCHANGE`: the comparison of
+a lax 2-cell is uniquely determined by its natural transformation, so no naturality has to be
+asked for, and `Cwa.LaxTwoCell.whisker_exchange` holds for arbitrary lax 2-cells on both sides.
+The bicategory that is not assembled here is assembled in `M10-CWA-LAX-BICAT`
+(`Cwa.LaxCModel.instBicategory`).  What this task itself proves is that whiskering on either side
+is defined and functorial in the 2-cell.
