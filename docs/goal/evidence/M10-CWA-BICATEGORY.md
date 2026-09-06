@@ -102,3 +102,75 @@ dimensions.  Bi-initiality in the lax 2-category, which had never been stateable
 
 What remains open here is unchanged: the pseudofunctors between models with Π and locally
 cartesian closed categories, and the biequivalence.
+
+## Update (the comparison with locally cartesian closed categories)
+
+Two of the three pieces the boundary above asks for are now in place, in
+`Start/CwaStrictPseudofunctor.lean` and `Start/LcccPseudofunctor.lean` (both imported by
+`Start.lean`, both `sorry`-free, `#print axioms` reporting only `propext`, `Classical.choice`,
+`Quot.sound`).
+
+* **`Cwa.strictificationPseudofunctor : Pseudofunctor PbCat LaxCModel`** — strictification is a
+  morphism of 2-categories in mathlib's sense: a category with pullbacks is a model of a dependent
+  type theory (`Cwa.PbCat.toLaxCModel`), a pullback-preserving functor a morphism of models, and a
+  natural transformation a lax 2-cell, compatibly with both whiskerings, the associator and the
+  unitors.  Its structural isomorphisms are transports along the equalities
+  `Cwa.morOfPreservesPullbacks_id` and `Cwa.morOfPreservesPullbacks_comp`
+  (`strictificationPseudofunctor_mapId`, `strictificationPseudofunctor_mapComp`), so the
+  pseudofunctor is in fact strict.  It is faithful on 1-cells
+  (`strictificationPseudofunctor_map_injective`) and locally fully faithful: on 2-cells it is the
+  identity on the underlying natural transformations
+  (`strictificationPseudofunctor_map₂_nat`, `strictificationPseudofunctor_map₂_bijective`).
+* **`Cwa.LcccCat`** — the 2-category of locally cartesian closed categories, the full
+  sub-2-category of `Cwa.PbCat` spanned by the objects `Cwa.LcccObj` that carry binary products
+  and a right adjoint to every substitution functor; it is inhabited by the category of sets
+  (`Cwa.LcccObj.type`).
+* **`Cwa.lcccPseudofunctor : Pseudofunctor LcccCat LaxCModel`** — strictification restricted to
+  it.  Every value is a model of the dependent product (`Cwa.lcccNaturalPiStruct`), and
+  conversely the strictification of a category with pullbacks and binary products carries a
+  natural Π-structure exactly when the category is locally cartesian closed
+  (`Cwa.nonempty_naturalPiStruct_toLaxCModel_iff`), so on objects the pseudofunctor hits, up to
+  that structure, precisely the models of Π that come from a category with pullbacks.  It is
+  faithful on 1-cells and locally fully faithful (`Cwa.lcccPseudofunctor_map_injective`,
+  `Cwa.lcccPseudofunctor_map₂_bijective`).
+
+What is still missing is only the third piece: a pseudofunctor back from models with Π to locally
+cartesian closed categories and a biequivalence.  It cannot be built for arbitrary models — the
+context category of a model of Π need not be locally cartesian closed, and a model need not have
+enough types — so the statement would first have to be restricted to the models that are
+democratic and full, which is not formalized here.
+
+## Update (the pseudofunctor back, and the biequivalence) — the task is now DONE_STRONG
+
+The third piece is in place, in `Start/LcccBiequivalence.lean` (imported by `Start.lean`,
+`sorry`-free, `#print axioms` reporting only `propext`, `Classical.choice`, `Quot.sound`).
+
+The comparison is stated between the 2-category `Cwa.LcccCat` of locally cartesian closed
+categories and the 2-category `Cwa.LcccModelCat` of the models they present: the full
+sub-2-category of `Cwa.LaxCModel` spanned by the strictifications, so that its 1-cells are *all*
+morphisms of models between them and its 2-cells all lax 2-cells.
+
+* **`Cwa.lcccStrictification : Pseudofunctor LcccCat LcccModelCat`** — strictification,
+  corestricted to that sub-2-category; its data is that of `Cwa.lcccPseudofunctor`.
+* **`Cwa.lcccCtx : Pseudofunctor LcccModelCat LcccCat`** — the pseudofunctor back.  A model goes
+  to its category of contexts, a morphism of models to its functor on contexts — which preserves
+  pullbacks, by `Cwa.Mor.preservesLimitsOfShape_fnc`, so it *is* a 1-cell of `LcccCat`
+  (`Cwa.ctxFnc`, `Cwa.ctxMap`) — and a lax 2-cell to its natural transformation
+  (`Cwa.ctxMap₂`).  It is strict: `Cwa.ctxMap_id` and `Cwa.ctxMap_comp` hold on the nose, so it is
+  built as a `StrictPseudofunctor` (`Cwa.lcccCtxStrict`).
+* **`Cwa.lcccCtx_map_lcccStrictification_map`** — one round trip is the identity on the nose, on
+  1-cells and (`Cwa.lcccCtx_map₂_lcccStrictification_map₂`) on 2-cells.
+* **`Cwa.lcccStrictificationMapCtxMapIso`** — the other round trip is the identity up to a
+  canonical invertible 2-cell, and no better: strictification is not full on the nose
+  (`Cwa.not_full_strictification`).
+* `Cwa.IsBiequivalence` — a pseudofunctor is a biequivalence when it is a local equivalence and
+  every object of the target is bicategorically equivalent to one in its image.
+* **`Cwa.lcccStrictification_isBiequivalence`**, **`Cwa.lcccCtx_isBiequivalence`** and
+  **`Cwa.lcccModelCat_biequivalent`** — both pseudofunctors are biequivalences.  Local
+  fully faithfulness and local essential surjectivity are proved for both directions
+  (`Cwa.lcccCtx_mapFunctor_isEquivalence`, `Cwa.lcccStrictification_mapFunctor_isEquivalence`);
+  on objects the two are mutually inverse on the nose.
+
+What this does *not* do, and what `M10-CWA-DEMOCRATIC` records instead, is describe the objects of
+`Cwa.LcccModelCat` intrinsically — as the full and democratic models of the dependent product —
+rather than as the strictifications of locally cartesian closed categories.

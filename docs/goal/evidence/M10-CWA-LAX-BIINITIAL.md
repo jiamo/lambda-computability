@@ -1,8 +1,9 @@
 # M10-CWA-LAX-BIINITIAL
 
-**Status:** DONE_WEAK
+**Status:** DONE_STRONG
 
-Module `Start/CwaLaxBiInitial.lean`, imported by `Start.lean` and registered in
+Modules `Start/CwaLaxBiInitial.lean`, `Start/PointedCwa.lean`, `Start/PointedModel.lean` and
+`Start/CwaLaxNotUnique.lean`, imported by `Start.lean` and registered in
 `Start/Capstones.lean`.  It builds without `sorry` and without linter warning; `#print axioms` on
 the headline declarations reports only `propext`, `Classical.choice`, `Quot.sound`.
 
@@ -34,12 +35,35 @@ Bi-initiality *in the lax sense* could not previously be stated at all: mathlib'
   reduced: there is at most one lax 2-cell between two 1-cells out of the syntax exactly when the
   two interpretation functors admit at most one natural transformation.
 
+* **`PointedModel.not_subsingleton_laxTwoCell_modelHom`** — the uniqueness clause **fails**, so
+  the syntactic model of `λΠ` is not bi-initial in the lax 2-category even when the models are
+  restricted to those of `λΠ` with injective products.  The witness is a new, non-syntactic model:
+
+  * `PointedModel.ptCwa` — a category with attributes on the category of pointed sets: a type over
+    a pointed set `Γ` is a function `Γ → Bool × ℕ`, decoded as `ℕ` (the universe of codes) or as a
+    one-point set (a small type), the boolean deciding which and the natural number serving as a
+    tag;
+  * `PointedModel.ptModel` — the corresponding **model of `λΠ`**: the universe of small types is
+    `ℕ`, and the code of a product of two small types is the Cantor pairing of their codes.  It is
+    pointed because `Nat.pair 0 0 = 0`;
+  * `PointedModel.ptModel_piInj` — its product former is **injective**, so the interpretation
+    `PointedModel.ptModelHom` of the syntax exists;
+  * `PointedModel.collapseNat` — the constant map to the base point is a natural endomorphism of
+    any functor into the pointed sets, hence of the interpretation functor;
+  * `PointedModel.starCtx_not_subsingleton` — the interpretation of the context `x : ∗` has more
+    than one point (its fibre is the universe `ℕ`), so that natural endomorphism is not the
+    identity: `PointedModel.not_subsingleton_natTrans`, and therefore
+    `PointedModel.not_subsingleton_laxTwoCell`.
+
+  The strict rigidity theorem is untouched: the collapsing 2-cell is not a strict one, because
+  substituting along a constant map does not carry a type to itself.
+
 ## Gates
 
 ```
 python3 scripts/goal_state.py validate
 python3 scripts/check_closure.py
-lake build Start.CwaLaxBiInitial
+lake build Start.CwaLaxBiInitial Start.PointedModel Start.CwaLaxNotUnique
 lake build
 ```
 
@@ -47,11 +71,6 @@ all pass; the full `lake build` reports no error and no linter warning.
 
 ## Boundary
 
-The uniqueness clause for the models of `λΠ` with injective products is **not** claimed, in either
-direction.  The rigidity argument that settles it for strict 2-cells
-(`LambdaPiBiInitial.app_eq_of_app_empty`) forces the component at an extended context from the
-component at the base, using the compatibility of a *strict* 2-cell with the types; a bare natural
-transformation has no such compatibility, and naturality alone leaves the term component at an
-extension free.  So the argument does not transfer, and no counterexample is exhibited either.
-Consequently a positive lax bi-initiality statement for the syntactic model is not available; what
-is available is the reduction above, together with the negative result for all coherent models.
+None.  Both halves are now settled: the existence clauses hold for the models of `λΠ` with
+injective products, and the uniqueness clause fails there, so the syntactic model is not bi-initial
+in the lax 2-category in any of the readings considered.

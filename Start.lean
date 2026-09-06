@@ -259,8 +259,15 @@ import Start.CwaStrictLaxWhisker
 import Start.PbCatBicat
 import Start.CwaBicat
 import Start.CwaLaxBicat
+import Start.CwaStrictPseudofunctor
+import Start.LcccPseudofunctor
+import Start.LcccBiequivalence
+import Start.CwaDemocratic
 import Start.CwaBiInitial
 import Start.CwaLaxBiInitial
+import Start.PointedCwa
+import Start.PointedModel
+import Start.CwaLaxNotUnique
 import Start.CwaUnivMorLocal
 import Start.CwaSmall
 import Start.LambdaPiSmallCompare
@@ -404,6 +411,11 @@ import Start.CreativeIso
 import Start.PCA
 import Start.PCATotal
 import Start.PCAKleene
+import Start.KleeneTwoBasic
+import Start.KleeneTwo
+import Start.PCAMorphism
+import Start.Specker
+import Start.SpeckerReal
 import Start.Assembly
 import Start.AssemblyCcc
 import Start.AssemblyLimits

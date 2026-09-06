@@ -632,3 +632,14 @@ identities and vertical composition.
 Still missing, and the reason this task stays open: strictification is not packaged as a mathlib
 `Pseudofunctor` between those two bicategories, no functor is built in the opposite direction, and
 no biequivalence is claimed.
+
+## Update (strictification as a pseudofunctor)
+
+The 2-categorical half of the comparison this task leaves open has moved: `Start/CwaStrictPseudofunctor.lean`
+packages strictification as `Cwa.strictificationPseudofunctor : Pseudofunctor PbCat LaxCModel`,
+strict (its structural isomorphisms are transports along equalities), faithful on 1-cells and
+locally fully faithful, and `Start/LcccPseudofunctor.lean` restricts it to the 2-category
+`Cwa.LcccCat` of locally cartesian closed categories, all of whose values model the dependent
+product (`Cwa.lcccNaturalPiStruct`), the converse being `Cwa.nonempty_naturalPiStruct_toLaxCModel_iff`.
+Still not claimed: the pseudofunctor from models with Π back to locally cartesian closed
+categories, and the biequivalence.

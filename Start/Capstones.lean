@@ -70,6 +70,11 @@ import Start.ModestReflect
 import Start.PERNNO
 import Start.PERSystemF
 import Start.PCAKleene
+import Start.KleeneTwoBasic
+import Start.KleeneTwo
+import Start.PCAMorphism
+import Start.Specker
+import Start.SpeckerReal
 import Start.PCATotal
 import Start.CwaPiType
 import Start.CwaTypeModelSigma
@@ -122,6 +127,10 @@ import Start.UniformSigFlat
 import Start.UniformStateInst
 import Start.UniformStateSubsume
 import Start.UniformTMInst
+import Start.CwaLaxNotUnique
+import Start.LcccPseudofunctor
+import Start.LcccBiequivalence
+import Start.CwaDemocratic
 
 /-! ## Interfaces of the untyped calculus
 
@@ -1045,6 +1054,46 @@ bracket abstraction turns any applicative expression into an element of the alge
 of `Start/LambdaModel.lean` — is one, and `Start/PCAKleene.lean` builds Kleene's first algebra
 `K₁`, the natural numbers under Turing application, using the s-m-n theorem.
 
+`Start/KleeneTwoBasic.lean` and `Start/KleeneTwo.lean` build the other pole of the picture,
+**Kleene's second algebra `K₂`**: Baire space `ℕ → ℕ` with the application of *function*
+realizability, where `α | β` answers queries about finite initial segments of `β`.  The first
+module sets up the application (`Realizability.KleeneTwo.appK`), proves Kleene's continuity
+principle — a value of `α | β` is produced by a finite initial segment of `β` — and constructs
+the *canonical associate* of a continuous operation on Baire space, which yields the combinator
+`k`.  The combinator `s` cannot be produced that way, because the operation
+`(α, β) ↦ (associate of γ ↦ (α|γ)|(β|γ))` must itself be continuous in `α` and `β`; the second
+module builds it from an explicit finite approximation, proves the approximation sound and
+complete, and concludes that `K₂` is a partial combinatory algebra
+(`Realizability.KleeneTwo.instPCABaire`).  The application is genuinely partial: an element that
+never answers applies to nothing.
+
+`Start/PCAMorphism.lean` adds the morphisms of Longley's programme, **applicative morphisms**:
+a total relation assigning to each element of `A` a nonempty set of representatives in `B`,
+tracked by a single element of `B`.  Every PCA has an identity morphism, realized by `λ x y. x y`
+from combinatory completeness, applicative morphisms compose, and there is a morphism `K₁ → K₂`
+sending a number to the constant function with that value: number realizability lands inside
+function realizability.  Continuity has a Brouwerian consequence: no element of `K₂` decides
+whether its argument is the zero function (`Realizability.KleeneTwo.no_zero_test`).
+
+`Start/Specker.lean` takes the first step from function realizability into **computable
+analysis**.  A *Specker sequence* is a computable, nondecreasing, bounded sequence of rationals
+whose limit is not computable, so the monotone convergence theorem fails effectively.  The
+sequence `Lambda.speckerVal` adds `2^{-(k+1)}` for every index `k < n` that has entered the
+halting set by stage `n`; it is nondecreasing (`Lambda.speckerVal_monotone`), bounded by `1`
+(`Lambda.speckerVal_lt_one`) and computable, its numerators over `2^n` being a computable
+function of `n` (`Lambda.computable_speckerNum`, `Lambda.speckerVal_eq`).  Yet it has **no
+computable modulus of convergence** (`Lambda.specker_no_computable_modulus`): from one, the
+halting set of `Start/KleeneK.lean` would be decidable, contradicting the undecidability of `K`.
+
+`Start/SpeckerReal.lean` takes the limit.  `Lambda.speckerReal` is the supremum of the sequence
+in `ℝ`, and `Lambda.specker_limit_not_computable` shows that this real number is **not
+computable**: no computable `f : ℕ → ℕ` has `|speckerReal - f m / 2 ^ m| < 2 ^ (-m)` for every
+`m`.  The proof searches, with `Nat.rfind`, for a stage of the sequence beyond the lower bound
+supplied by `f`; the stage found is close enough to the limit that the elements of the halting
+set below the precision have all appeared, so the halting set would be decidable.  This is the
+classical statement of Specker's theorem: a computable, nondecreasing, bounded sequence of
+rationals can converge to a non-computable real.
+
 `Start/Assembly.lean` and `Start/AssemblyCcc.lean` build the category of assemblies over an
 arbitrary PCA and show it is cartesian closed: sets with realizers, tracked maps as morphisms,
 Church pairs as products and tracked function spaces as exponentials.
@@ -1136,6 +1185,28 @@ function has no lift.
 #check @Realizability.Lambda.lambdaModelPCA
 #check @Realizability.Kleene.instPCANat
 #check @Realizability.Kleene.k1_app
+#check @Realizability.KleeneTwo.appK
+#check @Realizability.KleeneTwo.appK_continuous
+#check @Realizability.KleeneTwo.appK_zero_eq_none
+#check @Realizability.KleeneTwo.instPCABaire
+#check @Realizability.KleeneTwo.k2_k_app
+#check @Realizability.KleeneTwo.k2_s_dom
+#check @Realizability.KleeneTwo.k2_s_app
+#check @Realizability.AppMorphism
+#check @Realizability.AppMorphism.id
+#check @Realizability.AppMorphism.comp
+#check @Realizability.KleeneTwo.no_zero_test
+#check @Realizability.KleeneTwo.kOneToTwo
+#check @Realizability.KleeneTwo.evalAssoc_app
+#check @Lambda.speckerVal
+#check @Lambda.speckerVal_monotone
+#check @Lambda.speckerVal_lt_one
+#check @Lambda.computable_speckerNum
+#check @Lambda.specker_no_computable_modulus
+#check @Lambda.speckerReal
+#check @Lambda.speckerVal_le_speckerReal
+#check @Lambda.speckerReal_le_one
+#check @Lambda.specker_limit_not_computable
 #check @Realizability.Assembly
 #check @Realizability.Assembly.instCategory
 #check @Realizability.Assembly.isTerminalUnitAsm
@@ -1309,3 +1380,26 @@ model of System F, independent of the reducibility-candidate argument of `Start/
 #check @LuTy.homOverEquivTm
 #check @LcccPullbacks.ofNaturalPiStruct
 #check @Cwa.nonempty_naturalPiStruct_ofPullbacks_iff
+
+/-! ## The 2-categorical semantics of the dependent product
+
+`Start/CwaLaxNotUnique.lean` settles the uniqueness clause of lax bi-initiality in the negative,
+by a model of λΠ on pointed sets, and `Start/LcccPseudofunctor.lean` carries strictification
+across to the 2-category of locally cartesian closed categories.
+-/
+
+#check @PointedModel.not_subsingleton_laxTwoCell_modelHom
+#check @Cwa.lcccPseudofunctor
+#check @Cwa.lcccNaturalPiStruct
+#check @Cwa.nonempty_naturalPiStruct_toLaxCModel_iff
+#check @Cwa.lcccPseudofunctor_map₂_bijective
+#check @Cwa.lcccStrictification
+#check @Cwa.lcccCtx
+#check @Cwa.lcccCtx_map_lcccStrictification_map
+#check @Cwa.lcccStrictificationMapCtxMapIso
+#check @Cwa.lcccModelCat_biequivalent
+#check @Cwa.IsFull
+#check @Cwa.IsDemocratic
+#check @Cwa.hasPullbacks_of_isFull
+#check @Cwa.isFull_ofPullbacks
+#check @Cwa.isDemocratic_ofPullbacks

@@ -1093,7 +1093,7 @@ tasks:
     track: theory/semantics
     title: "Dependent types: the calculus lambda-Pi, categories with attributes, and locally cartesian closed categories"
     latest_evidence: "docs/goal/evidence/M9-LAMBDAPI-LCCC.md"
-    open_boundary: "Both sides are built, but the biequivalence is not claimed. Syntax: LambdaPiCwa.syntactic is a category with attributes whose types are the small types, LambdaPiCwa.weakPi its dependent product, and LambdaPiCwa.not_piStruct_weakPi shows eta fails. Semantics: the strictified model (Cwa.ofPullbacks) presents types by local universes, so substitution is strictly functorial, and a locally cartesian closed category carries there a dependent product with beta and eta (Cwa.piStructOfLccc). Universes: Cwa.Universe, SmallPi, PiClosed, CodePi and CodeSigma are what an interpretation needs; LambdaPiUniv.univ makes star a universe in the syntactic model and CwaUniv.universeOfHom makes every morphism one in the strictified model, and the two syntactic models are isomorphic (LambdaPiUniv.smallModelIso). A set-theoretic model is built (CwaTypeModel.model). Initiality is proved: LambdaPi.interp_exists_unique interprets every derivable judgement uniquely in any model with injective products, and LambdaPiInitial.mor packages it as a morphism of categories with attributes out of the syntax preserving the universe, its products and their codes. Not claimed: the biequivalence with locally cartesian closed categories, and closure of the universe of a general strictified model under the pushforward product on the nose - ruled out for a two-code universe of the standard model by CwaTypeNotClosed.not_piClosed. Its 1-categorical shadow is settled by M10-CWA-STRICT-FULL: strictification is full on underlying functors (Cwa.exists_pbCatHom_fnc) but not on the nose (Cwa.not_full_strictification), so the comparison is only up to isomorphism of types. Its 2-categorical shadow is settled by M10-CWA-LAX-BICAT: with lax 2-cells both sides are strict bicategories and strictification is compatible with whiskering in both dimensions, but it is still not packaged as a pseudofunctor, so the biequivalence remains out of reach."
+    open_boundary: "Both sides are built, but the biequivalence is not claimed. Syntax: LambdaPiCwa.syntactic is a category with attributes whose types are the small types, LambdaPiCwa.weakPi its dependent product, and LambdaPiCwa.not_piStruct_weakPi shows eta fails. Semantics: the strictified model (Cwa.ofPullbacks) presents types by local universes, so substitution is strictly functorial, and a locally cartesian closed category carries there a dependent product with beta and eta (Cwa.piStructOfLccc). Universes: Cwa.Universe, SmallPi, PiClosed, CodePi and CodeSigma are what an interpretation needs; LambdaPiUniv.univ makes star a universe in the syntactic model and CwaUniv.universeOfHom makes every morphism one in the strictified model, and the two syntactic models are isomorphic (LambdaPiUniv.smallModelIso). A set-theoretic model is built (CwaTypeModel.model). Initiality is proved: LambdaPi.interp_exists_unique interprets every derivable judgement uniquely in any model with injective products, and LambdaPiInitial.mor packages it as a morphism of categories with attributes out of the syntax preserving the universe, its products and their codes. Not claimed: the biequivalence with locally cartesian closed categories, and closure of the universe of a general strictified model under the pushforward product on the nose - ruled out for a two-code universe of the standard model by CwaTypeNotClosed.not_piClosed. Its 2-categorical shadow is settled by M10-CWA-LAX-BICAT and M10-CWA-BICATEGORY: both sides are strict bicategories and strictification is a locally fully faithful pseudofunctor (Cwa.strictificationPseudofunctor), restricting to the locally cartesian closed categories (Cwa.lcccPseudofunctor). The pseudofunctor back and the biequivalence are settled by M10-CWA-BICATEGORY (Cwa.lcccCtx, Cwa.lcccModelCat_biequivalent), for the models those categories present; an intrinsic description of them is M10-CWA-DEMOCRATIC."
     milestone: M9
     depends_on:
       - M9-STLC-CCC
@@ -1954,12 +1954,12 @@ tasks:
 
   - id: M10-CWA-BICATEGORY
     priority: P1
-    status: DONE_WEAK
+    status: DONE_STRONG
     track: theory/typetheory
     title: "Two-cells between morphisms of categories with attributes, and the bicategory of models"
     terminal_statement: "Cwa.CModel.instBicategory : Bicategory CModel, together with LambdaPiBiInitial.subsingleton_twoCell_mor and LambdaPiBiInitial.nonempty_iso_mor_iff : the hom-category out of the syntactic lambda-Pi model into a model with injective Pi is a preorder, and any two interpretations are isomorphic exactly when the empty context is terminal"
     latest_evidence: "docs/goal/evidence/M10-CWA-BICATEGORY.md"
-    open_boundary: "What remains open is only the comparison with locally cartesian closed categories: the pseudofunctors relating models with Pi to locally cartesian closed categories, with an inverse up to equivalence, are not constructed, and no biequivalence is claimed. The rest is settled. The strict 2-cells give a strict bicategory of coherent models (Cwa.CModel.instBicategory), and out of the syntax of lambda-Pi they are rigid, so the syntactic model is bi-initial among the models of lambda-Pi with injective products (LambdaPiInitial.biInitial_syntacticModel) but not among all coherent models (not_biInitial_syntacticCModel), since a model need not have any types. With the strict 2-cells, strictification of a category with pullbacks cannot be made 2-functorial at all (M10-CWA-STRICT-RIGID, Cwa.isEmpty_twoCell_id_coyoneda), and it is full on the underlying functors but not on the nose (M10-CWA-STRICT-FULL), so a comparison has to weaken both the morphisms and the 2-cells. That weakening is now complete. With the lax 2-cells (M10-CWA-LAX-TWOCELL) the offending natural transformation does induce a 2-cell; a lax 2-cell is in fact exactly a natural transformation of the functors on contexts (M10-CWA-LAX-RIGID, Cwa.LaxTwoCell.equivNatTrans), so the interchange law holds in full generality (M10-CWA-LAX-INTERCHANGE) and the coherent models with lax 2-cells form a strict bicategory (M10-CWA-LAX-BICAT, Cwa.LaxCModel.instBicategory), alongside the 2-category of categories with pullbacks (Cwa.PbCat.instBicategory), strictification carrying whiskering to whiskering in both dimensions. The earlier reading of this boundary - that horizontal composition of lax 2-cells is missing and that interchange cannot even be stated with the present notion of lax 2-cell - is withdrawn as mistaken. Bi-initiality in the lax 2-category is stated in M10-CWA-LAX-BIINITIAL."
+    open_boundary: ""
     milestone: M10
     depends_on:
       - M10-LAMBDA-MODEL-REFLEXIVE
@@ -1970,10 +1970,32 @@ tasks:
       - "A 2-cell whose underlying natural transformation is invertible is itself invertible."
       - "Bi-initiality is defined as contractibility of every hom-category, and is proved to force any two bi-initial objects to be equivalent."
       - "For the syntactic model of lambda-Pi, 2-cells out of it are proved to be determined by their component at the empty context, hence unique, and two interpretations into a model with injective Pi are proved isomorphic precisely when the image of the empty context is terminal."
+      - "Strictification is assembled into a pseudofunctor of 2-categories from the categories with pullbacks to the lax 2-category of models, and restricted to a pseudofunctor out of the 2-category of locally cartesian closed categories whose values model the dependent product."
+      - "A pseudofunctor back is constructed, from the 2-category of the models presented by locally cartesian closed categories to those categories, and the two are proved mutually inverse: one round trip is the identity on the nose, the other the identity up to a canonical invertible 2-cell, and both pseudofunctors are biequivalences."
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
-      - "lake build Start.CwaTwoCell Start.CwaBicat Start.CwaBiInitial"
+      - "lake build Start.CwaTwoCell Start.CwaBicat Start.CwaBiInitial Start.CwaStrictPseudofunctor Start.LcccPseudofunctor Start.LcccBiequivalence"
+
+  - id: M10-CWA-DEMOCRATIC
+    priority: P2
+    status: DONE_WEAK
+    track: theory/typetheory
+    title: "An intrinsic description of the models presented by locally cartesian closed categories"
+    latest_evidence: "docs/goal/evidence/M10-CWA-DEMOCRATIC.md"
+    open_boundary: "Fullness and democracy are now defined (Cwa.IsFull, Cwa.IsDemocratic), the category of contexts of a full model is proved to have pullbacks (Cwa.IsFull.isPullback, Cwa.hasPullbacks_of_isFull), and the strictification of a category with pullbacks is proved full and, with a terminal object, democratic (Cwa.isFull_ofPullbacks, Cwa.isDemocratic_ofPullbacks), so the objects of Cwa.LcccModelCat do have both properties. What remains is the transport of a natural Pi-structure on a full model to a locally cartesian closed structure on its contexts - the existing proof LcccPullbacks.ofNaturalPiStruct is for the strictified model, where a type is a local universe, and the presentation Cwa.IsFull.ty is stable under substitution only up to isomorphism - and the comparison of a full democratic model with the strictification of its contexts as an equivalence in the lax 2-category."
+    milestone: M10
+    depends_on:
+      - M10-CWA-BICATEGORY
+    rank: 351
+    exit_criteria:
+      - "Fullness and democracy are defined for a category with attributes, and the strictification of a category with pullbacks is proved full."
+      - "The category of contexts of a full democratic model is proved to have pullbacks, and to be locally cartesian closed when the model has a natural Pi-structure."
+      - "A full democratic model is proved equivalent, in the lax 2-category of models, to the strictification of its category of contexts."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.CwaDemocratic"
 
   - id: M10-LAMBDAPI-SELF-INITIAL
     priority: P1
@@ -2518,12 +2540,12 @@ tasks:
 
   - id: M10-CWA-LAX-BIINITIAL
     priority: P1
-    status: DONE_WEAK
+    status: DONE_STRONG
     track: theory/semantics
     title: "Bi-initiality in the lax 2-category of models"
-    terminal_statement: "Cwa.LaxCModel.biInitial_iff : bi-initiality in the lax 2-category is a condition on the functors on contexts alone; LambdaPiLaxBiInitial.not_biInitial_laxSyntacticCModel : the syntactic model of lambda-Pi is not bi-initial there either"
+    terminal_statement: "Cwa.LaxCModel.biInitial_iff : bi-initiality in the lax 2-category is a condition on the functors on contexts alone; LambdaPiLaxBiInitial.not_biInitial_laxSyntacticCModel : the syntactic model of lambda-Pi is not bi-initial there either; PointedModel.not_subsingleton_laxTwoCell_modelHom : the uniqueness clause fails as well, already for the models of lambda-Pi with injective products"
     latest_evidence: "docs/goal/evidence/M10-CWA-LAX-BIINITIAL.md"
-    open_boundary: "The uniqueness clause for the models of lambda-Pi with injective products is not claimed. Both existence clauses hold (LambdaPiLaxBiInitial.nonempty_hom_lax and nonempty_laxTwoCell_modelHom), and by the classification of lax 2-cells uniqueness asks exactly that two interpretation functors out of the syntax admit at most one natural transformation (LambdaPiLaxBiInitial.subsingleton_laxTwoCell_iff_natTrans). The rigidity argument for strict 2-cells does not settle it: it forces the component at an extended context from the component at the base using the compatibility of a strict 2-cell with the types, which a bare natural transformation does not have, so the term component at an extension is unconstrained by naturality alone. Neither uniqueness nor a counterexample is proved."
+    open_boundary: ""
     milestone: M10
     depends_on:
       - M10-CWA-LAX-BICAT
@@ -2534,10 +2556,11 @@ tasks:
       - "The models of lambda-Pi and the syntactic model are exhibited as objects of the lax 2-category."
       - "The syntactic model of lambda-Pi is proved not to be bi-initial in the lax 2-category of all coherent models."
       - "For the models with injective products, the existence of a 1-cell and of a lax 2-cell between any two 1-cells out of the syntax is proved, and the outstanding uniqueness clause is reduced to a statement about natural transformations."
+      - "The uniqueness clause is settled, negatively: a model of lambda-Pi with injective products on the pointed sets is built, and the interpretation of the syntax in it is proved to admit two distinct natural endomorphisms, hence two distinct lax 2-cells."
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
-      - "lake build Start.CwaLaxBiInitial"
+      - "lake build Start.CwaLaxBiInitial Start.PointedModel Start.CwaLaxNotUnique"
 
   - id: M10-ASSEMBLY-COLIMITS
     priority: P1
@@ -3048,3 +3071,89 @@ tasks:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
       - "lake build Start.NPInter"
+
+  - id: M11-KLEENE-TWO-PCA
+    priority: P1
+    status: DONE_STRONG
+    track: theory/realizability
+    title: "Kleene's second algebra K2: Baire space with function application is a PCA"
+    terminal_statement: "Realizability.KleeneTwo.instPCABaire : Baire space with the application of function realizability is a partial combinatory algebra, with Realizability.KleeneTwo.k2_k_app and Realizability.KleeneTwo.k2_s_app the computation rules of its combinators and Realizability.KleeneTwo.appK_continuous Kleene's continuity principle"
+    latest_evidence: "docs/goal/evidence/M11-KLEENE-TWO-PCA.md"
+    open_boundary: ""
+    milestone: M11
+    depends_on: []
+    rank: 770
+    exit_criteria:
+      - "The application of K2 is defined on Baire space and characterised by the value of a query at the least initial segment of the argument that is answered."
+      - "Kleene's continuity principle is proved: a value of the application is produced by a finite initial segment of the argument."
+      - "The canonical associate of a continuous operation on Baire space is constructed and proved to compute that operation, and the combinator k is obtained from it."
+      - "The combinator s is built from an explicit finite approximation to the composite, and the approximation is proved sound and complete."
+      - "Baire space is concluded to be a partial combinatory algebra, and the application is proved to be genuinely partial."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.KleeneTwoBasic"
+      - "lake build Start.KleeneTwo"
+
+  - id: M11-APPLICATIVE-MORPHISM
+    priority: P2
+    status: DONE_STRONG
+    track: theory/realizability
+    title: "Applicative morphisms of PCAs, and the morphism from K1 to K2"
+    terminal_statement: "Realizability.KleeneTwo.kOneToTwo : an applicative morphism from Kleene's first algebra to Kleene's second, a number being represented by the constant function with that value, with Realizability.KleeneTwo.evalAssoc_app its computation rule and Realizability.AppMorphism.id the identity morphism of an arbitrary PCA"
+    latest_evidence: "docs/goal/evidence/M11-APPLICATIVE-MORPHISM.md"
+    open_boundary: ""
+    milestone: M11
+    depends_on:
+      - M11-KLEENE-TWO-PCA
+    rank: 780
+    exit_criteria:
+      - "Applicative morphisms are defined: a total relation of representatives together with a single element tracking application."
+      - "The identity applicative morphism of an arbitrary PCA is constructed from combinatory completeness, and applicative morphisms are proved to compose."
+      - "A morphism from K1 to K2 is constructed and proved to track Turing application on the constant functions."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.PCAMorphism"
+
+  - id: M11-SPECKER
+    priority: P2
+    status: DONE_STRONG
+    track: theory/realizability
+    title: "A Specker sequence: effective failure of monotone convergence"
+    terminal_statement: "Lambda.specker_no_computable_modulus : the computable, nondecreasing, rational sequence Lambda.speckerVal, bounded above by 1, admits no computable modulus of convergence, since from one the halting set would be decidable"
+    latest_evidence: "docs/goal/evidence/M11-SPECKER.md"
+    open_boundary: ""
+    milestone: M11
+    depends_on:
+      - M11-APPLICATIVE-MORPHISM
+    rank: 790
+    exit_criteria:
+      - "A computable sequence of rationals is defined from the halting set, with its numerators over a power of two proved computable."
+      - "The sequence is proved nondecreasing and bounded above by 1, with an explicit lower bound on the jump made when a new index enters the halting set."
+      - "No computable modulus of convergence exists: from one, the halting set would be decidable."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.Specker"
+
+  - id: M11-SPECKER-REAL
+    priority: P2
+    status: DONE_STRONG
+    track: theory/realizability
+    title: "Specker's theorem: the limit of the Specker sequence is not a computable real"
+    terminal_statement: "Lambda.specker_limit_not_computable : the supremum Lambda.speckerReal of the computable nondecreasing bounded rational sequence Lambda.speckerVal is not a computable real number, no computable f giving dyadic approximations f m / 2 ^ m to within 2 ^ (-m)"
+    latest_evidence: "docs/goal/evidence/M11-SPECKER-REAL.md"
+    open_boundary: ""
+    milestone: M11
+    depends_on:
+      - M11-SPECKER
+    rank: 795
+    exit_criteria:
+      - "The limit of the Specker sequence is constructed as a real number, with its basic bounds."
+      - "Comparison of a dyadic rational with a stage of the sequence is reduced to natural-number arithmetic and shown computable."
+      - "No computable sequence of dyadic rationals approximates the limit to within the corresponding power of two."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.SpeckerReal"
