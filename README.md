@@ -18,7 +18,7 @@ Kolmogorov complexity, Chaitin's `Ω`, Martin-Löf randomness and Böhm's separa
 ![Lean](https://img.shields.io/badge/Lean-v4.33.0-blue)
 ![Mathlib](https://img.shields.io/badge/Mathlib-v4.33.0-blue)
 ![sorry-free](https://img.shields.io/badge/sorry--free-yes-brightgreen)
-![tasks](https://img.shields.io/badge/task%20board-93%2F94%20DONE__STRONG-brightgreen)
+![tasks](https://img.shields.io/badge/task%20board-148%2F150%20DONE__STRONG-brightgreen)
 
 Everything below is proved in `Start/`; the whole library compiles with `lake build`, contains no
 `sorry` and no `axiom`, and the headline results depend only on `propext`, `Classical.choice` and
@@ -304,6 +304,23 @@ Complexity.peqNP_of_npComplete_of_inP :
 Complexity.npHard_SAT : Complexity.NPHard Complexity.Sat.SAT
 Complexity.npComplete_SAT : Complexity.NPComplete Complexity.Sat.SAT
 Complexity.peqNP_iff_inP_SAT : Complexity.PeqNP ↔ Complexity.InP Complexity.Sat.SAT
+
+-- CIRCUIT-SAT: a second NP-complete problem, with reductions in both directions.
+Complexity.polyManyOne_CSAT_SAT : Complexity.PolyManyOne Complexity.CSAT Complexity.Sat.SAT
+Complexity.polyManyOne_SAT_CSAT : Complexity.PolyManyOne Complexity.Sat.SAT Complexity.CSAT
+Complexity.npComplete_CSAT : Complexity.NPComplete Complexity.CSAT
+
+-- k-SAT: the codes of satisfiable CNFs of width at most k are NP-complete for every k ≥ 3.
+Complexity.Sat.inP_KCnfWord : ∀ (w : ℕ), Complexity.InP (Complexity.Sat.KCnfWord w)
+Complexity.polyManyOne_CSAT_KSAT :
+    ∀ {k : ℕ}, 3 ≤ k → Complexity.PolyManyOne Complexity.CSAT (Complexity.Sat.KSAT k)
+Complexity.npComplete_KSAT : ∀ {k : ℕ}, 3 ≤ k → Complexity.NPComplete (Complexity.Sat.KSAT k)
+Complexity.npComplete_ThreeSAT : Complexity.NPComplete Complexity.Sat.ThreeSAT
+
+-- NP is closed under intersection: the witness is the pairing of the two witnesses.
+Complexity.InNP.inter :
+    ∀ {L₁ L₂ : Complexity.Language}, Complexity.InNP L₁ → Complexity.InNP L₂ →
+      Complexity.InNP fun x => L₁ x ∧ L₂ x
 ```
 
 ## Related work, and what is specific to this project
@@ -386,7 +403,15 @@ Public Lean 4 developments in this area, and how they relate (repository file li
   levels, the arithmetical predicates, has no universal predicate
   (`Start/ArithHierarchyProper.lean`).  Every level is closed under **bounded** quantification
   with a computable bound, proved by one induction using the collection principle
-  (`Start/ArithBounded.lean`).
+  (`Start/ArithBounded.lean`).  Every level is closed downwards under many-one reducibility, and
+  its universal predicate is **complete** for it — hard already for one-one reducibility — so each
+  level `n + 1` has complete predicates on both sides, exchanged by complementation and pairwise
+  many-one equivalent; a complete predicate escapes the dual level, the lower levels and
+  computability, at level one it is the halting problem, and the union of the levels has no
+  complete predicate (`Start/ArithComplete.lean`).  At level two the complete predicate is
+  concrete: the index set of the **total** functions is `Π⁰₂`-complete, so it is neither
+  recursively enumerable nor co-r.e., and the halting problem reduces to it but not conversely
+  (`Start/ArithIndexSets.lean`).
 - **Binary lambda calculus** — a decoder for the BLC bit-string code and the resulting
   bijection between terms and valid bit strings (`Start/BLC.lean`).
 - **Representation bridges** — de Bruijn ⟺ locally nameless (`cslib`) ⟺ BLC: mutually inverse
@@ -415,6 +440,16 @@ Public Lean 4 developments in this area, and how they relate (repository file li
   (`Start/PinnedCnf.lean`) and those are emitted by an explicit Cobham term
   (`Start/CobhamPin.lean`), which reduced the problem to the usual P-uniformity of a
   *length-indexed* circuit family (`Start/CookLevinUniform.lean`, `Start/CookLevinBound.lean`).
+  A **second NP-complete problem** is then derived: `CIRCUIT-SAT`, the words whose gate system is
+  satisfiable (`Complexity.CSAT`, `Start/CircuitSystem.lean`, `Start/CircuitSatLang.lean`), which
+  reduces to SAT by the Tseitin term and to which SAT reduces by the circuit that the same
+  right-to-left scan builds while evaluating a CNF (`Start/SatToCircuit.lean`,
+  `Start/SatToCircuitCob.lean`), giving `Complexity.npComplete_CSAT`.
+  A **third** one is `k`-SAT for every `k ≥ 3` (`Start/ThreeSat.lean`): the Tseitin translation
+  only ever emits clauses of at most three literals, so the same term reduces `CIRCUIT-SAT` to the
+  codes of satisfiable CNFs of width `k`, while membership in `NP` comes from the finite-state
+  check that a word codes such a CNF — `Complexity.npComplete_KSAT`, and
+  `Complexity.npComplete_ThreeSAT` for `3-SAT`.
   On the other side,
   the reduction to SAT is unconditional for every language decided by a P-uniform circuit family
   (`Start/UniformDecide.lean`), a class that contains every regular language
@@ -491,7 +526,24 @@ Public Lean 4 developments in this area, and how they relate (repository file li
   with β** (`Lambda.reduces_etaReduces_commute`), so βη is confluent there
   (`Lambda.betaEta_church_rosser`, `Start/LambdaEta.lean`, `Start/LambdaBetaEta.lean`), and η can
   even be **postponed**: βη-reduction is β-reduction followed by η-reduction
-  (`Lambda.betaEtaReduces_iff`, `Start/LambdaEtaPostpone.lean`).  Termination and confluence
+  (`Lambda.betaEtaReduces_iff`, `Start/LambdaEtaPostpone.lean`).  The same parallel-η argument
+  works for `λΠ`: η can be postponed there too, so a βη-reduction is a β-reduction followed by an
+  η-reduction (`LambdaPi.betaEtaRed_iff`), and since η shrinks a term this upgrades strong
+  normalization from β to **βη on typable terms** (`LambdaPi.Typing.betaEta_sn`,
+  `Start/LambdaPiEtaPostpone.lean`).  The failure of confluence is, moreover, *only* about the
+  annotations: erasing every domain annotation to a dummy sort, β and η strongly commute and βη is
+  confluent (`LambdaPi.erased_betaEta_church_rosser`), so two raw terms are βη-convertible exactly
+  when their erasures have a common βη-reduct (`LambdaPi.betaEtaConv_iff_join`) — **Church–Rosser
+  modulo annotations**, with the consequences the conversion rule needs: distinct sorts stay
+  distinct, no sort is convertible to a product, and products are injective
+  (`Start/LambdaPiEtaConfluent.lean`).  All of these arguments are instances of one abstract
+  rewriting theory, proved once for an arbitrary relation in `Start/Rewriting.lean` and used by
+  each calculus through a single bridging lemma `Red t u ↔ Star Step t u`: the diamond
+  property implies confluence, conversion of a confluent relation is joinability, strong
+  commutation implies commutation, two confluent commuting relations have a confluent union
+  (Hindley–Rosen), local postponement gives the factorization `(r ∪ s)* = r* ; s*`, a measure gives
+  termination, and a terminating locally confluent relation is confluent (Newman).  Termination
+  and confluence
   together make the calculus effective: a verified reduction strategy computes the normal form of
   a strongly normalizing term, so conversion of typable terms is **decidable**
   (`Start/LambdaPiNormalize.lean`), and the type-inference algorithm — written as a function that
@@ -520,7 +572,17 @@ Public Lean 4 developments in this area, and how they relate (repository file li
   **β and η** (`Cwa.piStructOfLccc`); the dependent sum comes with it (`Cwa.sigmaStructOfLccc`), and
   `Type u` is an instance (`Start/CwaPi.lean`, `Start/CwaPiType.lean`).  Abstraction and
   application of that dependent product are natural in the context, so the model also validates
-  the substitution law `(λ b)[σ] = λ (b[σ⁺])` (`LuTy.lam_sub`, `Start/CwaPiSub.lean`).  Since the
+  the substitution law `(λ b)[σ] = λ (b[σ⁺])` (`LuTy.lam_sub`, `Start/CwaPiSub.lean`).  The
+  comparison is then made **2-dimensional and reversible**: models and their lax 2-cells form a
+  strict bicategory, strictification is a pseudofunctor out of the 2-category of locally cartesian
+  closed categories (`Cwa.lcccStrictification`), reading off the category of contexts is a
+  pseudofunctor back (`Cwa.lcccCtx`), one round trip is the identity on the nose and the other the
+  identity up to a canonical invertible 2-cell, and both are biequivalences
+  (`Cwa.lcccModelCat_biequivalent`, `Start/LcccBiequivalence.lean`).  `Start/CwaDemocratic.lean`
+  begins the intrinsic description of the models so compared: a model is *full* when every
+  morphism of contexts is a display map up to isomorphism over its codomain and *democratic* when
+  every context is an extension of a terminal one, the contexts of a full model have pullbacks
+  (`Cwa.hasPullbacks_of_isFull`), and every strictification is full and democratic.  Since the
   types of `λΠ` are the *terms of the sort `∗`* rather than all the types of a model,
   `Start/CwaSmall.lean` extracts from a model with a universe its **small fragment**
   (`Cwa.Universe.smallCwa`): the category with attributes whose types are the codes, with its
@@ -551,7 +613,26 @@ Public Lean 4 developments in this area, and how they relate (repository file li
   category with attributes: it carries the sort `∗` to the universe of the model and commutes with
   decoding (`LambdaPiInitial.mor_preservesUniverse`), preserves the dependent products over the
   small types (`mor_preservesSmallPi`) and the codes for those products (`mor_preservesPiClosed`,
-  `Start/LambdaPiInitialUniv.lean`).
+  `Start/LambdaPiInitialUniv.lean`).  The interpretation is moreover **natural in the model**: a
+  morphism of models `LambdaPi.ModelHom` (`Start/LambdaPiModelHom.lean`) transports the whole
+  interpretation relation, so if a raw expression denotes a type, a term or a context in `M`, its
+  image denotes the transported type, term or context in `N` (`LambdaPi.TyI.map`,
+  `LambdaPi.TmI.map`, `LambdaPi.CtxI.map`, `Start/LambdaPiInterpTransport.lean`).  The comparison
+  also preserves abstraction and **application** (`LambdaPiInitial.tmMap_appQ`,
+  `Start/LambdaPiInitialApp.lean`), so it is itself a morphism of models
+  (`LambdaPiInitial.modelHom`); with the rigidity of the hom-category this makes the syntactic
+  model **bi-initial** among the models of `λΠ` with injective products
+  (`LambdaPiInitial.biInitial_syntacticModel`, `Start/LambdaPiInitialModelHom.lean`).
+  Strictification of a category with pullbacks is not 2-functorial for the strict 2-cells of
+  models, but it is once the 2-cells are taken **lax** — the equality of types replaced by a map
+  of extended contexts over the base (`Cwa.LaxTwoCell`, `Cwa.laxTwoCellOfNatTrans`,
+  `Cwa.laxTwoCellOfNatTrans_id`, `Cwa.laxTwoCellOfNatTrans_comp`, `Start/CwaLaxTwoCell.lean`,
+  `Start/CwaStrictLax.lean`).  Vertical composition of lax 2-cells is unital and associative, so
+  the morphisms of models and the lax 2-cells between them form a category, into which the strict
+  2-cells include by an injective functor (`Cwa.laxMorCategory`, `Cwa.laxInclusion`,
+  `Cwa.TwoCell.toLax_injective`, `Start/CwaLaxCategory.lean`); a lax 2-cell can be whiskered by a
+  morphism of models on either side, functorially in the 2-cell
+  (`Cwa.LaxTwoCell.whiskerLeft`, `Cwa.LaxTwoCell.whiskerRight`, `Start/CwaLaxWhisker.lean`).
 - **Böhm's separation theorem** — finite Böhm trees of normal forms (`Start/Bohm.lean`), the
   Böhm-out transformation (`Start/BohmOut.lean`), and the separation theorem for trees that are
   not η-equal (`Start/BohmEta.lean`).
@@ -689,21 +770,127 @@ Public Lean 4 developments in this area, and how they relate (repository file li
   in the category of sets that interpretation is a λ-model on the nose
   (`Lambda.SetReflexive.toModel`).
 
+- **Realizability: partial combinatory algebras and assemblies** (`Start/PCA.lean`,
+  `Start/PCATotal.lean`, `Start/PCAKleene.lean`, `Start/Assembly.lean`, `Start/AssemblyCcc.lean`,
+  `Start/AssemblyLimits.lean`, `Start/AssemblyNNO.lean`) — the other categorical semantics of
+  computation.  A **PCA** (`Realizability.PCA`) is a set with a partial application and the two
+  combinators `k`, `s`; *combinatory completeness* is proved in the form of an abstraction
+  operator on applicative expressions with `Realizability.PCA.lam_app`, which is what makes every
+  later construction possible.  Kleene's first algebra `K₁` — the naturals with Turing
+  application `a · b = φ_a(b)` — is an instance (`Realizability.Kleene.instPCANat`), and so is
+  every total combinatory algebra (`Realizability.TCA.toPCA`).  Kleene's **second** algebra `K₂`
+  (`Start/KleeneTwoBasic.lean`, `Start/KleeneTwo.lean`) is the other pole of the picture: Baire
+  space `ℕ → ℕ` with the application of *function* realizability, where `α | β` answers queries
+  about finite initial segments of `β` (`Realizability.KleeneTwo.appK`).  That application is
+  continuous — every value is produced by a finite initial segment of the argument, which is
+  Kleene's continuity principle (`KleeneTwo.appK_continuous`) — and genuinely partial
+  (`KleeneTwo.appK_zero_eq_none`).  The combinator `k` comes from the canonical associate of a
+  continuous operation (`KleeneTwo.detAssoc`, `KleeneTwo.appK_detAssoc`); the combinator `s`
+  needs an explicit finite approximation of `γ ↦ (α|γ)|(β|γ)`, proved sound and complete
+  (`KleeneTwo.compAux_sound`, `KleeneTwo.compAux_complete`), and the two together make `K₂` a PCA
+  (`Realizability.KleeneTwo.instPCABaire`).  The two algebras are compared by an **applicative
+  morphism** in the sense of Longley (`Start/PCAMorphism.lean`, `Realizability.AppMorphism`):
+  every PCA has an identity morphism, morphisms compose (`AppMorphism.comp`), and
+  `Realizability.KleeneTwo.kOneToTwo` sends a number to the constant function with that value, so
+  number realizability lands inside function realizability.  Continuity has a Brouwerian
+  consequence: no element of `K₂` decides whether its argument is the zero function
+  (`KleeneTwo.no_zero_test`).  Function realizability opens onto **computable analysis**, and
+  `Start/Specker.lean` takes the first step there with a **Specker sequence**
+  (`Lambda.speckerVal`): a sequence of rationals that is nondecreasing
+  (`Lambda.speckerVal_monotone`), bounded by `1` (`Lambda.speckerVal_lt_one`) and computable —
+  its numerator over `2^n` is a computable function of `n` (`Lambda.computable_speckerNum`,
+  `Lambda.speckerVal_eq`) — yet has **no computable modulus of convergence**
+  (`Lambda.specker_no_computable_modulus`), since from one the halting set would be decidable.
+  Effectively, the monotone convergence theorem fails.  `Start/SpeckerReal.lean` takes the limit
+  `Lambda.speckerReal` and proves the classical form of **Specker's theorem**: that real number
+  is not computable (`Lambda.specker_limit_not_computable`) — no computable `f : ℕ → ℕ` gives
+  dyadic approximations `f m / 2 ^ m` to within `2 ^ (-m)`, since an unbounded search through the
+  sequence would then decide the halting set.  Over an arbitrary PCA the
+  **assemblies** `Realizability.Assembly A` form a category with finite products
+  (`Assembly.prodFanIsLimit`) which is cartesian closed, the exponential being the tracked maps
+  (`Assembly.monoidalClosed`); it has equalizers, cut out as sub-assemblies, hence **all finite
+  limits** (`Assembly.instHasFiniteLimits`); and the naturals, realized by the Curry numerals,
+  form a **natural numbers object** (`Assembly.isNNO_natAsm`): iteration of a tracked endomap is
+  itself tracked, and the mediating map is unique.  Finally the sub-assemblies are **classified**
+  (`Start/AssemblySubobject.lean`): in the assembly of propositions `Assembly.propAsm` every
+  element of the algebra realizes every proposition, maps into it are exactly the predicates on
+  the carrier (`Assembly.homPropEquiv`), and the sub-assembly cut out by a predicate is the
+  pullback of `true` along its characteristic map (`Assembly.isPullback_subAsm`), uniquely so
+  (`Assembly.exists_unique_charMap`).  This classifies the *regular* subobjects, the ones whose
+  realizers are inherited from the ambient assembly, and not every mono: `Asm(A)` is not a topos.
+  Assemblies sit over sets by an adjunction (`Start/AssemblyGlobalSections.lean`): forgetting the
+  realizers is left adjoint to the **indiscrete** assembly, in which everything realizes
+  everything (`Assembly.gammaNablaAdj`), the indiscrete functor is fully faithful
+  (`Assembly.nablaFullyFaithful`), the classifier is the indiscrete assembly on `Prop`, and the
+  carrier of an assembly is its set of global sections, the maps out of the terminal assembly
+  (`Assembly.globalSectionsEquiv`).
+- **Modest sets are partial equivalence relations** (`Start/PER.lean`, `Start/Modest.lean`,
+  `Start/ModestEquiv.lean`) — a **PER** over a PCA is a symmetric transitive relation on the
+  algebra; it presents the assembly of its quotient (`PER.toAsm`), which is *modest*: realizers
+  determine elements.  Taking as morphisms of PERs the functions of the quotients computed by a
+  single element of the algebra (`PER.Tracked`, the same condition as being tracked as a map of
+  assemblies, `PER.tracked_iff`), PERs form a category, and the comparison functor into the full
+  subcategory of the modest assemblies is fully faithful (`PER.toModestFullyFaithful`) and
+  essentially surjective — a modest assembly has the same realizers as the assembly of the PER it
+  presents (`Assembly.toPERIso`).  So **PERs and modest sets are the same category**
+  (`perEquivModest`), and under the correspondence the arrow PER is the exponential
+  (`PER.arrowIso`).  Modesty is invariant under isomorphism (`Assembly.Modest.of_iso`), the
+  terminal assembly and the products and exponentials of modest assemblies are terminal, products
+  and exponentials *in the subcategory*, so the **modest sets are a cartesian closed category**
+  (`Modest.instMonoidalClosed`, `Start/ModestCcc.lean`) and so, by transport along the
+  equivalence, are the PERs (`PER.instMonoidalClosed`).
+- **Realizability over Kleene's first algebra** (`Start/AssemblyKleene.lean`) — over `K₁` the
+  naturals carry the *standard* assembly `Realizability.Kleene.natK1`, in which a number realizes
+  itself.  A function `ℕ → ℕ` is tracked there **exactly when it is computable**
+  (`Kleene.tracked_natK1_iff`), so the endomorphisms of that object are in bijection with the
+  computable functions (`Kleene.natK1EndEquiv`; for two arguments,
+  `Kleene.tracked_prod_natK1_iff`) and the diagonal function `n ↦ φₙ(n) + 1` is not
+  one of them (`Kleene.exists_not_tracked_natK1`): `Asm(K₁)` is not the category of sets.
+  Iterating a tracked endomorphism is partial recursive, so the standard numbers assembly is a
+  natural numbers object too (`Kleene.isNNO_natK1`); a natural numbers object is unique up to
+  isomorphism (`CategoryTheory.Limits.IsNNO.iso`), so it is isomorphic to the Curry numeral one
+  (`Kleene.natK1IsoNatAsm`).
+- **Booleans and decidable predicates over `K₁`** (`Start/AssemblyKleeneBool.lean`) — the standard
+  assembly of booleans `Realizability.Kleene.boolK1` (`true` realized by `1`, `false` by `0`) has
+  the computable boolean-valued functions as its maps out of the numbers
+  (`Kleene.tracked_boolK1_iff`, `Kleene.boolHomEquiv`), so a predicate on the numbers is cut out
+  by a characteristic morphism into the booleans exactly when it is a computable predicate
+  (`Kleene.exists_charBool_iff`).  Self-halting is undecidable
+  (`Kleene.not_computable_selfHalt`), hence has no characteristic boolean map of either polarity
+  (`Kleene.no_charBool_selfHalt`, `Kleene.boolK1_not_classifier`): in `Asm(K₁)` the booleans are
+  no classifier of sub-assemblies, unlike the indiscrete assembly on `Prop`.  The booleans are, on
+  the other hand, the coproduct `1 + 1` (`Kleene.boolK1IsoCoprod`, `Kleene.boolCofanIsColimit`).
+  A predicate is recursively enumerable exactly when it is the domain of convergence of an element
+  of `K₁` (`Kleene.rePred_iff_exists_index`), and self-halting is one
+  (`Kleene.rePred_selfHalt`): semidecidable, but not decidable
+  (`Kleene.not_computablePred_selfHalt`).
+- **Projective assemblies** (`Start/AssemblyProjective.lean`) — an assembly is *partitioned*
+  (`Realizability.Assembly.Partitioned`) when each point has exactly one realizer.  Partitioned
+  assemblies are projective for the covers, i.e. for the morphisms that lift realizers
+  (`Assembly.Partitioned.regularProjective`), every assembly is covered by a partitioned one
+  (`Assembly.exists_partitioned_cover`), and the regular projectives are exactly the assemblies
+  isomorphic to partitioned ones (`Assembly.regularProjective_iff`), a class closed under binary
+  products (`Assembly.RegularProjective.prod`).  Projectivity for all
+  epimorphisms is strictly stronger: over `K₁` the standard numbers assembly is regular projective
+  (`Kleene.regularProjective_natK1`) but not projective (`Kleene.not_projective_natK1`), the
+  epimorphism onto the indiscrete assembly on the numbers failing to lift realizers
+  (`Kleene.not_liftsRealizers_natToNabla`).
+
 `Start/Demo.lean` is a guided tour with `#check`s of the headline statements.
 
 ## Building
 
-> **Note on the pinned toolchain.**  The library is built against Lean `v4.33.0` and a matching
-> Mathlib checkout supplied at `.lake/packages/mathlib`; it is verified against Mathlib commit
-> `db584cd6`, the `v4.33.0` tag.  `cslib` is supplied the same way, at
-> `.lake/packages/cslib`, the revision built for Lean `v4.33.0`.  All of `Start/`
+> **Note on the pinned toolchain.**  The library is built against Lean `v4.33.0` and the matching
+> Mathlib tag `v4.33.0` (commit `db584cd6`).  `cslib` is pinned to the revision that moves it to
+> Lean `v4.33.0` (`3951377e5a3f5772737f11cd62bc5bb6a72f95d1`).  All of `Start/`
 > compiles on that toolchain, including the two modules that depend on `cslib`
 > (`Start/Representation.lean` and `Start/KolmogorovRepresentation.lean`).
 
 The project pins Lean `v4.33.0` (`lean-toolchain`); `lakefile.toml` requires Mathlib and `cslib`
-as local checkouts under `.lake/packages/`, and `lake-manifest.json` records them as such.  These
-sources must agree: if they do not, `lake` re-resolves the dependencies on every invocation and
-starts compiling all of Mathlib from source, which never finishes in reasonable time.
+as git dependencies at the revisions above, and `lake-manifest.json` records exactly those
+revisions.  These sources must agree: if they do not, `lake` re-resolves the dependencies on every
+invocation and starts compiling all of Mathlib from source, which never finishes in reasonable
+time.
 
 From a fresh clone:
 
@@ -727,9 +914,12 @@ for the policy and [`docs/release-notes/`](docs/release-notes) for the notes of 
 ## Task board and evidence
 
 `docs/goal/task-board.yaml` (rendered to `docs/current-goal-state.md`) tracks every result with an
-evidence note in `docs/goal/evidence/`, including the honest boundary of each claim.  Of the 92
-tasks, 91 are `DONE_STRONG`; the one `BACKEND_PARTIAL` task (`M9-LAMBDAPI-LCCC`) carries an
-explicit open boundary.  Validate and re-render with:
+evidence note in `docs/goal/evidence/`, including the honest boundary of each claim.  Of the 150
+tasks, 148 are `DONE_STRONG`; the one `BACKEND_PARTIAL` task (`M9-LAMBDAPI-LCCC`) and the one
+`DONE_WEAK` task (`M10-CWA-DEMOCRATIC`) each carry an explicit open boundary.  The consolidation
+work that `docs/consolidation-review.md` argues for is done: `Start/Rewriting.lean` proves the
+generic rewriting statements once, and the eight calculi named there obtain them through a single
+bridging lemma each.  Validate and re-render with:
 
 ```bash
 python3 scripts/goal_state.py validate
