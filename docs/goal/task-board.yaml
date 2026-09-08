@@ -1983,7 +1983,7 @@ tasks:
     track: theory/typetheory
     title: "An intrinsic description of the models presented by locally cartesian closed categories"
     latest_evidence: "docs/goal/evidence/M10-CWA-DEMOCRATIC.md"
-    open_boundary: "Fullness and democracy are now defined (Cwa.IsFull, Cwa.IsDemocratic), the category of contexts of a full model is proved to have pullbacks (Cwa.IsFull.isPullback, Cwa.hasPullbacks_of_isFull), and the strictification of a category with pullbacks is proved full and, with a terminal object, democratic (Cwa.isFull_ofPullbacks, Cwa.isDemocratic_ofPullbacks), so the objects of Cwa.LcccModelCat do have both properties. What remains is the transport of a natural Pi-structure on a full model to a locally cartesian closed structure on its contexts - the existing proof LcccPullbacks.ofNaturalPiStruct is for the strictified model, where a type is a local universe, and the presentation Cwa.IsFull.ty is stable under substitution only up to isomorphism - and the comparison of a full democratic model with the strictification of its contexts as an equivalence in the lax 2-category."
+    open_boundary: "Fullness and democracy are defined (Cwa.IsFull, Cwa.IsDemocratic), the category of contexts of a full model has pullbacks (Cwa.hasPullbacks_of_isFull), the strictification of a category with pullbacks is full and, with a terminal object, democratic, and - new - the category of contexts of a full model with a coherent substitution and a natural Pi-structure is locally cartesian closed (LcccPullbacks.ofIsFull, via Cwa.LcccOfFull.transpose and Cwa.LcccOfFull.transpose_naturality), so exit criteria 1 and 2 are met. The comparison of a full model with the strictification of its contexts is built as a morphism of models (Cwa.fullStrictify), the identity on contexts, bijective on terms (Cwa.fullStrictify_tmMap_bijective) and hitting every type up to an isomorphism of extended contexts over the base (Cwa.fullStrictify_essSurj). What remains is exit criterion 3, the equivalence in the lax 2-category: a morphism back would have to send a type over Gamma to a local universe whose base and generic family are independent of Gamma, which amounts to a universe for the model, and none is constructed here."
     milestone: M10
     depends_on:
       - M10-CWA-BICATEGORY
@@ -1995,7 +1995,7 @@ tasks:
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
-      - "lake build Start.CwaDemocratic"
+      - "lake build Start.CwaDemocratic Start.CwaHomOver Start.CwaLcccOfFull Start.CwaStrictifyFull"
 
   - id: M10-LAMBDAPI-SELF-INITIAL
     priority: P1
@@ -3157,3 +3157,72 @@ tasks:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
       - "lake build Start.SpeckerReal"
+
+  - id: M11-MYHILL-SHEPHERDSON
+    priority: P2
+    status: DONE_STRONG
+    track: theory/recursion
+    title: "The Myhill-Shepherdson theorem: an effective operation is Scott continuous"
+    terminal_statement: "Lambda.Post.effop_continuous : a partial computable function on indices whose value depends only on the partial function named takes a value at an index exactly when it takes it at an index of a finite restriction of that function, with Lambda.Post.effop_mono its monotonicity half and Lambda.Post.effop_finite_witness its compactness half"
+    latest_evidence: "docs/goal/evidence/M11-MYHILL-SHEPHERDSON.md"
+    open_boundary: ""
+    milestone: M11
+    depends_on:
+      - M11-SPECKER-REAL
+    rank: 800
+    exit_criteria:
+      - "The s-m-n theorem is available in the form that names a partial computable family together with its values."
+      - "Effective operations are defined, and the class of indices at which one takes a given value is proved r.e."
+      - "An effective operation is proved monotone: extending the argument cannot lose a value."
+      - "An effective operation is proved compact: a value is already taken at a finite restriction of the argument."
+      - "The two are combined into Scott continuity, and an operation with a value at the nowhere-defined function is proved constant."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.EffectiveOperation"
+
+  - id: M11-COMPUTABLE-REAL-CONTINUITY
+    priority: P2
+    status: DONE_STRONG
+    track: theory/realizability
+    title: "Computable analysis in K2: a computable real function is continuous"
+    terminal_statement: "Realizability.KleeneTwo.IsComputableFun.continuous : a function of the reals computed by an element of Kleene's second algebra, in the sense that it turns every name of x into a name of f x, is continuous, with Realizability.KleeneTwo.Realizes.exists_modulus its explicit modulus"
+    latest_evidence: "docs/goal/evidence/M11-COMPUTABLE-REAL-CONTINUITY.md"
+    open_boundary: ""
+    milestone: M11
+    depends_on:
+      - M11-SPECKER-REAL
+    rank: 810
+    exit_criteria:
+      - "Names of real numbers are defined through a coded denumeration of the rationals, and every real is proved to have a fast name."
+      - "The gluing lemma is proved: the first entries of a fast name of x are the first entries of a name of every point close enough to x."
+      - "Computable real functions are defined as those computed by an element of K2 on names."
+      - "An explicit modulus of continuity is derived from Kleene continuity, and a computable real function is proved continuous."
+      - "The step function is proved not computable, and the identity and the constants are proved computable."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.ComputableReal"
+
+  - id: M11-MULTI-TYPES
+    priority: P2
+    status: DONE_STRONG
+    track: theory/lambda
+    title: "Multi types: non-idempotent intersection types bound head reduction length"
+    terminal_statement: "Multi.hnIn_of_deriv : a term with a multi-type derivation of size n reaches a head normal form within n head steps, with Multi.subject_reduction_hstep the quantitative subject reduction behind it and Multi.typable_of_isHnf its converse half"
+    latest_evidence: "docs/goal/evidence/M11-MULTI-TYPES.md"
+    open_boundary: ""
+    milestone: M11
+    depends_on:
+      - M10-INTERSECTION-FILTER
+    rank: 820
+    exit_criteria:
+      - "Non-idempotent strict and multi types are defined, with contexts as multisets and no weakening rule."
+      - "The derivation relation carries its size as an index, and the context algebra it needs is proved."
+      - "The quantitative substitution lemma is proved: the size of the substituted derivation is the sum of the two sizes minus the length of the multi type consumed."
+      - "Quantitative subject reduction is proved: a head step strictly decreases the size."
+      - "The bound is derived: a derivation of size n reaches a head normal form in at most n head steps; head normal forms are typable; Omega is not."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.MultiTypes"

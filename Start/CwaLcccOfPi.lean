@@ -17,6 +17,7 @@ Main results:
   category with pullbacks makes it locally cartesian closed**.
 -/
 
+import Start.CwaHomOver
 import Start.CwaPiSub
 import Start.CwaSubFunctorial
 import Start.CwaUnivLocal
@@ -68,22 +69,6 @@ noncomputable def homOverEquivTm {Γ W : C} (w : W ⟶ Γ) (P : LuTy Γ) :
   pullback.lift_snd _ _ _
 
 end LuTy
-
-namespace Cwa
-
-variable {C : Type u} [Category.{v} C] {T : Cwa.{u, v, max u v} C}
-
-/-- Transport of terms along an equality of types, as a bijection. -/
-def tmCastEquiv {Γ : C} {A A' : T.Ty Γ} (h : A = A') : T.Tm Γ A ≃ T.Tm Γ A' where
-  toFun := tmCast h
-  invFun := tmCast h.symm
-  left_inv a := by cases h; rfl
-  right_inv a := by cases h; rfl
-
-@[simp] theorem tmCastEquiv_apply {Γ : C} {A A' : T.Ty Γ} (h : A = A') (a : T.Tm Γ A) :
-    tmCastEquiv (T := T) h a = tmCast h a := rfl
-
-end Cwa
 
 /-! ### A natural Π-structure is a locally cartesian closed structure -/
 

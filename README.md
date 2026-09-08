@@ -18,7 +18,7 @@ Kolmogorov complexity, Chaitin's `Ω`, Martin-Löf randomness and Böhm's separa
 ![Lean](https://img.shields.io/badge/Lean-v4.33.0-blue)
 ![Mathlib](https://img.shields.io/badge/Mathlib-v4.33.0-blue)
 ![sorry-free](https://img.shields.io/badge/sorry--free-yes-brightgreen)
-![tasks](https://img.shields.io/badge/task%20board-148%2F150%20DONE__STRONG-brightgreen)
+![tasks](https://img.shields.io/badge/task%20board-151%2F153%20DONE__STRONG-brightgreen)
 
 Everything below is proved in `Start/`; the whole library compiles with `lake build`, contains no
 `sorry` and no `axiom`, and the headline results depend only on `propext`, `Classical.choice` and
@@ -125,6 +125,13 @@ Lambda.Post.rice_shapiro :
         (∀ x, Lambda.Post.Wset d x → Lambda.Post.Wset e x) ∧ A d)
 Lambda.Post.not_rePred_emptyIndex : ¬ REPred fun d => ∀ x, ¬ Lambda.Post.Wset d x
 Lambda.Post.not_rePred_totalIndex : ¬ REPred fun d => ∀ x, Lambda.Post.Wset d x
+
+-- Myhill–Shepherdson: an effective operation — a partial computable function on
+-- indices whose value depends only on the partial function named — is Scott
+-- continuous: monotone, and already determined by a finite restriction.
+Lambda.Post.effop_continuous :
+    ∀ {Psi : ℕ →. ℕ}, Partrec Psi → Lambda.Post.ExtensionalOp Psi → ∀ e v : ℕ,
+      (v ∈ Psi e ↔ ∃ d : ℕ, Lambda.Post.SubFun d e ∧ Lambda.Post.FiniteDom d ∧ v ∈ Psi d)
 ```
 
 ### Relative computability, the jump, and the arithmetical hierarchy
@@ -582,7 +589,18 @@ Public Lean 4 developments in this area, and how they relate (repository file li
   begins the intrinsic description of the models so compared: a model is *full* when every
   morphism of contexts is a display map up to isomorphism over its codomain and *democratic* when
   every context is an extension of a terminal one, the contexts of a full model have pullbacks
-  (`Cwa.hasPullbacks_of_isFull`), and every strictification is full and democratic.  Since the
+  (`Cwa.hasPullbacks_of_isFull`), and every strictification is full and democratic.  That
+  description is completed on the semantic side by `Start/CwaLcccOfFull.lean`: the category of
+  contexts of a **full model with a natural Π-structure** (and coherent substitution on extended
+  contexts) is locally cartesian closed (`LcccPullbacks.ofIsFull`) — the dependent product of a
+  slice object is the display map of the Π-type of the two presented types, and naturality of the
+  transposition is exactly the law `(λ b)[σ] = λ (b[σ⁺])`.  The generic ingredient, that the maps
+  into a display map lying over a substitution are the terms of the substituted type, is
+  `Cwa.homOverEquivTm` (`Start/CwaHomOver.lean`).  Finally `Start/CwaStrictifyFull.lean` compares a
+  full model with the strictification of its own category of contexts: there is a morphism of
+  models out of the strictification (`Cwa.fullStrictify`), the identity on contexts, bijective on
+  terms, and every type of the model is in its image up to an isomorphism of extended contexts
+  over the base (`Cwa.fullStrictify_essSurj`).  Since the
   types of `λΠ` are the *terms of the sort `∗`* rather than all the types of a model,
   `Start/CwaSmall.lean` extracts from a model with a universe its **small fragment**
   (`Cwa.Universe.smallCwa`): the category with attributes whose types are the codes, with its
@@ -750,6 +768,20 @@ Public Lean 4 developments in this area, and how they relate (repository file li
   (`Inter.properTypable_iff_hasNormalForm`): a term is typable without `ω` exactly when it has a
   β-normal form — proved through the approximation theorem rather than by reducibility — and the
   inclusion is strict (`Inter.exists_typable_not_properTypable`, witnessed by `x Ω`).
+- **Multi types: intersection types that count** (`Start/MultiTypes.lean`) — the *non-idempotent*
+  system of de Carvalho, where an intersection is a finite **multiset** rather than a set.
+  Idempotence is exactly what destroys quantitative information: with `σ ∧ σ = σ` a premise may be
+  reused for free, and the derivation forgets how often an argument was needed.  Dropping it — no
+  weakening, contexts as outputs, an application summing the contexts of its premises — turns the
+  derivation into a measurement.  The engine is the quantitative substitution lemma
+  `Multi.substitution` (the substituted derivation has size `n + m - |a|`, where `a` is the multi
+  type consumed at the substituted variable), from which `Multi.subject_reduction_hstep` shows a
+  head step **strictly decreases** the size.  Hence `Multi.hnIn_of_deriv`: a term with a
+  derivation of size `n` reaches a head normal form within `n` head steps, so the type system
+  bounds the running time and not merely the fact of termination.  Conversely every head normal
+  form is typable (`Multi.typable_of_isHnf`) and `Ω` is not (`Multi.not_typable_omega`).
+  Subject *expansion* is not proved, so de Carvalho's exact equality between derivation size and
+  head reduction length is not claimed — only the bound.
 
 - **λ-models and the Scott–Koymans correspondence** (`Start/LambdaModel.lean`,
   `Start/LambdaModelInstances.lean`, `Start/KaroubiLambda.lean`, `Start/ReflexiveCcc.lean`,
@@ -805,7 +837,19 @@ Public Lean 4 developments in this area, and how they relate (repository file li
   `Lambda.speckerReal` and proves the classical form of **Specker's theorem**: that real number
   is not computable (`Lambda.specker_limit_not_computable`) — no computable `f : ℕ → ℕ` gives
   dyadic approximations `f m / 2 ^ m` to within `2 ^ (-m)`, since an unbounded search through the
-  sequence would then decide the halting set.  Over an arbitrary PCA the
+  sequence would then decide the halting set.  `Start/ComputableReal.lean` then runs the standard
+  construction of computable analysis on top of `K₂`: a real is presented by a **name**, a
+  sequence of coded rationals converging to it with error at most `2 ^ (-i)` at stage `i`
+  (`KleeneTwo.IsName`), and `f : ℝ → ℝ` is **computable** when one element of `K₂` turns every
+  name of `x` into a name of `f x` (`KleeneTwo.Realizes`).  Such a function is **continuous**,
+  with an explicit modulus (`KleeneTwo.Realizes.exists_modulus`,
+  `KleeneTwo.IsComputableFun.continuous`): the finite initial segment of the name of `x` read
+  when computing the `k`-th output rational is a modulus, because every nearby point has a name
+  beginning with the same segment (`KleeneTwo.glue_isName`).  So the step function is not
+  computable (`KleeneTwo.not_isComputableFun_step`) although each of its values is a computable
+  real, while the identity and the constants are.  This is the type-two counterpart of the
+  Kreisel–Lacombe–Shoenfield theorem, which is the same statement for Markov computability and is
+  not claimed here.  Over an arbitrary PCA the
   **assemblies** `Realizability.Assembly A` form a category with finite products
   (`Assembly.prodFanIsLimit`) which is cartesian closed, the exponential being the tracked maps
   (`Assembly.monoidalClosed`); it has equalizers, cut out as sub-assemblies, hence **all finite
@@ -914,8 +958,8 @@ for the policy and [`docs/release-notes/`](docs/release-notes) for the notes of 
 ## Task board and evidence
 
 `docs/goal/task-board.yaml` (rendered to `docs/current-goal-state.md`) tracks every result with an
-evidence note in `docs/goal/evidence/`, including the honest boundary of each claim.  Of the 150
-tasks, 148 are `DONE_STRONG`; the one `BACKEND_PARTIAL` task (`M9-LAMBDAPI-LCCC`) and the one
+evidence note in `docs/goal/evidence/`, including the honest boundary of each claim.  Of the 153
+tasks, 151 are `DONE_STRONG`; the one `BACKEND_PARTIAL` task (`M9-LAMBDAPI-LCCC`) and the one
 `DONE_WEAK` task (`M10-CWA-DEMOCRATIC`) each carry an explicit open boundary.  The consolidation
 work that `docs/consolidation-review.md` argues for is done: `Start/Rewriting.lean` proves the
 generic rewriting statements once, and the eight calculi named there obtain them through a single

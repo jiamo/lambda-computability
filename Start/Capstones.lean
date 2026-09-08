@@ -75,6 +75,7 @@ import Start.KleeneTwo
 import Start.PCAMorphism
 import Start.Specker
 import Start.SpeckerReal
+import Start.ComputableReal
 import Start.PCATotal
 import Start.CwaPiType
 import Start.CwaTypeModelSigma
@@ -86,6 +87,7 @@ import Start.GraphNotFullyAbstract
 import Start.InfiniteBohmTree
 import Start.ScottKoymans
 import Start.IntersectionNormalization
+import Start.MultiTypes
 import Start.KolmogorovPair
 import Start.ChaitinIncompleteness
 import Start.KolmogorovApprox
@@ -119,6 +121,7 @@ import Start.PostCreative
 import Start.RiceCreative
 import Start.CreativeCodeSets
 import Start.RiceShapiro
+import Start.EffectiveOperation
 import Start.ScottCurry
 import Start.SizeExplosion
 import Start.UniformCAInst
@@ -131,6 +134,8 @@ import Start.CwaLaxNotUnique
 import Start.LcccPseudofunctor
 import Start.LcccBiequivalence
 import Start.CwaDemocratic
+import Start.CwaLcccOfFull
+import Start.CwaStrictifyFull
 
 /-! ## Interfaces of the untyped calculus
 
@@ -198,6 +203,30 @@ class of indices of the empty set, and the class of indices of the total functio
 #check @Lambda.Post.rice_shapiro
 #check @Lambda.Post.not_rePred_emptyIndex
 #check @Lambda.Post.not_rePred_totalIndex
+
+/-! ## Recursion theory: the Myhill–Shepherdson theorem
+
+`Start/EffectiveOperation.lean`: an **effective operation** is a partial computable function on
+indices whose value depends only on the partial function named.  Nothing in that definition
+restricts the algorithm to reading finitely much of its argument — it is handed a program, a
+finite object determining the whole infinite graph — and yet it is forced to behave as if it
+did.  An effective operation is **monotone** (`Lambda.Post.effop_mono`) and **compact**
+(`Lambda.Post.effop_finite_witness`): a value it takes at an index is already taken at an index
+of a finite restriction of the function named.  Together this is Scott continuity
+(`Lambda.Post.effop_continuous`).  In particular an operation with a value at the nowhere-defined
+function has that value everywhere (`Lambda.Post.effop_const_of_empty`), so no effective
+operation can test its argument for divergence.  The proofs are those of Rice–Shapiro: from a
+failure one builds a computable family of programs whose membership in the class
+`{e | v ∈ Ψ e}` is exactly non-membership in the halting set.
+-/
+
+#check @Lambda.Post.phi
+#check @Lambda.Post.ExtensionalOp
+#check @Lambda.Post.exists_index_eval
+#check @Lambda.Post.effop_mono
+#check @Lambda.Post.effop_finite_witness
+#check @Lambda.Post.effop_continuous
+#check @Lambda.Post.effop_const_of_empty
 
 /-! ## Recursion theory: the Scott–Curry theorem
 
@@ -563,6 +592,35 @@ typable with an `ω`-free type in an `ω`-free basis exactly when it has a β-no
 #check @Inter.properDeriv_of_hasNormalForm
 #check @Inter.properTypable_iff_hasNormalForm
 #check @Inter.exists_typable_not_properTypable
+
+/-! ## Multi types: intersection types that count
+
+`Start/MultiTypes.lean`: the **non-idempotent** intersection types of de Carvalho.  An
+intersection is a finite *multiset* of strict types rather than a set, so nothing may be
+duplicated for free and each derivation carries a size.  Contexts are outputs, not inputs: there
+is no weakening, and an application sums the contexts of its premises.
+
+The engine is the **quantitative substitution lemma** `Multi.substitution`: a derivation of
+`M` of size `n` using the multi type `a` at `x`, together with a derivation list for `a` of total
+size `m`, yields a derivation of `M[N/x]` of size `p` with `p + |a| = n + m`.  From it,
+`Multi.subject_reduction_hstep` shows a head step **strictly decreases** the size of the
+derivation, which turns typability into a quantitative statement: `Multi.hnIn_of_deriv` says a
+derivation of size `n` reaches a head normal form within `n` head steps, so the type system does
+not merely certify termination, it bounds the running time.  Conversely
+`Multi.typable_of_isHnf` types every head normal form, and `Multi.not_typable_omega` rules out
+`Ω`.
+
+Subject *expansion* is not proved, so de Carvalho's exact equality between derivation size and
+head reduction length is not claimed here — only the upper bound.
+-/
+
+#check @Multi.Deriv
+#check @Multi.substitution
+#check @Multi.subject_reduction_hstep
+#check @Multi.hasHnf_of_typable
+#check @Multi.hnIn_of_deriv
+#check @Multi.typable_of_isHnf
+#check @Multi.not_typable_omega
 
 /-! ## The lattice of λ-theories
 
@@ -1094,6 +1152,23 @@ set below the precision have all appeared, so the halting set would be decidable
 classical statement of Specker's theorem: a computable, nondecreasing, bounded sequence of
 rationals can converge to a non-computable real.
 
+`Start/ComputableReal.lean` runs the construction of **computable analysis** on top of `K₂`.  A
+real number is presented by a *name* — a sequence of coded rationals converging to it with error
+at most `2 ^ (-i)` at stage `i` (`Realizability.KleeneTwo.IsName`) — and a function `f : ℝ → ℝ`
+is computable when a single element of `K₂` turns every name of `x` into a name of `f x`
+(`Realizability.KleeneTwo.Realizes`).  Such a function is **continuous**, with an explicit
+modulus (`Realizability.KleeneTwo.Realizes.exists_modulus`,
+`Realizability.KleeneTwo.IsComputableFun.continuous`): the finite initial segment of the name of
+`x` that the computation of the `k`-th output rational reads is a modulus, because every point
+near enough to `x` has a name beginning with that same segment — this is the gluing lemma
+`Realizability.KleeneTwo.glue_isName`, and it is where the spare half of a *fast* name is spent.
+So the step function is not computable (`Realizability.KleeneTwo.not_isComputableFun_step`)
+although each of its values is a computable real, while the identity and the constants are
+(`Realizability.KleeneTwo.isComputableFun_id`,
+`Realizability.KleeneTwo.isComputableFun_const`).  This is the type-two counterpart of the
+Kreisel–Lacombe–Shoenfield theorem, which is the same statement for Markov computability and is
+not proved here.
+
 `Start/Assembly.lean` and `Start/AssemblyCcc.lean` build the category of assemblies over an
 arbitrary PCA and show it is cartesian closed: sets with realizers, tracked maps as morphisms,
 Church pairs as products and tracked function spaces as exponentials.
@@ -1207,6 +1282,13 @@ function has no lift.
 #check @Lambda.speckerVal_le_speckerReal
 #check @Lambda.speckerReal_le_one
 #check @Lambda.specker_limit_not_computable
+#check @Realizability.KleeneTwo.IsName
+#check @Realizability.KleeneTwo.Realizes
+#check @Realizability.KleeneTwo.IsComputableFun
+#check @Realizability.KleeneTwo.Realizes.exists_modulus
+#check @Realizability.KleeneTwo.IsComputableFun.continuous
+#check @Realizability.KleeneTwo.not_isComputableFun_step
+#check @Realizability.KleeneTwo.isComputableFun_id
 #check @Realizability.Assembly
 #check @Realizability.Assembly.instCategory
 #check @Realizability.Assembly.isTerminalUnitAsm
@@ -1386,6 +1468,21 @@ model of System F, independent of the reducibility-candidate argument of `Start/
 `Start/CwaLaxNotUnique.lean` settles the uniqueness clause of lax bi-initiality in the negative,
 by a model of λΠ on pointed sets, and `Start/LcccPseudofunctor.lean` carries strictification
 across to the 2-category of locally cartesian closed categories.
+
+`Start/CwaDemocratic.lean` and `Start/CwaLcccOfFull.lean` describe the models so compared by
+properties rather than by construction: a *full* model presents every morphism of contexts as a
+display map, its category of contexts has pullbacks, and — the second half, proved here — that
+category is locally cartesian closed as soon as the model carries a natural Π-structure whose
+substitution on extended contexts is coherent (`LcccPullbacks.ofIsFull`).  The generic bijection
+between the maps into a display map lying over a substitution and the terms of the substituted
+type is `Start/CwaHomOver.lean`.
+
+`Start/CwaStrictifyFull.lean` compares a full model with the strictification of its own category
+of contexts: there is a morphism of models `Cwa.fullStrictify` out of the strictification, the
+identity on contexts, bijective on terms, and every type of the model is in its image up to an
+isomorphism of extended contexts over the base; for a full *democratic* model with dependent
+products the strictification of its contexts is again a model with dependent products
+(`Cwa.nonempty_naturalPiStruct_ofPullbacks_of_isFull`).
 -/
 
 #check @PointedModel.not_subsingleton_laxTwoCell_modelHom
@@ -1403,3 +1500,11 @@ across to the 2-category of locally cartesian closed categories.
 #check @Cwa.hasPullbacks_of_isFull
 #check @Cwa.isFull_ofPullbacks
 #check @Cwa.isDemocratic_ofPullbacks
+#check @Cwa.homOverEquivTm
+#check @Cwa.LcccOfFull.transpose
+#check @Cwa.LcccOfFull.transpose_naturality
+#check @LcccPullbacks.ofIsFull
+#check @Cwa.fullStrictify
+#check @Cwa.fullStrictify_tmMap_bijective
+#check @Cwa.fullStrictify_essSurj
+#check @Cwa.nonempty_naturalPiStruct_ofPullbacks_of_isFull

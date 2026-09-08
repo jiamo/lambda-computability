@@ -124,6 +124,7 @@ import Start.PostSimple
 import Start.PostIncomplete
 import Start.PostCreative
 import Start.RiceShapiro
+import Start.EffectiveOperation
 import Start.KraftConverse
 import Start.StepComplexity
 import Start.GapTheorem
@@ -232,6 +233,7 @@ import Start.Lccc
 import Start.LcccType
 import Start.CwaPi
 import Start.CwaPiSub
+import Start.CwaHomOver
 import Start.CwaLcccOfPi
 import Start.CwaPiType
 import Start.LambdaPiCwa
@@ -263,6 +265,8 @@ import Start.CwaStrictPseudofunctor
 import Start.LcccPseudofunctor
 import Start.LcccBiequivalence
 import Start.CwaDemocratic
+import Start.CwaLcccOfFull
+import Start.CwaStrictifyFull
 import Start.CwaBiInitial
 import Start.CwaLaxBiInitial
 import Start.PointedCwa
@@ -342,6 +346,7 @@ import Start.DinfSpine
 import Start.DinfTagBelow
 import Start.DinfTagBelowSound
 import Start.IntersectionTypes
+import Start.MultiTypes
 import Start.FilterModel
 import Start.IntersectionNormalization
 import Start.LambdaTheory
@@ -416,6 +421,7 @@ import Start.KleeneTwo
 import Start.PCAMorphism
 import Start.Specker
 import Start.SpeckerReal
+import Start.ComputableReal
 import Start.Assembly
 import Start.AssemblyCcc
 import Start.AssemblyLimits

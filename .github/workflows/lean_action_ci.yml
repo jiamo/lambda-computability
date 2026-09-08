@@ -19,3 +19,49 @@ jobs:
       - uses: actions/checkout@v5
       - uses: leanprover/lean-action@v1
       - uses: leanprover-community/docgen-action@v1
+
+  # Builds what the repository *ships*, not what happens to sit in a working tree:
+  # the sources are packed into an archive, unpacked somewhere else, and built there.
+  # A dependency manifest that disagrees with `lakefile.toml` — the one failure mode
+  # that a warm working tree hides, because `lake` never has to re-resolve anything —
+  # makes this job fail.
+  build-from-archive:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Pack the tracked sources
+        run: |
+          mkdir -p "${RUNNER_TEMP}/pack"
+          git archive --format=tar HEAD > "${RUNNER_TEMP}/pack/delivered.tar"
+
+      - name: Unpack them into a clean directory
+        run: |
+          mkdir -p "${RUNNER_TEMP}/delivered"
+          tar -x -f "${RUNNER_TEMP}/pack/delivered.tar" -C "${RUNNER_TEMP}/delivered"
+
+      - name: Check the shipped manifest against the shipped configuration
+        working-directory: ${{ runner.temp }}/delivered
+        run: python3 scripts/check_manifest.py
+
+      - name: Build the archive
+        uses: leanprover/lean-action@v1
+        with:
+          lake-package-directory: ${{ runner.temp }}/delivered
+          build-args: "--wfail"
+          use-mathlib-cache: true
+
+      - name: Refuse `sorry` and `admit` in the library
+        working-directory: ${{ runner.temp }}/delivered
+        run: |
+          if grep -R -n -E '\b(sorry|admit)\b' Start Start.lean; then
+            echo "::error::the shipped library contains sorry/admit"
+            exit 1
+          fi
+
+      - name: Project gates
+        working-directory: ${{ runner.temp }}/delivered
+        run: |
+          python3 scripts/goal_state.py validate
+          python3 scripts/check_closure.py
