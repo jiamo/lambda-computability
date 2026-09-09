@@ -1,3 +1,22 @@
+# Summary of changes for run ecfe8d64-3edf-4a52-b36f-3dce34bbacfb
+已按顺序做完你列的三件事，全部在本仓库里落地并提交。
+
+**0. 通道与门禁（先修）**
+- `lake-manifest.json` 与 `lakefile.toml` 确实是断的：manifest 里没有 `cslib`、包名写成 `start`、mathlib 的 `inputRev` 还停在旧标签，所以整棵树根本编不了。已重新生成，`python3 scripts/check_manifest.py` 现在 exit 0；`lake build` 全绿（9111 jobs，0 error、0 linter warning），`Start/` 无 `sorry`/`admit`。
+- `Start/ArithBounded.lean` 里的 `push Not`：在本仓库锁定的 Mathlib 版本上，情况正好相反——`push_neg` 已被弃用，官方提示改用 `push Not`。我实测把两处改成 `push_neg` 会产生两条 deprecation warning，于是保留原样，并在此说明。
+
+**1. 合理时间代价模型（①②③，三个新模块，全部 sorry-free，公理只有 `propext`/`Classical.choice`/`Quot.sound`）**
+- ① `Start/Krivine.lean`：抽象机（闭包／环境／栈），三条带标号的转移（`app`/`beta`/`var`），`Run n b` 同时计总步数与 β 步数，并通过 `Krivine.Run.starN` 接到已有的计步重写接口；确定性、终止态刻画、环境的结构深度（`var` 转移严格下降）。
+- ② `Start/KrivineDecode.lean`：状态解码（环境按并行代换展开、栈还原成应用脊），双向模拟——`Trans.decode_eq`（管理转移不改变项）、`Trans.decode_wstep`（一次 `beta` 恰是一次弱头 β 步）、`Run.decode_reducesIn`（b 次 β 转移 = 恰好 b 步 β 归约）、终止态解码为弱头范式，以及反方向的 `exists_final_of_whnIn`（项弱头可归约 ⇒ 机器一定停机，且 β 转移数 ≤ 策略步数）。
+- ③ `Start/KrivineBound.lean`：子项不变量（代码大小不增）+ 深度不变量（只有 β 转移会加深、且只加深 1）+ 势函数（`|code| + S·envDepth`，每个管理转移严格下降），得到 `run_length_le_init`：从 `t` 出发、含 b 次 β 转移的运行总步数 `n ≤ b + |t|·(1 + b·(b+1))`；与 `Run.beta_le`（`b ≤ n`）合起来即两种代价多项式相关。总结论 `Krivine.eval_cost`。文件末尾有 `(λx.x)(λx.x)` 的实例（3 步、1 次 β）作为非空性检查。
+  - 诚实边界：这里界的是**转移条数**，"单步开销在具体机器模型上多项式有界"那一半没有形式化（库里的机器模型尚未与 Krivine 机对接），所以该任务记为 `DONE_WEAK`，并单独立了一条待办 `M11-KRIVINE-UNIT-COST` 写清了 exit criteria。
+
+**2. K₁ ↪ K₂ 不可逆（`Start/KleeneNoRetraction.lean`）**
+你给的原命题（"不存在 K₂→K₁ 的 applicative morphism"）按本库的定义是**假**的：我构造了任意两个 PCA 之间的平凡态射 `AppMorphism.trivialMor`（目标的每个元素代表源的每个元素，实现子取常函数），这本身就是反例，已写进文件并在文档里说明。修正后的命题已证：`KleeneTwo.no_separatesBits_morphism`——任何 K₂→K₁ 的 applicative morphism 都无法用一个部分递归码把常函数 0 的代表与常函数 1 的代表分开（更强的"读回全部数码"版本是 `no_readsNumerals_morphism`、`kOneToTwo_not_invertible`）。证明用投影 `β ↦ β n` 的连续性（它们是 K₂ 的元素 `projAssoc n`）：能分辨一位，就能从一个代表恢复整条 0/1 序列，于是自然数集会被自然数命名，与 Cantor 定理矛盾。
+
+**3. 记账**
+四条任务（`M11-KRIVINE-MACHINE`、`M11-KRIVINE-SIMULATION`、`M11-KRIVINE-INVARIANCE`、`M11-KLEENE-NO-RETRACTION`）已按 board 的 schema（exit_criteria + required_gates + depends_on + rank + terminal_statement）写进 `docs/goal/task-board.yaml`，每条配了 `docs/goal/evidence/` 下的证据说明；`docs/current-goal-state.md` 已重渲染，新模块都被 `Start.lean` 导入、在 `Start/Capstones.lean` 里带散文与 `#check` 注册，README 也更新了。三个项目自带门禁全部通过：`goal_state.py validate`（158 tasks）、`check_closure.py`（391 modules 全在导入闭包且全部注册）、`check_manifest.py`。所有改动已提交。
+
 # Summary of changes for run 6b45f683-785b-4418-a8a1-29c2be412515
 I picked the project up, repaired the build, and closed the main item that was still open on its research queue. Everything is committed and pushed.
 

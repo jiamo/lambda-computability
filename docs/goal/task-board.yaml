@@ -3226,3 +3226,117 @@ tasks:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
       - "lake build Start.MultiTypes"
+
+  - id: M11-KRIVINE-MACHINE
+    priority: P2
+    status: DONE_STRONG
+    track: theory/lambda
+    title: "An abstract machine for the lambda calculus: the Krivine machine and its counted runs"
+    terminal_statement: "Krivine.Trans : the three labelled transitions of the Krivine machine on states of code, environment and argument stack, with Krivine.Run counting transitions and beta transitions separately, Krivine.Trans.deterministic and Krivine.isFinal_iff"
+    latest_evidence: "docs/goal/evidence/M11-KRIVINE-MACHINE.md"
+    open_boundary: ""
+    milestone: M11
+    depends_on:
+      - M11-MULTI-TYPES
+    rank: 830
+    exit_criteria:
+      - "Closures, environments and machine states are defined, with the initial state on a term."
+      - "The transitions are defined and labelled so that beta transitions can be counted apart from the administrative ones."
+      - "Runs are defined with two counters and bridged to the counted rewriting interface of Start/Rewriting.lean."
+      - "The machine is proved deterministic and the final states are characterised."
+      - "The structural depth of environments is defined and proved to decrease at a lookup."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.Krivine"
+
+  - id: M11-KRIVINE-SIMULATION
+    priority: P2
+    status: DONE_STRONG
+    track: theory/lambda
+    title: "Bisimulation: the machine runs are exactly the weak head reductions"
+    terminal_statement: "Krivine.Run.decode_reducesIn and Krivine.exists_final_of_whnIn : a run with b beta transitions is a reduction of exactly b steps of the decoded term, and conversely a term the weak head strategy normalises in k steps is evaluated by the machine to a final state with at most k beta transitions"
+    latest_evidence: "docs/goal/evidence/M11-KRIVINE-SIMULATION.md"
+    open_boundary: ""
+    milestone: M11
+    depends_on:
+      - M11-KRIVINE-MACHINE
+    rank: 840
+    exit_criteria:
+      - "The decoding of a state is defined by unfolding its environment into its code and applying the result to the decoded stack."
+      - "The administrative transitions are proved not to change the decoded term."
+      - "A beta transition is proved to be exactly one weak head step of the decoded term."
+      - "A final state is proved to decode to a weak head normal form."
+      - "The machine is proved to reach a final state whenever the decoded term is weak head normalising."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.KrivineDecode"
+
+  - id: M11-KRIVINE-INVARIANCE
+    priority: P2
+    status: DONE_WEAK
+    track: theory/complexity
+    title: "Polynomial invariance: the number of beta steps is a reasonable time cost model for weak head evaluation"
+    terminal_statement: "Krivine.eval_cost : a term the weak head strategy normalises in k steps is evaluated by the machine with at most k beta transitions and at most k + |t| * (1 + k * (k + 1)) transitions in all, the result being the weak head normal form reached in exactly as many beta steps as beta transitions"
+    latest_evidence: "docs/goal/evidence/M11-KRIVINE-INVARIANCE.md"
+    open_boundary: "Only the number of transitions is bounded. That one transition costs polynomial time on a concrete machine model is not formalised: the library's machine models are not connected to the Krivine machine."
+    milestone: M11
+    depends_on:
+      - M11-KRIVINE-SIMULATION
+    rank: 850
+    exit_criteria:
+      - "The subterm invariant is proved: no transition produces a piece of code larger than one already held."
+      - "The depth invariant is proved: only a beta transition deepens the environments, and by one."
+      - "A potential is defined that strictly decreases at every administrative transition."
+      - "The run length is bounded by a polynomial in the size of the initial term and the number of beta transitions."
+      - "The bound is combined with the bisimulation into the invariance statement for weak head evaluation."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.KrivineBound"
+
+  - id: M11-KLEENE-NO-RETRACTION
+    priority: P2
+    status: DONE_STRONG
+    track: theory/realizability
+    title: "The inclusion of Kleene's first algebra into the second is not reversible"
+    terminal_statement: "Realizability.KleeneTwo.no_separatesBits_morphism : no applicative morphism from K2 to K1 separates the representatives of the constant function 0 from those of the constant function 1, while Realizability.AppMorphism.trivialMor shows that applicative morphisms K2 to K1 do exist"
+    latest_evidence: "docs/goal/evidence/M11-KLEENE-NO-RETRACTION.md"
+    open_boundary: ""
+    milestone: M11
+    depends_on:
+      - M11-COMPUTABLE-REAL-CONTINUITY
+    rank: 860
+    exit_criteria:
+      - "The trivial applicative morphism between any two partial combinatory algebras is constructed, so the unqualified nonexistence statement is refuted."
+      - "The projections beta to beta n are proved continuous and realised by elements of K2."
+      - "Separating bits and reading back the numerals are defined for a morphism into K1."
+      - "A representative of a 0/1-valued sequence is proved to determine the sequence, for a morphism that separates bits."
+      - "The contradiction with Cantor's theorem is drawn, and the conclusion recorded for the morphism K1 to K2."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build Start.KleeneNoRetraction"
+
+  - id: M11-KRIVINE-UNIT-COST
+    priority: P2
+    status: TODO_READY
+    track: theory/complexity
+    title: "The missing half of invariance: one machine transition costs polynomial time on a concrete model"
+    latest_evidence: ""
+    open_boundary: ""
+    milestone: M11
+    depends_on:
+      - M11-KRIVINE-INVARIANCE
+    rank: 855
+    exit_criteria:
+      - "Machine states are encoded as words, with the code and the environments shared rather than copied."
+      - "The encoded state after a transition is computed from the encoded state before it by a term of one of the library's machine models."
+      - "The cost of that computation is bounded by a polynomial in the length of the encoding."
+      - "The encoding of a reachable state is bounded by a polynomial in the size of the initial term and the number of transitions."
+      - "The three are combined with Krivine.eval_cost into a bound on the running time of an implementation, polynomial in the size of the term and the number of beta steps."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build"

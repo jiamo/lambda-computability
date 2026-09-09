@@ -136,6 +136,8 @@ import Start.LcccBiequivalence
 import Start.CwaDemocratic
 import Start.CwaLcccOfFull
 import Start.CwaStrictifyFull
+import Start.KrivineBound
+import Start.KleeneNoRetraction
 
 /-! ## Interfaces of the untyped calculus
 
@@ -147,14 +149,36 @@ a consumer can use without reaching into the proofs.
 #check @EncodingBoundary.fromConcrete
 #check @ComputabilityInternalizer.toLambdaComputable
 
-/-! ## Cost of reduction: the size explosion
+/-! ## Cost of reduction: the size explosion, and a reasonable cost model
 
 `Start/SizeExplosion.lean`: there is a family of terms whose β-normal forms grow exponentially in
 the number of steps, so the naive unit-cost model of β-reduction is not reasonable.
+
+`Start/Krivine.lean`, `Start/KrivineDecode.lean` and `Start/KrivineBound.lean` give the positive
+half for weak head evaluation.  The Krivine machine keeps the result *shared*, as code together
+with an environment, which is what the size explosion forces; its `beta` transitions are exactly
+the weak head β-steps of the term it stands for (`Krivine.Trans.decode_wstep`,
+`Krivine.Run.decode_reducesIn`), the administrative ones do not change that term
+(`Krivine.Trans.decode_eq`), and their number is polynomially bounded
+(`Krivine.run_length_le_init`).  So the machine simulates the calculus with polynomial overhead
+and the calculus counts the machine's β transitions: `Krivine.eval_cost`.
 -/
 
 #check @Lambda.exists_size_explosion
 #check @Lambda.exists_size_explosion_steps
+#check @Krivine.Trans.deterministic
+#check @Krivine.isFinal_iff
+#check @Krivine.Trans.decode_eq
+#check @Krivine.Trans.decode_wstep
+#check @Krivine.Run.decode_reducesIn
+#check @Krivine.IsFinal.isWhnf_decode
+#check @Krivine.eval_sound
+#check @Krivine.exists_final_of_whnIn
+#check @Krivine.Trans.maxCode_le
+#check @Krivine.Trans.depthBound_le
+#check @Krivine.run_length_le
+#check @Krivine.run_length_le_init
+#check @Krivine.eval_cost
 
 /-! ## Recursion theory: Post's problem for many-one reducibility
 
@@ -1133,6 +1157,14 @@ sending a number to the constant function with that value: number realizability 
 function realizability.  Continuity has a Brouwerian consequence: no element of `K₂` decides
 whether its argument is the zero function (`Realizability.KleeneTwo.no_zero_test`).
 
+`Start/KleeneNoRetraction.lean` shows that the inclusion cannot be reversed.  Applicative
+morphisms `K₂ → K₁` do exist — the trivial one, where every element of the target represents
+every element of the source (`Realizability.AppMorphism.trivialMor`) — so the statement has to
+ask that the target read something back, and then there is none
+(`Realizability.KleeneTwo.no_separatesBits_morphism`): the projections `β ↦ β n` are continuous,
+hence are elements of `K₂`, so a representative of a `0/1`-valued `β` together with the realizer
+would determine every value of `β`, and a set of naturals would be named by a natural number.
+
 `Start/Specker.lean` takes the first step from function realizability into **computable
 analysis**.  A *Specker sequence* is a computable, nondecreasing, bounded sequence of rationals
 whose limit is not computable, so the monotone convergence theorem fails effectively.  The
@@ -1273,6 +1305,11 @@ function has no lift.
 #check @Realizability.KleeneTwo.no_zero_test
 #check @Realizability.KleeneTwo.kOneToTwo
 #check @Realizability.KleeneTwo.evalAssoc_app
+#check @Realizability.AppMorphism.trivialMor
+#check @Realizability.KleeneTwo.projAssoc
+#check @Realizability.KleeneTwo.appK_projAssoc
+#check @Realizability.KleeneTwo.no_separatesBits_morphism
+#check @Realizability.KleeneTwo.no_readsNumerals_morphism
 #check @Lambda.speckerVal
 #check @Lambda.speckerVal_monotone
 #check @Lambda.speckerVal_lt_one

@@ -18,7 +18,7 @@ Kolmogorov complexity, Chaitin's `Ω`, Martin-Löf randomness and Böhm's separa
 ![Lean](https://img.shields.io/badge/Lean-v4.33.0-blue)
 ![Mathlib](https://img.shields.io/badge/Mathlib-v4.33.0-blue)
 ![sorry-free](https://img.shields.io/badge/sorry--free-yes-brightgreen)
-![tasks](https://img.shields.io/badge/task%20board-151%2F153%20DONE__STRONG-brightgreen)
+![tasks](https://img.shields.io/badge/task%20board-154%2F158%20DONE__STRONG-brightgreen)
 
 Everything below is proved in `Start/`; the whole library compiles with `lake build`, contains no
 `sorry` and no `axiom`, and the headline results depend only on `propext`, `Classical.choice` and
@@ -328,6 +328,27 @@ Complexity.npComplete_ThreeSAT : Complexity.NPComplete Complexity.Sat.ThreeSAT
 Complexity.InNP.inter :
     ∀ {L₁ L₂ : Complexity.Language}, Complexity.InNP L₁ → Complexity.InNP L₂ →
       Complexity.InNP fun x => L₁ x ∧ L₂ x
+
+-- The number of β-steps is a reasonable time cost model for weak head evaluation: the Krivine
+-- machine performs exactly the weak head β-steps, and its administrative transitions are
+-- polynomially many in the size of the term and the number of β-steps.
+Krivine.Trans.decode_wstep :
+    ∀ {s s' : Krivine.State}, Krivine.Trans Krivine.Label.beta s s' →
+      Lambda.wstep s.decode s'.decode
+Krivine.run_length_le_init :
+    ∀ {t : Lambda} {n b : ℕ} {s : Krivine.State}, Krivine.Run n b (Krivine.State.init t) s →
+      n ≤ b + Lambda.size t * (1 + b * (b + 1))
+Krivine.eval_cost :
+    ∀ {t : Lambda} {k : ℕ}, Lambda.WHNIn k t →
+      ∃ (n b : ℕ) (s : Krivine.State), Krivine.Run n b (Krivine.State.init t) s ∧
+        Krivine.IsFinal s ∧ b ≤ k ∧ n ≤ b + Lambda.size t * (1 + b * (b + 1)) ∧
+        Lambda.reducesIn b t s.decode ∧ Lambda.IsWhnf s.decode
+
+-- Kleene's first algebra embeds in the second, and the embedding is not reversible: no
+-- applicative morphism K₂ → K₁ can even read one bit back off a representative (morphisms do
+-- exist — the trivial one — which is why the hypothesis is needed).
+Realizability.KleeneTwo.no_separatesBits_morphism :
+    ∀ (δ : Realizability.AppMorphism (ℕ → ℕ) ℕ), ¬ Realizability.KleeneTwo.SeparatesBits δ
 ```
 
 ## Related work, and what is specific to this project
@@ -349,6 +370,11 @@ Public Lean 4 developments in this area, and how they relate (repository file li
 - **Syntax, reduction, confluence, standardization** — `Start/Syntax.lean`,
   `Start/Reduction.lean`, `Start/GrossKnuth.lean`, `Start/Standardization.lean`,
   `Start/WeakHead.lean`, `Start/Leftmost.lean`.
+- **The cost of reduction** — the size explosion (`Start/SizeExplosion.lean`) shows that no
+  evaluator writing the result down can be fast; the Krivine machine keeps it shared
+  (`Start/Krivine.lean`), performs exactly the weak head β-steps (`Start/KrivineDecode.lean`) and
+  needs only polynomially many administrative transitions (`Start/KrivineBound.lean`), which is
+  the invariance statement `Krivine.eval_cost`.
 - **Church–Turing equivalence** — the lambda calculus computes exactly the partial
   recursive functions (`Start/PartialCapstone.lean`, `Start/PartrecLambda.lean`), which are
   exactly the Turing machine computable ones (`Start/TM2Forward.lean`, `Start/TM2Partrec.lean`,
@@ -826,7 +852,11 @@ Public Lean 4 developments in this area, and how they relate (repository file li
   `Realizability.KleeneTwo.kOneToTwo` sends a number to the constant function with that value, so
   number realizability lands inside function realizability.  Continuity has a Brouwerian
   consequence: no element of `K₂` decides whether its argument is the zero function
-  (`KleeneTwo.no_zero_test`).  Function realizability opens onto **computable analysis**, and
+  (`KleeneTwo.no_zero_test`).  The embedding is not reversible: applicative morphisms `K₂ → K₁`
+  do exist — the trivial one, `Realizability.AppMorphism.trivialMor` — but none of them can read
+  a single bit back off a representative (`Start/KleeneNoRetraction.lean`,
+  `KleeneTwo.no_separatesBits_morphism`).  Function realizability opens onto **computable
+  analysis**, and
   `Start/Specker.lean` takes the first step there with a **Specker sequence**
   (`Lambda.speckerVal`): a sequence of rationals that is nondecreasing
   (`Lambda.speckerVal_monotone`), bounded by `1` (`Lambda.speckerVal_lt_one`) and computable —
@@ -958,9 +988,11 @@ for the policy and [`docs/release-notes/`](docs/release-notes) for the notes of 
 ## Task board and evidence
 
 `docs/goal/task-board.yaml` (rendered to `docs/current-goal-state.md`) tracks every result with an
-evidence note in `docs/goal/evidence/`, including the honest boundary of each claim.  Of the 153
-tasks, 151 are `DONE_STRONG`; the one `BACKEND_PARTIAL` task (`M9-LAMBDAPI-LCCC`) and the one
-`DONE_WEAK` task (`M10-CWA-DEMOCRATIC`) each carry an explicit open boundary.  The consolidation
+evidence note in `docs/goal/evidence/`, including the honest boundary of each claim.  Of the 158
+tasks, 154 are `DONE_STRONG`; the one `BACKEND_PARTIAL` task (`M9-LAMBDAPI-LCCC`) and the two
+`DONE_WEAK` tasks (`M10-CWA-DEMOCRATIC`, `M11-KRIVINE-INVARIANCE`) each carry an explicit open
+boundary, and one task is open (`M11-KRIVINE-UNIT-COST`: the cost of a single machine transition
+on a concrete machine model).  The consolidation
 work that `docs/consolidation-review.md` argues for is done: `Start/Rewriting.lean` proves the
 generic rewriting statements once, and the eight calculi named there obtain them through a single
 bridging lemma each.  Validate and re-render with:

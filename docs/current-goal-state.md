@@ -157,6 +157,11 @@
 | 800 | `M11-MYHILL-SHEPHERDSON` | `P2` | `DONE_STRONG` | M11-SPECKER-REAL | docs/goal/evidence/M11-MYHILL-SHEPHERDSON.md |  |
 | 810 | `M11-COMPUTABLE-REAL-CONTINUITY` | `P2` | `DONE_STRONG` | M11-SPECKER-REAL | docs/goal/evidence/M11-COMPUTABLE-REAL-CONTINUITY.md |  |
 | 820 | `M11-MULTI-TYPES` | `P2` | `DONE_STRONG` | M10-INTERSECTION-FILTER | docs/goal/evidence/M11-MULTI-TYPES.md |  |
+| 830 | `M11-KRIVINE-MACHINE` | `P2` | `DONE_STRONG` | M11-MULTI-TYPES | docs/goal/evidence/M11-KRIVINE-MACHINE.md |  |
+| 840 | `M11-KRIVINE-SIMULATION` | `P2` | `DONE_STRONG` | M11-KRIVINE-MACHINE | docs/goal/evidence/M11-KRIVINE-SIMULATION.md |  |
+| 850 | `M11-KRIVINE-INVARIANCE` | `P2` | `DONE_WEAK` | M11-KRIVINE-SIMULATION | docs/goal/evidence/M11-KRIVINE-INVARIANCE.md | Only the number of transitions is bounded. That one transition costs polynomial time on a concrete machine model is not formalised: the library's machine models are not connected to the Krivine machine. |
+| 860 | `M11-KLEENE-NO-RETRACTION` | `P2` | `DONE_STRONG` | M11-COMPUTABLE-REAL-CONTINUITY | docs/goal/evidence/M11-KLEENE-NO-RETRACTION.md |  |
+| 855 | `M11-KRIVINE-UNIT-COST` | `P2` | `TODO_READY` | M11-KRIVINE-INVARIANCE | - |  |
 
 Next: `M10-CWA-DEMOCRATIC`
 
