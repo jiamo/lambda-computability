@@ -1,6 +1,6 @@
 # M11-KRIVINE-INVARIANCE
 
-**Status:** DONE_WEAK
+**Status:** DONE_STRONG
 
 `Start/KrivineBound.lean` bounds the administrative transitions of the machine, which is what
 turns the bisimulation of `M11-KRIVINE-SIMULATION` into an invariance statement: the two cost
@@ -38,12 +38,15 @@ measures — β-steps of the calculus and transitions of the machine — are pol
 A worked example at the end of the module runs the machine on `(λx. x) (λx. x)`: three
 transitions, one of them a β transition, and the final state decodes to the identity.
 
-## Boundary
+## The other half
 
-Only the *number of transitions* is bounded.  A reasonable cost model also needs that a single
-transition can be performed in time polynomial in the size of the state on a concrete machine
-model; the library's machine models (`Start/CookLevin.lean`, the Cobham terms) are not connected
-to the Krivine machine, so that half is not formalised.  This is why the task is `DONE_WEAK`.
+Only the *number of transitions* is bounded here.  A reasonable cost model also needs that a
+single transition can be performed in time polynomial in the size of the state on a concrete
+machine model.  That half is `M11-KRIVINE-UNIT-COST` (the implementation on a code table and a
+heap, and the word encoding of its states) together with `M11-KRIVINE-PASS-MACHINE`
+(`Krivine.Impl.stepT`, one transition as a Cobham term, with `Krivine.Impl.eval_stepT` and
+`Krivine.Impl.stepT_compiles`); `Krivine.Impl.eval_impl_cob_cost` composes them with the bound
+proved here, so this task has no open boundary left.
 
 The module is imported by `Start.lean`, registered in `Start/Capstones.lean`, builds without
 `sorry` and without linter warning; the headline results depend only on `propext`,

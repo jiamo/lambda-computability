@@ -643,3 +643,21 @@ locally fully faithful, and `Start/LcccPseudofunctor.lean` restricts it to the 2
 product (`Cwa.lcccNaturalPiStruct`), the converse being `Cwa.nonempty_naturalPiStruct_toLaxCModel_iff`.
 Still not claimed: the pseudofunctor from models with Π back to locally cartesian closed
 categories, and the biequivalence.
+
+## Update (the biequivalence, and the intrinsic description)
+
+Two of the items above have since moved.  `M10-CWA-BICATEGORY` builds the pseudofunctor back
+(`Cwa.lcccCtx`) and proves both directions biequivalences (`Cwa.lcccModelCat_biequivalent`), for
+the models that locally cartesian closed categories present.  `M10-CWA-DEMOCRATIC` settles the
+intrinsic description of those models: fullness and democracy give the contexts their pullbacks
+and their local cartesian closure, and the comparison `Cwa.fullStrictify` out of the
+strictification is bijective on terms and essentially surjective on types, but the two are *not*
+in general equivalent — the standard model of families is full and democratic and is not
+equivalent to the strictification of its contexts (`CwaType.not_equivalent_ofPullbacks`), because
+an equivalence would amount to a universe naming every type
+(`Cwa.fullStrictify_comp_iso_id`, `Cwa.comp_fullStrictify_iso_id`).
+
+What remains unclaimed here is therefore only the biequivalence for an *arbitrary* model of λΠ
+rather than for the models the strictification presents, and the closure of the universe of a
+general strictified model under the pushforward product on the nose, which is ruled out for the
+two-code universe of the standard model by `CwaTypeNotClosed.not_piClosed`.

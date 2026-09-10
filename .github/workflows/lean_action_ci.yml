@@ -41,6 +41,8 @@ jobs:
           mkdir -p "${RUNNER_TEMP}/delivered"
           tar -x -f "${RUNNER_TEMP}/pack/delivered.tar" -C "${RUNNER_TEMP}/delivered"
 
+      # The same gates that `scripts/pack_gate.sh` runs locally on the packed tree; the
+      # packaging step is expected to have run them already, this job is the backstop.
       - name: Check the shipped manifest against the shipped configuration
         working-directory: ${{ runner.temp }}/delivered
         run: python3 scripts/check_manifest.py
@@ -54,11 +56,7 @@ jobs:
 
       - name: Refuse `sorry` and `admit` in the library
         working-directory: ${{ runner.temp }}/delivered
-        run: |
-          if grep -R -n -E '\b(sorry|admit)\b' Start Start.lean; then
-            echo "::error::the shipped library contains sorry/admit"
-            exit 1
-          fi
+        run: python3 scripts/check_sorry.py
 
       - name: Project gates
         working-directory: ${{ runner.temp }}/delivered

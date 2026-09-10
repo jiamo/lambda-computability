@@ -344,6 +344,21 @@ Krivine.eval_cost :
         Krivine.IsFinal s ∧ b ≤ k ∧ n ≤ b + Lambda.size t * (1 + b * (b + 1)) ∧
         Lambda.reducesIn b t s.decode ∧ Lambda.IsWhnf s.decode
 
+-- ... and those transitions are performed on words: the machine implemented on a code table and
+-- a heap with shared environments evaluates the term from the encoded initial state to a stuck
+-- state at a cost polynomial in the size of the term and the number of β-steps, counted in
+-- sequential passes over the encoded state; one such pass is a single Cobham term
+-- (`Krivine.Impl.stepT`, `Krivine.Impl.eval_stepT`, `Krivine.Impl.stepT_compiles`), and
+-- `Krivine.Impl.eval_impl_cob_cost` composes the two.
+Krivine.Impl.eval_impl_cost :
+    ∀ {t : Lambda} {k : ℕ}, Lambda.WHNIn k t →
+      ∃ (n b : ℕ) (s : Krivine.Impl.HState),
+        Krivine.Impl.hrun (Krivine.Impl.tabOf t) n (Krivine.Impl.initState t) = some s ∧
+        Krivine.Impl.hstep (Krivine.Impl.tabOf t) s = none ∧ b ≤ k ∧
+        n ≤ b + Lambda.size t * (1 + b * (b + 1)) ∧ … ∧
+        Krivine.Impl.hrunCost (Krivine.Impl.tabOf t) n (Krivine.Impl.initState t) ≤
+          n * ((n + 2) * (Krivine.Impl.encBound t.nodes n + 1))
+
 -- Kleene's first algebra embeds in the second, and the embedding is not reversible: no
 -- applicative morphism K₂ → K₁ can even read one bit back off a representative (morphisms do
 -- exist — the trivial one — which is why the hypothesis is needed).
@@ -374,7 +389,14 @@ Public Lean 4 developments in this area, and how they relate (repository file li
   evaluator writing the result down can be fast; the Krivine machine keeps it shared
   (`Start/Krivine.lean`), performs exactly the weak head β-steps (`Start/KrivineDecode.lean`) and
   needs only polynomially many administrative transitions (`Start/KrivineBound.lean`), which is
-  the invariance statement `Krivine.eval_cost`.
+  the invariance statement `Krivine.eval_cost`.  `Start/KrivineHeap.lean` implements those
+  transitions on a code table and a heap with sharing and proves the implementation bisimilar to
+  the machine, and `Start/KrivineHeapCost.lean` writes the states as words and bounds the cost of
+  a whole evaluation (`Krivine.Impl.eval_impl_cost`); the cost is counted in passes over the
+  encoding, and `Start/KrivineCobWord.lean` and `Start/KrivineCobStep.lean` perform one such pass
+  on a machine model of the library — the transition is the single Cobham term
+  `Krivine.Impl.stepT` (`Krivine.Impl.eval_stepT`), whose cost in that model is polynomial
+  (`Krivine.Impl.stepT_compiles`), giving `Krivine.Impl.eval_impl_cob_cost`.
 - **Church–Turing equivalence** — the lambda calculus computes exactly the partial
   recursive functions (`Start/PartialCapstone.lean`, `Start/PartrecLambda.lean`), which are
   exactly the Turing machine computable ones (`Start/TM2Forward.lean`, `Start/TM2Partrec.lean`,
@@ -626,7 +648,16 @@ Public Lean 4 developments in this area, and how they relate (repository file li
   full model with the strictification of its own category of contexts: there is a morphism of
   models out of the strictification (`Cwa.fullStrictify`), the identity on contexts, bijective on
   terms, and every type of the model is in its image up to an isomorphism of extended contexts
-  over the base (`Cwa.fullStrictify_essSurj`).  Since the
+  over the base (`Cwa.fullStrictify_essSurj`).  That comparison is *not* in general an
+  equivalence.  In the lax 2-category a 2-cell is exactly a natural transformation of the functors
+  on contexts, so an isomorphism of 1-cells is one of those functors (`Cwa.laxIsoOfNatIso`) and an
+  equivalence would need only a morphism of models back that is the identity on contexts
+  (`Cwa.fullStrictify_comp_iso_id`, `Cwa.comp_fullStrictify_iso_id`, `Start/CwaStrictifyEquiv.lean`)
+  — that is, a universe naming every type.  The standard model of families is full
+  (`CwaType.isFull_families`) and democratic (`CwaType.isDemocratic_families`) and has none:
+  every type of `Type u` would embed into a single one, so there is no such morphism
+  (`CwaType.false_of_mor_isEquivalence`) and the model is not equivalent to the strictification of
+  its contexts (`CwaType.not_equivalent_ofPullbacks`, `Start/CwaFamiliesNoStrictify.lean`).  Since the
   types of `λΠ` are the *terms of the sort `∗`* rather than all the types of a model,
   `Start/CwaSmall.lean` extracts from a model with a universe its **small fragment**
   (`Cwa.Universe.smallCwa`): the category with attributes whose types are the codes, with its
@@ -988,11 +1019,9 @@ for the policy and [`docs/release-notes/`](docs/release-notes) for the notes of 
 ## Task board and evidence
 
 `docs/goal/task-board.yaml` (rendered to `docs/current-goal-state.md`) tracks every result with an
-evidence note in `docs/goal/evidence/`, including the honest boundary of each claim.  Of the 158
-tasks, 154 are `DONE_STRONG`; the one `BACKEND_PARTIAL` task (`M9-LAMBDAPI-LCCC`) and the two
-`DONE_WEAK` tasks (`M10-CWA-DEMOCRATIC`, `M11-KRIVINE-INVARIANCE`) each carry an explicit open
-boundary, and one task is open (`M11-KRIVINE-UNIT-COST`: the cost of a single machine transition
-on a concrete machine model).  The consolidation
+evidence note in `docs/goal/evidence/`, including the honest boundary of each claim.  Of the 159
+tasks, 158 are `DONE_STRONG` and the remaining one (`M9-LAMBDAPI-LCCC`, `BACKEND_PARTIAL`) carries
+an explicit open boundary; no task is left open.  The consolidation
 work that `docs/consolidation-review.md` argues for is done: `Start/Rewriting.lean` proves the
 generic rewriting statements once, and the eight calculi named there obtain them through a single
 bridging lemma each.  Validate and re-render with:

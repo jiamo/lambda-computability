@@ -1,6 +1,6 @@
 # M10-CWA-DEMOCRATIC
 
-**Status:** DONE_WEAK
+**Status:** DONE_STRONG
 
 `Start/LcccBiequivalence.lean` (M10-CWA-BICATEGORY) compares the 2-category of locally cartesian
 closed categories with the 2-category `Cwa.LcccModelCat` of the models they present.  That class
@@ -65,12 +65,46 @@ results reports only `propext`, `Classical.choice`, `Quot.sound`.
   and are locally cartesian closed, so the strictification of the contexts is itself a model with
   a natural Π-structure.
 
-## Boundary
+## Exit criterion 3, settled — `Start/CwaStrictifyEquiv.lean` and `Start/CwaFamiliesNoStrictify.lean`
 
-What remains of exit criterion 3 is the *equivalence* of a full democratic model with the
-strictification of its contexts, in the lax 2-category of models.  A morphism the other way,
-`T ⟶ Cwa.ofPullbacks C`, would have to send a type over `Γ` to a local universe whose base and
-generic family do not depend on `Γ` — that is, it would amount to a universe for the model, which
-a model need not have.  It is not constructed here, and neither its existence nor its
-non-existence is claimed; what is proved is the comparison `Cwa.fullStrictify` in the other
-direction, together with its bijectivity on terms and essential surjectivity on types.
+Exit criterion 3 asked for an *equivalence*, in the lax 2-category of models, between a full
+democratic model and the strictification of its contexts.  As stated it is **false**, and the two
+modules say exactly how much of it survives.
+
+*What an equivalence would take.*  In the lax 2-category a 2-cell is nothing but a natural
+transformation of the functors on contexts (`Cwa.LaxTwoCell.ofNat`, `Cwa.LaxTwoCell.ext_of_nat`),
+so an isomorphism of 1-cells is an isomorphism of those functors: `Cwa.laxIsoOfNatIso`.
+Consequently the *only* thing an equivalence needs, beyond `Cwa.fullStrictify`, is a morphism of
+models back, and one that is the identity on contexts already suffices:
+`Cwa.fullStrictify_comp_iso_id` and `Cwa.comp_fullStrictify_iso_id` show that both composites are
+then isomorphic to the identity 1-cells.  A morphism `T ⟶ Cwa.ofPullbacks C` sends a type over `Γ`
+to a local universe whose base and generic family do not depend on `Γ`, so it is a universe naming
+every type of the model.
+
+*And a full democratic model need not have one.*  `CwaType.families`, the standard model of
+families of types (contexts are types, a type over `Γ` is a family `Γ → Type u`), is full
+(`CwaType.isFull_families`), democratic (`CwaType.isDemocratic_families`), coherent
+(`CwaType.extCoherent_families`) and has a Π-structure (`CwaType.piStruct`) — so
+`Cwa.fullStrictify` applies to it — and yet:
+
+* `CwaType.total_tySub` — substitution acts on the classifying map alone, so the generic family a
+  morphism of models assigns to a type is unchanged by substitution;
+* `CwaType.total_const_eq` — a family over a two-element context connects any two closed types,
+  so *all* closed types get one and the same generic family;
+* `CwaType.exists_injective_total` — the extended context of a closed type embeds into that
+  generic family (the image of the terminal context is a singleton, so the pullback embeds in the
+  total space);
+* **`CwaType.false_of_mor_isEquivalence`** — hence there is no morphism of models
+  `CwaType.families ⟶ Cwa.ofPullbacks (Type u)` whose functor on contexts is an equivalence: every
+  type of `Type u`, `Set Q` included, would embed into a single type `Q`, which Cantor's theorem
+  forbids;
+* **`CwaType.not_equivalent_ofPullbacks`** — so the standard model is **not** equivalent, in the
+  lax 2-category, to the strictification of its own category of contexts.
+
+So the intrinsic description of the models presented by locally cartesian closed categories cannot
+be "full and democratic" up to equivalence of models: fullness and democracy give the contexts
+their pullbacks and their local cartesian closure (exit criteria 1 and 2, above) and the comparison
+`Cwa.fullStrictify`, bijective on terms and essentially surjective on types, but a genuine
+equivalence needs a universe, and the standard model has none.  Both modules build without
+`sorry`, are imported by `Start.lean`, registered in `Start/Capstones.lean`, and `#print axioms` on
+their results reports only `propext`, `Classical.choice`, `Quot.sound`.

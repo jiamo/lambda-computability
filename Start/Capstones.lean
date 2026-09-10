@@ -136,7 +136,11 @@ import Start.LcccBiequivalence
 import Start.CwaDemocratic
 import Start.CwaLcccOfFull
 import Start.CwaStrictifyFull
+import Start.CwaStrictifyEquiv
+import Start.CwaFamiliesNoStrictify
 import Start.KrivineBound
+import Start.KrivineHeapCost
+import Start.KrivineCobStep
 import Start.KleeneNoRetraction
 
 /-! ## Interfaces of the untyped calculus
@@ -162,6 +166,26 @@ the weak head β-steps of the term it stands for (`Krivine.Trans.decode_wstep`,
 (`Krivine.Trans.decode_eq`), and their number is polynomially bounded
 (`Krivine.run_length_le_init`).  So the machine simulates the calculus with polynomial overhead
 and the calculus counts the machine's β transitions: `Krivine.eval_cost`.
+
+`Start/KrivineHeap.lean` and `Start/KrivineHeapCost.lean` perform those transitions.  The machine
+is implemented on a code table and a heap in which the environments are shared
+(`Krivine.Impl.hstep`, correct by `Krivine.Impl.hstep_trans` and `Krivine.Impl.hstep_isNone_iff`);
+states are written as words, faithfully (`Krivine.Impl.encState_inj`) and shortly
+(`Krivine.Impl.encState_length_le`), and a whole evaluation costs a polynomial in the size of the
+term and the number of β-steps, counted in passes over the encoding
+(`Krivine.Impl.eval_impl_cost`).
+
+`Start/KrivineCobWord.lean` and `Start/KrivineCobStep.lean` supply the term that performs such a
+pass, in the machine model `Complexity.Cob` — Cobham's class of polynomial-time word functions,
+the model in which the uniformity of the Cook–Levin reduction is stated here.  Every field of the
+encoding is read, skipped or rebuilt by a Cobham term, dereferencing an address is one
+(`Krivine.Impl.eval_dropCellsT`), and so is the walk down an environment
+(`Krivine.Impl.eval_walkT`).  The transition itself is the single term `Krivine.Impl.stepT`: on
+the encoding of a valid state it evaluates to the encoding of the successor state, the empty word
+standing for a stuck machine (`Krivine.Impl.eval_stepT`), and its cost in the model — the size of
+the Boolean circuits it compiles into — is polynomial in the length of its input
+(`Krivine.Impl.stepT_compiles`).  Composed with the transition count, this is the invariance
+statement on a machine model of the library: `Krivine.Impl.eval_impl_cob_cost`.
 -/
 
 #check @Lambda.exists_size_explosion
@@ -179,6 +203,20 @@ and the calculus counts the machine's β transitions: `Krivine.eval_cost`.
 #check @Krivine.run_length_le
 #check @Krivine.run_length_le_init
 #check @Krivine.eval_cost
+#check @Krivine.Impl.hstep_trans
+#check @Krivine.Impl.hstep_isNone_iff
+#check @Krivine.Impl.encState_inj
+#check @Krivine.Impl.encState_length_le
+#check @Krivine.Impl.hstepCost_le
+#check @Krivine.Impl.exists_hrun_of_run
+#check @Krivine.Impl.eval_impl_cost
+#check @Krivine.Impl.eval_dropCellsT
+#check @Krivine.Impl.eval_countCellsT
+#check @Krivine.Impl.eval_walkT
+#check @Krivine.Impl.eval_stepT
+#check @Krivine.Impl.stepT_compiles
+#check @Krivine.Impl.eval_stepT_hrun
+#check @Krivine.Impl.eval_impl_cob_cost
 
 /-! ## Recursion theory: Post's problem for many-one reducibility
 
@@ -1520,6 +1558,19 @@ identity on contexts, bijective on terms, and every type of the model is in its 
 isomorphism of extended contexts over the base; for a full *democratic* model with dependent
 products the strictification of its contexts is again a model with dependent products
 (`Cwa.nonempty_naturalPiStruct_ofPullbacks_of_isFull`).
+
+Whether that comparison is an *equivalence* is settled by `Start/CwaStrictifyEquiv.lean` and
+`Start/CwaFamiliesNoStrictify.lean`.  In the lax 2-category a 2-cell is exactly a natural
+transformation of the functors on contexts, so an isomorphism of 1-cells is an isomorphism of
+those functors (`Cwa.laxIsoOfNatIso`): all that an equivalence needs is a morphism of models back,
+and one that is the identity on contexts suffices (`Cwa.fullStrictify_comp_iso_id`,
+`Cwa.comp_fullStrictify_iso_id`).  Such a morphism is a universe naming every type, and a full
+democratic model need not have one: the standard model of families
+(`CwaType.isFull_families`, `CwaType.isDemocratic_families`) admits **no** morphism to the
+strictification of its contexts whose functor on contexts is an equivalence
+(`CwaType.false_of_mor_isEquivalence`), because every type of `Type u` would then embed into a
+single one; so it is **not** equivalent to that strictification
+(`CwaType.not_equivalent_ofPullbacks`).
 -/
 
 #check @PointedModel.not_subsingleton_laxTwoCell_modelHom
@@ -1545,3 +1596,11 @@ products the strictification of its contexts is again a model with dependent pro
 #check @Cwa.fullStrictify_tmMap_bijective
 #check @Cwa.fullStrictify_essSurj
 #check @Cwa.nonempty_naturalPiStruct_ofPullbacks_of_isFull
+#check @Cwa.laxIsoOfNatIso
+#check @Cwa.fullStrictify_comp_iso_id
+#check @Cwa.comp_fullStrictify_iso_id
+#check @CwaType.isFull_families
+#check @CwaType.isDemocratic_families
+#check @CwaType.extCoherent_families
+#check @CwaType.false_of_mor_isEquivalence
+#check @CwaType.not_equivalent_ofPullbacks

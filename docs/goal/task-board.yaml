@@ -1093,7 +1093,7 @@ tasks:
     track: theory/semantics
     title: "Dependent types: the calculus lambda-Pi, categories with attributes, and locally cartesian closed categories"
     latest_evidence: "docs/goal/evidence/M9-LAMBDAPI-LCCC.md"
-    open_boundary: "Both sides are built, but the biequivalence is not claimed. Syntax: LambdaPiCwa.syntactic is a category with attributes whose types are the small types, LambdaPiCwa.weakPi its dependent product, and LambdaPiCwa.not_piStruct_weakPi shows eta fails. Semantics: the strictified model (Cwa.ofPullbacks) presents types by local universes, so substitution is strictly functorial, and a locally cartesian closed category carries there a dependent product with beta and eta (Cwa.piStructOfLccc). Universes: Cwa.Universe, SmallPi, PiClosed, CodePi and CodeSigma are what an interpretation needs; LambdaPiUniv.univ makes star a universe in the syntactic model and CwaUniv.universeOfHom makes every morphism one in the strictified model, and the two syntactic models are isomorphic (LambdaPiUniv.smallModelIso). A set-theoretic model is built (CwaTypeModel.model). Initiality is proved: LambdaPi.interp_exists_unique interprets every derivable judgement uniquely in any model with injective products, and LambdaPiInitial.mor packages it as a morphism of categories with attributes out of the syntax preserving the universe, its products and their codes. Not claimed: the biequivalence with locally cartesian closed categories, and closure of the universe of a general strictified model under the pushforward product on the nose - ruled out for a two-code universe of the standard model by CwaTypeNotClosed.not_piClosed. Its 2-categorical shadow is settled by M10-CWA-LAX-BICAT and M10-CWA-BICATEGORY: both sides are strict bicategories and strictification is a locally fully faithful pseudofunctor (Cwa.strictificationPseudofunctor), restricting to the locally cartesian closed categories (Cwa.lcccPseudofunctor). The pseudofunctor back and the biequivalence are settled by M10-CWA-BICATEGORY (Cwa.lcccCtx, Cwa.lcccModelCat_biequivalent), for the models those categories present; an intrinsic description of them is M10-CWA-DEMOCRATIC."
+    open_boundary: "Both sides are built, but the biequivalence is not claimed. Syntax: LambdaPiCwa.syntactic is a category with attributes whose types are the small types, LambdaPiCwa.weakPi its dependent product, and LambdaPiCwa.not_piStruct_weakPi shows eta fails. Semantics: the strictified model (Cwa.ofPullbacks) presents types by local universes, so substitution is strictly functorial, and a locally cartesian closed category carries there a dependent product with beta and eta (Cwa.piStructOfLccc). Universes: Cwa.Universe, SmallPi, PiClosed, CodePi and CodeSigma are what an interpretation needs; LambdaPiUniv.univ makes star a universe in the syntactic model and CwaUniv.universeOfHom makes every morphism one in the strictified model, and the two syntactic models are isomorphic. A set-theoretic model exists (CwaTypeModel.model). Initiality is proved: LambdaPi.interp_exists_unique interprets every derivable judgement uniquely in any model with injective products, and LambdaPiInitial.mor packages it as a morphism of categories with attributes out of the syntax, preserving the universe and its codes. Not claimed: the biequivalence with locally cartesian closed categories, and closure of the universe of a general strictified model under the pushforward product on the nose - ruled out for a two-code universe of the standard model by CwaTypeNotClosed.not_piClosed. Its 2-categorical shadow is settled by M10-CWA-LAX-BICAT and M10-CWA-BICATEGORY: both sides are strict bicategories and strictification is a locally fully faithful pseudofunctor (Cwa.strictificationPseudofunctor), restricting to the locally cartesian closed categories (Cwa.lcccPseudofunctor). The pseudofunctor back and the biequivalence are settled by M10-CWA-BICATEGORY (Cwa.lcccCtx, Cwa.lcccModelCat_biequivalent), for the models those categories present; an intrinsic description of them is M10-CWA-DEMOCRATIC, settled: a full democratic model need not be equivalent to the strictification of its contexts."
     milestone: M9
     depends_on:
       - M9-STLC-CCC
@@ -1979,11 +1979,12 @@ tasks:
 
   - id: M10-CWA-DEMOCRATIC
     priority: P2
-    status: DONE_WEAK
+    status: DONE_STRONG
     track: theory/typetheory
     title: "An intrinsic description of the models presented by locally cartesian closed categories"
+    terminal_statement: "LcccPullbacks.ofIsFull : the category of contexts of a full model with a coherent substitution and a natural Pi-structure is locally cartesian closed; Cwa.fullStrictify : the strictification of those contexts maps onto the model, bijectively on terms and onto every type up to isomorphism; and the equivalence asked for by exit criterion 3 is refuted - CwaType.not_equivalent_ofPullbacks shows the standard model of families, which is full and democratic, is not equivalent in the lax 2-category to the strictification of its contexts, while Cwa.fullStrictify_comp_iso_id and Cwa.comp_fullStrictify_iso_id show that a morphism of models back, identity on contexts, is all an equivalence would need"
     latest_evidence: "docs/goal/evidence/M10-CWA-DEMOCRATIC.md"
-    open_boundary: "Fullness and democracy are defined (Cwa.IsFull, Cwa.IsDemocratic), the category of contexts of a full model has pullbacks (Cwa.hasPullbacks_of_isFull), the strictification of a category with pullbacks is full and, with a terminal object, democratic, and - new - the category of contexts of a full model with a coherent substitution and a natural Pi-structure is locally cartesian closed (LcccPullbacks.ofIsFull, via Cwa.LcccOfFull.transpose and Cwa.LcccOfFull.transpose_naturality), so exit criteria 1 and 2 are met. The comparison of a full model with the strictification of its contexts is built as a morphism of models (Cwa.fullStrictify), the identity on contexts, bijective on terms (Cwa.fullStrictify_tmMap_bijective) and hitting every type up to an isomorphism of extended contexts over the base (Cwa.fullStrictify_essSurj). What remains is exit criterion 3, the equivalence in the lax 2-category: a morphism back would have to send a type over Gamma to a local universe whose base and generic family are independent of Gamma, which amounts to a universe for the model, and none is constructed here."
+    open_boundary: ""
     milestone: M10
     depends_on:
       - M10-CWA-BICATEGORY
@@ -1991,11 +1992,11 @@ tasks:
     exit_criteria:
       - "Fullness and democracy are defined for a category with attributes, and the strictification of a category with pullbacks is proved full."
       - "The category of contexts of a full democratic model is proved to have pullbacks, and to be locally cartesian closed when the model has a natural Pi-structure."
-      - "A full democratic model is proved equivalent, in the lax 2-category of models, to the strictification of its category of contexts."
+      - "A full democratic model is proved equivalent, in the lax 2-category of models, to the strictification of its category of contexts - refuted as stated: an equivalence is proved to need only a morphism of models back that is the identity on contexts (Cwa.laxIsoOfNatIso, Cwa.fullStrictify_comp_iso_id, Cwa.comp_fullStrictify_iso_id), and the standard model of families, which is full and democratic, is proved to admit none (CwaType.false_of_mor_isEquivalence, CwaType.not_equivalent_ofPullbacks)."
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
-      - "lake build Start.CwaDemocratic Start.CwaHomOver Start.CwaLcccOfFull Start.CwaStrictifyFull"
+      - "lake build Start.CwaDemocratic Start.CwaHomOver Start.CwaLcccOfFull Start.CwaStrictifyFull Start.CwaStrictifyEquiv Start.CwaFamiliesNoStrictify"
 
   - id: M10-LAMBDAPI-SELF-INITIAL
     priority: P1
@@ -3275,12 +3276,12 @@ tasks:
 
   - id: M11-KRIVINE-INVARIANCE
     priority: P2
-    status: DONE_WEAK
+    status: DONE_STRONG
     track: theory/complexity
     title: "Polynomial invariance: the number of beta steps is a reasonable time cost model for weak head evaluation"
     terminal_statement: "Krivine.eval_cost : a term the weak head strategy normalises in k steps is evaluated by the machine with at most k beta transitions and at most k + |t| * (1 + k * (k + 1)) transitions in all, the result being the weak head normal form reached in exactly as many beta steps as beta transitions"
     latest_evidence: "docs/goal/evidence/M11-KRIVINE-INVARIANCE.md"
-    open_boundary: "Only the number of transitions is bounded. That one transition costs polynomial time on a concrete machine model is not formalised: the library's machine models are not connected to the Krivine machine."
+    open_boundary: ""
     milestone: M11
     depends_on:
       - M11-KRIVINE-SIMULATION
@@ -3321,10 +3322,11 @@ tasks:
 
   - id: M11-KRIVINE-UNIT-COST
     priority: P2
-    status: TODO_READY
+    status: DONE_STRONG
     track: theory/complexity
     title: "The missing half of invariance: one machine transition costs polynomial time on a concrete model"
-    latest_evidence: ""
+    terminal_statement: "Krivine.Impl.eval_impl_cost : the Krivine machine implemented on a code table and a heap with sharing, whose states are written as words (Krivine.Impl.encState, faithful by Krivine.Impl.encState_inj), evaluates a term the weak head strategy normalises in k steps from the encoded initial state to a stuck state, at a total cost n * ((n + 2) * (encBound |t| n + 1)) counted in sequential passes over the encoding, with n the number of transitions bounded by Krivine.eval_cost"
+    latest_evidence: "docs/goal/evidence/M11-KRIVINE-UNIT-COST.md"
     open_boundary: ""
     milestone: M11
     depends_on:
@@ -3336,6 +3338,29 @@ tasks:
       - "The cost of that computation is bounded by a polynomial in the length of the encoding."
       - "The encoding of a reachable state is bounded by a polynomial in the size of the initial term and the number of transitions."
       - "The three are combined with Krivine.eval_cost into a bound on the running time of an implementation, polynomial in the size of the term and the number of beta steps."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build"
+
+  - id: M11-KRIVINE-PASS-MACHINE
+    priority: P2
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "One pass over the encoded state, on a machine model of the library"
+    terminal_statement: "Krivine.Impl.eval_stepT : the single Cobham term Krivine.Impl.stepT sends the encoding of a valid state of the implementation to the encoding of its successor, the empty word standing for a stuck machine, its cost in the model being polynomial by Krivine.Impl.stepT_compiles, and Krivine.Impl.eval_impl_cob_cost composes this with the transition count of Krivine.Impl.eval_impl_cost"
+    latest_evidence: "docs/goal/evidence/M11-KRIVINE-PASS-MACHINE.md"
+    open_boundary: ""
+    milestone: M11
+    depends_on:
+      - M11-KRIVINE-UNIT-COST
+    rank: 857
+    exit_criteria:
+      - "A word function is defined that sends the encoding of a state to the encoding of its successor, and is proved to agree with Krivine.Impl.hstep through Krivine.Impl.encState."
+      - "That word function is exhibited as a term of one of the library's machine models: a Cobham term with its CobShape (Start/ComplexityClasses.lean, Start/UniformSigAll.lean), a Complexity.TuringMachine (Start/UniformTM.lean) or a bundled Turing.FinTM2 (Start/TM2PolyTime.lean)."
+      - "The cost of that term is bounded by a polynomial in the length of the encoding, in the cost measure of the chosen model (steps for a machine, size of the compiled circuit family for a Cobham term)."
+      - "The bound is composed with Krivine.Impl.eval_impl_cost, so that the running time of the implementation on the chosen model is polynomial in the size of the term and the number of beta steps."
+      - "The open_boundary of M11-KRIVINE-UNIT-COST is emptied, or restated to whatever remains."
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"

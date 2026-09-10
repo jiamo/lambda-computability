@@ -267,6 +267,8 @@ import Start.LcccBiequivalence
 import Start.CwaDemocratic
 import Start.CwaLcccOfFull
 import Start.CwaStrictifyFull
+import Start.CwaStrictifyEquiv
+import Start.CwaFamiliesNoStrictify
 import Start.CwaBiInitial
 import Start.CwaLaxBiInitial
 import Start.PointedCwa
@@ -422,6 +424,11 @@ import Start.PCAMorphism
 import Start.Krivine
 import Start.KrivineDecode
 import Start.KrivineBound
+import Start.KrivineTable
+import Start.KrivineHeap
+import Start.KrivineHeapCost
+import Start.KrivineCobWord
+import Start.KrivineCobStep
 import Start.KleeneNoRetraction
 import Start.Specker
 import Start.SpeckerReal

@@ -1,3 +1,19 @@
+# Summary of changes for run fdd436a0-535a-4e45-8173-bed640726b95
+I picked the project up where it stood and closed the remaining open items on its task board. The whole tree builds green (9118 jobs, zero errors and zero linter warnings), `Start/` contains no `sorry`/`admit`, and all the project's own gates pass (`goal_state.py validate` — 159 tasks, `check_closure.py` — 398 modules, `check_sorry.py` — 399 modules, `check_manifest.py`, `pack_gate.sh`). Everything is committed.
+
+**Dependency manifest repaired.** The checked-in `lake-manifest.json` disagreed with `lakefile.toml` (wrong package name, missing `cslib`, stale mathlib revision), so the tree could not be built at all. It is regenerated and now resolves mathlib v4.33.0 and cslib; `scripts/check_manifest.py` passes.
+
+**One Krivine transition on a machine model (task M11-KRIVINE-PASS-MACHINE, previously open).** The mathematics in `Start/KrivineCobWord.lean` and `Start/KrivineCobStep.lean` was present but unregistered and unrecorded. I verified it, registered it in `Start/Capstones.lean` (prose plus `#check`s), and closed the task: `Krivine.Impl.stepT` is a single Cobham term that turns the encoding of a valid machine state into the encoding of its successor (`Krivine.Impl.eval_stepT`, the empty word meaning a stuck machine), its cost in that model is polynomial in the length of its input (`Krivine.Impl.stepT_compiles`), and `Krivine.Impl.eval_impl_cob_cost` composes this with the transition count. This empties the open boundary of `M11-KRIVINE-UNIT-COST` and of `M11-KRIVINE-INVARIANCE`, both now recorded as fully done.
+
+**New mathematics: when a full model is equivalent to the strictification of its contexts (task M10-CWA-DEMOCRATIC, previously weak).** Its last exit criterion asked for an equivalence, in the lax 2-category of models, between a full democratic model and the strictification of its category of contexts. I settled it, in the negative, with two new modules.
+
+- `Start/CwaStrictifyEquiv.lean`: in the lax 2-category an isomorphism of 1-cells is exactly an isomorphism of the functors on contexts (`Cwa.laxIsoOfNatIso`), so the only thing an equivalence needs beyond the existing comparison `Cwa.fullStrictify` is a morphism of models back that is the identity on contexts (`Cwa.fullStrictify_comp_iso_id`, `Cwa.comp_fullStrictify_iso_id`) — i.e. a universe naming every type.
+- `Start/CwaFamiliesNoStrictify.lean`: the standard model of families (contexts are types, a type over Γ is a family `Γ → Type u`) is full, democratic and coherent (`CwaType.isFull_families`, `CwaType.isDemocratic_families`, `CwaType.extCoherent_families`) and has no such universe. Substitution acts on the classifying map alone, so the generic family assigned to a type is substitution-invariant (`CwaType.total_tySub`); a family over a two-element context connects any two closed types, so all closed types share one generic family (`CwaType.total_const_eq`); each closed type embeds into it (`CwaType.exists_injective_total`); Cantor's theorem then forbids the whole thing (`CwaType.false_of_mor_isEquivalence`). Hence `CwaType.not_equivalent_ofPullbacks`: the standard model is **not** equivalent, in the lax 2-category, to the strictification of its own category of contexts.
+
+`#print axioms` on every headline result above reports only `propext`, `Classical.choice`, `Quot.sound`.
+
+**Bookkeeping.** The task board and `docs/current-goal-state.md` were updated and re-rendered (158 of 159 tasks now `DONE_STRONG`; the single remaining `M9-LAMBDAPI-LCCC` keeps an explicit, honest boundary and is no longer blocked by anything I could close with new proofs), a new evidence note was written for the pass-machine task, three existing evidence notes were rewritten to match their new status, and `README.md` now describes both new developments.
+
 # Summary of changes for run ecfe8d64-3edf-4a52-b36f-3dce34bbacfb
 已按顺序做完你列的三件事，全部在本仓库里落地并提交。
 

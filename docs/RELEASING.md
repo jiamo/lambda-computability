@@ -52,6 +52,38 @@ The same three things can be done from the web interface: *Releases → v4.33.0 
 then *Tags → v4.33.0 → Delete*; *Releases → Draft a new release* with tag `v0.1.0`; and
 the *About* gear on the repository front page for description and topics.
 
+## Packaging: run the gates on the archive, before delivering
+
+The tree that is delivered is the one `git archive` produces, and it is *not* the working
+tree: the working tree carries `.lake/`, so `lake` never has to re-resolve dependencies
+there and a `lake-manifest.json` that disagrees with `lakefile.toml` stays invisible in it
+while breaking every fresh clone.  That is exactly the failure that shipped four times.
+
+The packaging step therefore has its own gate, to be run **after** `git archive` and
+**before** the archive is handed over:
+
+```bash
+scripts/pack_gate.sh          # or: scripts/pack_gate.sh <revision>
+```
+
+It packs the given revision (default `HEAD`), unpacks it into a scratch directory, and
+runs, *inside the unpacked copy*:
+
+* `scripts/check_manifest.py` — the shipped manifest agrees with the shipped
+  `lakefile.toml`: every `[[require]]` is present, its `inputRev` is the pinned revision,
+  every entry has a resolved `rev`, and the manifest names the package that the lakefile
+  declares;
+* `scripts/check_sorry.py` — no `sorry`/`admit` in `Start.lean` or `Start/`, comments and
+  string literals excluded (a plain `grep` fails on the documentation, which discusses
+  `sorry` in prose);
+* `scripts/goal_state.py validate` and `scripts/check_closure.py` — the task board is
+  well formed and every module is in the import closure.
+
+The `build-from-archive` job of `.github/workflows/lean_action_ci.yml` runs the same gates
+and then *builds* the archive, so it also catches what an offline gate cannot.  But CI
+only reports after a push: a delivery that does not go through CI must run
+`scripts/pack_gate.sh` itself.
+
 ## Versioning policy from now on
 
 * The library version lives in `lakefile.toml` (`version = "0.1.0"`) and is **independent**
