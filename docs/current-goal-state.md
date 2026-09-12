@@ -1,6 +1,6 @@
 # Current goal state
 
-- Active milestone: `M12`
+- Active milestone: `M13`
 
 | Rank | ID | Priority | Status | Depends on | Evidence | Open Boundary |
 |---:|---|---|---|---|---|---|
@@ -169,5 +169,12 @@
 | 925 | `M12-EXREG-REGULAR` | `P2` | `DONE_STRONG` | M12-EFF-EXREG | docs/goal/evidence/M12-EXREG-REGULAR.md |  |
 | 930 | `M12-KRIVINE-SPACE-CALCULUS` | `P2` | `DONE_STRONG` | M12-KRIVINE-SPACE-INVARIANCE | docs/goal/evidence/M12-KRIVINE-SPACE-CALCULUS.md |  |
 | 920 | `M12-EFF-EXREG` | `P2` | `DONE_STRONG` | - | docs/goal/evidence/M12-EFF-EXREG.md |  |
+| 926 | `M12-EXREG-PROJ-EXACT` | `P2` | `DONE_STRONG` | M12-EFF-EXREG, M12-EXREG-REGULAR | docs/goal/evidence/M12-EXREG-PROJ-EXACT.md |  |
+| 930 | `M13-SPACE-MODEL` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M13-SPACE-MODEL.md |  |
+| 931 | `M13-SPACE-CONFIG-COUNT` | `P1` | `DONE_STRONG` | M13-SPACE-MODEL, M13-SAVITCH-REACH | docs/goal/evidence/M13-SPACE-CONFIG-COUNT.md |  |
+| 932 | `M13-SAVITCH-REACH` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M13-SAVITCH-REACH.md |  |
+| 933 | `M13-SAVITCH-VM` | `P1` | `DONE_STRONG` | M13-SAVITCH-REACH | docs/goal/evidence/M13-SAVITCH-VM.md |  |
+| 934 | `M13-SAVITCH-SPACE` | `P1` | `DONE_STRONG` | M13-SPACE-CONFIG-COUNT, M13-SAVITCH-VM | docs/goal/evidence/M13-SAVITCH-SPACE.md |  |
+| 935 | `M13-QBF-SPACE` | `P2` | `DONE_STRONG` | M13-SAVITCH-VM | docs/goal/evidence/M13-QBF-SPACE.md |  |
 
 Next: all tasks in the active milestone are `DONE_STRONG`.

@@ -95,13 +95,24 @@ directions:
   point uniformly, which fails when the points lying over a related pair carry unrelated
   realizers.
 
+What has since been done, in `Start/AsmExRegProj.lean` and `Start/AsmExRegEffective.lean` (task
+`M12-EXREG-PROJ-EXACT`): **restricting the bases to the regular projectives repairs exactness.**
+On the full subcategory `Realizability.ExReg.ExRegP` of the objects whose base is a partitioned
+assembly — the regular projectives of `Asm(A)` — every internal equivalence relation is effective:
+the quotient map above is its coequalizer and the relation is that map's kernel pair
+(`Realizability.ExReg.ExRegP.exists_effective_quotient`,
+`.isKernelPair_of_isInternalEquiv`).  The two ingredients are joint monicity read as an element of
+the algebra (`Realizability.ExReg.jmTracker_of_jointlyMono`) and the lifting that the single
+realizer of a point of a partitioned assembly makes possible
+(`Realizability.ExReg.exists_liftPre`) — the very step the counterexample blocks over a general
+base.
+
 Not done, in order of dependence:
 
+* the regularity of that restricted subcategory as a category in its own right: the finite limits
+  of `Start/AsmExRegEq.lean` and the image factorizations stay inside it only up to isomorphism,
+  since the limits carry witnesses in their realizers;
 * the universal property — that a regular functor out of `Asm(A)` extends, uniquely up to
   isomorphism, to an exact functor out of the completion;
 * the topos structure: a subobject classifier and exponentials;
-* the identification with the effective topos.  That comparison asks for the bases to be
-  restricted to the regular projectives of `Asm(A)` — the partitioned assemblies of
-  `Start/AssemblyProjective.lean` — since it is on those that the ex/reg and ex/lex completions
-  agree, and it is there that exactness is expected to hold; the counterexample above shows it
-  fails for arbitrary bases.
+* the identification with the effective topos.

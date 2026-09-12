@@ -1,7 +1,7 @@
 version: 2
 source_protocol: docs/goal/goal-prompt.md
-active_milestone: M12
-milestone_order: ["M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10", "M11", "M12"]
+active_milestone: M13
+milestone_order: ["M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10", "M11", "M12", "M13"]
 tasks:
   - id: M1-BOUNDARY-SORRY-CLOSURE
     priority: P0
@@ -3505,6 +3505,169 @@ tasks:
       - "The completion is proved to have finite limits, and the embedding to preserve the terminal object and binary products."
       - "Every object of the completion is proved to be a quotient of an assembly: the canonical map from the base of a relation is the coequalizer of the two endpoints of its assembly of proofs, hence a regular epimorphism."
       - "Every morphism of the completion is factored as an epimorphism followed by a monomorphism."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build"
+
+  - id: M12-EXREG-PROJ-EXACT
+    priority: P2
+    status: DONE_STRONG
+    track: theory/realizability
+    title: "Exactness of the completion on the regular projective bases"
+    terminal_statement: "Realizability.ExReg.ExRegP is the full subcategory of the exact completion of the assemblies spanned by the objects whose base is a partitioned assembly, i.e. a regular projective of Asm(A) (Realizability.ExReg.ExRegP.regularProjective_base); Realizability.ExReg.ExRegP.exists_effective_quotient : every internal equivalence relation of that subcategory is effective - the map onto the quotient of Start/AsmExRegCoeq.lean is its coequalizer and the relation is that map's kernel pair (Realizability.ExReg.ExRegP.isKernelPair_of_isInternalEquiv); the two ingredients are Realizability.ExReg.jmTracker_of_jointlyMono, which reads joint monicity as a single element of the algebra, and Realizability.ExReg.exists_liftPre, the lifting that fails over a general base"
+    latest_evidence: "docs/goal/evidence/M12-EXREG-PROJ-EXACT.md"
+    # The further programme - regularity of the restricted subcategory in its own right, its
+    # universal property among exact categories, its topos structure, and the identification with
+    # the effective topos - lies beyond this task's exit criteria and is recorded in the evidence
+    # files of this task and of M12-EFF-EXREG.
+    open_boundary: ""
+    milestone: M12
+    depends_on:
+      - M12-EFF-EXREG
+      - M12-EXREG-REGULAR
+    rank: 926
+    exit_criteria:
+      - "The objects of the completion whose base is a regular projective of Asm(A) are isolated as a full subcategory, and their bases are proved regular projective."
+      - "Joint monicity of a parallel pair of that subcategory is read computationally: a single element of the algebra produces a proof that two points are related from their realizers and from proofs that their images agree."
+      - "Every internal equivalence relation of the subcategory is proved to be the kernel pair of the map onto its quotient, and that map is proved to be their coequalizer."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build"
+
+  - id: M13-SPACE-MODEL
+    priority: P1
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "A machine model for space, and the classes DSPACE, NSPACE, L, PSPACE, NPSPACE"
+    terminal_statement: "Start/SpaceMachine.lean defines the offline machine (read-only input tape with a clamped head, one binary work tape, a transition function returning the list of available instructions) together with Complexity.Space.Machine.Accepts, Complexity.Space.Machine.SpaceBounded and the classes Complexity.Space.DSPACE, .NSPACE, .LOGSPACE, .PSPACE, .NPSPACE; Complexity.Space.nspace_of_dspace, .npspace_of_pspace, .DSPACE.mono, .NSPACE.mono, .pspace_of_logspace are the basic inclusions and Complexity.Space.dspace_const_decidable witnesses non-vacuity"
+    latest_evidence: "docs/goal/evidence/M13-SPACE-MODEL.md"
+    open_boundary: ""
+    milestone: M13
+    depends_on: []
+    rank: 930
+    exit_criteria:
+      - "An offline machine with a read-only input tape and one work tape is defined, with a one-step relation, acceptance and a space bound on the reachable configurations."
+      - "DSPACE, NSPACE, LOGSPACE, PSPACE and NPSPACE are defined on that model, reusing the polynomial bound of Start/ComplexityClasses.lean."
+      - "Determinism is a property of the model, and the inclusions DSPACE <= NSPACE, PSPACE <= NPSPACE, L <= PSPACE, and monotonicity in the bound, are proved."
+      - "A machine witnessing that the classes are non-empty is exhibited."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build"
+
+  - id: M13-SPACE-CONFIG-COUNT
+    priority: P1
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "Configuration counting: acceptance in bounded space is reachability in a finite graph"
+    terminal_statement: "Complexity.Space.card_boundedCfg_le : the configurations of a machine running in space s on an input of length n number at most q*(n+1)*(s+1)^2*2^s (Complexity.Space.cfgBound); Complexity.Space.accepts_iff_exists_reachable_accepting : acceptance is reachability of an accepting configuration in that finite graph; Complexity.Space.exists_short_accepting_run : an accepting run can be taken of length below the configuration count"
+    latest_evidence: "docs/goal/evidence/M13-SPACE-CONFIG-COUNT.md"
+    open_boundary: ""
+    milestone: M13
+    depends_on:
+      - M13-SPACE-MODEL
+      - M13-SAVITCH-REACH
+    rank: 931
+    exit_criteria:
+      - "The configurations of a machine inside a space bound are isolated as a finite type with an explicit cardinality bound."
+      - "A run of the machine is proved to be a walk in that finite graph and conversely."
+      - "Acceptance is proved equivalent to reachability of an accepting configuration, and accepting runs are proved shortenable below the configuration count."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build"
+
+  - id: M13-SAVITCH-REACH
+    priority: P1
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "Bounded reachability and the midpoint identity"
+    terminal_statement: "Complexity.Reach.reachLe_succ_iff : reachability within 2^(k+1) steps is the existence of a midpoint with both legs reachable within 2^k; Complexity.Reach.exists_steps_lt_card : a walk in a finite graph shortens to one of length below the number of vertices; Complexity.Reach.reachB_iff and .reachB_iff_exists_steps : the midpoint recursion of depth k decides reachability within 2^k steps, and decides reachability outright once 2^k is at least the number of vertices"
+    latest_evidence: "docs/goal/evidence/M13-SAVITCH-REACH.md"
+    open_boundary: ""
+    milestone: M13
+    depends_on: []
+    rank: 932
+    exit_criteria:
+      - "Walks of a given length are defined and proved to compose and decompose at any intermediate length."
+      - "The midpoint identity for reachability within 2^k steps is proved."
+      - "Walk shortening in a finite graph is proved by a pigeonhole on the visited vertices."
+      - "The midpoint recursion is proved to decide reachability."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build"
+
+  - id: M13-SAVITCH-VM
+    priority: P1
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "A stack machine that executes the midpoint recursion in bounded memory"
+    terminal_statement: "Complexity.Savitch.step is a deterministic stack machine whose activation records hold two vertices, a depth, an index into an enumeration of the vertices and one bit; Complexity.Savitch.trace_call : started on a subproblem of depth k it returns Complexity.Savitch.reachL of that subproblem and every state it passes through carries at most k records; Complexity.Savitch.memBits_le_of_visited : hence it runs in (k+1)*(2w+2d+1) bits; Complexity.Savitch.reachL_eq_reachB identifies the value computed with the recursion of Start/SavitchReach.lean"
+    latest_evidence: "docs/goal/evidence/M13-SAVITCH-VM.md"
+    open_boundary: ""
+    milestone: M13
+    depends_on:
+      - M13-SAVITCH-REACH
+    rank: 933
+    exit_criteria:
+      - "A deterministic stack machine executing the midpoint recursion is defined, with activation records that store an index into the enumeration of the vertices rather than a list of them."
+      - "Its correctness and its stack-height bound are proved in one induction, over runs whose every visited state respects the bound."
+      - "The memory of a visited state is bounded in bits."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build"
+
+  - id: M13-SAVITCH-SPACE
+    priority: P1
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "Savitch's theorem: nondeterministic space s is simulated deterministically in O(s^2) memory"
+    terminal_statement: "Complexity.Space.savitch_accepts_iff : the decision Complexity.Space.savitchDecide - some accepting configuration is reachable from the initial one by the midpoint recursion of depth Complexity.Space.savitchDepth - is correct for a nondeterministic machine running in space s; Complexity.Space.savitch_trace and Complexity.Space.savitch_memBits_le : each of its queries is run by the deterministic stack machine of Start/SavitchVM.lean within (k+1)*(4k+3) bits; Complexity.Space.savitchDepth_le : k <= log2 q + log2 (n+1) + 2 log2 (s+1) + s, so the memory is O((s + log n)^2); Complexity.Space.savitch_poly_memory : for a language in NPSPACE that memory is bounded by a polynomial in the length of the input"
+    latest_evidence: "docs/goal/evidence/M13-SAVITCH-SPACE.md"
+    # The further programme - compiling the stack machine into an offline Turing machine of
+    # Start/SpaceMachine.lean, which would turn the memory bound into membership in
+    # Complexity.Space.DSPACE and give NPSPACE = PSPACE, and then the PSPACE-completeness of TQBF -
+    # lies beyond this task's exit criteria and is recorded in its evidence file and in the module
+    # documentation of Start/SavitchSpace.lean.
+    open_boundary: ""
+    milestone: M13
+    depends_on:
+      - M13-SPACE-CONFIG-COUNT
+      - M13-SAVITCH-VM
+    rank: 934
+    exit_criteria:
+      - "The depth of the recursion is defined as the logarithm of the configuration count and bounded by log2 q + log2 (n+1) + 2 log2 (s+1) + s."
+      - "A decision procedure for acceptance by a nondeterministic space-bounded machine is defined and proved correct."
+      - "Each reachability query of that procedure is proved to be run by the deterministic stack machine within a memory bound quadratic in the depth."
+      - "For a language in NPSPACE the memory bound is proved polynomial in the length of the input."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build"
+
+  - id: M13-QBF-SPACE
+    priority: P2
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "Quantified Boolean formulas evaluated in memory polynomial in the formula"
+    terminal_statement: "Complexity.Qbf.QBF and .eval define quantified Boolean formulas and their semantics, Complexity.Qbf.QBF.eval_closed makes Complexity.Qbf.TQBF well defined; Complexity.Qbf.trace_eval : the deterministic evaluating stack machine returns the value of the formula, restores the assignment it was given, and never holds more than height p activation records; Complexity.Qbf.tqbf_memBits_le and .tqbf_memBits_le_size : deciding a closed formula therefore costs at most varBound p + (height p + 1)*(2w+2) bits, quadratic in the size of the formula"
+    latest_evidence: "docs/goal/evidence/M13-QBF-SPACE.md"
+    # The hard half of the PSPACE-completeness of TQBF - a generic reduction from a space-bounded
+    # machine to a quantified Boolean formula - lies beyond this task's exit criteria and is
+    # recorded in its evidence file and in the module documentation of Start/Qbf.lean.
+    open_boundary: ""
+    milestone: M13
+    depends_on:
+      - M13-SAVITCH-VM
+    rank: 935
+    exit_criteria:
+      - "Quantified Boolean formulas, their semantics and the true closed ones are defined, with the proof that the value of a closed formula does not depend on the assignment."
+      - "A deterministic stack machine evaluating a formula is defined, and proved to return the value of the formula and to hand back the assignment it was given."
+      - "Its stack height is proved bounded by the height of the formula, and its memory bounded in bits by a polynomial in the size of the formula."
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"

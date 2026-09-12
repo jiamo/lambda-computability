@@ -460,6 +460,8 @@ import Start.AsmExRegCover
 import Start.AsmExRegRegular
 import Start.AsmExRegNotExact
 import Start.AsmExRegCoeq
+import Start.AsmExRegProj
+import Start.AsmExRegEffective
 import Start.PER
 import Start.Modest
 import Start.ModestEquiv
@@ -470,4 +472,10 @@ import Start.ModestNNO
 import Start.ModestReflect
 import Start.PERNNO
 import Start.PERSystemF
+import Start.SavitchReach
+import Start.SpaceMachine
+import Start.SpaceConfigCount
+import Start.SavitchVM
+import Start.SavitchSpace
+import Start.Qbf
 import Start.Capstones

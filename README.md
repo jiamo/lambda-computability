@@ -366,6 +366,45 @@ Realizability.KleeneTwo.no_separatesBits_morphism :
     ∀ (δ : Realizability.AppMorphism (ℕ → ℕ) ℕ), ¬ Realizability.KleeneTwo.SeparatesBits δ
 ```
 
+### Space-bounded computation and Savitch's theorem
+
+Space is measured on a machine — `Start/SpaceMachine.lean`: an offline Turing machine with a
+read-only input tape whose head is clamped to the input and its end marker, and one binary work
+tape whose used length is what the bound constrains.  The transition function returns the *list*
+of available instructions, so determinism is a property of the same model.  On it sit
+`Complexity.Space.DSPACE`, `.NSPACE`, `.LOGSPACE`, `.PSPACE` and `.NPSPACE` (polynomials are the
+`Complexity.PolyBound` of the time half of the library), with `DSPACE ⊆ NSPACE`, `L ⊆ PSPACE`
+and monotonicity in the bound.
+
+```lean
+-- A machine running in space `s` on an input of length `n` has at most
+-- `q · (n+1) · (s+1)² · 2 ^ s` configurations, and acceptance is reachability among them.
+Complexity.Space.card_boundedCfg_le :
+    ∀ (M : Complexity.Space.Machine) (x : List Bool) (s : ℕ),
+      Fintype.card (Complexity.Space.BoundedCfg M x s) ≤ Complexity.Space.cfgBound M x s
+
+-- Savitch's recursion: reachability within `2 ^ (k+1)` steps is a midpoint with two legs of
+-- `2 ^ k`; a deterministic stack machine executes it holding at most `k` activation records.
+Complexity.Savitch.trace_call :
+    ∀ (r : C → C → Bool) (cs : List C) (k : ℕ) (a b : C) (st : List (Complexity.Savitch.Frame C)),
+      Complexity.Savitch.Trace r cs (st.length + k) ⟨.call a b k, st⟩
+        ⟨.ret (Complexity.Savitch.reachL r cs k a b), st⟩
+
+-- Savitch's theorem, in that cost model: the deterministic decision is correct, and runs in
+-- `(k+1)·(4k+3)` bits with `k ≤ log₂ q + log₂ (n+1) + 2 log₂ (s+1) + s`.
+Complexity.Space.savitch_accepts_iff :
+    ∀ (hwf : M.WellFormed) (hsp : M.SpaceBoundedOn x s),
+      M.Accepts x ↔ Complexity.Space.savitchDecide hwf hsp = true
+Complexity.Space.savitch_poly_memory :
+    ∀ {L : Complexity.Space.Language}, Complexity.Space.NPSPACE L → …  -- polynomial memory
+```
+
+The honest boundary: the deterministic simulation is exhibited on the stack machine, whose memory
+is counted in bits of activation records, and not as an offline Turing machine; compiling it into
+that model — the routine half of the model-independence of space — is not formalized, so
+`NPSPACE = PSPACE` is not claimed as a theorem about `Complexity.Space.DSPACE`, and neither is the
+PSPACE-completeness of TQBF.
+
 ## Related work, and what is specific to this project
 
 Public Lean 4 developments in this area, and how they relate (repository file listings checked
@@ -530,6 +569,21 @@ Public Lean 4 developments in this area, and how they relate (repository file li
   computing it, together with a polynomial length bound
   (`Start/UniformSigCompile.lean`, `Start/UniformSigFlat.lean`), leaving bounded recursion
   (`Cob.bRec`) as the only shape for which the device must still be produced by hand.
+- **Space complexity** — space is measured on an offline machine with a read-only input tape and
+  one binary work tape (`Start/SpaceMachine.lean`), which carries `DSPACE`, `NSPACE`, `LOGSPACE`,
+  `PSPACE` and `NPSPACE`.  A machine running in space `s` has at most `q · (n+1) · (s+1)² · 2 ^ s`
+  configurations and acceptance is reachability among them (`Start/SpaceConfigCount.lean`);
+  reachability within `2 ^ (k+1)` steps is a midpoint with two legs of `2 ^ k`
+  (`Start/SavitchReach.lean`); and a deterministic stack machine executes that recursion holding
+  at most `k` activation records (`Start/SavitchVM.lean`).  Together they give **Savitch's
+  theorem** in that cost model: the deterministic decision is correct and runs in `(k+1)·(4k+3)`
+  bits with `k ≤ log₂ q + log₂ (n+1) + 2 log₂ (s+1) + s`, so polynomially bounded memory for a
+  language in `NPSPACE` (`Start/SavitchSpace.lean`).  Compiling the stack machine back into the
+  offline model, which is what `NPSPACE = PSPACE` as a statement about `DSPACE` would need, is not
+  formalized.  In the same cost model, quantified Boolean formulas are evaluated by a stack
+  machine that holds one activation record per level of the formula and one bit per variable, so
+  a closed formula is decided in memory quadratic in its size (`Start/Qbf.lean`) — the easy half
+  of the PSPACE-completeness of `TQBF`; the reduction that is its hard half is not formalized.
 - **Typed calculi and proof theory** — the simply typed lambda calculus over the same de Bruijn
   syntax, with Tait strong normalization and the untypability of `omega`
   (`Start/SimpleTypes.lean`); **System F**, the polymorphic lambda calculus in Curry style over
@@ -1004,8 +1058,25 @@ Public Lean 4 developments in this area, and how they relate (repository file li
   choose one point per point of the source *and* compute a realizer of the chosen point from a
   realizer of the source point, and the counterexample makes the points lying over a related
   pair carry realizers that no single element of the algebra can produce — a three-point
-  pigeonhole, since application is single-valued.  Exactness is therefore to be expected only
-  for the completion whose bases are the regular projectives.
+  pigeonhole, since application is single-valued.
+- **Exactness on the regular projectives** (`Start/AsmExRegProj.lean`,
+  `Start/AsmExRegEffective.lean`) — and that is exactly where exactness is repaired.  On the full
+  subcategory `ExReg.ExRegP` of the objects whose base is a **partitioned** assembly, i.e. a
+  regular projective of `Asm(A)` (`ExReg.ExRegP.regularProjective_base`), **every internal
+  equivalence relation is effective**: the map onto the quotient above is its coequalizer and the
+  relation is that map's kernel pair (`ExReg.ExRegP.exists_effective_quotient`,
+  `ExReg.ExRegP.isKernelPair_of_isInternalEquiv`).  The proofs run on *probes* — objects whose
+  points are their own realizers (`ExReg.pairERel`, `ExReg.partitioned_pairERel`), so that a
+  tracker out of them may read the data their points carry.  Probing a jointly monic pair turns
+  joint monicity into a single element of the algebra manufacturing the proof that relates two
+  points (`ExReg.JMTracker`, `ExReg.jmTracker_of_jointlyMono`), and probing the composable pairs
+  makes the quotient available over the weaker data that the subcategory supplies
+  (`ExReg.compData`, `ExReg.EqvDataP`, `ExReg.coeqObjP`).  With them the lifting goes through
+  (`ExReg.exists_liftPre`, `ExReg.existsUnique_lift`): one realizer per point of the source
+  determines both the point of the relation to choose and a realizer of it.  Not claimed:
+  regularity of the restricted subcategory in its own right, the universal property of the
+  completion among exact categories, the topos structure, and the identification with the
+  effective topos.
 
 `Start/Demo.lean` is a guided tour with `#check`s of the headline statements.
 

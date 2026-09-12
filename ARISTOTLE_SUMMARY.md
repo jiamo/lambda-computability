@@ -1,3 +1,39 @@
+# Summary of changes for run 49464b6b-5b25-47f7-8422-3d1ca1e1adf8
+本轮把之前一直空着的那条线——空间复杂度——补上了，并顺手修好了交付树本身编不了的问题。所有改动已提交。
+
+**0. 先修通道。** 交付的 `lake-manifest.json` 又是坏的（包名不对、缺 `cslib`、mathlib 的 `inputRev` 与 `lakefile.toml` 不符），干净克隆里 `lake` 直接拒绝构建。已按 `lakefile.toml` 与 `lean-toolchain` 重新解析依赖（Lean v4.33.0 + mathlib `v4.33.0` + 锁定的 `cslib`），`scripts/check_manifest.py` 通过，全树 `lake build` 成功（9141 jobs，0 error、0 linter warning）。
+
+**1. 空间受限计算的机器模型（`Start/SpaceMachine.lean`）。** 只读输入带（读头被夹在输入与结束标记之间）＋一条二进制工作带的离线图灵机；转移函数返回「可选指令的列表」，于是确定性只是同一模型上的一条性质。在其上定义 `DSPACE`、`NSPACE`、`LOGSPACE`、`PSPACE`、`NPSPACE`（多项式界沿用库里时间那半边的 `Complexity.PolyBound`），证明了 `DSPACE ⊆ NSPACE`、`PSPACE ⊆ NPSPACE`、`L ⊆ PSPACE`、对界的单调性，以及一台见证类非空的机器。
+
+**2. 构形计数（`Start/SpaceConfigCount.lean`）。** 空间为 `s`、输入长 `n` 时构形至多 `q·(n+1)·(s+1)²·2^s` 个；机器的运行恰是这张有限图上的走道，接受即「可达某个接受构形」，因而接受运行总可以缩短到构形数以内。
+
+**3. 可达性与中点递归（`Start/SavitchReach.lean`）。** 走道的合成与分解、中点恒等式（`2^(k+1)` 步可达 ⟺ 存在中点两腿各 `2^k` 步）、有限图中走道可缩短到顶点数以下（鸽笼＋去圈），以及「深度 `k` 的中点递归判定可达性」。
+
+**4. 真正执行递归的机器（`Start/SavitchVM.lean`）。** Savitch 定理的内容是「这个递归能在小内存里跑」，所以给出实现：一台确定性栈机，活动记录只存两个顶点、深度、一个指向顶点枚举的**下标**和一个比特（枚举本身不进内存）。一次归纳同时证出正确性与栈高界——从深度 `k` 的子问题出发返回递归的值，且**沿途每个状态**的活动记录不超过 `k` 条，于是内存 `(k+1)·(2w+2d+1)` 比特。
+
+**5. Savitch 定理（`Start/SavitchSpace.lean`）。** 把栈机实例化到构形图：判定过程正确（`savitch_accepts_iff`），每次可达性询问由栈机在 `(k+1)·(4k+3)` 比特内完成，且 `k ≤ log₂q + log₂(n+1) + 2log₂(s+1) + s`，即 `O((s+log n)²)`；对 `NPSPACE` 中的语言，模拟所用内存被输入长度的多项式界住（`savitch_poly_memory`）。
+
+**6. 量化布尔公式（`Start/Qbf.lean`）。** QBF 的语法与语义、闭公式的值与赋值无关（故 `TQBF` 良定义），以及求值栈机：返回公式的值、归还它拿到的赋值（每个量词恢复被覆盖的那一位）、活动记录不超过公式高度，于是判定闭公式的内存关于公式规模是二次的——TQBF 属于多项式空间那一半。
+
+**诚实边界（已写进模块文档、证据文件与任务板注释）：** 确定性模拟是在栈机上给出的，内存按活动记录的比特计数；把栈机再编译回离线图灵机模型（那是空间的模型无关性中例行、繁琐的一半）没有形式化，因此**没有**把 `NPSPACE = PSPACE` 当作关于 `DSPACE` 的定理来断言；TQBF 的 PSPACE-难（从空间受限机器到公式的通用归约）同样没有做。
+
+**记账与验证。** 五个新模块被 `Start.lean` 导入、在 `Start/Capstones.lean` 里带散文与 `#check` 注册；README 增补了「空间复杂度与 Savitch 定理」一节和库地图条目；任务板新增里程碑 M13（六条任务，全部 DONE_STRONG）并配六份证据文件，`docs/current-goal-state.md` 重新渲染（172 条任务）。全树 `lake build` 成功、零警告，`Start/` 下无 `sorry`/`admit`（422 个模块），新结论 `#print axioms` 只有 `propext`、`Classical.choice`、`Quot.sound`，`goal_state.py validate`、`check_closure.py`、`check_sorry.py`、`check_manifest.py` 与打包门 `scripts/pack_gate.sh` 全部通过。
+
+# Summary of changes for run fe076533-53d1-498e-870d-ebf0f38cf033
+**0. 通道先修（你说的最后一步，已在本克隆里执行）**
+- 在这个仓库里跑了一次 `scripts/install_hooks.sh`：`core.hooksPath = .githooks` 现已生效，并实测验证——本次每一次正式提交都触发了 `pre-commit`，它在**暂存树**上跑 `scripts/pack_gate.sh`，四道门（manifest / sorry / task board / import 闭包）全部打印通过。
+- `lake-manifest.json` 交付时又是坏的（包名 `start`、mathlib 的 `inputRev` 停在 `v4.28.0`、没有 `cslib`），因此整棵树在干净克隆里编不了。已按 `lakefile.toml` 与 `lean-toolchain` 重新解析：Lean v4.33.0、mathlib `v4.33.0`（`db584cd6…`）加匹配的 batteries/aesop/Qq/proofwidgets/Cli/plausible/importGraph/LeanSearchClient，以及锁定的 `cslib`；`python3 scripts/check_manifest.py` 现在 exit 0，全树可编。
+
+**1. Eff 那条：把“被自己证否的那半”补上（你排的第一位）**
+新增两个模块，全部 sorry-free：
+- `Start/AsmExRegProj.lean`：完备化中底对象为 **partitioned assembly**（即 `Asm(A)` 的正则投射，`Assembly.regularProjective_iff`）的对象构成的全子范畴 `Realizability.ExReg.ExRegP`；以及做这件事的关键工具——**探针**（`pairERel`，点就是自己的实现子，故底对象天然 partitioned，`partitioned_pairERel`、`homotopic_pair`）。用探针把“联合单”读成算法内容：一个元素即可从两点的实现子与“两条腿的像相关”的证明造出“两点相关”的证明（`JMTracker`、`jmTracker_of_jointlyMono`）；另一枚探针把**可复合对**也变成投射对象（`compData`），于是商的传递性只需要投射对象上的复合，这正是子范畴所能提供的（`EqvDataP`、`eqvDataP_of_isInternalEquiv`）。
+- `Start/AsmExRegEffective.lean`：把 `Start/AsmExRegCoeq.lean` 的商在这套较弱数据上重建（`coeqObjP`、`coeqPreP`、`coeqCoforkPIsColimit`），并证出关键的**提升**：底对象 partitioned 的对象上，两个在商里同伦的映射一定经过关系分解，且分解唯一（`exists_liftPre`、`existsUnique_lift`）——点只有唯一实现子，于是“选哪个点 + 算它的实现子”这一步变成函数，而这恰是反例在任意底对象上封死的一步。结论：**`ExRegP` 上每个内部等价关系都是有效的**——商映射是它们的余等化子，它们是该映射的核对（`ExRegP.exists_effective_quotient`、`ExRegP.isKernelPair_of_isInternalEquiv`）。另有非空性与定位引理：`ExRegP.regularProjective_base`、`embP`、`isInternalEquiv_id`。
+- 记账：新模块被 `Start.lean` 导入、在 `Start/Capstones.lean` 里带散文与 `#check` 注册；`README.md` 增补一节；任务板新增 `M12-EXREG-PROJ-EXACT`（DONE_STRONG）并配 `docs/goal/evidence/M12-EXREG-PROJ-EXACT.md`，`M12-EFF-EXREG` 的证据文件改写（把“Not done”列表按新进展更新），`docs/current-goal-state.md` 重渲染（166 条任务）。
+
+**诚实边界（未做，已写进模块文档、证据文件与任务板）**：受限子范畴自身作为范畴的正则性（有限极限与像分解只在同构意义下留在子范畴内，因为 `Start/AsmExRegEq.lean` 的等化子把见证放进了实现子）、完备化在正合范畴中的普遍性质、topos 结构（子对象分类子与指数）、以及与 effective topos 的认同。你列的第 2 条（空间复杂度类 DSPACE/PSPACE/L、Savitch、TQBF 的 PSPACE-完全性）本次**没有**动——库里仍然只有 `InP`/`InNP`/`NPComplete`，那条线保持原状。
+
+**验证**：`lake build` 全树成功（9135 jobs，0 error、0 linter warning），`Start/Demo.lean` 也编过；`Start/` 下无 `sorry`/`admit`（`check_sorry.py`：416 个模块）；新结论 `#print axioms` 只有 `propext`、`Classical.choice`、`Quot.sound`；`goal_state.py validate`、`check_closure.py`（415 模块全在导入闭包且全部注册）、`check_manifest.py`、`pack_gate.sh` 全部通过。所有改动已提交。
+
 # Summary of changes for run 9670534a-dcaf-41f2-9d9c-ca69dedf63c3
 All outstanding work on the project is now finished; the whole library builds clean under the pinned toolchain.
 

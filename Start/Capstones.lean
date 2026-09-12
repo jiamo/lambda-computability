@@ -60,6 +60,8 @@ import Start.AsmExRegImage
 import Start.AsmExRegRegular
 import Start.AsmExRegNotExact
 import Start.AsmExRegCoeq
+import Start.AsmExRegProj
+import Start.AsmExRegEffective
 import Start.AssemblySubobject
 import Start.AssemblyImage
 import Start.AssemblyRegular
@@ -148,6 +150,12 @@ import Start.KrivineCobStep
 import Start.KrivineCobBin
 import Start.KrivineSpaceCalculus
 import Start.KleeneNoRetraction
+import Start.SavitchReach
+import Start.SpaceMachine
+import Start.SpaceConfigCount
+import Start.SavitchVM
+import Start.SavitchSpace
+import Start.Qbf
 
 /-! ## Interfaces of the untyped calculus
 
@@ -1424,9 +1432,34 @@ proofs of the quotient datum with the homotopy that identifies the legs
 (`Realizability.ExReg.Coeq.coeqCoforkIsColimit`,
 `Realizability.ExReg.Coeq.hasCoequalizer_of_isInternalEquiv`).  Together with the counterexample
 above: the quotient exists, but the relation one recovers from it can be strictly coarser than
-the one one started from.  What remains open is the completion with bases restricted to the
-regular projectives: its exactness, its universal property among exact categories, its topos
-structure, and its identification with the effective topos.
+the one one started from.
+
+**Restricting the bases to the regular projectives repairs exactness.**  The regular projectives
+of `Asm(A)` are exactly the assemblies isomorphic to partitioned ones, where a point has exactly
+one realizer (`Realizability.Assembly.regularProjective_iff`), and
+`Start/AsmExRegProj.lean` and `Start/AsmExRegEffective.lean` prove that on the full subcategory
+`Realizability.ExReg.ExRegP` of the objects whose base is partitioned **every internal
+equivalence relation is effective**: the map onto the quotient above is its coequalizer and it is
+that map's kernel pair (`Realizability.ExReg.ExRegP.exists_effective_quotient`,
+`Realizability.ExReg.ExRegP.isKernelPair_of_isInternalEquiv`).  Two ingredients make it work,
+both supplied by probes — objects whose points *are* their realizers, so that a tracker out of
+them may read the data the points carry (`Realizability.ExReg.pairERel`,
+`Realizability.ExReg.partitioned_pairERel`, `Realizability.ExReg.homotopic_pair`).  The first is
+joint monicity read computationally: probing the relation with the tuples consisting of two
+points of `R`, realizers of them and proofs that their images agree turns joint monicity into a
+single element of the algebra that manufactures the proof relating the two points
+(`Realizability.ExReg.JMTracker`, `Realizability.ExReg.jmTracker_of_jointlyMono`).  The second is
+that the composable pairs can be probed as well, so that the transitivity of the quotient
+relation only needs composites of maps out of *projective* objects, which is all that the
+subcategory supplies (`Realizability.ExReg.compData`, `Realizability.ExReg.EqvDataP`).  With
+them the lifting goes through: two maps out of an object with partitioned base which agree in the
+quotient factor through the relation, because the single realizer of a point of the source
+determines the point of `R` to be chosen and a realizer of it
+(`Realizability.ExReg.exists_liftPre`, `Realizability.ExReg.existsUnique_lift`) — exactly what
+the counterexample shows to be impossible over an arbitrary base.  What remains open for that
+subcategory is its regularity as a category in its own right (closure of the finite limits and
+the image factorizations under the restriction), its universal property among exact categories,
+its topos structure, and its identification with the effective topos.
 -/
 
 #check @Realizability.PCA
@@ -1561,6 +1594,22 @@ structure, and its identification with the effective topos.
 #check @Realizability.ExReg.Coeq.coeqObj
 #check @Realizability.ExReg.Coeq.coeqCoforkIsColimit
 #check @Realizability.ExReg.Coeq.hasCoequalizer_of_isInternalEquiv
+#check @Realizability.ExReg.ProjBase
+#check @Realizability.ExReg.ExRegP
+#check @Realizability.ExReg.pairERel
+#check @Realizability.ExReg.partitioned_pairERel
+#check @Realizability.ExReg.homotopic_pair
+#check @Realizability.ExReg.JMTracker
+#check @Realizability.ExReg.jmTracker_of_jointlyMono
+#check @Realizability.ExReg.compData
+#check @Realizability.ExReg.EqvDataP
+#check @Realizability.ExReg.eqvDataP_of_isInternalEquiv
+#check @Realizability.ExReg.coeqObjP
+#check @Realizability.ExReg.exists_liftPre
+#check @Realizability.ExReg.existsUnique_lift
+#check @Realizability.ExReg.ExRegP.regularProjective_base
+#check @Realizability.ExReg.ExRegP.exists_effective_quotient
+#check @Realizability.ExReg.ExRegP.isKernelPair_of_isInternalEquiv
 
 /-!
 ### PERs, modest sets and the PER model of System F
@@ -1743,3 +1792,104 @@ single one; so it is **not** equivalent to that strictification
 #check @CwaType.extCoherent_families
 #check @CwaType.false_of_mor_isEquivalence
 #check @CwaType.not_equivalent_ofPullbacks
+
+/-!
+## Space-bounded computation and Savitch's theorem
+
+Time in this library is Cobham's class, where composition is a constructor; space has to be a
+machine, because a space bound is a statement about storage and not about the length of the
+computation.  `Start/SpaceMachine.lean` gives the standard model for sublinear space — a
+read-only input tape whose head is clamped to the input and its end marker, one binary work tape
+whose used length is what the bound constrains, and a transition function returning the *list* of
+available instructions, so that determinism (`Complexity.Space.Machine.Deterministic`) is a
+property and not a separate model.  On top of it sit `Complexity.Space.DSPACE`,
+`Complexity.Space.NSPACE`, `Complexity.Space.LOGSPACE`, `Complexity.Space.PSPACE` and
+`Complexity.Space.NPSPACE`, with the inclusions one expects
+(`Complexity.Space.nspace_of_dspace`, `Complexity.Space.pspace_of_logspace`) and a machine that
+witnesses non-vacuity (`Complexity.Space.dspace_const_decidable`).
+
+`Start/SpaceConfigCount.lean` counts the configurations: a machine running in space `s` on an
+input of length `n` has at most `q · (n+1) · (s+1)² · 2 ^ s` of them
+(`Complexity.Space.card_boundedCfg_le`), they form a finite graph under the one-step relation,
+and acceptance is reachability in that graph
+(`Complexity.Space.accepts_iff_exists_reachable_accepting`), so an accepting run can always be
+taken shorter than the number of configurations
+(`Complexity.Space.exists_short_accepting_run`).
+
+`Start/SavitchReach.lean` is the graph-theoretic core: reachability within `2 ^ (k+1)` steps is
+the existence of a midpoint reachable within `2 ^ k` from one side and reaching the target within
+`2 ^ k` from the other (`Complexity.Reach.reachLe_succ_iff`); a walk in a finite graph shortens to
+one of length below the number of vertices (`Complexity.Reach.exists_steps_lt_card`); so the
+midpoint recursion of depth `k` decides reachability as soon as `2 ^ k` is at least the number of
+vertices (`Complexity.Reach.reachB_iff_exists_steps`).
+
+Savitch's theorem is the claim that this recursion can be *executed* in small memory, which is a
+statement about an implementation, so `Start/SavitchVM.lean` gives one: a deterministic stack
+machine whose activation records hold the two endpoints of a subproblem, its depth, an index into
+an enumeration of the vertices and one bit.  It returns the value of the recursion and never
+holds more than `k` records (`Complexity.Savitch.trace_call`), hence runs in
+`(k + 1) · (2 w + 2 d + 1)` bits (`Complexity.Savitch.memBits_le_of_visited`).  Instantiated at
+the configuration graph, `Start/SavitchSpace.lean` gives the theorem: the decision
+`Complexity.Space.savitchDecide` is correct (`Complexity.Space.savitch_accepts_iff`), each of its
+queries is run by the stack machine (`Complexity.Space.savitch_trace`) within
+`(k + 1) · (4 k + 3)` bits (`Complexity.Space.savitch_memBits_le`), and
+`k ≤ log₂ q + log₂ (n+1) + 2 log₂ (s+1) + s` (`Complexity.Space.savitchDepth_le`) — Savitch's
+`O(s²)`.  For a language in `NPSPACE` the memory of the simulation is therefore polynomially
+bounded (`Complexity.Space.savitch_poly_memory`).
+
+The honest boundary: the deterministic simulation is exhibited on the stack machine and its
+memory is counted in bits of activation records; compiling that machine into an offline Turing
+machine of `Start/SpaceMachine.lean` — the routine half of the model-independence of space — is
+not formalized, so `NPSPACE = PSPACE` is not claimed as a theorem about
+`Complexity.Space.DSPACE`.
+-/
+
+#check @Complexity.Space.Machine.SpaceBounded
+#check @Complexity.Space.nspace_of_dspace
+#check @Complexity.Space.npspace_of_pspace
+#check @Complexity.Space.pspace_of_logspace
+#check @Complexity.Space.dspace_const_decidable
+#check @Complexity.Space.card_boundedCfg_le
+#check @Complexity.Space.accepts_iff_exists_reachable_accepting
+#check @Complexity.Space.exists_short_accepting_run
+#check @Complexity.Reach.reachLe_succ_iff
+#check @Complexity.Reach.exists_steps_lt_card
+#check @Complexity.Reach.reachB_iff
+#check @Complexity.Reach.reachB_iff_exists_steps
+#check @Complexity.Savitch.reachL_eq_reachB
+#check @Complexity.Savitch.trace_call
+#check @Complexity.Savitch.memBits_le_of_visited
+#check @Complexity.Space.savitchDepth_le
+#check @Complexity.Space.savitch_accepts_iff
+#check @Complexity.Space.savitch_trace
+#check @Complexity.Space.savitch_memBits_le
+#check @Complexity.Space.savitch_poly_memory
+
+/-!
+## Quantified Boolean formulas, and the easy half of their PSPACE-completeness
+
+`Start/Qbf.lean` defines quantified Boolean formulas (`Complexity.Qbf.QBF`), their value under an
+assignment (`Complexity.Qbf.QBF.eval`), and the true closed ones (`Complexity.Qbf.TQBF`), which is
+well defined because the value of a closed formula does not depend on the assignment
+(`Complexity.Qbf.QBF.eval_closed`).
+
+The evaluator is again a deterministic stack machine (`Complexity.Qbf.step`), and the theorem
+about it is the shape of its memory: started on a formula it returns the formula's value, hands
+back the assignment it was given — each quantifier restores the bit it overwrote — and never holds
+more than `height p` activation records (`Complexity.Qbf.trace_eval`).  Counting one bit per
+variable for the assignment, a pointer and a variable index per record
+(`Complexity.Qbf.memBits`), deciding a closed formula costs at most
+`varBound p + (height p + 1) · (2 w + 2)` bits (`Complexity.Qbf.tqbf_memBits_le`), which is
+quadratic in the size of the formula (`Complexity.Qbf.tqbf_memBits_le_size`): the easy half of the
+PSPACE-completeness of `TQBF`.  The hard half — a generic reduction from a space-bounded machine
+to a quantified Boolean formula — is not formalized.
+-/
+
+#check @Complexity.Qbf.QBF.eval
+#check @Complexity.Qbf.QBF.eval_congr
+#check @Complexity.Qbf.QBF.eval_closed
+#check @Complexity.Qbf.TQBF
+#check @Complexity.Qbf.trace_eval
+#check @Complexity.Qbf.tqbf_trace
+#check @Complexity.Qbf.tqbf_memBits_le
+#check @Complexity.Qbf.tqbf_memBits_le_size
