@@ -10,6 +10,20 @@ This file is for humans and coding agents working in this repository.
    before choosing follow-up work.
 4. Validate task-board edits with `python3 scripts/goal_state.py validate`.
 
+## Delivery Rule
+
+Before packaging anything (a `tar`, an archive, a hand-off), run
+
+```bash
+scripts/pack_gate.sh
+```
+
+It runs the offline gates on what `git archive` actually ships, not on the warm working
+tree, and it is the only thing that catches a `lake-manifest.json` disagreeing with
+`lakefile.toml` — the failure that shipped five deliveries in a row.  Run
+`scripts/install_hooks.sh` once per clone so that `.githooks/pre-commit` calls the gate on
+every commit; see `docs/RELEASING.md`.
+
 ## Task Board Rule
 
 `docs/goal/task-board.yaml` is the machine-readable task queue for this

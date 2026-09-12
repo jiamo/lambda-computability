@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Run the packaging gate on the tree that is about to be committed.
+#
+# The failure this prevents has now shipped five times: a `lake-manifest.json` that
+# disagrees with `lakefile.toml` is invisible in a warm working tree (`lake` never
+# re-resolves anything there) and breaks every fresh clone and every archive.  The gate
+# for it, `scripts/pack_gate.sh`, existed and was correct; what was missing was a caller.
+# This hook is that caller: it runs on the *staged* tree, so what passes the gate is
+# exactly what enters history — and therefore exactly what `git archive` later ships.
+#
+# Install with:  scripts/install_hooks.sh   (i.e. `git config core.hooksPath .githooks`)
+# Bypass, when you really must, with `git commit --no-verify`.
+
+set -euo pipefail
+
+root="$(git rev-parse --show-toplevel)"
+tree="$(git write-tree)"
+
+echo "pre-commit: running scripts/pack_gate.sh on the staged tree ${tree}"
+"${root}/scripts/pack_gate.sh" "${tree}"

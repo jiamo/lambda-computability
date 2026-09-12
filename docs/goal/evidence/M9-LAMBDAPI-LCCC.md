@@ -661,3 +661,21 @@ What remains unclaimed here is therefore only the biequivalence for an *arbitrar
 rather than for the models the strictification presents, and the closure of the universe of a
 general strictified model under the pushforward product on the nose, which is ruled out for the
 two-code universe of the standard model by `CwaTypeNotClosed.not_piClosed`.
+
+## Closing note (status changed to DONE_STRONG)
+
+The `open_boundary` of this task had not been rewritten since the results that emptied it were
+proved, so it read as the only open item on the board while naming no unproved claim.  It listed
+two things.
+
+* *"the biequivalence with locally cartesian closed categories"* — proved, as
+  `Cwa.lcccModelCat_biequivalent` (`Start/LcccBiequivalence.lean`): strictification
+  (`Cwa.lcccPseudofunctor`) and taking contexts (`Cwa.lcccCtx`) are both biequivalences, so the
+  wording of the task was simply out of date.
+* *"closure of the universe of a general strictified model under the pushforward product on the
+  nose"* — settled in the negative by `CwaTypeNotClosed.not_piClosed`, and the companion question
+  about full democratic models in the negative by `CwaType.not_equivalent_ofPullbacks`.  A
+  negative answer is a closed question, not an open boundary.
+
+The two are now recorded as exit criteria instead, together with initiality, and the status is
+`DONE_STRONG` with an empty boundary.  No mathematics was added for this change.

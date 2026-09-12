@@ -79,6 +79,22 @@ runs, *inside the unpacked copy*:
 * `scripts/goal_state.py validate` and `scripts/check_closure.py` — the task board is
   well formed and every module is in the import closure.
 
+### The gate now has a caller
+
+Shipping the gate is not the same as running it, and the gate was shipped, documented and
+not called: the fifth delivery again carried a manifest naming the wrong package, pinning
+the wrong Mathlib revision and omitting `cslib`.  So the call is now automatic:
+
+```bash
+scripts/install_hooks.sh       # once per clone: git config core.hooksPath .githooks
+```
+
+`.githooks/pre-commit` runs `scripts/pack_gate.sh "$(git write-tree)"`, i.e. the gate on
+the *staged* tree.  Nothing can enter history without passing it, and what `git archive`
+ships is exactly what is in history.  A packaging step that tars the repository therefore
+needs no extra discipline; a delivery that bypasses git should still run
+`scripts/pack_gate.sh` immediately before the `tar`.
+
 The `build-from-archive` job of `.github/workflows/lean_action_ci.yml` runs the same gates
 and then *builds* the archive, so it also catches what an offline gate cannot.  But CI
 only reports after a push: a delivery that does not go through CI must run

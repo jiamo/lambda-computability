@@ -1,6 +1,6 @@
 # Current goal state
 
-- Active milestone: `M10`
+- Active milestone: `M12`
 
 | Rank | ID | Priority | Status | Depends on | Evidence | Open Boundary |
 |---:|---|---|---|---|---|---|
@@ -63,7 +63,7 @@
 | 140 | `M9-SCOTT-DINF` | `P1` | `DONE_STRONG` | M9-GRAPH-MODEL | docs/goal/evidence/M9-SCOTT-DINF.md |  |
 | 150 | `M9-SYSTEMT-ADEQUACY` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M9-SYSTEMT-ADEQUACY.md |  |
 | 160 | `M9-STLC-CCC` | `P1` | `DONE_STRONG` | M9-SCOTT-DINF | docs/goal/evidence/M9-STLC-CCC.md |  |
-| 170 | `M9-LAMBDAPI-LCCC` | `P1` | `BACKEND_PARTIAL` | M9-STLC-CCC | docs/goal/evidence/M9-LAMBDAPI-LCCC.md | Both sides are built, but the biequivalence is not claimed. Syntax: LambdaPiCwa.syntactic is a category with attributes whose types are the small types, LambdaPiCwa.weakPi its dependent product, and LambdaPiCwa.not_piStruct_weakPi shows eta fails. Semantics: the strictified model (Cwa.ofPullbacks) presents types by local universes, so substitution is strictly functorial, and a locally cartesian closed category carries there a dependent product with beta and eta (Cwa.piStructOfLccc). Universes: Cwa.Universe, SmallPi, PiClosed, CodePi and CodeSigma are what an interpretation needs; LambdaPiUniv.univ makes star a universe in the syntactic model and CwaUniv.universeOfHom makes every morphism one in the strictified model, and the two syntactic models are isomorphic. A set-theoretic model exists (CwaTypeModel.model). Initiality is proved: LambdaPi.interp_exists_unique interprets every derivable judgement uniquely in any model with injective products, and LambdaPiInitial.mor packages it as a morphism of categories with attributes out of the syntax, preserving the universe and its codes. Not claimed: the biequivalence with locally cartesian closed categories, and closure of the universe of a general strictified model under the pushforward product on the nose - ruled out for a two-code universe of the standard model by CwaTypeNotClosed.not_piClosed. Its 2-categorical shadow is settled by M10-CWA-LAX-BICAT and M10-CWA-BICATEGORY: both sides are strict bicategories and strictification is a locally fully faithful pseudofunctor (Cwa.strictificationPseudofunctor), restricting to the locally cartesian closed categories (Cwa.lcccPseudofunctor). The pseudofunctor back and the biequivalence are settled by M10-CWA-BICATEGORY (Cwa.lcccCtx, Cwa.lcccModelCat_biequivalent), for the models those categories present; an intrinsic description of them is M10-CWA-DEMOCRATIC, settled: a full democratic model need not be equivalent to the strictification of its contexts. |
+| 170 | `M9-LAMBDAPI-LCCC` | `P1` | `DONE_STRONG` | M9-STLC-CCC | docs/goal/evidence/M9-LAMBDAPI-LCCC.md |  |
 | 172 | `M9-LAMBDAPI-SN` | `P1` | `DONE_STRONG` | M9-LAMBDAPI-LCCC | docs/goal/evidence/M9-LAMBDAPI-SN.md |  |
 | 175 | `M9-SYSTEM-F` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M9-SYSTEM-F.md |  |
 | 180 | `M9-DINF-ADEQUACY` | `P2` | `DONE_STRONG` | M9-SCOTT-DINF | docs/goal/evidence/M9-DINF-ADEQUACY.md |  |
@@ -163,5 +163,11 @@
 | 860 | `M11-KLEENE-NO-RETRACTION` | `P2` | `DONE_STRONG` | M11-COMPUTABLE-REAL-CONTINUITY | docs/goal/evidence/M11-KLEENE-NO-RETRACTION.md |  |
 | 855 | `M11-KRIVINE-UNIT-COST` | `P2` | `DONE_STRONG` | M11-KRIVINE-INVARIANCE | docs/goal/evidence/M11-KRIVINE-UNIT-COST.md |  |
 | 857 | `M11-KRIVINE-PASS-MACHINE` | `P2` | `DONE_STRONG` | M11-KRIVINE-UNIT-COST | docs/goal/evidence/M11-KRIVINE-PASS-MACHINE.md |  |
+| 900 | `M12-KRIVINE-SPACE-LIVE` | `P1` | `DONE_STRONG` | M11-KRIVINE-UNIT-COST | docs/goal/evidence/M12-KRIVINE-SPACE-LIVE.md |  |
+| 905 | `M12-KRIVINE-SPACE-LOG` | `P1` | `DONE_STRONG` | M12-KRIVINE-SPACE-LIVE | docs/goal/evidence/M12-KRIVINE-SPACE-LOG.md |  |
+| 910 | `M12-KRIVINE-SPACE-INVARIANCE` | `P1` | `DONE_STRONG` | M12-KRIVINE-SPACE-LOG | docs/goal/evidence/M12-KRIVINE-SPACE-INVARIANCE.md |  |
+| 925 | `M12-EXREG-REGULAR` | `P2` | `DONE_STRONG` | M12-EFF-EXREG | docs/goal/evidence/M12-EXREG-REGULAR.md |  |
+| 930 | `M12-KRIVINE-SPACE-CALCULUS` | `P2` | `DONE_STRONG` | M12-KRIVINE-SPACE-INVARIANCE | docs/goal/evidence/M12-KRIVINE-SPACE-CALCULUS.md |  |
+| 920 | `M12-EFF-EXREG` | `P2` | `DONE_STRONG` | - | docs/goal/evidence/M12-EFF-EXREG.md |  |
 
 Next: all tasks in the active milestone are `DONE_STRONG`.

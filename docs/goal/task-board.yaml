@@ -1,7 +1,7 @@
 version: 2
 source_protocol: docs/goal/goal-prompt.md
-active_milestone: M10
-milestone_order: ["M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10", "M11"]
+active_milestone: M12
+milestone_order: ["M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10", "M11", "M12"]
 tasks:
   - id: M1-BOUNDARY-SORRY-CLOSURE
     priority: P0
@@ -1089,11 +1089,11 @@ tasks:
 
   - id: M9-LAMBDAPI-LCCC
     priority: P1
-    status: BACKEND_PARTIAL
+    status: DONE_STRONG
     track: theory/semantics
     title: "Dependent types: the calculus lambda-Pi, categories with attributes, and locally cartesian closed categories"
     latest_evidence: "docs/goal/evidence/M9-LAMBDAPI-LCCC.md"
-    open_boundary: "Both sides are built, but the biequivalence is not claimed. Syntax: LambdaPiCwa.syntactic is a category with attributes whose types are the small types, LambdaPiCwa.weakPi its dependent product, and LambdaPiCwa.not_piStruct_weakPi shows eta fails. Semantics: the strictified model (Cwa.ofPullbacks) presents types by local universes, so substitution is strictly functorial, and a locally cartesian closed category carries there a dependent product with beta and eta (Cwa.piStructOfLccc). Universes: Cwa.Universe, SmallPi, PiClosed, CodePi and CodeSigma are what an interpretation needs; LambdaPiUniv.univ makes star a universe in the syntactic model and CwaUniv.universeOfHom makes every morphism one in the strictified model, and the two syntactic models are isomorphic. A set-theoretic model exists (CwaTypeModel.model). Initiality is proved: LambdaPi.interp_exists_unique interprets every derivable judgement uniquely in any model with injective products, and LambdaPiInitial.mor packages it as a morphism of categories with attributes out of the syntax, preserving the universe and its codes. Not claimed: the biequivalence with locally cartesian closed categories, and closure of the universe of a general strictified model under the pushforward product on the nose - ruled out for a two-code universe of the standard model by CwaTypeNotClosed.not_piClosed. Its 2-categorical shadow is settled by M10-CWA-LAX-BICAT and M10-CWA-BICATEGORY: both sides are strict bicategories and strictification is a locally fully faithful pseudofunctor (Cwa.strictificationPseudofunctor), restricting to the locally cartesian closed categories (Cwa.lcccPseudofunctor). The pseudofunctor back and the biequivalence are settled by M10-CWA-BICATEGORY (Cwa.lcccCtx, Cwa.lcccModelCat_biequivalent), for the models those categories present; an intrinsic description of them is M10-CWA-DEMOCRATIC, settled: a full democratic model need not be equivalent to the strictification of its contexts."
+    open_boundary: ""
     milestone: M9
     depends_on:
       - M9-STLC-CCC
@@ -1105,6 +1105,9 @@ tasks:
       - "Type u is proved locally cartesian closed with an explicit dependent product, and that product is identified with the Pi-type of the standard model."
       - "The syntactic category of lambda-Pi contexts and substitutions is a category with a terminal object, and its context extension squares are pullbacks."
       - "The syntactic category carries a category-with-attributes structure with a dependent-product structure, and the failure of eta is proved."
+      - "Initiality: every derivable judgement is interpreted uniquely in any model with injective products (LambdaPi.interp_exists_unique), packaged as a morphism of categories with attributes out of the syntax preserving the universe and its codes (LambdaPiInitial.mor)."
+      - "The comparison with locally cartesian closed categories is a biequivalence: Cwa.lcccModelCat_biequivalent, by strictification (Cwa.lcccPseudofunctor) and by taking contexts (Cwa.lcccCtx)."
+      - "The two ways in which the comparison is not an equality are settled negatively rather than left open: a full democratic model need not be equivalent to the strictification of its contexts (CwaType.not_equivalent_ofPullbacks), and the universe of a strictified model is not closed under the pushforward product on the nose (CwaTypeNotClosed.not_piClosed)."
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "lake build"
@@ -3361,6 +3364,147 @@ tasks:
       - "The cost of that term is bounded by a polynomial in the length of the encoding, in the cost measure of the chosen model (steps for a machine, size of the compiled circuit family for a Cobham term)."
       - "The bound is composed with Krivine.Impl.eval_impl_cost, so that the running time of the implementation on the chosen model is polynomial in the size of the term and the number of beta steps."
       - "The open_boundary of M11-KRIVINE-UNIT-COST is emptied, or restated to whatever remains."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build"
+
+  - id: M12-KRIVINE-SPACE-LIVE
+    priority: P1
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "A space measure for the Krivine machine with sharing: live data, and garbage collection"
+    terminal_statement: "Krivine.Impl.space is the number of cells reachable from the roots of a state; Krivine.Impl.decState_congr_live shows nothing else is read, Krivine.Impl.gcState_dec and Krivine.Impl.gcState_valid that the other cells can be removed without changing the run, Krivine.Impl.gcState_heap_length that the collected heap has exactly that many cells, and Krivine.Impl.space_hstep_le that a transition costs at most one cell"
+    latest_evidence: "docs/goal/evidence/M12-KRIVINE-SPACE-LIVE.md"
+    open_boundary: ""
+    milestone: M12
+    depends_on:
+      - M11-KRIVINE-UNIT-COST
+    rank: 900
+    exit_criteria:
+      - "The cells reachable from the state - its live data - are defined, and reachability is proved independent of the fuel used to compute it and closed under the references of a live cell."
+      - "The decoded state depends only on the live cells: two heaps agreeing on them decode the state the same way."
+      - "Garbage collection is defined: the live cells, in their original order, with the references renamed to their ranks."
+      - "Garbage collection is correct: it preserves the invariant Krivine.Impl.Valid and the decoded state, and its heap has exactly one cell per live address."
+      - "The space of a state is defined as the number of live cells, is zero initially, and grows by at most one per transition."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build"
+
+  - id: M12-KRIVINE-SPACE-LOG
+    priority: P1
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "Logarithmic overhead: the collected state written with binary pointers"
+    terminal_statement: "Krivine.Impl.gcState_encoded_log : written with every field on widthOf tab s = Nat.size (|tab| + |stack| + space s) bits, a collected state is recovered from its word (Krivine.Impl.decStateBin_encStateBin, hence Krivine.Impl.encStateBin_inj) and its word is at most (4 + |stack| + 3 * space s) * (widthOf tab s + 1) bits long, while being at least space s bits long (Krivine.Impl.space_le_encStateBin_gcState_length)"
+    latest_evidence: "docs/goal/evidence/M12-KRIVINE-SPACE-LOG.md"
+    open_boundary: ""
+    milestone: M12
+    depends_on:
+      - M12-KRIVINE-SPACE-LIVE
+    rank: 905
+    exit_criteria:
+      - "A binary encoding of an implementation state is defined and proved faithful: the state is determined by its word."
+      - "The length of the encoding of a collected state is bounded by a constant times the number of live cells and the length of the stack, times the number of bits of the largest address - the logarithmic overhead."
+      - "The number of live cells is bounded by the length of the encoding, so that the two space measures agree up to that logarithmic factor."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build"
+
+  - id: M12-KRIVINE-SPACE-INVARIANCE
+    priority: P1
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "Space invariance of the run: the machine runs in the space of its live data"
+    terminal_statement: "Krivine.Impl.eval_impl_space : the implementation collected at every transition (Krivine.Impl.gstep) performs the same run (Krivine.Impl.exists_grun_of_run, Krivine.Impl.gstep_trans), holds exactly its live cells at every step (Krivine.Impl.grun_collected, from Krivine.Impl.space_gcState), is bounded by the peak of the run and hence by the number of transitions (Krivine.Impl.gpeak_le), and is written in (4 + |stack| + 3 * |heap|) * (widthOf + 1) bits (Krivine.Impl.encStateBin_length_le')"
+    latest_evidence: "docs/goal/evidence/M12-KRIVINE-SPACE-INVARIANCE.md"
+    open_boundary: ""
+    milestone: M12
+    depends_on:
+      - M12-KRIVINE-SPACE-LOG
+    rank: 910
+    exit_criteria:
+      - "The implementation collected at every transition is defined, and is proved to perform the same run: same labels, same decoded states, same stuck states."
+      - "Every state of that run is bounded in space by the peak number of live cells of the run, and in bits by that number times the logarithmic factor."
+      - "The two are combined into a space bound for the evaluation of a term, in the same shape as the time bound Krivine.Impl.eval_impl_cost."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build"
+
+  - id: M12-EXREG-REGULAR
+    priority: P2
+    status: DONE_STRONG
+    track: theory/realizability
+    title: "The exact completion of the assemblies is a regular, but not an exact, category"
+    terminal_statement: "Realizability.ExReg.cover_iff_isRegularEpi : a morphism of the completion is a regular epimorphism exactly when it is a cover, i.e. has a computable section up to the relation; Realizability.ExReg.regularEpi_imgFac : the first factor of the image factorization is a regular epimorphism; Realizability.ExReg.cover_of_isPullback and .regularEpi_isStableUnderBaseChange : covers are stable under base change; Realizability.ExReg.hasCoequalizer_of_isKernelPair : kernel pairs have coequalizers; Realizability.ExReg.instRegular : the completion is a regular category in the sense of CategoryTheory.Regular; Realizability.ExReg.Coeq.hasCoequalizer_of_isInternalEquiv : every internal equivalence relation of the completion has a coequalizer (Realizability.ExReg.Coeq.coeqCoforkIsColimit); Realizability.ExReg.NotExact.exists_internalEquiv_not_kernelPair and .kleene_exReg_not_exact : the completion is nevertheless not exact - over any algebra with three distinct elements, in particular over Kleene's first algebra, it carries an internal equivalence relation that is the kernel pair of no morphism"
+    latest_evidence: "docs/goal/evidence/M12-EXREG-REGULAR.md"
+    open_boundary: ""
+    milestone: M12
+    depends_on:
+      - M12-EFF-EXREG
+    rank: 925
+    exit_criteria:
+      - "The regular epimorphisms of the completion are identified, and the first factor of the image factorization is proved to be one."
+      - "Those factorizations are proved stable under pullback, so the completion is a regular category."
+      # The original criterion read: "The completion is proved exact: every equivalence relation
+      # in it is the kernel pair of its coequalizer."  That statement is false for the completion
+      # of *all* assemblies, and is refuted in Start/AsmExRegNotExact.lean; the criterion below
+      # records the question and its negative resolution, together with the half that does hold.
+      - "The exactness question is settled: every internal equivalence relation of the completion is proved to have a coequalizer, and a counterexample shows that it need not be the kernel pair of any morphism, so the completion is regular but not exact."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build"
+
+  - id: M12-KRIVINE-SPACE-CALCULUS
+    priority: P2
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "A space cost model on lambda-terms, to compare with the space of the machine"
+    terminal_statement: "Krivine.State.cells measures a state of the calculus by the nodes of its closure trees; Krivine.Impl.space_le_cells_decState : the live cells of a valid implementation state are at most that measure of the state it represents; Krivine.Impl.gpeak_le_of_cells_le : the peak of a collected run is bounded by any bound on that measure along the run; Krivine.Impl.eval_impl_space_calculus : the resulting space bound for an evaluation, with the logarithmic factor for writing a state down; Krivine.Impl.popStackBinT : a pass over the binary encoding of a state, which rewrites the encoding of a state with a nonempty stack into that of the state with its stack popped (Krivine.Impl.eval_popStackBinT) and compiles into Boolean circuits of size polynomial in the length of its input (Krivine.Impl.popStackBinT_compiles)"
+    latest_evidence: "docs/goal/evidence/M12-KRIVINE-SPACE-CALCULUS.md"
+    open_boundary: ""
+    milestone: M12
+    depends_on:
+      - M12-KRIVINE-SPACE-INVARIANCE
+    rank: 930
+    exit_criteria:
+      - "A space measure on lambda-terms, or on the states of the sharing calculus, is defined and related to the live data of the machine."
+      - "The peak space of a run is bounded by that measure, up to the logarithmic factor already proved."
+      - "One pass over the binary encoding of a state is compiled into a machine model of the library."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build"
+
+  - id: M12-EFF-EXREG
+    priority: P2
+    status: DONE_STRONG
+    track: theory/realizability
+    title: "The effective topos as the exact completion of the category of assemblies"
+    terminal_statement: "Realizability.ExReg.ERel is the category of pseudo-equivalence relations over the assemblies and tracked maps up to homotopy (Realizability.ExReg.instCategory); Realizability.ExReg.emb embeds the assemblies fully and faithfully (Realizability.ExReg.instFullEmb, .instFaithfulEmb) preserving the terminal object and binary products (.embTermIso, .embProdIso); the completion has finite limits (Realizability.ExReg.instHasFiniteLimits, from .prodFanIsLimit and .eqForkIsLimit); every object is a regular quotient of an assembly (Realizability.ExReg.quotIsColimit, .regularEpi_quot); and every morphism factors as an epimorphism followed by a monomorphism (Realizability.ExReg.imgFac_comp_imgIncl, .epi_imgFac, .mono_imgIncl)"
+    latest_evidence: "docs/goal/evidence/M12-EFF-EXREG.md"
+    # The open boundary of this task was the exactness of the completion, which is now settled:
+    # Realizability.ExReg.Coeq.hasCoequalizer_of_isInternalEquiv gives the coequalizer of every
+    # internal equivalence relation, and Realizability.ExReg.NotExact.exists_internalEquiv_not_kernelPair
+    # shows the relation need not be the kernel pair of it, so the completion of *all* assemblies
+    # is regular but not exact.  The remaining programme - the universal property among exact
+    # categories, the topos structure, and the identification with the effective topos, for bases
+    # restricted to the regular projectives - is beyond this task's exit criteria and is recorded
+    # in the evidence file.
+    open_boundary: ""
+    milestone: M12
+    depends_on: []
+    rank: 920
+    exit_criteria:
+      - "Pseudo-equivalence relations in the category of assemblies, and morphisms between them up to homotopy, are defined and shown to form a category."
+      - "The embedding of the assemblies into that category is defined and proved full and faithful."
+      - "The completion is proved to have finite limits, and the embedding to preserve the terminal object and binary products."
+      - "Every object of the completion is proved to be a quotient of an assembly: the canonical map from the base of a relation is the coequalizer of the two endpoints of its assembly of proofs, hence a regular epimorphism."
+      - "Every morphism of the completion is factored as an epimorphism followed by a monomorphism."
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"

@@ -56,6 +56,10 @@ import Start.AssemblyNNO
 import Start.AssemblyKleene
 import Start.AssemblyKleeneBool
 import Start.AssemblyProjective
+import Start.AsmExRegImage
+import Start.AsmExRegRegular
+import Start.AsmExRegNotExact
+import Start.AsmExRegCoeq
 import Start.AssemblySubobject
 import Start.AssemblyImage
 import Start.AssemblyRegular
@@ -141,6 +145,8 @@ import Start.CwaFamiliesNoStrictify
 import Start.KrivineBound
 import Start.KrivineHeapCost
 import Start.KrivineCobStep
+import Start.KrivineCobBin
+import Start.KrivineSpaceCalculus
 import Start.KleeneNoRetraction
 
 /-! ## Interfaces of the untyped calculus
@@ -186,6 +192,27 @@ standing for a stuck machine (`Krivine.Impl.eval_stepT`), and its cost in the mo
 the Boolean circuits it compiles into — is polynomial in the length of its input
 (`Krivine.Impl.stepT_compiles`).  Composed with the transition count, this is the invariance
 statement on a machine model of the library: `Krivine.Impl.eval_impl_cob_cost`.
+
+`Start/KrivineSpace.lean` and its satellites do the same for **space**.  The space of an
+implementation state is the number of heap cells reachable from its roots, only those cells are
+ever read, and the others can be removed (`Start/KrivineSpaceGc.lean`); a collected state is
+written in binary with a logarithmic overhead (`Start/KrivineSpaceLog.lean`); and the machine
+collected at every transition performs the same run while holding exactly its live data
+(`Krivine.Impl.eval_impl_space`).  `Start/KrivineSpaceCalculus.lean` supplies the measure on the
+calculus side that this is compared with: the space of a closure is the number of nodes of the
+tree that writes it down, and the space of a state is the space of its environment plus that of
+the closures on its stack (`Krivine.State.cells`).  The implementation never holds more cells
+than the state of the calculus it represents has nodes — sharing can only save
+(`Krivine.Impl.space_le_cells_decState`) — so the peak of a collected run is bounded by any
+bound on that measure along the run (`Krivine.Impl.gpeak_le_of_cells_le`), and an evaluation
+runs in that space, written down with the logarithmic factor
+(`Krivine.Impl.eval_impl_space_calculus`).  `Start/KrivineCobBin.lean` closes the loop on the
+machine side: a pass over the *binary* encoding, where the fields have fixed width and the
+offsets depend only on the width and the length of the stack, is a term of Cobham's class
+(`Krivine.Impl.popStackBinT`); it rewrites the encoding of a state with a nonempty stack into
+the encoding of the state with its stack popped (`Krivine.Impl.eval_popStackBinT`), and it
+compiles into Boolean circuits of size polynomial in the length of its input
+(`Krivine.Impl.popStackBinT_compiles`).
 -/
 
 #check @Lambda.exists_size_explosion
@@ -217,6 +244,14 @@ statement on a machine model of the library: `Krivine.Impl.eval_impl_cob_cost`.
 #check @Krivine.Impl.stepT_compiles
 #check @Krivine.Impl.eval_stepT_hrun
 #check @Krivine.Impl.eval_impl_cob_cost
+#check @Krivine.State.cells
+#check @Krivine.Impl.reach_length_le_cells
+#check @Krivine.Impl.space_le_cells_decState
+#check @Krivine.Impl.gpeak_le_of_cells_le
+#check @Complexity.Cob.eval_takeNT
+#check @Krivine.Impl.eval_popStackBinT
+#check @Krivine.Impl.popStackBinT_compiles
+#check @Krivine.Impl.eval_impl_space_calculus
 
 /-! ## Recursion theory: Post's problem for many-one reducibility
 
@@ -1320,6 +1355,78 @@ epimorphisms is strictly stronger and fails already over `K₁`: the standard nu
 partitioned, hence regular projective, but the identity map onto the indiscrete assembly on the
 numbers is an epimorphism that does not lift realizers, and along it the non-computable diagonal
 function has no lift.
+
+`Start/AsmExReg.lean` and its satellites begin the **exact completion** of that regular category,
+the construction whose result is the effective topos.  An object is an assembly together with a
+pseudo-equivalence relation on it, presented computationally: proofs of `x ~ y` carry realizers,
+their two endpoints are computable from the proof, and reflexivity, symmetry and transitivity are
+each witnessed by an element of the algebra.  A morphism is a function that transports proofs
+uniformly, two such being identified when a single element of the algebra turns a realizer of `x`
+into a proof that the two values are related.  The assemblies embed by taking equality, and the
+embedding is full and faithful; it preserves the terminal object and binary products.  The
+completion has finite limits: binary products are the pairs of proofs, and the equalizer of two
+maps carries at each endpoint a witness that they agree there — witnesses that are data, not
+merely assumptions, which is what makes the endpoints of a proof computable.  Finally every
+object is a quotient of an assembly: the assembly of proofs of a relation has two endpoint maps,
+and the canonical map from the base is their coequalizer, so it is a regular epimorphism.  Every
+morphism factors as an epimorphism, the identity on points, followed by a monomorphism, the
+middle object being the base of the source with the relation pulled back along the map.
+
+The completion is moreover a **regular category**.  Its regular epimorphisms are exactly its
+*covers*: the morphisms with a computable section up to the relation, a function `g` on points
+together with an element of the algebra which, from a realizer of `y`, computes a realizer of
+`g y` and a proof that `f (g y)` is related to `y`.  A cover is a regular epimorphism because
+the monomorphism of its image factorization is then invertible, while the epimorphism of that
+factorization is regular — composed with the canonical cover of the source it *is* the canonical
+cover of the image; conversely a regular epimorphism is strong, so the monomorphism of its
+factorization is invertible and the cover data can be read off the inverse.  Covers are stable
+under base change because the base of an object, with equality, is projective for them: from a
+realizer of a point `x` one computes a point over `f x`, which lifts the canonical cover through
+the pullback, and a right factor of a cover is a cover.  With the coequalizers of kernel pairs,
+which are the images, this makes the completion regular in the sense of
+`CategoryTheory.Regular`.
+
+It is **not exact**, and `Start/AsmExRegNotExact.lean` settles that question in the negative for
+every algebra with three distinct elements — in particular for Kleene's first algebra.  The
+reason is the one regularity left open: a morphism into an object of the completion picks one
+point per point of the source *and* computes a realizer of the chosen point from a realizer of
+the source point, uniformly, by a single element of the algebra.  The counterexample attaches to
+each element `s` of the algebra a pair of "witnesses" `cw s false`, `cw s true` chosen so that
+the element `s` itself fails to normalize the pair — a three-point pigeonhole, since application
+is single-valued and no element can map three pairwise distinct elements into a single one of
+them.  The object `X` has two points `(s, false)`, `(s, true)` per element, both realized by `s`
+alone; the object `R` has, over each such pair, one point per witness, realized by the pair of
+`s` and an element computing the constant function at that witness.  The two endpoint maps
+`p₁, p₂ : R ⟶ X` are jointly monic and carry a diagonal, a swap and a composition, so they are
+an internal equivalence relation in the sense of
+`Realizability.ExReg.NotExact.IsInternalEquiv` — a notion every kernel pair satisfies
+(`Realizability.ExReg.NotExact.isInternalEquiv_of_isKernelPair`).  Yet they are the kernel pair
+of no morphism: the test object of the counterexample maps into `X` twice, the two maps are
+equalized after any candidate `k` because their difference is covered by the cross points, and a
+lift into `R` would have to choose one witness per index `s` and compute a realizer of the chosen
+cross point from `s` — at the index `s = t`, with `t` the tracker of the lift, that is exactly
+what the blocking property forbids
+(`Realizability.ExReg.NotExact.exists_internalEquiv_not_kernelPair`,
+`Realizability.ExReg.NotExact.kleene_exReg_not_exact`).  So the completion of the *assemblies*,
+with arbitrary assemblies as bases, is regular but not exact; the effective topos is obtained by
+restricting the bases to the regular projectives, the partitioned assemblies.
+
+The other half of exactness does hold, and `Start/AsmExRegCoeq.lean` proves it: **every internal
+equivalence relation of the completion has a coequalizer.**  The quotient is the base of `E` with
+a coarser relation — a proof that `x` and `y` are related is a point `r` of the base of `R` with
+a realizer of it and proofs, in `E`, that `f₁ r` is related to `x` and `f₂ r` to `y`.  Its
+reflexivity is the diagonal of the relation, its symmetry the swap, and its transitivity the
+composition, applied to the object of *composable pairs*: pairs of points of `R` whose middle
+endpoints are related, realized by their realizers together with a proof of that relation.  The
+map onto the quotient is the identity on points, so it is an epimorphism, and a map out of `E`
+that identifies the two legs descends along it — the descent is tracked by chaining the two
+proofs of the quotient datum with the homotopy that identifies the legs
+(`Realizability.ExReg.Coeq.coeqCoforkIsColimit`,
+`Realizability.ExReg.Coeq.hasCoequalizer_of_isInternalEquiv`).  Together with the counterexample
+above: the quotient exists, but the relation one recovers from it can be strictly coarser than
+the one one started from.  What remains open is the completion with bases restricted to the
+regular projectives: its exactness, its universal property among exact categories, its topos
+structure, and its identification with the effective topos.
 -/
 
 #check @Realizability.PCA
@@ -1422,6 +1529,38 @@ function has no lift.
 #check @Realizability.Kleene.not_projective_natK1
 #check @Realizability.Kleene.not_liftsRealizers_natToNabla
 #check @CategoryTheory.Limits.IsNNO.iso
+#check @Realizability.ExReg.ERel
+#check @Realizability.ExReg.instCategory
+#check @Realizability.ExReg.instFullEmb
+#check @Realizability.ExReg.instFaithfulEmb
+#check @Realizability.ExReg.isTerminalTerm
+#check @Realizability.ExReg.epi_quot
+#check @Realizability.ExReg.prodFanIsLimit
+#check @Realizability.ExReg.embProdIso
+#check @Realizability.ExReg.embTermIso
+#check @Realizability.ExReg.eqForkIsLimit
+#check @Realizability.ExReg.instHasFiniteLimits
+#check @Realizability.ExReg.quotIsColimit
+#check @Realizability.ExReg.regularEpi_quot
+#check @Realizability.ExReg.imgFac_comp_imgIncl
+#check @Realizability.ExReg.epi_imgFac
+#check @Realizability.ExReg.mono_imgIncl
+#check @Realizability.ExReg.cover_iff_isRegularEpi
+#check @Realizability.ExReg.regularEpi_imgFac
+#check @Realizability.ExReg.isIso_imgIncl_of_cover
+#check @Realizability.ExReg.cover_of_isPullback
+#check @Realizability.ExReg.hasCoequalizer_of_isKernelPair
+#check @Realizability.ExReg.instRegular
+#check @Realizability.ExReg.NotExact.IsInternalEquiv
+#check @Realizability.ExReg.NotExact.isInternalEquiv_of_isKernelPair
+#check @Realizability.ExReg.NotExact.exists_internalEquiv_not_kernelPair
+#check @Realizability.ExReg.NotExact.kleene_exReg_not_exact
+#check @Realizability.ExReg.Coeq.EqvData
+#check @Realizability.ExReg.Coeq.eqvData_of_isInternalEquiv
+#check @Realizability.ExReg.Coeq.compERel
+#check @Realizability.ExReg.Coeq.coeqObj
+#check @Realizability.ExReg.Coeq.coeqCoforkIsColimit
+#check @Realizability.ExReg.Coeq.hasCoequalizer_of_isInternalEquiv
 
 /-!
 ### PERs, modest sets and the PER model of System F
