@@ -156,6 +156,8 @@ import Start.SpaceConfigCount
 import Start.SavitchVM
 import Start.SavitchSpace
 import Start.Qbf
+import Start.QbfReach
+import Start.KrivineSpaceConfig
 
 /-! ## Interfaces of the untyped calculus
 
@@ -221,6 +223,18 @@ offsets depend only on the width and the length of the stack, is a term of Cobha
 the encoding of the state with its stack popped (`Krivine.Impl.eval_popStackBinT`), and it
 compiles into Boolean circuits of size polynomial in the length of its input
 (`Krivine.Impl.popStackBinT_compiles`).
+
+`Start/KrivineSpaceConfig.lean` connects that space measure with the machine model of
+`Start/SpaceMachine.lean`: the binary word of a collected state is put on the work tape of a
+configuration (`Krivine.Impl.spaceConfig`), the memory measure of that configuration is the
+length of the word (`Krivine.Impl.spaceConfig_space`), the word still determines the state
+(`Krivine.Impl.gcState_eq_of_spaceConfig_eq`), and the tape holds at least one bit per live cell
+(`Krivine.Impl.space_le_spaceConfig_space`) and at most `O(S · log S)` bits when the code table,
+the stack and the live data fit in a budget `S` (`Krivine.Impl.spaceConfig_space_le_of_budget`),
+along a whole collected run in terms of its peak
+(`Krivine.Impl.spaceConfig_space_le_of_run_budget`).  This is the memory half of the bridge; a
+machine of `Start/SpaceMachine.lean` that *performs* Krivine transitions on that word, which is
+what a `Complexity.Space.DSPACE` membership would need, is not formalised.
 -/
 
 #check @Lambda.exists_size_explosion
@@ -260,6 +274,12 @@ compiles into Boolean circuits of size polynomial in the length of its input
 #check @Krivine.Impl.eval_popStackBinT
 #check @Krivine.Impl.popStackBinT_compiles
 #check @Krivine.Impl.eval_impl_space_calculus
+#check @Krivine.Impl.spaceConfig
+#check @Krivine.Impl.spaceConfig_space
+#check @Krivine.Impl.gcState_eq_of_spaceConfig_eq
+#check @Krivine.Impl.space_le_spaceConfig_space
+#check @Krivine.Impl.spaceConfig_space_le_of_budget
+#check @Krivine.Impl.spaceConfig_space_le_of_run_budget
 
 /-! ## Recursion theory: Post's problem for many-one reducibility
 
@@ -1893,3 +1913,30 @@ to a quantified Boolean formula — is not formalized.
 #check @Complexity.Qbf.tqbf_trace
 #check @Complexity.Qbf.tqbf_memBits_le
 #check @Complexity.Qbf.tqbf_memBits_le_size
+
+/-!
+## Bounded reachability as a quantified Boolean formula
+
+`Start/QbfReach.lean` writes the midpoint recursion of `Start/SavitchReach.lean` as a formula.
+Vertices are words of `m` bits held in *blocks* of variables (`Complexity.Qbf.blockVal`), and the
+edge relation enters as a family of formulas `stepF a b`, one per pair of blocks.  The formula
+`Complexity.Qbf.QBF.reachF stepF m k a b t` quantifies over a midpoint and then, universally over
+a pair of endpoints, makes a *single* recursive call stand for both legs, so that it grows by one
+block of quantifiers per level rather than doubling.
+
+It is correct — it holds exactly when the word in block `a` reaches the word in block `b` within
+`2 ^ k` steps, in the sense of `Complexity.Reach.reachLe`
+(`Complexity.Qbf.QBF.eval_reachF`) — and small: its size is bounded by the size of one step
+formula plus `k * (43 * m + 21) + 10 * m + 5` (`Complexity.Qbf.QBF.size_reachF_le`), so it is
+polynomial in the width of a vertex and the depth of the recursion.
+
+This is the formula half of the PSPACE-hardness of `TQBF`.  What is still missing for the
+hardness theorem itself is the machine half: that the configuration graph of a space-bounded
+machine of `Start/SpaceMachine.lean` admits such a family of step formulas, computed from the
+input in polynomial time.
+-/
+
+#check @Complexity.Qbf.blockVal
+#check @Complexity.Qbf.QBF.reachF
+#check @Complexity.Qbf.QBF.eval_reachF
+#check @Complexity.Qbf.QBF.size_reachF_le

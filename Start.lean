@@ -431,6 +431,7 @@ import Start.KrivineSpace
 import Start.KrivineSpaceGc
 import Start.KrivineSpaceLog
 import Start.KrivineSpaceRun
+import Start.KrivineSpaceConfig
 import Start.KrivineSpaceCalculus
 import Start.KrivineCobWord
 import Start.KrivineCobStep
@@ -478,4 +479,5 @@ import Start.SpaceConfigCount
 import Start.SavitchVM
 import Start.SavitchSpace
 import Start.Qbf
+import Start.QbfReach
 import Start.Capstones

@@ -1,7 +1,7 @@
 version: 2
 source_protocol: docs/goal/goal-prompt.md
-active_milestone: M13
-milestone_order: ["M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10", "M11", "M12", "M13"]
+active_milestone: M14
+milestone_order: ["M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10", "M11", "M12", "M13", "M14"]
 tasks:
   - id: M1-BOUNDARY-SORRY-CLOSURE
     priority: P0
@@ -3668,6 +3668,131 @@ tasks:
       - "Quantified Boolean formulas, their semantics and the true closed ones are defined, with the proof that the value of a closed formula does not depend on the assignment."
       - "A deterministic stack machine evaluating a formula is defined, and proved to return the value of the formula and to hand back the assignment it was given."
       - "Its stack height is proved bounded by the height of the formula, and its memory bounded in bits by a polynomial in the size of the formula."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build"
+
+  - id: M14-TOOLCHAIN-V428-REPAIR
+    priority: P0
+    status: DONE_STRONG
+    track: infra/toolchain
+    title: "The tree builds on the pinned toolchain again, and the manifest agrees with the lakefile"
+    terminal_statement: "lean-toolchain, lakefile.toml and lake-manifest.json pin the available triple (Lean v4.28.0, mathlib v4.28.0 = 8f9d9cff6b, cslib b13a67207c), scripts/check_manifest.py passes, the sources are back on those APIs, and lake build succeeds with 0 errors and 0 warnings"
+    latest_evidence: "docs/goal/evidence/M14-TOOLCHAIN-V428-REPAIR.md"
+    open_boundary: ""
+    milestone: M14
+    depends_on: []
+    rank: 940
+    exit_criteria:
+      - "lake-manifest.json names the package the lakefile declares, records the required revisions and lists every dependency, so check_manifest.py passes."
+      - "The pinned toolchain, mathlib and cslib revisions are the ones the sources are written against."
+      - "lake build succeeds with no errors and no warnings, and scripts/install_hooks.sh has been run in the clone."
+    required_gates:
+      - "python3 scripts/check_manifest.py"
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build"
+
+  - id: M14-KRIVINE-SPACE-CONFIG
+    priority: P1
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "The Krivine space measure, stated on the work tape of the space-bounded machine model"
+    terminal_statement: "Krivine.Impl.spaceConfig puts the binary word of a collected state on the work tape of a Complexity.Space.Config; Krivine.Impl.spaceConfig_space : its memory measure is the length of that word; Krivine.Impl.gcState_eq_of_spaceConfig_eq : the configuration determines the collected state; Krivine.Impl.space_le_spaceConfig_space and Krivine.Impl.spaceConfig_space_le_widthOf : the tape holds between one bit per live cell and (4 + |stack| + 3*space)*(size(|tab| + |stack| + space) + 1) bits; Krivine.Impl.spaceConfig_space_le_of_run_budget : along a collected run whose table, stacks and peak live data fit in S, at most (4S+4)*(size(3S)+1) bits"
+    latest_evidence: "docs/goal/evidence/M14-KRIVINE-SPACE-CONFIG.md"
+    open_boundary: ""
+    milestone: M14
+    depends_on:
+      - M12-KRIVINE-SPACE-INVARIANCE
+      - M13-SPACE-MODEL
+    rank: 941
+    exit_criteria:
+      - "The binary state encoding of the Krivine implementation is related to the tape/memory measure of Start/SpaceMachine.lean."
+      - "The relation is faithful: the configuration determines the collected state."
+      - "A state whose live data, stack and code table fit in a budget S is written on O(S log S) bits, along a whole collected run."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build"
+
+  - id: M14-QBF-REACH-FORMULA
+    priority: P1
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "Bounded reachability as a quantified Boolean formula of polynomial size"
+    terminal_statement: "Complexity.Qbf.QBF.reachF writes the midpoint recursion as a formula over blocks of variables, with a single recursive call guarded by a universal quantifier over a pair of endpoints; Complexity.Qbf.QBF.eval_reachF : it holds exactly when the word in one block reaches the word in the other within 2^k steps, in the sense of Complexity.Reach.reachLe; Complexity.Qbf.QBF.size_reachF_le : its size is at most c + 10m + 5 + k*(43m+21) with c a bound on one step formula"
+    latest_evidence: "docs/goal/evidence/M14-QBF-REACH-FORMULA.md"
+    open_boundary: ""
+    milestone: M14
+    depends_on:
+      - M13-SAVITCH-REACH
+      - M13-QBF-SPACE
+    rank: 942
+    exit_criteria:
+      - "Quantification over a block of variables is defined and proved to be quantification over a word of that width."
+      - "The bounded-reachability predicate of Start/SavitchReach.lean, with its midpoint identity, is expressed as a quantified Boolean formula, correctly."
+      - "The size of that formula is proved polynomial in the width of a vertex and the depth of the recursion, and the hypotheses are shown satisfiable."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build"
+
+  - id: M14-TQBF-PSPACE-HARD
+    priority: P2
+    status: TODO_NEEDS_DESIGN
+    track: theory/complexity
+    title: "TQBF is PSPACE-hard, hence PSPACE-complete"
+    latest_evidence: "docs/goal/evidence/M14-QBF-REACH-FORMULA.md"
+    open_boundary: "The formula half is done (M14-QBF-REACH-FORMULA): the midpoint recursion is a quantified Boolean formula of size polynomial in the width of a vertex and the depth. What is missing is the machine half: encoding the configurations of a machine of Start/SpaceMachine.lean running in space s as words of O(s + log n) bits, producing for each pair of blocks a formula of polynomial size that expresses one transition on those words, and showing that the whole formula is computed from the input in polynomial time - only then does every language in PSPACE reduce to TQBF."
+    milestone: M14
+    depends_on:
+      - M14-QBF-REACH-FORMULA
+      - M13-SAVITCH-SPACE
+    rank: 943
+    exit_criteria:
+      - "Configurations of a space-bounded machine are encoded as fixed-width bit words, with a family of step formulas of polynomial size expressing one transition."
+      - "Every language in PSPACE is reduced to TQBF in polynomial time."
+      - "Complexity.Qbf.pspaceComplete_TQBF."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build"
+
+  - id: M14-KRIVINE-SPACE-CLASS
+    priority: P1
+    status: TODO_NEEDS_DESIGN
+    track: theory/complexity
+    title: "The Krivine space bound, stated against DSPACE"
+    latest_evidence: "docs/goal/evidence/M14-KRIVINE-SPACE-CONFIG.md"
+    open_boundary: "The memory half is done (M14-KRIVINE-SPACE-CONFIG): the word of a collected state is a work tape of Start/SpaceMachine.lean and its length is that model's memory measure, O(s log s) in the live data. What is missing is a machine of that model which performs the Krivine transitions on the word: a bit-level interpreter for Start/KrivineCobBin.lean's passes, with the invariant that its reachable configurations are the encodings of the states of the run, so that a language decided by a lambda-term within a space bound s lands in Complexity.Space.DSPACE (s * log s)."
+    milestone: M14
+    depends_on:
+      - M14-KRIVINE-SPACE-CONFIG
+    rank: 944
+    exit_criteria:
+      - "A machine of Start/SpaceMachine.lean performs the transitions of the Krivine implementation on the binary encoding of a state."
+      - "A term whose run has live-data peak s is evaluated by that machine in O(s * log s) memory bits."
+      - "Consequently the languages decided by lambda-terms within a space bound s lie in DSPACE(s * log s)."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build"
+
+  - id: M14-SPACE-REASONABLE
+    priority: P2
+    status: TODO_NEEDS_DESIGN
+    track: theory/complexity
+    title: "Space is a reasonable cost model: the converse simulation"
+    latest_evidence: ""
+    open_boundary: "Nothing of this direction is formalised. It needs a compiler from a machine of Start/SpaceMachine.lean to a lambda-term, together with the analysis of the Krivine run of that term, showing its live-data peak polynomial (or linear) in the space of the machine; only with M14-KRIVINE-SPACE-CLASS does this give the two-directional statement that the lambda-calculus is a reasonable space cost model."
+    milestone: M14
+    depends_on:
+      - M14-KRIVINE-SPACE-CLASS
+    rank: 945
+    exit_criteria:
+      - "A machine of Start/SpaceMachine.lean running in space s is simulated by a lambda-term whose Krivine run has live-data peak polynomial (or linear) in s."
+      - "The two bounds together state that the lambda-calculus is a reasonable space cost model, in the same two-directional form as the time result."
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
