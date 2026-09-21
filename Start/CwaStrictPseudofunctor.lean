@@ -75,6 +75,30 @@ noncomputable abbrev strictMapComp {X Y Z : PbCat.{u, v}} (f : X ⟶ Y) (g : Y �
     strictMap (f ≫ g) ≅ strictMap f ≫ strictMap g :=
   LaxCModel.morEqToIso (morOfPreservesPullbacks_comp f.fnc g.fnc)
 
+/-- The comparison 2-cell of a composite is the identity on components. -/
+@[simp] theorem strictMapComp_hom_nat_app {X Y Z : PbCat.{u, v}} (f : X ⟶ Y) (g : Y ⟶ Z)
+    (W : X.Ctx) : (strictMapComp f g).hom.nat.app W = 𝟙 _ :=
+  (LaxCModel.morEqToHom_nat_app (M := PbCat.toLaxCModel X) (N := PbCat.toLaxCModel Z)
+    (morOfPreservesPullbacks_comp f.fnc g.fnc) W).trans (eqToHom_refl _ _)
+
+/-- The inverse comparison 2-cell of a composite is the identity on components. -/
+@[simp] theorem strictMapComp_inv_nat_app {X Y Z : PbCat.{u, v}} (f : X ⟶ Y) (g : Y ⟶ Z)
+    (W : X.Ctx) : (strictMapComp f g).inv.nat.app W = 𝟙 _ :=
+  (LaxCModel.morEqToHom_nat_app (M := PbCat.toLaxCModel X) (N := PbCat.toLaxCModel Z)
+    (morOfPreservesPullbacks_comp f.fnc g.fnc).symm W).trans (eqToHom_refl _ _)
+
+/-- The comparison 2-cell of an identity is the identity on components. -/
+@[simp] theorem strictMapId_hom_nat_app (X : PbCat.{u, v}) (W : X.Ctx) :
+    (strictMapId X).hom.nat.app W = 𝟙 _ :=
+  (LaxCModel.morEqToHom_nat_app (M := PbCat.toLaxCModel X) (N := PbCat.toLaxCModel X)
+    (morOfPreservesPullbacks_id (C := X.Ctx)) W).trans (eqToHom_refl _ _)
+
+/-- The inverse comparison 2-cell of an identity is the identity on components. -/
+@[simp] theorem strictMapId_inv_nat_app (X : PbCat.{u, v}) (W : X.Ctx) :
+    (strictMapId X).inv.nat.app W = 𝟙 _ :=
+  (LaxCModel.morEqToHom_nat_app (M := PbCat.toLaxCModel X) (N := PbCat.toLaxCModel X)
+    (morOfPreservesPullbacks_id (C := X.Ctx)).symm W).trans (eqToHom_refl _ _)
+
 /-- The lax 2-cell induced by a 2-cell of categories with pullbacks. -/
 noncomputable abbrev strictMap₂ {X Y : PbCat.{u, v}} {f g : X ⟶ Y} (τ : f ⟶ g) :
     strictMap f ⟶ strictMap g :=
@@ -104,40 +128,59 @@ noncomputable def strictificationPseudofunctor :
     intros
     refine LaxTwoCell.ext_of_nat ?_
     ext X
-    simp only [morOfPreservesPullbacks_fnc, PbCat.comp_fnc, Functor.comp_obj,
-      PbCat.bicategoryWhiskerLeft_eq, laxTwoCellOfNatTrans_nat, Functor.whiskerLeft_app,
-      LaxCModel.morEqToIso, eqToIso.hom, eqToIso.inv, LaxCModel.comp_nat, LaxCModel.comp_fnc,
-      LaxCModel.eqToHom_nat, LaxCModel.bicategoryWhiskerLeft_nat, eqToHom_naturality,
-      eqToHom_refl, Category.id_comp, NatTrans.comp_app]
-    exact (eqToHom_app_comp_self rfl _ _).symm
+    simp only [LaxCModel.comp_nat, PbCat.bicategoryWhiskerLeft_eq,
+      laxTwoCellOfNatTrans_nat, LaxCModel.bicategoryWhiskerLeft_nat]
+    repeat erw [NatTrans.comp_app]
+    simp [Functor.whiskerLeft_app, strictMapComp_hom_nat_app,
+      strictMapComp_inv_nat_app]
   map₂_whisker_right := by
     intros
     refine LaxTwoCell.ext_of_nat ?_
     ext X
-    simp only [morOfPreservesPullbacks_fnc, PbCat.comp_fnc, Functor.comp_obj,
-      PbCat.bicategoryWhiskerRight_eq, laxTwoCellOfNatTrans_nat, Functor.whiskerRight_app,
-      LaxCModel.morEqToIso, eqToIso.hom, eqToIso.inv, LaxCModel.comp_nat, LaxCModel.comp_fnc,
-      LaxCModel.eqToHom_nat, LaxCModel.bicategoryWhiskerRight_nat, eqToHom_naturality,
-      eqToHom_refl, Category.id_comp, NatTrans.comp_app]
-    exact (eqToHom_app_comp_self rfl _ _).symm
+    simp only [LaxCModel.comp_nat, PbCat.bicategoryWhiskerRight_eq,
+      laxTwoCellOfNatTrans_nat, LaxCModel.bicategoryWhiskerRight_nat]
+    repeat erw [NatTrans.comp_app]
+    simp [Functor.whiskerRight_app, strictMapComp_hom_nat_app,
+      strictMapComp_inv_nat_app]
   map₂_associator := by
     intros
     refine LaxTwoCell.ext_of_nat ?_
     ext X
-    simp [LaxCModel.morEqToIso, morOfPreservesPullbacks_fnc,
+    simp only [LaxCModel.comp_nat, laxTwoCellOfNatTrans_nat,
+      LaxCModel.bicategoryWhiskerLeft_nat, LaxCModel.bicategoryWhiskerRight_nat,
       Bicategory.Strict.associator_eqToIso]
+    repeat erw [NatTrans.comp_app]
+    simp only [morOfPreservesPullbacks_fnc, PbCat.comp_fnc, Functor.comp_obj, eqToIso_refl,
+      Iso.refl_hom, PbCat.id_app, LaxCModel.comp_fnc, strictMapComp_hom_nat_app, eqToIso.hom,
+      LaxCModel.eqToHom_nat, strictMapComp_inv_nat_app, Category.comp_id, Category.id_comp]
+    erw [Functor.whiskerRight_app, eqToHom_app, Functor.whiskerLeft_app]
+    simp
   map₂_left_unitor := by
     intros
     refine LaxTwoCell.ext_of_nat ?_
     ext X
-    simp [LaxCModel.morEqToIso, morOfPreservesPullbacks_fnc,
-      Bicategory.Strict.leftUnitor_eqToIso]
+    simp only [LaxCModel.comp_nat, laxTwoCellOfNatTrans_nat,
+      LaxCModel.bicategoryWhiskerRight_nat, Bicategory.Strict.leftUnitor_eqToIso]
+    repeat erw [NatTrans.comp_app]
+    simp only [morOfPreservesPullbacks_fnc, PbCat.comp_fnc, PbCat.id_fnc, Functor.comp_obj,
+      Functor.id_obj, eqToIso_refl, Iso.refl_hom, PbCat.id_app, LaxCModel.comp_fnc,
+      strictMapComp_hom_nat_app, LaxCModel.id_fnc, eqToIso.hom, LaxCModel.eqToHom_nat,
+      Category.id_comp]
+    erw [Functor.whiskerRight_app, eqToHom_app]
+    simp
   map₂_right_unitor := by
     intros
     refine LaxTwoCell.ext_of_nat ?_
     ext X
-    simp [LaxCModel.morEqToIso, morOfPreservesPullbacks_fnc,
-      Bicategory.Strict.rightUnitor_eqToIso]
+    simp only [LaxCModel.comp_nat, laxTwoCellOfNatTrans_nat,
+      LaxCModel.bicategoryWhiskerLeft_nat, Bicategory.Strict.rightUnitor_eqToIso]
+    repeat erw [NatTrans.comp_app]
+    simp only [morOfPreservesPullbacks_fnc, PbCat.comp_fnc, PbCat.id_fnc, Functor.comp_obj,
+      Functor.id_obj, eqToIso_refl, Iso.refl_hom, PbCat.id_app, LaxCModel.comp_fnc,
+      strictMapComp_hom_nat_app, LaxCModel.id_fnc, eqToIso.hom, LaxCModel.eqToHom_nat,
+      Category.id_comp]
+    erw [Functor.whiskerLeft_app, eqToHom_app]
+    simp
 
 @[simp] theorem strictificationPseudofunctor_obj (X : PbCat.{u, v}) :
     strictificationPseudofunctor.obj X = PbCat.toLaxCModel X := rfl

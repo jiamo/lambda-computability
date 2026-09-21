@@ -393,6 +393,7 @@ import Start.CwaTwoCellUniv
 import Start.CwaMorVal
 import Start.LambdaPiModelHom
 import Start.LambdaPiInterpTransport
+import Start.OracleCobham
 import Start.OracleSegment
 import Start.OracleMachine
 import Start.OracleSim
@@ -480,4 +481,17 @@ import Start.SavitchVM
 import Start.SavitchSpace
 import Start.Qbf
 import Start.QbfReach
+import Start.SpacePadded
+import Start.QbfCfgWord
+import Start.QbfMachine
+import Start.QbfClosed
+import Start.QbfPspace
+import Start.QbfVarBound
+import Start.QbfWord
+import Start.QbfWordStream
+import Start.CobhamRange
+import Start.QbfCobPrefix
+import Start.CobhamFields
+import Start.QbfCobEqBlock
+import Start.QbfCobLevel
 import Start.Capstones

@@ -157,6 +157,19 @@ import Start.SavitchVM
 import Start.SavitchSpace
 import Start.Qbf
 import Start.QbfReach
+import Start.SpacePadded
+import Start.QbfCfgWord
+import Start.QbfMachine
+import Start.QbfClosed
+import Start.QbfPspace
+import Start.QbfVarBound
+import Start.QbfWord
+import Start.QbfWordStream
+import Start.CobhamRange
+import Start.QbfCobPrefix
+import Start.CobhamFields
+import Start.QbfCobEqBlock
+import Start.QbfCobLevel
 import Start.KrivineSpaceConfig
 
 /-! ## Interfaces of the untyped calculus
@@ -1940,3 +1953,209 @@ input in polynomial time.
 #check @Complexity.Qbf.QBF.reachF
 #check @Complexity.Qbf.QBF.eval_reachF
 #check @Complexity.Qbf.QBF.size_reachF_le
+
+/-!
+## From a space-bounded machine to a quantified Boolean formula
+
+`Start/SpacePadded.lean` normalises a configuration to a fixed width: for a machine running in
+space `s`, `Complexity.Space.pad` pads the work tape to `s` cells, `Complexity.Space.Fits`
+recognises the configurations of that width inside the bound, and `Complexity.Space.padStep` is
+the one-step relation between them.  Padding is a bisimulation, so acceptance is reachability in
+the padded graph within `2 ^ savitchDepth` steps
+(`Complexity.Space.accepts_iff_reachLe_padStep`).
+
+`Start/QbfCfgWord.lean` writes such a configuration as a word of
+`Complexity.Qbf.cfgWidth M x s = q + (n + 1) + 2 s` bits — control state and the two head
+positions in unary, the work tape bit by bit.  The encoding is injective on configurations of
+that width (`Complexity.Qbf.cfgWord_injective`), so bounded reachability of words is bounded
+reachability of configurations (`Complexity.Qbf.reachLe_wordStep_iff`).
+
+`Start/QbfMachine.lean` supplies the step formula that `Start/QbfReach.lean` asks for.  It is a
+disjunction over the situations of the machine — a control state, a position of each head and the
+bit read — of the constraints one instruction imposes on two blocks; unary heads keep every
+constraint a literal or a copy, so one situation costs `O(width)`
+(`Complexity.Qbf.QBF.size_stepF_le`) and the formula expresses exactly one step of the machine
+(`Complexity.Qbf.QBF.eval_stepF`).  The cases run over the instructions a situation can possibly
+offer (`Complexity.Qbf.QBF.allInstr`) rather than over the transition function's own list, so the
+size bound holds for every machine, deterministic or not.  Feeding it to the midpoint recursion
+gives the *closed* formula `Complexity.Qbf.QBF.machineF M x s`, true exactly when the machine
+accepts the input (`Complexity.Qbf.QBF.eval_machineF`), of size polynomial in the number of
+states, the length of the input, the space bound and the branching of the transition function
+(`Complexity.Qbf.QBF.size_machineF_le`).
+
+`Start/QbfClosed.lean` tracks the free variables of every piece of the construction and concludes
+that the formula is *closed* (`Complexity.Qbf.QBF.closed_machineF`), so it is an instance of
+`Complexity.Qbf.TQBF`, true exactly when the machine accepts the input
+(`Complexity.Qbf.QBF.tqbf_machineF_iff`).  Reading that off for a whole class,
+`Start/QbfPspace.lean` gives: **every language in `NPSPACE` — hence every language in `PSPACE` —
+has a family of closed quantified Boolean formulas of polynomial size, one per input, true exactly
+on the members of the language** (`Complexity.Qbf.QBF.npspace_polySize_tqbf`,
+`Complexity.Qbf.QBF.pspace_polySize_tqbf`).
+
+The honest boundary: the map from an input to its formula is not shown here to be computable in
+polynomial time, so this is a polynomial-size reduction of membership to `TQBF`, and not yet the
+`PSPACE`-hardness of `TQBF`.
+-/
+
+#check @Complexity.Space.accepts_iff_reachLe_padStep
+#check @Complexity.Qbf.cfgWord
+#check @Complexity.Qbf.reachLe_wordStep_iff
+#check @Complexity.Qbf.QBF.stepF
+#check @Complexity.Qbf.QBF.eval_stepF
+#check @Complexity.Qbf.QBF.size_stepF_le
+#check @Complexity.Qbf.QBF.machineF
+#check @Complexity.Qbf.QBF.eval_machineF
+#check @Complexity.Qbf.QBF.size_machineF_le
+#check @Complexity.Qbf.QBF.closed_machineF
+#check @Complexity.Qbf.QBF.tqbf_machineF_iff
+#check @Complexity.Qbf.QBF.npspace_polySize_tqbf
+#check @Complexity.Qbf.QBF.pspace_polySize_tqbf
+
+/-!
+### `TQBF` as a language of words, and the reduction as a map of words
+
+The classes of `Start/SpaceMachine.lean` are classes of *languages* — sets of binary words — so
+stating the hardness of `TQBF` first needs the formulas themselves written down as words.
+`Start/QbfWord.lean` gives a self-delimiting binary code: three tag bits per node (two for a
+variable or a negation), variable indices in unary (`Complexity.Qbf.QBF.enc`).  A decoder driven
+by a fuel bound reads a formula back off the front of a word
+(`Complexity.Qbf.QBF.dec_enc_append`), so the code is injective
+(`Complexity.Qbf.QBF.enc_injective`), and the code of a formula of size `n` with variables below
+`v` is at most `n * (v + 3)` bits long (`Complexity.Qbf.QBF.length_enc_le`).  The codes of the
+true closed formulas form the language `Complexity.Qbf.tqbfLang`
+(`Complexity.Qbf.tqbfLang_enc_iff`).
+
+`Start/QbfVarBound.lean` bounds every variable of the reduction formula by
+`(3 k + 5) * cfgWidth M x s` (`Complexity.Qbf.QBF.varBound_machineF_le`), which together with the
+size bound of `Start/QbfPspace.lean` bounds the *length of its code*
+(`Complexity.Qbf.QBF.length_enc_machineF_le`) by a polynomial in the input length
+(`Complexity.Qbf.QBF.polyBound_wordBound`).  Hence: **every language in `NPSPACE`, and so every
+language in `PSPACE`, is mapped into `tqbfLang` by one map of words whose output length is bounded
+by a single polynomial in the input length** (`Complexity.Qbf.QBF.npspace_polyLength_tqbfWord`,
+`Complexity.Qbf.QBF.pspace_polyLength_tqbfWord`).
+
+The honest boundary is now the only thing between this and the `PSPACE`-hardness of `TQBF`: that
+map of words is not shown to be computable in polynomial time, i.e. to be the value of a term of
+`Complexity.Cob`.
+-/
+
+#check @Complexity.Qbf.QBF.enc
+#check @Complexity.Qbf.QBF.dec_enc_append
+#check @Complexity.Qbf.QBF.enc_injective
+#check @Complexity.Qbf.QBF.length_enc_le
+#check @Complexity.Qbf.tqbfLang
+#check @Complexity.Qbf.tqbfLang_enc_iff
+#check @Complexity.Qbf.QBF.varBound_machineF_le
+#check @Complexity.Qbf.QBF.length_enc_machineF_le
+#check @Complexity.Qbf.QBF.polyBound_wordBound
+#check @Complexity.Qbf.QBF.npspace_polyLength_tqbfWord
+#check @Complexity.Qbf.QBF.pspace_polyLength_tqbfWord
+
+/-!
+### The code of the reduction formula as a stream of blocks
+
+What a polynomial-time reduction would have to *write* is the word of the previous section, and
+the Cobham toolkit of this library writes a word by sweeping one once and emitting a block at
+every position (`Complexity.eval_blkRunTerm`, `Complexity.eval_lrunTerm`).
+`Start/QbfWordStream.lean` puts the code in exactly that shape.  Quantifier prefixes are
+concatenations over a range (`Complexity.Qbf.QBF.enc_exBits`, `Complexity.Qbf.QBF.enc_allBits`),
+finite conjunctions and disjunctions are concatenations over their case lists
+(`Complexity.Qbf.QBF.enc_conjAll`, `Complexity.Qbf.QBF.enc_disjAny`), and the midpoint recursion —
+the only genuinely recursive part of the formula, and one with a *single* recursive call —
+contributes one block per level: `Complexity.Qbf.QBF.enc_reachF` writes the code of the
+reachability formula as `k` copies of `Complexity.Qbf.QBF.reachPre` whose block indices at level
+`j` are the closed expressions `Complexity.Qbf.QBF.aAt`, `Complexity.Qbf.QBF.bAt` and `2 + 3 j`,
+followed by the code of the base case.  Assembling the pieces,
+`Complexity.Qbf.QBF.enc_machineF_stream` exhibits the whole code as a fixed prefix, the codes of
+the two machine constraints, the blocks of the levels and the code of the base case.
+
+This is the uniformity statement a compiler needs, and no more: the blocks are still *described*
+rather than produced by a Cobham term, so the `PSPACE`-hardness of `TQBF` remains open.
+-/
+
+#check @Complexity.Qbf.QBF.enc_exBits
+#check @Complexity.Qbf.QBF.enc_allBits
+#check @Complexity.Qbf.QBF.enc_conjAll
+#check @Complexity.Qbf.QBF.enc_disjAny
+#check @Complexity.Qbf.QBF.reachPre
+#check @Complexity.Qbf.QBF.enc_reachF_succ
+#check @Complexity.Qbf.QBF.enc_reachF
+#check @Complexity.Qbf.QBF.enc_machineF_stream
+
+/-!
+### Writing a range of blocks, and the quantifier prefixes of the code
+
+`Start/CobhamRange.lean` packages the block-emitting recursion of `Start/CobhamBlock.lean` for the
+shape the reduction needs: a word `(List.range n).flatMap W`, one block per index of a range.  The
+sweep runs from the right, so the index of a block has to be recovered from the counter, which is
+what `Complexity.Cob.dropN` does — dropping as many bits as its first argument is long is a Cobham
+function (`Complexity.Cob.eval_dropN`), and on unary words that is truncated subtraction.  The
+result is `Complexity.eval_rangeEmitTerm`: **writing one block per index of a range is a Cobham
+function** of `1^n` and of a parameter word whose leading ones carry `n`.
+
+`Start/QbfCobPrefix.lean` applies it to the first piece of the code of the reduction formula.
+`Complexity.Qbf.QBF.quantPrefixTerm` writes the code of a nest of `n` quantifiers over the
+variables `o, …, o + n - 1` from the width and the offset in unary
+(`Complexity.Qbf.QBF.eval_quantPrefixTerm`), so the code of `exBits` and of `allBits` is that
+value followed by the code of the body (`Complexity.Qbf.QBF.enc_exBits_eval`,
+`Complexity.Qbf.QBF.enc_allBits_eval`).
+-/
+
+#check @Complexity.Cob.dropN
+#check @Complexity.Cob.eval_dropN
+#check @Complexity.rangeEmitTerm
+#check @Complexity.eval_rangeEmitTerm
+#check @Complexity.Qbf.QBF.quantPrefixTerm
+#check @Complexity.Qbf.QBF.eval_quantPrefixTerm
+#check @Complexity.Qbf.QBF.enc_exBits_eval
+#check @Complexity.Qbf.QBF.enc_allBits_eval
+
+/-!
+### Unary fields, and the block-equality formula as a Cobham term
+
+A block of the code needs several numbers at once — a width, two block indices, an offset — so
+`Start/CobhamFields.lean` fixes a format for the parameter word of the emitter: a list of naturals
+written in unary, each field terminated by a zero bit (`Complexity.fieldsWord`), with
+`Complexity.Cob.fieldTerm` reading the `k`-th of them
+(`Complexity.Cob.eval_fieldTerm`).
+
+`Start/QbfCobEqBlock.lean` uses it for the workhorse of the reduction formula,
+`Complexity.Qbf.QBF.eqBlock m i j`, which says that two blocks of `m` variables carry the same
+word and of which every level of the midpoint recursion contains four.  Its code is one block per
+position, holding the variable indices `i * m + l` and `j * m + l` in unary.  The two products are
+computed once, outside the sweep, and travel in the parameter word, so that the block written at a
+position stays short and the padding constant of the term does not depend on the instance:
+`Complexity.Qbf.QBF.idxTerm` writes an index (`Complexity.Qbf.QBF.eval_idxTerm`) and
+`Complexity.Qbf.QBF.enc_eqBlock_eval` shows that **the code of `eqBlock m i j` is the value of one
+Cobham term at `1^m` and the unary fields `m, i * m, j * m`**, followed by the code of the constant
+that closes the conjunction.
+-/
+
+#check @Complexity.fieldsWord
+#check @Complexity.Cob.fieldTerm
+#check @Complexity.Cob.eval_fieldTerm
+#check @Complexity.Qbf.QBF.idxTerm
+#check @Complexity.Qbf.QBF.eval_idxTerm
+#check @Complexity.Qbf.QBF.eqBlockTerm
+#check @Complexity.Qbf.QBF.enc_eqBlock_eval
+
+/-!
+### The block of a level of the midpoint recursion as a Cobham term
+
+`Start/QbfCobLevel.lean` composes the two previous pieces into the block that one level of the
+midpoint recursion contributes to the code, `Complexity.Qbf.QBF.reachPre m a b t`: the three
+quantifier prefixes over the scratch blocks and the four block equalities of its antecedent.  The
+parameter word of a level (`Complexity.Qbf.QBF.levelParam`) carries the width and the five
+products of a block index with the width in unary — the multiplications happen once, outside every
+sweep — and the pieces assemble the parameter words they expect out of those fields
+(`Complexity.Qbf.QBF.eval_prefixArg`, `Complexity.Qbf.QBF.eval_eqArg`).  The result is
+`Complexity.Qbf.QBF.reachPre_eval`: **the block of a level is the value of one Cobham term**,
+`Complexity.Qbf.QBF.levelTerm`, at the width in unary and the parameter word of the level, with
+padding constants that do not depend on the instance.
+-/
+
+#check @Complexity.Qbf.QBF.levelParam
+#check @Complexity.Qbf.QBF.eval_prefixArg
+#check @Complexity.Qbf.QBF.eval_eqArg
+#check @Complexity.Qbf.QBF.levelTerm
+#check @Complexity.Qbf.QBF.reachPre_eval

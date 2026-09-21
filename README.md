@@ -15,8 +15,8 @@ the Church–Turing equivalence with partial recursive functions and Turing mach
 Kolmogorov complexity, Chaitin's `Ω`, Martin-Löf randomness and Böhm's separation theorem.
 
 [![CI](../../actions/workflows/lean_action_ci.yml/badge.svg)](../../actions/workflows/lean_action_ci.yml)
-![Lean](https://img.shields.io/badge/Lean-v4.33.0-blue)
-![Mathlib](https://img.shields.io/badge/Mathlib-v4.33.0-blue)
+![Lean](https://img.shields.io/badge/Lean-v4.28.0-blue)
+![Mathlib](https://img.shields.io/badge/Mathlib-v4.28.0-blue)
 ![sorry-free](https://img.shields.io/badge/sorry--free-yes-brightgreen)
 ![tasks](https://img.shields.io/badge/task%20board-154%2F158%20DONE__STRONG-brightgreen)
 
@@ -399,11 +399,56 @@ Complexity.Space.savitch_poly_memory :
     ∀ {L : Complexity.Space.Language}, Complexity.Space.NPSPACE L → …  -- polynomial memory
 ```
 
+Two further pieces sit on top of that.  `Start/QbfReach.lean` writes the midpoint recursion as a
+*formula*: vertices are words of `m` bits held in blocks of variables, the edge relation enters as
+a family of step formulas, and each level quantifies over a midpoint and then, universally over a
+pair of endpoints, makes a single recursive call stand for both legs.  The formula is correct
+(`Complexity.Qbf.QBF.eval_reachF`) and its size is at most `c + 10m + 5 + k · (43m + 21)`
+(`Complexity.Qbf.QBF.size_reachF_le`) — the formula half of the PSPACE-hardness of `TQBF`.
+`Start/QbfMachine.lean` supplies the missing step formulas: a configuration of a machine running
+in space `s` is a word of `q + (n+1) + 2s` bits (control state and both head positions in unary,
+the work tape bit by bit, `Start/SpacePadded.lean` and `Start/QbfCfgWord.lean`), and one
+transition is a disjunction over the situations of the machine of literal and copy constraints on
+two blocks.  The step formula expresses exactly one step (`Complexity.Qbf.QBF.eval_stepF`) and is
+of size `O(q · (n+1) · s · d · width)` (`Complexity.Qbf.QBF.size_stepF_le`), so the midpoint
+recursion built on it is a *closed* formula, true exactly when the machine accepts its input
+(`Complexity.Qbf.QBF.eval_machineF`), of size polynomial in `q`, `n`, `s` and the branching `d`
+(`Complexity.Qbf.QBF.size_machineF_le`).  `Start/QbfClosed.lean` tracks free variables through the
+construction and proves the formula closed (`Complexity.Qbf.QBF.closed_machineF`), so it is an
+instance of `TQBF` (`Complexity.Qbf.QBF.tqbf_machineF_iff`), and `Start/QbfPspace.lean` reads that
+off for a whole class: every language in `NPSPACE`, hence every language in `PSPACE`, has one
+polynomial `p` and, for each input `x`, a closed formula of size at most `p |x|` which is a true
+quantified Boolean formula exactly when `x` is in the language
+(`Complexity.Qbf.QBF.npspace_polySize_tqbf`, `Complexity.Qbf.QBF.pspace_polySize_tqbf`).
+`Start/QbfWord.lean` writes the formulas themselves as binary words — a self-delimiting code with
+a decoder, so the code is injective and short (`Complexity.Qbf.QBF.enc_injective`,
+`Complexity.Qbf.QBF.length_enc_le`) — which turns `TQBF` into a language of words
+(`Complexity.Qbf.tqbfLang`) and the reduction into a map of words of polynomially bounded output
+length (`Complexity.Qbf.QBF.pspace_polyLength_tqbfWord`).  `Start/QbfWordStream.lean` then puts
+that word in the shape a polynomial-time compiler needs: a concatenation of blocks, one per index
+of a range, with the midpoint recursion contributing exactly one block per level
+(`Complexity.Qbf.QBF.enc_reachF`, `Complexity.Qbf.QBF.enc_machineF_stream`).  The first blocks are
+already written by Cobham terms: `Start/CobhamRange.lean` makes the emission of one block per
+index of a range a Cobham function (`Complexity.eval_rangeEmitTerm`, with the truncated
+subtraction `Complexity.Cob.eval_dropN`), `Start/CobhamFields.lean` reads the unary fields of the
+parameter word (`Complexity.Cob.eval_fieldTerm`), and `Start/QbfCobPrefix.lean` and
+`Start/QbfCobEqBlock.lean` write the quantifier prefixes and the block-equality formulas
+(`Complexity.Qbf.QBF.eval_quantPrefixTerm`, `Complexity.Qbf.QBF.enc_eqBlock_eval`).
+`Start/KrivineSpaceConfig.lean` puts the binary word of a collected Krivine state on the work tape
+of a configuration of this model, so that the cell measure of the λ-machine and the bit measure of
+the tape are compared directly: the word determines the state, holds at least one bit per live
+cell, and at most `(4S+4)·(log₂(3S)+2)` bits along a run whose code table, stacks and peak live
+data fit in `S` (`Krivine.Impl.spaceConfig_space_le_of_run_budget`).
+
 The honest boundary: the deterministic simulation is exhibited on the stack machine, whose memory
 is counted in bits of activation records, and not as an offline Turing machine; compiling it into
 that model — the routine half of the model-independence of space — is not formalized, so
-`NPSPACE = PSPACE` is not claimed as a theorem about `Complexity.Space.DSPACE`, and neither is the
-PSPACE-completeness of TQBF.
+`NPSPACE = PSPACE` is not claimed as a theorem about `Complexity.Space.DSPACE`.  For the same
+reason the two space results above stop where they do: `TQBF` is not proved PSPACE-hard (what is
+missing now is only that the map from an input to its formula is computed in polynomial time),
+and the Krivine bound is a statement about the memory
+measure, not yet a `DSPACE` membership (the missing half is a machine of that model performing
+Krivine transitions on the word).
 
 ## Related work, and what is specific to this project
 
@@ -583,7 +628,26 @@ Public Lean 4 developments in this area, and how they relate (repository file li
   formalized.  In the same cost model, quantified Boolean formulas are evaluated by a stack
   machine that holds one activation record per level of the formula and one bit per variable, so
   a closed formula is decided in memory quadratic in its size (`Start/Qbf.lean`) — the easy half
-  of the PSPACE-completeness of `TQBF`; the reduction that is its hard half is not formalized.
+  of the PSPACE-completeness of `TQBF`.  Of the hard half, the formula side is done: the midpoint
+  recursion is written as a quantified Boolean formula over blocks of variables, correct and of
+  size polynomial in the width of a vertex and the depth (`Start/QbfReach.lean`), and so is the
+  machine side: configurations of a space-bounded machine are words of `q + (n+1) + 2s` bits, one
+  transition is a formula of size linear in that width per situation, and the resulting closed
+  formula is true exactly when the machine accepts its input and has polynomial size
+  (`Start/SpacePadded.lean`, `Start/QbfCfgWord.lean`, `Start/QbfMachine.lean`), and that formula
+  is closed, so every language in `NPSPACE` (hence in `PSPACE`) reduces to `TQBF` by a map of
+  polynomial size
+  (`Start/QbfClosed.lean`, `Start/QbfPspace.lean`), indeed by a map of *words* of polynomially
+  bounded length into the language of the codes of true closed formulas (`Start/QbfWord.lean`),
+  whose value is a concatenation of blocks, one per level of the recursion
+  (`Start/QbfWordStream.lean`), the first of which are written by Cobham terms
+  (`Start/CobhamRange.lean`, `Start/CobhamFields.lean`, `Start/QbfCobPrefix.lean`,
+  `Start/QbfCobEqBlock.lean`).  What is still missing for hardness is that the whole map from an
+  input to its formula is computed in polynomial time.  On the λ-calculus side the word of a collected
+  Krivine state is a work tape of that machine model, with the memory it costs bounded by
+  `O(S · log S)` in the live data of the run (`Start/KrivineSpaceConfig.lean`); a machine of the
+  model that performs Krivine transitions on the word, which a `DSPACE` membership would need, is
+  not formalized.
 - **Typed calculi and proof theory** — the simply typed lambda calculus over the same de Bruijn
   syntax, with Tait strong normalization and the untypability of `omega`
   (`Start/SimpleTypes.lean`); **System F**, the polymorphic lambda calculus in Curry style over
@@ -1082,13 +1146,13 @@ Public Lean 4 developments in this area, and how they relate (repository file li
 
 ## Building
 
-> **Note on the pinned toolchain.**  The library is built against Lean `v4.33.0` and the matching
-> Mathlib tag `v4.33.0` (commit `db584cd6`).  `cslib` is pinned to the revision that moves it to
-> Lean `v4.33.0` (`3951377e5a3f5772737f11cd62bc5bb6a72f95d1`).  All of `Start/`
+> **Note on the pinned toolchain.**  The library is built against Lean `v4.28.0` and the matching
+> Mathlib tag `v4.28.0` (commit `8f9d9cff6b`).  `cslib` is pinned to the last revision built for
+> that toolchain (`b13a67207c489f4b3f816cf96fcd3d38855db80f`).  All of `Start/`
 > compiles on that toolchain, including the two modules that depend on `cslib`
 > (`Start/Representation.lean` and `Start/KolmogorovRepresentation.lean`).
 
-The project pins Lean `v4.33.0` (`lean-toolchain`); `lakefile.toml` requires Mathlib and `cslib`
+The project pins Lean `v4.28.0` (`lean-toolchain`); `lakefile.toml` requires Mathlib and `cslib`
 as git dependencies at the revisions above, and `lake-manifest.json` records exactly those
 revisions.  These sources must agree: if they do not, `lake` re-resolves the dependencies on every
 invocation and starts compiling all of Mathlib from source, which never finishes in reasonable

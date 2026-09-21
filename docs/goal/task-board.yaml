@@ -3738,16 +3738,62 @@ tasks:
       - "python3 scripts/check_closure.py"
       - "lake build"
 
+  - id: M14-QBF-STEP-FORMULA
+    priority: P1
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "The configuration graph of a space-bounded machine as quantified Boolean formulas"
+    terminal_statement: "Complexity.Space.accepts_iff_reachLe_padStep : acceptance is bounded reachability in the graph of configurations padded to width s; Complexity.Qbf.cfgWord and Complexity.Qbf.cfgWord_injective : a configuration is a word of cfgWidth M x s = q + (n+1) + 2s bits, faithfully; Complexity.Qbf.reachLe_wordStep_iff : bounded reachability of words is bounded reachability of configurations; Complexity.Qbf.QBF.eval_stepF : the step formula expresses one transition on two blocks; Complexity.Qbf.QBF.size_stepF_le : its size is at most q*(n+1)*s*2*(18q)*(15*width+13)+4, with no hypothesis on the machine; Complexity.Qbf.QBF.eval_machineF : the closed formula machineF M x s is true exactly when the machine accepts the input; Complexity.Qbf.QBF.size_machineF_le : its size is polynomial in q, n and s"
+    latest_evidence: "docs/goal/evidence/M14-QBF-STEP-FORMULA.md"
+    open_boundary: ""
+    milestone: M14
+    depends_on:
+      - M14-QBF-REACH-FORMULA
+      - M13-SPACE-MODEL
+    rank: 946
+    exit_criteria:
+      - "Configurations of a space-bounded machine are encoded as fixed-width bit words, faithfully, and runs of the machine are walks on those words."
+      - "A family of step formulas of size polynomial in the width expresses one transition between two blocks."
+      - "A closed quantified Boolean formula of polynomial size is true exactly when the machine accepts its input."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build"
+
+  - id: M14-QBF-PSPACE-FAMILY
+    priority: P1
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "The formula of the reduction is closed, and polynomial in size for a whole class"
+    terminal_statement: "Complexity.Qbf.QBF.closed_machineF : the formula of the reduction has no free variable; Complexity.Qbf.QBF.tqbf_machineF_iff : it is a true closed quantified Boolean formula exactly when the machine accepts the input; Complexity.Qbf.QBF.npspace_polySize_qbf, Complexity.Qbf.QBF.npspace_polySize_tqbf and Complexity.Qbf.QBF.pspace_polySize_tqbf : every language in NPSPACE, hence every language in PSPACE, has one polynomial p and, for each input x, a closed formula of size at most p |x| which is in TQBF exactly when x is in the language; Complexity.PolyBound.mul : polynomial bounds are closed under products"
+    latest_evidence: "docs/goal/evidence/M14-QBF-PSPACE-FAMILY.md"
+    open_boundary: ""
+    milestone: M14
+    depends_on:
+      - M14-QBF-STEP-FORMULA
+    rank: 947
+    exit_criteria:
+      - "The formula built from a space-bounded machine is proved closed, so it is an instance of TQBF."
+      - "For a language in NPSPACE, hence for one in PSPACE, the sizes of the formulas of its inputs are bounded by a single polynomial in the input length."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build"
+
   - id: M14-TQBF-PSPACE-HARD
     priority: P2
     status: TODO_NEEDS_DESIGN
     track: theory/complexity
     title: "TQBF is PSPACE-hard, hence PSPACE-complete"
-    latest_evidence: "docs/goal/evidence/M14-QBF-REACH-FORMULA.md"
-    open_boundary: "The formula half is done (M14-QBF-REACH-FORMULA): the midpoint recursion is a quantified Boolean formula of size polynomial in the width of a vertex and the depth. What is missing is the machine half: encoding the configurations of a machine of Start/SpaceMachine.lean running in space s as words of O(s + log n) bits, producing for each pair of blocks a formula of polynomial size that expresses one transition on those words, and showing that the whole formula is computed from the input in polynomial time - only then does every language in PSPACE reduce to TQBF."
+    latest_evidence: "docs/goal/evidence/M14-QBF-PSPACE-FAMILY.md"
+    open_boundary: "The non-computational part is done, now down to the level of words: TQBF is a language of binary words (Complexity.Qbf.tqbfLang) and every language in PSPACE is mapped into it by one map of words whose output length is bounded by a single polynomial in the input length (M14-QBF-WORD-LANG); moreover the code of the formula of an input is a concatenation of blocks, one per level of the midpoint recursion, each a closed function of the level (M14-QBF-WORD-STREAM). What is missing is the computational half: a term of Complexity.Cob that writes those blocks, i.e. that the map of words is computed in polynomial time in the time model of Start/ComplexityClasses.lean - only then is TQBF PSPACE-hard."
     milestone: M14
     depends_on:
       - M14-QBF-REACH-FORMULA
+      - M14-QBF-STEP-FORMULA
+      - M14-QBF-PSPACE-FAMILY
+      - M14-QBF-WORD-LANG
+      - M14-QBF-WORD-STREAM
       - M13-SAVITCH-SPACE
     rank: 943
     exit_criteria:
@@ -3796,4 +3842,71 @@ tasks:
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
+      - "lake build"
+
+  - id: M14-QBF-WORD-LANG
+    priority: P1
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "TQBF as a language of words, and the reduction as a map of words"
+    terminal_statement: "Complexity.Qbf.QBF.enc writes a quantified Boolean formula as a binary word and Complexity.Qbf.QBF.dec_enc_append reads it back, so Complexity.Qbf.QBF.enc_injective : the code is injective; Complexity.Qbf.QBF.length_enc_le : a formula of size n with variables below v has a code of at most n*(v+3) bits; Complexity.Qbf.tqbfLang and Complexity.Qbf.tqbfLang_enc_iff : the language of the codes of true closed formulas; Complexity.Qbf.QBF.length_enc_machineF_le and Complexity.Qbf.QBF.polyBound_wordBound : the code of the reduction formula of an input of length n is polynomially long; Complexity.Qbf.QBF.npspace_polyLength_tqbfWord and .pspace_polyLength_tqbfWord : every language in NPSPACE, hence in PSPACE, is mapped into tqbfLang by one map of words of polynomially bounded output length"
+    latest_evidence: "docs/goal/evidence/M14-QBF-WORD-LANG.md"
+    open_boundary: ""
+    milestone: M14
+    depends_on:
+      - M14-QBF-PSPACE-FAMILY
+    rank: 948
+    exit_criteria:
+      - "Formulas are coded as binary words by an injective code with a decoder, and the length of the code is bounded by the size and the variable bound."
+      - "TQBF is available as a language of words, and the codes of the reduction formulas are polynomially long."
+      - "Every language in PSPACE is mapped into that language by a map of words with polynomially bounded output."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M14-QBF-WORD-STREAM
+    priority: P1
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "The code of the reduction formula as a stream of blocks"
+    terminal_statement: "Complexity.Qbf.QBF.enc_exBits and .enc_allBits : a quantifier prefix is a concatenation over a range; Complexity.Qbf.QBF.enc_conjAll and .enc_disjAny : a finite conjunction or disjunction is a concatenation over its list; Complexity.Qbf.QBF.reachPre, .aAt, .bAt with Complexity.Qbf.QBF.enc_reachF_succ and .enc_reachF : the code of the reachability formula is one block per level of the midpoint recursion followed by the code of the base case, the indices of level j being closed expressions in j; Complexity.Qbf.QBF.enc_machineF_stream : the code of the whole reduction formula is a fixed prefix, the codes of the two machine constraints, the blocks of the levels and the code of the base case"
+    latest_evidence: "docs/goal/evidence/M14-QBF-WORD-STREAM.md"
+    open_boundary: ""
+    milestone: M14
+    depends_on:
+      - M14-QBF-WORD-LANG
+    rank: 949
+    exit_criteria:
+      - "The code of a quantifier prefix, of a finite conjunction and of a finite disjunction is exhibited as a concatenation over a range or over the list."
+      - "The code of the midpoint recursion is exhibited as one block per level, with the parameters of a level given in closed form."
+      - "The code of the whole reduction formula is exhibited in that streaming shape."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M14-QBF-COB-PIECES
+    priority: P1
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "The first pieces of the reduction written by Cobham terms"
+    terminal_statement: "Complexity.Cob.dropN and Complexity.Cob.eval_dropN : dropping a unary number of bits, hence truncated subtraction, is a Cobham function; Complexity.rangeEmitTerm and Complexity.eval_rangeEmitTerm : writing one block per index of a range is a Cobham function of the range in unary and of a parameter word whose leading ones carry it; Complexity.fieldsWord and Complexity.Cob.eval_fieldTerm : reading the k-th unary field of a parameter word is a Cobham function; Complexity.Qbf.QBF.eval_quantPrefixTerm with .enc_exBits_eval and .enc_allBits_eval : the code of a nest of quantifiers over a block of variables is the value of one Cobham term at the width and the offset in unary; Complexity.Qbf.QBF.enc_eqBlock_eval : the code of eqBlock m i j is the value of one Cobham term at 1^m and the unary fields m, i*m, j*m, followed by the code of the closing constant, with a padding constant that does not depend on the instance; Complexity.Qbf.QBF.levelTerm and Complexity.Qbf.QBF.reachPre_eval : the block contributed by one level of the midpoint recursion is the value of one Cobham term at the width in unary and the parameter word of the level"
+    latest_evidence: "docs/goal/evidence/M14-QBF-COB-PIECES.md"
+    open_boundary: ""
+    milestone: M14
+    depends_on:
+      - M14-QBF-WORD-STREAM
+    rank: 950
+    exit_criteria:
+      - "Truncated subtraction of unary words and the emission of one block per index of a range are Cobham functions."
+      - "A parameter word carrying a list of unary fields is readable by Cobham terms."
+      - "The quantifier prefixes and the block-equality formulas of the reduction are written by Cobham terms."
+      - "The block contributed by one level of the midpoint recursion is written by a Cobham term."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
       - "lake build"
