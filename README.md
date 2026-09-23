@@ -450,6 +450,98 @@ and the Krivine bound is a statement about the memory
 measure, not yet a `DSPACE` membership (the missing half is a machine of that model performing
 Krivine transitions on the word).
 
+### Relativization: the classes with an oracle
+
+Both cost models are relativized.  On the time side (`Start/OracleCob.lean`) an oracle machine is
+a Cobham term with one extra constructor, `Complexity.CobQ.query`, which asks the oracle about its
+first argument; evaluation returns the value **and** the list of words the oracle was asked about,
+because a diagonalization needs the queries and not only the answer.  With constants independent
+of the oracle, the value is polynomially long, the *number* of queries is polynomially bounded and
+every queried word is polynomially long, and two oracles that agree on the words actually queried
+give the same run — the use principle.
+
+```lean
+-- The number of queries of a polynomial-time oracle machine is polynomially bounded.
+Complexity.CobQ.polyQueryCount :
+    ∀ (t : Complexity.CobQ), ∃ p : ℕ → ℕ, Complexity.PolyMono p ∧
+      ∀ (A : Complexity.Oracle) (args : List Complexity.Word),
+        (Complexity.CobQ.queries A t args).length ≤ p (Complexity.maxLen args)
+
+-- The use principle.
+Complexity.CobQ.run_congr :
+    ∀ (t : Complexity.CobQ) (A B : Complexity.Oracle) (args : List Complexity.Word),
+      (∀ w ∈ Complexity.CobQ.queries A t args, A w = B w) →
+        Complexity.CobQ.run A t args = Complexity.CobQ.run B t args
+
+-- The empty oracle gives back the unrelativized classes.
+Complexity.inP_rel_empty_iff :
+    ∀ {L : Complexity.Language},
+      Complexity.InP_rel Complexity.CobQ.emptyOracle L ↔ Complexity.InP L
+```
+
+On the space side (`Start/OracleSpace.lean`) the offline machine gains a query tape, which counts
+towards the space bound; an ordinary machine is an oracle machine with no query state, with the
+same runs, so `PSPACE ⊆ PSPACE^A` for every oracle.  `Start/OracleClasses.lean` carries the
+classes themselves (`Complexity.InP_rel`, `Complexity.InNP_rel`,
+`Complexity.Space.InPSPACE_rel`), the inclusions `P ⊆ P^A`, `NP ⊆ NP^A`, `P^A ⊆ NP^A`, the closure
+properties of `P^A`, and the fact that the oracle itself is decided in `P^A`.  The honest
+boundary: `NP^A ⊆ PSPACE^A` is not proved, because time and space are measured on different models
+here and even the unrelativized `P ⊆ PSPACE` would need a compiler from Cobham terms to
+space-bounded machines.
+
+### An oracle that separates: `P^B ≠ NP^B`
+
+`Start/BakerGillSolovay.lean` builds the separating oracle of Baker–Gill–Solovay.  The language is
+the standard one — an input is accepted when some word of its length lies in the oracle — which is
+in `NP^B` for every `B`: guess the word and ask.  The oracle is built in stages against the
+enumeration of the oracle Cobham terms of `Start/OracleEnum.lean`: at stage `e + 1` the `e`-th term
+is run on `1 ^ n` for an `n` above everything settled so far, and the word of length `n` that the
+run never asked about (`Complexity.CobQ.exists_word_not_queried_unary`) is added exactly when the
+run rejects.  By the use principle the run does not notice, so the term decides the language
+wrongly at `1 ^ n`, and the enumeration is onto.
+
+```lean
+-- The separating half of Baker–Gill–Solovay.
+Complexity.bgs_different : ∃ B : Complexity.Oracle, ¬ Complexity.PeqNP_rel B
+```
+
+Since every oracle Cobham term is polynomial-time by construction, no separate uniform time bound
+in the index is needed for the diagonalization.
+
+`Start/Relativization.lean` draws the barrier from it.  A statement about the classes
+*relativizes* when it holds with every oracle attached (`Complexity.Relativizes`); the separating
+oracle says that `P = NP` does not
+(`Complexity.peqnp_does_not_relativize : ¬ Complexity.Relativizes Complexity.PeqNP_rel`), so no
+relativizing argument proves `P = NP`.  The other half is stated conditionally,
+`Complexity.no_relativizing_resolution`: from any oracle with `P^A = NP^A` it follows that neither
+side of the question is settled by a relativizing argument.  That collapsing oracle — classically
+a `PSPACE`-complete one — is the part the library does not have, for the same reason that
+`NP^A ⊆ PSPACE^A` is missing: time here is Cobham's class and space is the offline machine.
+
+### The frame a priority construction runs in
+
+Nothing in the library is yet built by a priority argument; `Start/OracleUse.lean` and
+`Start/Priority.lean` build the frame for one.  The use of an oracle computation becomes a
+function — `Lambda.Oracle.use`, one more than the least stage at which the computation converges —
+and the use principle takes the form a strategy needs: an oracle agreeing below the use gives the
+same computation *and* the same use.  A construction is a primitive recursive increasing sequence
+of finite approximations, and the set it enumerates is c.e.; a requirement is a predicate on the
+approximation, injured at a stage when it holds there and fails at the next.
+
+```lean
+-- The finite injury lemma, for requirements ordered by priority, where between two actions of a
+-- requirement one of higher priority acts.
+Lambda.Priority.Injury.acts_finite :
+    ∀ (I : Lambda.Priority.Injury) (i : ℕ), {s | I.acts i s}.Finite
+
+Lambda.Priority.Injury.exists_final_stage :
+    ∀ (I : Lambda.Priority.Injury) (i : ℕ),
+      ∃ t, ∀ s, t ≤ s → ¬ I.acts i s ∧ ¬ I.injured i s
+```
+
+The lemma is proved for an arbitrary instance of the frame; feeding a concrete construction to it
+— Friedberg–Muchnik — is the next step and is not done here.
+
 ## Related work, and what is specific to this project
 
 Public Lean 4 developments in this area, and how they relate (repository file listings checked
@@ -506,7 +598,10 @@ Public Lean 4 developments in this area, and how they relate (repository file li
   Chaitin's incompleteness theorem for complexity lower bounds
   (`Start/ChaitinIncompleteness.lean`), the upper semicomputability of `K` — `K s ≤ n` is
   recursively enumerable, `n < K s` is not, and `K` is the infimum of a primitive recursive
-  decreasing approximation (`Start/KolmogorovApprox.lean`),
+  decreasing approximation (`Start/KolmogorovApprox.lean`), the time-bounded complexity `K^T` —
+  the least size of a closed term reducing to the numeral within `T` beta steps — with its
+  monotonicity in `T`, its position between `K` and the size of the numeral, its convergence to
+  `K` and its invariance under a change of interpreter (`Start/KolmogorovTime.lean`),
   and the randomness of `Ω` itself (`Start/OmegaURandom.lean`, `Start/KCComputable.lean`).
 - **Algorithmic randomness** — the uniform measure on Cantor space, Martin-Löf tests and
   Martin-Löf randomness (`Start/MartinLof.lean`): no computable sequence is random, and every
@@ -1004,7 +1099,12 @@ Public Lean 4 developments in this area, and how they relate (repository file li
   (`KleeneTwo.no_zero_test`).  The embedding is not reversible: applicative morphisms `K₂ → K₁`
   do exist — the trivial one, `Realizability.AppMorphism.trivialMor` — but none of them can read
   a single bit back off a representative (`Start/KleeneNoRetraction.lean`,
-  `KleeneTwo.no_separatesBits_morphism`).  Function realizability opens onto **computable
+  `KleeneTwo.no_separatesBits_morphism`).  `Start/PCAOrder.lean` turns this into an order: the
+  preorder of algebras under the mere existence of a morphism (`Realizability.PCALe`) is
+  degenerate — the trivial morphism makes all algebras equivalent (`Realizability.pcaEquiv_of_any`)
+  — whereas the morphisms that *decide* their representatives
+  (`Realizability.AppMorphism.Decides`) form a preorder in which `K₁ < K₂` strictly
+  (`Realizability.KleeneTwo.kleene_strict`).  Function realizability opens onto **computable
   analysis**, and
   `Start/Specker.lean` takes the first step there with a **Specker sequence**
   (`Lambda.speckerVal`): a sequence of rationals that is nondecreasing

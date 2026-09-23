@@ -371,6 +371,7 @@ import Start.ChaitinIncompleteness
 import Start.KolmogorovApprox
 import Start.ReducesIn
 import Start.LevinKt
+import Start.KolmogorovTime
 import Start.LevinSearch
 import Start.CwaVar
 import Start.LambdaPiInterp
@@ -438,6 +439,7 @@ import Start.KrivineCobWord
 import Start.KrivineCobStep
 import Start.KrivineCobBin
 import Start.KleeneNoRetraction
+import Start.PCAOrder
 import Start.Specker
 import Start.SpeckerReal
 import Start.ComputableReal
@@ -494,4 +496,13 @@ import Start.QbfCobPrefix
 import Start.CobhamFields
 import Start.QbfCobEqBlock
 import Start.QbfCobLevel
+import Start.OracleCob
+import Start.OracleClasses
+import Start.OracleSpace
+import Start.OracleDiag
+import Start.OracleEnum
+import Start.BakerGillSolovay
+import Start.Relativization
+import Start.OracleUse
+import Start.Priority
 import Start.Capstones

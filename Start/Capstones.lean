@@ -112,6 +112,7 @@ import Start.LambdaPiSelfIso
 import Start.LambdaPiSelfMor
 import Start.LambdaPiInitialModelHom
 import Start.LevinKt
+import Start.KolmogorovTime
 import Start.LevinSearch
 import Start.OracleCone
 import Start.LimitLemma
@@ -150,6 +151,7 @@ import Start.KrivineCobStep
 import Start.KrivineCobBin
 import Start.KrivineSpaceCalculus
 import Start.KleeneNoRetraction
+import Start.PCAOrder
 import Start.SavitchReach
 import Start.SpaceMachine
 import Start.SpaceConfigCount
@@ -171,6 +173,15 @@ import Start.CobhamFields
 import Start.QbfCobEqBlock
 import Start.QbfCobLevel
 import Start.KrivineSpaceConfig
+import Start.OracleCob
+import Start.OracleClasses
+import Start.OracleSpace
+import Start.OracleDiag
+import Start.OracleEnum
+import Start.BakerGillSolovay
+import Start.Relativization
+import Start.OracleUse
+import Start.Priority
 
 /-! ## Interfaces of the untyped calculus
 
@@ -432,6 +443,13 @@ of a primitive recursive, non-increasing family of stagewise approximations.
 
 `Start/LevinKt.lean`: Levin complexity `Kt` and its invariance theorem.
 
+`Start/KolmogorovTime.lean`: time-bounded Kolmogorov complexity `K^T` — the least size of a
+closed term reducing to the numeral within `T` beta steps — as an instance of the description
+systems: it decreases in `T`, lies between plain complexity `K` and the size of the numeral,
+agrees with `K` from some bound on, is invariant under a change of interpreter up to an additive
+constant and one extra step, is bounded below by Levin's `Kt` minus the logarithm of the bound,
+and inherits the counting bound and incompressibility of `K`.
+
 `Start/LevinSearch.lean`: Levin's universal search and its optimality — for any verifiable search
 problem the universal search finds a verified answer within a constant factor of any single
 program's running time.
@@ -447,6 +465,15 @@ program's running time.
 #check @Lambda.kolm_eq_iInf_kolmAt
 #check @Lambda.primrec_kolmAt
 #check @Lambda.kt_le_ktWith
+#check @Lambda.ktime_antitone
+#check @Lambda.kolm_le_ktime
+#check @Lambda.ktime_le_church
+#check @Lambda.ktime_le_iff
+#check @Lambda.exists_bound_ktime_eq_kolm
+#check @Lambda.ktime_le_ktimeWith
+#check @Lambda.ktimeWith_I_le_ktime
+#check @Lambda.kt_le_ktime_add_log
+#check @Lambda.exists_incompressible_ktime
 #check @Lambda.kolm_le_kt
 #check @Complexity.levinSearch_sound
 #check @Complexity.levin_optimal
@@ -1279,6 +1306,18 @@ ask that the target read something back, and then there is none
 hence are elements of `K₂`, so a representative of a `0/1`-valued `β` together with the realizer
 would determine every value of `β`, and a set of naturals would be named by a natural number.
 
+`Start/PCAOrder.lean` turns this into an order.  Ordering the partial combinatory algebras by the
+mere existence of an applicative morphism (`Realizability.PCALe`) gives a preorder that is
+**degenerate** — the trivial morphism makes every algebra precede every other one, so all of them
+are equivalent (`Realizability.pcaEquiv_of_any`).  The informative order is carried by the
+morphisms that *decide* their representatives (`Realizability.AppMorphism.Decides`: one element of
+the target tells representatives of the combinator `k` from representatives of `k i`); the
+identity decides and decidable morphisms compose, so this is again a preorder
+(`Realizability.pcaLeD_refl`, `Realizability.pcaLeD_trans`), and in it the two Kleene algebras are
+separated: `Realizability.KleeneTwo.kOneToTwo_decides` makes `K₁ ⪯ K₂`, while
+`Realizability.KleeneTwo.not_decides` shows no morphism `K₂ → K₁` decides — a decision of the two
+combinators already separates bits — whence `Realizability.KleeneTwo.kleene_strict`: `K₁ < K₂`.
+
 `Start/Specker.lean` takes the first step from function realizability into **computable
 analysis**.  A *Specker sequence* is a computable, nondecreasing, bounded sequence of rationals
 whose limit is not computable, so the monotone convergence theorem fails effectively.  The
@@ -1520,6 +1559,12 @@ its topos structure, and its identification with the effective topos.
 #check @Realizability.KleeneTwo.projAssoc
 #check @Realizability.KleeneTwo.appK_projAssoc
 #check @Realizability.KleeneTwo.no_separatesBits_morphism
+#check @Realizability.pcaLe_trans
+#check @Realizability.pcaEquiv_of_any
+#check @Realizability.pcaLeD_trans
+#check @Realizability.KleeneTwo.kOneToTwo_decides
+#check @Realizability.KleeneTwo.not_decides
+#check @Realizability.KleeneTwo.kleene_strict
 #check @Realizability.KleeneTwo.no_readsNumerals_morphism
 #check @Lambda.speckerVal
 #check @Lambda.speckerVal_monotone
@@ -2159,3 +2204,187 @@ padding constants that do not depend on the instance.
 #check @Complexity.Qbf.QBF.eval_eqArg
 #check @Complexity.Qbf.QBF.levelTerm
 #check @Complexity.Qbf.QBF.reachPre_eval
+
+/-!
+### Relativization: polynomial time with an oracle
+
+`Start/OracleCob.lean` relativizes the time side of the library.  Polynomial time is Cobham's
+class here, so an oracle machine is a Cobham term with one extra constructor, `Complexity.CobQ`,
+whose `query` asks the oracle about its first argument.  Evaluation returns the value *and* the
+list of words the oracle was asked about (`Complexity.CobQ.run`, `.eval`, `.queries`), because a
+diagonalization needs the queries and not only the answer.  Three bounds hold with constants that
+do not depend on the oracle: the output is polynomially long (`Complexity.CobQ.polyLen`), the
+**number** of queries is polynomially bounded (`Complexity.CobQ.polyQueryCount`) — this is what
+makes the queried set too small to exhaust the words of a given length — and every queried word is
+polynomially long (`Complexity.CobQ.polyQueryLen`).  The **use principle** is
+`Complexity.CobQ.run_congr`: two oracles agreeing on the words actually queried give the same run.
+
+`Start/OracleClasses.lean` defines the relativized classes `Complexity.InP_rel` and
+`Complexity.InNP_rel` and shows that they relativize the unrelativized ones: an ordinary Cobham
+term is an oracle term that asks nothing (`Complexity.CobQ.eval_ofCob`), an oracle term run with
+the empty oracle is an ordinary Cobham term (`Complexity.CobQ.eval_erase`), and hence
+`Complexity.inP_rel_empty_iff` and `Complexity.inNP_rel_empty_iff` give back `P` and `NP`, while
+`Complexity.InP.to_rel` and `Complexity.InNP.to_rel` give `P ⊆ P^A` and `NP ⊆ NP^A` for every `A`.
+`Complexity.inNP_rel_of_inP_rel` is `P^A ⊆ NP^A`, and `Complexity.inP_rel_oracle` is the point of
+the exercise: the oracle itself is decided in `P^A`.
+
+`Start/OracleSpace.lean` relativizes the space side: the offline machine of
+`Start/SpaceMachine.lean` with a query tape that counts towards the space bound
+(`Complexity.Space.OMachine`), the classes `Complexity.Space.ODSPACE`,
+`Complexity.Space.InPSPACE_rel`, and the embedding of the unrelativized model as the machines that
+never query (`Complexity.Space.ofMachine_accepts_iff`), whence
+`Complexity.Space.inPSPACE_rel_of_pspace` : `PSPACE ⊆ PSPACE^A` for every oracle.
+-/
+
+#check @Complexity.CobQ.run
+#check @Complexity.CobQ.eval
+#check @Complexity.CobQ.queries
+#check @Complexity.CobQ.polyLen
+#check @Complexity.CobQ.polyQueryCount
+#check @Complexity.CobQ.polyQueryLen
+#check @Complexity.CobQ.run_congr
+#check @Complexity.CobQ.eval_ofCob
+#check @Complexity.CobQ.eval_erase
+#check @Complexity.InP_rel
+#check @Complexity.InNP_rel
+#check @Complexity.inP_rel_empty_iff
+#check @Complexity.inNP_rel_empty_iff
+#check @Complexity.InP.to_rel
+#check @Complexity.InNP.to_rel
+#check @Complexity.inNP_rel_of_inP_rel
+#check @Complexity.inP_rel_oracle
+#check @Complexity.Space.OMachine
+#check @Complexity.Space.ODSPACE
+#check @Complexity.Space.InPSPACE_rel
+#check @Complexity.Space.ofMachine_accepts_iff
+#check @Complexity.Space.inPSPACE_rel_of_pspace
+
+/-!
+### The counting step of a diagonalization against oracle machines
+
+`Start/OracleDiag.lean` proves the combinatorial fact a separating oracle is built on: a
+polynomial-time oracle machine, on arguments of length at most `n`, asks the oracle about fewer
+than `2 ^ n` words once `n` is large, so some word of length `n` is never asked about and remains
+free to be decided afterwards.  It rests on `Complexity.PolyMono.lt_two_pow` (a monotone
+polynomial bound is eventually below the exponential), on `Complexity.card_words_of_length` (there
+are `2 ^ n` words of length `n`) and on the query count of `Complexity.CobQ.polyQueryCount`; the
+statement is `Complexity.CobQ.exists_word_not_queried`, with
+`Complexity.CobQ.exists_word_not_queried_unary` for the unary inputs that the
+Baker–Gill–Solovay language uses.
+-/
+
+#check @Complexity.exists_mul_pow_lt_two_pow
+#check @Complexity.PolyMono.lt_two_pow
+#check @Complexity.card_words_of_length
+#check @Complexity.exists_word_length_not_mem
+#check @Complexity.CobQ.exists_word_not_queried
+#check @Complexity.CobQ.exists_word_not_queried_unary
+
+/-!
+### The oracle machines are enumerated
+
+`Start/OracleEnum.lean` codes the oracle Cobham terms by naturals (`Complexity.CobQ.code`, the
+constructor paired with the codes of the parts, the list of a composition coded by the encoding of
+lists of naturals) and proves the code injective (`Complexity.CobQ.code_injective`).  The type is a
+nested inductive, so the `Countable` deriving handler does not apply to it; with the code, the
+terms are countable and hence enumerated by a surjection `ℕ → Complexity.CobQ`
+(`Complexity.CobQ.exists_enumeration`), which is what a stage-wise diagonalization runs through.
+-/
+
+#check @Complexity.CobQ.code
+#check @Complexity.CobQ.code_injective
+#check @Complexity.CobQ.exists_enumeration
+
+/-!
+### An oracle that separates: `P^B ≠ NP^B`
+
+`Start/BakerGillSolovay.lean` carries out the separating half of Baker–Gill–Solovay.  The language
+is the standard one, `Complexity.BGS.langB`: an input `x` is accepted when some word of length
+`|x|` lies in the oracle.  It is in `NP^B` for every oracle — guess the word and ask
+(`Complexity.BGS.inNP_rel_langB`).  The oracle itself is built in stages
+(`Complexity.BGS.stage`) against the enumeration of `Start/OracleEnum.lean`: at stage `e + 1` the
+`e`-th oracle Cobham term is run on the unary input `1 ^ n` for an `n` above everything decided so
+far, with the finite oracle built up to that point; if it accepts, no word of length `n` is ever
+added, and if it rejects, a word of length `n` that the run never asked about is added
+(`Complexity.CobQ.exists_word_not_queried_unary`).  The run does not notice the change, by the use
+principle `Complexity.CobQ.run_congr`, so the term fails to decide the language at `1 ^ n`; since
+the enumeration is onto, no term decides it (`Complexity.BGS.not_inP_rel_langB`).  Hence
+`Complexity.bgs_different`: there is an oracle `B` with `P^B ≠ NP^B`.
+-/
+
+#check @Complexity.BGS.langB
+#check @Complexity.BGS.stage
+#check @Complexity.BGS.oracleB
+#check @Complexity.BGS.inNP_rel_langB
+#check @Complexity.BGS.not_inP_rel_langB
+#check @Complexity.bgs_different
+
+/-!
+### The relativization barrier
+
+`Start/Relativization.lean` says what it means for a statement about the classes to relativize
+(`Complexity.Relativizes`: it holds with every oracle attached) and draws the consequence of the
+separating oracle: `Complexity.peqnp_does_not_relativize`, no argument whose conclusion survives
+every oracle proves `P = NP`.  The companion half is conditional, because the collapsing oracle is
+not in the library: given any oracle with `P^A = NP^A`, `Complexity.no_relativizing_resolution`
+gives the barrier in full — neither `P = NP` nor `P ≠ NP` relativizes.
+-/
+
+#check @Complexity.Relativizes
+#check @Complexity.PneNP_rel
+#check @Complexity.peqnp_does_not_relativize
+#check @Complexity.pnenp_does_not_relativize
+#check @Complexity.no_relativizing_resolution
+
+/-!
+### The use of an oracle computation
+
+`Start/OracleUse.lean` turns the existential use principle of `Start/OracleMachine.lean` into a
+function.  `Lambda.Oracle.useStage` is the least stage at which the search defining
+`Lambda.Oracle.evalOracle` succeeds and `Lambda.Oracle.use` is one more than it;
+`Lambda.Oracle.useStage_le_of_isSome` is its minimality,
+`Lambda.Oracle.evalOracle_eq_of_agree_below_use` is the use principle with that explicit bound —
+an oracle agreeing below the use gives the same computation — and
+`Lambda.Oracle.use_eq_of_agree_below_use` adds that the use itself is unchanged, which is what a
+strategy protecting a computation needs.
+-/
+
+#check @Lambda.Oracle.Converges
+#check @Lambda.Oracle.useStage
+#check @Lambda.Oracle.use
+#check @Lambda.Oracle.useStage_le_of_isSome
+#check @Lambda.Oracle.evalOracle_eq_of_agree_below_use
+#check @Lambda.Oracle.use_eq_of_agree_below_use
+
+/-!
+### Requirements, injury and the finite injury lemma
+
+`Start/Priority.lean` is the frame a priority construction runs in.  A construction
+(`Lambda.Priority.Construction`) is a primitive recursive increasing sequence of finite
+approximations, and the set it enumerates is c.e. (`Lambda.Priority.Construction.rePred_set`).  A
+requirement (`Lambda.Priority.Requirement`) is a predicate on the approximation; it is *met at* a
+stage when the approximation satisfies it, *injured at* a stage when it is satisfied there and no
+longer at the next stage, and *met* when it is satisfied from some stage on — and a requirement
+satisfied once and never injured again is met
+(`Lambda.Priority.Requirement.met_of_not_injured`).
+
+`Lambda.Priority.Injury` packages the priority ordering: requirements are indexed by the naturals,
+a smaller index having the higher priority, a requirement is injured exactly when one of higher
+priority acts, and the single hypothesis is that a requirement acts twice only with an injury in
+between.  From that, `Lambda.Priority.Injury.acts_finite` — **each requirement acts only finitely
+often** — and hence `Lambda.Priority.Injury.injured_finite` and
+`Lambda.Priority.Injury.exists_final_stage`: from some stage on a requirement neither acts nor is
+injured, which is the hypothesis `Lambda.Priority.Injury.requirements_met` turns into "every
+requirement is met".
+-/
+
+#check @Lambda.Priority.Construction
+#check @Lambda.Priority.Construction.rePred_set
+#check @Lambda.Priority.Requirement
+#check @Lambda.Priority.Requirement.InjuredAt
+#check @Lambda.Priority.Requirement.met_of_not_injured
+#check @Lambda.Priority.Injury
+#check @Lambda.Priority.Injury.acts_finite
+#check @Lambda.Priority.Injury.injured_finite
+#check @Lambda.Priority.Injury.exists_final_stage
+#check @Lambda.Priority.Injury.requirements_met
