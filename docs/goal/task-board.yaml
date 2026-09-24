@@ -3782,11 +3782,11 @@ tasks:
 
   - id: M14-TQBF-PSPACE-HARD
     priority: P2
-    status: TODO_NEEDS_DESIGN
+    status: DONE_WEAK
     track: theory/complexity
     title: "TQBF is PSPACE-hard, hence PSPACE-complete"
-    latest_evidence: "docs/goal/evidence/M14-QBF-PSPACE-FAMILY.md"
-    open_boundary: "The non-computational part is done, now down to the level of words: TQBF is a language of binary words (Complexity.Qbf.tqbfLang) and every language in PSPACE is mapped into it by one map of words whose output length is bounded by a single polynomial in the input length (M14-QBF-WORD-LANG); moreover the code of the formula of an input is a concatenation of blocks, one per level of the midpoint recursion, each a closed function of the level (M14-QBF-WORD-STREAM). What is missing is the computational half: a term of Complexity.Cob that writes those blocks, i.e. that the map of words is computed in polynomial time in the time model of Start/ComplexityClasses.lean - only then is TQBF PSPACE-hard."
+    latest_evidence: "docs/goal/evidence/M14-TQBF-PSPACE-HARD.md"
+    open_boundary: "Hardness is proved: Complexity.Qbf.QBF.pspaceHard_tqbfLang and .npspaceHard_tqbfLang reduce every language of (nondeterministic) polynomial space to Complexity.Qbf.tqbfLang by a single Cobham term of the input (Complexity.Qbf.QBF.redTerm, .eval_redTerm), which is a polynomial-time many-one reduction in the sense of Complexity.PolyManyOne. What is missing for completeness is the membership TQBF in PSPACE: the library has the memory bound of the evaluating stack machine (Complexity.Qbf.tqbf_memBits_le_size) but not a machine of Start/SpaceMachine.lean deciding tqbfLang in polynomial space, which is the open task M14-TQBF-IN-PSPACE; only with it can Complexity.Qbf.pspaceComplete_TQBF be stated."
     milestone: M14
     depends_on:
       - M14-QBF-REACH-FORMULA
@@ -3909,6 +3909,230 @@ tasks:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
       - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M14-QBF-COB-COND
+    priority: P1
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "Conditionals and unary arithmetic for the compiler: comparison and bit reading"
+    terminal_statement: "Complexity.Cob.boolT with Complexity.Cob.eval_boolT : the truth value of a term, normalised; Complexity.Cob.ltU, .leU, .eqU with Complexity.Cob.eval_ltU, .eval_leU, .eval_eqU : the comparison of two numbers given in unary is a Cobham function; Complexity.Cob.bitU with Complexity.Cob.eval_bitU : the bit of a word at a position given in unary is a Cobham function"
+    latest_evidence: "docs/goal/evidence/M14-QBF-COB-PIECES.md"
+    open_boundary: ""
+    milestone: M14
+    depends_on:
+      - M14-QBF-COB-PIECES
+    rank: 951
+    exit_criteria:
+      - "Two numbers given in unary are compared by a Cobham term."
+      - "The bit of a word at a position given in unary is read by a Cobham term."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M14-QBF-COB-CFGBLOCK
+    priority: P1
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "The configuration-block formulas of the reduction are written by Cobham terms"
+    terminal_statement: "Complexity.Qbf.QBF.cfgConj, .cfgParam, .cfgBlockTerm, .cfgEmitTerm with Complexity.Qbf.QBF.enc_cfgF_eval : the code of cfgF M x s a q i j is the value of one Cobham term at the width in unary and the parameter word of the situation, followed by the code of the closing constant; Complexity.Qbf.QBF.tgtConj, .tgtParam, .tgtBlockTerm, .tgtEmitTerm with Complexity.Qbf.QBF.enc_tgtF_eval : the same for the successor-block formula tgtF"
+    latest_evidence: "docs/goal/evidence/M14-QBF-COB-PIECES.md"
+    open_boundary: ""
+    milestone: M14
+    depends_on:
+      - M14-QBF-COB-COND
+    rank: 952
+    exit_criteria:
+      - "The code of cfgF is the value of one Cobham term at the width in unary and a parameter word of unary fields."
+      - "The code of tgtF is the value of one Cobham term, the written bit being a constant of the term."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M14-QBF-COB-STEPCASE
+    priority: P1
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "The block of one case of the step formula, guarded by the transition table"
+    latest_evidence: "docs/goal/evidence/M14-TQBF-PSPACE-HARD.md"
+    open_boundary: ""
+    milestone: M14
+    depends_on:
+      - M14-QBF-COB-CFGBLOCK
+    rank: 953
+    exit_criteria:
+      - "The code of Complexity.Qbf.QBF.stepCase -- the tag bits, the code of cfgF, the literal of the bit read and the code of tgtF -- is the value of one Cobham term at the width in unary and a parameter word assembled from the situation."
+      - "The guard of a case, i.e. whether the instruction belongs to the transition table at the bit the machine reads, is computed by a Cobham term from the input word and the position of the input head in unary; the table itself is a constant of the term."
+      - "A case contributes its block when the guard holds and the empty word otherwise, so that the concatenation over all cases is the code of the disjunction over the filtered list."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M14-QBF-COB-STEP
+    priority: P1
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "The step formula of the reduction is written by a Cobham term"
+    latest_evidence: "docs/goal/evidence/M14-TQBF-PSPACE-HARD.md"
+    open_boundary: ""
+    milestone: M14
+    depends_on:
+      - M14-QBF-COB-STEPCASE
+    rank: 954
+    exit_criteria:
+      - "The sweep over the positions of the input head and of the work head is a nest of two range emitters, the control states and the instructions being unrolled into the term because they are finitely many for a fixed machine."
+      - "Complexity.Qbf.QBF.enc (stepF M x s a b) is the value of one Cobham term at the input word and the unary parameters of the two blocks."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M14-QBF-COB-INITACC
+    priority: P1
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "The initial and accepting constraints are written by Cobham terms"
+    latest_evidence: "docs/goal/evidence/M14-TQBF-PSPACE-HARD.md"
+    open_boundary: ""
+    milestone: M14
+    depends_on:
+      - M14-QBF-COB-CFGBLOCK
+    rank: 955
+    exit_criteria:
+      - "Complexity.Qbf.QBF.enc (initF M x s a) is the value of one Cobham term: the code of cfgF for the initial situation, and one block per cell of the blank work tape."
+      - "Complexity.Qbf.QBF.enc (accF M x s b) is the value of one Cobham term: one block per accepting situation, the accepting states being unrolled into the term."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M14-QBF-COB-LEVELS
+    priority: P1
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "The levels of the midpoint recursion are swept by a Cobham term"
+    latest_evidence: "docs/goal/evidence/M14-TQBF-PSPACE-HARD.md"
+    open_boundary: ""
+    milestone: M14
+    depends_on:
+      - M14-QBF-COB-STEP
+    rank: 956
+    exit_criteria:
+      - "The parameter word of the level j -- the width and the five products of a block index with the width -- is computed from j in unary by a Cobham term, the products by the smash function."
+      - "Complexity.Qbf.QBF.enc (reachF (stepF M x s) m k a b t) is the value of one Cobham term: one block Complexity.Qbf.QBF.levelTerm per level, then the code of the base case."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M14-QBF-COB-MACHINE
+    priority: P1
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "The code of the whole reduction formula is written by a Cobham term"
+    latest_evidence: "docs/goal/evidence/M14-TQBF-PSPACE-HARD.md"
+    open_boundary: ""
+    milestone: M14
+    depends_on:
+      - M14-QBF-COB-LEVELS
+      - M14-QBF-COB-INITACC
+    rank: 957
+    exit_criteria:
+      - "Complexity.Qbf.QBF.enc (machineF M x s) is the value of one Cobham term at the input word and the space bound in unary: the two quantifier prefixes, the codes of the initial and accepting constraints, the blocks of the levels and the code of the base case."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M14-QBF-COB-REDUCTION
+    priority: P1
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "The reduction is a polynomial-time map of words"
+    latest_evidence: "docs/goal/evidence/M14-TQBF-PSPACE-HARD.md"
+    open_boundary: ""
+    milestone: M14
+    depends_on:
+      - M14-QBF-COB-MACHINE
+    rank: 958
+    exit_criteria:
+      - "For a polynomial bound, the word 1^(p |x|) is computed from x by a Cobham term, so that the space bound of the simulated machine is available to the compiler."
+      - "The map x |-> Complexity.Qbf.QBF.enc (machineF M x (p |x|)) is the evaluation of a single Cobham term at [x]."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M14-PSPACE-HARDNESS-USE
+    priority: P2
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "Hardness for polynomial space as a property of a language, and its consequences"
+    latest_evidence: "docs/goal/evidence/M14-TQBF-PSPACE-HARD.md"
+    open_boundary: ""
+    milestone: M14
+    depends_on:
+      - M14-TQBF-PSPACE-HARD
+    rank: 960
+    exit_criteria:
+      - "Hardness and completeness for polynomial space are predicates of a language (Complexity.Space.PSPACEHard, .NPSPACEHard, .PSPACEComplete) and hardness travels along polynomial-time many-one reductions."
+      - "TQBF is hard in that vocabulary (Complexity.Space.pspaceHard_tqbfLang')."
+      - "A hard language in P puts the whole of PSPACE in P (Complexity.Space.PSPACEHard.inP_of_inP, Complexity.Space.pspace_inP_of_tqbf_inP), with the contrapositive Complexity.Space.tqbf_not_inP."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M14-QBF-CODE-SPACE
+    priority: P1
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "The memory of the QBF evaluator, measured against the length of the code"
+    latest_evidence: "docs/goal/evidence/M14-QBF-CODE-SPACE.md"
+    open_boundary: ""
+    milestone: M14
+    depends_on:
+      - M14-QBF-WORD-LANG
+    rank: 962
+    exit_criteria:
+      - "The size, the variable bound and the height of a formula are bounded by the length of its code (Complexity.Qbf.QBF.size_le_length_enc, .varBound_le_length_enc, .height_lt_length_enc)."
+      - "Deciding a closed formula on the evaluating stack machine costs at most 2n^2 + 3n bits, n being the length of its code (Complexity.Qbf.tqbf_memBits_le_length_enc, Complexity.Qbf.tqbf_memBits_le_length)."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M14-TQBF-IN-PSPACE
+    priority: P1
+    status: TODO_NEEDS_DESIGN
+    track: theory/complexity
+    title: "TQBF lies in PSPACE: the evaluator as a space-bounded machine"
+    latest_evidence: "docs/goal/evidence/M13-SAVITCH-SPACE.md"
+    open_boundary: "The space bound is now stated in the right currency: the evaluating stack machine of Start/Qbf.lean decides a closed formula within 2n^2 + 3n bits, n being the length of the code of the formula (M14-QBF-CODE-SPACE). What is missing is only the compilation of that stack machine into the offline machine of Start/SpaceMachine.lean - an offline machine that decodes the input word and performs the evaluation on its work tape within that bound - so Complexity.Space.PSPACE Complexity.Qbf.tqbfLang, and with it the completeness of TQBF, is still unavailable."
+    milestone: M14
+    depends_on:
+      - M14-QBF-WORD-LANG
+      - M14-QBF-CODE-SPACE
+    rank: 959
+    exit_criteria:
+      - "The evaluation of a closed quantified Boolean formula given by its code is performed by a machine of Start/SpaceMachine.lean in space polynomial in the length of the code."
+      - "Complexity.Space.PSPACE Complexity.Qbf.tqbfLang."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
       - "lake build"
 
   # --- M15: relativization and the barriers -----------------------------------------

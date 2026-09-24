@@ -172,6 +172,19 @@ import Start.QbfCobPrefix
 import Start.CobhamFields
 import Start.QbfCobEqBlock
 import Start.QbfCobLevel
+import Start.CobhamCond
+import Start.CobhamUnary
+import Start.CobhamFieldsApp
+import Start.QbfMachineDepth
+import Start.QbfCobCfg
+import Start.QbfCobStepCase
+import Start.QbfCobStep
+import Start.QbfCobInitAcc
+import Start.QbfCobLevels
+import Start.QbfCobMachine
+import Start.QbfCobReduction
+import Start.QbfHard
+import Start.QbfCodeSpace
 import Start.KrivineSpaceConfig
 import Start.OracleCob
 import Start.OracleClasses
@@ -2204,6 +2217,151 @@ padding constants that do not depend on the instance.
 #check @Complexity.Qbf.QBF.eval_eqArg
 #check @Complexity.Qbf.QBF.levelTerm
 #check @Complexity.Qbf.QBF.reachPre_eval
+
+/-!
+### The arithmetic the compiler of the reduction needs
+
+The blocks of the reduction depend on *tests* — where a position lies in a configuration, which
+position a head marks, which bit of the input is read — so the compiler needs arithmetic, not only
+control structure.  `Start/CobhamCond.lean` supplies it: the normalised truth value of a term
+(`Complexity.Cob.eval_boolT`), the comparison of two numbers given in unary
+(`Complexity.Cob.eval_ltU`, `.eval_leU`, `Complexity.Cob.eval_eqU`) and the reading of the bit of
+a word at a unary position (`Complexity.Cob.eval_bitU`).  `Start/CobhamUnary.lean` adds unary
+successor, predecessor, sum and minimum, and the assembly of a parameter word out of terms
+computing its fields (`Complexity.Cob.eval_fieldsT`); `Start/CobhamFieldsApp.lean` lets such a
+parameter word carry a word after its fields, so that the input of the simulated machine travels
+inside it (`Complexity.Cob.eval_fieldTerm_app`, `Complexity.Cob.eval_tailWord`).
+-/
+
+#check @Complexity.Cob.eval_boolT
+#check @Complexity.Cob.eval_ltU
+#check @Complexity.Cob.eval_leU
+#check @Complexity.Cob.eval_eqU
+#check @Complexity.Cob.eval_bitU
+#check @Complexity.Cob.eval_uSucc
+#check @Complexity.Cob.eval_uAdd
+#check @Complexity.Cob.eval_fieldsT
+#check @Complexity.Cob.eval_fieldTerm_app
+#check @Complexity.Cob.eval_tailWord
+
+/-!
+### The reduction formula at an arbitrary depth
+
+`Start/QbfMachineDepth.lean` frees the reduction formula from the exact depth of the midpoint
+recursion: `Complexity.Qbf.QBF.machineFk M x s k` is correct at every depth `k` at or above
+`Complexity.Qbf.savitchDepth` (`Complexity.Qbf.QBF.eval_machineFk`), it is closed
+(`Complexity.Qbf.QBF.closed_machineFk`), and it is a true closed formula exactly when the machine
+accepts the input (`Complexity.Qbf.QBF.tqbf_machineFk_iff`).  This is what lets the compiler use a
+depth which is a convenient polynomial of the length of the input rather than the exact one.
+-/
+
+#check @Complexity.Qbf.QBF.eval_machineFk
+#check @Complexity.Qbf.QBF.closed_machineFk
+#check @Complexity.Qbf.QBF.tqbf_machineFk_iff
+
+/-!
+### Every constraint of the reduction is written by a Cobham term
+
+The code of the reduction formula is a concatenation of blocks, and each family of blocks is now
+*computed*, by one term whose padding constants do not depend on the instance, so that a single
+term serves every machine, width, block index and level.
+
+* `Start/QbfCobCfg.lean` — the configuration-block formulas, one conjunct per position of a block:
+  `Complexity.Qbf.QBF.enc_cfgF_eval` and `Complexity.Qbf.QBF.enc_tgtF_eval`.
+* `Start/QbfCobStepCase.lean` — one case of the step formula, guarded by the transition relation:
+  `Complexity.Qbf.QBF.eval_stepCaseTerm`, and `Complexity.Qbf.QBF.eval_caseTerm`, which contributes
+  the block exactly when the case belongs to the list of cases.
+* `Start/QbfCobStep.lean` — the sweeps over the situations assemble the whole step formula:
+  `Complexity.Qbf.QBF.enc_stepF_eval`.
+* `Start/QbfCobInitAcc.lean` — the initial and the accepting constraints:
+  `Complexity.Qbf.QBF.enc_initF_eval`, `Complexity.Qbf.QBF.enc_accF_eval`.
+* `Start/QbfCobLevels.lean` — the sweep over the levels of the midpoint recursion, whose six fields
+  are affine in the level: `Complexity.Qbf.QBF.eval_levelsT`.
+* `Start/QbfCobMachine.lean` — the concatenation of all of them:
+  `Complexity.Qbf.QBF.enc_machineFk_eval`, **the code of the reduction formula is the value of one
+  Cobham term** at the input and a parameter word.
+-/
+
+#check @Complexity.Qbf.QBF.enc_cfgF_eval
+#check @Complexity.Qbf.QBF.enc_tgtF_eval
+#check @Complexity.Qbf.QBF.eval_stepCaseTerm
+#check @Complexity.Qbf.QBF.eval_caseTerm
+#check @Complexity.Qbf.QBF.enc_stepF_eval
+#check @Complexity.Qbf.QBF.enc_initF_eval
+#check @Complexity.Qbf.QBF.enc_accF_eval
+#check @Complexity.Qbf.QBF.eval_levelsT
+#check @Complexity.Qbf.QBF.enc_machineFk_eval
+
+/-!
+### `TQBF` is `PSPACE`-hard
+
+`Start/QbfCobReduction.lean` removes the parameter word.  For a machine running in polynomial
+space every field of that word is a polynomial in the length of the input, and a polynomial in
+unary is a Cobham function of the input (`Complexity.Cob.eval_onesT`, `.eval_powT`, `.eval_nsmulT`),
+so the reduction is a single Cobham term applied to the input alone
+(`Complexity.Qbf.QBF.redTerm`, `Complexity.Qbf.QBF.eval_redTerm`) — that is, a polynomial-time
+many-one reduction in the sense of `Complexity.PolyManyOne`.  Hence
+`Complexity.Qbf.QBF.npspaceHard_tqbfLang` and `Complexity.Qbf.QBF.pspaceHard_tqbfLang`: **every
+language in (nondeterministic) polynomial space reduces to `TQBF` in polynomial time.**
+-/
+
+#check @Complexity.Cob.eval_onesT
+#check @Complexity.Cob.eval_powT
+#check @Complexity.Cob.eval_nsmulT
+#check @Complexity.Qbf.QBF.redTerm
+#check @Complexity.Qbf.QBF.eval_redTerm
+#check @Complexity.Qbf.QBF.npspaceHard_tqbfLang
+#check @Complexity.Qbf.QBF.pspaceHard_tqbfLang
+
+/-!
+### What hardness buys
+
+`Start/QbfHard.lean` packages hardness as a property of a language
+(`Complexity.Space.PSPACEHard`, `.NPSPACEHard`, and `Complexity.Space.PSPACEComplete` for hardness
+together with membership) and draws the consequences.  Hardness travels along reductions
+(`Complexity.Space.PSPACEHard.of_reduction`), so every language `TQBF` reduces to is hard as well;
+and a hard language decided in polynomial time decides the whole class
+(`Complexity.Space.PSPACEHard.inP_of_inP`).  For `TQBF` itself,
+`Complexity.Space.pspace_inP_of_tqbf_inP` says that a polynomial-time algorithm for `TQBF` would
+decide every language of polynomial space in polynomial time, and
+`Complexity.Space.tqbf_not_inP` is the contrapositive.
+
+The boundary, recorded here as everywhere: `Complexity.Space.PSPACEComplete
+Complexity.Qbf.tqbfLang` is *not* proved, because the membership `TQBF ∈ PSPACE` would need the
+evaluating stack machine of `Start/Qbf.lean` compiled into the offline machine of
+`Start/SpaceMachine.lean`.
+-/
+
+#check @Complexity.Space.PSPACEHard
+#check @Complexity.Space.NPSPACEHard
+#check @Complexity.Space.PSPACEComplete
+#check @Complexity.Space.pspaceHard_tqbfLang'
+#check @Complexity.Space.npspaceHard_tqbfLang'
+#check @Complexity.Space.PSPACEHard.of_reduction
+#check @Complexity.Space.PSPACEHard.inP_of_inP
+#check @Complexity.Space.pspace_inP_of_tqbf_inP
+#check @Complexity.Space.tqbf_not_inP
+
+/-!
+### The memory of the evaluator, measured against the length of the code
+
+A membership `TQBF ∈ PSPACE` is a statement about the *code* of a formula, so the memory of the
+evaluating stack machine has to be bounded by a polynomial in the length of that code and not only
+in the size of the formula.  `Start/QbfCodeSpace.lean` supplies the comparison: the code spends at
+least one bit per node and writes every variable index in unary, so the size, the variable bound
+and the height of a formula are all bounded by the length of its code
+(`Complexity.Qbf.QBF.size_le_length_enc`, `.varBound_le_length_enc`, `.height_lt_length_enc`), and
+therefore deciding a closed formula costs at most `2 n² + 3 n` bits for `n` the length of its code
+(`Complexity.Qbf.tqbf_memBits_le_length_enc`, `Complexity.Qbf.tqbf_memBits_le_length`).  What is
+still missing for the membership itself is the compilation of that stack machine into the offline
+machine of `Start/SpaceMachine.lean`.
+-/
+
+#check @Complexity.Qbf.QBF.size_le_length_enc
+#check @Complexity.Qbf.QBF.varBound_le_length_enc
+#check @Complexity.Qbf.QBF.height_lt_length_enc
+#check @Complexity.Qbf.tqbf_memBits_le_length_enc
+#check @Complexity.Qbf.tqbf_memBits_le_length
 
 /-!
 ### Relativization: polynomial time with an oracle

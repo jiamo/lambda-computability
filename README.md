@@ -428,12 +428,25 @@ length (`Complexity.Qbf.QBF.pspace_polyLength_tqbfWord`).  `Start/QbfWordStream.
 that word in the shape a polynomial-time compiler needs: a concatenation of blocks, one per index
 of a range, with the midpoint recursion contributing exactly one block per level
 (`Complexity.Qbf.QBF.enc_reachF`, `Complexity.Qbf.QBF.enc_machineF_stream`).  The first blocks are
-already written by Cobham terms: `Start/CobhamRange.lean` makes the emission of one block per
+written by Cobham terms: `Start/CobhamRange.lean` makes the emission of one block per
 index of a range a Cobham function (`Complexity.eval_rangeEmitTerm`, with the truncated
 subtraction `Complexity.Cob.eval_dropN`), `Start/CobhamFields.lean` reads the unary fields of the
 parameter word (`Complexity.Cob.eval_fieldTerm`), and `Start/QbfCobPrefix.lean` and
 `Start/QbfCobEqBlock.lean` write the quantifier prefixes and the block-equality formulas
-(`Complexity.Qbf.QBF.eval_quantPrefixTerm`, `Complexity.Qbf.QBF.enc_eqBlock_eval`).
+(`Complexity.Qbf.QBF.eval_quantPrefixTerm`, `Complexity.Qbf.QBF.enc_eqBlock_eval`).  The remaining
+arithmetic is in `Start/CobhamCond.lean` (comparison of unary numbers, reading a bit at a unary
+position), `Start/CobhamUnary.lean` and `Start/CobhamFieldsApp.lean`, and with it every constraint
+of the reduction is computed: the configuration blocks (`Start/QbfCobCfg.lean`), one case of the
+step formula and its guard (`Start/QbfCobStepCase.lean`), the step formula itself
+(`Start/QbfCobStep.lean`), the initial and accepting constraints (`Start/QbfCobInitAcc.lean`), the
+sweep over the levels of the recursion (`Start/QbfCobLevels.lean`) and their concatenation
+(`Start/QbfCobMachine.lean`, with the reduction formula taken at an arbitrary depth in
+`Start/QbfMachineDepth.lean`).  Removing the parameter word — every field of it is a polynomial of
+the length of the input, and a polynomial in unary is a Cobham function — gives the reduction as a
+single Cobham term of the input and hence **`TQBF` is `PSPACE`-hard**
+(`Complexity.Qbf.QBF.redTerm`, `Complexity.Qbf.QBF.eval_redTerm`,
+`Complexity.Qbf.QBF.npspaceHard_tqbfLang`, `Complexity.Qbf.QBF.pspaceHard_tqbfLang`,
+`Start/QbfCobReduction.lean`).
 `Start/KrivineSpaceConfig.lean` puts the binary word of a collected Krivine state on the work tape
 of a configuration of this model, so that the cell measure of the λ-machine and the bit measure of
 the tape are compared directly: the word determines the state, holds at least one bit per live
@@ -444,8 +457,11 @@ The honest boundary: the deterministic simulation is exhibited on the stack mach
 is counted in bits of activation records, and not as an offline Turing machine; compiling it into
 that model — the routine half of the model-independence of space — is not formalized, so
 `NPSPACE = PSPACE` is not claimed as a theorem about `Complexity.Space.DSPACE`.  For the same
-reason the two space results above stop where they do: `TQBF` is not proved PSPACE-hard (what is
-missing now is only that the map from an input to its formula is computed in polynomial time),
+reason the two space results above stop where they do: `TQBF` is proved `PSPACE`-hard but not
+`PSPACE`-*complete*, since membership `TQBF ∈ PSPACE` is available only as a memory bound on the
+evaluating stack machine — now measured against the length of the code of the formula,
+`2 n² + 3 n` bits, which is the bound an offline machine would have to respect
+(`Start/QbfCodeSpace.lean`) — and not as a machine of `Start/SpaceMachine.lean`,
 and the Krivine bound is a statement about the memory
 measure, not yet a `DSPACE` membership (the missing half is a machine of that model performing
 Krivine transitions on the word).
@@ -737,8 +753,16 @@ Public Lean 4 developments in this area, and how they relate (repository file li
   whose value is a concatenation of blocks, one per level of the recursion
   (`Start/QbfWordStream.lean`), the first of which are written by Cobham terms
   (`Start/CobhamRange.lean`, `Start/CobhamFields.lean`, `Start/QbfCobPrefix.lean`,
-  `Start/QbfCobEqBlock.lean`).  What is still missing for hardness is that the whole map from an
-  input to its formula is computed in polynomial time.  On the λ-calculus side the word of a collected
+  `Start/QbfCobEqBlock.lean`), and the rest of which — the configuration blocks, the step formula
+  with its guarded cases, the initial and accepting constraints and the sweep over the levels — are
+  written by the `Start/QbfCob*.lean` modules on top of the unary arithmetic of
+  `Start/CobhamCond.lean` and `Start/CobhamUnary.lean`, so that the whole map from an input to the
+  code of its formula is one Cobham term: **`TQBF` is `PSPACE`-hard**
+  (`Start/QbfCobReduction.lean`), with the consequences of hardness in `Start/QbfHard.lean`: a
+  polynomial-time algorithm for `TQBF` would decide every language of polynomial space in
+  polynomial time.  Completeness still needs the membership `TQBF ∈ PSPACE` on the offline machine
+  model; the memory of the evaluator is already bounded by `2 n² + 3 n` in the length `n` of the
+  code (`Start/QbfCodeSpace.lean`).  On the λ-calculus side the word of a collected
   Krivine state is a work tape of that machine model, with the memory it costs bounded by
   `O(S · log S)` in the live data of the run (`Start/KrivineSpaceConfig.lean`); a machine of the
   model that performs Krivine transitions on the word, which a `DSPACE` membership would need, is
