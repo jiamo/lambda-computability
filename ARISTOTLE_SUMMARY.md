@@ -1,3 +1,51 @@
+# Summary of changes for run c2b75df7-0746-46a4-a1f4-5618528c69da
+## 结论先说
+
+`M14-SPACE-COMPILE` 已完成：通用的桥写好了，也全部证明了。但有一条预期没有实现：`M14-TQBF-IN-PSPACE` 和 `M14-KRIVINE-SPACE-CLASS` **都不会变成一行实例**。原因是：如果输入只有"状态类型 + 转移函数 + 编码 + 内存界"，这样的通用编译器不可能存在。`SpaceMachine` 的控制状态是有限的，算不出任意的转移函数。
+
+所以这件事分成两半：
+- **运行层**：每条轨道上重复的都是同一套论证，这一半证明了一次。
+- **单步层**：每个客户仍要给一条桥接引理。对 QBF 来说，就是把求值器的状态铺到二进制带上，再写一个执行"一步"的带程序并证明它正确。
+
+这个缺口已点名，并开成新的队首任务 `M14-QBF-STEP-PROG`。按你补的规则，这属于"识别、命名、开成新任务"的可接受交付，`M14-TQBF-PSPACE-HARD` 等任务也没有虚报成 `DONE_STRONG`。
+
+## 新增模块（均已接入 `Start.lean`，并在 `Start/Capstones.lean` 注册）
+
+- **`Start/SpaceCompile.lean`：运行层。**
+  - 唯一的桥接陈述是 `Complexity.Space.Realizes`，和 `Start/Rewriting.lean` 里的 `Red ↔ Star Step` 同构。它要求：抽象机的每一步由离线机的一段运行（`Machine.Seg`）完成，中间构型都在界内且都不接受；停机状态编码成停机构型。
+  - 由它推出：
+    - 接受等价：`Realizes.accepts_iff`；
+    - **所有**可达构型都在界内，包括每一步的中间构型：`Realizes.spaceBoundedOn`；
+    - `DSPACE` / `PSPACE` 成员资格：`Realizes.dspace` / `.pspace`。
+  - 这个接口不丢东西：`dspace_iff_realizes` 表明 `DSPACE s` 恰好就是"被实现的抽象机"的语言类。
+- **`Start/SpaceProg.lean`：让单步层可写。**
+  - 结构化带程序 `Prog`：动作、顺序、条件、while 循环。
+  - 大步语义 `Exec` 带着一个副条件（例如"不超过 B 格"），另有 while 规则 `Exec.loop_of_variant`。
+  - 编译器正确性 `path_of_exec`；编出的机器 well-formed 且确定（`machine_wellFormed`、`machine_deterministic`）。
+  - 对主循环 `loop t body`，`realizes_loop` / `dspace_loop` 把客户的全部义务化成一条桥接引理：`body` 在每个状态的编码上执行抽象机的一步。
+- **`Start/SpaceProgDemo.lean`：端到端客户。** 用上面整条管线证明了 `{x | true ∈ x} ∈ DSPACE 1`（`Demo.dspace_hasTrue`）。这个例子很小，但它满足了 `realizes_loop` 的每一个假设，说明接口确实能用。
+
+各主定理只依赖 `propext`、`Classical.choice`、`Quot.sound`。库中没有 `sorry`。
+
+## 任务板（`docs/goal/task-board.yaml`，已校验通过，并重新渲染了 `docs/current-goal-state.md`）
+
+| 任务 | 状态 | 说明 |
+|---|---|---|
+| `M14-SPACE-COMPILE` | `DONE_STRONG` | 证据在 `docs/goal/evidence/M14-SPACE-COMPILE.md`，其中写明了它不做什么 |
+| `M14-QBF-STEP-PROG` | 新开，排名 936 | 状态编码加单步带程序 |
+| `M14-TQBF-IN-PSPACE` | 依赖上一项 | 此后才是 `dspace_loop` 的实例 |
+| `M14-KRIVINE-SPACE-CLASS` | 改为 `TODO_READY` | 缺口改写为"Krivine 单步程序" |
+| `M14-SPACE-REASONABLE` | 未动 | 仍是反方向的编译器 |
+
+排名按你给的顺序排：TQBF → BGS → 相对化障碍 → Krivine → M16 / M19 / M20。
+
+## 流程方面
+
+- **打包命令固定。** 在 `AGENTS.md`、`docs/goal/goal-prompt.md`、`docs/RELEASING.md` 里写死为：`scripts/pack_gate.sh HEAD && git archive --format=tar.gz HEAD -o delivery.tar.gz`。
+- **顺带发现一个问题：`scripts/pack_gate.sh` 原来在 git 里没有可执行位**，照原样执行上面那条命令会报 Permission denied。现已把 `scripts/*.sh` 和 `.githooks/pre-commit` 设为可执行。上面那条命令已在最终 `HEAD` 上实跑通过（manifest / sorry / 任务板 / 导入闭包四道门）。
+- **DONE_WEAK 例外规则已写入仓库。** `AGENTS.md` 和 `goal-prompt.md` 都加了这条例外。你外部指令里那句"DONE_WEAK is not an acceptable outcome"不在仓库里，需要你自己在那边补同样的例外。
+- **"gate 的树和打包的树不是同一棵"的根因。** 这次收到的 `lake-manifest.json` 又是坏的：包名 `start`、mathlib 的 `inputRev` 是 `v4.28.0`、缺 `cslib`。已重新解析修好并提交，全树 `lake build` 成功（9184 jobs）。这个文件每次都以坏的形式回到我手上，很可能是上传环节替换了它。建议在你那边核对一下 manifest 是否会在交付后被改写。
+
 # Summary of changes for run 97a377e0-71b5-4122-bf5d-4370ca1912c8
 I picked the project up where it stood, made the delivered tree buildable again, and closed out the line of work that had been left dangling — the `PSPACE`-hardness of `TQBF` — then pushed it one step further. Everything is committed; `lake build` succeeds (9180 jobs, no errors), the library contains no `sorry`/`admit`, and every repository gate passes.
 

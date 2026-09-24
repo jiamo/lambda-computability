@@ -766,7 +766,15 @@ Public Lean 4 developments in this area, and how they relate (repository file li
   Krivine state is a work tape of that machine model, with the memory it costs bounded by
   `O(S · log S)` in the live data of the run (`Start/KrivineSpaceConfig.lean`); a machine of the
   model that performs Krivine transitions on the word, which a `DSPACE` membership would need, is
-  not formalized.
+  not formalized.  What all three of these gaps share is now proved once: a bounded-memory abstract
+  machine realized step by step by an offline machine — the single bridge statement
+  `Complexity.Space.Realizes` — yields acceptance, the bound on every reachable configuration and
+  membership in `DSPACE`/`PSPACE`, and `DSPACE` is exactly the class of languages of realized
+  abstract machines (`Start/SpaceCompile.lean`); the step level is written as structured tape
+  programs with a verified compiler into offline machines, so that for a main loop a client owes
+  one bridge lemma, the execution of the loop body on the encoding of each step
+  (`Start/SpaceProg.lean`, exercised end to end in `Start/SpaceProgDemo.lean`).  The QBF
+  evaluator's bridge lemma is the open task `M14-QBF-STEP-PROG`.
 - **Typed calculi and proof theory** — the simply typed lambda calculus over the same de Bruijn
   syntax, with Tait strong normalization and the untypability of `omega`
   (`Start/SimpleTypes.lean`); **System F**, the polymorphic lambda calculus in Curry style over

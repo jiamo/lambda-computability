@@ -157,6 +157,9 @@ import Start.SpaceMachine
 import Start.SpaceConfigCount
 import Start.SavitchVM
 import Start.SavitchSpace
+import Start.SpaceCompile
+import Start.SpaceProg
+import Start.SpaceProgDemo
 import Start.Qbf
 import Start.QbfReach
 import Start.SpacePadded
@@ -2362,6 +2365,60 @@ machine of `Start/SpaceMachine.lean`.
 #check @Complexity.Qbf.QBF.height_lt_length_enc
 #check @Complexity.Qbf.tqbf_memBits_le_length_enc
 #check @Complexity.Qbf.tqbf_memBits_le_length
+
+/-!
+### From a bounded-memory abstract machine to an offline machine
+
+Several abstract machines of the library carry their own memory bound — the evaluator of
+`Start/Qbf.lean`, the Krivine machine with a shared heap, Savitch's recursion — and what separates
+each bound from a statement about `Complexity.Space.DSPACE` is an offline machine running the
+abstract one.  `Start/SpaceCompile.lean` proves the run-level half of that simulation once.  A
+client supplies one bridge statement, `Complexity.Space.Realizes`: each abstract step is carried
+out by a segment of a deterministic offline machine between the encodings of the two states, all
+of whose intermediate configurations fit in the bound and are non-accepting
+(`Complexity.Space.Machine.Seg`), and halting states are encoded by halting configurations.  From
+it follow acceptance (`Complexity.Space.Realizes.accepts_iff`), the bound on *every* reachable
+configuration (`Complexity.Space.Realizes.spaceBoundedOn`), and membership in `DSPACE` and
+`PSPACE` (`Complexity.Space.Realizes.dspace`, `.pspace`).  Nothing is lost:
+`Complexity.Space.dspace_iff_realizes` says that `DSPACE s` is exactly the class of languages of
+realized abstract machines.
+
+The step-level half cannot be proved once — a finite control cannot compute an arbitrary
+transition function — so `Start/SpaceProg.lean` makes it writable: structured tape programs
+(`Complexity.Space.Prog`: actions, sequencing, conditionals, while loops) with a big-step semantics
+that carries a side condition on every configuration (`Complexity.Space.Prog.Exec`, with the while
+rule `Complexity.Space.Prog.Exec.loop_of_variant`), compiled into transition tables with a proved
+compiler (`Complexity.Space.Prog.path_of_exec`) into well-formed deterministic machines
+(`Complexity.Space.Prog.machine_wellFormed`, `.machine_deterministic`).  For a program
+`loop t body`, `Complexity.Space.Prog.realizes_loop` and `.dspace_loop` reduce a client's whole
+obligation to one bridge lemma: the body executes each abstract step on the encoding of the state.
+`Start/SpaceProgDemo.lean` runs the pipeline end to end on `{x | true ∈ x} ∈ DSPACE 1`
+(`Complexity.Space.Demo.dspace_hasTrue`).  What remains for `TQBF ∈ PSPACE` is exactly that bridge
+lemma for the evaluator of `Start/Qbf.lean`: a tape program performing one of its steps on a
+binary encoding of its state.
+-/
+
+#check @Complexity.Space.Realizes
+#check @Complexity.Space.Machine.steps_det
+#check @Complexity.Space.Realizes.reach_code
+#check @Complexity.Space.Realizes.onRun
+#check @Complexity.Space.Realizes.accepts_iff
+#check @Complexity.Space.Realizes.spaceBoundedOn
+#check @Complexity.Space.Realizes.dspace
+#check @Complexity.Space.Realizes.pspace
+#check @Complexity.Space.realizes_self
+#check @Complexity.Space.dspace_iff_realizes
+#check @Complexity.Space.Prog.Exec.loop_of_variant
+#check @Complexity.Space.Prog.path_of_exec
+#check @Complexity.Space.Prog.machine_wellFormed
+#check @Complexity.Space.Prog.machine_deterministic
+#check @Complexity.Space.Prog.loop_seg
+#check @Complexity.Space.Prog.loop_exit
+#check @Complexity.Space.Prog.realizes_loop
+#check @Complexity.Space.Prog.dspace_loop
+#check @Complexity.Space.Demo.exec_step
+#check @Complexity.Space.Demo.scan_accepts_iff
+#check @Complexity.Space.Demo.dspace_hasTrue
 
 /-!
 ### Relativization: polynomial time with an oracle

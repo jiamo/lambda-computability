@@ -481,6 +481,9 @@ import Start.SpaceMachine
 import Start.SpaceConfigCount
 import Start.SavitchVM
 import Start.SavitchSpace
+import Start.SpaceCompile
+import Start.SpaceProg
+import Start.SpaceProgDemo
 import Start.Qbf
 import Start.QbfReach
 import Start.SpacePadded

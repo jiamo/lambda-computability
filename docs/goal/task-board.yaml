@@ -3786,7 +3786,7 @@ tasks:
     track: theory/complexity
     title: "TQBF is PSPACE-hard, hence PSPACE-complete"
     latest_evidence: "docs/goal/evidence/M14-TQBF-PSPACE-HARD.md"
-    open_boundary: "Hardness is proved: Complexity.Qbf.QBF.pspaceHard_tqbfLang and .npspaceHard_tqbfLang reduce every language of (nondeterministic) polynomial space to Complexity.Qbf.tqbfLang by a single Cobham term of the input (Complexity.Qbf.QBF.redTerm, .eval_redTerm), which is a polynomial-time many-one reduction in the sense of Complexity.PolyManyOne. What is missing for completeness is the membership TQBF in PSPACE: the library has the memory bound of the evaluating stack machine (Complexity.Qbf.tqbf_memBits_le_size) but not a machine of Start/SpaceMachine.lean deciding tqbfLang in polynomial space, which is the open task M14-TQBF-IN-PSPACE; only with it can Complexity.Qbf.pspaceComplete_TQBF be stated."
+    open_boundary: "Hardness is proved: Complexity.Qbf.QBF.pspaceHard_tqbfLang and .npspaceHard_tqbfLang reduce every language of (nondeterministic) polynomial space to Complexity.Qbf.tqbfLang by a single Cobham term of the input (Complexity.Qbf.QBF.redTerm, .eval_redTerm), which is a polynomial-time many-one reduction in the sense of Complexity.PolyManyOne. What is missing for completeness is the membership TQBF in PSPACE, the open task M14-TQBF-IN-PSPACE; the general bridge it needs is now in place (M14-SPACE-COMPILE), and the remaining gap is named as M14-QBF-STEP-PROG: the tape program performing one step of the evaluator of Start/Qbf.lean and its bridge lemma. Only with it can Complexity.Qbf.pspaceComplete_TQBF be stated."
     milestone: M14
     depends_on:
       - M14-QBF-REACH-FORMULA
@@ -3807,15 +3807,16 @@ tasks:
 
   - id: M14-KRIVINE-SPACE-CLASS
     priority: P1
-    status: TODO_NEEDS_DESIGN
+    status: TODO_READY
     track: theory/complexity
     title: "The Krivine space bound, stated against DSPACE"
     latest_evidence: "docs/goal/evidence/M14-KRIVINE-SPACE-CONFIG.md"
-    open_boundary: "The memory half is done (M14-KRIVINE-SPACE-CONFIG): the word of a collected state is a work tape of Start/SpaceMachine.lean and its length is that model's memory measure, O(s log s) in the live data. What is missing is a machine of that model which performs the Krivine transitions on the word: a bit-level interpreter for Start/KrivineCobBin.lean's passes, with the invariant that its reachable configurations are the encodings of the states of the run, so that a language decided by a lambda-term within a space bound s lands in Complexity.Space.DSPACE (s * log s)."
+    open_boundary: "The memory half is done (M14-KRIVINE-SPACE-CONFIG): the word of a collected state is a work tape of Start/SpaceMachine.lean and its length is that model's memory measure, O(s log s) in the live data. The run-level half of the simulation is now general (M14-SPACE-COMPILE): a realization in the sense of Complexity.Space.Realizes, or a loop program in the sense of Complexity.Space.Prog.realizes_loop, gives DSPACE membership with the bound on every reachable configuration. What is missing is the client's bridge lemma: a tape program performing one pass of Start/KrivineCobBin.lean on the word of a state, with its execution on the encoding of each state of the run, so that a language decided by a lambda-term within a space bound s lands in Complexity.Space.DSPACE (s * log s)."
     milestone: M14
     depends_on:
       - M14-KRIVINE-SPACE-CONFIG
-    rank: 944
+      - M14-SPACE-COMPILE
+    rank: 1035
     exit_criteria:
       - "A machine of Start/SpaceMachine.lean performs the transitions of the Krivine implementation on the binary encoding of a state."
       - "A term whose run has live-data peak s is evaluated by that machine in O(s * log s) memory bits."
@@ -3831,11 +3832,11 @@ tasks:
     track: theory/complexity
     title: "Space is a reasonable cost model: the converse simulation"
     latest_evidence: ""
-    open_boundary: "Nothing of this direction is formalised. It needs a compiler from a machine of Start/SpaceMachine.lean to a lambda-term, together with the analysis of the Krivine run of that term, showing its live-data peak polynomial (or linear) in the space of the machine; only with M14-KRIVINE-SPACE-CLASS does this give the two-directional statement that the lambda-calculus is a reasonable space cost model."
+    open_boundary: "Nothing of this direction is formalised. It is the converse bridge to M14-SPACE-COMPILE: a compiler from a machine of Start/SpaceMachine.lean to a lambda-term, together with the analysis of the Krivine run of that term, showing its live-data peak polynomial (or linear) in the space of the machine; only with M14-KRIVINE-SPACE-CLASS does this give the two-directional statement that the lambda-calculus is a reasonable space cost model."
     milestone: M14
     depends_on:
       - M14-KRIVINE-SPACE-CLASS
-    rank: 945
+    rank: 1036
     exit_criteria:
       - "A machine of Start/SpaceMachine.lean running in space s is simulated by a lambda-term whose Krivine run has live-data peak polynomial (or linear) in s."
       - "The two bounds together state that the lambda-calculus is a reasonable space cost model, in the same two-directional form as the time result."
@@ -4115,18 +4116,65 @@ tasks:
       - "python3 scripts/check_sorry.py"
       - "lake build"
 
+  - id: M14-SPACE-COMPILE
+    priority: P1
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "A bounded-memory abstract machine realized by an offline machine: the bridge, proved once"
+    terminal_statement: "Complexity.Space.AbsMachine with .Reaches, .Accepts : deterministic abstract machines on binary inputs; Complexity.Space.Machine.Path, .Seg : runs with a side condition, segments within a bound; Complexity.Space.Realizes : the single bridge statement a client proves; Complexity.Space.Realizes.onRun : every reachable configuration of the offline machine is an encoding or quiet; Complexity.Space.Realizes.accepts_iff, .spaceBoundedOn, .dspace, .pspace : acceptance, the space bound on every reachable configuration, DSPACE and PSPACE; Complexity.Space.dspace_iff_realizes : DSPACE s is exactly the class of languages of realized abstract machines; Complexity.Space.Prog with .Exec, .Exec.loop_of_variant, .machine, .path_of_exec, .machine_wellFormed, .machine_deterministic : structured tape programs and their verified compiler; Complexity.Space.Prog.realizes_loop, .dspace_loop : the loop form of the bridge; Complexity.Space.Demo.dspace_hasTrue : an end-to-end client, {x | true in x} in DSPACE 1"
+    latest_evidence: "docs/goal/evidence/M14-SPACE-COMPILE.md"
+    open_boundary: ""
+    milestone: M14
+    depends_on:
+      - M13-SPACE-MODEL
+    rank: 935
+    exit_criteria:
+      - "The run-level half of simulating a bounded-memory abstract machine on an offline machine of Start/SpaceMachine.lean is proved once, against a single bridge statement (Complexity.Space.Realizes) in the pattern of Start/Rewriting.lean: acceptance and the space bound of every reachable configuration follow, hence DSPACE and PSPACE."
+      - "The interface loses nothing: DSPACE s is characterised as the class of languages of realized abstract machines (Complexity.Space.dspace_iff_realizes)."
+      - "The step-level half is made writable: structured tape programs with a big-step semantics carrying a side condition, a while rule, and a compiler into well-formed deterministic machines with a correctness proof (Start/SpaceProg.lean)."
+      - "For a main loop the client obligation is one bridge lemma, the execution of the loop body on the encoding of each abstract step (Complexity.Space.Prog.realizes_loop, .dspace_loop), and the pipeline is run end to end on a concrete language (Complexity.Space.Demo.dspace_hasTrue)."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M14-QBF-STEP-PROG
+    priority: P1
+    status: TODO_READY
+    track: theory/complexity
+    title: "The bridge lemma for the QBF evaluator: a tape program performing one of its steps"
+    latest_evidence: "docs/goal/evidence/M14-SPACE-COMPILE.md"
+    open_boundary: ""
+    milestone: M14
+    depends_on:
+      - M14-SPACE-COMPILE
+      - M14-QBF-CODE-SPACE
+    rank: 936
+    exit_criteria:
+      - "A binary encoding of the states of the evaluator of Start/Qbf.lean (the phase as a pointer into the input code, the assignment, the stack of records with pointers and variable indices) as configurations of Start/SpaceMachine.lean, the initial state as the initial configuration, with the length of the encoding O(n^2) in the length n of the code."
+      - "An abstract machine (Complexity.Space.AbsMachine) on input words whose run on the code of a closed formula is the evaluator's run, halting and accepting exactly when the value is true (a rejecting run loops), and whose states on other words are handled by a decoding phase."
+      - "A tape program body and test with the bridge lemma of Complexity.Space.Prog.realizes_loop: the test fails exactly on halting states and the body executes each abstract step on the encoding within the bound."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
   - id: M14-TQBF-IN-PSPACE
     priority: P1
-    status: TODO_NEEDS_DESIGN
+    status: TODO_READY
     track: theory/complexity
     title: "TQBF lies in PSPACE: the evaluator as a space-bounded machine"
-    latest_evidence: "docs/goal/evidence/M13-SAVITCH-SPACE.md"
-    open_boundary: "The space bound is now stated in the right currency: the evaluating stack machine of Start/Qbf.lean decides a closed formula within 2n^2 + 3n bits, n being the length of the code of the formula (M14-QBF-CODE-SPACE). What is missing is only the compilation of that stack machine into the offline machine of Start/SpaceMachine.lean - an offline machine that decodes the input word and performs the evaluation on its work tape within that bound - so Complexity.Space.PSPACE Complexity.Qbf.tqbfLang, and with it the completeness of TQBF, is still unavailable."
+    latest_evidence: "docs/goal/evidence/M14-SPACE-COMPILE.md"
+    open_boundary: "Nothing is proved beyond the pieces: the memory bound 2n^2 + 3n of the evaluator in the length of the code (M14-QBF-CODE-SPACE) and, since M14-SPACE-COMPILE, the general bridge that turns a realization into DSPACE membership (Complexity.Space.Realizes.pspace, Complexity.Space.Prog.dspace_loop). This task is the instance: once M14-QBF-STEP-PROG supplies the tape program and its bridge lemma, Complexity.Space.Prog.dspace_loop with the bound of M14-QBF-CODE-SPACE gives Complexity.Space.PSPACE Complexity.Qbf.tqbfLang, and with the hardness already proved, Complexity.Qbf.pspaceComplete_TQBF."
     milestone: M14
     depends_on:
       - M14-QBF-WORD-LANG
       - M14-QBF-CODE-SPACE
-    rank: 959
+      - M14-SPACE-COMPILE
+      - M14-QBF-STEP-PROG
+    rank: 937
     exit_criteria:
       - "The evaluation of a closed quantified Boolean formula given by its code is performed by a machine of Start/SpaceMachine.lean in space polynomial in the length of the code."
       - "Complexity.Space.PSPACE Complexity.Qbf.tqbfLang."
