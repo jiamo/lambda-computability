@@ -1,8 +1,8 @@
 # Delivery instruction
 
-Paste the block below as the instruction for a delivery.  It is written to close one theorem
-per delivery instead of opening several lines at once; the queue at the end is followed in
-order, and the first item that is not `DONE_STRONG` is the objective.
+Paste the block below as the instruction for a delivery.  Unlike the previous version, the
+objective is a *theorem* rather than a single row: the five rows it needs are all
+`TODO_READY`, share one substrate, and are worth doing in one delivery.
 
 ---
 
@@ -11,91 +11,97 @@ Work to this instruction for this delivery.
 
 THE OBJECTIVE
 
-Your objective is the first task in the QUEUE below whose status is not DONE_STRONG.
-That task, and nothing else, is what this delivery is for. Do not choose a different
-task because it looks cheaper, and do not open a new milestone while the objective
-is open.
+Close the relativization barrier: prove that neither side of P vs NP relativizes,
+unconditionally. That is one theorem, and it needs these five rows, all of which are
+already TODO_READY -- none needs a design step:
+
+  M15-ORACLE-PROG      query-tape instructions for Complexity.Space.Prog, the
+                       compiler of Start/CobhamSpace.lean extended to Complexity.CobQ,
+                       and the witness loop giving NP^A subseteq PSPACE^A.
+  M15-ORACLE-CLASSES   closes (DONE_WEAK) as soon as the above lands.
+  M14-QBF-STEP-PROG    a tape program performing one step of the Start/Qbf.lean
+                       evaluator, with the realizes_loop bridge.
+  M14-TQBF-IN-PSPACE   follows from it and M14-SPACE-COMPILE; with the hardness
+                       already proved, M14-TQBF-PSPACE-HARD then closes and TQBF is
+                       PSPACE-complete.
+  M15-BGS-EQUAL        P^A = NP^A for that A, from the two above.
+  M15-NO-RELATIVIZING-PROOF  closes (DONE_WEAK), and with it
+
+      Complexity.no_relativizing_resolution
+
+  becomes unconditional. BakerGillSolovay.lean already supplies the other oracle.
+
+DO THEM IN ONE DELIVERY
+
+The one-objective-per-delivery rule is about not wandering between milestones. It is
+not a rule against finishing a chain: when every row of the objective is TODO_READY
+and they depend only on each other, carry them all. Stop only when the theorem is
+closed or when a row defeats you.
+
+M15-ORACLE-PROG and M14-QBF-STEP-PROG are the same kind of work -- writing a tape
+program on top of the combinators you factored out in Start/SpaceProgLib.lean,
+Start/SpaceProgTracks.lean and Start/SpaceProgDecide.lean. Do them together, and if
+the combinator library turns out to be missing something both need, extend it there
+rather than twice.
 
 WHAT COUNTS AS DONE
 
-The delivery is acceptable only if the objective ends the delivery as DONE_STRONG with
-an empty open_boundary. DONE_WEAK is not an acceptable outcome for the objective. If
-you cannot close it, deliver the partial work but say so in one sentence at the top of
-your report, name the single lemma that defeated you, and leave the objective as the
-first queue item so that the next delivery resumes it. Do not fill the delivery with
-unrelated tasks to compensate.
+Complexity.no_relativizing_resolution with no hypothesis about an oracle, and
+M15-NO-RELATIVIZING-PROOF, M15-ORACLE-CLASSES and M14-TQBF-PSPACE-HARD all
+DONE_STRONG with empty open_boundary. If a row defeats you, the DONE_WEAK rule of
+docs/goal/goal-prompt.md applies: name the missing lemma precisely, open it as a row
+at the head of the queue, and leave the rest of the chain unstarted rather than
+substituting other work.
 
-IF THE OBJECTIVE IS TODO_NEEDS_DESIGN
+ONE QUESTION TO ANSWER IN THE REPORT
 
-Design first, in writing, before any Lean. Split it into TODO_READY rows on the task
-board, each with a terminal_statement you could check against, and each small enough
-that its proof is a single module. Then execute those rows in the same delivery. The
-split itself is part of the delivery, not a substitute for it: a delivery that only
-adds rows has not met the objective.
+AGENTS.md now says a delivery is produced by exactly
 
-WHAT MAY BE DONE BESIDES
+    scripts/pack_gate.sh HEAD && git archive --format=tar.gz HEAD -o delivery.tar.gz
 
-Only what the objective needs. If a prerequisite turns out to be missing, add it and
-say so. Incidental cleanups are fine when they are forced by the objective; they are
-not a reason to grow the delivery. A DONE_WEAK task from an earlier delivery may be
-closed if the objective passes through it.
+Thirteen consecutive deliveries, including the one that introduced that rule, have
+arrived with a lake-manifest.json naming package 'start', pinning Mathlib v4.28.0 and
+omitting cslib. That manifest fails scripts/check_manifest.py, so the command above
+cannot have produced those archives: pack_gate.sh would have exited first and no
+tarball would exist. Something else is packing them.
 
-STANDING PRECONDITIONS
+So, in the report: what command or process actually produces the file that is handed
+over, and from which directory? Do not guess -- check, and quote what you find. If the
+packaging is outside your control, say that; it is a more useful answer than another
+promise to run the gate.
 
-Run scripts/install_hooks.sh once in your clone; the pre-commit hook it installs calls
-scripts/pack_gate.sh, which is the gate that catches a lake-manifest.json disagreeing
-with lakefile.toml. Nine consecutive deliveries have shipped a manifest naming package
-'start' while lakefile.toml declares 'lambda_computability': that manifest cannot be
-built from a fresh clone, so every one of those deliveries was unbuildable as shipped,
-whatever your working tree did. Run scripts/pack_gate.sh before packing, and do not
-deliver a tree that fails it.
+AFTER THE OBJECTIVE, IF THERE IS ROOM
 
-This repository is pinned to leanprover/lean4:v4.33.0 with Mathlib v4.33.0 (db584cd6)
-and cslib 3951377e. If your environment cannot supply that pair, say so in the report
-rather than repinning the tree downwards: a v4.28 tree cannot be merged here, and the
-adaptation diffs it produces are discarded on arrival.
+docs/related-work.md lists claims you could not verify. Two are cheap to settle from
+sources you already have, and both affect how the library describes itself:
+
+  - the Coq L development (Forster et al., POPL 2020 / ITP 2021): exactly which
+    invariance results does it prove, and in which direction? The document now says
+    it proves more of the programme than this library does; confirm or correct that
+    with a citation.
+  - Cubical Agda's realizability topos: does it construct the effective topos itself,
+    or assemblies and modest sets only?
+
+Nothing else from that list. Do not start a new milestone.
 
 REPORT
 
-Three short paragraphs: what the objective was and whether it is closed; the terminal
-statement, verbatim, of what was proved; what is honestly still open, if anything.
-
-QUEUE
-
- 1. M14-TQBF-PSPACE-HARD   — TQBF is PSPACE-complete. All the machinery exists
-                              (M14-QBF-*, M13-SAVITCH-SPACE); what is missing is the
-                              reduction itself and Complexity.Qbf.pspaceComplete_TQBF.
- 2. M15-BGS-EQUAL          — P^A = NP^A for A PSPACE-complete. Unblocked by 1.
- 3. M15-NO-RELATIVIZING-PROOF — currently DONE_WEAK; closes with 2, and with it the
-                              whole statement that neither side of P vs NP relativizes.
- 4. M16-FRIEDBERG-MUCHNIK  — the framework is in place (M16-FINITE-INJURY); this is the
-                              construction itself, and Post's problem with it.
- 5. M17-EXREG-PROJ-REGULAR and M17-EXREG-UNIVERSAL — both TODO_READY, both short.
- 6. M18-KLS                — TODO_READY.
- 7. M19-SYMMETRY-HARD-HALF — the oldest outstanding item in the library.
- 8. M20-GANDY              — the physical Church-Turing thesis; the task this library is
-                              named for, and never formalized anywhere.
-
-Items 1 to 3 are one theorem split across three rows: until they are all DONE_STRONG the
-barrier result cannot be stated, and the fourteen QBF modules of the last two deliveries
-are load-bearing for nothing.
+Four short paragraphs: whether the barrier theorem is closed and the verbatim
+statement of what was proved; which rows closed and which did not; the answer to the
+packaging question; and anything from related-work.md you settled.
 ```
 
 ---
 
-## Why it is shaped this way
+## Why this shape
 
-Fourteen deliveries of evidence say the failure is not capacity, it is selection:
-
-* **It builds machinery and does not close the theorem.**  The last two deliveries added
-  fourteen modules encoding a space-bounded run as a QBF, and `M14-TQBF-PSPACE-HARD` is
-  still `TODO_NEEDS_DESIGN`.  Hence: one named objective, and `DONE_WEAK` disallowed for it.
-* **It will not start a `TODO_NEEDS_DESIGN` task.**  Seventeen of the thirty-one open tasks
-  carry that status and none has been picked up; the two flagships it *did* finish
-  (Accattoli's time invariance, the space cost model) were both handed to it pre-split into
-  three rows.  Hence: the split is mandatory and is part of the delivery, not the delivery.
-* **It compensates for a hard objective with easy breadth.**  Hence the explicit ban on
-  filling the delivery with unrelated tasks, and the requirement to name the lemma that
-  defeated it.
-* **The queue is ordered so that consecutive deliveries continue the same line** rather
-  than each opening a new one.
+* **The objective is a theorem, not a row.**  Fifteen deliveries have shown that one row per
+  delivery is the right granularity when rows need designing, and the wrong one when a chain
+  of `TODO_READY` rows is all that stands between the library and a quotable result.  Five
+  rows, no design, one theorem.
+* **The two tape-program rows are siblings.**  `Start/SpaceProgLib.lean` was factored out
+  last delivery precisely so that writing the next tape program would be cheap; this is the
+  delivery that tests whether it was.
+* **The packaging item is a question, not a reminder.**  Thirteen reminders have not worked,
+  and the delivered artifact is now provably not the output of the documented command.  Asking
+  where the file comes from is the only step that can move it.
