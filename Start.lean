@@ -484,6 +484,11 @@ import Start.SavitchSpace
 import Start.SpaceCompile
 import Start.SpaceProg
 import Start.SpaceProgDemo
+import Start.SpaceProgLib
+import Start.SpaceProgTracks
+import Start.SpaceProgDecide
+import Start.CobhamSpace
+import Start.CobhamPspace
 import Start.Qbf
 import Start.QbfReach
 import Start.SpacePadded

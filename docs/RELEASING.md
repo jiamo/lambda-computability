@@ -100,6 +100,20 @@ and then *builds* the archive, so it also catches what an offline gate cannot.  
 only reports after a push: a delivery that does not go through CI must run
 `scripts/pack_gate.sh` itself.
 
+### One command, one tree
+
+The gate and the archive must be computed from the same tree.  A delivery once listed
+`check_manifest.py` among the gates it had run, yet the archive it shipped failed that very
+check: the gate had run on one tree and the archive had been made from another.  Remembering to
+run the gate does not prevent that; tying the two to the same revision does.  The packaging
+command is therefore fixed:
+
+```bash
+scripts/pack_gate.sh HEAD && git archive --format=tar.gz HEAD -o delivery.tar.gz
+```
+
+`delivery.tar.gz` is ignored by git.
+
 ## Versioning policy from now on
 
 * The library version lives in `lakefile.toml` (`version = "0.1.0"`) and is **independent**

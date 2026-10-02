@@ -1,3 +1,74 @@
+# Summary of changes for run b438e934-c7e1-47c3-b773-5a6ea95efebf
+I've written `docs/related-work.md` and committed it. No Lean files changed. Of the five "unusual" claims proposed in the brief, four did not survive checking and are dropped from the document. The fifth (complexity measures as instances of one description system) is kept with low confidence. I checked declarations against the source text only and did not rebuild the library.
+
+**How the claims were checked**
+- **This library:** every module/declaration pair the document cites (84 pairs) is confirmed by a script to exist with that full name in that file, and I read each statement. A search finds no `sorry`/`admit`/`axiom` in `Start/` outside comments.
+- **Other projects:** each claim is labelled [V] (verified against a source retrieved today), [M] (from memory, unverified) or [N] (no information). Sources: Mathlib `v4.33.0` source, the pinned cslib revision, READMEs and listings of the Coq undecidability, synthetic-computability and complexity libraries, the HOL4 `examples/computability` and `examples/lambda` trees, AFP entry pages, Lean4Lean, UniMath, Cubical Agda realizability, HoTTLean and `cameronfreer/algorithmic-randomness`.
+- The document contains no unqualified "first formalization".
+
+**What the document contains**
+- **§0, the four former to-do items:** three are `DONE_STRONG`. `Lambda.EvalCorrectness` is refuted by `Lambda.not_evalCorrectness`, and `LambdaComputable_imp_Partrec_unconditional` in `Start/EvalGK.lean` replaces it with no assumption. This is presented as a result, not a gap.
+- **§1:** a 34-row table, one closest existing formalization per result, then a paragraph on how each "none known to me" was checked and how confident I am.
+- **§2:** each requested neighbour (Mathlib, Lean4Lean, Forster's Coq libraries, Paulson, Norrish's HOL4, Xu–Zhang–Urban, cslib) is compared in both directions, plus a few others found along the way.
+- **§3, what survived:**
+  - **Dropped, λ-calculus as primary model:** not unusual (HOL4 and the Coq libraries also do this). The Turing machines are not derived from λ; the equivalence goes through Mathlib's `Partrec`.
+  - **Dropped, Krivine time-and-space invariance:** time is one direction only, and space stops short of a `DSPACE` membership. The Coq L development (POPL 2020, ITP 2021) proves more.
+  - **Dropped, realizability up to the exact completion:** the library's completion is proved *not* exact, and Cubical Agda already builds the realizability topos.
+  - **Dropped, 2-categorical treatment:** UniMath has the Clairambault–Dybjer biequivalence.
+  - **Kept, description systems:** the source has eight measures, not six; confidence that this is unusual is low.
+  - **Kept:** breadth on one λ-core, and the habit of proving refuted statements false.
+- **§4, caveats:**
+  - P and NP are defined via Cobham's algebra, not machines.
+  - Savitch is proved for a stack machine's memory, not as `NPSPACE ⊆ PSPACE` on the offline machine.
+  - TQBF is proved PSPACE-hard, not PSPACE-complete.
+  - Baker–Gill–Solovay: only the separating oracle.
+- **§5, what the library is not:**
+  - formal arithmetic: `M24-ARITH-THEORY`, `M24-ABSTRACT-LOB`, `M24-GODEL2-ARITH`;
+  - ordinals: `M24-HYPERARITH`;
+  - identity types: `M23-ID-TYPES`;
+  - probability beyond the fair-coin measure on Cantor space: the `M21-*` rows from `M21-IP-DEF`;
+  - nondeterministic tape programs: `M22-NONDET-PROG`.
+
+"No probability" had to be qualified: `Lambda.cantorMeasure` in `Start/MartinLof.lean` is a genuine probability measure.
+
+**Claims I could not verify** (also listed in §6 of the document)
+1. Norrish's ITP 2011 paper as the reference for the HOL4 λ-based computability work. Only the files were checked.
+2. That Paulson's AFP entry has no general computability theory. This is inferred from its session names.
+3. That Xu–Zhang–Urban also prove TM ⇒ recursive functions.
+4. Strong-normalization formalizations of System F, System T and LF/λΠ in Coq, Agda and Isabelle.
+5. Brunerie–de Boer–Lumsdaine–Mörtberg's Agda initiality, and Abel–Öhman–Vezzosi's Agda decidability of conversion.
+6. Inverse-limit domain constructions in Isabelle/HOLCF and in Coq (Benton–Kennedy–Varming).
+7. Anything behind a README, abstract or file listing beyond the quoted text. In particular:
+   - the Lean repositories found by search (Cook–Levin, Savitch, Kolmogorov, `Kt`, descriptive complexity, `blam`) are cited by their one-line descriptions only;
+   - ArkLib's sum-check directory was not opened;
+   - HOL4 `other-models` and `busyBeaverScript.sml` were not opened.
+8. Every [N] ("none known to me") entry. Absence was checked only in the sources listed, and GitHub's search rate limit cut the repository search short.
+9. That the library compiles at commit `bbaa6ec`.
+
+# Summary of changes for run dd0e8c15-ede3-4c41-b1e0-c2b1713545f7
+## 本轮结果：队列第 1 项 M21-COBHAM-TO-SPACE 已完成（DONE_STRONG），第 2–6 项未完成
+
+**已证明：P ⊆ PSPACE**
+`Complexity.Space.pspace_of_inP : InP L → PSPACE L`（`Start/CobhamPspace.lean`）。整个证明无 `sorry`，`#print axioms` 只显示 `propext`、`Classical.choice`、`Quot.sound`。空间界为 `(Cob.spaceW c n + 3)·(2(Cob.need c + 2) + 1)` 个格子，`Cob.spaceW` 已证是多项式。
+
+**按你的建议，可复用的带程序组合子单独成了模块：**
+- `Start/SpaceProgLib.lean`：带程序的精确状态规格 `Prog.Runs`。它只看带的内容、工作头和输入头，客户证明里不再出现会增长的带列表。另有组合规则（顺序 `Runs.seq`、条件 `Runs.ite`、循环 `Runs.loop_stages`）、按常数移动磁头，以及把寄存器组按轨道（track）铺在带上的布局 `Tracks.lay`。
+- `Start/SpaceProgTracks.lean`：寄存器原语，包括清空、复制、赋值、末尾追加、头部插入、弹出末位并分支、截断、"寄存器非空时循环"、复制输入。每个原语的规格都是同一种形式，空间条件只有一条。
+- `Start/SpaceProgDecide.lean`：`Prog.dspace_of_runs` / `pspace_of_runs`。只要程序在每个输入上于界内跑到"磁头下的位就是答案"的状态，就得到 `DSPACE` / `PSPACE`。
+- `Start/CobhamSpace.lean`：编译器 `compile`，以及对全部 Cobham 构造子（含 smash、复合、有界递归）的正确性 `compileOK`。
+
+**验证情况：** 新模块已加入 `Start.lean`，并在 `Start/Capstones.lean` 登记。`lake build Start Start.Capstones` 通过，新模块没有警告。`check_sorry`、`check_closure`、`goal_state.py validate` 和 `bash scripts/pack_gate.sh HEAD` 均通过。证据文件是 `docs/goal/evidence/M21-COBHAM-TO-SPACE.md`，`docs/current-goal-state.md` 已重新生成。
+
+**第 2–6 项为什么没做：**
+- **第 2–4 项（M15 链）**：M15-ORACLE-CLASSES 仍是 DONE_WEAK。NP^A ⊆ PSPACE^A 用的是带查询带的神谕机 `OMachine`，而带程序语言和它的编译器目前只对无神谕机存在。这一缺口在任务板上已明确命名为新任务 **M15-ORACLE-PROG**，排在 M15-ORACLE-CLASSES 之前并由后者依赖。它包括三件事：带查询指令的带程序及其到 `OMachine` 的编译器；把本轮编译器扩展到 `CobQ` 的 `query` 构造子；枚举所有多项式长度证据的循环。
+- 第 2 项本身不需要新设计，但 M15-BGS-EQUAL 还依赖 TQBF ∈ PSPACE（M14 那条线）。所以第 1 项完成后，第 2–4 项**并不是**都已经可以直接开做。M15-NO-RELATIVIZING-PROOF 的 open_boundary 已按这一现状改写。
+- **第 5、6 项**本轮没有开始。
+- **任务板约束**：校验脚本不允许 M15 的任务依赖 M21 的任务，所以 M15-ORACLE-PROG 在任务板上只登记了对 M14-SPACE-COMPILE 的依赖。它对本轮编译器的复用写在退出条件里。
+
+**对两行实例化的说明：**
+- M14-QBF-STEP-PROG 现在可以直接用寄存器原语来写。
+- M22-NONDET-PROG 仍需要给 `Prog` 新增一个猜测构造子和一个新编译器；组合子库只覆盖其中的确定性部分。所以它不会完全退化为实例。
+
 # Summary of changes for run 5ac3bd04-4fe1-4b0f-a3eb-2c6f2cd81c70
 ## 先说结论
 

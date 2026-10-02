@@ -160,6 +160,7 @@ import Start.SavitchSpace
 import Start.SpaceCompile
 import Start.SpaceProg
 import Start.SpaceProgDemo
+import Start.CobhamPspace
 import Start.Qbf
 import Start.QbfReach
 import Start.SpacePadded
@@ -2627,3 +2628,24 @@ requirement is met".
 #check @Lambda.Priority.Injury.injured_finite
 #check @Lambda.Priority.Injury.exists_final_stage
 #check @Lambda.Priority.Injury.requirements_met
+
+/-!
+`Start/CobhamPspace.lean` proves **P ⊆ PSPACE** across the two models of the library: the class
+`P` is defined by Cobham terms, the class `PSPACE` by space-bounded offline machines.  The bridge
+is a compiler of Cobham terms into tape programs (`Complexity.Space.compile`, correct by
+`Complexity.Space.compileOK`, in space `(Cob.spaceW c N + 3)(2K + 1)` with `Cob.spaceW c`
+polynomial), built on a reusable combinator layer: exact-state specifications of tape programs
+with their composition rules (`Complexity.Space.Prog.Runs`, `Start/SpaceProgLib.lean`), a register
+file laid out in tracks with its primitives — clear, copy, append, prepend, pop-and-branch,
+truncate, while-nonempty, input copy (`Start/SpaceProgTracks.lean`) — and the passage from a
+specification to `DSPACE`/`PSPACE` (`Complexity.Space.Prog.dspace_of_runs`,
+`Start/SpaceProgDecide.lean`).
+-/
+
+#check @Complexity.Space.Prog.Runs
+#check @Complexity.Space.Prog.Runs.loop_stages
+#check @Complexity.Space.Tracks.runs_whileNE
+#check @Complexity.Space.Prog.dspace_of_runs
+#check @Complexity.Space.compileOK
+#check @Complexity.Space.runs_cobDecider
+#check @Complexity.Space.pspace_of_inP

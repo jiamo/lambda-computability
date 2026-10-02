@@ -4185,6 +4185,27 @@ tasks:
 
   # --- M15: relativization and the barriers -----------------------------------------
 
+  - id: M15-ORACLE-PROG
+    priority: P1
+    status: TODO_READY
+    track: theory/complexity
+    title: "Tape programs for oracle machines, and NP^A in PSPACE^A"
+    latest_evidence: "docs/goal/evidence/M21-COBHAM-TO-SPACE.md"
+    open_boundary: ""
+    milestone: M15
+    depends_on:
+      - M14-SPACE-COMPILE
+    rank: 999
+    exit_criteria:
+      - "Complexity.Space.Prog (or a variant) gains query-tape instructions -- append a bit to the query tape, ask the oracle and branch on the answer -- with a compiler into well-formed deterministic machines Complexity.Space.OMachine and the analogue of Complexity.Space.Prog.dspace_of_runs for Complexity.Space.ODSPACE."
+      - "The compiler of Start/CobhamSpace.lean is extended to Complexity.CobQ (the query constructor), giving P^A subseteq PSPACE^A within the bound of Complexity.CobQ.polyQueryLen."
+      - "A loop enumerating all witnesses of length at most p |x| gives Complexity.InNP_rel A L implies Complexity.Space.InPSPACE_rel A L, closing M15-ORACLE-CLASSES."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
   - id: M15-ORACLE-CLASSES
     priority: P1
     status: DONE_WEAK
@@ -4192,10 +4213,11 @@ tasks:
     title: "Relativized complexity classes: P^A, NP^A and PSPACE^A"
     terminal_statement: "Complexity.CobQ with Complexity.CobQ.run, .eval, .queries : Cobham's class with an oracle query, evaluated to a value and to the list of words the oracle was asked about; Complexity.CobQ.polyLen, .polyQueryCount, .polyQueryLen : the value, the number of queries and the length of every query are polynomially bounded, uniformly in the oracle; Complexity.CobQ.run_congr : the use principle; Complexity.InP_rel, Complexity.InNP_rel, Complexity.Space.InPSPACE_rel : the relativized classes; Complexity.inP_rel_empty_iff and Complexity.inNP_rel_empty_iff : the empty oracle gives back P and NP; Complexity.InP.to_rel, Complexity.InNP.to_rel, Complexity.Space.inPSPACE_rel_of_pspace : P subseteq P^A, NP subseteq NP^A, PSPACE subseteq PSPACE^A; Complexity.inNP_rel_of_inP_rel : P^A subseteq NP^A; Complexity.inP_rel_oracle : the oracle is decided in P^A"
     latest_evidence: "docs/goal/evidence/M15-ORACLE-CLASSES.md"
-    open_boundary: "NP^A subseteq PSPACE^A is not proved: time is measured on Cobham's class and space on the offline machine, so the inclusion needs a compiler from Cobham terms to space-bounded machines, which the library does not have -- the unrelativized P subseteq PSPACE is missing for the same reason. Everything else in the exit criteria is done."
+    open_boundary: "NP^A subseteq PSPACE^A is not proved. The unrelativized compiler from Cobham terms to space-bounded machines now exists (M21-COBHAM-TO-SPACE, Complexity.Space.pspace_of_inP), but the relativized classes use the oracle machine Complexity.Space.OMachine, for which there are no tape programs: the missing construction is M15-ORACLE-PROG (tape programs with query-tape instructions compiled into OMachine, the Cobham compiler extended by the query constructor of CobQ, and a loop over all witnesses of polynomially bounded length). Everything else in the exit criteria is done."
     milestone: M15
     depends_on:
       - M13-SPACE-MODEL
+      - M15-ORACLE-PROG
     rank: 1000
     exit_criteria:
       - "A polynomial-time machine with an oracle tape is defined, with its query cost, on top of Start/OracleMachine.lean."
@@ -4255,7 +4277,7 @@ tasks:
     title: "The relativization barrier: no relativizing argument settles P vs NP"
     terminal_statement: "Complexity.Relativizes : a statement about the classes holds with every oracle attached; Complexity.PneNP_rel : the statement P^A != NP^A; Complexity.peqnp_does_not_relativize : P = NP does not relativize, from Complexity.bgs_different; Complexity.pnenp_does_not_relativize and Complexity.no_relativizing_resolution : given an oracle with P^A = NP^A, neither P = NP nor P != NP relativizes"
     latest_evidence: "docs/goal/evidence/M15-NO-RELATIVIZING-PROOF.md"
-    open_boundary: "The unconditional half is proved: P = NP does not relativize, by the separating oracle of Start/BakerGillSolovay.lean. The other half is stated conditionally on the collapsing oracle of M15-BGS-EQUAL -- an oracle with P^A = NP^A, classically a PSPACE-complete language -- which the library does not have, because time is Cobham's class and space is the offline machine and no compiler between the two models is available."
+    open_boundary: "The unconditional half is proved: P = NP does not relativize, by the separating oracle of Start/BakerGillSolovay.lean. The other half is stated conditionally on the collapsing oracle of M15-BGS-EQUAL -- an oracle with P^A = NP^A, classically a PSPACE-complete language -- which the library does not have: P subseteq PSPACE is now proved (M21-COBHAM-TO-SPACE), but the collapsing oracle needs NP^A subseteq PSPACE^A (M15-ORACLE-PROG, M15-ORACLE-CLASSES) and TQBF in PSPACE (M14-TQBF-IN-PSPACE)."
     milestone: M15
     depends_on:
       - M15-BGS-EQUAL
@@ -4967,10 +4989,11 @@ tasks:
 
   - id: M21-COBHAM-TO-SPACE
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: theory/complexity
     title: "Cobham terms run in polynomial space on the offline machine: P is contained in PSPACE"
-    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    terminal_statement: "Complexity.Space.pspace_of_inP : Complexity.InP L implies Complexity.Space.PSPACE L; Complexity.Space.compile with Complexity.Space.compileOK : a compiler of Cobham terms into tape programs on a register file in tracks, correct and within (Cob.spaceW c N + 3)(2K + 1) cells, Cob.spaceW c polynomial (Complexity.Cob.spaceW_polyBound); Complexity.Space.runs_cobDecider : the decider of a Cobham term; reusable layer: Complexity.Space.Prog.Runs with .seq, .ite, .loop_stages (Start/SpaceProgLib.lean), register primitives clear, assign, append, prepend, popBranch, truncate, whileNE, copyInput (Start/SpaceProgTracks.lean), Complexity.Space.Prog.dspace_of_runs, .pspace_of_runs (Start/SpaceProgDecide.lean)"
+    latest_evidence: "docs/goal/evidence/M21-COBHAM-TO-SPACE.md"
     open_boundary: ""
     milestone: M21
     depends_on:
