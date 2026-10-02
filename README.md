@@ -762,7 +762,10 @@ Public Lean 4 developments in this area, and how they relate (repository file li
   polynomial-time algorithm for `TQBF` would decide every language of polynomial space in
   polynomial time.  Completeness still needs the membership `TQBF ∈ PSPACE` on the offline machine
   model; the memory of the evaluator is already bounded by `2 n² + 3 n` in the length `n` of the
-  code (`Start/QbfCodeSpace.lean`).  On the λ-calculus side the word of a collected
+  code (`Start/QbfCodeSpace.lean`).  The first step towards `IP = PSPACE` is Shamir's
+  arithmetization of formulas, exact on `0/1` values in every commutative ring, together with the
+  one-round soundness bound of sum-check (`Start/QbfArith.lean`); the rest of that line is split
+  into rows M21 of the task board (`docs/goal/proposed-M21-M24.md`).  On the λ-calculus side the word of a collected
   Krivine state is a work tape of that machine model, with the memory it costs bounded by
   `O(S · log S)` in the live data of the run (`Start/KrivineSpaceConfig.lean`); a machine of the
   model that performs Krivine transitions on the word, which a `DSPACE` membership would need, is

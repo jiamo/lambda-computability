@@ -1,7 +1,7 @@
 version: 2
 source_protocol: docs/goal/goal-prompt.md
 active_milestone: M14
-milestone_order: ["M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10", "M11", "M12", "M13", "M14", "M15", "M16", "M17", "M18", "M19", "M20"]
+milestone_order: ["M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10", "M11", "M12", "M13", "M14", "M15", "M16", "M17", "M18", "M19", "M20", "M21", "M22", "M23", "M24"]
 tasks:
   - id: M1-BOUNDARY-SORRY-CLOSURE
     priority: P0
@@ -4750,4 +4750,878 @@ tasks:
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
+      - "lake build"
+
+  # --- M21: IP = PSPACE (Shamir) ----------------------------------------------------
+
+  - id: M21-QBF-ARITH
+    priority: P1
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "Shamir's arithmetization of quantified Boolean formulas, correct on 0/1 values"
+    terminal_statement: "Complexity.Qbf.QBF.arith, .arith_bool, .tqbf_iff_arith, .arithPoly, .eval_arithPoly (Start/QbfArith.lean)"
+    latest_evidence: "docs/goal/evidence/M21-QBF-ARITH.md"
+    open_boundary: ""
+    milestone: M21
+    depends_on: []
+    rank: 1600
+    exit_criteria:
+      - "Complexity.Qbf.QBF.arith : the arithmetization of a formula of Start/Qbf.lean in an arbitrary commutative ring, with the quantifiers acting on the values at 0 and 1."
+      - "Complexity.Qbf.QBF.arith_bool : on 0/1 values it computes the truth value, in every commutative ring; Complexity.Qbf.QBF.tqbf_iff_arith : a closed formula is true iff its arithmetization is 1, in every nontrivial commutative ring."
+      - "Complexity.Qbf.QBF.arithPoly with Complexity.Qbf.QBF.eval_arithPoly : the same map into MvPolynomial, evaluating to arith."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M21-SUMCHECK-ROUND
+    priority: P1
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "One round of sum-check: distinct low-degree polynomials over a finite field rarely agree"
+    terminal_statement: "Polynomial.card_eval_eq_le, Polynomial.card_eval_eq_le_div (Start/QbfArith.lean)"
+    latest_evidence: "docs/goal/evidence/M21-QBF-ARITH.md"
+    open_boundary: ""
+    milestone: M21
+    depends_on: []
+    rank: 1605
+    exit_criteria:
+      - "Polynomial.card_eval_eq_le : two different polynomials of degree at most d over a finite field agree on at most d points."
+      - "Polynomial.card_eval_eq_le_div : the same as the bound d / |F| on the probability that a check at a uniformly random point is fooled."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M21-QBF-SIMPLE-FORM
+    priority: P1
+    status: TODO_READY
+    track: theory/complexity
+    title: "A polynomial-time normal form of QBF on which the degree-reduced protocol runs"
+    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    open_boundary: ""
+    milestone: M21
+    depends_on:
+      - M21-QBF-ARITH
+      - M14-TQBF-PSPACE-HARD
+    rank: 1610
+    exit_criteria:
+      - "First check whether the output of Complexity.Qbf.QBF.redTerm is already in prenex form with a quantifier-free matrix of bounded shape; if so this row reduces to stating that fact."
+      - "Otherwise: a translation to prenex form with distinct bound variables, preserving the value, computed by a Cobham term (so that PSPACE-hardness transfers to the normal-form language)."
+      - "The size of the output is polynomial in the size of the input."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M21-LINEARIZE
+    priority: P1
+    status: TODO_READY
+    track: theory/complexity
+    title: "Degree reduction: Shen's linearization operators keep every intermediate polynomial of low degree"
+    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    open_boundary: ""
+    milestone: M21
+    depends_on:
+      - M21-QBF-ARITH
+      - M21-QBF-SIMPLE-FORM
+    rank: 1620
+    exit_criteria:
+      - "The linearization operator L_i f = x_i f[x_i:=1] + (1 - x_i) f[x_i:=0] on MvPolynomial, agreeing with f on 0/1 points and of degree at most 1 in x_i."
+      - "The operator sequence of a prenex formula (a quantifier operator followed by linearizations of the earlier variables) has the same value as Complexity.Qbf.QBF.arith on closed formulas."
+      - "Every univariate restriction met along the sequence has degree at most max(2, deg of the matrix), with the matrix degree at most the size of the formula."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M21-IP-DEF
+    priority: P1
+    status: TODO_READY
+    track: theory/complexity
+    title: "Interactive proofs: verifiers in Cobham's class, provers arbitrary, acceptance probability by counting"
+    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    open_boundary: ""
+    milestone: M21
+    depends_on: []
+    rank: 1630
+    exit_criteria:
+      - "A verifier is a Cobham term of the input, the transcript so far and a random word; a prover is an arbitrary function from transcripts to messages; the number of rounds and all lengths are polynomially bounded."
+      - "The acceptance probability is a rational number computed by counting over the random words of the prescribed length (a finite average; no measure theory)."
+      - "Complexity.IP : completeness at least 2/3 with some prover, soundness at most 1/3 against every prover."
+      - "Sanity: Complexity.InNP L implies Complexity.IP L (one message, no randomness), and IP is closed under polynomial-time many-one reductions (Complexity.PolyManyOne)."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M21-SUMCHECK-GAME
+    priority: P1
+    status: TODO_READY
+    track: theory/complexity
+    title: "The sum-check protocol over a finite field as a game: perfect completeness and the union-bound soundness"
+    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    open_boundary: ""
+    milestone: M21
+    depends_on:
+      - M21-SUMCHECK-ROUND
+      - M21-LINEARIZE
+    rank: 1640
+    exit_criteria:
+      - "The protocol for an operator sequence over a finite field F: in each round the prover sends a univariate polynomial of bounded degree, the verifier checks consistency and picks a random point."
+      - "Completeness: the honest prover is accepted with probability 1 on true claims."
+      - "Soundness: on a false claim every prover is accepted with probability at most (sum of the round degrees) / |F|, by induction on the rounds with Polynomial.card_eval_eq_le."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M21-FIELD-COBHAM
+    priority: P1
+    status: TODO_READY
+    track: theory/complexity
+    title: "Arithmetic in Z/p on binary words as Cobham terms, and a small prime found by the verifier"
+    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    open_boundary: ""
+    milestone: M21
+    depends_on:
+      - M21-SUMCHECK-ROUND
+    rank: 1650
+    exit_criteria:
+      - "Addition, multiplication and reduction modulo p of binary words are Cobham terms, correct against ZMod p."
+      - "Evaluation of a univariate polynomial given by its list of coefficients at a point is a Cobham term."
+      - "A prime p with a prescribed polynomial lower bound (of magnitude polynomial in n, hence O(log n) bits) is found by trial division within Cobham's class; since arith is exactly 0 or 1 (Complexity.Qbf.QBF.tqbf_iff_arith), no further condition on p is needed."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M21-VERIFIER-POLY
+    priority: P1
+    status: TODO_READY
+    track: theory/complexity
+    title: "The sum-check verifier for TQBF runs in polynomial time"
+    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    open_boundary: ""
+    milestone: M21
+    depends_on:
+      - M21-IP-DEF
+      - M21-SUMCHECK-GAME
+      - M21-FIELD-COBHAM
+    rank: 1660
+    exit_criteria:
+      - "The verifier of M21-SUMCHECK-GAME, instantiated with the operator sequence of a formula, is a Cobham term of the input code, the transcript and the random word."
+      - "The final check, the evaluation of the arithmetized matrix at a point of F, is a Cobham term."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M21-TQBF-IN-IP
+    priority: P1
+    status: TODO_READY
+    track: theory/complexity
+    title: "TQBF has an interactive proof"
+    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    open_boundary: ""
+    milestone: M21
+    depends_on:
+      - M21-VERIFIER-POLY
+    rank: 1670
+    exit_criteria:
+      - "Complexity.IP Complexity.Qbf.tqbfLang."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M21-PSPACE-SUBSET-IP
+    priority: P1
+    status: TODO_READY
+    track: theory/complexity
+    title: "PSPACE is contained in IP"
+    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    open_boundary: ""
+    milestone: M21
+    depends_on:
+      - M21-TQBF-IN-IP
+      - M14-TQBF-PSPACE-HARD
+    rank: 1680
+    exit_criteria:
+      - "Complexity.Space.PSPACE L implies Complexity.IP L, from Complexity.Qbf.QBF.pspaceHard_tqbfLang and the closure of IP under polynomial-time reductions."
+      - "This half does not need TQBF in PSPACE nor any compiler between the time and the space model."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M21-COBHAM-TO-SPACE
+    priority: P1
+    status: TODO_READY
+    track: theory/complexity
+    title: "Cobham terms run in polynomial space on the offline machine: P is contained in PSPACE"
+    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    open_boundary: ""
+    milestone: M21
+    depends_on:
+      - M14-SPACE-COMPILE
+    rank: 1690
+    exit_criteria:
+      - "Every Cobham term is evaluated by a machine of Start/SpaceMachine.lean in space polynomial in the length of its inputs (via Complexity.Space.Prog and Complexity.Space.Prog.realizes_loop)."
+      - "Complexity.InP L implies Complexity.Space.PSPACE L."
+      - "This is the missing link named in the open boundaries of M15-ORACLE-CLASSES (NP^A in PSPACE^A) and M15-BGS-EQUAL, which it unblocks as well."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M21-IP-SUBSET-PSPACE
+    priority: P1
+    status: TODO_READY
+    track: theory/complexity
+    title: "IP is contained in PSPACE: the optimal prover's acceptance probability in polynomial space"
+    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    open_boundary: ""
+    milestone: M21
+    depends_on:
+      - M21-IP-DEF
+      - M21-COBHAM-TO-SPACE
+    rank: 1700
+    exit_criteria:
+      - "The maximal acceptance probability over all provers is computed by a recursion over transcripts (max over messages, average over random bits), with memory polynomial in the input length."
+      - "That recursion is realized on the offline machine; Complexity.IP L implies Complexity.Space.PSPACE L."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M21-IP-EQ-PSPACE
+    priority: P1
+    status: TODO_READY
+    track: theory/complexity
+    title: "Shamir's theorem: IP = PSPACE"
+    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    open_boundary: ""
+    milestone: M21
+    depends_on:
+      - M21-PSPACE-SUBSET-IP
+      - M21-IP-SUBSET-PSPACE
+    rank: 1710
+    exit_criteria:
+      - "Complexity.ip_eq_pspace : Complexity.IP L iff Complexity.Space.PSPACE L."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  # --- M22: further complexity: proof complexity, circuits, space, descriptive ---
+
+  - id: M22-NONDET-PROG
+    priority: P1
+    status: TODO_READY
+    track: theory/complexity
+    title: "Nondeterministic tape programs: a guess instruction for Complexity.Space.Prog"
+    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    open_boundary: ""
+    milestone: M22
+    depends_on:
+      - M14-SPACE-COMPILE
+    rank: 1800
+    exit_criteria:
+      - "Complexity.Space.Prog gains a nondeterministic choice, with a big-step semantics and a compiler into well-formed nondeterministic machines of Start/SpaceMachine.lean."
+      - "The loop form of the bridge gives Complexity.Space.NSPACE membership."
+      - "This is the step-level prerequisite shared by M22-IMMERMAN-SZELEPCSENYI and M22-SPACE-HIERARCHY."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M22-IMMERMAN-SZELEPCSENYI
+    priority: P1
+    status: TODO_READY
+    track: theory/complexity
+    title: "Immerman-Szelepcsenyi: nondeterministic space is closed under complement"
+    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    open_boundary: ""
+    milestone: M22
+    depends_on:
+      - M22-NONDET-PROG
+    rank: 1810
+    exit_criteria:
+      - "Inductive counting of the reachable configurations (reusing Start/SpaceConfigCount.lean) as a nondeterministic tape program."
+      - "For s at least logarithmic: Complexity.Space.NSPACE s L implies Complexity.Space.NSPACE s (complement of L), up to the constant factors of the model."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M22-SPACE-HIERARCHY
+    priority: P2
+    status: TODO_READY
+    track: theory/complexity
+    title: "The deterministic space hierarchy theorem, unrelativized"
+    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    open_boundary: ""
+    milestone: M22
+    depends_on:
+      - M14-SPACE-COMPILE
+    rank: 1820
+    exit_criteria:
+      - "A universal offline machine simulating a machine given by its code within a constant factor of space."
+      - "For space-constructible s, g with g = o(s): DSPACE g is strictly contained in DSPACE s."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M22-CONP-PH
+    priority: P2
+    status: TODO_READY
+    track: theory/complexity
+    title: "coNP and the polynomial hierarchy"
+    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    open_boundary: ""
+    milestone: M22
+    depends_on: []
+    rank: 1830
+    exit_criteria:
+      - "Complexity.InCoNP and the levels Sigma_k^p, Pi_k^p of the polynomial hierarchy, defined from Complexity.InNP by alternating polynomially bounded certificates."
+      - "NP = coNP implies that the hierarchy collapses to NP; P = NP implies that it collapses to P."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M22-COOK-RECKHOW
+    priority: P1
+    status: TODO_READY
+    track: theory/proof-complexity
+    title: "Cook-Reckhow: NP = coNP iff some propositional proof system is polynomially bounded"
+    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    open_boundary: ""
+    milestone: M22
+    depends_on:
+      - M22-CONP-PH
+    rank: 1840
+    exit_criteria:
+      - "A proof system for unsatisfiable CNFs (of the library's CNF encoding) is a polynomial-time map (a Cobham term) onto exactly the unsatisfiable ones."
+      - "Complexity.cook_reckhow : NP = coNP iff there is a polynomially bounded proof system."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M22-RESOLUTION
+    priority: P1
+    status: TODO_READY
+    track: theory/proof-complexity
+    title: "Resolution refutations: soundness and refutational completeness"
+    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    open_boundary: ""
+    milestone: M22
+    depends_on: []
+    rank: 1850
+    exit_criteria:
+      - "Resolution derivations from a CNF, with their size."
+      - "Soundness: a CNF with a refutation is unsatisfiable. Completeness: every unsatisfiable CNF has a refutation."
+      - "Resolution is a proof system in the sense of M22-COOK-RECKHOW."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M22-HAKEN-PHP
+    priority: P1
+    status: TODO_READY
+    track: theory/proof-complexity
+    title: "Haken: the pigeonhole principle needs exponential-size resolution refutations"
+    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    open_boundary: ""
+    milestone: M22
+    depends_on:
+      - M22-RESOLUTION
+    rank: 1860
+    exit_criteria:
+      - "The CNF PHP(n+1, n) is defined and proved unsatisfiable."
+      - "Every resolution refutation of PHP(n+1, n) has size at least 2^(c n) for a fixed c > 0 (Haken's bottleneck argument, or the simplified Beame-Pitassi proof)."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M22-AC0-DEF
+    priority: P2
+    status: TODO_READY
+    track: theory/circuits
+    title: "AC0: constant-depth unbounded fan-in circuits of polynomial size"
+    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    open_boundary: ""
+    milestone: M22
+    depends_on: []
+    rank: 1870
+    exit_criteria:
+      - "Unbounded fan-in circuits of AND, OR, NOT gates with depth and size, next to Start/PolyCircuit.lean."
+      - "The class AC0 of families of polynomial size and constant depth; closure facts needed downstream (merging layers, pushing negations to the inputs)."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M22-SWITCHING-LEMMA
+    priority: P2
+    status: TODO_READY
+    track: theory/circuits
+    title: "Hastad's switching lemma, by Razborov's counting argument"
+    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    open_boundary: ""
+    milestone: M22
+    depends_on:
+      - M22-AC0-DEF
+    rank: 1880
+    exit_criteria:
+      - "Random restrictions are counted, not measured: the number of restrictions with a given number of free variables under which a k-DNF has no decision tree of depth s is bounded by an explicit injection (Razborov's encoding)."
+      - "The resulting bound (c p k)^s on the fraction of bad restrictions."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M22-PARITY-NOT-AC0
+    priority: P2
+    status: TODO_READY
+    track: theory/circuits
+    title: "Parity is not in AC0"
+    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    open_boundary: ""
+    milestone: M22
+    depends_on:
+      - M22-SWITCHING-LEMMA
+    rank: 1890
+    exit_criteria:
+      - "Complexity.parity_not_AC0 : no family of constant depth and polynomial size computes parity."
+      - "Quantitative form: depth-d circuits for parity have size 2^(Omega(n^(1/(d-1))))."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M22-FAGIN
+    priority: P2
+    status: TODO_NEEDS_DESIGN
+    track: theory/descriptive
+    title: "Fagin's theorem: NP is existential second-order logic on finite structures"
+    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    open_boundary: "Design question: which model of NP the logic side is compared with. The library's NP is certificate-checking by a Cobham term, not a Turing machine, so the tableau in the hard direction is a tableau of a Cobham evaluation."
+    milestone: M22
+    depends_on: []
+    rank: 1900
+    exit_criteria:
+      - "Finite relational structures, their encodings as words, and existential second-order sentences with their satisfaction relation."
+      - "ESO-definable classes of structures are in NP (the Cobham verifier checks a guessed relation)."
+      - "Every NP class of (ordered) structures is ESO-definable (a tableau of the verifier's computation described in logic, reusing the Cook-Levin encodings of Start/CookLevinBound.lean where possible)."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  # --- M23: lambda-calculus and type theory: the cube, identity types, optimal reduction ---
+
+  - id: M23-PTS
+    priority: P1
+    status: TODO_READY
+    track: theory/types
+    title: "Pure type systems, with the lambda-cube as instances"
+    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    open_boundary: ""
+    milestone: M23
+    depends_on: []
+    rank: 2000
+    exit_criteria:
+      - "A generic pure type system (sorts, axioms, rules) with its typing judgement, substitution and subject reduction."
+      - "The eight corners of the cube as instances; the existing lambda-Pi of Start/LambdaPi.lean and System F of Start/SystemF.lean are shown to embed in their corners."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M23-FOMEGA
+    priority: P2
+    status: TODO_READY
+    track: theory/types
+    title: "System F-omega: type operators and strong normalization"
+    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    open_boundary: ""
+    milestone: M23
+    depends_on:
+      - M23-PTS
+    rank: 2010
+    exit_criteria:
+      - "F-omega as a corner of M23-PTS."
+      - "Strong normalization, by reducibility candidates indexed by kinds (extending the candidates of the System F development)."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M23-COC-SN
+    priority: P1
+    status: TODO_READY
+    track: theory/types
+    title: "Strong normalization of the calculus of constructions"
+    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    open_boundary: ""
+    milestone: M23
+    depends_on:
+      - M23-PTS
+      - M23-FOMEGA
+    rank: 2020
+    exit_criteria:
+      - "The calculus of constructions as the top corner of M23-PTS."
+      - "Strong normalization of well-typed terms (Geuvers' saturated-set model, or Altenkirch's Lambda-set construction)."
+      - "Consequences: consistency (no closed term of type forall A : *, A) and decidability of type checking, as for lambda-Pi in Start/LambdaPiInfer.lean."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M23-HURKENS
+    priority: P2
+    status: TODO_READY
+    track: theory/types
+    title: "System U- is inconsistent: Hurkens' paradox"
+    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    open_boundary: ""
+    milestone: M23
+    depends_on:
+      - M23-PTS
+    rank: 2030
+    exit_criteria:
+      - "System U- as an instance of M23-PTS."
+      - "A closed term of type forall A : *, A in System U-, following Hurkens' simplification of Girard's paradox, checked by the typing judgement of M23-PTS."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M23-ID-TYPES
+    priority: P1
+    status: TODO_READY
+    track: theory/types
+    title: "Identity types for categories with attributes"
+    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    open_boundary: "The library's type theories (lambda-Pi, System F) have no identity types, so this row is a prerequisite and not a formality."
+    milestone: M23
+    depends_on: []
+    rank: 2040
+    exit_criteria:
+      - "An identity-type structure on a CwA of the library (formation, reflexivity, the J eliminator with its computation rule, stable under substitution)."
+      - "UIP stated as a property of such a structure."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M23-GROUPOID-MODEL
+    priority: P1
+    status: TODO_READY
+    track: theory/types
+    title: "The Hofmann-Streicher groupoid model"
+    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    open_boundary: ""
+    milestone: M23
+    depends_on:
+      - M23-ID-TYPES
+    rank: 2050
+    exit_criteria:
+      - "Groupoids (Mathlib's CategoryTheory.Groupoid) form a CwA whose types over a groupoid are functors into groupoids."
+      - "It carries Pi-types and an identity-type structure in the sense of M23-ID-TYPES."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M23-UIP-INDEPENDENT
+    priority: P1
+    status: TODO_READY
+    track: theory/types
+    title: "UIP fails in the groupoid model, hence is not derivable"
+    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    open_boundary: ""
+    milestone: M23
+    depends_on:
+      - M23-GROUPOID-MODEL
+    rank: 2060
+    exit_criteria:
+      - "A type of the groupoid model with a non-trivial loop (a universe of finite sets and bijections, or the groupoid with one object and the automorphism group of Bool) on which UIP fails."
+      - "Hence UIP does not follow from the rules of identity types that the model validates."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M23-LAMBDA-MU
+    priority: P2
+    status: TODO_READY
+    track: theory/lambda
+    title: "Parigot's lambda-mu: classical Curry-Howard, and its CPS translation"
+    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    open_boundary: ""
+    milestone: M23
+    depends_on: []
+    rank: 2070
+    exit_criteria:
+      - "Typed lambda-mu with subject reduction; call/cc typed by Peirce's law."
+      - "A CPS translation into the simply typed calculus that preserves typing (with double negation of types) and simulates reduction."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M23-LEVY-FAMILIES
+    priority: P2
+    status: TODO_NEEDS_DESIGN
+    track: theory/lambda
+    title: "Levy's labelled lambda-calculus and families of redexes"
+    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    open_boundary: "Foundation for optimal reduction; the correctness of Lamping's algorithm is the separate row M23-LAMPING-ABSTRACT."
+    milestone: M23
+    depends_on: []
+    rank: 2080
+    exit_criteria:
+      - "Levy's labelled calculus, the family relation on redexes, and the finite-developments theorem for families."
+      - "Optimality stated: a strategy reducing one family per step is optimal in the number of family reductions."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M23-LAMPING-ABSTRACT
+    priority: P3
+    status: TODO_NEEDS_DESIGN
+    track: theory/lambda
+    title: "Lamping's abstract algorithm on a fragment without bookkeeping"
+    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    open_boundary: "The full algorithm with bookkeeping, and the Lawall-Mairson and Asperti-Mairson complexity results, are not in scope of this row."
+    milestone: M23
+    depends_on:
+      - M23-LEVY-FAMILIES
+    rank: 2090
+    exit_criteria:
+      - "Sharing graphs (application, abstraction, fan nodes with levels) and their local rewriting rules."
+      - "Correctness of the read-back on a fragment where the abstract algorithm needs no oracle (for example elementary-affine typable terms), before any bookkeeping is attempted."
+      - "The relation to the cost-model results of the library (the Krivine time and space invariance) is recorded as the design question of a later row."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  # --- M24: logic and computability: incompleteness, reverse mathematics, randomness ---
+
+  - id: M24-ABSTRACT-LOB
+    priority: P1
+    status: TODO_READY
+    track: theory/logic
+    title: "Loeb's theorem and the second incompleteness theorem from the derivability conditions"
+    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    open_boundary: ""
+    milestone: M24
+    depends_on: []
+    rank: 2200
+    exit_criteria:
+      - "An abstract provability operator on sentences satisfying the Hilbert-Bernays-Loeb conditions D1-D3, together with a diagonal lemma."
+      - "Loeb's theorem, and the unprovability of consistency, as consequences of those hypotheses."
+      - "This is the abstract form only: it does not yet exhibit a theory satisfying the hypotheses (that is M24-GODEL2-ARITH)."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M24-ARITH-THEORY
+    priority: P1
+    status: TODO_READY
+    track: theory/logic
+    title: "A first-order arithmetic with proofs, and its Goedel numbering"
+    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    open_boundary: "The library has no first-order theory of arithmetic yet: Start/ChaitinIncompleteness.lean works with an abstract sound r.e. proof system."
+    milestone: M24
+    depends_on: []
+    rank: 2210
+    exit_criteria:
+      - "Syntax of first-order arithmetic, a Hilbert-style proof calculus, Robinson's Q and PA as axiom sets."
+      - "Proofs are coded by numerals and the proof relation is primitive recursive (reusing the coding of Start/CodePrimrec.lean)."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M24-GODEL2-ARITH
+    priority: P1
+    status: TODO_READY
+    track: theory/logic
+    title: "Goedel's second incompleteness theorem for PA"
+    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    open_boundary: ""
+    milestone: M24
+    depends_on:
+      - M24-ABSTRACT-LOB
+      - M24-ARITH-THEORY
+    rank: 2220
+    exit_criteria:
+      - "Provable Sigma-1 completeness inside the theory (the derivability condition D3), the expensive step."
+      - "The provability predicate of PA satisfies D1-D3, so M24-ABSTRACT-LOB applies: PA does not prove its own consistency, and Loeb's theorem holds for PA."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M24-GL
+    priority: P2
+    status: TODO_READY
+    track: theory/logic
+    title: "The provability logic GL: Kripke soundness and completeness"
+    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    open_boundary: ""
+    milestone: M24
+    depends_on:
+      - M24-ABSTRACT-LOB
+    rank: 2230
+    exit_criteria:
+      - "GL as a modal Hilbert system; soundness and completeness for finite transitive irreflexive Kripke frames."
+      - "Arithmetical soundness of GL for PA from M24-GODEL2-ARITH (Solovay's completeness is a later row)."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M24-OMEGA-MODELS
+    priority: P1
+    status: TODO_READY
+    track: theory/recursion
+    title: "Reverse mathematics on omega-models: Turing ideals, Scott ideals, jump ideals"
+    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    open_boundary: "Proof-theoretic reverse mathematics (the axiom systems as formal theories, the conservation results) is not in scope; the omega-model route needs no ordinals."
+    milestone: M24
+    depends_on: []
+    rank: 2240
+    exit_criteria:
+      - "omega-models of RCA0, WKL0 and ACA0 characterised as Turing ideals, Scott ideals and ideals closed under the jump (using the Turing reducibility and jump of the library)."
+      - "The Kleene tree: a computable infinite binary tree with no computable path; hence the computable sets form a model of RCA0 but not of WKL0."
+      - "Separations of the first three of the Big Five on omega-models."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M24-VAN-LAMBALGEN
+    priority: P2
+    status: TODO_READY
+    track: theory/randomness
+    title: "Van Lambalgen's theorem"
+    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    open_boundary: ""
+    milestone: M24
+    depends_on: []
+    rank: 2250
+    exit_criteria:
+      - "A join A (+) B is Martin-Loef random iff A is random and B is random relative to A, for the Martin-Loef tests of Start/MartinLof.lean relativized to an oracle."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M24-KUCERA-GACS
+    priority: P2
+    status: TODO_READY
+    track: theory/randomness
+    title: "Kucera-Gacs: every set is computable from a Martin-Loef random set"
+    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    open_boundary: ""
+    milestone: M24
+    depends_on: []
+    rank: 2260
+    exit_criteria:
+      - "Every set is Turing (indeed wtt) reducible to some Martin-Loef random set."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M24-K-TRIVIAL
+    priority: P2
+    status: TODO_READY
+    track: theory/randomness
+    title: "K-trivial sets: definition and first properties"
+    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    open_boundary: ""
+    milestone: M24
+    depends_on: []
+    rank: 2270
+    exit_criteria:
+      - "K-trivial sets defined from the prefix complexity of the library; every computable set is K-trivial."
+      - "There is a non-computable c.e. K-trivial set (the cost-function construction), or, as a first step, every K-trivial set is Delta-0-2 (Chaitin)."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M24-HYPERARITH
+    priority: P3
+    status: TODO_NEEDS_DESIGN
+    track: theory/recursion
+    title: "Beyond the arithmetical hierarchy: Sigma-1-1, Kleene's O and the hyperarithmetical sets"
+    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    open_boundary: "Needs ordinals and transfinite iterations of the jump; the library has no ordinals yet (Mathlib's do exist)."
+    milestone: M24
+    depends_on: []
+    rank: 2280
+    exit_criteria:
+      - "The analytical classes Sigma-1-1 and Pi-1-1 over the arithmetical hierarchy of Start/ArithHierarchy.lean (quantification over functions)."
+      - "Kleene's O, and the set of indices of computable well-founded trees is Pi-1-1-complete."
+      - "The statement Delta-1-1 = HYP (Kleene-Suslin) recorded as the exit of a later row."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
       - "lake build"

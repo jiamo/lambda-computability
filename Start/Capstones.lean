@@ -188,6 +188,7 @@ import Start.QbfCobMachine
 import Start.QbfCobReduction
 import Start.QbfHard
 import Start.QbfCodeSpace
+import Start.QbfArith
 import Start.KrivineSpaceConfig
 import Start.OracleCob
 import Start.OracleClasses
@@ -2365,6 +2366,29 @@ machine of `Start/SpaceMachine.lean`.
 #check @Complexity.Qbf.QBF.height_lt_length_enc
 #check @Complexity.Qbf.tqbf_memBits_le_length_enc
 #check @Complexity.Qbf.tqbf_memBits_le_length
+
+/-!
+### Arithmetization of quantified Boolean formulas
+
+The first algebraic step of Shamir's `IP = PSPACE`.  `Start/QbfArith.lean` sends a formula to an
+element of an arbitrary commutative ring (`Complexity.Qbf.QBF.arith`): negation to `1 - a`,
+conjunction to a product, disjunction and `∃` to the dual product, `∀` to the product of the values
+at `0` and `1`.  On `0/1` values it computes the truth value exactly
+(`Complexity.Qbf.QBF.arith_bool`), so a closed formula is true iff its arithmetization is `1` in any
+nontrivial commutative ring (`Complexity.Qbf.QBF.tqbf_iff_arith`); the same map lands in
+multivariate polynomials (`Complexity.Qbf.QBF.arithPoly`, `.eval_arithPoly`).  The one-round
+soundness of sum-check is `Polynomial.card_eval_eq_le`: distinct polynomials of degree `≤ d` over a
+finite field agree on at most `d` points.  The degree reduction and the protocol itself are still
+open (task board, milestone M21).
+-/
+
+#check @Complexity.Qbf.QBF.arith
+#check @Complexity.Qbf.QBF.arith_bool
+#check @Complexity.Qbf.QBF.tqbf_iff_arith
+#check @Complexity.Qbf.QBF.arithPoly
+#check @Complexity.Qbf.QBF.eval_arithPoly
+#check @Polynomial.card_eval_eq_le
+#check @Polynomial.card_eval_eq_le_div
 
 /-!
 ### From a bounded-memory abstract machine to an offline machine

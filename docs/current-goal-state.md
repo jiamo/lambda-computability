@@ -229,6 +229,49 @@
 | 1520 | `M20-THEORY-LATTICE-UNCOUNTABLE` | `P2` | `TODO_NEEDS_DESIGN` | - | docs/goal/evidence/M10-LAMBDA-THEORY-LATTICE.md |  |
 | 1530 | `M20-GANDY` | `P1` | `TODO_NEEDS_DESIGN` | - | docs/goal/evidence/M4-CHURCH-TURING-LAMBDA.md | Never formalized, as far as is known. This is the physical form of the Church-Turing thesis, and the one the name of this library refers to; the design question is the formalization of Gandy's four principles. |
 | 1540 | `M20-RULE-110` | `P2` | `TODO_NEEDS_DESIGN` | - | docs/goal/evidence/M4-TM2-IMP-PARTREC.md | Cook's proof is long and combinatorial; the task is a serious engineering effort with a fully classical statement. |
+| 1600 | `M21-QBF-ARITH` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M21-QBF-ARITH.md |  |
+| 1605 | `M21-SUMCHECK-ROUND` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M21-QBF-ARITH.md |  |
+| 1610 | `M21-QBF-SIMPLE-FORM` | `P1` | `TODO_READY` | M21-QBF-ARITH, M14-TQBF-PSPACE-HARD | docs/goal/proposed-M21-M24.md |  |
+| 1620 | `M21-LINEARIZE` | `P1` | `TODO_READY` | M21-QBF-ARITH, M21-QBF-SIMPLE-FORM | docs/goal/proposed-M21-M24.md |  |
+| 1630 | `M21-IP-DEF` | `P1` | `TODO_READY` | - | docs/goal/proposed-M21-M24.md |  |
+| 1640 | `M21-SUMCHECK-GAME` | `P1` | `TODO_READY` | M21-SUMCHECK-ROUND, M21-LINEARIZE | docs/goal/proposed-M21-M24.md |  |
+| 1650 | `M21-FIELD-COBHAM` | `P1` | `TODO_READY` | M21-SUMCHECK-ROUND | docs/goal/proposed-M21-M24.md |  |
+| 1660 | `M21-VERIFIER-POLY` | `P1` | `TODO_READY` | M21-IP-DEF, M21-SUMCHECK-GAME, M21-FIELD-COBHAM | docs/goal/proposed-M21-M24.md |  |
+| 1670 | `M21-TQBF-IN-IP` | `P1` | `TODO_READY` | M21-VERIFIER-POLY | docs/goal/proposed-M21-M24.md |  |
+| 1680 | `M21-PSPACE-SUBSET-IP` | `P1` | `TODO_READY` | M21-TQBF-IN-IP, M14-TQBF-PSPACE-HARD | docs/goal/proposed-M21-M24.md |  |
+| 1690 | `M21-COBHAM-TO-SPACE` | `P1` | `TODO_READY` | M14-SPACE-COMPILE | docs/goal/proposed-M21-M24.md |  |
+| 1700 | `M21-IP-SUBSET-PSPACE` | `P1` | `TODO_READY` | M21-IP-DEF, M21-COBHAM-TO-SPACE | docs/goal/proposed-M21-M24.md |  |
+| 1710 | `M21-IP-EQ-PSPACE` | `P1` | `TODO_READY` | M21-PSPACE-SUBSET-IP, M21-IP-SUBSET-PSPACE | docs/goal/proposed-M21-M24.md |  |
+| 1800 | `M22-NONDET-PROG` | `P1` | `TODO_READY` | M14-SPACE-COMPILE | docs/goal/proposed-M21-M24.md |  |
+| 1810 | `M22-IMMERMAN-SZELEPCSENYI` | `P1` | `TODO_READY` | M22-NONDET-PROG | docs/goal/proposed-M21-M24.md |  |
+| 1820 | `M22-SPACE-HIERARCHY` | `P2` | `TODO_READY` | M14-SPACE-COMPILE | docs/goal/proposed-M21-M24.md |  |
+| 1830 | `M22-CONP-PH` | `P2` | `TODO_READY` | - | docs/goal/proposed-M21-M24.md |  |
+| 1840 | `M22-COOK-RECKHOW` | `P1` | `TODO_READY` | M22-CONP-PH | docs/goal/proposed-M21-M24.md |  |
+| 1850 | `M22-RESOLUTION` | `P1` | `TODO_READY` | - | docs/goal/proposed-M21-M24.md |  |
+| 1860 | `M22-HAKEN-PHP` | `P1` | `TODO_READY` | M22-RESOLUTION | docs/goal/proposed-M21-M24.md |  |
+| 1870 | `M22-AC0-DEF` | `P2` | `TODO_READY` | - | docs/goal/proposed-M21-M24.md |  |
+| 1880 | `M22-SWITCHING-LEMMA` | `P2` | `TODO_READY` | M22-AC0-DEF | docs/goal/proposed-M21-M24.md |  |
+| 1890 | `M22-PARITY-NOT-AC0` | `P2` | `TODO_READY` | M22-SWITCHING-LEMMA | docs/goal/proposed-M21-M24.md |  |
+| 1900 | `M22-FAGIN` | `P2` | `TODO_NEEDS_DESIGN` | - | docs/goal/proposed-M21-M24.md | Design question: which model of NP the logic side is compared with. The library's NP is certificate-checking by a Cobham term, not a Turing machine, so the tableau in the hard direction is a tableau of a Cobham evaluation. |
+| 2000 | `M23-PTS` | `P1` | `TODO_READY` | - | docs/goal/proposed-M21-M24.md |  |
+| 2010 | `M23-FOMEGA` | `P2` | `TODO_READY` | M23-PTS | docs/goal/proposed-M21-M24.md |  |
+| 2020 | `M23-COC-SN` | `P1` | `TODO_READY` | M23-PTS, M23-FOMEGA | docs/goal/proposed-M21-M24.md |  |
+| 2030 | `M23-HURKENS` | `P2` | `TODO_READY` | M23-PTS | docs/goal/proposed-M21-M24.md |  |
+| 2040 | `M23-ID-TYPES` | `P1` | `TODO_READY` | - | docs/goal/proposed-M21-M24.md | The library's type theories (lambda-Pi, System F) have no identity types, so this row is a prerequisite and not a formality. |
+| 2050 | `M23-GROUPOID-MODEL` | `P1` | `TODO_READY` | M23-ID-TYPES | docs/goal/proposed-M21-M24.md |  |
+| 2060 | `M23-UIP-INDEPENDENT` | `P1` | `TODO_READY` | M23-GROUPOID-MODEL | docs/goal/proposed-M21-M24.md |  |
+| 2070 | `M23-LAMBDA-MU` | `P2` | `TODO_READY` | - | docs/goal/proposed-M21-M24.md |  |
+| 2080 | `M23-LEVY-FAMILIES` | `P2` | `TODO_NEEDS_DESIGN` | - | docs/goal/proposed-M21-M24.md | Foundation for optimal reduction; the correctness of Lamping's algorithm is the separate row M23-LAMPING-ABSTRACT. |
+| 2090 | `M23-LAMPING-ABSTRACT` | `P3` | `TODO_NEEDS_DESIGN` | M23-LEVY-FAMILIES | docs/goal/proposed-M21-M24.md | The full algorithm with bookkeeping, and the Lawall-Mairson and Asperti-Mairson complexity results, are not in scope of this row. |
+| 2200 | `M24-ABSTRACT-LOB` | `P1` | `TODO_READY` | - | docs/goal/proposed-M21-M24.md |  |
+| 2210 | `M24-ARITH-THEORY` | `P1` | `TODO_READY` | - | docs/goal/proposed-M21-M24.md | The library has no first-order theory of arithmetic yet: Start/ChaitinIncompleteness.lean works with an abstract sound r.e. proof system. |
+| 2220 | `M24-GODEL2-ARITH` | `P1` | `TODO_READY` | M24-ABSTRACT-LOB, M24-ARITH-THEORY | docs/goal/proposed-M21-M24.md |  |
+| 2230 | `M24-GL` | `P2` | `TODO_READY` | M24-ABSTRACT-LOB | docs/goal/proposed-M21-M24.md |  |
+| 2240 | `M24-OMEGA-MODELS` | `P1` | `TODO_READY` | - | docs/goal/proposed-M21-M24.md | Proof-theoretic reverse mathematics (the axiom systems as formal theories, the conservation results) is not in scope; the omega-model route needs no ordinals. |
+| 2250 | `M24-VAN-LAMBALGEN` | `P2` | `TODO_READY` | - | docs/goal/proposed-M21-M24.md |  |
+| 2260 | `M24-KUCERA-GACS` | `P2` | `TODO_READY` | - | docs/goal/proposed-M21-M24.md |  |
+| 2270 | `M24-K-TRIVIAL` | `P2` | `TODO_READY` | - | docs/goal/proposed-M21-M24.md |  |
+| 2280 | `M24-HYPERARITH` | `P3` | `TODO_NEEDS_DESIGN` | - | docs/goal/proposed-M21-M24.md | Needs ordinals and transfinite iterations of the jump; the library has no ordinals yet (Mathlib's do exist). |
 
 Next: `M14-QBF-STEP-PROG`
 

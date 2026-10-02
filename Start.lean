@@ -512,6 +512,7 @@ import Start.QbfCobMachine
 import Start.QbfCobReduction
 import Start.QbfHard
 import Start.QbfCodeSpace
+import Start.QbfArith
 import Start.OracleCob
 import Start.OracleClasses
 import Start.OracleSpace

@@ -1,3 +1,61 @@
+# Summary of changes for run 5ac3bd04-4fe1-4b0f-a3eb-2c6f2cd81c70
+## 先说结论
+
+M21–M24 的任务板行我已经写好，不用你再写了：`docs/goal/task-board.yaml` 新增 43 行，校验通过（268 个任务）。完整说明在 `docs/goal/proposed-M21-M24.md`。IP = PSPACE 按你说的拆成了 `TODO_READY` 小行，其中前两块已经在 Lean 里证完。
+
+写之前我把你的清单逐条对照了仓库，有几处和实际不符，建议对外表述时改正：
+
+## 核对出的出入
+
+1. **IP = PSPACE 的前置没有"全铺齐"。**
+   - `TQBF ∈ PSPACE` 没有证明。已证的只有 PSPACE-困难性，成员性仍是开放任务 `M14-TQBF-IN-PSPACE`。
+   - `QbfCob*` 不是算术化。`Cob` 指 Cobham 类，这组模块是困难性归约的多项式时间编译器，和多项式、有限域无关。
+   - 库里连 `P ⊆ PSPACE` 都没有：时间在 Cobham 类上度量，空间在离线机上度量，两者之间没有编译器（M15 两行的 `open_boundary` 里已经写明）。所以 `IP ⊆ PSPACE` 被卡住，已单列 `M21-COBHAM-TO-SPACE`，它同时会解开 M15 那两行。
+   - 反过来，`PSPACE ⊆ IP` 只依赖已有的困难性，可以先做。
+   - 还缺度数约减（Shen 的线性化），已单列 `M21-LINEARIZE`。
+2. **λΠ 的类型检查算法已经有了。** `Start/LambdaPiInfer.lean` 里有双向类型推断和可判定性（`decidableTypable` / `decidableTyping`），缺的只是 NbE 这一种具体算法，所以没为它开行。
+3. **几项前置在库里是空的。**
+   - 没有序数，所以逆数学改走 ω-模型路线，不需要序数。
+   - 没有形式算术理论（Chaitin 那一版用的是抽象证明系统），所以 Gödel II 拆成两步：先做抽象 Löb，再做 PA 本身。
+   - 没有恒等类型（"UIP"的几处命中其实是别的单词的子串），所以 groupoid 模型之前要先做 `M23-ID-TYPES`。
+   - 没有非确定带程序，而 Immerman–Szelepcsényi 需要它，已单列 `M22-NONDET-PROG`。
+   - 没有 coNP，Cook–Reckhow 之前要先定义。
+4. **"全世界没人形式化过"这类说法我无法核实，建议不要这么写。** 据我所知，至少以下几条已有人做过：
+   - Gödel II：Isabelle 里有；Lean 的 Foundation 项目据我所知也有，包括 GL。
+   - Hurkens 悖论：Coq 标准库里有。
+   - CoC 强正规化：有早年的形式化。
+   - groupoid 模型：Lean 4 里有专门的项目。
+   - sum-check 可靠性：有形式化。
+
+   以上是我的记忆，没有逐一核对，外发前请自行确认。
+
+## 已完成的部分
+
+新模块 `Start/QbfArith.lean`，已接入 `Start.lean` 并在 `Start/Capstones.lean` 注册：
+- `QBF.arith`：Shamir 的算术化，定义在任意交换环上。
+- `QBF.arith_bool`：在 0/1 输入上恰好算出真值。
+- `QBF.tqbf_iff_arith`：闭公式为真，当且仅当其算术化等于 1（任意非平凡交换环都成立）。一个直接后果是对素数 p 没有额外条件，验证者可以自己用试除法找一个多项式大小的素数。
+- `QBF.arithPoly` / `eval_arithPoly`：同一映射的多项式版本。
+- `Polynomial.card_eval_eq_le`（以及概率形式 `_div`）：sum-check 的单轮可靠性。有限域上两个不同的、度数 ≤ d 的多项式至多在 d 个点上相等。
+
+这两块对应任务板上的 `M21-QBF-ARITH` 和 `M21-SUMCHECK-ROUND`，已标为 `DONE_STRONG`，证据在 `docs/goal/evidence/M21-QBF-ARITH.md`。
+
+## 优先级上的差异
+
+- **IP = PSPACE** 同意排第一，但建议先做 `PSPACE ⊆ IP` 这一半。
+- **"单步层写带程序"是共同瓶颈**，值得单独作为一条主线：TQBF 完全性、Krivine 空间类、Immerman–Szelepcsényi、空间层级、`IP ⊆ PSPACE` 这五个都卡在这里。
+- **最优归约**我不建议列进前三，先做 Lévy 的 families 把问题陈述清楚。
+- **性价比最高的短任务**是抽象 Löb、resolution 加 Haken、以及 Kleene 树。
+- 新行的 rank 接在 M20 之后，没有改动现有队列顺序。要提前做，改 rank 即可。
+
+## 构建与交付
+
+- 这次收到的 `lake-manifest.json` 又是坏的（包名、Mathlib 版本不对，缺 `cslib`），而且预装的 Mathlib 是给 Lean v4.28 编译的。我重新解析了依赖（Lean v4.33.0，Mathlib `v4.33.0`），修好后提交了。
+- `scripts/*.sh` 的可执行位又丢了，已恢复并提交。这两个问题每次都出现，很可能是上传环节改写了文件，建议在你那边查一下。
+- 全树 `lake build` 成功（9185 jobs）。无 `sorry`（466 个模块），导入闭包检查、manifest 检查、任务板校验和 `scripts/pack_gate.sh HEAD` 全部通过。
+- 新定理只依赖 `propext`、`Classical.choice`、`Quot.sound`。
+- 所有改动已提交；`ARISTOTLE_SUMMARY.md` 没有改动。
+
 # Summary of changes for run c2b75df7-0746-46a4-a1f4-5618528c69da
 ## 结论先说
 
