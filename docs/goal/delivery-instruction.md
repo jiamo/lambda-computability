@@ -65,6 +65,12 @@ omitting cslib. That manifest fails scripts/check_manifest.py, so the command ab
 cannot have produced those archives: pack_gate.sh would have exited first and no
 tarball would exist. Something else is packing them.
 
+There is a second symptom. The delivery numbered 21 and the delivery numbered 1 carry
+the same work -- identical docs/related-work.md, identical Start/SpaceProgLib.lean,
+identical task-board statuses -- but different archive checksums, and the second
+contains nothing the first did not. So a batch was packed and handed over twice, under
+two numbers, with no commit between them.
+
 So, in the report: what command or process actually produces the file that is handed
 over, and from which directory? Do not guess -- check, and quote what you find. If the
 packaging is outside your control, say that; it is a more useful answer than another
