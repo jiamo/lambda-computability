@@ -92,8 +92,8 @@ computability.
 | 18 | Cook–Levin: SAT, CIRCUIT-SAT and k-SAT (k ≥ 3) are NP-complete | `Start/CookLevinNPHard.lean` : `Complexity.npComplete_SAT`; `Start/SatToCircuitCob.lean` : `Complexity.npComplete_CSAT`; `Start/ThreeSat.lean` : `Complexity.npComplete_KSAT` | Coq: Gäher–Kunze, ITP 2021 (`coq-library-complexity`, `NP/SAT`). Isabelle AFP *The Cook-Levin theorem* (Balbach, 2023). Lean repositories found by search (`EdouardBonnet/cook-levin`, `PierreSenellart/descriptive-complexity`, others) | [V] Coq README; [V] AFP page; Lean repositories: description only |
 | 19 | Savitch's theorem, in the memory model of a stack machine | `Start/SavitchSpace.lean` : `Complexity.Space.savitch_accepts_iff`, `Complexity.Space.savitch_poly_memory` | Lean `EdouardBonnet/savitch`, whose description reads "Lean statements, finite reachability proofs, and explicit machine obligations" | description only; otherwise [N] |
 | 20 | P ⊆ PSPACE on an offline Turing machine | `Start/CobhamPspace.lean` : `Complexity.Space.pspace_of_inP` | none known to me | [N] |
-| 21 | TQBF is PSPACE-hard (completeness open; see §4) | `Start/QbfCobReduction.lean` : `Complexity.Qbf.QBF.pspaceHard_tqbfLang` | none known to me | [N] |
-| 22 | Baker–Gill–Solovay, separating half: some oracle `B` with `P^B ≠ NP^B` | `Start/BakerGillSolovay.lean` : `Complexity.bgs_different`; `Start/Relativization.lean` : `Complexity.peqnp_does_not_relativize` | none known to me | [N] |
+| 21 | TQBF is PSPACE-complete (hardness and, since a later run, membership) | `Start/QbfCobReduction.lean` : `Complexity.Qbf.QBF.pspaceHard_tqbfLang`; `Start/QbfEvalCob.lean` : `Complexity.Space.pspaceComplete_tqbfLang` | none known to me | [N] |
+| 22 | Baker–Gill–Solovay: some oracle `B` with `P^B ≠ NP^B` and (by a self-referential construction) some `A` with `P^A = NP^A`; the relativization barrier with no hypothesis | `Start/BakerGillSolovay.lean` : `Complexity.bgs_different`; `Start/CollapsingOracle.lean` : `Complexity.bgs_equal`; `Start/Relativization.lean` : `Complexity.no_relativizing_resolution` | none known to me | [N] |
 | 23 | Shamir arithmetization of QBF; one-round sum-check soundness | `Start/QbfArith.lean` : `Complexity.Qbf.QBF.tqbf_iff_arith`, `Polynomial.card_eval_eq_le` | Lean `Verified-zkEVM/ArkLib` has a `ProofSystem/Sumcheck` directory | [V] directory listing only; contents not inspected |
 | 24 | Krivine machine: β-steps are a polynomial time cost for weak head evaluation; one transition is a Cobham term | `Start/KrivineBound.lean` : `Krivine.eval_cost`; `Start/KrivineHeapCost.lean` : `Krivine.Impl.eval_impl_cost`; `Start/KrivineCobStep.lean` : `Krivine.Impl.eval_impl_cob_cost` | Coq: Forster–Kunze–Smolka–Wuttke, *time invariance thesis for weak call-by-value λ*, ITP 2021; Forster–Kunze–Roth, *the weak call-by-value λ-calculus is reasonable for both time and space*, POPL 2020. A HOL4 translation of the POPL 2020 development (`examples/lambda/wcbv-reasonable`) | [V] Coq READMEs; [V] HOL4 README |
 | 25 | Krivine machine: space measured by live cells, garbage collection, `O(s log s)` bits on a work tape | `Start/KrivineSpaceRun.lean` : `Krivine.Impl.eval_impl_space`; `Start/KrivineSpaceConfig.lean` : `Krivine.Impl.spaceConfig_space_le_of_run_budget` | the same Coq and HOL4 developments (row 24); HOL4 `examples/lambda/cbpv-reasonable` (heap-machine space simulation) | [V] READMEs |
@@ -492,11 +492,14 @@ Readers comparing rows 18–22 with machine-based developments should know these
   PSPACE` on the offline machine.** `Complexity.Space.savitch_poly_memory` bounds
   `memBits` of a `Trace`. The library proves only `PSPACE ⊆ NPSPACE`
   (`Complexity.Space.npspace_of_pspace`).
-- **TQBF is PSPACE-hard but not proved PSPACE-complete.** Membership is the open task
-  `M14-TQBF-IN-PSPACE`. Only a memory bound for the evaluator is proved
-  (`Complexity.Qbf.tqbf_memBits_le_length_enc`, `Start/QbfCodeSpace.lean`).
-- **Baker–Gill–Solovay: only the separating oracle.** The collapsing oracle is the open
-  task `M15-BGS-EQUAL`.
+- **TQBF: resolved since this document was written.** TQBF is now proved PSPACE-complete
+  (`Complexity.Space.pspaceComplete_tqbfLang`, `Start/QbfEvalCob.lean`); the membership goes
+  through an iteration of Cobham terms rather than the stack-machine evaluator.
+- **Baker–Gill–Solovay: the collapsing oracle is not the textbook one.** Both halves are
+  proved (`Complexity.bgs_different`, `Complexity.bgs_equal`), so the relativization barrier
+  `Complexity.no_relativizing_resolution` has no hypothesis. The collapsing oracle is a
+  self-referential construction (`Start/CollapsingOracle.lean`), not a `PSPACE`-complete
+  language: `P^TQBF = NP^TQBF` is the open task `M15-BGS-EQUAL`.
 
 ## 5. What the library is not
 

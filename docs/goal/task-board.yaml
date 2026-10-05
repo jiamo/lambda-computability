@@ -3782,11 +3782,12 @@ tasks:
 
   - id: M14-TQBF-PSPACE-HARD
     priority: P2
-    status: DONE_WEAK
+    status: DONE_STRONG
     track: theory/complexity
     title: "TQBF is PSPACE-hard, hence PSPACE-complete"
-    latest_evidence: "docs/goal/evidence/M14-TQBF-PSPACE-HARD.md"
-    open_boundary: "Hardness is proved: Complexity.Qbf.QBF.pspaceHard_tqbfLang and .npspaceHard_tqbfLang reduce every language of (nondeterministic) polynomial space to Complexity.Qbf.tqbfLang by a single Cobham term of the input (Complexity.Qbf.QBF.redTerm, .eval_redTerm), which is a polynomial-time many-one reduction in the sense of Complexity.PolyManyOne. What is missing for completeness is the membership TQBF in PSPACE, the open task M14-TQBF-IN-PSPACE; the general bridge it needs is now in place (M14-SPACE-COMPILE), and the remaining gap is named as M14-QBF-STEP-PROG: the tape program performing one step of the evaluator of Start/Qbf.lean and its bridge lemma. Only with it can Complexity.Qbf.pspaceComplete_TQBF be stated."
+    latest_evidence: "docs/goal/evidence/M14-TQBF-IN-PSPACE.md"
+    open_boundary: ""
+    terminal_statement: "Complexity.Qbf.pspaceComplete_TQBF (= Complexity.Space.pspaceComplete_tqbfLang) : Complexity.Space.PSPACEComplete Complexity.Qbf.tqbfLang; hardness Complexity.Qbf.QBF.pspaceHard_tqbfLang and .npspaceHard_tqbfLang (Start/QbfCobReduction.lean), membership Complexity.Qbf.tqbf_pspace (Start/QbfEvalCob.lean)"
     milestone: M14
     depends_on:
       - M14-QBF-REACH-FORMULA
@@ -4141,10 +4142,11 @@ tasks:
 
   - id: M14-QBF-STEP-PROG
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: theory/complexity
     title: "The bridge lemma for the QBF evaluator: a tape program performing one of its steps"
-    latest_evidence: "docs/goal/evidence/M14-SPACE-COMPILE.md"
+    terminal_statement: "Complexity.Qbf.EvalW.eval_stepT : the six Cobham terms Complexity.Qbf.EvalW.stepT compute one step of the word evaluator Complexity.Qbf.EvalW.qstep on every state; the tape program for one step is Complexity.Space.iterBody (the compiled step terms and the copy-back), with bridge lemma Complexity.Space.runs_iterBody"
+    latest_evidence: "docs/goal/evidence/M14-TQBF-IN-PSPACE.md"
     open_boundary: ""
     milestone: M14
     depends_on:
@@ -4152,9 +4154,9 @@ tasks:
       - M14-QBF-CODE-SPACE
     rank: 936
     exit_criteria:
-      - "A binary encoding of the states of the evaluator of Start/Qbf.lean (the phase as a pointer into the input code, the assignment, the stack of records with pointers and variable indices) as configurations of Start/SpaceMachine.lean, the initial state as the initial configuration, with the length of the encoding O(n^2) in the length n of the code."
-      - "An abstract machine (Complexity.Space.AbsMachine) on input words whose run on the code of a closed formula is the evaluator's run, halting and accepting exactly when the value is true (a rejecting run loops), and whose states on other words are handled by a decoding phase."
-      - "A tape program body and test with the bridge lemma of Complexity.Space.Prog.realizes_loop: the test fails exactly on halting states and the body executes each abstract step on the encoding within the bound."
+      - "A word encoding of the states of an evaluator of quantified Boolean formulas working on their codes (Start/QbfEvalMachine.lean: Complexity.Qbf.EvalW.QS, six words), with every reachable state polynomially bounded in the length of the input (Complexity.Qbf.EvalW.inv_iterate)."
+      - "The evaluator halts on every word and accepts exactly Complexity.Qbf.tqbfLang (Complexity.Qbf.EvalW.halts, Complexity.Qbf.EvalW.accepts_iff)."
+      - "A tape program performing one step on the encoding, with its bridge lemma: the step as Cobham terms (Complexity.Qbf.EvalW.eval_stepT), compiled by the verified compiler of M21-COBHAM-TO-SPACE into Complexity.Space.iterBody (Complexity.Space.runs_iterBody). Revised from the original criterion, which named Complexity.Space.Prog.realizes_loop; the loop used is Complexity.Space.Tracks.runs_whileNE."
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
@@ -4163,11 +4165,12 @@ tasks:
 
   - id: M14-TQBF-IN-PSPACE
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: theory/complexity
     title: "TQBF lies in PSPACE: the evaluator as a space-bounded machine"
-    latest_evidence: "docs/goal/evidence/M14-SPACE-COMPILE.md"
-    open_boundary: "Nothing is proved beyond the pieces: the memory bound 2n^2 + 3n of the evaluator in the length of the code (M14-QBF-CODE-SPACE) and, since M14-SPACE-COMPILE, the general bridge that turns a realization into DSPACE membership (Complexity.Space.Realizes.pspace, Complexity.Space.Prog.dspace_loop). This task is the instance: once M14-QBF-STEP-PROG supplies the tape program and its bridge lemma, Complexity.Space.Prog.dspace_loop with the bound of M14-QBF-CODE-SPACE gives Complexity.Space.PSPACE Complexity.Qbf.tqbfLang, and with the hardness already proved, Complexity.Qbf.pspaceComplete_TQBF."
+    terminal_statement: "Complexity.Qbf.tqbf_pspace : Complexity.Space.PSPACE Complexity.Qbf.tqbfLang; general tool Complexity.Space.pspace_of_cobIter (Start/CobhamIterate.lean): iterating Cobham terms through polynomially bounded states decides in polynomial space"
+    latest_evidence: "docs/goal/evidence/M14-TQBF-IN-PSPACE.md"
+    open_boundary: ""
     milestone: M14
     depends_on:
       - M14-QBF-WORD-LANG
@@ -4187,10 +4190,11 @@ tasks:
 
   - id: M15-ORACLE-PROG
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: theory/complexity
     title: "Tape programs for oracle machines, and NP^A in PSPACE^A"
-    latest_evidence: "docs/goal/evidence/M21-COBHAM-TO-SPACE.md"
+    terminal_statement: "Complexity.Space.OProg : tape programs with query-tape instructions (qbit appends the scanned bit to the query tape, ask branches on the oracle's answer); Complexity.Space.OProg.omachine with omachine_wellFormed and omachine_deterministic : the compiler into oracle machines Complexity.Space.OMachine; Complexity.Space.OProg.odspace_of_oexec and Complexity.Space.OProg.inPSPACE_rel_of_oruns : the analogue of Complexity.Space.Prog.dspace_of_runs for ODSPACE and PSPACE^A; Complexity.Space.OProg.ORunsQ.lift : every specification of an unrelativized program is one of its lift; Complexity.Space.OProg.oruns_queryReg : the query gadget; Complexity.Space.OProg.compileQ with Complexity.Space.OProg.compileQOK : the Cobham compiler extended to Complexity.CobQ; Complexity.Space.inPSPACE_rel_of_inP_rel : P^A subseteq PSPACE^A; Complexity.Space.inPSPACE_rel_of_inNP_rel : NP^A subseteq PSPACE^A for every oracle A"
+    latest_evidence: "docs/goal/evidence/M15-ORACLE-PROG.md"
     open_boundary: ""
     milestone: M15
     depends_on:
@@ -4208,12 +4212,12 @@ tasks:
 
   - id: M15-ORACLE-CLASSES
     priority: P1
-    status: DONE_WEAK
+    status: DONE_STRONG
     track: theory/complexity
     title: "Relativized complexity classes: P^A, NP^A and PSPACE^A"
-    terminal_statement: "Complexity.CobQ with Complexity.CobQ.run, .eval, .queries : Cobham's class with an oracle query, evaluated to a value and to the list of words the oracle was asked about; Complexity.CobQ.polyLen, .polyQueryCount, .polyQueryLen : the value, the number of queries and the length of every query are polynomially bounded, uniformly in the oracle; Complexity.CobQ.run_congr : the use principle; Complexity.InP_rel, Complexity.InNP_rel, Complexity.Space.InPSPACE_rel : the relativized classes; Complexity.inP_rel_empty_iff and Complexity.inNP_rel_empty_iff : the empty oracle gives back P and NP; Complexity.InP.to_rel, Complexity.InNP.to_rel, Complexity.Space.inPSPACE_rel_of_pspace : P subseteq P^A, NP subseteq NP^A, PSPACE subseteq PSPACE^A; Complexity.inNP_rel_of_inP_rel : P^A subseteq NP^A; Complexity.inP_rel_oracle : the oracle is decided in P^A"
+    terminal_statement: "Complexity.CobQ with Complexity.CobQ.run, .eval, .queries : Cobham's class with an oracle query, evaluated to a value and to the list of words the oracle was asked about; Complexity.CobQ.polyLen, .polyQueryCount, .polyQueryLen : the value, the number of queries and the length of every query are polynomially bounded, uniformly in the oracle; Complexity.CobQ.run_congr : the use principle; Complexity.InP_rel, Complexity.InNP_rel, Complexity.Space.InPSPACE_rel : the relativized classes; Complexity.inP_rel_empty_iff and Complexity.inNP_rel_empty_iff : the empty oracle gives back P and NP; Complexity.InP.to_rel, Complexity.InNP.to_rel, Complexity.Space.inPSPACE_rel_of_pspace : P subseteq P^A, NP subseteq NP^A, PSPACE subseteq PSPACE^A; Complexity.inNP_rel_of_inP_rel : P^A subseteq NP^A; Complexity.inP_rel_oracle : the oracle is decided in P^A; Complexity.Space.inPSPACE_rel_of_inP_rel and Complexity.Space.inPSPACE_rel_of_inNP_rel : P^A subseteq PSPACE^A and NP^A subseteq PSPACE^A for every oracle A"
     latest_evidence: "docs/goal/evidence/M15-ORACLE-CLASSES.md"
-    open_boundary: "NP^A subseteq PSPACE^A is not proved. The unrelativized compiler from Cobham terms to space-bounded machines now exists (M21-COBHAM-TO-SPACE, Complexity.Space.pspace_of_inP), but the relativized classes use the oracle machine Complexity.Space.OMachine, for which there are no tape programs: the missing construction is M15-ORACLE-PROG (tape programs with query-tape instructions compiled into OMachine, the Cobham compiler extended by the query constructor of CobQ, and a loop over all witnesses of polynomially bounded length). Everything else in the exit criteria is done."
+    open_boundary: ""
     milestone: M15
     depends_on:
       - M13-SPACE-MODEL
@@ -4234,7 +4238,7 @@ tasks:
     track: theory/complexity
     title: "An oracle that collapses: P^A = NP^A for A a PSPACE-complete language"
     latest_evidence: "docs/goal/evidence/M13-SAVITCH-SPACE.md"
-    open_boundary: ""
+    open_boundary: "Both named ingredients are proved: NP^A in PSPACE^A for every oracle (Complexity.Space.inPSPACE_rel_of_inNP_rel) and TQBF in PSPACE (Complexity.Qbf.tqbf_pspace, M14-TQBF-IN-PSPACE). What is missing is PSPACE^TQBF in PSPACE: a space-bounded oracle machine whose queries are answered by a space-bounded subroutine deciding TQBF; the easy half PSPACE in P^TQBF follows from the hardness reduction (one query to the reduced word)."
     milestone: M15
     depends_on:
       - M15-ORACLE-CLASSES
@@ -4270,17 +4274,39 @@ tasks:
       - "python3 scripts/check_closure.py"
       - "lake build"
 
-  - id: M15-NO-RELATIVIZING-PROOF
+  - id: M15-BGS-COLLAPSE
     priority: P1
-    status: DONE_WEAK
+    status: DONE_STRONG
     track: theory/complexity
-    title: "The relativization barrier: no relativizing argument settles P vs NP"
-    terminal_statement: "Complexity.Relativizes : a statement about the classes holds with every oracle attached; Complexity.PneNP_rel : the statement P^A != NP^A; Complexity.peqnp_does_not_relativize : P = NP does not relativize, from Complexity.bgs_different; Complexity.pnenp_does_not_relativize and Complexity.no_relativizing_resolution : given an oracle with P^A = NP^A, neither P = NP nor P != NP relativizes"
-    latest_evidence: "docs/goal/evidence/M15-NO-RELATIVIZING-PROOF.md"
-    open_boundary: "The unconditional half is proved: P = NP does not relativize, by the separating oracle of Start/BakerGillSolovay.lean. The other half is stated conditionally on the collapsing oracle of M15-BGS-EQUAL -- an oracle with P^A = NP^A, classically a PSPACE-complete language -- which the library does not have: P subseteq PSPACE is now proved (M21-COBHAM-TO-SPACE), but the collapsing oracle needs NP^A subseteq PSPACE^A (M15-ORACLE-PROG, M15-ORACLE-CLASSES) and TQBF in PSPACE (M14-TQBF-IN-PSPACE)."
+    title: "An oracle that collapses: P^A = NP^A by a self-referential construction"
+    terminal_statement: "Complexity.Collapse.oracleC : the oracle answering, on a padded query 1^K 0 1^L 0 1^c 0 x, whether the oracle verifier with code c, run with the oracle restricted to words shorter than the query, accepts (x, w) for some |w| <= L; Complexity.Collapse.oracleC_eq : its fixed-point equation; Complexity.Collapse.peqNP_rel_oracleC : every NP^A language is decided in P^A by a single query; Complexity.bgs_equal : there is an oracle A with P^A = NP^A"
+    latest_evidence: "docs/goal/evidence/M15-BGS-COLLAPSE.md"
+    open_boundary: ""
     milestone: M15
     depends_on:
-      - M15-BGS-EQUAL
+      - M15-ORACLE-CLASSES
+    rank: 1025
+    exit_criteria:
+      - "An oracle A is defined, by well-founded recursion on the length of the query, whose answer on a padded query is the acceptance of the encoded NP^A verifier run with A restricted to shorter words."
+      - "By the use principle and the polynomial bound on query lengths, every NP^A language is decided in P^A by one query."
+      - "Complexity.bgs_equal : there is an oracle A with P^A = NP^A, with no hypothesis."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M15-NO-RELATIVIZING-PROOF
+    priority: P1
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "The relativization barrier: no relativizing argument settles P vs NP"
+    terminal_statement: "Complexity.Relativizes : a statement about the classes holds with every oracle attached; Complexity.PneNP_rel : the statement P^A != NP^A; Complexity.peqnp_does_not_relativize : P = NP does not relativize, from Complexity.bgs_different; Complexity.pnenp_does_not_relativize : P != NP does not relativize, from Complexity.bgs_equal; Complexity.no_relativizing_resolution : neither P = NP nor P != NP relativizes, with no hypothesis"
+    latest_evidence: "docs/goal/evidence/M15-NO-RELATIVIZING-PROOF.md"
+    open_boundary: ""
+    milestone: M15
+    depends_on:
+      - M15-BGS-COLLAPSE
       - M15-BGS-DIFFERENT
     rank: 1030
     exit_criteria:
@@ -5154,10 +5180,11 @@ tasks:
 
   - id: M22-RESOLUTION
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: theory/proof-complexity
     title: "Resolution refutations: soundness and refutational completeness"
-    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    terminal_statement: "Complexity.Sat.Deriv F C with Complexity.Sat.Deriv.size : resolution derivations from a CNF of Start/Sat.lean; Complexity.Sat.unsat_of_refutation (soundness), Complexity.Sat.refutation_of_unsat (refutational completeness), Complexity.Sat.refutation_iff_unsat (Start/Resolution.lean)"
+    latest_evidence: "docs/goal/evidence/M22-RESOLUTION.md"
     open_boundary: ""
     milestone: M22
     depends_on: []
@@ -5165,7 +5192,28 @@ tasks:
     exit_criteria:
       - "Resolution derivations from a CNF, with their size."
       - "Soundness: a CNF with a refutation is unsatisfiable. Completeness: every unsatisfiable CNF has a refutation."
-      - "Resolution is a proof system in the sense of M22-COOK-RECKHOW."
+      - "The third original criterion, that resolution is a proof system in the sense of M22-COOK-RECKHOW, needs that notion first and is the separate row M22-RESOLUTION-PROOF-SYSTEM."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M22-RESOLUTION-PROOF-SYSTEM
+    priority: P2
+    status: TODO_READY
+    track: theory/proof-complexity
+    title: "Resolution is a Cook-Reckhow proof system"
+    latest_evidence: "docs/goal/evidence/M22-RESOLUTION.md"
+    open_boundary: ""
+    milestone: M22
+    depends_on:
+      - M22-RESOLUTION
+      - M22-COOK-RECKHOW
+    rank: 1855
+    exit_criteria:
+      - "A binary encoding of resolution refutations and a Cobham term checking it, mapping exactly the codes of refutations onto the codes of the CNFs they refute (Complexity.Sat.refutation_iff_unsat gives that the image is exactly the unsatisfiable CNFs)."
+      - "Resolution as an instance of the proof systems of M22-COOK-RECKHOW."
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
@@ -5476,10 +5524,11 @@ tasks:
 
   - id: M24-ABSTRACT-LOB
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: theory/logic
     title: "Loeb's theorem and the second incompleteness theorem from the derivability conditions"
-    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    terminal_statement: "Lambda.Lob.ProvabilitySystem.lob : |- Box B -> B implies |- B; .lob_internal : |- Box(Box B -> B) -> Box B; .not_thm_con : a consistent system does not prove Box bot -> bot; hypotheses K, S, MP, D1-D3 and the diagonal lemma for Box X -> B, satisfiable by the consistent system .trueBox (Start/AbstractLob.lean)"
+    latest_evidence: "docs/goal/evidence/M24-ABSTRACT-LOB.md"
     open_boundary: ""
     milestone: M24
     depends_on: []

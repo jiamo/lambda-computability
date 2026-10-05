@@ -198,8 +198,12 @@ import Start.OracleDiag
 import Start.OracleEnum
 import Start.BakerGillSolovay
 import Start.Relativization
+import Start.OracleNPSpace
 import Start.OracleUse
 import Start.Priority
+import Start.QbfEvalCob
+import Start.AbstractLob
+import Start.Resolution
 
 /-! ## Interfaces of the untyped calculus
 
@@ -2565,16 +2569,50 @@ the enumeration is onto, no term decides it (`Complexity.BGS.not_inP_rel_langB`)
 `Start/Relativization.lean` says what it means for a statement about the classes to relativize
 (`Complexity.Relativizes`: it holds with every oracle attached) and draws the consequence of the
 separating oracle: `Complexity.peqnp_does_not_relativize`, no argument whose conclusion survives
-every oracle proves `P = NP`.  The companion half is conditional, because the collapsing oracle is
-not in the library: given any oracle with `P^A = NP^A`, `Complexity.no_relativizing_resolution`
-gives the barrier in full — neither `P = NP` nor `P ≠ NP` relativizes.
+every oracle proves `P = NP`.  The companion half uses the collapsing oracle of
+`Start/CollapsingOracle.lean`: `Complexity.Collapse.oracleC` answers, on a padded query
+`1^K 0 1^L 0 1^c 0 x`, whether the verifier with code `c`, run with the oracle restricted to
+shorter words, accepts `(x, w)` for some `|w| ≤ L`; its fixed-point equation is
+`Complexity.Collapse.oracleC_eq`, and `Complexity.Collapse.peqNP_rel_oracleC` decides every
+`NP^A` language in `P^A` by one query, so `Complexity.bgs_equal` gives an oracle with
+`P^A = NP^A`.  Hence `Complexity.pnenp_does_not_relativize` and, with no hypothesis,
+`Complexity.no_relativizing_resolution`: neither `P = NP` nor `P ≠ NP` relativizes.
 -/
+
+#check @Complexity.Collapse.oracleC
+#check @Complexity.Collapse.oracleC_eq
+#check @Complexity.Collapse.peqNP_rel_oracleC
+#check @Complexity.bgs_equal
 
 #check @Complexity.Relativizes
 #check @Complexity.PneNP_rel
 #check @Complexity.peqnp_does_not_relativize
+#check @Complexity.pnenp_does_not_relativize_of
 #check @Complexity.pnenp_does_not_relativize
 #check @Complexity.no_relativizing_resolution
+
+/-!
+### Tape programs with an oracle, and `NP^A ⊆ PSPACE^A`
+
+`Start/OracleProg.lean` extends the tape programs by query-tape instructions
+(`Complexity.Space.OProg`: append the scanned bit to the query tape, ask the oracle and branch on
+the answer), compiles them into well-formed deterministic oracle machines
+(`Complexity.Space.OProg.omachine`) and turns an execution into membership in `DSPACE^A`
+(`Complexity.Space.OProg.odspace_of_oexec`).  `Start/OracleProgLib.lean` lifts the whole
+combinator library of the unrelativized programs (`Complexity.Space.OProg.ORunsQ.lift`) and adds
+the query gadget `Complexity.Space.OProg.queryReg`; `Start/OracleCobSpace.lean` extends the
+Cobham compiler to oracle terms (`Complexity.Space.OProg.compileQ`, correct by
+`Complexity.Space.OProg.compileQOK`).  `Start/OracleNPSpace.lean` gives `P^A ⊆ PSPACE^A` and, by a
+loop over all witnesses of polynomially bounded length, **`NP^A ⊆ PSPACE^A`** for every oracle.
+-/
+
+#check @Complexity.Space.OProg.odspace_of_oexec
+#check @Complexity.Space.OProg.ORunsQ.lift
+#check @Complexity.Space.OProg.oruns_queryReg
+#check @Complexity.Space.OProg.compileQOK
+#check @Complexity.Space.OProg.inPSPACE_rel_of_oruns
+#check @Complexity.Space.inPSPACE_rel_of_inP_rel
+#check @Complexity.Space.inPSPACE_rel_of_inNP_rel
 
 /-!
 ### The use of an oracle computation
@@ -2649,3 +2687,69 @@ specification to `DSPACE`/`PSPACE` (`Complexity.Space.Prog.dspace_of_runs`,
 #check @Complexity.Space.compileOK
 #check @Complexity.Space.runs_cobDecider
 #check @Complexity.Space.pspace_of_inP
+
+/-!
+### `TQBF` is `PSPACE`-complete
+
+`Start/CobhamIterate.lean` runs on a tape an iteration whose initial state and step are Cobham
+terms: `Complexity.Space.pspace_of_cobIter` puts in `PSPACE` every language decided by iterating a
+Cobham step, through states of polynomially bounded size, however many rounds the iteration takes.
+`Start/QbfEvalMachine.lean` gives an evaluator of quantified Boolean formulas working on words
+(`Complexity.Qbf.EvalW.qstep`): from the initial state it halts on every word
+(`Complexity.Qbf.EvalW.halts`), accepts exactly the words of `Complexity.Qbf.tqbfLang`
+(`Complexity.Qbf.EvalW.accepts_iff`), and every reachable state satisfies an invariant bounding
+all its components polynomially (`Complexity.Qbf.EvalW.inv_iterate`).  `Start/QbfEvalCob.lean`
+writes the step of that evaluator as six Cobham terms (`Complexity.Qbf.EvalW.eval_stepT`), so
+that the iteration of the terms is the run of the evaluator (`Complexity.Qbf.EvalW.cobIter_eq`).
+Together: **`TQBF ∈ PSPACE`** (`Complexity.Qbf.tqbf_pspace`) and, with the hardness of
+`Start/QbfHard.lean`, **`TQBF` is `PSPACE`-complete** (`Complexity.Space.pspaceComplete_tqbfLang`).
+-/
+
+#check @Complexity.Space.pspace_of_cobIter
+#check @Complexity.Qbf.EvalW.halts
+#check @Complexity.Qbf.EvalW.accepts_iff
+#check @Complexity.Qbf.EvalW.inv_iterate
+#check @Complexity.Qbf.EvalW.eval_stepT
+#check @Complexity.Qbf.EvalW.cobIter_eq
+#check @Complexity.Qbf.tqbf_pspace
+#check @Complexity.Space.pspaceComplete_tqbfLang
+#check @Complexity.Qbf.pspaceComplete_TQBF
+
+/-!
+### Löb's theorem and the second incompleteness theorem, abstractly
+
+`Start/AbstractLob.lean` derives both from the Hilbert–Bernays–Löb derivability conditions and the
+diagonal lemma, for an abstract theory with a provability operator
+(`Lambda.Lob.ProvabilitySystem`): **Löb's theorem** `⊢ □B → B ⟹ ⊢ B`
+(`Lambda.Lob.ProvabilitySystem.lob`), its formalized version `⊢ □(□B → B) → □B`
+(`Lambda.Lob.ProvabilitySystem.lob_internal`) and **the second incompleteness theorem**: a
+consistent system does not prove `□⊥ → ⊥` (`Lambda.Lob.ProvabilitySystem.not_thm_con`).  The
+hypotheses are satisfiable by a consistent system
+(`Lambda.Lob.ProvabilitySystem.trueBox_consistent`).
+-/
+
+#check @Lambda.Lob.ProvabilitySystem
+#check @Lambda.Lob.ProvabilitySystem.lob
+#check @Lambda.Lob.ProvabilitySystem.lob_internal
+#check @Lambda.Lob.ProvabilitySystem.not_thm_con
+#check @Lambda.Lob.ProvabilitySystem.not_thm_reflection
+#check @Lambda.Lob.ProvabilitySystem.trueBox_consistent
+
+/-!
+### Resolution: soundness and refutational completeness
+
+`Start/Resolution.lean` defines resolution derivations from a CNF of `Start/Sat.lean`
+(`Complexity.Sat.Deriv`, with their size `Complexity.Sat.Deriv.size`) and proves **soundness** —
+a CNF with a refutation is unsatisfiable (`Complexity.Sat.unsat_of_refutation`) — and
+**refutational completeness** — every unsatisfiable CNF has a refutation
+(`Complexity.Sat.refutation_of_unsat`), by the Davis–Putnam elimination of one variable at a time
+with the lifting lemma `Complexity.Sat.Deriv.lift`.
+-/
+
+#check @Complexity.Sat.Deriv
+#check @Complexity.Sat.Deriv.size
+#check @Complexity.Sat.Deriv.sound
+#check @Complexity.Sat.unsat_of_refutation
+#check @Complexity.Sat.Deriv.lift
+#check @Complexity.Sat.refutation_of_unsat
+#check @Complexity.Sat.refutation_iff_unsat

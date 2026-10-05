@@ -524,7 +524,17 @@ import Start.OracleSpace
 import Start.OracleDiag
 import Start.OracleEnum
 import Start.BakerGillSolovay
+import Start.CollapsingOracle
+import Start.OracleProg
+import Start.OracleProgLib
+import Start.OracleCobSpace
+import Start.OracleNPSpace
 import Start.Relativization
 import Start.OracleUse
 import Start.Priority
+import Start.QbfEvalMachine
+import Start.CobhamIterate
+import Start.QbfEvalCob
+import Start.AbstractLob
+import Start.Resolution
 import Start.Capstones

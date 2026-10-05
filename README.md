@@ -457,14 +457,16 @@ The honest boundary: the deterministic simulation is exhibited on the stack mach
 is counted in bits of activation records, and not as an offline Turing machine; compiling it into
 that model — the routine half of the model-independence of space — is not formalized, so
 `NPSPACE = PSPACE` is not claimed as a theorem about `Complexity.Space.DSPACE`.  For the same
-reason the two space results above stop where they do: `TQBF` is proved `PSPACE`-hard but not
-`PSPACE`-*complete*, since membership `TQBF ∈ PSPACE` is available only as a memory bound on the
-evaluating stack machine — now measured against the length of the code of the formula,
-`2 n² + 3 n` bits, which is the bound an offline machine would have to respect
-(`Start/QbfCodeSpace.lean`) — and not as a machine of `Start/SpaceMachine.lean`,
-and the Krivine bound is a statement about the memory
+reason the Krivine bound is a statement about the memory
 measure, not yet a `DSPACE` membership (the missing half is a machine of that model performing
 Krivine transitions on the word).
+
+`TQBF` itself, by contrast, is now **`PSPACE`-complete** on the offline machine
+(`Complexity.Space.pspaceComplete_tqbfLang`, `Start/QbfEvalCob.lean`).  The membership half does not
+go through the stack machine: `Start/QbfEvalMachine.lean` gives an evaluator working on words, with
+every reachable state polynomially bounded; `Start/QbfEvalCob.lean` writes its step as six Cobham
+terms; and `Start/CobhamIterate.lean` runs any such iteration of Cobham terms on a tape in
+polynomial space (`Complexity.Space.pspace_of_cobIter`), giving `Complexity.Qbf.tqbf_pspace`.
 
 ### Relativization: the classes with an oracle
 
@@ -528,11 +530,25 @@ in the index is needed for the diagonalization.
 *relativizes* when it holds with every oracle attached (`Complexity.Relativizes`); the separating
 oracle says that `P = NP` does not
 (`Complexity.peqnp_does_not_relativize : ¬ Complexity.Relativizes Complexity.PeqNP_rel`), so no
-relativizing argument proves `P = NP`.  The other half is stated conditionally,
-`Complexity.no_relativizing_resolution`: from any oracle with `P^A = NP^A` it follows that neither
-side of the question is settled by a relativizing argument.  That collapsing oracle — classically
-a `PSPACE`-complete one — is the part the library does not have, for the same reason that
-`NP^A ⊆ PSPACE^A` is missing: time here is Cobham's class and space is the offline machine.
+relativizing argument proves `P = NP`.  The other half uses the collapsing oracle of
+`Start/CollapsingOracle.lean`.  It is not the classical `PSPACE`-complete oracle but a
+self-referential one: on a padded query `1^K 0 1^L 0 1^c 0 x`, `Complexity.Collapse.oracleC`
+answers whether the verifier with code `c`, run with the oracle restricted to shorter words, accepts
+`(x, w)` for some `|w| ≤ L`.  By the use principle and the polynomial bound on query lengths, every
+`NP^A` language is then decided in `P^A` by one query (`Complexity.Collapse.peqNP_rel_oracleC`).
+The barrier therefore holds with no hypothesis:
+
+```lean
+Complexity.bgs_equal : ∃ A : Complexity.Oracle, Complexity.PeqNP_rel A
+Complexity.no_relativizing_resolution :
+  ¬ Complexity.Relativizes Complexity.PeqNP_rel ∧ ¬ Complexity.Relativizes Complexity.PneNP_rel
+```
+
+`P^TQBF = NP^TQBF`, the textbook form of the collapsing half, is still open (`M15-BGS-EQUAL`).
+Both ingredients named for it earlier are now proved — `NP^A ⊆ PSPACE^A`
+(`Complexity.Space.inPSPACE_rel_of_inNP_rel`) and `TQBF ∈ PSPACE` (`Complexity.Qbf.tqbf_pspace`) —
+and what remains is `PSPACE^TQBF ⊆ PSPACE`: answering the oracle queries of a space-bounded oracle
+machine by a space-bounded subroutine.
 
 ### The frame a priority construction runs in
 
@@ -760,9 +776,9 @@ Public Lean 4 developments in this area, and how they relate (repository file li
   code of its formula is one Cobham term: **`TQBF` is `PSPACE`-hard**
   (`Start/QbfCobReduction.lean`), with the consequences of hardness in `Start/QbfHard.lean`: a
   polynomial-time algorithm for `TQBF` would decide every language of polynomial space in
-  polynomial time.  Completeness still needs the membership `TQBF ∈ PSPACE` on the offline machine
-  model; the memory of the evaluator is already bounded by `2 n² + 3 n` in the length `n` of the
-  code (`Start/QbfCodeSpace.lean`).  The first step towards `IP = PSPACE` is Shamir's
+  polynomial time.  With the membership `TQBF ∈ PSPACE` on the offline machine
+  (`Start/QbfEvalCob.lean`), **`TQBF` is `PSPACE`-complete**
+  (`Complexity.Space.pspaceComplete_tqbfLang`).  The first step towards `IP = PSPACE` is Shamir's
   arithmetization of formulas, exact on `0/1` values in every commutative ring, together with the
   one-round soundness bound of sum-check (`Start/QbfArith.lean`); the rest of that line is split
   into rows M21 of the task board (`docs/goal/proposed-M21-M24.md`).  On the λ-calculus side the word of a collected

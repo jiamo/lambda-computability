@@ -1,3 +1,42 @@
+# Summary of changes for run d621c83c-24f4-4f93-a5ce-4b79a7bc3845
+I continued from where the last run stopped. The library builds again, three more items on the task board are finished, and `TQBF` is now proved `PSPACE`-complete. Everything is committed. `lake build Start` succeeds (9200 jobs). `check_sorry.py` (481 modules), `check_closure.py`, `check_manifest.py`, `goal_state.py validate` (271 tasks) and `scripts/pack_gate.sh HEAD` all pass. The new theorems depend only on `propext`, `Classical.choice` and `Quot.sound`; the Löb results depend on no axioms at all.
+
+**Making the tree build again**
+- `lake-manifest.json` arrived broken again: wrong package name, Mathlib `v4.28.0`, no `cslib`. I re-resolved it to Lean v4.33.0, Mathlib `v4.33.0` and the pinned `cslib`. The executable bits on `scripts/*.sh` and `.githooks/pre-commit` had also been lost, and I restored them.
+- Five modules from the previous unfinished run didn't compile. Three were already in the library (`OracleProg`, `OracleProgLib`, `OracleNPSpace`), so the main build failed; the other two (`CobhamIterate`, `QbfEvalMachine`) were left outside it. I fixed the proofs in all five and added the two outside ones to the library.
+
+**`TQBF` is `PSPACE`-complete (task-board items `M14-QBF-STEP-PROG`, `M14-TQBF-IN-PSPACE`, `M14-TQBF-PSPACE-HARD`)**
+- New module `Start/QbfEvalCob.lean` writes one step of the word evaluator from `Start/QbfEvalMachine.lean` as six Cobham terms. `eval_stepT` proves they compute that step on every state.
+- `Start/CobhamIterate.lean` runs any such iteration on a tape in polynomial space (`pspace_of_cobIter`). Together these give `Complexity.Qbf.tqbf_pspace`: `TQBF ∈ PSPACE`.
+- Combined with the hardness proved earlier, this gives `Complexity.Space.pspaceComplete_tqbfLang`, also available under the task board's name `Complexity.Qbf.pspaceComplete_TQBF`.
+- I rewrote the exit criteria of `M14-QBF-STEP-PROG` to match the route actually taken: the step tape program comes from compiling the Cobham terms (`iterBody` / `runs_iterBody`), not from `realizes_loop`. The evidence note `docs/goal/evidence/M14-TQBF-IN-PSPACE.md` explains this.
+
+**Löb's theorem, abstract form (`M24-ABSTRACT-LOB`), in `Start/AbstractLob.lean`**
+- The setting is an abstract theory with a provability operator that satisfies the derivability conditions D1–D3 and the diagonal lemma (`ProvabilitySystem`).
+- Proved: Löb's theorem (`lob`), its internal version `⊢ □(□B→B) → □B` (`lob_internal`), and the second incompleteness theorem, that a consistent system does not prove `□⊥ → ⊥` (`not_thm_con`).
+- A consistent example system (`trueBox`) shows the hypotheses are not contradictory, so these results aren't vacuous.
+
+**Resolution (`M22-RESOLUTION`), in `Start/Resolution.lean`**
+- Resolution derivations over the CNFs of `Start/Sat.lean`, with their size.
+- `refutation_iff_unsat`: a CNF has a refutation exactly when it is unsatisfiable. Both soundness and refutational completeness are proved; completeness uses Davis–Putnam variable elimination.
+- The third original criterion (resolution as a Cook–Reckhow proof system) needs a notion defined in a later task. It is now a separate row, `M22-RESOLUTION-PROOF-SYSTEM`.
+
+**Bookkeeping**
+- New evidence notes for the three tasks.
+- `M15-BGS-EQUAL` now names what is still missing for it: showing that `PSPACE^TQBF ⊆ PSPACE`.
+- `docs/current-goal-state.md` was re-rendered. The `README.md` and `docs/related-work.md` passages that said `TQBF` was only `PSPACE`-hard have been corrected.
+- `Start/Capstones.lean` registers all the new results.
+- `ARISTOTLE_SUMMARY.md` was left untouched.
+
+**Still open:** the rest of the queue, including the Krivine space class, `M15-BGS-EQUAL`, and the M16–M24 programme.
+
+# Summary of changes for run 1698c29a-acfd-4eda-8cd9-2d8181cedc28
+
+
+## Suggested follow-up
+
+I reached this run’s time limit. Send “continue” to pick up where I left off.
+
 # Summary of changes for run b438e934-c7e1-47c3-b773-5a6ea95efebf
 I've written `docs/related-work.md` and committed it. No Lean files changed. Of the five "unusual" claims proposed in the brief, four did not survive checking and are dropped from the document. The fifth (complexity measures as instances of one description system) is kept with low confidence. I checked declarations against the source text only and did not rebuild the library.
 

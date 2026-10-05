@@ -181,7 +181,7 @@
 | 942 | `M14-QBF-REACH-FORMULA` | `P1` | `DONE_STRONG` | M13-SAVITCH-REACH, M13-QBF-SPACE | docs/goal/evidence/M14-QBF-REACH-FORMULA.md |  |
 | 946 | `M14-QBF-STEP-FORMULA` | `P1` | `DONE_STRONG` | M14-QBF-REACH-FORMULA, M13-SPACE-MODEL | docs/goal/evidence/M14-QBF-STEP-FORMULA.md |  |
 | 947 | `M14-QBF-PSPACE-FAMILY` | `P1` | `DONE_STRONG` | M14-QBF-STEP-FORMULA | docs/goal/evidence/M14-QBF-PSPACE-FAMILY.md |  |
-| 943 | `M14-TQBF-PSPACE-HARD` | `P2` | `DONE_WEAK` | M14-QBF-REACH-FORMULA, M14-QBF-STEP-FORMULA, M14-QBF-PSPACE-FAMILY, M14-QBF-WORD-LANG, M14-QBF-WORD-STREAM, M13-SAVITCH-SPACE | docs/goal/evidence/M14-TQBF-PSPACE-HARD.md | Hardness is proved: Complexity.Qbf.QBF.pspaceHard_tqbfLang and .npspaceHard_tqbfLang reduce every language of (nondeterministic) polynomial space to Complexity.Qbf.tqbfLang by a single Cobham term of the input (Complexity.Qbf.QBF.redTerm, .eval_redTerm), which is a polynomial-time many-one reduction in the sense of Complexity.PolyManyOne. What is missing for completeness is the membership TQBF in PSPACE, the open task M14-TQBF-IN-PSPACE; the general bridge it needs is now in place (M14-SPACE-COMPILE), and the remaining gap is named as M14-QBF-STEP-PROG: the tape program performing one step of the evaluator of Start/Qbf.lean and its bridge lemma. Only with it can Complexity.Qbf.pspaceComplete_TQBF be stated. |
+| 943 | `M14-TQBF-PSPACE-HARD` | `P2` | `DONE_STRONG` | M14-QBF-REACH-FORMULA, M14-QBF-STEP-FORMULA, M14-QBF-PSPACE-FAMILY, M14-QBF-WORD-LANG, M14-QBF-WORD-STREAM, M13-SAVITCH-SPACE | docs/goal/evidence/M14-TQBF-IN-PSPACE.md |  |
 | 1035 | `M14-KRIVINE-SPACE-CLASS` | `P1` | `TODO_READY` | M14-KRIVINE-SPACE-CONFIG, M14-SPACE-COMPILE | docs/goal/evidence/M14-KRIVINE-SPACE-CONFIG.md | The memory half is done (M14-KRIVINE-SPACE-CONFIG): the word of a collected state is a work tape of Start/SpaceMachine.lean and its length is that model's memory measure, O(s log s) in the live data. The run-level half of the simulation is now general (M14-SPACE-COMPILE): a realization in the sense of Complexity.Space.Realizes, or a loop program in the sense of Complexity.Space.Prog.realizes_loop, gives DSPACE membership with the bound on every reachable configuration. What is missing is the client's bridge lemma: a tape program performing one pass of Start/KrivineCobBin.lean on the word of a state, with its execution on the encoding of each state of the run, so that a language decided by a lambda-term within a space bound s lands in Complexity.Space.DSPACE (s * log s). |
 | 1036 | `M14-SPACE-REASONABLE` | `P2` | `TODO_NEEDS_DESIGN` | M14-KRIVINE-SPACE-CLASS | - | Nothing of this direction is formalised. It is the converse bridge to M14-SPACE-COMPILE: a compiler from a machine of Start/SpaceMachine.lean to a lambda-term, together with the analysis of the Krivine run of that term, showing its live-data peak polynomial (or linear) in the space of the machine; only with M14-KRIVINE-SPACE-CLASS does this give the two-directional statement that the lambda-calculus is a reasonable space cost model. |
 | 948 | `M14-QBF-WORD-LANG` | `P1` | `DONE_STRONG` | M14-QBF-PSPACE-FAMILY | docs/goal/evidence/M14-QBF-WORD-LANG.md |  |
@@ -198,13 +198,14 @@
 | 960 | `M14-PSPACE-HARDNESS-USE` | `P2` | `DONE_STRONG` | M14-TQBF-PSPACE-HARD | docs/goal/evidence/M14-TQBF-PSPACE-HARD.md |  |
 | 962 | `M14-QBF-CODE-SPACE` | `P1` | `DONE_STRONG` | M14-QBF-WORD-LANG | docs/goal/evidence/M14-QBF-CODE-SPACE.md |  |
 | 935 | `M14-SPACE-COMPILE` | `P1` | `DONE_STRONG` | M13-SPACE-MODEL | docs/goal/evidence/M14-SPACE-COMPILE.md |  |
-| 936 | `M14-QBF-STEP-PROG` | `P1` | `TODO_READY` | M14-SPACE-COMPILE, M14-QBF-CODE-SPACE | docs/goal/evidence/M14-SPACE-COMPILE.md |  |
-| 937 | `M14-TQBF-IN-PSPACE` | `P1` | `TODO_READY` | M14-QBF-WORD-LANG, M14-QBF-CODE-SPACE, M14-SPACE-COMPILE, M14-QBF-STEP-PROG | docs/goal/evidence/M14-SPACE-COMPILE.md | Nothing is proved beyond the pieces: the memory bound 2n^2 + 3n of the evaluator in the length of the code (M14-QBF-CODE-SPACE) and, since M14-SPACE-COMPILE, the general bridge that turns a realization into DSPACE membership (Complexity.Space.Realizes.pspace, Complexity.Space.Prog.dspace_loop). This task is the instance: once M14-QBF-STEP-PROG supplies the tape program and its bridge lemma, Complexity.Space.Prog.dspace_loop with the bound of M14-QBF-CODE-SPACE gives Complexity.Space.PSPACE Complexity.Qbf.tqbfLang, and with the hardness already proved, Complexity.Qbf.pspaceComplete_TQBF. |
-| 999 | `M15-ORACLE-PROG` | `P1` | `TODO_READY` | M14-SPACE-COMPILE | docs/goal/evidence/M21-COBHAM-TO-SPACE.md |  |
-| 1000 | `M15-ORACLE-CLASSES` | `P1` | `DONE_WEAK` | M13-SPACE-MODEL, M15-ORACLE-PROG | docs/goal/evidence/M15-ORACLE-CLASSES.md | NP^A subseteq PSPACE^A is not proved. The unrelativized compiler from Cobham terms to space-bounded machines now exists (M21-COBHAM-TO-SPACE, Complexity.Space.pspace_of_inP), but the relativized classes use the oracle machine Complexity.Space.OMachine, for which there are no tape programs: the missing construction is M15-ORACLE-PROG (tape programs with query-tape instructions compiled into OMachine, the Cobham compiler extended by the query constructor of CobQ, and a loop over all witnesses of polynomially bounded length). Everything else in the exit criteria is done. |
-| 1010 | `M15-BGS-EQUAL` | `P1` | `TODO_READY` | M15-ORACLE-CLASSES, M14-TQBF-PSPACE-HARD | docs/goal/evidence/M13-SAVITCH-SPACE.md |  |
+| 936 | `M14-QBF-STEP-PROG` | `P1` | `DONE_STRONG` | M14-SPACE-COMPILE, M14-QBF-CODE-SPACE | docs/goal/evidence/M14-TQBF-IN-PSPACE.md |  |
+| 937 | `M14-TQBF-IN-PSPACE` | `P1` | `DONE_STRONG` | M14-QBF-WORD-LANG, M14-QBF-CODE-SPACE, M14-SPACE-COMPILE, M14-QBF-STEP-PROG | docs/goal/evidence/M14-TQBF-IN-PSPACE.md |  |
+| 999 | `M15-ORACLE-PROG` | `P1` | `DONE_STRONG` | M14-SPACE-COMPILE | docs/goal/evidence/M15-ORACLE-PROG.md |  |
+| 1000 | `M15-ORACLE-CLASSES` | `P1` | `DONE_STRONG` | M13-SPACE-MODEL, M15-ORACLE-PROG | docs/goal/evidence/M15-ORACLE-CLASSES.md |  |
+| 1010 | `M15-BGS-EQUAL` | `P1` | `TODO_READY` | M15-ORACLE-CLASSES, M14-TQBF-PSPACE-HARD | docs/goal/evidence/M13-SAVITCH-SPACE.md | Both named ingredients are proved: NP^A in PSPACE^A for every oracle (Complexity.Space.inPSPACE_rel_of_inNP_rel) and TQBF in PSPACE (Complexity.Qbf.tqbf_pspace, M14-TQBF-IN-PSPACE). What is missing is PSPACE^TQBF in PSPACE: a space-bounded oracle machine whose queries are answered by a space-bounded subroutine deciding TQBF; the easy half PSPACE in P^TQBF follows from the hardness reduction (one query to the reduced word). |
 | 1020 | `M15-BGS-DIFFERENT` | `P1` | `DONE_STRONG` | M15-ORACLE-CLASSES | docs/goal/evidence/M15-BGS-DIFFERENT.md |  |
-| 1030 | `M15-NO-RELATIVIZING-PROOF` | `P1` | `DONE_WEAK` | M15-BGS-EQUAL, M15-BGS-DIFFERENT | docs/goal/evidence/M15-NO-RELATIVIZING-PROOF.md | The unconditional half is proved: P = NP does not relativize, by the separating oracle of Start/BakerGillSolovay.lean. The other half is stated conditionally on the collapsing oracle of M15-BGS-EQUAL -- an oracle with P^A = NP^A, classically a PSPACE-complete language -- which the library does not have: P subseteq PSPACE is now proved (M21-COBHAM-TO-SPACE), but the collapsing oracle needs NP^A subseteq PSPACE^A (M15-ORACLE-PROG, M15-ORACLE-CLASSES) and TQBF in PSPACE (M14-TQBF-IN-PSPACE). |
+| 1025 | `M15-BGS-COLLAPSE` | `P1` | `DONE_STRONG` | M15-ORACLE-CLASSES | docs/goal/evidence/M15-BGS-COLLAPSE.md |  |
+| 1030 | `M15-NO-RELATIVIZING-PROOF` | `P1` | `DONE_STRONG` | M15-BGS-COLLAPSE, M15-BGS-DIFFERENT | docs/goal/evidence/M15-NO-RELATIVIZING-PROOF.md |  |
 | 1040 | `M15-TIME-HIERARCHY-REL` | `P2` | `TODO_READY` | M15-ORACLE-CLASSES | docs/goal/evidence/M13-SPACE-MODEL.md |  |
 | 1100 | `M16-REQUIREMENT-FRAMEWORK` | `P1` | `DONE_WEAK` | - | docs/goal/evidence/M16-REQUIREMENT-FRAMEWORK.md | The frame is generic and has not yet been instantiated by an actual construction; the first one to run in it is Friedberg-Muchnik, M16-FRIEDBERG-MUCHNIK, still open. |
 | 1110 | `M16-FINITE-INJURY` | `P1` | `DONE_WEAK` | M16-REQUIREMENT-FRAMEWORK | docs/goal/evidence/M16-FINITE-INJURY.md | The lemma is proved for an arbitrary instance of the framework; no concrete construction has been fed to it yet, so the verification of the between-injuries hypothesis for a real strategy is still to come with M16-FRIEDBERG-MUCHNIK. |
@@ -248,7 +249,8 @@
 | 1820 | `M22-SPACE-HIERARCHY` | `P2` | `TODO_READY` | M14-SPACE-COMPILE | docs/goal/proposed-M21-M24.md |  |
 | 1830 | `M22-CONP-PH` | `P2` | `TODO_READY` | - | docs/goal/proposed-M21-M24.md |  |
 | 1840 | `M22-COOK-RECKHOW` | `P1` | `TODO_READY` | M22-CONP-PH | docs/goal/proposed-M21-M24.md |  |
-| 1850 | `M22-RESOLUTION` | `P1` | `TODO_READY` | - | docs/goal/proposed-M21-M24.md |  |
+| 1850 | `M22-RESOLUTION` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M22-RESOLUTION.md |  |
+| 1855 | `M22-RESOLUTION-PROOF-SYSTEM` | `P2` | `TODO_READY` | M22-RESOLUTION, M22-COOK-RECKHOW | docs/goal/evidence/M22-RESOLUTION.md |  |
 | 1860 | `M22-HAKEN-PHP` | `P1` | `TODO_READY` | M22-RESOLUTION | docs/goal/proposed-M21-M24.md |  |
 | 1870 | `M22-AC0-DEF` | `P2` | `TODO_READY` | - | docs/goal/proposed-M21-M24.md |  |
 | 1880 | `M22-SWITCHING-LEMMA` | `P2` | `TODO_READY` | M22-AC0-DEF | docs/goal/proposed-M21-M24.md |  |
@@ -264,7 +266,7 @@
 | 2070 | `M23-LAMBDA-MU` | `P2` | `TODO_READY` | - | docs/goal/proposed-M21-M24.md |  |
 | 2080 | `M23-LEVY-FAMILIES` | `P2` | `TODO_NEEDS_DESIGN` | - | docs/goal/proposed-M21-M24.md | Foundation for optimal reduction; the correctness of Lamping's algorithm is the separate row M23-LAMPING-ABSTRACT. |
 | 2090 | `M23-LAMPING-ABSTRACT` | `P3` | `TODO_NEEDS_DESIGN` | M23-LEVY-FAMILIES | docs/goal/proposed-M21-M24.md | The full algorithm with bookkeeping, and the Lawall-Mairson and Asperti-Mairson complexity results, are not in scope of this row. |
-| 2200 | `M24-ABSTRACT-LOB` | `P1` | `TODO_READY` | - | docs/goal/proposed-M21-M24.md |  |
+| 2200 | `M24-ABSTRACT-LOB` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M24-ABSTRACT-LOB.md |  |
 | 2210 | `M24-ARITH-THEORY` | `P1` | `TODO_READY` | - | docs/goal/proposed-M21-M24.md | The library has no first-order theory of arithmetic yet: Start/ChaitinIncompleteness.lean works with an abstract sound r.e. proof system. |
 | 2220 | `M24-GODEL2-ARITH` | `P1` | `TODO_READY` | M24-ABSTRACT-LOB, M24-ARITH-THEORY | docs/goal/proposed-M21-M24.md |  |
 | 2230 | `M24-GL` | `P2` | `TODO_READY` | M24-ABSTRACT-LOB | docs/goal/proposed-M21-M24.md |  |
@@ -274,8 +276,8 @@
 | 2270 | `M24-K-TRIVIAL` | `P2` | `TODO_READY` | - | docs/goal/proposed-M21-M24.md |  |
 | 2280 | `M24-HYPERARITH` | `P3` | `TODO_NEEDS_DESIGN` | - | docs/goal/proposed-M21-M24.md | Needs ordinals and transfinite iterations of the jump; the library has no ordinals yet (Mathlib's do exist). |
 
-Next: `M14-QBF-STEP-PROG`
+Next: `M14-KRIVINE-SPACE-CLASS`
 
-- Title: The bridge lemma for the QBF evaluator: a tape program performing one of its steps
+- Title: The Krivine space bound, stated against DSPACE
 - Status: `TODO_READY`
-- Open boundary: 
+- Open boundary: The memory half is done (M14-KRIVINE-SPACE-CONFIG): the word of a collected state is a work tape of Start/SpaceMachine.lean and its length is that model's memory measure, O(s log s) in the live data. The run-level half of the simulation is now general (M14-SPACE-COMPILE): a realization in the sense of Complexity.Space.Realizes, or a loop program in the sense of Complexity.Space.Prog.realizes_loop, gives DSPACE membership with the bound on every reachable configuration. What is missing is the client's bridge lemma: a tape program performing one pass of Start/KrivineCobBin.lean on the word of a state, with its execution on the encoding of each state of the run, so that a language decided by a lambda-term within a space bound s lands in Complexity.Space.DSPACE (s * log s).

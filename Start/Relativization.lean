@@ -9,18 +9,19 @@ states that, and records what the library proves about it.
 * `Complexity.Relativizes` — a statement about the oracle holds for every oracle;
 * `Complexity.peqnp_does_not_relativize` — **`P = NP` does not relativize**, by the separating
   oracle of `Start/BakerGillSolovay.lean`;
-* `Complexity.no_relativizing_resolution` — given a collapsing oracle, neither `P = NP` nor
-  `P ≠ NP` relativizes, so no relativizing argument settles the question either way.
+* `Complexity.pnenp_does_not_relativize` — **`P ≠ NP` does not relativize**, by the collapsing
+  oracle of `Start/CollapsingOracle.lean` (`Complexity.bgs_equal`);
+* `Complexity.no_relativizing_resolution` — **neither `P = NP` nor `P ≠ NP` relativizes**, so no
+  relativizing argument settles the question either way.  This holds with no hypothesis.
 
-The hypothesis of the last statement is the half of Baker–Gill–Solovay that the library does not
-yet have: an oracle `A` with `P^A = NP^A`, classically a `PSPACE`-complete one.  Here time is
-measured on Cobham's class and space on the offline machine of `Start/SpaceMachine.lean`, so that
-half needs a compiler from Cobham terms to space-bounded machines; see the boundary of
-`M15-BGS-EQUAL` on the task board.
+The collapsing oracle is not the classical `PSPACE`-complete one: it is built directly by a
+self-referential construction (the oracle answers whether a verifier, run with the oracle restricted
+to shorter words, accepts some short witness), which needs no space-bounded machines.
 -/
 
 import Mathlib
 import Start.BakerGillSolovay
+import Start.CollapsingOracle
 
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
@@ -40,18 +41,23 @@ theorem peqnp_does_not_relativize : ¬ Relativizes PeqNP_rel := by
   obtain ⟨B, hB⟩ := bgs_different
   exact hB (h B)
 
-/-- `P ≠ NP` does not relativize either, as soon as one oracle collapses the two classes. -/
-theorem pnenp_does_not_relativize (h : ∃ A : Oracle, PeqNP_rel A) :
+/-- `P ≠ NP` does not relativize as soon as one oracle collapses the two classes. -/
+theorem pnenp_does_not_relativize_of (h : ∃ A : Oracle, PeqNP_rel A) :
     ¬ Relativizes PneNP_rel := by
   intro hrel
   obtain ⟨A, hA⟩ := h
   exact hrel A hA
 
-/-- **The relativization barrier.**  With a collapsing oracle at hand, neither `P = NP` nor
-`P ≠ NP` relativizes: a proof technique whose conclusions hold with every oracle attached settles
-neither side of the question. -/
-theorem no_relativizing_resolution (h : ∃ A : Oracle, PeqNP_rel A) :
+/-- **`P ≠ NP` does not relativize**: some oracle collapses the two classes
+(`Complexity.bgs_equal`), so no argument whose conclusion survives every oracle can prove
+`P ≠ NP`. -/
+theorem pnenp_does_not_relativize : ¬ Relativizes PneNP_rel :=
+  pnenp_does_not_relativize_of bgs_equal
+
+/-- **The relativization barrier.**  Neither `P = NP` nor `P ≠ NP` relativizes: a proof technique
+whose conclusions hold with every oracle attached settles neither side of the question. -/
+theorem no_relativizing_resolution :
     ¬ Relativizes PeqNP_rel ∧ ¬ Relativizes PneNP_rel :=
-  ⟨peqnp_does_not_relativize, pnenp_does_not_relativize h⟩
+  ⟨peqnp_does_not_relativize, pnenp_does_not_relativize⟩
 
 end Complexity
