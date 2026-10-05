@@ -1,8 +1,7 @@
 # Delivery instruction
 
-Paste the block below as the instruction for a delivery.  Unlike the previous version, the
-objective is a *theorem* rather than a single row: the five rows it needs are all
-`TODO_READY`, share one substrate, and are worth doing in one delivery.
+The objective is a theorem, and the rows it needs are all `TODO_READY`.  This is the same
+shape as the delivery that closed the relativization barrier.
 
 ---
 
@@ -11,103 +10,87 @@ Work to this instruction for this delivery.
 
 THE OBJECTIVE
 
-Close the relativization barrier: prove that neither side of P vs NP relativizes,
-unconditionally. That is one theorem, and it needs these five rows, all of which are
-already TODO_READY -- none needs a design step:
+IP = PSPACE.
 
-  M15-ORACLE-PROG      query-tape instructions for Complexity.Space.Prog, the
-                       compiler of Start/CobhamSpace.lean extended to Complexity.CobQ,
-                       and the witness loop giving NP^A subseteq PSPACE^A.
-  M15-ORACLE-CLASSES   closes (DONE_WEAK) as soon as the above lands.
-  M14-QBF-STEP-PROG    a tape program performing one step of the Start/Qbf.lean
-                       evaluator, with the realizes_loop bridge.
-  M14-TQBF-IN-PSPACE   follows from it and M14-SPACE-COMPILE; with the hardness
-                       already proved, M14-TQBF-PSPACE-HARD then closes and TQBF is
-                       PSPACE-complete.
-  M15-BGS-EQUAL        P^A = NP^A for that A, from the two above.
-  M15-NO-RELATIVIZING-PROOF  closes (DONE_WEAK), and with it
+Every row it needs is TODO_READY, and both prerequisites outside M21 are now
+DONE_STRONG (M14-TQBF-PSPACE-HARD and M21-COBHAM-TO-SPACE). Nothing here needs a
+design step. Nine rows, in dependency order:
 
-      Complexity.no_relativizing_resolution
+  M21-QBF-SIMPLE-FORM    the simple form of a QBF the protocol runs on
+  M21-LINEARIZE          Shen's linearization operator, so a quantifier cannot double
+                         the degree and the verifier stays polynomial
+  M21-IP-DEF             verifiers in Cobham's class, provers arbitrary, acceptance
+                         probability by counting over random words: completeness 2/3,
+                         soundness 1/3
+  M21-FIELD-COBHAM       field arithmetic as Cobham terms
+  M21-SUMCHECK-GAME      the protocol itself, on top of M21-SUMCHECK-ROUND
+  M21-VERIFIER-POLY      the verifier is a Cobham term
+  M21-TQBF-IN-IP         TQBF has an interactive proof
+  M21-PSPACE-SUBSET-IP   with TQBF PSPACE-complete, PSPACE subseteq IP
+  M21-IP-SUBSET-PSPACE   the converse, from M21-COBHAM-TO-SPACE
+  M21-IP-EQ-PSPACE       Complexity.ip_eq_pspace
 
-  becomes unconditional. BakerGillSolovay.lean already supplies the other oracle.
+CARRY THE CHAIN, AND STOP WHERE IT STOPS
 
-DO THEM IN ONE DELIVERY
+Take the rows in order and carry as many as hold. Nine is more than the five of the
+last delivery, and finishing all of them in one go is not expected. What is expected
+is that you stop at the first row that defeats you rather than moving sideways: name
+the missing lemma in its open_boundary, open it as a row if it is a new construction,
+and leave the rest of the chain unstarted.
 
-The one-objective-per-delivery rule is about not wandering between milestones. It is
-not a rule against finishing a chain: when every row of the objective is TODO_READY
-and they depend only on each other, carry them all. Stop only when the theorem is
-closed or when a row defeats you.
+If a row turns out to be reachable by a different route than the one its exit criteria
+describe -- as the collapsing oracle was last time, where the self-referential
+construction of Start/CollapsingOracle.lean replaced the PSPACE-complete oracle -- take
+the better route, prove the theorem, and leave the superseded row TODO_READY with its
+own gap named. That was the right call and it is the right call again.
 
-M15-ORACLE-PROG and M14-QBF-STEP-PROG are the same kind of work -- writing a tape
-program on top of the combinators you factored out in Start/SpaceProgLib.lean,
-Start/SpaceProgTracks.lean and Start/SpaceProgDecide.lean. Do them together, and if
-the combinator library turns out to be missing something both need, extend it there
-rather than twice.
+GOING BEYOND THE OBJECTIVE
 
-WHAT COUNTS AS DONE
+Last time the instruction said not to start a new milestone and Start/Resolution.lean
+and Start/AbstractLob.lean were started anyway. The rule was too blunt, so here it is
+properly: when the objective is closed and there is room left, continue with rows that
+are already on the board, say in the report which ones and why, and do not add a
+milestone that is not there. Do not do this before the objective is closed.
 
-Complexity.no_relativizing_resolution with no hypothesis about an oracle, and
-M15-NO-RELATIVIZING-PROOF, M15-ORACLE-CLASSES and M14-TQBF-PSPACE-HARD all
-DONE_STRONG with empty open_boundary. If a row defeats you, the DONE_WEAK rule of
-docs/goal/goal-prompt.md applies: name the missing lemma precisely, open it as a row
-at the head of the queue, and leave the rest of the chain unstarted rather than
-substituting other work.
+THE PACKAGING QUESTION, AGAIN
 
-ONE QUESTION TO ANSWER IN THE REPORT
+The previous instruction asked what command actually produces the delivered archive.
+The report did not answer it. The delivered manifest has now named package 'start',
+pinned Mathlib v4.28.0 and omitted cslib fourteen times running, including in the two
+deliveries that added scripts/pack_gate.sh, .githooks/pre-commit and the AGENTS.md
+rule fixing the delivery to one command. Those archives therefore cannot have come
+from that command.
 
-AGENTS.md now says a delivery is produced by exactly
+Answer in the report, in three lines:
+  - the exact command or script that writes the file handed over;
+  - the directory it runs in, and whether that directory is a git clone of this
+    repository at the delivered commit;
+  - whether scripts/check_manifest.py passes in that directory right now, quoting its
+    output.
 
-    scripts/pack_gate.sh HEAD && git archive --format=tar.gz HEAD -o delivery.tar.gz
-
-Thirteen consecutive deliveries, including the one that introduced that rule, have
-arrived with a lake-manifest.json naming package 'start', pinning Mathlib v4.28.0 and
-omitting cslib. That manifest fails scripts/check_manifest.py, so the command above
-cannot have produced those archives: pack_gate.sh would have exited first and no
-tarball would exist. Something else is packing them.
-
-There is a second symptom. The delivery numbered 21 and the delivery numbered 1 carry
-the same work -- identical docs/related-work.md, identical Start/SpaceProgLib.lean,
-identical task-board statuses -- but different archive checksums, and the second
-contains nothing the first did not. So a batch was packed and handed over twice, under
-two numbers, with no commit between them.
-
-So, in the report: what command or process actually produces the file that is handed
-over, and from which directory? Do not guess -- check, and quote what you find. If the
-packaging is outside your control, say that; it is a more useful answer than another
-promise to run the gate.
-
-AFTER THE OBJECTIVE, IF THERE IS ROOM
-
-docs/related-work.md lists claims you could not verify. Two are cheap to settle from
-sources you already have, and both affect how the library describes itself:
-
-  - the Coq L development (Forster et al., POPL 2020 / ITP 2021): exactly which
-    invariance results does it prove, and in which direction? The document now says
-    it proves more of the programme than this library does; confirm or correct that
-    with a citation.
-  - Cubical Agda's realizability topos: does it construct the effective topos itself,
-    or assemblies and modest sets only?
-
-Nothing else from that list. Do not start a new milestone.
+If you cannot determine any of the three, say which and why. An honest "the packaging
+step is outside the tree I work in" ends fourteen deliveries of guessing.
 
 REPORT
 
-Four short paragraphs: whether the barrier theorem is closed and the verbatim
-statement of what was proved; which rows closed and which did not; the answer to the
-packaging question; and anything from related-work.md you settled.
+Four short paragraphs: which rows closed, with the verbatim terminal statement of the
+furthest one reached; where the chain stopped and what defeated it; the three lines on
+packaging; and anything done after the objective, with the row ids.
 ```
 
 ---
 
-## Why this shape
+## Notes
 
-* **The objective is a theorem, not a row.**  Fifteen deliveries have shown that one row per
-  delivery is the right granularity when rows need designing, and the wrong one when a chain
-  of `TODO_READY` rows is all that stands between the library and a quotable result.  Five
-  rows, no design, one theorem.
-* **The two tape-program rows are siblings.**  `Start/SpaceProgLib.lean` was factored out
-  last delivery precisely so that writing the next tape program would be cheap; this is the
-  delivery that tests whether it was.
-* **The packaging item is a question, not a reminder.**  Thirteen reminders have not worked,
-  and the delivered artifact is now provably not the output of the documented command.  Asking
-  where the file comes from is the only step that can move it.
+* **Nine rows, one theorem.**  The pattern that closed the barrier is reused deliberately: an
+  objective stated as a theorem, a chain of `TODO_READY` rows under it, and permission to
+  carry them all.  Nine will probably not fit in one delivery; the instruction says so, and
+  says what to do instead of substituting other work.
+* **The re-routing clause is new.**  Last delivery proved `bgs_equal` by a construction the
+  row did not call for, and left the row open with its gap named.  That is better behaviour
+  than following the written route into a wall, so it is now explicitly sanctioned.
+* **The overshoot rule is loosened rather than repeated.**  "Do not start a new milestone"
+  was ignored; the version here allows continuing on existing rows after the objective and
+  asks for them to be named.
+* **The packaging question is now three specific questions.**  The open-ended version went
+  unanswered.
