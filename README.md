@@ -780,8 +780,18 @@ Public Lean 4 developments in this area, and how they relate (repository file li
   (`Start/QbfEvalCob.lean`), **`TQBF` is `PSPACE`-complete**
   (`Complexity.Space.pspaceComplete_tqbfLang`).  The first step towards `IP = PSPACE` is Shamir's
   arithmetization of formulas, exact on `0/1` values in every commutative ring, together with the
-  one-round soundness bound of sum-check (`Start/QbfArith.lean`); the rest of that line is split
-  into rows M21 of the task board (`docs/goal/proposed-M21-M24.md`).  On the λ-calculus side the word of a collected
+  one-round soundness bound of sum-check (`Start/QbfArith.lean`).  Further along that line:
+  - Shen's linearization inserted into the formula tree keeps every round of degree at most
+    `2 · size` (`Start/QbfLinearize.lean`).
+  - The class `IP` is defined with Cobham verifiers and counted acceptance probabilities, with
+    `NP ⊆ IP` and closure under reductions (`Start/InteractiveProof.lean`).
+  - The sum-check game has perfect completeness and soundness `d · rounds / |F|`
+    (`Start/SumCheck.lean`).
+  - Arithmetic in `ZMod p`, Horner evaluation and a prime search are written as Cobham terms
+    (`Start/FieldCob.lean`).
+
+  What remains, from the verifier as a Cobham term (`M21-VERIFIER-POLY`) to `IP = PSPACE`, is on
+  the M21 rows of the task board.  On the λ-calculus side the word of a collected
   Krivine state is a work tape of that machine model, with the memory it costs bounded by
   `O(S · log S)` in the live data of the run (`Start/KrivineSpaceConfig.lean`); a machine of the
   model that performs Krivine transitions on the word, which a `DSPACE` membership would need, is

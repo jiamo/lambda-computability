@@ -233,12 +233,16 @@
 | 1540 | `M20-RULE-110` | `P2` | `TODO_NEEDS_DESIGN` | - | docs/goal/evidence/M4-TM2-IMP-PARTREC.md | Cook's proof is long and combinatorial; the task is a serious engineering effort with a fully classical statement. |
 | 1600 | `M21-QBF-ARITH` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M21-QBF-ARITH.md |  |
 | 1605 | `M21-SUMCHECK-ROUND` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M21-QBF-ARITH.md |  |
-| 1610 | `M21-QBF-SIMPLE-FORM` | `P1` | `TODO_READY` | M21-QBF-ARITH, M14-TQBF-PSPACE-HARD | docs/goal/proposed-M21-M24.md |  |
-| 1620 | `M21-LINEARIZE` | `P1` | `TODO_READY` | M21-QBF-ARITH, M21-QBF-SIMPLE-FORM | docs/goal/proposed-M21-M24.md |  |
-| 1630 | `M21-IP-DEF` | `P1` | `TODO_READY` | - | docs/goal/proposed-M21-M24.md |  |
-| 1640 | `M21-SUMCHECK-GAME` | `P1` | `TODO_READY` | M21-SUMCHECK-ROUND, M21-LINEARIZE | docs/goal/proposed-M21-M24.md |  |
-| 1650 | `M21-FIELD-COBHAM` | `P1` | `TODO_READY` | M21-SUMCHECK-ROUND | docs/goal/proposed-M21-M24.md |  |
-| 1660 | `M21-VERIFIER-POLY` | `P1` | `TODO_READY` | M21-IP-DEF, M21-SUMCHECK-GAME, M21-FIELD-COBHAM | docs/goal/proposed-M21-M24.md |  |
+| 1610 | `M21-QBF-SIMPLE-FORM` | `P1` | `TODO_READY` | M21-QBF-ARITH, M14-TQBF-PSPACE-HARD | docs/goal/proposed-M21-M24.md | Not on the route taken.  Shen's linearization was inserted directly into the formula tree (Complexity.Qbf.QBF.toOp, M21-LINEARIZE) and the sum-check game walks that tree (Complexity.Qbf.run, M21-SUMCHECK-GAME), so neither row needs a normal form and the dependency of M21-LINEARIZE on this row was dropped.  This row's own gap is unchanged: a Cobham translation of QBF codes to prenex form with distinct bound variables, with polynomial output size (or the statement that redTerm already produces such a form).  It would only become necessary if the verifier of M21-VERIFIER-POLY were written for prenex formulas rather than for the formula tree. |
+| 1620 | `M21-LINEARIZE` | `P1` | `DONE_STRONG` | M21-QBF-ARITH | docs/goal/evidence/M21-LINEARIZE.md |  |
+| 1630 | `M21-IP-DEF` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M21-IP-DEF.md |  |
+| 1640 | `M21-SUMCHECK-GAME` | `P1` | `DONE_STRONG` | M21-SUMCHECK-ROUND, M21-LINEARIZE | docs/goal/evidence/M21-SUMCHECK-GAME.md |  |
+| 1650 | `M21-FIELD-COBHAM` | `P1` | `DONE_STRONG` | M21-SUMCHECK-ROUND | docs/goal/evidence/M21-FIELD-COBHAM.md |  |
+| 1652 | `M21-COB-TIME-ITERATE` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M21-COB-TIME-ITERATE.md |  |
+| 1654 | `M21-SUMCHECK-REPLAY` | `P1` | `TODO_READY` | M21-SUMCHECK-GAME | docs/goal/evidence/M21-SUMCHECK-GAME.md |  |
+| 1656 | `M21-SUMCHECK-COINS` | `P1` | `TODO_READY` | M21-SUMCHECK-GAME | docs/goal/evidence/M21-SUMCHECK-GAME.md |  |
+| 1658 | `M21-VERIFIER-STEP-COB` | `P1` | `TODO_READY` | M21-SUMCHECK-REPLAY, M21-FIELD-COBHAM, M21-COB-TIME-ITERATE | docs/goal/evidence/M21-FIELD-COBHAM.md |  |
+| 1660 | `M21-VERIFIER-POLY` | `P1` | `TODO_READY` | M21-IP-DEF, M21-SUMCHECK-GAME, M21-FIELD-COBHAM, M21-COB-TIME-ITERATE, M21-SUMCHECK-REPLAY, M21-SUMCHECK-COINS, M21-VERIFIER-STEP-COB | docs/goal/proposed-M21-M24.md | Stopped here.  Attempted after M21-COB-TIME-ITERATE (the generic iteration combinator, done).  Missing: (1) M21-SUMCHECK-REPLAY — the iterative, stack-based replay of Complexity.Qbf.run over the code of the formula, proved equal to run; (2) M21-VERIFIER-STEP-COB — one replay step as Cobham terms on the code, the point, the stack and the transcript; (3) M21-SUMCHECK-COINS — field elements from the random bits of Complexity.Verifier.accProb and the transfer of Complexity.Qbf.cntL_run_false / run_honest from counting over F to counting over bits.  Route note for the rows after this one: the verifier need only be correct on codes of closed formulas, because PSPACE-SUBSET-IP can go through Complexity.Qbf.QBF.redTerm, whose outputs are such codes, and Complexity.IP.of_reduction; Complexity.IP Complexity.Qbf.tqbfLang then follows from Complexity.Qbf.tqbf_pspace and PSPACE ⊆ IP, so no code validation is needed in the verifier. |
 | 1670 | `M21-TQBF-IN-IP` | `P1` | `TODO_READY` | M21-VERIFIER-POLY | docs/goal/proposed-M21-M24.md |  |
 | 1680 | `M21-PSPACE-SUBSET-IP` | `P1` | `TODO_READY` | M21-TQBF-IN-IP, M14-TQBF-PSPACE-HARD | docs/goal/proposed-M21-M24.md |  |
 | 1690 | `M21-COBHAM-TO-SPACE` | `P1` | `DONE_STRONG` | M14-SPACE-COMPILE | docs/goal/evidence/M21-COBHAM-TO-SPACE.md |  |
@@ -275,6 +279,16 @@
 | 2260 | `M24-KUCERA-GACS` | `P2` | `TODO_READY` | - | docs/goal/proposed-M21-M24.md |  |
 | 2270 | `M24-K-TRIVIAL` | `P2` | `TODO_READY` | - | docs/goal/proposed-M21-M24.md |  |
 | 2280 | `M24-HYPERARITH` | `P3` | `TODO_NEEDS_DESIGN` | - | docs/goal/proposed-M21-M24.md | Needs ordinals and transfinite iterations of the jump; the library has no ordinals yet (Mathlib's do exist). |
+| 2300 | `M25-UNIFICATION` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M25-UNIFICATION.md |  |
+| 2310 | `M25-HM-TYPING` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M25-HM-TYPING.md |  |
+| 2320 | `M25-HM-ALGORITHM-W` | `P1` | `DONE_STRONG` | M25-UNIFICATION, M25-HM-TYPING | docs/goal/evidence/M25-HM-ALGORITHM-W.md |  |
+| 2330 | `M25-HM-PRINCIPAL` | `P1` | `DONE_STRONG` | M25-HM-ALGORITHM-W | docs/goal/evidence/M25-HM-PRINCIPAL.md |  |
+| 2340 | `M25-CBV-MACHINE` | `P1` | `TODO_READY` | - | docs/goal/evidence/M11-KRIVINE-MACHINE.md |  |
+| 2350 | `M25-CBV-COST` | `P1` | `TODO_READY` | M25-CBV-MACHINE | docs/goal/evidence/M11-KRIVINE-INVARIANCE.md |  |
+| 2360 | `M25-CBNEED-MACHINE` | `P1` | `TODO_READY` | - | docs/goal/evidence/M12-KRIVINE-SPACE-LIVE.md |  |
+| 2370 | `M25-CBNEED-COST` | `P2` | `TODO_READY` | M25-CBNEED-MACHINE | docs/goal/evidence/M11-KRIVINE-INVARIANCE.md |  |
+| 2380 | `M25-CBPV` | `P2` | `TODO_READY` | M25-CBV-MACHINE | docs/goal/evidence/M9-SYSTEM-F.md |  |
+| 2390 | `M25-FSUB-UNDECIDABLE` | `P1` | `TODO_NEEDS_DESIGN` | - | docs/goal/evidence/M4-TM2-IMP-PARTREC.md | The design question is which undecidable problem to reduce from and how to encode its configurations as subtyping judgements. cslib supplies the calculus and its soundness, so none of that has to be rebuilt. |
 
 Next: `M14-KRIVINE-SPACE-CLASS`
 

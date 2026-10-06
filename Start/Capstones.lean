@@ -204,6 +204,17 @@ import Start.Priority
 import Start.QbfEvalCob
 import Start.AbstractLob
 import Start.Resolution
+import Start.QbfLinearize
+import Start.InteractiveProof
+import Start.SumCheck
+import Start.FieldCob
+import Start.CobhamTimeIter
+import Start.SumCheckReplay
+import Start.CoinDecode
+import Start.ShamirWords
+import Start.ShamirSim
+import Start.HMSystemF
+import Start.HMPrincipal
 
 /-! ## Interfaces of the untyped calculus
 
@@ -2753,3 +2764,192 @@ with the lifting lemma `Complexity.Sat.Deriv.lift`.
 #check @Complexity.Sat.Deriv.lift
 #check @Complexity.Sat.refutation_of_unsat
 #check @Complexity.Sat.refutation_iff_unsat
+
+/-!
+### Degree reduction: Shen's linearization operators
+
+`Start/QbfLinearize.lean` inserts a linearization `L_j f = x_j f[x_j:=1] + (1-x_j) f[x_j:=0]`
+(`Complexity.Qbf.linOp`) of every variable after every quantifier of a formula
+(`Complexity.Qbf.QBF.toOp`, an expression of `Complexity.Qbf.Op`).  On `0/1` points the result has
+the value of the arithmetization (`Complexity.Qbf.QBF.eval_toOp_bool`), so a closed formula is
+true iff its operator tree evaluates to `1` (`Complexity.Qbf.QBF.tqbf_iff_toOp`), and **every
+univariate restriction met in the protocol has degree at most `2 · size p`**
+(`Complexity.Qbf.QBF.roundDeg_toOp`), against the doubling at every quantifier without it.
+-/
+
+#check @Complexity.Qbf.linOp
+#check @Complexity.Qbf.linOp_eq_of_bool
+#check @Complexity.Qbf.uniDeg_linOp_self
+#check @Complexity.Qbf.UniDeg
+#check @Complexity.Qbf.Op.eval
+#check @Complexity.Qbf.Op.RoundDeg
+#check @Complexity.Qbf.QBF.toOp
+#check @Complexity.Qbf.QBF.size_toOp
+#check @Complexity.Qbf.QBF.eval_toOp_bool
+#check @Complexity.Qbf.QBF.tqbf_iff_toOp
+#check @Complexity.Qbf.QBF.uniDeg_toOp
+#check @Complexity.Qbf.QBF.roundDeg_toOp
+
+/-!
+### Interactive proofs
+
+`Start/InteractiveProof.lean` defines the class `IP` (`Complexity.IP`): the verifier
+(`Complexity.Verifier`) is given by Cobham terms computing the number of rounds, the number of
+private random bits, the message-length bound, its next message and its verdict; the prover
+(`Complexity.Prover`) is an arbitrary function of the transcript; the acceptance probability
+(`Complexity.Verifier.accProb`) is the fraction of random words of the prescribed length on which
+the verifier accepts, counted by `Complexity.cntL` (`Start/CountProb.lean`, with
+`Complexity.cntL_eq_card`).  Completeness `≥ 2/3`, soundness `≤ 1/3`.  Sanity:
+`NP ⊆ IP` (`Complexity.inIP_of_inNP`) and `IP` is closed under polynomial-time reductions
+(`Complexity.IP.of_reduction`); transcripts are polynomially long
+(`Complexity.Verifier.length_transcript_le`).
+-/
+
+#check @Complexity.cntL
+#check @Complexity.cntL_eq_card
+#check @Complexity.sumL_append
+#check @Complexity.encMsg
+#check @Complexity.Verifier
+#check @Complexity.Prover
+#check @Complexity.Verifier.transcript
+#check @Complexity.Verifier.accProb
+#check @Complexity.Verifier.length_transcript_le
+#check @Complexity.IP
+#check @Complexity.inIP_of_inNP
+#check @Complexity.IP.of_reduction
+
+/-!
+### The sum-check protocol as a game
+
+`Start/SumCheck.lean` runs Shamir–Shen's protocol on an operator tree over a finite field
+(`Complexity.Qbf.run`): at a round the prover sends the coefficient list of a univariate
+polynomial of degree at most `d`, the verifier checks it against the current claim and draws a
+random point.  **Completeness** (`Complexity.Qbf.run_honest`, `Complexity.Qbf.scProb_honest`):
+the honest prover (`Complexity.Qbf.honest`) is always accepted on a true claim.  **Soundness**
+(`Complexity.Qbf.cntL_run_false`, `Complexity.Qbf.scProb_le`): on a false claim every prover is
+accepted with probability at most `d · rounds / |F|`.  For a formula
+(`Complexity.Qbf.tqbf_sumcheck_complete`, `Complexity.Qbf.tqbf_sumcheck_sound`): probability `1`
+for true closed formulas, at most `2 · size · (N + 1) · size / |F|` for false ones.
+-/
+
+#check @Complexity.Qbf.evalL
+#check @Complexity.Qbf.Strat
+#check @Complexity.Qbf.run
+#check @Complexity.Qbf.scProb
+#check @Complexity.Qbf.honest
+#check @Complexity.Qbf.run_honest
+#check @Complexity.Qbf.scProb_honest
+#check @Complexity.Qbf.cntL_run_false
+#check @Complexity.Qbf.scProb_le
+#check @Complexity.Qbf.tqbf_sumcheck_complete
+#check @Complexity.Qbf.tqbf_sumcheck_sound
+
+/-!
+### Field arithmetic as Cobham terms
+
+`Start/FieldCob.lean` writes elements of `ZMod p` in unary (the field size is polynomial, so
+this costs polynomial length) and gives the field operations as Cobham terms correct against
+`ZMod p` (`Complexity.Cob.eval_fAdd`, `.eval_fMul`, `.eval_fSub` with `Complexity.zmod_fAdd`,
+`.zmod_fMul`, `.zmod_fSub`), Horner evaluation of a coefficient list at a point
+(`Complexity.Cob.eval_polyEvalT`, `Complexity.zmod_hornerN`), primality by trial division
+(`Complexity.Cob.eval_isPrimeT`) and a prime in `(m, 2m]` found from `1^m`
+(`Complexity.Cob.eval_findPrimeT`).
+-/
+
+#check @Complexity.Cob.fAdd
+#check @Complexity.Cob.fMul
+#check @Complexity.Cob.fSub
+#check @Complexity.Cob.eval_fAdd
+#check @Complexity.Cob.eval_fMul
+#check @Complexity.Cob.eval_fSub
+#check @Complexity.zmod_fAdd
+#check @Complexity.zmod_fMul
+#check @Complexity.zmod_fSub
+#check @Complexity.Cob.polyEvalT
+#check @Complexity.Cob.eval_polyEvalT
+#check @Complexity.zmod_hornerN
+#check @Complexity.Cob.isPrimeT
+#check @Complexity.Cob.eval_isPrimeT
+#check @Complexity.Cob.findPrimeT
+#check @Complexity.Cob.eval_findPrimeT
+
+/-!
+### Iterating a Cobham term polynomially often
+
+`Start/CobhamTimeIter.lean`: `Complexity.Cob.iterT` runs a step term `|w|` times from an initial
+state, by bounded recursion on notation over the counter `w`; `Complexity.Cob.eval_iterT` — it
+computes the `|w|`-fold iterate whenever every intermediate state fits in the bound.  This is the
+time-model counterpart of `Start/CobhamIterate.lean`.
+-/
+
+#check @Complexity.Cob.iterT
+#check @Complexity.Cob.eval_iterT
+
+/-!
+### Toward the verifier: replay, coins, word records
+
+`Start/SumCheckReplay.lean`: an accepted sum-check run is determined by the messages it reads
+(`Complexity.Qbf.run_out`, `Complexity.Qbf.run_replay`), its history depends only on the points
+read so far (`Complexity.Qbf.run_causal`), and two provers that agree on the histories a run can
+reach give the same verdict (`Complexity.Qbf.run_congr`).
+
+`Start/CoinDecode.lean`: blocks of random bits decoded to residues mod `p`
+(`Complexity.decP`), every residue has at most `2^K/p + 1` preimages, and counting over bits is at
+most twice counting over the field when `2·n·p ≤ 2^K` (`Complexity.cntL_blocks_le`).
+
+`Start/ShamirWords.lean`: reading and writing unary fields and records inside one word
+(`Complexity.Shamir.fieldAt_fieldsWord`, `Complexity.Shamir.setField_fieldsWord`,
+`Complexity.Shamir.fieldsWord_decF`).
+-/
+
+#check @Complexity.Qbf.run_out
+#check @Complexity.Qbf.run_replay
+#check @Complexity.Qbf.run_causal
+#check @Complexity.Qbf.run_congr
+#check @Complexity.cntL_blocks_le
+#check @Complexity.Shamir.fieldAt_fieldsWord
+#check @Complexity.Shamir.setField_fieldsWord
+#check @Complexity.Shamir.fieldsWord_decF
+
+/-! `Start/ShamirSim.lean` (unfinished part of the IP = PSPACE work): the transcript and the
+prover that reads its messages off it (`Complexity.Shamir.idxStrat`). -/
+
+#check @Complexity.Shamir.idxStrat
+
+/-!
+### M25: Hindley–Milner type inference
+
+`Start/Unification.lean`: Robinson's unification algorithm terminates, returns a most general
+unifier (`HM.unify_sound`, `HM.unify_mgu`, `HM.mgu_iff`), and fails only when there is no unifier
+(`HM.unify_none`).
+
+`Start/HindleyMilner.lean`: monotypes, schemes, let-generalization and the Damas–Milner typing
+judgement, with substitution (`HM.Typing.subst`), weakening (`HM.Typing.weaken`), substitution of
+terms (`HM.Typing.substE`) and subject reduction (`HM.Typing.preservation`).
+
+`Start/HMSystemF.lean`: every HM typing is a System F typing of the erased term
+(`HM.typing_systemF`).
+
+`Start/HMAlgorithmW.lean`: algorithm W (`HM.W`) is sound (`HM.W_sound`).
+
+`Start/HMPrincipal.lean`: W is complete (`HM.W_complete`), every typable term has a principal
+type computed by W (`HM.principal`, `HM.principal_closed`), W fails exactly on the untypable terms
+(`HM.W_none_iff`), and typability is decidable (`HM.typable_iff`, `HM.decTypable`).
+-/
+
+#check @HM.unify_sound
+#check @HM.unify_mgu
+#check @HM.unify_none
+#check @HM.mgu_iff
+#check @HM.Typing.subst
+#check @HM.Typing.weaken
+#check @HM.Typing.substE
+#check @HM.Typing.preservation
+#check @HM.typing_systemF
+#check @HM.W_sound
+#check @HM.W_complete
+#check @HM.principal
+#check @HM.principal_closed
+#check @HM.W_none_iff
+#check @HM.typable_iff
+#check @HM.decTypable

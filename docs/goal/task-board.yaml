@@ -1,7 +1,7 @@
 version: 2
 source_protocol: docs/goal/goal-prompt.md
 active_milestone: M14
-milestone_order: ["M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10", "M11", "M12", "M13", "M14", "M15", "M16", "M17", "M18", "M19", "M20", "M21", "M22", "M23", "M24"]
+milestone_order: ["M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10", "M11", "M12", "M13", "M14", "M15", "M16", "M17", "M18", "M19", "M20", "M21", "M22", "M23", "M24", "M25"]
 tasks:
   - id: M1-BOUNDARY-SORRY-CLOSURE
     priority: P0
@@ -4849,7 +4849,7 @@ tasks:
     track: theory/complexity
     title: "A polynomial-time normal form of QBF on which the degree-reduced protocol runs"
     latest_evidence: "docs/goal/proposed-M21-M24.md"
-    open_boundary: ""
+    open_boundary: "Not on the route taken.  Shen's linearization was inserted directly into the formula tree (Complexity.Qbf.QBF.toOp, M21-LINEARIZE) and the sum-check game walks that tree (Complexity.Qbf.run, M21-SUMCHECK-GAME), so neither row needs a normal form and the dependency of M21-LINEARIZE on this row was dropped.  This row's own gap is unchanged: a Cobham translation of QBF codes to prenex form with distinct bound variables, with polynomial output size (or the statement that redTerm already produces such a form).  It would only become necessary if the verifier of M21-VERIFIER-POLY were written for prenex formulas rather than for the formula tree."
     milestone: M21
     depends_on:
       - M21-QBF-ARITH
@@ -4867,20 +4867,20 @@ tasks:
 
   - id: M21-LINEARIZE
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: theory/complexity
     title: "Degree reduction: Shen's linearization operators keep every intermediate polynomial of low degree"
-    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    terminal_statement: "Complexity.Qbf.linOp, Complexity.Qbf.linOp_eq_of_bool, Complexity.Qbf.uniDeg_linOp_self, Complexity.Qbf.QBF.toOp, Complexity.Qbf.QBF.eval_toOp_bool, Complexity.Qbf.QBF.tqbf_iff_toOp, Complexity.Qbf.QBF.uniDeg_toOp, Complexity.Qbf.QBF.roundDeg_toOp, Complexity.Qbf.QBF.size_toOp (Start/QbfLinearize.lean)"
+    latest_evidence: "docs/goal/evidence/M21-LINEARIZE.md"
     open_boundary: ""
     milestone: M21
     depends_on:
       - M21-QBF-ARITH
-      - M21-QBF-SIMPLE-FORM
     rank: 1620
     exit_criteria:
-      - "The linearization operator L_i f = x_i f[x_i:=1] + (1 - x_i) f[x_i:=0] on MvPolynomial, agreeing with f on 0/1 points and of degree at most 1 in x_i."
-      - "The operator sequence of a prenex formula (a quantifier operator followed by linearizations of the earlier variables) has the same value as Complexity.Qbf.QBF.arith on closed formulas."
-      - "Every univariate restriction met along the sequence has degree at most max(2, deg of the matrix), with the matrix degree at most the size of the formula."
+      - "The linearization operator Complexity.Qbf.linOp j f = x_j f[x_j:=1] + (1 - x_j) f[x_j:=0] on functions (ℕ → R) → R, agreeing with f where x_j ∈ {0,1} (linOp_eq_of_bool) and of degree at most 1 in x_j (uniDeg_linOp_self); degrees are semantic: Complexity.Qbf.UniDeg f j d says every restriction of f to a line in direction j is a polynomial of degree ≤ d."
+      - "Route: the operators are inserted into the formula tree itself, with no prenex form: Complexity.Qbf.QBF.toOp N linearizes every variable below N after every quantifier.  On 0/1 points its value is Complexity.Qbf.QBF.arith (eval_toOp_bool), so a closed formula is true iff the operator tree evaluates to 1 (tqbf_iff_toOp); the tree has at most (N+1)·size p nodes (size_toOp)."
+      - "Every univariate restriction met along the tree has degree at most 2·size p (roundDeg_toOp, from uniDeg_toOp: the value has degree ≤ size p in every variable), for varBound p ≤ N."
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
@@ -4889,10 +4889,11 @@ tasks:
 
   - id: M21-IP-DEF
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: theory/complexity
     title: "Interactive proofs: verifiers in Cobham's class, provers arbitrary, acceptance probability by counting"
-    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    terminal_statement: "Complexity.IP, Complexity.Verifier, Complexity.Prover, Complexity.Verifier.accProb, Complexity.Verifier.length_transcript_le, Complexity.inIP_of_inNP, Complexity.IP.of_reduction (Start/InteractiveProof.lean); Complexity.cntL, Complexity.cntL_eq_card (Start/CountProb.lean)"
+    latest_evidence: "docs/goal/evidence/M21-IP-DEF.md"
     open_boundary: ""
     milestone: M21
     depends_on: []
@@ -4910,10 +4911,11 @@ tasks:
 
   - id: M21-SUMCHECK-GAME
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: theory/complexity
     title: "The sum-check protocol over a finite field as a game: perfect completeness and the union-bound soundness"
-    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    terminal_statement: "Complexity.Qbf.run, Complexity.Qbf.honest, Complexity.Qbf.run_honest, Complexity.Qbf.scProb_honest, Complexity.Qbf.cntL_run_false, Complexity.Qbf.scProb_le, Complexity.Qbf.tqbf_sumcheck_complete, Complexity.Qbf.tqbf_sumcheck_sound (Start/SumCheck.lean)"
+    latest_evidence: "docs/goal/evidence/M21-SUMCHECK-GAME.md"
     open_boundary: ""
     milestone: M21
     depends_on:
@@ -4921,9 +4923,9 @@ tasks:
       - M21-LINEARIZE
     rank: 1640
     exit_criteria:
-      - "The protocol for an operator sequence over a finite field F: in each round the prover sends a univariate polynomial of bounded degree, the verifier checks consistency and picks a random point."
-      - "Completeness: the honest prover is accepted with probability 1 on true claims."
-      - "Soundness: on a false claim every prover is accepted with probability at most (sum of the round degrees) / |F|, by induction on the rounds with Polynomial.card_eval_eq_le."
+      - "The protocol for an operator tree over a finite field F (Complexity.Qbf.run): at a quantifier or linearization node the prover sends the coefficient list of a polynomial of degree ≤ d, the verifier checks it against the claim and draws a random point; at a conjunction or disjunction the prover sends the two child values; the prover is an arbitrary strategy on the history."
+      - "Completeness: the honest prover is accepted on every choice of random points on true claims (run_honest; scProb_honest gives probability 1)."
+      - "Soundness: on a false claim every prover is accepted with probability at most d·rounds/|F| (cntL_run_false, scProb_le), by induction on the tree with Polynomial.card_eval_eq_le; for a closed formula: tqbf_sumcheck_complete, tqbf_sumcheck_sound."
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
@@ -4932,19 +4934,104 @@ tasks:
 
   - id: M21-FIELD-COBHAM
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: theory/complexity
     title: "Arithmetic in Z/p on binary words as Cobham terms, and a small prime found by the verifier"
-    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    terminal_statement: "Complexity.Cob.fAdd, .fMul, .fSub with Complexity.Cob.eval_fAdd, .eval_fMul, .eval_fSub and Complexity.zmod_fAdd, .zmod_fMul, .zmod_fSub; Complexity.Cob.polyEvalT, Complexity.Cob.eval_polyEvalT, Complexity.zmod_hornerN; Complexity.Cob.isPrimeT, Complexity.Cob.eval_isPrimeT; Complexity.Cob.findPrimeT, Complexity.Cob.eval_findPrimeT (Start/FieldCob.lean)"
+    latest_evidence: "docs/goal/evidence/M21-FIELD-COBHAM.md"
     open_boundary: ""
     milestone: M21
     depends_on:
       - M21-SUMCHECK-ROUND
     rank: 1650
     exit_criteria:
-      - "Addition, multiplication and reduction modulo p of binary words are Cobham terms, correct against ZMod p."
-      - "Evaluation of a univariate polynomial given by its list of coefficients at a point is a Cobham term."
-      - "A prime p with a prescribed polynomial lower bound (of magnitude polynomial in n, hence O(log n) bits) is found by trial division within Cobham's class; since arith is exactly 0 or 1 (Complexity.Qbf.QBF.tqbf_iff_arith), no further condition on p is needed."
+      - "Route: elements of ZMod p are written in unary (1^k, k < p).  The field size the protocol needs is polynomial in n, so unary words are polynomially long, and the binary representation of the original criterion is not needed.  Addition, multiplication and subtraction modulo p are Cobham terms (eval_fAdd, eval_fMul, eval_fSub), correct against ZMod p (zmod_fAdd, zmod_fMul, zmod_fSub)."
+      - "Evaluation by Horner's rule of a univariate polynomial given by its coefficient list (a word of unary fields) at a point is a Cobham term (eval_polyEvalT), computing Complexity.Qbf.evalL in ZMod p (zmod_hornerN)."
+      - "Primality of a unary number is decided by trial division within Cobham's class (eval_isPrimeT), and a prime p with m < p ≤ 2m is computed from 1^m (eval_findPrimeT, using Bertrand's postulate); since arith is exactly 0 or 1 (tqbf_iff_arith), no further condition on p is needed."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M21-COB-TIME-ITERATE
+    priority: P1
+    status: DONE_STRONG
+    track: theory/complexity
+    title: "A step term iterated polynomially often is a Cobham term"
+    terminal_statement: "Complexity.Cob.iterT, Complexity.Cob.eval_iterT (Start/CobhamTimeIter.lean)"
+    latest_evidence: "docs/goal/evidence/M21-COB-TIME-ITERATE.md"
+    open_boundary: ""
+    milestone: M21
+    depends_on: []
+    rank: 1652
+    exit_criteria:
+      - "Complexity.Cob.iterT init step bnd c: bounded recursion on notation over a counter word runs s ↦ step(s, ctx) |w| times from init(ctx), truncating each state to |bnd(ctx)|."
+      - "Complexity.Cob.eval_iterT: it computes the |w|-fold iterate whenever every intermediate state fits in the bound."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M21-SUMCHECK-REPLAY
+    priority: P1
+    status: TODO_READY
+    track: theory/complexity
+    title: "The sum-check run as a small-step replay over the code of the formula"
+    latest_evidence: "docs/goal/evidence/M21-SUMCHECK-GAME.md"
+    open_boundary: ""
+    milestone: M21
+    depends_on:
+      - M21-SUMCHECK-GAME
+    rank: 1654
+    exit_criteria:
+      - "A state machine whose state is (position in the code QBF.enc p, current point, current claim, stack of pending (point, claim) pairs for the right children of conjunctions and disjunctions, verdict) and whose step consumes one message and one random point; the linearization nodes of toOp N p are generated at each quantifier position (N steps, then the quantifier step)."
+      - "Its iteration over the rounds of toOp N p, fed the messages and points of a run, ends with the verdict of Complexity.Qbf.run (the code lists the nodes in the preorder in which run visits them)."
+      - "Every state has length polynomial in |enc p|, N and log p."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M21-SUMCHECK-COINS
+    priority: P1
+    status: TODO_READY
+    track: theory/complexity
+    title: "Random field elements from random bits, and the transfer of the sum-check bounds to counting over bits"
+    latest_evidence: "docs/goal/evidence/M21-SUMCHECK-GAME.md"
+    open_boundary: ""
+    milestone: M21
+    depends_on:
+      - M21-SUMCHECK-GAME
+    rank: 1656
+    exit_criteria:
+      - "A field element from k random bits (binary number mod p, written in unary by a Cobham term); every residue has ⌊2^k/p⌋ or ⌈2^k/p⌉ preimages."
+      - "Transfer: for an event on lists of n field elements counted by Complexity.cntL, the count over the n·k bits that decode to it is at most ⌈2^k/p⌉^n times its count over F; with 2^k ≥ c·n·p this changes the soundness bound of Complexity.Qbf.scProb_le by at most a constant factor."
+      - "Completeness transfers exactly (probability 1 over F gives probability 1 over bits)."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M21-VERIFIER-STEP-COB
+    priority: P1
+    status: TODO_READY
+    track: theory/complexity
+    title: "One step of the sum-check replay as Cobham terms on the formula code"
+    latest_evidence: "docs/goal/evidence/M21-FIELD-COBHAM.md"
+    open_boundary: ""
+    milestone: M21
+    depends_on:
+      - M21-SUMCHECK-REPLAY
+      - M21-FIELD-COBHAM
+      - M21-COB-TIME-ITERATE
+    rank: 1658
+    exit_criteria:
+      - "The state of M21-SUMCHECK-REPLAY as one word of unary fields; the step (reading the tag bits and the unary variable index at the current code position, the field checks with Complexity.Cob.fAdd/fMul/fSub and Complexity.Cob.polyEvalT, the update of one coordinate of the point, push and pop of the stack, reading the next message from the transcript of Complexity.Verifier.transcript) as Cobham terms, correct on every state satisfying the invariant."
+      - "The whole replay is Complexity.Cob.iterT of that step, with the bound of M21-SUMCHECK-REPLAY."
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
@@ -4957,12 +5044,16 @@ tasks:
     track: theory/complexity
     title: "The sum-check verifier for TQBF runs in polynomial time"
     latest_evidence: "docs/goal/proposed-M21-M24.md"
-    open_boundary: ""
+    open_boundary: "Stopped here.  Attempted after M21-COB-TIME-ITERATE (the generic iteration combinator, done).  Missing: (1) M21-SUMCHECK-REPLAY — the iterative, stack-based replay of Complexity.Qbf.run over the code of the formula, proved equal to run; (2) M21-VERIFIER-STEP-COB — one replay step as Cobham terms on the code, the point, the stack and the transcript; (3) M21-SUMCHECK-COINS — field elements from the random bits of Complexity.Verifier.accProb and the transfer of Complexity.Qbf.cntL_run_false / run_honest from counting over F to counting over bits.  Route note for the rows after this one: the verifier need only be correct on codes of closed formulas, because PSPACE-SUBSET-IP can go through Complexity.Qbf.QBF.redTerm, whose outputs are such codes, and Complexity.IP.of_reduction; Complexity.IP Complexity.Qbf.tqbfLang then follows from Complexity.Qbf.tqbf_pspace and PSPACE ⊆ IP, so no code validation is needed in the verifier."
     milestone: M21
     depends_on:
       - M21-IP-DEF
       - M21-SUMCHECK-GAME
       - M21-FIELD-COBHAM
+      - M21-COB-TIME-ITERATE
+      - M21-SUMCHECK-REPLAY
+      - M21-SUMCHECK-COINS
+      - M21-VERIFIER-STEP-COB
     rank: 1660
     exit_criteria:
       - "The verifier of M21-SUMCHECK-GAME, instantiated with the operator sequence of a formula, is a Cobham term of the input code, the transcript and the random word."
@@ -5696,4 +5787,211 @@ tasks:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
       - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  # --- M25: type systems of functional languages ------------------------------------
+
+  - id: M25-UNIFICATION
+    priority: P1
+    status: DONE_STRONG
+    track: theory/types
+    title: "First-order unification and the most general unifier"
+    terminal_statement: "HM.unify, HM.unify_sound, HM.unify_mgu, HM.unify_none, HM.unify_vars, HM.mgu_iff (Start/Unification.lean)"
+    latest_evidence: "docs/goal/evidence/M25-UNIFICATION.md"
+    open_boundary: ""
+    milestone: M25
+    depends_on: []
+    rank: 2300
+    exit_criteria:
+      - "Type terms over a signature with variables, substitutions and their composition."
+      - "A unification algorithm, with termination proved by the standard measure."
+      - "Soundness: the result is a unifier. Completeness: it is most general, every unifier factors through it."
+      - "Failure is correct: when the algorithm fails there is no unifier."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M25-HM-TYPING
+    priority: P1
+    status: DONE_STRONG
+    track: theory/types
+    title: "The Hindley-Milner type system: monotypes, schemes and let-generalization"
+    terminal_statement: "HM.Sch, HM.Sch.inst, HM.gen, HM.Typing, HM.Typing.subst, HM.Typing.weaken, HM.Typing.substE, HM.Typing.preservation (Start/HindleyMilner.lean); HM.typing_systemF, HM.sn_of_typing (Start/HMSystemF.lean)"
+    latest_evidence: "docs/goal/evidence/M25-HM-TYPING.md"
+    open_boundary: ""
+    milestone: M25
+    depends_on: []
+    rank: 2310
+    exit_criteria:
+      - "Monotypes, type schemes, instantiation and generalization relative to a context."
+      - "The typing judgement, with the let rule that generalizes and the variable rule that instantiates."
+      - "Weakening, substitution and subject reduction."
+      - "Every HM-typable term is typable in System F, by erasing the schemes to prefixes of universal quantifiers."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M25-HM-ALGORITHM-W
+    priority: P1
+    status: DONE_STRONG
+    track: theory/types
+    title: "Algorithm W, and its soundness"
+    terminal_statement: "HM.W, HM.W_sound, HM.W_sound_closed (Start/HMAlgorithmW.lean)"
+    latest_evidence: "docs/goal/evidence/M25-HM-ALGORITHM-W.md"
+    open_boundary: ""
+    milestone: M25
+    depends_on:
+      - M25-UNIFICATION
+      - M25-HM-TYPING
+    rank: 2320
+    exit_criteria:
+      - "Algorithm W as a function returning a substitution and a type, or failure."
+      - "Soundness: when it returns, the substituted context types the term with the returned type."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M25-HM-PRINCIPAL
+    priority: P1
+    status: DONE_STRONG
+    track: theory/types
+    title: "Principal types: algorithm W is complete, and typability is decidable"
+    terminal_statement: "HM.W_complete, HM.principal, HM.principal_closed : (exists t, Typing [] e t) -> exists s t m, W [] e 0 = some (s, t, m) and forall t', Typing [] e t' iff exists r, t' = t.subst r; HM.W_none_iff, HM.W_closed_none_iff, HM.typable_iff, HM.decTypable (Start/HMPrincipal.lean)"
+    latest_evidence: "docs/goal/evidence/M25-HM-PRINCIPAL.md"
+    open_boundary: ""
+    milestone: M25
+    depends_on:
+      - M25-HM-ALGORITHM-W
+    rank: 2330
+    exit_criteria:
+      - "Completeness: every typing of a term is an instance of the one W computes."
+      - "Hence a typable term has a principal type, and W computes it."
+      - "W fails exactly on the untypable terms, so HM typability is decidable -- the property System F lacks."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M25-CBV-MACHINE
+    priority: P1
+    status: TODO_READY
+    track: theory/semantics
+    title: "Call-by-value: an abstract machine, and its simulation"
+    latest_evidence: "docs/goal/evidence/M11-KRIVINE-MACHINE.md"
+    open_boundary: ""
+    milestone: M25
+    depends_on: []
+    rank: 2340
+    exit_criteria:
+      - "Call-by-value reduction on the untyped terms of Start/Reduction.lean, with values and evaluation contexts."
+      - "A CEK-style machine with environments and a continuation stack."
+      - "Bidirectional simulation against call-by-value reduction, in the shape of Start/KrivineDecode.lean."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build"
+
+  - id: M25-CBV-COST
+    priority: P1
+    status: TODO_READY
+    track: theory/complexity
+    title: "The call-by-value cost model"
+    latest_evidence: "docs/goal/evidence/M11-KRIVINE-INVARIANCE.md"
+    open_boundary: ""
+    milestone: M25
+    depends_on:
+      - M25-CBV-MACHINE
+    rank: 2350
+    exit_criteria:
+      - "The number of machine transitions is polynomially related to the number of call-by-value steps."
+      - "One transition is realized by a tape program, through Complexity.Space.Realizes of Start/SpaceCompile.lean."
+      - "So the number of call-by-value beta steps is a reasonable time cost model, as it is for call-by-name."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build"
+
+  - id: M25-CBNEED-MACHINE
+    priority: P1
+    status: TODO_READY
+    track: theory/semantics
+    title: "Call-by-need: thunks, update, and the sharing that makes laziness lazy"
+    latest_evidence: "docs/goal/evidence/M12-KRIVINE-SPACE-LIVE.md"
+    open_boundary: ""
+    milestone: M25
+    depends_on: []
+    rank: 2360
+    exit_criteria:
+      - "A call-by-need machine whose heap cells are thunks, overwritten by their value when first forced."
+      - "The sharing is semantic, not only a space measure: a thunk forced twice is evaluated once, and this is proved."
+      - "The machine computes the same weak head normal forms as the call-by-name machine of Start/Krivine.lean."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build"
+
+  - id: M25-CBNEED-COST
+    priority: P2
+    status: TODO_READY
+    track: theory/complexity
+    title: "What laziness costs, and what it saves"
+    latest_evidence: "docs/goal/evidence/M11-KRIVINE-INVARIANCE.md"
+    open_boundary: ""
+    milestone: M25
+    depends_on:
+      - M25-CBNEED-MACHINE
+    rank: 2370
+    exit_criteria:
+      - "A time cost model for call-by-need, in the form of M11-KRIVINE-INVARIANCE."
+      - "A family of terms on which call-by-need takes exponentially fewer steps than call-by-name, and the proof that it never takes more."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build"
+
+  - id: M25-CBPV
+    priority: P2
+    status: TODO_READY
+    track: theory/types
+    title: "Call-by-push-value: one calculus containing both evaluation orders"
+    latest_evidence: "docs/goal/evidence/M9-SYSTEM-F.md"
+    open_boundary: ""
+    milestone: M25
+    depends_on:
+      - M25-CBV-MACHINE
+    rank: 2380
+    exit_criteria:
+      - "Value types and computation types, with thunk and force, and the typing judgement."
+      - "The call-by-value translation and the call-by-name translation, each preserving typing."
+      - "Each translation preserves reduction, so the two evaluation orders are two fragments of one calculus."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build"
+
+  - id: M25-FSUB-UNDECIDABLE
+    priority: P1
+    status: TODO_NEEDS_DESIGN
+    track: theory/types
+    title: "Subtyping in full System F-sub is undecidable (Pierce)"
+    latest_evidence: "docs/goal/evidence/M4-TM2-IMP-PARTREC.md"
+    open_boundary: "The design question is which undecidable problem to reduce from and how to encode its configurations as subtyping judgements. cslib supplies the calculus and its soundness, so none of that has to be rebuilt."
+    milestone: M25
+    depends_on: []
+    rank: 2390
+    exit_criteria:
+      - "The subtyping relation of cslib's Fsub is connected to a decision problem on words."
+      - "A two-counter machine, or another undecidable problem already in this library, is reduced to it."
+      - "Subtyping in full F-sub is proved undecidable, hence type checking is."
+      - "The decidable kernel fragment is identified, and the row records that it is where real languages live."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
       - "lake build"

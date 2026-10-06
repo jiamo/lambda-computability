@@ -1,3 +1,35 @@
+# Summary of changes for run 83c06be3-b018-4793-acbf-4d682c94bc9c
+**Rows closed.** I added milestone M25 to `docs/goal/task-board.yaml`: ten rows at ranks 2300–2390, `M25` appended to `milestone_order`, with `M25-FSUB-UNDECIDABLE` as the one `TODO_NEEDS_DESIGN` row. I wrote `docs/goal/proposed-M25.md` from the text you pasted. That text had no `required_gates` for rows 3–10, so I gave them the same gates as rows 1–2 and said so in the file. All four Hindley–Milner rows are now `DONE_STRONG`, each with an evidence note.
+- `M25-UNIFICATION` (`Start/Unification.lean`): Robinson's algorithm, with termination proved on the measure (number of variables, problem size). It is proved sound and most general (every unifier `s'` satisfies `s' = s' ∘ u`), and when it fails there is no unifier.
+- `M25-HM-TYPING` (`Start/HindleyMilner.lean`, `Start/HMSystemF.lean`): schemes, instantiation, `let`-generalization and the typing judgement. Proved: substitution, weakening, substitution of terms, subject reduction, and that every HM typing is a System F typing of the erased term (`HM.typing_systemF`).
+- `M25-HM-ALGORITHM-W` (`Start/HMAlgorithmW.lean`): `HM.W` and its soundness, `HM.W_sound`.
+- `M25-HM-PRINCIPAL` (`Start/HMPrincipal.lean`): the completeness of W (`HM.W_complete`), principal typings in any context (`HM.principal`), "W fails exactly on untypable terms" (`HM.W_none_iff`), and decidable typability (`HM.typable_iff`, instance `HM.decTypable`). The verbatim terminal statement is:
+`theorem principal_closed {e : Expr} (h : ∃ τ, Typing [] e τ) : ∃ s τ m, W [] e 0 = some (s, τ, m) ∧ ∀ τ', Typing [] e τ' ↔ ∃ r : ℕ → Ty, τ' = τ.subst r`
+
+Two checks show the statements are not vacuous: `let id = λx.x in id id` is typable, and `λx. x x` is not, so W fails on it. The new theorems use only `propext`, `Classical.choice` and `Quot.sound`. `lake build Start` succeeds (9216 jobs), and `scripts/pack_gate.sh HEAD` passes: manifest, sorry/admit (497 modules), board (285 tasks) and closure (496 modules).
+
+**Where the chain stopped.** It didn't: all four rows closed, and I did not start the CBV, call-by-need, CBPV or F-sub rows. Three caveats are recorded in the evidence notes:
+- The unification terms are the monotypes (variables, constants and the arrow). A general first-order signature is not formalized.
+- Type constants embed into System F as the closed type `∀α. α`, because the library's System F has no base types.
+- Typability in a context with free type variables is decided by running W and then checking that the substitution it returns is an injective renaming on the context's variables.
+
+**Did any of it already exist?** No. Before starting I searched `Start/`: there is no unification, Hindley–Milner or principal-types development under any name, and `Start/LambdaPiInfer.lean` is bidirectional checking for λΠ. Three repairs that are not M25 work:
+- `lake-manifest.json` had drifted again (package `start`, Mathlib `v4.28.0`, no `cslib`). I re-resolved it to `lakefile.toml`.
+- The executable bits on `scripts/*.sh` and `.githooks/pre-commit` were missing again. I restored them.
+- `Start/ShamirSim.lean`, left by the stopped IP = PSPACE work, compiled but was outside the import closure, so the closure gate failed. I added it to `Start.lean` and registered its existing `Complexity.Shamir.idxStrat`. Its header announced a theorem `Complexity.Shamir.sim` that the file does not contain, so I added a note saying it is not proved yet. No IP = PSPACE proof work was done.
+
+**Packaging.**
+1. Command: the packaging step is outside the tree I work in. I don't run or see the command that writes the delivered file; the protocol's `scripts/pack_gate.sh HEAD && git archive --format=tar.gz HEAD -o delivery.tar.gz` is what I can run here, and the delivered tree is produced from my committed HEAD by a separate step.
+2. Directory: I can't name it or say whether it is a clone at the delivered commit. The tree I received was a single "Initial commit" with the manifest drift and missing executable bits described above, which suggests whatever produces or ingests it rewrites those files.
+3. `scripts/check_manifest.py` in my repository at the delivered commit now prints `OK: lake-manifest.json agrees with lakefile.toml (10 packages, 2 direct dependencies, leanprover/lean4:v4.33.0)`. On arrival it failed with `check_manifest: lake-manifest.json is for package 'start', but lakefile.toml declares 'lambda_computability'`.
+
+# Summary of changes for run 734df340-0031-400c-9022-fde98114da24
+
+
+## Suggested follow-up
+
+I reached this run’s time limit. Send “continue” to pick up where I left off.
+
 # Summary of changes for run d621c83c-24f4-4f93-a5ce-4b79a7bc3845
 I continued from where the last run stopped. The library builds again, three more items on the task board are finished, and `TQBF` is now proved `PSPACE`-complete. Everything is committed. `lake build Start` succeeds (9200 jobs). `check_sorry.py` (481 modules), `check_closure.py`, `check_manifest.py`, `goal_state.py validate` (271 tasks) and `scripts/pack_gate.sh HEAD` all pass. The new theorems depend only on `propext`, `Classical.choice` and `Quot.sound`; the Löb results depend on no axioms at all.
 
