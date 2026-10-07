@@ -4976,10 +4976,10 @@ tasks:
 
   - id: M21-SUMCHECK-REPLAY
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: theory/complexity
     title: "The sum-check run as a small-step replay over the code of the formula"
-    latest_evidence: "docs/goal/evidence/M21-SUMCHECK-GAME.md"
+    latest_evidence: "docs/goal/evidence/M21-PSPACE-SUBSET-IP.md"
     open_boundary: ""
     milestone: M21
     depends_on:
@@ -4997,10 +4997,10 @@ tasks:
 
   - id: M21-SUMCHECK-COINS
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: theory/complexity
     title: "Random field elements from random bits, and the transfer of the sum-check bounds to counting over bits"
-    latest_evidence: "docs/goal/evidence/M21-SUMCHECK-GAME.md"
+    latest_evidence: "docs/goal/evidence/M21-PSPACE-SUBSET-IP.md"
     open_boundary: ""
     milestone: M21
     depends_on:
@@ -5018,10 +5018,10 @@ tasks:
 
   - id: M21-VERIFIER-STEP-COB
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: theory/complexity
     title: "One step of the sum-check replay as Cobham terms on the formula code"
-    latest_evidence: "docs/goal/evidence/M21-FIELD-COBHAM.md"
+    latest_evidence: "docs/goal/evidence/M21-PSPACE-SUBSET-IP.md"
     open_boundary: ""
     milestone: M21
     depends_on:
@@ -5040,11 +5040,11 @@ tasks:
 
   - id: M21-VERIFIER-POLY
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: theory/complexity
     title: "The sum-check verifier for TQBF runs in polynomial time"
-    latest_evidence: "docs/goal/proposed-M21-M24.md"
-    open_boundary: "Stopped here.  Attempted after M21-COB-TIME-ITERATE (the generic iteration combinator, done).  Missing: (1) M21-SUMCHECK-REPLAY — the iterative, stack-based replay of Complexity.Qbf.run over the code of the formula, proved equal to run; (2) M21-VERIFIER-STEP-COB — one replay step as Cobham terms on the code, the point, the stack and the transcript; (3) M21-SUMCHECK-COINS — field elements from the random bits of Complexity.Verifier.accProb and the transfer of Complexity.Qbf.cntL_run_false / run_honest from counting over F to counting over bits.  Route note for the rows after this one: the verifier need only be correct on codes of closed formulas, because PSPACE-SUBSET-IP can go through Complexity.Qbf.QBF.redTerm, whose outputs are such codes, and Complexity.IP.of_reduction; Complexity.IP Complexity.Qbf.tqbfLang then follows from Complexity.Qbf.tqbf_pspace and PSPACE ⊆ IP, so no code validation is needed in the verifier."
+    latest_evidence: "docs/goal/evidence/M21-PSPACE-SUBSET-IP.md"
+    open_boundary: ""
     milestone: M21
     depends_on:
       - M21-IP-DEF
@@ -5066,10 +5066,10 @@ tasks:
 
   - id: M21-TQBF-IN-IP
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: theory/complexity
     title: "TQBF has an interactive proof"
-    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    latest_evidence: "docs/goal/evidence/M21-PSPACE-SUBSET-IP.md"
     open_boundary: ""
     milestone: M21
     depends_on:
@@ -5085,10 +5085,10 @@ tasks:
 
   - id: M21-PSPACE-SUBSET-IP
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: theory/complexity
     title: "PSPACE is contained in IP"
-    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    latest_evidence: "docs/goal/evidence/M21-PSPACE-SUBSET-IP.md"
     open_boundary: ""
     milestone: M21
     depends_on:
@@ -5128,10 +5128,10 @@ tasks:
 
   - id: M21-IP-SUBSET-PSPACE
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: theory/complexity
     title: "IP is contained in PSPACE: the optimal prover's acceptance probability in polynomial space"
-    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    latest_evidence: "docs/goal/evidence/M21-IP-EQ-PSPACE.md"
     open_boundary: ""
     milestone: M21
     depends_on:
@@ -5149,10 +5149,10 @@ tasks:
 
   - id: M21-IP-EQ-PSPACE
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: theory/complexity
     title: "Shamir's theorem: IP = PSPACE"
-    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    latest_evidence: "docs/goal/evidence/M21-IP-EQ-PSPACE.md"
     open_boundary: ""
     milestone: M21
     depends_on:

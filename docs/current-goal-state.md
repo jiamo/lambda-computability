@@ -239,15 +239,15 @@
 | 1640 | `M21-SUMCHECK-GAME` | `P1` | `DONE_STRONG` | M21-SUMCHECK-ROUND, M21-LINEARIZE | docs/goal/evidence/M21-SUMCHECK-GAME.md |  |
 | 1650 | `M21-FIELD-COBHAM` | `P1` | `DONE_STRONG` | M21-SUMCHECK-ROUND | docs/goal/evidence/M21-FIELD-COBHAM.md |  |
 | 1652 | `M21-COB-TIME-ITERATE` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M21-COB-TIME-ITERATE.md |  |
-| 1654 | `M21-SUMCHECK-REPLAY` | `P1` | `TODO_READY` | M21-SUMCHECK-GAME | docs/goal/evidence/M21-SUMCHECK-GAME.md |  |
-| 1656 | `M21-SUMCHECK-COINS` | `P1` | `TODO_READY` | M21-SUMCHECK-GAME | docs/goal/evidence/M21-SUMCHECK-GAME.md |  |
-| 1658 | `M21-VERIFIER-STEP-COB` | `P1` | `TODO_READY` | M21-SUMCHECK-REPLAY, M21-FIELD-COBHAM, M21-COB-TIME-ITERATE | docs/goal/evidence/M21-FIELD-COBHAM.md |  |
-| 1660 | `M21-VERIFIER-POLY` | `P1` | `TODO_READY` | M21-IP-DEF, M21-SUMCHECK-GAME, M21-FIELD-COBHAM, M21-COB-TIME-ITERATE, M21-SUMCHECK-REPLAY, M21-SUMCHECK-COINS, M21-VERIFIER-STEP-COB | docs/goal/proposed-M21-M24.md | Stopped here.  Attempted after M21-COB-TIME-ITERATE (the generic iteration combinator, done).  Missing: (1) M21-SUMCHECK-REPLAY — the iterative, stack-based replay of Complexity.Qbf.run over the code of the formula, proved equal to run; (2) M21-VERIFIER-STEP-COB — one replay step as Cobham terms on the code, the point, the stack and the transcript; (3) M21-SUMCHECK-COINS — field elements from the random bits of Complexity.Verifier.accProb and the transfer of Complexity.Qbf.cntL_run_false / run_honest from counting over F to counting over bits.  Route note for the rows after this one: the verifier need only be correct on codes of closed formulas, because PSPACE-SUBSET-IP can go through Complexity.Qbf.QBF.redTerm, whose outputs are such codes, and Complexity.IP.of_reduction; Complexity.IP Complexity.Qbf.tqbfLang then follows from Complexity.Qbf.tqbf_pspace and PSPACE ⊆ IP, so no code validation is needed in the verifier. |
-| 1670 | `M21-TQBF-IN-IP` | `P1` | `TODO_READY` | M21-VERIFIER-POLY | docs/goal/proposed-M21-M24.md |  |
-| 1680 | `M21-PSPACE-SUBSET-IP` | `P1` | `TODO_READY` | M21-TQBF-IN-IP, M14-TQBF-PSPACE-HARD | docs/goal/proposed-M21-M24.md |  |
+| 1654 | `M21-SUMCHECK-REPLAY` | `P1` | `DONE_STRONG` | M21-SUMCHECK-GAME | docs/goal/evidence/M21-PSPACE-SUBSET-IP.md |  |
+| 1656 | `M21-SUMCHECK-COINS` | `P1` | `DONE_STRONG` | M21-SUMCHECK-GAME | docs/goal/evidence/M21-PSPACE-SUBSET-IP.md |  |
+| 1658 | `M21-VERIFIER-STEP-COB` | `P1` | `DONE_STRONG` | M21-SUMCHECK-REPLAY, M21-FIELD-COBHAM, M21-COB-TIME-ITERATE | docs/goal/evidence/M21-PSPACE-SUBSET-IP.md |  |
+| 1660 | `M21-VERIFIER-POLY` | `P1` | `DONE_STRONG` | M21-IP-DEF, M21-SUMCHECK-GAME, M21-FIELD-COBHAM, M21-COB-TIME-ITERATE, M21-SUMCHECK-REPLAY, M21-SUMCHECK-COINS, M21-VERIFIER-STEP-COB | docs/goal/evidence/M21-PSPACE-SUBSET-IP.md |  |
+| 1670 | `M21-TQBF-IN-IP` | `P1` | `DONE_STRONG` | M21-VERIFIER-POLY | docs/goal/evidence/M21-PSPACE-SUBSET-IP.md |  |
+| 1680 | `M21-PSPACE-SUBSET-IP` | `P1` | `DONE_STRONG` | M21-TQBF-IN-IP, M14-TQBF-PSPACE-HARD | docs/goal/evidence/M21-PSPACE-SUBSET-IP.md |  |
 | 1690 | `M21-COBHAM-TO-SPACE` | `P1` | `DONE_STRONG` | M14-SPACE-COMPILE | docs/goal/evidence/M21-COBHAM-TO-SPACE.md |  |
-| 1700 | `M21-IP-SUBSET-PSPACE` | `P1` | `TODO_READY` | M21-IP-DEF, M21-COBHAM-TO-SPACE | docs/goal/proposed-M21-M24.md |  |
-| 1710 | `M21-IP-EQ-PSPACE` | `P1` | `TODO_READY` | M21-PSPACE-SUBSET-IP, M21-IP-SUBSET-PSPACE | docs/goal/proposed-M21-M24.md |  |
+| 1700 | `M21-IP-SUBSET-PSPACE` | `P1` | `DONE_STRONG` | M21-IP-DEF, M21-COBHAM-TO-SPACE | docs/goal/evidence/M21-IP-EQ-PSPACE.md |  |
+| 1710 | `M21-IP-EQ-PSPACE` | `P1` | `DONE_STRONG` | M21-PSPACE-SUBSET-IP, M21-IP-SUBSET-PSPACE | docs/goal/evidence/M21-IP-EQ-PSPACE.md |  |
 | 1800 | `M22-NONDET-PROG` | `P1` | `TODO_READY` | M14-SPACE-COMPILE | docs/goal/proposed-M21-M24.md |  |
 | 1810 | `M22-IMMERMAN-SZELEPCSENYI` | `P1` | `TODO_READY` | M22-NONDET-PROG | docs/goal/proposed-M21-M24.md |  |
 | 1820 | `M22-SPACE-HIERARCHY` | `P2` | `TODO_READY` | M14-SPACE-COMPILE | docs/goal/proposed-M21-M24.md |  |

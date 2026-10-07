@@ -1,3 +1,33 @@
+# Summary of changes for run f7ae9ba4-73d1-4b52-a5ea-78c3569e4644
+I finished the interrupted Shamir milestone. The library now has a complete, sorry-free proof of **IP = PSPACE**.
+
+**What was proved**
+- `Complexity.IPSpace.ip_subset_pspace`: if a language has an interactive proof (an `IP L` hypothesis), it is in `Space.PSPACE`.
+- `Complexity.IPSpace.ip_eq_pspace`, also available as `Complexity.ip_eq_pspace` (the name the task board asks for): `IP L ↔ Space.PSPACE L`. It combines the new direction with the earlier `Complexity.Shamir.pspace_subset_ip`.
+- `#print axioms` shows only `propext`, `Classical.choice` and `Quot.sound`.
+
+**How the proof works**
+- `Start/IPValue.lean`: defines the value of the interaction game (sum over the verifier's questions, maximum over the prover's answers, and at the end a count of accepting coin words). It proves that no prover is accepted on more coin words than this value, and that some prover reaches it.
+- `Start/BinArith.lean` and `Start/TreeEval.lean`: any sum/max tree whose positions are given by Cobham terms, with polynomial depth and polynomial position length, can be evaluated in polynomial space by a depth-first walk with values kept in binary (`pspace_of_ctree`).
+- `Start/IPSpace.lean`: encodes a verifier's game as such a tree and proves its value equals the game value (`cnt_sem`, `ma_sem`, `sq_sem`, `rnd_sem`). It then derives the two theorems, turning the 2/3 and 1/3 acceptance thresholds into a test on the number of accepting coin words.
+
+**Deviation from the board's wording**: the recursion works with acceptance counts (the numerator over \(2^{\text{coins}}\)) rather than probabilities. The two are equivalent, and this is noted in the evidence file.
+
+**Project bookkeeping**
+- The four new modules are imported from `Start.lean`, with `#check` entries in `Start/Capstones.lean`.
+- Board rows `M21-IP-SUBSET-PSPACE` and `M21-IP-EQ-PSPACE` are now DONE_STRONG, with evidence in `docs/goal/evidence/M21-IP-EQ-PSPACE.md`; `docs/current-goal-state.md` was re-rendered.
+- Both theorems are added to the Properties table as proved.
+- The full `lake build` succeeds (9230 jobs), and `check_sorry.py`, `check_closure.py`, `goal_state.py validate` and `pack_gate.sh HEAD` all pass. Everything is committed.
+
+**What remains**: the board still has 37 TODO_READY and 23 TODO_NEEDS_DESIGN tasks, and 4 tasks are DONE_WEAK. Each is a separate formalization project. The next one by rank is `M14-KRIVINE-SPACE-CLASS` (the Krivine machine's space bound stated against DSPACE).
+
+# Summary of changes for run 0e11545e-9eba-4556-8a46-0f77d505a12f
+
+
+## Suggested follow-up
+
+I reached this run’s time limit. Send “continue” to pick up where I left off.
+
 # Summary of changes for run 83c06be3-b018-4793-acbf-4d682c94bc9c
 **Rows closed.** I added milestone M25 to `docs/goal/task-board.yaml`: ten rows at ranks 2300–2390, `M25` appended to `milestone_order`, with `M25-FSUB-UNDECIDABLE` as the one `TODO_NEEDS_DESIGN` row. I wrote `docs/goal/proposed-M25.md` from the text you pasted. That text had no `required_gates` for rows 3–10, so I gave them the same gates as rows 1–2 and said so in the file. All four Hindley–Milner rows are now `DONE_STRONG`, each with an evidence note.
 - `M25-UNIFICATION` (`Start/Unification.lean`): Robinson's algorithm, with termination proved on the measure (number of variables, problem size). It is proved sound and most general (every unifier `s'` satisfies `s' = s' ∘ u`), and when it fails there is no unifier.

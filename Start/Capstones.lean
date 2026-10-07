@@ -213,6 +213,8 @@ import Start.SumCheckReplay
 import Start.CoinDecode
 import Start.ShamirWords
 import Start.ShamirSim
+import Start.ShamirIP
+import Start.IPSpace
 import Start.HMSystemF
 import Start.HMPrincipal
 
@@ -2911,10 +2913,46 @@ most twice counting over the field when `2·n·p ≤ 2^K` (`Complexity.cntL_bloc
 #check @Complexity.Shamir.setField_fieldsWord
 #check @Complexity.Shamir.fieldsWord_decF
 
-/-! `Start/ShamirSim.lean` (unfinished part of the IP = PSPACE work): the transcript and the
-prover that reads its messages off it (`Complexity.Shamir.idxStrat`). -/
+/-!
+### M21: `PSPACE ⊆ IP`
+
+`Start/ShamirReplay.lean`: the verifier machine replays the sum-check protocol on the code of a
+formula (`Complexity.Shamir.sim`).  `Start/ShamirVerifier.lean`, `Start/ShamirAsk.lean`: Shamir's
+verifier `Complexity.Shamir.shamirV` as five Cobham terms (hence polynomial time), whose verdict
+is that of the machine on the transcript (`Complexity.Shamir.accepts_shamirV`,
+`Complexity.Shamir.transcript_shamirV`).  `Start/ShamirSoundness.lean`: on a false closed formula
+every prover is accepted with probability at most `1/3`
+(`Complexity.Shamir.accProb_shamirV_le`).  `Start/ShamirComplete.lean`: on a true closed formula
+the honest prover is accepted with probability `1` (`Complexity.Shamir.accProb_shamirV_complete`).
+`Start/ShamirIP.lean`: `TQBF ∈ IP` and `PSPACE ⊆ IP`.
+-/
 
 #check @Complexity.Shamir.idxStrat
+#check @Complexity.Shamir.sim
+#check @Complexity.Shamir.shamirV
+#check @Complexity.Shamir.accProb_shamirV_le
+#check @Complexity.Shamir.accProb_shamirV_complete
+#check @Complexity.Shamir.shamirV_promise
+#check @Complexity.Shamir.tqbf_in_ip
+#check @Complexity.Shamir.pspace_subset_ip
+
+/-!
+`Start/BinArith.lean`, `Start/TreeEval.lean`: a sum–max tree presented by Cobham terms, of
+polynomial depth and position size, is evaluated in polynomial space by a depth-first traversal
+(`Complexity.TreeEval.pspace_of_ctree`).  `Start/IPValue.lean`: the value of the game of a verifier
+bounds every prover's acceptance count and is attained by some prover
+(`Complexity.IPValue.accCount_le_F`, `Complexity.IPValue.exists_F_le_accCount`).
+`Start/IPSpace.lean`: the game tree as a Cobham tree, `IP ⊆ PSPACE` and **Shamir's theorem
+`IP = PSPACE`**.
+-/
+
+#check @Complexity.TreeEval.pspace_of_ctree
+#check @Complexity.IPValue.accCount_le_F
+#check @Complexity.IPValue.exists_F_le_accCount
+#check @Complexity.IPSpace.rnd_sem
+#check @Complexity.IPSpace.ip_subset_pspace
+#check @Complexity.IPSpace.ip_eq_pspace
+#check @Complexity.ip_eq_pspace
 
 /-!
 ### M25: Hindley–Milner type inference
