@@ -1,0 +1,48 @@
+lambda-computability
+====================
+
+This repository contains Lean code adapted from third-party work, as listed below.
+
+openai/math
+-----------
+
+Source:   https://github.com/openai/math, commit adc7f1241
+Licence:  Apache License, Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+Authors:  OpenAI
+
+The following modules of `Start/` are adapted from the `lean/OAI/Computability` tree of that
+repository.  Adaptation consisted of: dropping the `OAI` namespace, renaming each module
+`OAI.Computability.<Dir>.<Name>` to the flat module `Start.<Prefix><Name>`, replacing lemma
+names that differ between the upstream pin (Lean v4.34.1, Mathlib d13f23b7) and this library's pin
+(Lean v4.33.0, Mathlib v4.33.0) -- `dite_eq_left`/`dite_eq_right`/`ite_eq_left`/`ite_eq_right`
+became `dif_pos`/`dif_neg`/`if_pos`/`if_neg`, `Finset.prod_le_prod₀` became
+`Finset.prod_le_prod`, and upstream's one-hypothesis `Finset.prod_le_prod` became
+`Finset.prod_le_prod'`, and `Finset.prod_le_one₀` became `Finset.prod_le_one` -- and adding an attribution header to each file.  Any further change to a
+proof is recorded in the header of the module concerned.  The mathematics and the proofs are
+upstream's.
+
+| upstream directory        | family | paper                                                              | modules here            |
+|---------------------------|--------|--------------------------------------------------------------------|-------------------------|
+| `TypeSystem/` (33 files)  | 245    | Weak and strong normalization in pure type systems                 | `Start/PTS*.lean` (except `Start/PTSLambdaPi.lean`) |
+| `Logspace/` (1 file)      | 103    | Exact derandomization of logarithmic space, L = RL = BPL           | `Start/LogspaceDeterministic.lean` |
+| `SolenoidalRecorder/` (5) | 376    | Finite instructions and solenoidal shear flows                     | `Start/Solenoidal*.lean` |
+| `StarHeight/` (37 files)  | 134    | Finite monoid computations and a uniform generalized star height bound | `Start/StarHeight*.lean` |
+| `WeisfeilerLeman/` (43)   | 133    | (paper not included in the snapshot)                               | `Start/WL*.lean`        |
+| `DepthThree/` (179 files) | 112    | Beyond the square-root exponent for depth-three Boolean circuits   | `Start/DepthThree*.lean` |
+| `DegreeRigidity/` (975)   | 241    | Rigidity of the Turing degrees                                     | `Start/Rigidity*.lean` (except `Start/RigidityBridge.lean`) |
+
+In addition, `Start/OracleDegreeBridge.lean` restates (without proofs) the five definitions of
+`DegreeRigidity/Model.lean` (family 241, "Rigidity of the Turing degrees") in order to compare
+them with this library's degrees.
+
+For `DegreeRigidity/`, the module `OAI.Computability.DegreeRigidity.<Dir>.<Name>` became
+`Start.Rigidity<Name>` (the upstream file names are unique across its subdirectories).  Besides
+the renamings above, `Filter.eventuallyEqSet_iff` became `Filter.eventuallyEq_set` and
+`Measurable.of_eval` became `measurable_pi_lambda`, and one case name of
+`Ordinal.lt_wf.induction` became `h` (upstream: `ind`); the header of each changed module records the
+change.
+
+The following modules are this library's own and are *not* adapted from openai/math, although
+they refer to the adapted modules: `Start/PTSLambdaPi.lean`, `Start/OracleDegreeBridge.lean`
+(apart from the restated definitions), `Start/RigidityBridge.lean`,
+`Start/LogspaceAmplification.lean`.

@@ -1,0 +1,52 @@
+import Start.RigidityGenericSourceTransfer
+
+/-
+Absorbed from github.com/openai/math (commit adc7f1241, Apache-2.0),
+file `lean/OAI/Computability/DegreeRigidity/Effective/TriplePrefix.lean`, family 241,
+paper "Rigidity of the Turing degrees".
+Adapted to this library's Lean v4.33.0 / Mathlib `v4.33.0` pin: the `OAI` namespace was dropped,
+imports were renamed to `Start.Rigidity*`, and proofs were repaired where the pin required it.
+See `NOTICE` at the repository root.
+-/
+
+namespace TuringRigidity.TriplePrefix
+open FiniteShuffle ShuffleRequirements PairGenericSelection
+
+theorem join_agree {n : ℕ} {A A' B B' : Oracle}
+    (ha : Agree n A A') (hb : Agree n B B') : Agree n (join A B) (join A' B') := by
+  intro i hi
+  simp only [join]
+  split
+  · exact hb (i / 2) (by omega)
+  · exact ha (i / 2) (by omega)
+
+theorem join_columns (H : Oracle) : join (column false H) (column true H) = H := by
+  funext i
+  rcases Nat.mod_two_eq_zero_or_one i with hi | hi
+  · have he : i = 2 * (i / 2) := by omega
+    rw [he,join_even]
+    rfl
+  · have he : i = 2 * (i / 2) + 1 := by omega
+    rw [he,join_odd]
+    rfl
+
+def prefixes (s : List Bool) : List Bool × List Bool × List Bool :=
+  let H : Oracle := fun i => s.getD i false
+  (initial (column false H) s.length,
+    initial (column false (column true H)) s.length,
+    initial (column true (column true H)) s.length)
+
+theorem realizes_join {s : List Bool} {Y L R : Oracle}
+    (hY : Realizes (prefixes s).1 Y)
+    (hL : Realizes (prefixes s).2.1 L)
+    (hR : Realizes (prefixes s).2.2 R) : Realizes s (join Y (join L R)) := by
+  let H : Oracle := fun i => s.getD i false
+  have hYa : Agree s.length (column false H) Y := (realizes_initial _ _ _).mp hY
+  have hLa : Agree s.length (column false (column true H)) L := (realizes_initial _ _ _).mp hL
+  have hRa : Agree s.length (column true (column true H)) R := (realizes_initial _ _ _).mp hR
+  have h := join_agree hYa (join_agree hLa hRa)
+  rw [join_columns,join_columns] at h
+  exact h
+
+end TuringRigidity.TriplePrefix
+

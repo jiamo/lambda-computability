@@ -217,6 +217,19 @@ import Start.ShamirIP
 import Start.IPSpace
 import Start.HMSystemF
 import Start.HMPrincipal
+import Start.PTSNormalization
+import Start.PTSLambdaPi
+import Start.OracleDegreeBridge
+import Start.LogspaceDeterministic
+import Start.SolenoidalHalting
+import Start.StarHeightMain
+import Start.WLMain
+import Start.DepthThreeMain
+import Start.DepthThreeMachineCompilation
+import Start.DepthThreeTapeScan
+import Start.LogspaceAmplification
+import Start.RigidityBridge
+import Start.RigidityArithmeticRepresentation
 
 /-! ## Interfaces of the untyped calculus
 
@@ -2991,3 +3004,176 @@ type computed by W (`HM.principal`, `HM.principal_closed`), W fails exactly on t
 #check @HM.W_none_iff
 #check @HM.typable_iff
 #check @HM.decTypable
+
+/-!
+## Absorbed from github.com/openai/math: pure type systems (family 245)
+
+The modules `Start/PTS*.lean` other than `Start/PTSLambdaPi.lean` are adapted from
+github.com/openai/math (commit adc7f1241, Apache-2.0), directory
+`lean/OAI/Computability/TypeSystem`, family 245, paper "Weak and strong normalization in pure
+type systems".  The theorem below is theirs, not this library's; see `NOTICE`.
+
+`PureTypeSystem.weak_implies_strong`: for every pure type system (arbitrary sorts, axioms and
+rules, annotated abstractions), system-wide weak normalization implies system-wide strong
+normalization.
+
+`Start/PTSLambdaPi.lean` (this library's own) places `λΠ` in that framework:
+`PureTypeSystem.lambdaPi_systemStronglyNormalizing` is derived from `LambdaPi.Typing.sn`, not
+from `weak_implies_strong` (which would be circular, since weak normalization of `λΠ` is only
+available as a corollary of strong normalization).
+-/
+
+#check @PureTypeSystem.weak_implies_strong
+#check @PureTypeSystem.lambdaPi_systemStronglyNormalizing
+#check @PureTypeSystem.lambdaPi_systemWeaklyNormalizing
+#check @PureTypeSystem.lambdaPi_weak_implies_strong_consistent
+
+/-!
+## Comparing degree presentations with github.com/openai/math (family 241)
+
+`Start/OracleDegreeBridge.lean` restates the five definitions of openai/math's
+`DegreeRigidity/Model.lean` (their proofs are not absorbed) and shows that their `Degree`, the
+quotient of `ℕ → Bool` under Turing reducibility of `oracleFun`, embeds as an order into
+mathlib's `TuringDegree` used by this library.
+-/
+
+#check @Lambda.Oracle.oracleFunction_eq
+#check @Lambda.Oracle.setReduces_iff
+#check @Lambda.Oracle.SetDegree.toTuringDegree
+#check @Lambda.Oracle.SetDegree.range_toTuringDegree
+#check @Lambda.Oracle.SetDegreeRigidity
+
+/-!
+## Absorbed from github.com/openai/math: rigidity of the Turing degrees (family 241)
+
+`Start/Rigidity*.lean` (975 modules) are adapted from github.com/openai/math (commit adc7f1241,
+Apache-2.0), directory `lean/OAI/Computability/DegreeRigidity`, family 241, paper "Rigidity of the
+Turing degrees".  The theorem is theirs: every order automorphism of the Turing degrees of subsets
+of `ℕ` is the identity (`TuringRigidity.ManuscriptMain.rigidity : TuringRigidity.MainTheorem`).
+`Start/RigidityBridge.lean` (this library's own) identifies their `Degree` with
+`Lambda.Oracle.SetDegree` and proves `Lambda.Oracle.SetDegreeRigidity`.
+`Start/RigidityArithmeticRepresentation.lean` is an upstream module the main theorem does not
+import; it is kept so that the directory is absorbed whole.
+-/
+
+#check @TuringRigidity.ManuscriptMain.rigidity
+#check @TuringRigidity.MainTheorem
+#check @Lambda.Oracle.setDegreeOrderIso
+#check @Lambda.Oracle.setDegreeRigidity
+#check @TuringRigidity.ManuscriptArithmeticRepresentation.arithmetic_representation
+
+/-! Upstream `DegreeRigidity/` modules that the main theorem imports but whose declarations no
+other module mentions by name (registered here so that each module has a compiled entry point). -/
+
+#check @TuringRigidity.BoundedSetTheory.sourceT_arithmetic_persistent_graph
+#check @TuringRigidity.AtomicForcing.Atomic
+#check @TuringRigidity.FullSetForcing.outputSentence
+#check @TuringRigidity.ElementaryModel.definedSet_univ
+#check @TuringRigidity.BoundedForcing.extension_boundedSeparation
+#check @TuringRigidity.FiniteSupport.codingLocation_iff
+#check @TuringRigidity.FullSetForcing.fromInternal
+#check @TuringRigidity.RelativeConstructible.generically_persistent_ground_graph_definition
+#check @TuringRigidity.FullSetForcing.persistent_extension_one_real_names
+#check @TuringRigidity.RelativeConstructible.generic_real_column_realizes
+#check @TuringRigidity.InternalCohenBooleanReading.original_name_boolean_intermediate
+#check @TuringRigidity.BoundedSetTheory.Formula.numericalGraph
+#check @TuringRigidity.RelativeConstructible.Construction.subset_at_level
+#check @TuringRigidity.RelativeConstructible.modelRealSentence
+#check @TuringRigidity.RelativeConstructible.orderType_certificate_relative
+#check @TuringRigidity.OriginalRealGeneratedModel.original_name_hull
+#check @TuringRigidity.RelativeConstructible.Construction.ownReals_at_level
+#check @TuringRigidity.RelativeConstructible.seedBoundStage_sourceT
+#check @TuringRigidity.BoundedSetTheory.parameter_persistent_collapse
+#check @TuringRigidity.SameExtensionCommonIdeal.exists_common_ideal_pair
+#check @TuringRigidity.SameRealBooleanFilter.generated_agreement
+#check @TuringRigidity.ArithmeticTree.Test.nodeCode_mem
+#check @TuringRigidity.SetRankCertificate.RankMap
+#check @TuringRigidity.ArithmeticTree.generic_presentation_comparison
+#check @TuringRigidity.RelativeConstructible.uniform_cohen_definition_symmetric
+#check @TuringRigidity.FullSetForcing.checked_mem_iff_all_outer_generic
+
+/-!
+## Absorbed from github.com/openai/math: logarithmic space (family 103)
+
+`Start/LogspaceDeterministic.lean` is adapted from github.com/openai/math (commit adc7f1241,
+Apache-2.0), directory `lean/OAI/Computability/Logspace`, family 103, paper "Exact
+derandomization of logarithmic space, L = RL = BPL".  Despite the paper's title, the upstream file
+proves only the inclusions `L ⊆ RL` and `L ⊆ BPL` (a deterministic log-space decider halts within
+a polynomial clock and is a one- and two-sided error machine); the converse inclusions
+`RL ⊆ L` and `BPL ⊆ L` are not in the upstream Lean.
+
+`Start/LogspaceAmplification.lean` (this library's own) proves `RL ⊆ BPL` in the same machine
+model, by running two copies of an `RL` machine on alternate coin bits and accepting if either
+accepts.  Hence `BPL ⊆ L` alone would give `RL ⊆ L` and `L = RL = BPL`.  `BPL ⊆ L` itself (the
+main theorem of the paper) is **not** proved here.
+-/
+
+#check @ExactDerandomization.L_subset_RL
+#check @ExactDerandomization.L_subset_BPL
+#check @ExactDerandomization.RL_subset_BPL
+#check @ExactDerandomization.Machine.twoTrial_acceptanceProbability
+#check @ExactDerandomization.RL_subset_L_of_BPL_subset_L
+#check @ExactDerandomization.L_eq_RL_and_L_eq_BPL_of_BPL_subset_L
+
+/-!
+## Absorbed from github.com/openai/math: the solenoidal recorder machine (family 376)
+
+`Start/Solenoidal*.lean` are adapted from github.com/openai/math (commit adc7f1241, Apache-2.0),
+directory `lean/OAI/Computability/SolenoidalRecorder`, family 376, paper "Finite instructions and
+solenoidal shear flows".  They are the discrete recorder machine of that paper: it reaches a
+terminal configuration exactly when the simulated Turing machine halts, and otherwise runs
+forever.  The fluid-dynamical part of the paper is not formalized upstream.
+-/
+
+#check @Solenoidal.Recorder.halting_iff
+#check @Solenoidal.Recorder.nonhalting_execution
+
+/-!
+## Absorbed from github.com/openai/math: generalized star height (family 134)
+
+`Start/StarHeight*.lean` are adapted from github.com/openai/math (commit adc7f1241, Apache-2.0),
+directory `lean/OAI/Computability/StarHeight`, family 134, paper "Finite monoid computations and a
+uniform generalized star height bound".  The theorem is theirs: over a finite alphabet, every
+regular language (mathlib's `Language.IsRegular`) is denoted by an extended regular expression
+(with complement) of star height at most three.
+-/
+
+#check @GeneralizedStarHeight.main
+
+/-!
+## Absorbed from github.com/openai/math: Weisfeiler–Leman time lower bound (family 133)
+
+`Start/WL*.lean` are adapted from github.com/openai/math (commit adc7f1241, Apache-2.0),
+directory `lean/OAI/Computability/WeisfeilerLeman`, family 133 (the paper is not part of the
+snapshot we received).  The theorem is theirs: there are `c > 0` and `k₀` such that for every
+`k ≥ k₀`, every Turing machine or word RAM deciding `k`-dimensional Weisfeiler–Leman equivalence
+on the stated input class needs worst-case time at least `n ^ (c k)` for large `n`.
+-/
+
+#check @WLTime.unconditional_time_lower_bound
+#check @WLTime.MainClaim
+
+/-!
+## Absorbed from github.com/openai/math: a depth-three circuit lower bound (family 112)
+
+`Start/DepthThree*.lean` are adapted from github.com/openai/math (commit adc7f1241, Apache-2.0),
+directory `lean/OAI/Computability/DepthThree`, family 112, paper "Beyond the square-root exponent
+for depth-three Boolean circuits".  The theorem is theirs: there is a language decided by a finite
+multi-tape Turing machine in polynomial time such that, for every `A > 0` and all large `n`, every
+unbounded fan-in OR-of-AND-of-OR circuit computing its `n`-bit slice has more than
+`2 ^ (A √n)` gates.  The circuit and machine models are upstream's own (`Circuit3`,
+`FiniteMultiTapeMachine`); they are not yet connected to `Start/PolyCircuit.lean` or
+`Start/UniformCircuit.lean`.
+-/
+
+#check @DepthThreeLowerBound.exists_polynomial_time_language_depth_three_lower_bound
+
+/-! Upstream auxiliary modules of `DepthThree/` that the main theorem does not import (kept so
+that the directory is absorbed whole): compilation of counted `TM1` deciders to finite machines,
+tape-scan programs, an interpolation identity, and a tape-word lemma
+(`Start/DepthThreeTapeWord.lean`). -/
+
+#check @DepthThreeLowerBound.MachineCompilation.polynomialTimeDecider_of_counted_TM1
+#check @DepthThreeLowerBound.TapeProgram.runs_scan_mark
+#check @DepthThreeLowerBound.Interpolation.finiteAvg_encoded_acceptEval_finset
+#check @DepthThreeLowerBound.TapeWord.move_right_iterate_mk₂_append

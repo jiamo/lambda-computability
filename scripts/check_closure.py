@@ -103,16 +103,22 @@ def main() -> int:
             texts[module] = f.read()
     capstones = texts.get("Start.Capstones", "")
 
+    # `\bname\b` occurs in a text iff, for a name made only of word characters, the name is one
+    # of the text's maximal word-character runs; precomputing those runs once per module keeps the
+    # gate linear in the size of the library.  Other names fall back to the regular expression.
+    word_runs = {module: set(re.findall(r"\w+", text)) for module, text in texts.items()}
+
+    def mentions(other: str, name: str) -> bool:
+        if re.fullmatch(r"\w+", name):
+            return name in word_runs[other]
+        return re.search(r"\b" + re.escape(name) + r"\b", texts[other]) is not None
+
     terminal = []
     for module, path in sorted(modules.items()):
         names = declarations(path)
         if not names:
             continue
-        used = any(
-            any(re.search(r"\b" + re.escape(n) + r"\b", other_text) for n in names)
-            for other, other_text in texts.items()
-            if other != module
-        )
+        used = any(mentions(other, n) for n in names for other in texts if other != module)
         if used:
             continue
         terminal.append(module)

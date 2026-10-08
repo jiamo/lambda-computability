@@ -1,0 +1,76 @@
+import Start.RigidityTupleRelation
+import Start.RigidityInternalUniformization
+
+/-
+Absorbed from github.com/openai/math (commit adc7f1241, Apache-2.0),
+file `lean/OAI/Computability/DegreeRigidity/SetModels/FiniteSkolem.lean`, family 241,
+paper "Rigidity of the Turing degrees".
+Adapted to this library's Lean v4.33.0 / Mathlib `v4.33.0` pin: the `OAI` namespace was dropped,
+imports were renamed to `Start.Rigidity*`, and proofs were repaired where the pin required it.
+See `NOTICE` at the repository root.
+-/
+
+namespace TuringRigidity.BoundedSetTheory
+open TransitiveNameModel
+universe u
+namespace FiniteTuple
+
+noncomputable def requests (d : ZFSet.{u}) (n : ℕ) (r : ZFSet.{u}) : ZFSet.{u} :=
+  ZFSet.sep (fun t => ∃ y ∈ d, ZFSet.pair t y ∈ r) (space d n)
+
+theorem requests_mem (M : ZFSet.{u}) (hM : Transitive M)
+    (hP : Pairing M) (hU : BoundedSetTheory.Union M) (hPow : PowerSet M)
+    (hS : Separation M) {d r : ZFSet.{u}} (hd : d ∈ M) (hr : r ∈ M) (n : ℕ) :
+    requests d n r ∈ M := by
+  simpa only [requests,Formula.Eval,Formula.eval_pairMem,cons_zero,cons_succ] using
+    sep_mem M hM hS (.existsMem 1 (.pairMem 1 0 3))
+      (cons d (fun _ => r)) (by intro i; cases i <;> assumption)
+      (space_mem M hM hP hU hPow hS hd n)
+
+def SkolemGraph (d : ZFSet.{u}) (n : ℕ) (φ : Formula)
+    (e : ℕ → ZFSet.{u}) (g : ZFSet.{u}) : Prop :=
+  g ⊆ relation d n φ e ∧
+  ∀ xs : List ZFSet.{u}, xs.length = n → (∀ x ∈ xs, x ∈ d) →
+    (∃ y ∈ d, φ.Eval (cons y (prepend xs e))) →
+      ∃ y ∈ d, ZFSet.pair (code xs) y ∈ g ∧
+        ∀ z ∈ d, ZFSet.pair (code xs) z ∈ g → z = y
+
+theorem internal_skolem_graph (M : ZFSet.{u}) (hM : Transitive M)
+    (hP : Pairing M) (hU : BoundedSetTheory.Union M) (hPow : PowerSet M)
+    (hS : Separation M) (hR : SigmaReplacement M) (hI : Infinity M) (hAC : Choice M)
+    {d : ZFSet.{u}} (hd : d ∈ M) (n : ℕ) (φ : Formula)
+    (e : ℕ → ZFSet.{u}) (he : ∀ i, e i ∈ M) :
+    ∃ g ∈ M, SkolemGraph d n φ e g := by
+  have hr := relation_mem M hM hP hU hPow hS hR hI hd n φ e he
+  have ha := requests_mem M hM hP hU hPow hS hd hr n
+  obtain ⟨g,hg,hgr,_,hsel⟩ := internal_relation_choice M hM hP hU hPow hS hAC ha hd hr
+    (fun t ht => (ZFSet.mem_sep.mp ht).2)
+  refine ⟨g,hg,hgr,?_⟩
+  intro xs hlen hxs hw
+  subst n
+  have ht : code xs ∈ requests d xs.length (relation d xs.length φ e) := by
+    obtain ⟨y,hy,hφ⟩ := hw
+    exact ZFSet.mem_sep.mpr ⟨code_mem_space d xs hxs,y,hy,
+      (relation_pair d y xs φ e).mpr ⟨hxs,hy,hφ⟩⟩
+  exact hsel _ ht
+
+theorem SkolemGraph.correct {d g : ZFSet.{u}} {n : ℕ} {φ : Formula}
+    {e : ℕ → ZFSet.{u}} (hg : SkolemGraph d n φ e g)
+    (xs : List ZFSet.{u}) (hlen : xs.length = n) {y : ZFSet.{u}}
+    (hy : ZFSet.pair (code xs) y ∈ g) :
+    (∀ x ∈ xs, x ∈ d) ∧ y ∈ d ∧ φ.Eval (cons y (prepend xs e)) := by
+  subst n
+  exact (relation_pair d y xs φ e).mp (hg.1 hy)
+
+theorem SkolemGraph.functional {d g : ZFSet.{u}} {n : ℕ} {φ : Formula}
+    {e : ℕ → ZFSet.{u}} (hg : SkolemGraph d n φ e g)
+    (xs : List ZFSet.{u}) (hlen : xs.length = n) {y z : ZFSet.{u}}
+    (hy : ZFSet.pair (code xs) y ∈ g) (hz : ZFSet.pair (code xs) z ∈ g) : y = z := by
+  have hy' := hg.correct xs hlen hy
+  have hz' := hg.correct xs hlen hz
+  obtain ⟨w,_,_,hu⟩ := hg.2 xs hlen hy'.1 ⟨y,hy'.2⟩
+  exact (hu y hy'.2.1 hy).trans (hu z hz'.2.1 hz).symm
+
+end FiniteTuple
+end TuringRigidity.BoundedSetTheory
+

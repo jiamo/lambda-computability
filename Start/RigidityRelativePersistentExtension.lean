@@ -1,0 +1,41 @@
+import Start.RigidityRelativePersistentDescent
+import Start.RigidityPersistentExtension
+
+/-
+Absorbed from github.com/openai/math (commit adc7f1241, Apache-2.0),
+file `lean/OAI/Computability/DegreeRigidity/Constructibility/RelativePersistentExtension.lean`, family 241,
+paper "Rigidity of the Turing degrees".
+Adapted to this library's Lean v4.33.0 / Mathlib `v4.33.0` pin: the `OAI` namespace was dropped,
+imports were renamed to `Start.Rigidity*`, and proofs were repaired where the pin required it.
+See `NOTICE` at the repository root.
+-/
+
+namespace TuringRigidity.RelativeConstructible
+open TransitiveNameModel BoundedSetTheory ElementaryModel SetDegreeDecoding
+open PersistentRestrictions
+universe u
+
+theorem persistent_extension_in_relativeModel (M : ZFSet.{u}) [Countable (Conditions M)]
+    (hM : Transitive M) (hT : SourceT M)
+    (I : CountableIdeal) (ρ : I ≃o I) (hρ : Persistent I ρ)
+    (hz : degree (OracleJump.jump FixedArithmetic.zero) ∈ I.carrier)
+    (hIM : I.carrier ⊆ (modelIdeal M hM hT).carrier) :
+    ∃ σ : modelIdeal M hM hT ≃o modelIdeal M hM hT,
+      Extends hIM ρ σ ∧ Persistent (modelIdeal M hM hT) σ ∧
+      automorphismSet σ ∈ relativeModel M (groundReals M) := by
+  obtain ⟨σ,he,hσ⟩ := PersistentExtension.source_4_1_10 I (modelIdeal M hM hT) ρ hρ hz hIM
+    (modelIdeal_jump M hM hT)
+  exact ⟨σ,he,hσ,persistent_modelIdeal_graph_mem_relativeModel M hM hT σ hσ⟩
+
+theorem persistent_extension_in_model (M : ZFSet.{u}) [Countable (Conditions M)]
+    (hM : Transitive M) (hT : SourceT M)
+    (I : CountableIdeal) (ρ : I ≃o I) (hρ : Persistent I ρ)
+    (hz : degree (OracleJump.jump FixedArithmetic.zero) ∈ I.carrier)
+    (hIM : I.carrier ⊆ (modelIdeal M hM hT).carrier) :
+    ∃ σ : modelIdeal M hM hT ≃o modelIdeal M hM hT,
+      Extends hIM ρ σ ∧ Persistent (modelIdeal M hM hT) σ ∧ automorphismSet σ ∈ M := by
+  obtain ⟨σ,he,hσ,hmem⟩ := persistent_extension_in_relativeModel M hM hT I ρ hρ hz hIM
+  exact ⟨σ,he,hσ,relativeModel_subset M _ hmem⟩
+
+end TuringRigidity.RelativeConstructible
+

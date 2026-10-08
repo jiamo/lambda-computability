@@ -142,7 +142,7 @@ theorem sumL_comp_fiber {α β : Type*} [Fintype α] [Fintype β] [DecidableEq �
 of the decoding of a block. -/
 theorem sumL_blocks_le {p : ℕ} [NeZero p] (hp : 0 < p) (K : ℕ) :
     ∀ (n : ℕ) (g : List (ZMod p) → ℕ),
-      sumL (n * K) (fun r => g ((blocks p K n r).map (fun k => (k : ZMod p)))) ≤
+      sumL (n * K) (fun r => g ((blocks p K n r).map (fun k : ℕ => (k : ZMod p)))) ≤
         (2 ^ K / p + 1) ^ n * sumL n g := by
   intro n
   induction n with
@@ -151,14 +151,14 @@ theorem sumL_blocks_le {p : ℕ} [NeZero p] (hp : 0 < p) (K : ℕ) :
       intro g
       rw [show (n + 1) * K = K + n * K by ring, sumL_append]
       have step : ∀ w : List Bool, w.length = K →
-          sumL (n * K) (fun r => g ((blocks p K (n + 1) (w ++ r)).map (fun k => (k : ZMod p)))) ≤
+          sumL (n * K) (fun r => g ((blocks p K (n + 1) (w ++ r)).map (fun k : ℕ => (k : ZMod p)))) ≤
             (2 ^ K / p + 1) ^ n * sumL n (fun ρ => g ((decP p w : ZMod p) :: ρ)) := by
         intro w hw
         have := ih (fun ρ => g ((decP p w : ZMod p) :: ρ))
         simp only [blocks, List.take_left' hw, List.drop_left' hw]
         exact this
       calc sumL K (fun w => sumL (n * K)
-              (fun r => g ((blocks p K (n + 1) (w ++ r)).map (fun k => (k : ZMod p)))))
+              (fun r => g ((blocks p K (n + 1) (w ++ r)).map (fun k : ℕ => (k : ZMod p)))))
           ≤ sumL K (fun w => (2 ^ K / p + 1) ^ n *
               sumL n (fun ρ => g ((decP p w : ZMod p) :: ρ))) := sumL_le_of_length step
         _ = (2 ^ K / p + 1) ^ n * sumL K (fun w => sumL n (fun ρ => g ((decP p w : ZMod p) :: ρ))) :=
@@ -206,13 +206,13 @@ elements are decoded from `n` blocks of `K` coin flips, is at most twice its pro
 uniform distribution on the field, as soon as `2 · n · p ≤ 2 ^ K`. -/
 theorem cntL_blocks_le {p : ℕ} [NeZero p] (hp : 0 < p) (K n : ℕ) (hK : 2 * n * p ≤ 2 ^ K)
     (E : List (ZMod p) → Bool) :
-    (cntL (n * K) (fun r => E ((blocks p K n r).map (fun k => (k : ZMod p)))) : ℚ) / 2 ^ (n * K) ≤
+    (cntL (n * K) (fun r => E ((blocks p K n r).map (fun k : ℕ => (k : ZMod p)))) : ℚ) / 2 ^ (n * K) ≤
       2 * ((cntL n E : ℚ) / (p : ℚ) ^ n) := by
   have h := sumL_blocks_le hp K n (fun ρ => if E ρ then 1 else 0)
-  have hcnt : (cntL (n * K) (fun r => E ((blocks p K n r).map (fun k => (k : ZMod p)))) : ℚ) ≤
+  have hcnt : (cntL (n * K) (fun r => E ((blocks p K n r).map (fun k : ℕ => (k : ZMod p)))) : ℚ) ≤
       ((2 ^ K / p + 1 : ℕ) : ℚ) ^ n * cntL n E := by
     unfold cntL
-    have : sumL (n * K) (fun r => if E ((blocks p K n r).map (fun k => (k : ZMod p))) = true
+    have : sumL (n * K) (fun r => if E ((blocks p K n r).map (fun k : ℕ => (k : ZMod p))) = true
         then 1 else 0) ≤ (2 ^ K / p + 1) ^ n * sumL n (fun ρ => if E ρ = true then 1 else 0) := h
     exact_mod_cast this
   have hc : ((2 ^ K / p + 1 : ℕ) : ℚ) * p ≤ 2 ^ K + p := by
@@ -235,7 +235,7 @@ theorem cntL_blocks_le {p : ℕ} [NeZero p] (hp : 0 < p) (K n : ℕ) (hK : 2 * n
           linarith
   have hE : (0 : ℚ) ≤ cntL n E := by positivity
   rw [div_le_iff₀ (by positivity)]
-  calc (cntL (n * K) (fun r => E ((blocks p K n r).map (fun k => (k : ZMod p)))) : ℚ)
+  calc (cntL (n * K) (fun r => E ((blocks p K n r).map (fun k : ℕ => (k : ZMod p)))) : ℚ)
       ≤ ((2 ^ K / p + 1 : ℕ) : ℚ) ^ n * cntL n E := hcnt
     _ = (((2 ^ K / p + 1 : ℕ) : ℚ) * p / 2 ^ K) ^ n * ((cntL n E : ℚ) / (p : ℚ) ^ n) *
           2 ^ (n * K) := by

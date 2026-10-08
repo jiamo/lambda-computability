@@ -566,4 +566,17 @@ import Start.HindleyMilner
 import Start.HMSystemF
 import Start.HMAlgorithmW
 import Start.HMPrincipal
+import Start.PTSNormalization
+import Start.PTSLambdaPi
+import Start.OracleDegreeBridge
+import Start.LogspaceDeterministic
+import Start.SolenoidalHalting
+import Start.StarHeightMain
+import Start.WLMain
+import Start.DepthThreeMain
+import Start.DepthThreeMachineCompilation
+import Start.DepthThreeTapeScan
+import Start.LogspaceAmplification
+import Start.RigidityBridge
+import Start.RigidityArithmeticRepresentation
 import Start.Capstones

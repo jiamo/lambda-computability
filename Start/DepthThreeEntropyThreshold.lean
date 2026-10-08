@@ -1,0 +1,62 @@
+import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
+import Mathlib.Analysis.SpecificLimits.Basic
+
+/-
+Absorbed from github.com/openai/math (commit adc7f1241, Apache-2.0),
+directory `lean/OAI/Computability/DepthThree/EntropyThreshold.lean`, family 112,
+paper "Beyond the square-root exponent for depth-three Boolean circuits".
+Adapted to this library's Lean v4.33.0 / Mathlib `v4.33.0` pin: the `OAI` namespace was dropped,
+imports were renamed to `Start.DepthThree*`, and proofs were repaired where the pin required it.
+See `NOTICE` at the repository root.
+-/
+
+open Filter
+open scoped Topology
+
+namespace DepthThreeLowerBound
+
+noncomputable def binaryEntropy (x : ℝ) : ℝ :=
+  -(x * Real.log x + (1 - x) * Real.log (1 - x)) / Real.log 2
+
+@[simp] theorem binaryEntropy_zero : binaryEntropy 0 = 0 := by
+  simp [binaryEntropy]
+
+@[simp] theorem binaryEntropy_one : binaryEntropy 1 = 0 := by
+  simp [binaryEntropy]
+
+theorem binaryEntropy_mul_log_two (x : ℝ) :
+    binaryEntropy x * Real.log 2 =
+      -(x * Real.log x + (1 - x) * Real.log (1 - x)) := by
+  exact div_mul_cancel₀ _ (ne_of_gt (Real.log_pos one_lt_two))
+
+theorem binaryEntropy_nonneg {x : ℝ} (hx₀ : 0 ≤ x) (hx₁ : x ≤ 1) :
+    0 ≤ binaryEntropy x := by
+  apply div_nonneg
+  · exact neg_nonneg.mpr (add_nonpos
+      (Real.mul_log_nonpos hx₀ hx₁)
+      (Real.mul_log_nonpos (sub_nonneg.mpr hx₁) (sub_le_self _ hx₀)))
+  · exact (Real.log_pos one_lt_two).le
+
+theorem continuous_binaryEntropy : Continuous binaryEntropy := by
+  unfold binaryEntropy
+  exact ((Real.continuous_mul_log.add
+    (Real.continuous_mul_log.comp (continuous_const.sub continuous_id))).neg).div_const _
+
+theorem tendsto_binaryEntropy_reciprocal :
+    Tendsto (fun r : ℕ => binaryEntropy (1 / (r : ℝ))) atTop (𝓝 0) := by
+  simpa only [binaryEntropy_zero, Function.comp_def] using
+    (continuous_binaryEntropy.tendsto 0).comp tendsto_one_div_atTop_nhds_zero_nat
+
+theorem exists_integer_entropy_threshold (F : ℕ) {ε : ℝ} (hε : 0 < ε) :
+    ∃ r : ℕ, 2 ≤ r ∧ (F : ℝ) * binaryEntropy (1 / (r : ℝ)) ≤ ε := by
+  have hlim : Tendsto (fun r : ℕ => (F : ℝ) * binaryEntropy (1 / (r : ℝ)))
+      atTop (𝓝 0) := by
+    simpa only [mul_zero] using
+      (tendsto_const_nhds.mul tendsto_binaryEntropy_reciprocal :
+        Tendsto (fun r : ℕ => (F : ℝ) * binaryEntropy (1 / (r : ℝ)))
+          atTop (𝓝 ((F : ℝ) * 0)))
+  obtain ⟨N, hN⟩ := eventually_atTop.1 (hlim.eventually (eventually_lt_nhds hε))
+  exact ⟨max N 2, le_max_right _ _, (hN _ (le_max_left _ _)).le⟩
+
+end DepthThreeLowerBound
+

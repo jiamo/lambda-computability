@@ -586,6 +586,31 @@ Public Lean 4 developments in this area, and how they relate (repository file li
 | [`a9lim/blam`](https://github.com/a9lim/blam) | Computational experiments in binary lambda calculus (censuses, BBλ, Ω/K measurements) | Numerical/experimental rather than a formalization; `Start/BLC.lean` proves the BLC decoder correct and gives the bijection `Lambda ≃ {bs // isBLC bs}` |
 | `Mathlib.Computability` | Partial recursive functions, `Nat.Partrec.Code`, TM0/TM1/TM2, `Turing.PartrecToTM2` | Used as the base: the equivalences above are stated against mathlib's `Partrec`, `Computable`, `REPred` and `Turing.FinTM2`, not against a private notion of computability |
 
+## Results absorbed from openai/math (not this library's own)
+
+The following results are **not** original to this library.  They were adapted, proofs included,
+from [github.com/openai/math](https://github.com/openai/math) (commit adc7f1241, Apache-2.0) to
+this repository's Lean/Mathlib pin, and they are listed with their upstream directory and family
+in [`NOTICE`](NOTICE) and in `docs/goal/evidence/M26-OAI-ABSORPTION.md`.
+
+| upstream directory, family | modules | theorem (upstream's) |
+| --- | --- | --- |
+| `TypeSystem`, 245 | `Start/PTS*.lean` | `PureTypeSystem.weak_implies_strong`: in every pure type system, weak normalization implies strong normalization |
+| `Logspace`, 103 | `Start/LogspaceDeterministic.lean` | `ExactDerandomization.L_subset_RL`, `L_subset_BPL` (only these inclusions are in upstream Lean; the paper's `RL, BPL ⊆ L` is not) |
+| `SolenoidalRecorder`, 376 | `Start/Solenoidal*.lean` | `Solenoidal.Recorder.halting_iff`: the recorder machine terminates iff the simulated Turing machine halts |
+| `StarHeight`, 134 | `Start/StarHeight*.lean` | `GeneralizedStarHeight.main`: every regular language has generalized star height at most 3 |
+| `WeisfeilerLeman`, 133 | `Start/WL*.lean` | `WLTime.unconditional_time_lower_bound`: deciding k-dimensional WL equivalence needs time `n^(ck)` |
+| `DepthThree`, 112 | `Start/DepthThree*.lean` | `DepthThreeLowerBound.exists_polynomial_time_language_depth_three_lower_bound` |
+| `DegreeRigidity`, 241 | `Start/Rigidity*.lean` (975 modules, except `Start/RigidityBridge.lean`) | `TuringRigidity.ManuscriptMain.rigidity`: every order automorphism of the Turing degrees of sets is the identity |
+
+This library's own additions around them are `Start/PTSLambdaPi.lean` (λΠ as a pure type system;
+its strong normalization in the PTS sense is derived from `Start/LambdaPiSN.lean`, independently of
+the absorbed theorem), `Start/OracleDegreeBridge.lean` (openai/math's degrees of sets embed into
+mathlib's `TuringDegree` used here), `Start/RigidityBridge.lean` (the absorbed rigidity theorem
+restated and proved as `Lambda.Oracle.setDegreeRigidity`), and `Start/LogspaceAmplification.lean`
+(`ExactDerandomization.RL_subset_BPL` by two-trial amplification, so that `BPL ⊆ L` alone would
+give `L = RL = BPL`; `BPL ⊆ L` itself, the paper's main theorem, is **not** proved here).
+
 ## Map of the library
 
 `Start/` is self-contained; `Start.lean` imports everything.
@@ -1372,7 +1397,8 @@ material gets to them:
 
 ## License
 
-Apache License 2.0 — see [`LICENSE`](LICENSE).
+Apache License 2.0 — see [`LICENSE`](LICENSE).  Code adapted from third parties is listed in
+[`NOTICE`](NOTICE).
 
 ## Scratch files
 

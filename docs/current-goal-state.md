@@ -289,6 +289,19 @@
 | 2370 | `M25-CBNEED-COST` | `P2` | `TODO_READY` | M25-CBNEED-MACHINE | docs/goal/evidence/M11-KRIVINE-INVARIANCE.md |  |
 | 2380 | `M25-CBPV` | `P2` | `TODO_READY` | M25-CBV-MACHINE | docs/goal/evidence/M9-SYSTEM-F.md |  |
 | 2390 | `M25-FSUB-UNDECIDABLE` | `P1` | `TODO_NEEDS_DESIGN` | - | docs/goal/evidence/M4-TM2-IMP-PARTREC.md | The design question is which undecidable problem to reduce from and how to encode its configurations as subtyping judgements. cslib supplies the calculus and its soundness, so none of that has to be rebuilt. |
+| 2400 | `M26-ARISTOTLE-ASK-TOOL` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M26-ARISTOTLE-ASK-TOOL.md |  |
+| 2401 | `M26-ARISTOTLE-SOURCE-SUBMISSION` | `P1` | `DONE_STRONG` | M26-ARISTOTLE-ASK-TOOL | docs/goal/evidence/M26-ARISTOTLE-SOURCE-SUBMISSION.md |  |
+| 2400 | `M26-OAI-DEGREE-QUESTION` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M26-OAI-ABSORPTION.md |  |
+| 2410 | `M26-OAI-TYPESYSTEM` | `P1` | `DONE_STRONG` | M26-OAI-DEGREE-QUESTION | docs/goal/evidence/M26-OAI-ABSORPTION.md |  |
+| 2415 | `M26-LOGSPACE-CONVERSE` | `P1` | `TODO_NEEDS_DESIGN` | - | docs/goal/evidence/M26-OAI-ABSORPTION.md | The upstream Lean file proves only L ⊆ RL and L ⊆ BPL; the derandomization direction of the paper (family 103) is not formalized upstream and would have to be built here from the paper. Reduced to one inclusion: Start/LogspaceAmplification.lean proves RL ⊆ BPL (ExactDerandomization.RL_subset_BPL) and hence BPL ⊆ L → L = RL ∧ L = BPL (ExactDerandomization.L_eq_RL_and_L_eq_BPL_of_BPL_subset_L). BPL ⊆ L itself, the paper's main theorem (a 7.9k-line preprint using property (T) mixing, fingerprinting and a catalytic log-space controller), is not formalized. |
+| 2420 | `M26-OAI-LOGSPACE` | `P1` | `DONE_WEAK` | M26-OAI-TYPESYSTEM, M26-LOGSPACE-CONVERSE | docs/goal/evidence/M26-OAI-ABSORPTION.md | Only L ⊆ RL and L ⊆ BPL are in upstream Lean and are absorbed (Start/LogspaceDeterministic.lean); the converse inclusions are task M26-LOGSPACE-CONVERSE. |
+| 2430 | `M26-OAI-SOLENOIDAL` | `P1` | `DONE_STRONG` | M26-OAI-TYPESYSTEM | docs/goal/evidence/M26-OAI-ABSORPTION.md |  |
+| 2440 | `M26-OAI-STARHEIGHT` | `P1` | `DONE_STRONG` | M26-OAI-SOLENOIDAL | docs/goal/evidence/M26-OAI-ABSORPTION.md |  |
+| 2450 | `M26-OAI-WEISFEILERLEMAN` | `P1` | `DONE_STRONG` | M26-OAI-SOLENOIDAL | docs/goal/evidence/M26-OAI-ABSORPTION.md |  |
+| 2460 | `M26-OAI-DEPTHTHREE` | `P1` | `DONE_STRONG` | M26-OAI-STARHEIGHT, M26-OAI-WEISFEILERLEMAN | docs/goal/evidence/M26-OAI-ABSORPTION.md |  |
+| 2470 | `M26-OAI-DEGREE-RIGIDITY` | `P1` | `DONE_STRONG` | M26-OAI-DEPTHTHREE | docs/goal/evidence/M26-OAI-ABSORPTION.md |  |
+| 2480 | `M26-DELIVERY-8-MERGE` | `P1` | `DONE_STRONG` | M26-ARISTOTLE-SOURCE-SUBMISSION | docs/goal/evidence/M26-DELIVERY-8-MERGE.md |  |
+| 2490 | `M26-DELIVERY-12-MERGE` | `P1` | `DONE_STRONG` | M26-DELIVERY-8-MERGE | docs/goal/evidence/M26-DELIVERY-12-MERGE.md |  |
 
 Next: `M14-KRIVINE-SPACE-CLASS`
 

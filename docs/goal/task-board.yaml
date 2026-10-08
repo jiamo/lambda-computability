@@ -1,7 +1,7 @@
 version: 2
 source_protocol: docs/goal/goal-prompt.md
 active_milestone: M14
-milestone_order: ["M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10", "M11", "M12", "M13", "M14", "M15", "M16", "M17", "M18", "M19", "M20", "M21", "M22", "M23", "M24", "M25"]
+milestone_order: ["M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10", "M11", "M12", "M13", "M14", "M15", "M16", "M17", "M18", "M19", "M20", "M21", "M22", "M23", "M24", "M25", "M26"]
 tasks:
   - id: M1-BOUNDARY-SORRY-CLOSURE
     priority: P0
@@ -5995,3 +5995,259 @@ tasks:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
       - "lake build"
+
+  - id: M26-ARISTOTLE-ASK-TOOL
+    priority: P1
+    status: DONE_STRONG
+    track: tooling/aristotle
+    title: "Prepare the source snapshot and delivery prompt for the existing Aristotle project"
+    latest_evidence: "docs/goal/evidence/M26-ARISTOTLE-ASK-TOOL.md"
+    open_boundary: ""
+    milestone: M26
+    depends_on: []
+    rank: 2400
+    exit_criteria:
+      - "The source snapshot round-trips through two uniquely named attachments with every relative path and byte preserved, including licenses and PDFs."
+      - "The supplied absorption instruction remains intact after the transport preamble."
+      - "The real SDK with an offline HTTP transport sends one INSTRUCT follow-up to the existing project, refuses busy projects and recorded duplicates, and excludes the key from attachments and receipts."
+    required_gates:
+      - "uv run --with aristotlelib==2.1.0 python -m unittest scripts.test_aristotle_ask -v"
+      - "python3 scripts/goal_state.py validate"
+
+  - id: M26-ARISTOTLE-SOURCE-SUBMISSION
+    priority: P1
+    status: DONE_STRONG
+    track: tooling/aristotle
+    title: "Submit the source snapshot and absorption instruction to the existing Aristotle project"
+    latest_evidence: "docs/goal/evidence/M26-ARISTOTLE-SOURCE-SUBMISSION.md"
+    open_boundary: ""
+    milestone: M26
+    depends_on:
+      - M26-ARISTOTLE-ASK-TOOL
+    rank: 2401
+    exit_criteria:
+      - "Project.ask accepts the complete source bundle and delivery instruction for project 04009a97-5b4f-4a0f-872c-515ae1fa69cc and returns a task ID."
+      - "The submission receipt records the actual task ID and URL without the API key."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "Authenticated SDK AgentTask.from_id readback of task 79ddcf9b-59ab-4dbe-ad7b-c84b3cc9dc17, recorded in docs/goal/evidence/M26-ARISTOTLE-SOURCE-SUBMISSION.md"
+
+  - id: M26-OAI-DEGREE-QUESTION
+    priority: P1
+    status: DONE_STRONG
+    track: absorb/openai-math
+    title: "Settle whether openai/math Degree and this library's oracle degrees are the same object"
+    latest_evidence: "docs/goal/evidence/M26-OAI-ABSORPTION.md"
+    open_boundary: ""
+    milestone: M26
+    depends_on: []
+    rank: 2400
+    exit_criteria:
+      - "Both definitions are quoted side by side in the evidence file."
+      - "Lambda.Oracle.oracleFunction_eq (rfl) and Lambda.Oracle.setReduces_iff (Iff.rfl) are provable."
+      - "Lambda.Oracle.SetDegree.toTuringDegree : SetDegree ↪o TuringDegree is constructed, with its range characterized by Lambda.Oracle.SetDegree.range_toTuringDegree."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M26-OAI-TYPESYSTEM
+    priority: P1
+    status: DONE_STRONG
+    track: absorb/openai-math
+    title: "Absorb openai/math TypeSystem (family 245): weak normalization implies strong normalization for every PTS"
+    latest_evidence: "docs/goal/evidence/M26-OAI-ABSORPTION.md"
+    open_boundary: ""
+    milestone: M26
+    depends_on:
+      - M26-OAI-DEGREE-QUESTION
+    rank: 2410
+    exit_criteria:
+      - "PureTypeSystem.weak_implies_strong : SystemWeaklyNormalizing P → SystemStronglyNormalizing P is provable for every Specification P, in Start/PTSNormalization.lean."
+      - "Start/LambdaPiSN.lean is related to it: PureTypeSystem.lambdaPi_systemStronglyNormalizing is derived from LambdaPi.Typing.sn, and the evidence explains why the converse route is circular."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M26-LOGSPACE-CONVERSE
+    priority: P1
+    status: TODO_NEEDS_DESIGN
+    track: absorb/openai-math
+    title: "RL ⊆ L and BPL ⊆ L for the ExactDerandomization machine model"
+    latest_evidence: "docs/goal/evidence/M26-OAI-ABSORPTION.md"
+    open_boundary: "The upstream Lean file proves only L ⊆ RL and L ⊆ BPL; the derandomization direction of the paper (family 103) is not formalized upstream and would have to be built here from the paper. Reduced to one inclusion: Start/LogspaceAmplification.lean proves RL ⊆ BPL (ExactDerandomization.RL_subset_BPL) and hence BPL ⊆ L → L = RL ∧ L = BPL (ExactDerandomization.L_eq_RL_and_L_eq_BPL_of_BPL_subset_L). BPL ⊆ L itself, the paper's main theorem (a 7.9k-line preprint using property (T) mixing, fingerprinting and a catalytic log-space controller), is not formalized."
+    milestone: M26
+    depends_on: []
+    rank: 2415
+    exit_criteria:
+      - "ExactDerandomization.RL ⊆ ExactDerandomization.BPL is provable (done: ExactDerandomization.RL_subset_BPL)."
+      - "ExactDerandomization.RL ⊆ ExactDerandomization.L is provable (follows from the next item via RL_subset_L_of_BPL_subset_L)."
+      - "ExactDerandomization.BPL ⊆ ExactDerandomization.L is provable, giving L = RL = BPL (open)."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M26-OAI-LOGSPACE
+    priority: P1
+    status: DONE_WEAK
+    track: absorb/openai-math
+    title: "Absorb openai/math Logspace (family 103): L = RL = BPL"
+    latest_evidence: "docs/goal/evidence/M26-OAI-ABSORPTION.md"
+    open_boundary: "Only L ⊆ RL and L ⊆ BPL are in upstream Lean and are absorbed (Start/LogspaceDeterministic.lean); the converse inclusions are task M26-LOGSPACE-CONVERSE."
+    milestone: M26
+    depends_on:
+      - M26-OAI-TYPESYSTEM
+      - M26-LOGSPACE-CONVERSE
+    rank: 2420
+    exit_criteria:
+      - "ExactDerandomization.L_subset_RL and ExactDerandomization.L_subset_BPL are provable (done)."
+      - "ExactDerandomization.L = ExactDerandomization.RL ∧ ExactDerandomization.RL = ExactDerandomization.BPL is provable (open)."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M26-OAI-SOLENOIDAL
+    priority: P1
+    status: DONE_STRONG
+    track: absorb/openai-math
+    title: "Absorb openai/math SolenoidalRecorder (family 376): the recorder machine"
+    latest_evidence: "docs/goal/evidence/M26-OAI-ABSORPTION.md"
+    open_boundary: ""
+    milestone: M26
+    depends_on:
+      - M26-OAI-TYPESYSTEM
+    rank: 2430
+    exit_criteria:
+      - "Solenoidal.Recorder.halting_iff and Solenoidal.Recorder.nonhalting_execution are provable, in Start/SolenoidalHalting.lean."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M26-OAI-STARHEIGHT
+    priority: P1
+    status: DONE_STRONG
+    track: absorb/openai-math
+    title: "Absorb openai/math StarHeight (family 134): generalized star height at most three"
+    latest_evidence: "docs/goal/evidence/M26-OAI-ABSORPTION.md"
+    open_boundary: ""
+    milestone: M26
+    depends_on:
+      - M26-OAI-SOLENOIDAL
+    rank: 2440
+    exit_criteria:
+      - "GeneralizedStarHeight.main : L.IsRegular → HasHeightAtMost L 3 is provable over every finite alphabet, in Start/StarHeightMain.lean."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M26-OAI-WEISFEILERLEMAN
+    priority: P1
+    status: DONE_STRONG
+    track: absorb/openai-math
+    title: "Absorb openai/math WeisfeilerLeman (family 133): n^Omega(k) time lower bound for k-WL"
+    latest_evidence: "docs/goal/evidence/M26-OAI-ABSORPTION.md"
+    open_boundary: ""
+    milestone: M26
+    depends_on:
+      - M26-OAI-SOLENOIDAL
+    rank: 2450
+    exit_criteria:
+      - "WLTime.unconditional_time_lower_bound : WLTime.MainClaim is provable, in Start/WLMain.lean."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M26-OAI-DEPTHTHREE
+    priority: P1
+    status: DONE_STRONG
+    track: absorb/openai-math
+    title: "Absorb openai/math DepthThree (family 112): a P-language needing 2^omega(sqrt n) depth-three circuits"
+    latest_evidence: "docs/goal/evidence/M26-OAI-ABSORPTION.md"
+    open_boundary: ""
+    milestone: M26
+    depends_on:
+      - M26-OAI-STARHEIGHT
+      - M26-OAI-WEISFEILERLEMAN
+    rank: 2460
+    exit_criteria:
+      - "DepthThreeLowerBound.exists_polynomial_time_language_depth_three_lower_bound is provable, in Start/DepthThreeMain.lean."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M26-OAI-DEGREE-RIGIDITY
+    priority: P1
+    status: DONE_STRONG
+    track: absorb/openai-math
+    title: "Absorb openai/math DegreeRigidity (family 241): every automorphism of the Turing degrees is trivial"
+    latest_evidence: "docs/goal/evidence/M26-OAI-ABSORPTION.md"
+    open_boundary: ""
+    milestone: M26
+    depends_on:
+      - M26-OAI-DEPTHTHREE
+    rank: 2470
+    exit_criteria:
+      - "Lambda.Oracle.SetDegreeRigidity (the upstream MainTheorem, restated against Lambda.Oracle.SetDegree) is provable (done: Lambda.Oracle.setDegreeRigidity in Start/RigidityBridge.lean, from TuringRigidity.ManuscriptMain.rigidity; all 975 upstream files absorbed as Start/Rigidity*.lean)."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M26-DELIVERY-8-MERGE
+    priority: P1
+    status: DONE_STRONG
+    track: integration/aristotle
+    title: "Merge and verify the existing Aristotle delivery from Downloads/8"
+    latest_evidence: "docs/goal/evidence/M26-DELIVERY-8-MERGE.md"
+    open_boundary: ""
+    milestone: M26
+    depends_on:
+      - M26-ARISTOTLE-SOURCE-SUBMISSION
+    rank: 2480
+    exit_criteria:
+      - "The 298 delivered upstream modules and two new bridge modules are imported through Start.lean and registered in Capstones."
+      - "The existing public Lean interfaces, dependency pins and local submission tooling are preserved."
+      - "The merged library passes lake build, manifest, sorry, closure and task-board checks."
+    required_gates:
+      - "lake build"
+      - "python3 scripts/check_manifest.py"
+      - "python3 scripts/check_sorry.py"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/goal_state.py validate"
+
+  - id: M26-DELIVERY-12-MERGE
+    priority: P1
+    status: DONE_STRONG
+    track: integration/aristotle
+    title: "Merge the existing Aristotle update from Downloads/12"
+    latest_evidence: "docs/goal/evidence/M26-DELIVERY-12-MERGE.md"
+    open_boundary: ""
+    milestone: M26
+    depends_on:
+      - M26-DELIVERY-8-MERGE
+    rank: 2490
+    exit_criteria:
+      - "All 975 upstream rigidity modules, RigidityBridge and LogspaceAmplification are in the Start import closure and have terminal registrations."
+      - "All 977 new Lean files match the delivered sources byte for byte; updated imports, registrations, attribution, evidence and task rows are merged."
+      - "Local pins, public interfaces and earlier task/tooling records are preserved. Compilation is excluded at the user's explicit request; producer-reported proof statuses are retained without claiming completed local verification."
+    required_gates:
+      - "python3 scripts/check_manifest.py"
+      - "python3 scripts/check_sorry.py"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/goal_state.py validate"
