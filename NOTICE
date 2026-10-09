@@ -6,7 +6,8 @@ This repository contains Lean code adapted from third-party work, as listed belo
 openai/math
 -----------
 
-Source:   https://github.com/openai/math, commit adc7f1241
+Source:   https://github.com/openai/math, commit adc7f1241; the `Logspace/` directory is taken
+          from commit 3014888 (301488868beec11bfd897168433b0a64f5258559, published 2026-10-08)
 Licence:  Apache License, Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
 Authors:  OpenAI
 
@@ -24,12 +25,24 @@ upstream's.
 | upstream directory        | family | paper                                                              | modules here            |
 |---------------------------|--------|--------------------------------------------------------------------|-------------------------|
 | `TypeSystem/` (33 files)  | 245    | Weak and strong normalization in pure type systems                 | `Start/PTS*.lean` (except `Start/PTSLambdaPi.lean`) |
-| `Logspace/` (1 file)      | 103    | Exact derandomization of logarithmic space, L = RL = BPL           | `Start/LogspaceDeterministic.lean` |
+| `Logspace/` (39 files, commit 3014888) | 103 | Exact Derandomization of Logarithmic Space: L = RL = BPL | `Start/Logspace*.lean` (except `Start/LogspaceAmplification.lean`) |
 | `SolenoidalRecorder/` (5) | 376    | Finite instructions and solenoidal shear flows                     | `Start/Solenoidal*.lean` |
 | `StarHeight/` (37 files)  | 134    | Finite monoid computations and a uniform generalized star height bound | `Start/StarHeight*.lean` |
 | `WeisfeilerLeman/` (43)   | 133    | (paper not included in the snapshot)                               | `Start/WL*.lean`        |
 | `DepthThree/` (179 files) | 112    | Beyond the square-root exponent for depth-three Boolean circuits   | `Start/DepthThree*.lean` |
 | `DegreeRigidity/` (975)   | 241    | Rigidity of the Turing degrees                                     | `Start/Rigidity*.lean` (except `Start/RigidityBridge.lean`) |
+
+For `Logspace/`, `Deterministic.lean` (unchanged between commits adc7f1241 and 3014888) is
+`Start/LogspaceDeterministic.lean`; the 38 modules added at commit 3014888 became
+`Start.Logspace<Name>`, except that `Amplification.lean` became
+`Start/LogspaceTableAmplification.lean` (the name `Start.LogspaceAmplification` was already taken
+by this library's own module).  Its final class-level theorem `RL_subset_BPL` is omitted because
+this library's `Start/LogspaceAmplification.lean` already proves that identical statement under that
+identical name, and `Start/LogspaceEquality.lean` imports it from there.  Besides the scripted
+`ite`/`dite` renamings, one proof (`cord_mono` in `Start/LogspaceRecursivePrograms.lean`) needed an
+added `all_goals norm_num`; its header records the change.  The terminal theorems are
+`ExactDerandomization.BPL_subset_L : BPL ⊆ L` and
+`ExactDerandomization.exact_logarithmic_space_derandomization : L = RL ∧ RL = BPL`.
 
 In addition, `Start/OracleDegreeBridge.lean` restates (without proofs) the five definitions of
 `DegreeRigidity/Model.lean` (family 241, "Rigidity of the Turing degrees") in order to compare

@@ -16,11 +16,11 @@ Main definitions:
 
 Main results:
 
-* `Complexity.Shamir.sim` (**not yet in this file**; the IP = PSPACE work stopped before it) —
-  the machine replays the protocol on every formula: if the run accepts, after `size (toOp N q)`
-  steps the machine has popped its stack (or halted, if the stack was empty) without rejecting;
-  if the run rejects, the machine has rejected by then.  What the file contains so far is the
-  transcript, the points, the reading prover and the field-arithmetic facts the proof will use.
+Main result proved downstream:
+
+* `Complexity.Shamir.sim` (in `Start/ShamirReplay.lean`) — the machine replays the protocol on
+  every formula; this file contains the transcript, the points, the reading prover and the
+  field-arithmetic facts that proof uses.
 -/
 
 import Start.ShamirMachine

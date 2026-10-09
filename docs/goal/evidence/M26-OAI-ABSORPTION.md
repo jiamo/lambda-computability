@@ -172,6 +172,9 @@ from `TuringRigidity.ManuscriptMain.rigidity : TuringRigidity.MainTheorem`.
 
 ### Logspace converse (row `M26-LOGSPACE-CONVERSE`)
 
+> **Superseded** (see "Follow-up: Logspace equality absorbed from commit 3014888" below).  The
+> statement that no upstream Lean proof exists applied to commit adc7f1241 only.
+
 The upstream Lean contains no proof of `RL ⊆ L` or `BPL ⊆ L`, so there is nothing further to
 absorb; the derandomization direction is the main theorem of the 7.9k-line preprint (median of
 estimates of a correction/copy hierarchy, property (T) mixing, fingerprinting, a catalytic
@@ -191,3 +194,41 @@ probability at `2T` is `1 - (1 - p)^2` (`twoTrial_acceptanceProbability`), and i
 most the sum of the two copies' (`twoTrial_spaceThrough`, `twoTrial_logSpace`).  So only
 `BPL ⊆ L` remains open; the row stays `TODO_NEEDS_DESIGN` and `M26-OAI-LOGSPACE` stays
 `DONE_WEAK`.
+
+## Follow-up: Logspace equality absorbed from commit 3014888
+
+openai/math commit 301488868beec11bfd897168433b0a64f5258559 (3014888, published 2026-10-08) adds 38
+modules to `lean/OAI/Computability/Logspace` (39 in total; `Deterministic.lean` unchanged), family
+103, paper "Exact Derandomization of Logarithmic Space: L = RL = BPL".  The solution module named by
+upstream's `lean/docs/103.md`, `formalization.yaml` and `ComparatorChallenges/LogspaceEquality.json`
+is `Equality.lean`.  The comparator `.lean` (an intentional `sorry` stub) is a specification only and
+was neither imported nor copied.
+
+All 38 new modules are absorbed as `Start/Logspace<Name>.lean` (OAI namespace dropped, imports
+renamed, attribution header).  Changes needed for our Lean v4.33.0 / Mathlib v4.33.0 pin:
+
+* scripted renaming `ite_eq_left`/`ite_eq_right`/`dite_eq_left`/`dite_eq_right` →
+  `if_pos`/`if_neg`/`dif_pos`/`dif_neg` (as for earlier directories);
+* `cord_mono` (`Start/LogspaceRecursivePrograms.lean`): `gcongr` leaves the side goal `1 ≤ 2` on our
+  pin; an added `all_goals norm_num` closes it.
+
+Reconciliation of `Amplification.lean` with this library's `Start/LogspaceAmplification.lean`:
+both define `ExactDerandomization.RL_subset_BPL : RL ⊆ BPL` with the identical statement.  Upstream's
+file is absorbed as `Start/LogspaceTableAmplification.lean` (table-level two-run amplification,
+`Table.TM.twice`, `prob_twice`, ...) without that final wrapper; `Start/LogspaceEquality.lean` imports
+`Start/LogspaceAmplification.lean` and uses the existing `RL_subset_BPL`.  No public statement was
+weakened or renamed.
+
+The definitions of upstream's comparator target (`Word` … `BPL`, 25 declarations) occur verbatim
+(up to whitespace) in `Start/LogspaceDeterministic.lean`, so the terminal theorems below state
+exactly the comparator's claim, in our namespace `ExactDerandomization`:
+
+```lean
+theorem ExactDerandomization.BPL_subset_L : BPL ⊆ L
+theorem ExactDerandomization.exact_logarithmic_space_derandomization : L = RL ∧ RL = BPL
+```
+
+Both are registered in `Start/Capstones.lean`, imported from `Start.lean`, and depend only on
+`propext`, `Classical.choice`, `Quot.sound` (`#print axioms`).  As upstream's `103.md` notes, the
+paper's explicit compiler and numerical running-time bounds are not separately asserted.  Rows
+`M26-LOGSPACE-CONVERSE` and `M26-OAI-LOGSPACE` are now `DONE_STRONG`.

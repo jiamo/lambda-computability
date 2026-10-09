@@ -33,6 +33,11 @@ import Start.CookLevinNPHard
 import Start.SatToCircuitCob
 import Start.ThreeSat
 import Start.NPInter
+import Start.PolyHierarchy
+import Start.CookReckhow
+import Start.AC0
+import Start.CbvMachine
+import Start.CbvCost
 import Start.CwaBiInitial
 import Start.CwaLcccOfPi
 import Start.CwaStrictFunctor
@@ -228,8 +233,15 @@ import Start.DepthThreeMain
 import Start.DepthThreeMachineCompilation
 import Start.DepthThreeTapeScan
 import Start.LogspaceAmplification
+import Start.LogspaceEquality
 import Start.RigidityBridge
 import Start.RigidityArithmeticRepresentation
+import Start.PTSSystemFElab
+import Start.PTSHurkens
+import Start.SpaceToLogspaceTransfer
+import Start.LogspaceToSpaceStep
+import Start.LogspaceTransferRandomized
+import Start.KolmogorovCount
 
 /-! ## Interfaces of the untyped calculus
 
@@ -545,6 +557,19 @@ finite-state check that a word codes a `CNF` of that width.
 witnesses — the first component with every bit doubled, the marker `10`, then the second — whose
 projections are finite-state transductions, hence Cobham terms.
 
+`Start/PolyHierarchy.lean` defines `coNP` and the levels `Σₖᵖ`, `Πₖᵖ` of the polynomial hierarchy
+(`Σ₀ᵖ = P`, `Σₖ₊₁ᵖ` the polynomially bounded existential quantifier over `Πₖᵖ`, on the same
+pairing), proves `Σ₁ᵖ = NP`, and the two collapses: `NP = coNP` puts every level in `NP`, and
+`P = NP` puts every level in `P`.
+
+`Start/CookReckhow.lean` proves the Cook–Reckhow theorem: a propositional proof system is a
+Cobham term whose range is exactly `UNSAT` (the codes of unsatisfiable CNFs), and `NP = coNP`
+holds iff some proof system has polynomially short proofs of every unsatisfiable CNF.
+
+`Start/AC0.lean` adds unbounded fan-in circuits (trees of `NOT` and list-`AND`/`OR` gates over
+literals), their depth and size, negation normal form at no cost in depth, the merging of two
+adjacent layers of the same kind, and the class `AC⁰` with its Boolean closure.
+
 The remaining modules feed the reduction: renumbering variables of an encoded `CNF`
 (`Start/CobhamShift.lean`, `Start/CircuitShift.lean`), and the P-uniformity of the circuit
 families produced by the various devices — cellular automata, iterated stages, flat Cobham terms,
@@ -569,6 +594,37 @@ finite-state machines and Turing machines.
 #check @Complexity.fstOf_pairW
 #check @Complexity.sndOf_pairW
 #check @Complexity.InNP.inter
+#check @Complexity.inSigma_one_iff
+#check @Complexity.inPi_one_iff
+#check @Complexity.InNP.of_existsP
+#check @Complexity.inNP_of_inSigma_of_NP_eq_coNP
+#check @Complexity.inNP_of_inPi_of_NP_eq_coNP
+#check @Complexity.ph_collapse_of_NP_eq_coNP
+#check @Complexity.NP_eq_coNP_of_peqNP
+#check @Complexity.inP_of_inSigma_of_peqNP
+#check @Complexity.inP_of_inPi_of_peqNP
+#check @Complexity.inCoNP_UNSAT
+#check @Complexity.NP_eq_coNP_iff_inNP_UNSAT
+#check @Complexity.inNP_UNSAT_of_polyBounded
+#check @Complexity.polyBounded_of_inNP_UNSAT
+#check (Complexity.cook_reckhow : (∀ L, Complexity.InNP L ↔ Complexity.InCoNP L) ↔
+  ∃ f : Complexity.Cob, Complexity.IsProofSystem f ∧ Complexity.PolyBounded f)
+#check @Complexity.ACCirc.eval_nnf
+#check @Complexity.ACCirc.depth_nnf
+#check @Complexity.ACCirc.size_nnf
+#check @Complexity.ACCirc.noNot_nnf
+#check @Complexity.ACCirc.eval_and_join
+#check @Complexity.ACCirc.eval_or_join
+#check @Complexity.ACCirc.depth_and_join_le
+#check @Complexity.ACCirc.depth_or_join_le
+#check @Complexity.ACCirc.size_and_join_le
+#check @Complexity.ACCirc.size_or_join_le
+#check @Complexity.InAC0.exists_noNot
+#check @Complexity.InAC0.compl
+#check @Complexity.InAC0.inter
+#check @Complexity.InAC0.union
+#check @Complexity.inAC0_someOne
+#check @Complexity.inAC0_allOne
 #check @Complexity.Sat.SAT_eval_shiftTerm
 #check @Complexity.Sat.decode_eval_shiftTerm
 #check @Complexity.CircCode.eval_shiftCircTerm
@@ -3096,16 +3152,20 @@ other module mentions by name (registered here so that each module has a compile
 ## Absorbed from github.com/openai/math: logarithmic space (family 103)
 
 `Start/LogspaceDeterministic.lean` is adapted from github.com/openai/math (commit adc7f1241,
-Apache-2.0), directory `lean/OAI/Computability/Logspace`, family 103, paper "Exact
-derandomization of logarithmic space, L = RL = BPL".  Despite the paper's title, the upstream file
-proves only the inclusions `L ⊆ RL` and `L ⊆ BPL` (a deterministic log-space decider halts within
-a polynomial clock and is a one- and two-sided error machine); the converse inclusions
-`RL ⊆ L` and `BPL ⊆ L` are not in the upstream Lean.
+unchanged at commit 3014888), original path `lean/OAI/Computability/Logspace/Deterministic.lean`,
+family 103, paper "Exact Derandomization of Logarithmic Space: L = RL = BPL".  It defines the
+machine model and the classes `L`, `RL`, `BPL`, and proves `L ⊆ RL` and `L ⊆ BPL`.
 
 `Start/LogspaceAmplification.lean` (this library's own) proves `RL ⊆ BPL` in the same machine
-model, by running two copies of an `RL` machine on alternate coin bits and accepting if either
-accepts.  Hence `BPL ⊆ L` alone would give `RL ⊆ L` and `L = RL = BPL`.  `BPL ⊆ L` itself (the
-main theorem of the paper) is **not** proved here.
+model, by running two copies of an `RL` machine on alternate coin bits.
+
+The remaining 38 upstream modules of `lean/OAI/Computability/Logspace` at commit 3014888
+(301488868beec11bfd897168433b0a64f5258559) are absorbed as `Start/Logspace*.lean`; upstream's
+`Amplification.lean` became `Start/LogspaceTableAmplification.lean` without its class-level
+wrapper, which duplicated `RL_subset_BPL` above.  The terminal module
+`Start/LogspaceEquality.lean` (upstream `Equality.lean`) proves the paper's main theorem
+`BPL ⊆ L` unconditionally, and hence `L = RL ∧ RL = BPL`, the statement of upstream's comparator
+target `ComparatorChallenges/LogspaceEquality.lean`.
 -/
 
 #check @ExactDerandomization.L_subset_RL
@@ -3114,6 +3174,12 @@ main theorem of the paper) is **not** proved here.
 #check @ExactDerandomization.Machine.twoTrial_acceptanceProbability
 #check @ExactDerandomization.RL_subset_L_of_BPL_subset_L
 #check @ExactDerandomization.L_eq_RL_and_L_eq_BPL_of_BPL_subset_L
+#check @ExactDerandomization.Table.TM.prob_twice
+#check @ExactDerandomization.Umbra.fixed_precision_estimator
+#check (ExactDerandomization.BPL_subset_L : ExactDerandomization.BPL ⊆ ExactDerandomization.L)
+#check (ExactDerandomization.exact_logarithmic_space_derandomization :
+  ExactDerandomization.L = ExactDerandomization.RL ∧
+    ExactDerandomization.RL = ExactDerandomization.BPL)
 
 /-!
 ## Absorbed from github.com/openai/math: the solenoidal recorder machine (family 376)
@@ -3177,3 +3243,114 @@ tape-scan programs, an interpolation identity, and a tape-word lemma
 #check @DepthThreeLowerBound.TapeProgram.runs_scan_mark
 #check @DepthThreeLowerBound.Interpolation.finiteAvg_encoded_acceptEval_finset
 #check @DepthThreeLowerBound.TapeWord.move_right_iterate_mk₂_append
+
+/-!
+## M23: the lambda cube, System F elaboration and Hurkens' paradox (this library's own)
+
+Built on the pure type system framework absorbed from openai/math (`Start/PTSBasic.lean` and
+friends).  `Start/PTSCube.lean` defines the eight corners of the cube as one family
+`cubeSpec : CubeFeatures → Specification Srt`, proves the inclusions induced by adding product
+rules, and identifies the library's `λΠ` with the `λP` corner.  `Start/PTSSystemFElab.lean`
+elaborates Curry-style System F derivations into annotated `systemF`-corner derivations with an
+erasure theorem.  `Start/PTSHurkens.lean` defines System U⁻, checks Hurkens' term against
+`ΠA:∗. A` with a verified inference procedure (`Start/PTSCheck.lean`), and derives that U⁻ is
+inconsistent and neither weakly nor strongly normalizing.
+-/
+
+#check @PureTypeSystem.cube_inclusion
+#check @PureTypeSystem.lambdaPiSpec_eq_cube
+#check @PureTypeSystem.cube_lambdaP_toTyping
+#check @PureTypeSystem.cube_lambdaArrow_sn
+#check @PureTypeSystem.FElab.elaborate
+#check @PureTypeSystem.FElab.elaborate_ctx
+#check @PureTypeSystem.Check.infer_sound
+#check @PureTypeSystem.no_normal_closed_bot
+#check @PureTypeSystem.Hurkens.hurkens_typed
+#check @PureTypeSystem.Hurkens.uMinus_inconsistent
+#check @PureTypeSystem.Hurkens.uMinus_not_wn
+#check @PureTypeSystem.Hurkens.uMinus_not_sn
+
+/-!
+## M27: host logarithmic space inside the upstream class `L` (this library's own)
+
+`Start/SpaceToLogspace*.lean` compile a deterministic well-formed offline machine of
+`Start/SpaceMachine.lean` (one-sided binary work tape, one input head, acceptance by passing
+through an accepting state, possibly looping) into a machine of the absorbed
+`Start/LogspaceDeterministic.lean` model that always halts: work tape `0` copies the host tape,
+work tape `1` marks the origin, input head `0` follows the host head, and `k` further input heads
+form an odometer clock in base `n + 2` that uses no work cells.  The clock length
+`clockLen Q a = Q (a+1)² 2^a + a + 3` exceeds the number of host configurations, so expiry of the
+clock proves that the host never accepts.
+-/
+
+#check @Complexity.Space.ToLogspace.compile
+#check @Complexity.Space.ToLogspace.compile_decides
+#check @Complexity.Space.ToLogspace.compile_spaceThrough
+#check @Complexity.Space.ToLogspace.cfgBound_le_clock
+#check @Complexity.Space.ToLogspace.logspace_subset_L
+#check @Complexity.Space.ToLogspace.logspace_subset_RL
+#check @Complexity.Space.ToLogspace.logspace_subset_BPL
+
+/-!
+The converse direction, `L ⊆ LOGSPACE`, is in progress.  Its building blocks so far:
+binary counters in bijective base two on the track layout (`Start/SpaceProgCounter.lean`),
+finite dispatch on unary control states and read symbols (`Start/SpaceProgDispatch.lean`), a
+two-sided work tape in a window held in two registers (`Start/LogspaceToSpaceTape.lean`), the
+register-file encoding of an upstream configuration (`Start/LogspaceToSpace.lean`), and the tape
+programs for the phases of one simulated transition (`Start/LogspaceToSpaceStep.lean`).
+-/
+
+#check @Complexity.Space.FromLogspace.runs_setState
+#check @Complexity.Space.FromLogspace.runs_setFlags
+#check @Complexity.Space.FromLogspace.runs_tapesOp
+#check @Complexity.Space.FromLogspace.runs_headsOp
+
+/-!
+## M19: description-cost audit of `kolm` and `kolmCond` (this library's own)
+
+`Start/KolmogorovCount.lean` compares the raw syntax size used by `kolm` with an explicit
+prefix-free binary code (`size t ≤ |sizeBits t| ≤ 2 size t`) and proves the counting facts that hold
+for the actual measure: at most `4^m` terms of size `≤ m`, hence at most `4^m` numbers of
+(conditional) complexity `≤ m`, and an incompressible number below `4^m + 1`.
+-/
+
+#check @Lambda.sizeBits_append_inj
+#check @Lambda.size_le_length_sizeBits
+#check @Lambda.length_sizeBits_le
+#check @Lambda.card_size_le
+#check @Lambda.card_kolm_le
+#check @Lambda.card_kolmCond_le
+#check @Lambda.exists_le_four_pow_kolm_gt
+#check @Lambda.exists_le_four_pow_kolmCond_gt
+#check @Lambda.kolm_le_kolmBits
+#check @Lambda.kolmBits_le_two_mul_kolm
+
+/-!
+## M25: call-by-value and the CEK machine (this library's own)
+
+`Start/CbvMachine.lean` defines Plotkin's call-by-value reduction (values are abstractions and
+variables; left-to-right), proves it deterministic and a sub-relation of β, and implements it by a
+CEK machine reusing the closures of the Krivine machine.  The simulation goes both ways: every β
+transition is one call-by-value step of the decoded term and the administrative transitions do
+not change it, final states decode to normal forms, and whenever the decoded term reaches a
+normal form in `k` steps the machine halts on it after exactly `k` β transitions.
+-/
+
+#check @Lambda.cbvstep_deterministic
+#check @Lambda.cbvstep_imp_step
+#check @CEK.Trans.decode_eq
+#check @CEK.Trans.decode_cbvstep
+#check @CEK.Run.decode_cbvIn
+#check @CEK.IsFinal.cbvNormal_decode
+#check @CEK.eval_sound
+#check @CEK.exists_final_of_cbvIn
+#check @CEK.eval_complete
+
+/-!
+`Start/CbvCost.lean` bounds the overhead of the CEK machine: a run from `t` with `b` β
+transitions has at most `b + 3 |t| (b + 1)` transitions, by a potential argument on the
+administrative transitions, the codes met in a run never exceeding the size of `t`.
+-/
+
+#check @CEK.run_length_le
+#check @CEK.run_length_le_of_cbvIn

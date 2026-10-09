@@ -1,7 +1,7 @@
 version: 2
 source_protocol: docs/goal/goal-prompt.md
 active_milestone: M14
-milestone_order: ["M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10", "M11", "M12", "M13", "M14", "M15", "M16", "M17", "M18", "M19", "M20", "M21", "M22", "M23", "M24", "M25", "M26"]
+milestone_order: ["M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10", "M11", "M12", "M13", "M14", "M15", "M16", "M17", "M18", "M19", "M20", "M21", "M22", "M23", "M24", "M25", "M26", "M27"]
 tasks:
   - id: M1-BOUNDARY-SORRY-CLOSURE
     priority: P0
@@ -4634,9 +4634,10 @@ tasks:
     track: theory/kolmogorov
     title: "Symmetry of information, the hard half"
     latest_evidence: "docs/goal/evidence/M6-KOLMOGOROV-CORE.md"
-    open_boundary: "Start/KolmogorovCond.lean has the easy half, kolm_le_kolmCond_add. The converse needs the counting argument over the description sets, with the Kraft-Chaitin machine of Start/KCMachine.lean."
+    open_boundary: "Start/KolmogorovCond.lean has the easy half, kolm_le_kolmCond_add. Start/KolmogorovCount.lean proves the base-4 counting bounds for the raw size measure (card_kolm_le, card_kolmCond_le) and the comparison with a prefix-free bit code (size <= |bits| <= 2 size). Still missing: an effective enumeration of {(s,y) : K(<s,y>) <= m} by dovetailing, and the conditional decoder recovering s from its index, y and m as a closed lambda term with explicit size; with base-4 counting the resulting inequality for kolm carries a factor 2 on the counting term."
     milestone: M19
-    depends_on: []
+    depends_on:
+      - M19-DESCRIPTION-COST-AUDIT
     rank: 1400
     exit_criteria:
       - "K(s, y) >= K(y) + K(s | y) - O(log(min(K s, K y)))."
@@ -4769,7 +4770,7 @@ tasks:
     track: theory/computability
     title: "Gandy's theorem: a discrete deterministic mechanical device computes only computable functions"
     latest_evidence: "docs/goal/evidence/M4-CHURCH-TURING-LAMBDA.md"
-    open_boundary: "Never formalized, as far as is known. This is the physical form of the Church-Turing thesis, and the one the name of this library refers to; the design question is the formalization of Gandy's four principles."
+    open_boundary: "A faithful formalization of Gandy's mechanism principles and effective structural-state coding remains to be constructed. Computability of global evolution must follow from the principles rather than be assumed in the definition. The next research programme includes concrete mechanism instances and a simulation into the existing Church-Turing equivalence."
     milestone: M20
     depends_on: []
     rank: 1530
@@ -5232,10 +5233,11 @@ tasks:
 
   - id: M22-CONP-PH
     priority: P2
-    status: TODO_READY
+    status: DONE_STRONG
     track: theory/complexity
     title: "coNP and the polynomial hierarchy"
-    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    terminal_statement: "Complexity.inSigma_one_iff, Complexity.ph_collapse_of_NP_eq_coNP, Complexity.inP_of_inSigma_of_peqNP, Complexity.inP_of_inPi_of_peqNP"
+    latest_evidence: "docs/goal/evidence/M22-CONP-PH.md"
     open_boundary: ""
     milestone: M22
     depends_on: []
@@ -5251,10 +5253,11 @@ tasks:
 
   - id: M22-COOK-RECKHOW
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: theory/proof-complexity
     title: "Cook-Reckhow: NP = coNP iff some propositional proof system is polynomially bounded"
-    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    terminal_statement: "Complexity.cook_reckhow : (forall L, InNP L <-> InCoNP L) <-> exists f : Cob, IsProofSystem f and PolyBounded f"
+    latest_evidence: "docs/goal/evidence/M22-COOK-RECKHOW.md"
     open_boundary: ""
     milestone: M22
     depends_on:
@@ -5333,10 +5336,11 @@ tasks:
 
   - id: M22-AC0-DEF
     priority: P2
-    status: TODO_READY
+    status: DONE_STRONG
     track: theory/circuits
     title: "AC0: constant-depth unbounded fan-in circuits of polynomial size"
-    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    terminal_statement: "Complexity.ACCirc (unbounded fan-in trees) with eval, depth, size; Complexity.InAC0; ACCirc.nnf with eval_nnf, depth_nnf, size_nnf, noNot_nnf; eval_and_join, eval_or_join, depth_and_join_le, depth_or_join_le; InAC0.compl, InAC0.inter, InAC0.union, InAC0.exists_noNot; inAC0_someOne, inAC0_allOne"
+    latest_evidence: "docs/goal/evidence/M22-AC0-DEF.md"
     open_boundary: ""
     milestone: M22
     depends_on: []
@@ -5414,10 +5418,11 @@ tasks:
 
   - id: M23-PTS
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: theory/types
     title: "Pure type systems, with the lambda-cube as instances"
-    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    terminal_statement: "PureTypeSystem.cubeSpec : CubeFeatures -> Specification Srt with the eight corners; PureTypeSystem.cube_inclusion (adding product rules preserves derivations); PureTypeSystem.lambdaPiSpec_eq_cube and cube_lambdaP_toTyping (lambda-Pi is the lambdaP corner, with a derivation translation into LambdaPi.Typing); PureTypeSystem.FElab.elaborate, elaborate_ctx, elaborate_corner (derivation-directed elaboration of Curry System F into annotated systemF-corner derivations with erase M = t); subject reduction from the absorbed framework"
+    latest_evidence: "docs/goal/evidence/M23-PTS.md"
     open_boundary: ""
     milestone: M23
     depends_on: []
@@ -5437,7 +5442,7 @@ tasks:
     track: theory/types
     title: "System F-omega: type operators and strong normalization"
     latest_evidence: "docs/goal/proposed-M21-M24.md"
-    open_boundary: ""
+    open_boundary: "The corner systemFOmega of PureTypeSystem.cubeSpec (Start/PTSCube.lean) gives F-omega with its kinding and substitution through the generic PTS metatheory. Strong normalization is not proved: the first missing lemma is the classification of systemFOmega-legal expressions into kinds, constructors and terms (constructors never contain term-level subexpressions), needed to index reducibility candidates by kinds; no candidate interpretation for the PTS syntax exists yet."
     milestone: M23
     depends_on:
       - M23-PTS
@@ -5457,7 +5462,7 @@ tasks:
     track: theory/types
     title: "Strong normalization of the calculus of constructions"
     latest_evidence: "docs/goal/proposed-M21-M24.md"
-    open_boundary: ""
+    open_boundary: "The coc corner is defined (Start/PTSCube.lean) and cube_sn_mono would transfer SN to every corner. SN of coc is not proved: the generic weak_implies_strong needs system-wide WN, which is not available. The first missing construction is the classification lemma for coc (each legal term is a kind, constructor or object, stable under reduction) followed by Geuvers saturated-set interpretation of kinds and its fundamental lemma."
     milestone: M23
     depends_on:
       - M23-PTS
@@ -5475,10 +5480,11 @@ tasks:
 
   - id: M23-HURKENS
     priority: P2
-    status: TODO_READY
+    status: DONE_STRONG
     track: theory/types
     title: "System U- is inconsistent: Hurkens' paradox"
-    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    terminal_statement: "PureTypeSystem.Hurkens.hurkens_typed : HasType uMinus ([]) hurkens botE (botE = Pi A : *, A, System U- with axioms *:box, box:tri and rules (*,*),(box,*),(box,box),(tri,box)); uMinus_inconsistent, uMinus_not_wn, uMinus_not_sn; PureTypeSystem.no_normal_closed_bot for every PTS"
+    latest_evidence: "docs/goal/evidence/M23-HURKENS.md"
     open_boundary: ""
     milestone: M23
     depends_on:
@@ -5881,10 +5887,11 @@ tasks:
 
   - id: M25-CBV-MACHINE
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: theory/semantics
     title: "Call-by-value: an abstract machine, and its simulation"
-    latest_evidence: "docs/goal/evidence/M11-KRIVINE-MACHINE.md"
+    terminal_statement: "Lambda.cbvstep (Plotkin, values = abstractions and variables), cbvstep_deterministic; CEK.Trans (eval/ret states, arg/fn frames, Krivine closures); CEK.Trans.decode_eq, decode_cbvstep, Run.decode_cbvIn, IsFinal.cbvNormal_decode, eval_sound; CEK.exists_final_of_cbvIn and eval_complete (bidirectional simulation)"
+    latest_evidence: "docs/goal/evidence/M25-CBV-MACHINE.md"
     open_boundary: ""
     milestone: M25
     depends_on: []
@@ -5898,16 +5905,37 @@ tasks:
       - "python3 scripts/check_closure.py"
       - "lake build"
 
-  - id: M25-CBV-COST
+  - id: M25-CBV-STEP-PROG
     priority: P1
     status: TODO_READY
     track: theory/complexity
-    title: "The call-by-value cost model"
-    latest_evidence: "docs/goal/evidence/M11-KRIVINE-INVARIANCE.md"
+    title: "A tape program for one transition of the CEK machine"
+    latest_evidence: "docs/goal/evidence/M25-CBV-COST.md"
     open_boundary: ""
     milestone: M25
     depends_on:
       - M25-CBV-MACHINE
+    rank: 2345
+    exit_criteria:
+      - "A binary encoding of CEK states (codes, nested environments of closures, frames) as words."
+      - "A tape program performing one CEK transition on the encoding, with its execution specified through Complexity.Space.Realizes of Start/SpaceCompile.lean, and a time bound polynomial in the size of the encoded state."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "lake build"
+
+  - id: M25-CBV-COST
+    priority: P1
+    status: DONE_WEAK
+    track: theory/complexity
+    title: "The call-by-value cost model"
+    terminal_statement: "CEK.run_length_le : Run n b (State.init t) s -> n <= b + 3 * size t * (b + 1); CEK.run_length_le_of_cbvIn (with eval_complete: the machine halts after exactly k beta transitions and at most k + 3 |t| (k + 1) transitions when t reaches a call-by-value normal form in k steps)"
+    latest_evidence: "docs/goal/evidence/M25-CBV-COST.md"
+    open_boundary: "The first criterion is proved, with a linear bound (Start/CbvCost.lean). The second and third are not: they need a tape program for one CEK transition on an encoding of states, which is the new row M25-CBV-STEP-PROG."
+    milestone: M25
+    depends_on:
+      - M25-CBV-MACHINE
+      - M25-CBV-STEP-PROG
     rank: 2350
     exit_criteria:
       - "The number of machine transitions is polynomially related to the number of call-by-value steps."
@@ -6074,18 +6102,18 @@ tasks:
 
   - id: M26-LOGSPACE-CONVERSE
     priority: P1
-    status: TODO_NEEDS_DESIGN
+    status: DONE_STRONG
     track: absorb/openai-math
     title: "RL ⊆ L and BPL ⊆ L for the ExactDerandomization machine model"
     latest_evidence: "docs/goal/evidence/M26-OAI-ABSORPTION.md"
-    open_boundary: "The upstream Lean file proves only L ⊆ RL and L ⊆ BPL; the derandomization direction of the paper (family 103) is not formalized upstream and would have to be built here from the paper. Reduced to one inclusion: Start/LogspaceAmplification.lean proves RL ⊆ BPL (ExactDerandomization.RL_subset_BPL) and hence BPL ⊆ L → L = RL ∧ L = BPL (ExactDerandomization.L_eq_RL_and_L_eq_BPL_of_BPL_subset_L). BPL ⊆ L itself, the paper's main theorem (a 7.9k-line preprint using property (T) mixing, fingerprinting and a catalytic log-space controller), is not formalized."
+    open_boundary: ""
     milestone: M26
     depends_on: []
     rank: 2415
     exit_criteria:
-      - "ExactDerandomization.RL ⊆ ExactDerandomization.BPL is provable (done: ExactDerandomization.RL_subset_BPL)."
-      - "ExactDerandomization.RL ⊆ ExactDerandomization.L is provable (follows from the next item via RL_subset_L_of_BPL_subset_L)."
-      - "ExactDerandomization.BPL ⊆ ExactDerandomization.L is provable, giving L = RL = BPL (open)."
+      - "ExactDerandomization.RL ⊆ ExactDerandomization.BPL is provable (done: ExactDerandomization.RL_subset_BPL, Start/LogspaceAmplification.lean)."
+      - "ExactDerandomization.RL ⊆ ExactDerandomization.L is provable (done: RL_subset_BPL.trans BPL_subset_L, inside exact_logarithmic_space_derandomization)."
+      - "ExactDerandomization.BPL ⊆ ExactDerandomization.L is provable (done: ExactDerandomization.BPL_subset_L, Start/LogspaceEquality.lean, absorbed from openai/math commit 3014888, family 103)."
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
@@ -6094,11 +6122,11 @@ tasks:
 
   - id: M26-OAI-LOGSPACE
     priority: P1
-    status: DONE_WEAK
+    status: DONE_STRONG
     track: absorb/openai-math
     title: "Absorb openai/math Logspace (family 103): L = RL = BPL"
     latest_evidence: "docs/goal/evidence/M26-OAI-ABSORPTION.md"
-    open_boundary: "Only L ⊆ RL and L ⊆ BPL are in upstream Lean and are absorbed (Start/LogspaceDeterministic.lean); the converse inclusions are task M26-LOGSPACE-CONVERSE."
+    open_boundary: ""
     milestone: M26
     depends_on:
       - M26-OAI-TYPESYSTEM
@@ -6106,7 +6134,7 @@ tasks:
     rank: 2420
     exit_criteria:
       - "ExactDerandomization.L_subset_RL and ExactDerandomization.L_subset_BPL are provable (done)."
-      - "ExactDerandomization.L = ExactDerandomization.RL ∧ ExactDerandomization.RL = ExactDerandomization.BPL is provable (open)."
+      - "ExactDerandomization.L = ExactDerandomization.RL ∧ ExactDerandomization.RL = ExactDerandomization.BPL is provable (done: ExactDerandomization.exact_logarithmic_space_derandomization, Start/LogspaceEquality.lean; all 39 upstream Logspace modules of openai/math commit 3014888 absorbed as Start/Logspace*.lean, registered in Start/Capstones.lean; axioms propext, Classical.choice, Quot.sound)."
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
@@ -6251,3 +6279,145 @@ tasks:
       - "python3 scripts/check_sorry.py"
       - "python3 scripts/check_closure.py"
       - "python3 scripts/goal_state.py validate"
+
+  - id: M26-DELIVERY-15-MERGE
+    priority: P1
+    status: DONE_STRONG
+    track: integration/aristotle
+    title: "Merge the completed Logspace absorption from Downloads/15"
+    latest_evidence: "docs/goal/evidence/M26-DELIVERY-15-MERGE.md"
+    open_boundary: ""
+    milestone: M26
+    depends_on:
+      - M26-DELIVERY-12-MERGE
+    rank: 2500
+    exit_criteria:
+      - "The 38 new delivered modules are copied unchanged; all 39 upstream Logspace modules have corresponding Start modules."
+      - "The unconditional BPL_subset_L and exact_logarithmic_space_derandomization proof bodies, root imports, typed Capstones registrations and attribution are present."
+      - "Local pins, public interfaces and previous records are preserved. Producer-reported proof statuses are merged without claiming local compilation."
+    required_gates:
+      - "python3 scripts/check_manifest.py"
+      - "python3 scripts/check_sorry.py"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/goal_state.py validate"
+
+  - id: M27-SPACE-MODEL-COMPILE
+    priority: P1
+    status: TODO_READY
+    track: research/model-transfer
+    title: "Concrete space-bounded compiler from upstream finite machines to the host model"
+    latest_evidence: "docs/goal/evidence/M27-LOGSPACE-TRANSFER.md"
+    open_boundary: "Not done: this row is the upstream-to-host direction (ExactDerandomization.Machine into Complexity.Space.Machine). The delivery's Complexity.Space.ToLogspace.compile goes the other way and is credited to M27-SPACE-MODEL-TOTALIZE. Building blocks exist: bijective base-two counters with increment/decrement and a counted input seek (Start/SpaceProgCounter.lean), finite dispatch (Start/SpaceProgDispatch.lean), a two-sided windowed tape in two registers (Start/LogspaceToSpaceTape.lean), the register-file encoding FromLogspace.encR (Start/LogspaceToSpace.lean) and tape programs for the phases of one transition, runs_setState, runs_setFlags, runs_tapesOp, runs_headsOp (Start/LogspaceToSpaceStep.lean). First missing construction: the tape program for one full upstream transition (read the symbols, dispatch, run the phases) with its specification on encR; then the loop over the run and the logarithmic bound on the registers."
+    milestone: M27
+    depends_on: []
+    rank: 2510
+    exit_criteria:
+      - "Construct finite target control for the upstream deterministic multi-work-tape/multi-input-head machine model, with a step simulation and acceptance preservation."
+      - "Prove a bound C_M * (s + log2(n + 2) + 1) on every reachable target configuration, including initialization and intermediate scratch work."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M27-SPACE-MODEL-TOTALIZE
+    priority: P1
+    status: DONE_STRONG
+    track: research/model-transfer
+    title: "Translate host logarithmic-space recognizers into total upstream deciders"
+    terminal_statement: "Complexity.Space.ToLogspace.compile M k (host work tape on upstream work tape 0, origin marker on work tape 1, host head as input head 0, input heads 1..k an odometer clock in base n + 2 using no work cells); compile_spaceThrough (every intermediate configuration uses at most 2 s(|x|) work cells); compile_decides (halts on every input and decides the host language); cfgBound_le_clock (clockLen Q a = Q (a+1)^2 2^a + a + 3 exceeds the configuration bound for space a (log2 (n+1) + 1))"
+    latest_evidence: "docs/goal/evidence/M27-LOGSPACE-TRANSFER.md"
+    open_boundary: ""
+    milestone: M27
+    depends_on: []
+    rank: 2520
+    exit_criteria:
+      - "Implement the host-to-upstream machine translation, including input/end-marker and tape conventions."
+      - "Give an explicit finite-configuration clock or cycle argument, prove rejection totalization and its logarithmic-space bound."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M27-LOGSPACE-TRANSFER
+    priority: P1
+    status: DONE_WEAK
+    track: research/model-transfer
+    title: "Transfer the derandomization equality to the host LOGSPACE class"
+    terminal_statement: "Complexity.Space.ToLogspace.logspace_subset_L : LOGSPACE A -> {x | A x} in ExactDerandomization.L; logspace_subset_RL and logspace_subset_BPL through the absorbed exact_logarithmic_space_derandomization"
+    latest_evidence: "docs/goal/evidence/M27-LOGSPACE-TRANSFER.md"
+    open_boundary: "Only host LOGSPACE into ExactDerandomization.L, RL and BPL is proved (logspace_subset_L, logspace_subset_RL, logspace_subset_BPL). The converse ExactDerandomization.L subset LOGSPACE is open; it waits on the upstream-to-host compiler M27-SPACE-MODEL-COMPILE, whose open boundary names the first missing construction."
+    milestone: M27
+    depends_on:
+      - M27-SPACE-MODEL-COMPILE
+      - M27-SPACE-MODEL-TOTALIZE
+    rank: 2530
+    exit_criteria:
+      - "For every binary language A, prove A in ExactDerandomization.L iff Complexity.Space.LOGSPACE A using the concrete simulations."
+      - "Derive the corresponding RL and BPL iff LOGSPACE statements from the absorbed unconditional equality, retaining machine witnesses and quantitative bounds."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M27-POLYTIME-MODEL-EQUIV
+    priority: P1
+    status: TODO_NEEDS_DESIGN
+    track: research/model-transfer
+    title: "Connect explicit polynomial-time tape machines with Cobham-based P"
+    latest_evidence: "docs/goal/evidence/M26-OAI-ABSORPTION.md"
+    open_boundary: "The exact source tape-machine representation and effective compilation interface need to be selected; computability results alone do not prove polynomial-time equivalence."
+    milestone: M27
+    depends_on: []
+    rank: 2540
+    exit_criteria:
+      - "Fix the concrete finite tape-machine model and binary language/input encoding, and give the two translations with explicit polynomial bounds."
+      - "Prove equivalence with the existing Cobham-based P without redefining P or assuming the missing compiler."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M27-DEPTH3-HOST
+    priority: P1
+    status: TODO_NEEDS_DESIGN
+    track: research/model-transfer
+    title: "State the absorbed depth-three lower bound in the host complexity/circuit theory"
+    latest_evidence: "docs/goal/evidence/M26-OAI-ABSORPTION.md"
+    open_boundary: "Upstream Circuit3 has unbounded fan-in OR/AND/OR layers and its own gate count; existing binary-gate interfaces cannot be identified with it while preserving depth without proof."
+    milestone: M27
+    depends_on:
+      - M27-POLYTIME-MODEL-EQUIV
+      - M26-OAI-DEPTHTHREE
+    rank: 2550
+    exit_criteria:
+      - "Prove the required circuit translations with explicit basis, fan-in, depth and size contracts, extending the host interface conservatively if necessary."
+      - "Place the lower-bound language in host P and recover the genuine nonuniform unbounded-fan-in depth-three bound with a documented relation to PolyCircuit/UniformCircuit."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M19-DESCRIPTION-COST-AUDIT
+    priority: P1
+    status: DONE_WEAK
+    track: research/information
+    title: "Prove counting and coding bounds for the actual Kolmogorov description measures"
+    terminal_statement: "Lambda.sizeBits_append_inj (prefix-free bit code of terms); Lambda.size_le_length_sizeBits and Lambda.length_sizeBits_le (size t <= |bits t| <= 2 size t); Lambda.card_size_le (at most 4^m terms of size <= m); Lambda.card_kolm_le and Lambda.card_kolmCond_le (at most 4^m numbers of complexity <= m); Lambda.exists_le_four_pow_kolm_gt and exists_le_four_pow_kolmCond_gt; Lambda.kolm_le_kolmBits and kolmBits_le_two_mul_kolm"
+    latest_evidence: "docs/goal/evidence/M19-DESCRIPTION-COST-AUDIT.md"
+    open_boundary: "The counting bounds and the comparison with bit length are proved in Start/KolmogorovCount.lean. The bound 4^m is not shown to be tight (no matching lower bound on the number of terms of size m is proved), so whether the correct constant for the symmetry law of kolm is 2 or smaller is open."
+    milestone: M19
+    depends_on: []
+    rank: 1390
+    exit_criteria:
+      - "Prove finite counting/encoding bounds for closed lambda terms under Lambda.size and explicit comparisons with the binary-description complexity machinery."
+      - "Determine the justified quantitative target for M19-SYMMETRY-HARD-HALF; support any correction with a proved bound or counterexample while retaining the existing complexity functions."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"

@@ -222,14 +222,14 @@
 | 1310 | `M18-WEIHRAUCH` | `P1` | `TODO_NEEDS_DESIGN` | - | docs/goal/evidence/M11-COMPUTABLE-REAL-CONTINUITY.md |  |
 | 1320 | `M18-EXTENSIONAL-COLLAPSE` | `P2` | `TODO_NEEDS_DESIGN` | M18-KLS | docs/goal/evidence/M11-KLEENE-TWO-PCA.md | Longley's programme; the general theory of extensional collapses of PCAs is not fully settled in the literature, so the task should be scoped to K2 first. |
 | 1330 | `M18-PCA-LATTICE` | `P2` | `DONE_WEAK` | - | docs/goal/evidence/M18-PCA-LATTICE.md | The order, its degeneracy, the refinement by decidable morphisms and the separation K1 < K2 are proved in Start/PCAOrder.lean. Two things are not: the strictness is proved for the refined order only - in the plain order all algebras are equivalent, which is itself a theorem here - and the third exit criterion, whether two algebras with equivalent realizability toposes are equivalent, is recorded as open rather than proved, since the library constructs the assemblies and their exact completion but not the realizability topos of an algebra. |
-| 1400 | `M19-SYMMETRY-HARD-HALF` | `P1` | `TODO_NEEDS_DESIGN` | - | docs/goal/evidence/M6-KOLMOGOROV-CORE.md | Start/KolmogorovCond.lean has the easy half, kolm_le_kolmCond_add. The converse needs the counting argument over the description sets, with the Kraft-Chaitin machine of Start/KCMachine.lean. |
+| 1400 | `M19-SYMMETRY-HARD-HALF` | `P1` | `TODO_NEEDS_DESIGN` | M19-DESCRIPTION-COST-AUDIT | docs/goal/evidence/M6-KOLMOGOROV-CORE.md | Start/KolmogorovCond.lean has the easy half, kolm_le_kolmCond_add. Start/KolmogorovCount.lean proves the base-4 counting bounds for the raw size measure (card_kolm_le, card_kolmCond_le) and the comparison with a prefix-free bit code (size <= \|bits\| <= 2 size). Still missing: an effective enumeration of {(s,y) : K(<s,y>) <= m} by dovetailing, and the conditional decoder recovering s from its index, y and m as a closed lambda term with explicit size; with base-4 counting the resulting inequality for kolm carries a factor 2 on the counting term. |
 | 1410 | `M19-KT-DEFINITIONS` | `P1` | `DONE_WEAK` | - | docs/goal/evidence/M19-KT-DEFINITIONS.md | The measure, its basic theory and its invariance are proved in Start/KolmogorovTime.lean. The third exit criterion is not: that the language {(x, k) : K^T(x) <= k} is in NP. Lambda.ktime_le_iff gives its combinatorial half - the certificate is a program of size at most k - and what is missing is that checking such a certificate (running a guessed term for T steps) is polynomial time in the model of Start/ComplexityClasses.lean; the machinery for that is the Krivine machine in the Cobham model (Start/KrivineCobStep.lean) together with an encoding of terms as words. |
 | 1420 | `M19-MCSP` | `P1` | `TODO_NEEDS_DESIGN` | M19-KT-DEFINITIONS | docs/goal/evidence/M9-COMPLEXITY-CLASSES.md | Whether MCSP is NP-complete is open; the task is to define it, place it in NP, and prove what is known unconditionally. |
 | 1430 | `M19-OWF-KT` | `P2` | `TODO_NEEDS_DESIGN` | M19-KT-DEFINITIONS, M19-SYMMETRY-HARD-HALF | docs/goal/evidence/M10-LEVIN-KT.md | Recent research, 2020; the equivalence needs a probabilistic framework the library does not have, so the first half of the task is to decide how much probability to import from Mathlib. |
 | 1500 | `M20-RANGE-PROPERTY` | `P2` | `TODO_NEEDS_DESIGN` | - | docs/goal/evidence/M10-LAMBDA-THEORY-LATTICE.md | Open. The range of a lambda-definable function on a lambda-theory is conjectured to be either a singleton or infinite; it is known for beta and for some theories, open in general. |
 | 1510 | `M20-EASY-TERMS` | `P2` | `TODO_NEEDS_DESIGN` | - | docs/goal/evidence/M5-SOLVABILITY.md | Whether every unsolvable term is easy is open; Jacopini's theorem for Omega itself is not. |
 | 1520 | `M20-THEORY-LATTICE-UNCOUNTABLE` | `P2` | `TODO_NEEDS_DESIGN` | - | docs/goal/evidence/M10-LAMBDA-THEORY-LATTICE.md |  |
-| 1530 | `M20-GANDY` | `P1` | `TODO_NEEDS_DESIGN` | - | docs/goal/evidence/M4-CHURCH-TURING-LAMBDA.md | Never formalized, as far as is known. This is the physical form of the Church-Turing thesis, and the one the name of this library refers to; the design question is the formalization of Gandy's four principles. |
+| 1530 | `M20-GANDY` | `P1` | `TODO_NEEDS_DESIGN` | - | docs/goal/evidence/M4-CHURCH-TURING-LAMBDA.md | A faithful formalization of Gandy's mechanism principles and effective structural-state coding remains to be constructed. Computability of global evolution must follow from the principles rather than be assumed in the definition. The next research programme includes concrete mechanism instances and a simulation into the existing Church-Turing equivalence. |
 | 1540 | `M20-RULE-110` | `P2` | `TODO_NEEDS_DESIGN` | - | docs/goal/evidence/M4-TM2-IMP-PARTREC.md | Cook's proof is long and combinatorial; the task is a serious engineering effort with a fully classical statement. |
 | 1600 | `M21-QBF-ARITH` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M21-QBF-ARITH.md |  |
 | 1605 | `M21-SUMCHECK-ROUND` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M21-QBF-ARITH.md |  |
@@ -251,19 +251,19 @@
 | 1800 | `M22-NONDET-PROG` | `P1` | `TODO_READY` | M14-SPACE-COMPILE | docs/goal/proposed-M21-M24.md |  |
 | 1810 | `M22-IMMERMAN-SZELEPCSENYI` | `P1` | `TODO_READY` | M22-NONDET-PROG | docs/goal/proposed-M21-M24.md |  |
 | 1820 | `M22-SPACE-HIERARCHY` | `P2` | `TODO_READY` | M14-SPACE-COMPILE | docs/goal/proposed-M21-M24.md |  |
-| 1830 | `M22-CONP-PH` | `P2` | `TODO_READY` | - | docs/goal/proposed-M21-M24.md |  |
-| 1840 | `M22-COOK-RECKHOW` | `P1` | `TODO_READY` | M22-CONP-PH | docs/goal/proposed-M21-M24.md |  |
+| 1830 | `M22-CONP-PH` | `P2` | `DONE_STRONG` | - | docs/goal/evidence/M22-CONP-PH.md |  |
+| 1840 | `M22-COOK-RECKHOW` | `P1` | `DONE_STRONG` | M22-CONP-PH | docs/goal/evidence/M22-COOK-RECKHOW.md |  |
 | 1850 | `M22-RESOLUTION` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M22-RESOLUTION.md |  |
 | 1855 | `M22-RESOLUTION-PROOF-SYSTEM` | `P2` | `TODO_READY` | M22-RESOLUTION, M22-COOK-RECKHOW | docs/goal/evidence/M22-RESOLUTION.md |  |
 | 1860 | `M22-HAKEN-PHP` | `P1` | `TODO_READY` | M22-RESOLUTION | docs/goal/proposed-M21-M24.md |  |
-| 1870 | `M22-AC0-DEF` | `P2` | `TODO_READY` | - | docs/goal/proposed-M21-M24.md |  |
+| 1870 | `M22-AC0-DEF` | `P2` | `DONE_STRONG` | - | docs/goal/evidence/M22-AC0-DEF.md |  |
 | 1880 | `M22-SWITCHING-LEMMA` | `P2` | `TODO_READY` | M22-AC0-DEF | docs/goal/proposed-M21-M24.md |  |
 | 1890 | `M22-PARITY-NOT-AC0` | `P2` | `TODO_READY` | M22-SWITCHING-LEMMA | docs/goal/proposed-M21-M24.md |  |
 | 1900 | `M22-FAGIN` | `P2` | `TODO_NEEDS_DESIGN` | - | docs/goal/proposed-M21-M24.md | Design question: which model of NP the logic side is compared with. The library's NP is certificate-checking by a Cobham term, not a Turing machine, so the tableau in the hard direction is a tableau of a Cobham evaluation. |
-| 2000 | `M23-PTS` | `P1` | `TODO_READY` | - | docs/goal/proposed-M21-M24.md |  |
-| 2010 | `M23-FOMEGA` | `P2` | `TODO_READY` | M23-PTS | docs/goal/proposed-M21-M24.md |  |
-| 2020 | `M23-COC-SN` | `P1` | `TODO_READY` | M23-PTS, M23-FOMEGA | docs/goal/proposed-M21-M24.md |  |
-| 2030 | `M23-HURKENS` | `P2` | `TODO_READY` | M23-PTS | docs/goal/proposed-M21-M24.md |  |
+| 2000 | `M23-PTS` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M23-PTS.md |  |
+| 2010 | `M23-FOMEGA` | `P2` | `TODO_READY` | M23-PTS | docs/goal/proposed-M21-M24.md | The corner systemFOmega of PureTypeSystem.cubeSpec (Start/PTSCube.lean) gives F-omega with its kinding and substitution through the generic PTS metatheory. Strong normalization is not proved: the first missing lemma is the classification of systemFOmega-legal expressions into kinds, constructors and terms (constructors never contain term-level subexpressions), needed to index reducibility candidates by kinds; no candidate interpretation for the PTS syntax exists yet. |
+| 2020 | `M23-COC-SN` | `P1` | `TODO_READY` | M23-PTS, M23-FOMEGA | docs/goal/proposed-M21-M24.md | The coc corner is defined (Start/PTSCube.lean) and cube_sn_mono would transfer SN to every corner. SN of coc is not proved: the generic weak_implies_strong needs system-wide WN, which is not available. The first missing construction is the classification lemma for coc (each legal term is a kind, constructor or object, stable under reduction) followed by Geuvers saturated-set interpretation of kinds and its fundamental lemma. |
+| 2030 | `M23-HURKENS` | `P2` | `DONE_STRONG` | M23-PTS | docs/goal/evidence/M23-HURKENS.md |  |
 | 2040 | `M23-ID-TYPES` | `P1` | `TODO_READY` | - | docs/goal/proposed-M21-M24.md | The library's type theories (lambda-Pi, System F) have no identity types, so this row is a prerequisite and not a formality. |
 | 2050 | `M23-GROUPOID-MODEL` | `P1` | `TODO_READY` | M23-ID-TYPES | docs/goal/proposed-M21-M24.md |  |
 | 2060 | `M23-UIP-INDEPENDENT` | `P1` | `TODO_READY` | M23-GROUPOID-MODEL | docs/goal/proposed-M21-M24.md |  |
@@ -283,8 +283,9 @@
 | 2310 | `M25-HM-TYPING` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M25-HM-TYPING.md |  |
 | 2320 | `M25-HM-ALGORITHM-W` | `P1` | `DONE_STRONG` | M25-UNIFICATION, M25-HM-TYPING | docs/goal/evidence/M25-HM-ALGORITHM-W.md |  |
 | 2330 | `M25-HM-PRINCIPAL` | `P1` | `DONE_STRONG` | M25-HM-ALGORITHM-W | docs/goal/evidence/M25-HM-PRINCIPAL.md |  |
-| 2340 | `M25-CBV-MACHINE` | `P1` | `TODO_READY` | - | docs/goal/evidence/M11-KRIVINE-MACHINE.md |  |
-| 2350 | `M25-CBV-COST` | `P1` | `TODO_READY` | M25-CBV-MACHINE | docs/goal/evidence/M11-KRIVINE-INVARIANCE.md |  |
+| 2340 | `M25-CBV-MACHINE` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M25-CBV-MACHINE.md |  |
+| 2345 | `M25-CBV-STEP-PROG` | `P1` | `TODO_READY` | M25-CBV-MACHINE | docs/goal/evidence/M25-CBV-COST.md |  |
+| 2350 | `M25-CBV-COST` | `P1` | `DONE_WEAK` | M25-CBV-MACHINE, M25-CBV-STEP-PROG | docs/goal/evidence/M25-CBV-COST.md | The first criterion is proved, with a linear bound (Start/CbvCost.lean). The second and third are not: they need a tape program for one CEK transition on an encoding of states, which is the new row M25-CBV-STEP-PROG. |
 | 2360 | `M25-CBNEED-MACHINE` | `P1` | `TODO_READY` | - | docs/goal/evidence/M12-KRIVINE-SPACE-LIVE.md |  |
 | 2370 | `M25-CBNEED-COST` | `P2` | `TODO_READY` | M25-CBNEED-MACHINE | docs/goal/evidence/M11-KRIVINE-INVARIANCE.md |  |
 | 2380 | `M25-CBPV` | `P2` | `TODO_READY` | M25-CBV-MACHINE | docs/goal/evidence/M9-SYSTEM-F.md |  |
@@ -293,8 +294,8 @@
 | 2401 | `M26-ARISTOTLE-SOURCE-SUBMISSION` | `P1` | `DONE_STRONG` | M26-ARISTOTLE-ASK-TOOL | docs/goal/evidence/M26-ARISTOTLE-SOURCE-SUBMISSION.md |  |
 | 2400 | `M26-OAI-DEGREE-QUESTION` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M26-OAI-ABSORPTION.md |  |
 | 2410 | `M26-OAI-TYPESYSTEM` | `P1` | `DONE_STRONG` | M26-OAI-DEGREE-QUESTION | docs/goal/evidence/M26-OAI-ABSORPTION.md |  |
-| 2415 | `M26-LOGSPACE-CONVERSE` | `P1` | `TODO_NEEDS_DESIGN` | - | docs/goal/evidence/M26-OAI-ABSORPTION.md | The upstream Lean file proves only L ⊆ RL and L ⊆ BPL; the derandomization direction of the paper (family 103) is not formalized upstream and would have to be built here from the paper. Reduced to one inclusion: Start/LogspaceAmplification.lean proves RL ⊆ BPL (ExactDerandomization.RL_subset_BPL) and hence BPL ⊆ L → L = RL ∧ L = BPL (ExactDerandomization.L_eq_RL_and_L_eq_BPL_of_BPL_subset_L). BPL ⊆ L itself, the paper's main theorem (a 7.9k-line preprint using property (T) mixing, fingerprinting and a catalytic log-space controller), is not formalized. |
-| 2420 | `M26-OAI-LOGSPACE` | `P1` | `DONE_WEAK` | M26-OAI-TYPESYSTEM, M26-LOGSPACE-CONVERSE | docs/goal/evidence/M26-OAI-ABSORPTION.md | Only L ⊆ RL and L ⊆ BPL are in upstream Lean and are absorbed (Start/LogspaceDeterministic.lean); the converse inclusions are task M26-LOGSPACE-CONVERSE. |
+| 2415 | `M26-LOGSPACE-CONVERSE` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M26-OAI-ABSORPTION.md |  |
+| 2420 | `M26-OAI-LOGSPACE` | `P1` | `DONE_STRONG` | M26-OAI-TYPESYSTEM, M26-LOGSPACE-CONVERSE | docs/goal/evidence/M26-OAI-ABSORPTION.md |  |
 | 2430 | `M26-OAI-SOLENOIDAL` | `P1` | `DONE_STRONG` | M26-OAI-TYPESYSTEM | docs/goal/evidence/M26-OAI-ABSORPTION.md |  |
 | 2440 | `M26-OAI-STARHEIGHT` | `P1` | `DONE_STRONG` | M26-OAI-SOLENOIDAL | docs/goal/evidence/M26-OAI-ABSORPTION.md |  |
 | 2450 | `M26-OAI-WEISFEILERLEMAN` | `P1` | `DONE_STRONG` | M26-OAI-SOLENOIDAL | docs/goal/evidence/M26-OAI-ABSORPTION.md |  |
@@ -302,6 +303,13 @@
 | 2470 | `M26-OAI-DEGREE-RIGIDITY` | `P1` | `DONE_STRONG` | M26-OAI-DEPTHTHREE | docs/goal/evidence/M26-OAI-ABSORPTION.md |  |
 | 2480 | `M26-DELIVERY-8-MERGE` | `P1` | `DONE_STRONG` | M26-ARISTOTLE-SOURCE-SUBMISSION | docs/goal/evidence/M26-DELIVERY-8-MERGE.md |  |
 | 2490 | `M26-DELIVERY-12-MERGE` | `P1` | `DONE_STRONG` | M26-DELIVERY-8-MERGE | docs/goal/evidence/M26-DELIVERY-12-MERGE.md |  |
+| 2500 | `M26-DELIVERY-15-MERGE` | `P1` | `DONE_STRONG` | M26-DELIVERY-12-MERGE | docs/goal/evidence/M26-DELIVERY-15-MERGE.md |  |
+| 2510 | `M27-SPACE-MODEL-COMPILE` | `P1` | `TODO_READY` | - | docs/goal/evidence/M27-LOGSPACE-TRANSFER.md | Not done: this row is the upstream-to-host direction (ExactDerandomization.Machine into Complexity.Space.Machine). The delivery's Complexity.Space.ToLogspace.compile goes the other way and is credited to M27-SPACE-MODEL-TOTALIZE. Building blocks exist: bijective base-two counters with increment/decrement and a counted input seek (Start/SpaceProgCounter.lean), finite dispatch (Start/SpaceProgDispatch.lean), a two-sided windowed tape in two registers (Start/LogspaceToSpaceTape.lean), the register-file encoding FromLogspace.encR (Start/LogspaceToSpace.lean) and tape programs for the phases of one transition, runs_setState, runs_setFlags, runs_tapesOp, runs_headsOp (Start/LogspaceToSpaceStep.lean). First missing construction: the tape program for one full upstream transition (read the symbols, dispatch, run the phases) with its specification on encR; then the loop over the run and the logarithmic bound on the registers. |
+| 2520 | `M27-SPACE-MODEL-TOTALIZE` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M27-LOGSPACE-TRANSFER.md |  |
+| 2530 | `M27-LOGSPACE-TRANSFER` | `P1` | `DONE_WEAK` | M27-SPACE-MODEL-COMPILE, M27-SPACE-MODEL-TOTALIZE | docs/goal/evidence/M27-LOGSPACE-TRANSFER.md | Only host LOGSPACE into ExactDerandomization.L, RL and BPL is proved (logspace_subset_L, logspace_subset_RL, logspace_subset_BPL). The converse ExactDerandomization.L subset LOGSPACE is open; it waits on the upstream-to-host compiler M27-SPACE-MODEL-COMPILE, whose open boundary names the first missing construction. |
+| 2540 | `M27-POLYTIME-MODEL-EQUIV` | `P1` | `TODO_NEEDS_DESIGN` | - | docs/goal/evidence/M26-OAI-ABSORPTION.md | The exact source tape-machine representation and effective compilation interface need to be selected; computability results alone do not prove polynomial-time equivalence. |
+| 2550 | `M27-DEPTH3-HOST` | `P1` | `TODO_NEEDS_DESIGN` | M27-POLYTIME-MODEL-EQUIV, M26-OAI-DEPTHTHREE | docs/goal/evidence/M26-OAI-ABSORPTION.md | Upstream Circuit3 has unbounded fan-in OR/AND/OR layers and its own gate count; existing binary-gate interfaces cannot be identified with it while preserving depth without proof. |
+| 1390 | `M19-DESCRIPTION-COST-AUDIT` | `P1` | `DONE_WEAK` | - | docs/goal/evidence/M19-DESCRIPTION-COST-AUDIT.md | The counting bounds and the comparison with bit length are proved in Start/KolmogorovCount.lean. The bound 4^m is not shown to be tight (no matching lower bound on the number of terms of size m is proved), so whether the correct constant for the symmetry law of kolm is 2 or smaller is open. |
 
 Next: `M14-KRIVINE-SPACE-CLASS`
 

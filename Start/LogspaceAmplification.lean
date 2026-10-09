@@ -21,9 +21,10 @@ Consequences proved here:
 * `RL_subset_L_of_BPL_subset_L : BPL ⊆ L → RL ⊆ L`;
 * `L_eq_RL_and_L_eq_BPL_of_BPL_subset_L : BPL ⊆ L → L = RL ∧ L = BPL`.
 
-So of the two inclusions missing from upstream (`RL ⊆ L`, `BPL ⊆ L`), only `BPL ⊆ L` — the main
-theorem of the paper "Exact derandomization of logarithmic space, L = RL = BPL" — remains open
-in this library.
+The remaining inclusion `BPL ⊆ L`, the main theorem of the paper "Exact Derandomization of
+Logarithmic Space: L = RL = BPL", is proved unconditionally in `Start/LogspaceEquality.lean`
+(absorbed from github.com/openai/math, commit 3014888, family 103), which uses
+`RL_subset_BPL` from this module to conclude `L = RL ∧ RL = BPL`.
 -/
 
 namespace ExactDerandomization

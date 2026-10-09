@@ -1,3 +1,190 @@
+# Summary of changes for run cb2ae4a3-da81-4c52-9035-5b63d4807520
+I closed three more task-board rows (`M22-CONP-PH`, `M22-COOK-RECKHOW`, `M22-AC0-DEF`) and `M25-CBV-MACHINE`, and proved the first part of `M25-CBV-COST`. I also fixed a name clash, left by the previous run, that stopped `Start/Capstones.lean` from compiling. The full library now builds with `lake build Start` (10566 jobs). There is no `sorry` in it, and `check_closure.py`, `goal_state.py validate` and `pack_gate.sh HEAD` all pass. The main theorems depend only on `propext`, `Classical.choice` and `Quot.sound`.
+
+**New modules**
+- **`Start/PolyHierarchy.lean`** (`M22-CONP-PH`, done). It defines `coNP` and the levels \(\Sigma_k^p\), \(\Pi_k^p\) of the polynomial hierarchy, using the word pairing from `Start/NPInter.lean`. As with the library's `NP`, a witness's length bound is enforced by the language itself rather than stated as an extra condition.
+  - `inSigma_one_iff`: \(\Sigma_1^p = \mathsf{NP}\).
+  - `ph_collapse_of_NP_eq_coNP`: if NP = coNP, every level from 1 up equals NP.
+  - `inP_of_inSigma_of_peqNP` and `inP_of_inPi_of_peqNP`: if P = NP, every level is contained in P.
+- **`Start/CookReckhow.lean`** (`M22-COOK-RECKHOW`, done). A proof system is a Cobham term whose outputs are exactly the codes of unsatisfiable CNFs.
+  - `cook_reckhow`: NP = coNP if and only if some proof system gives every unsatisfiable CNF a proof of polynomial length.
+- **`Start/AC0.lean`** (`M22-AC0-DEF`, done). It defines circuits with unbounded fan-in, their depth and size, and the class `InAC0`.
+  - Negations can be pushed to the inputs without changing depth or increasing size.
+  - Two adjacent AND layers (or two OR layers) merge into one, saving a layer.
+  - `AC⁰` is closed under complement, intersection and union.
+  - As non-vacuity checks, "some bit is 1" and "every bit is 1" are in `AC⁰`.
+- **`Start/CbvMachine.lean`** (`M25-CBV-MACHINE`, done). It defines Plotkin's call-by-value reduction, which is deterministic, and a CEK machine that reuses the Krivine machine's closures. The simulation is proved in both directions: `eval_sound`, and `eval_complete` (if a term reaches a normal form in `k` steps, the machine halts on it after exactly `k` β transitions).
+- **`Start/CbvCost.lean`** (`M25-CBV-COST`, still `DONE_WEAK`). `run_length_le` shows a run with `b` β transitions has at most \(b + 3\,|t|\,(b+1)\) transitions. The row's remaining part, a tape program for one machine step, is not done. It is now a new task, `M25-CBV-STEP-PROG`.
+
+**Repairs to the previous run's work**
+- `Start/KolmogorovCount.lean` defined `Lambda.bits`, which clashed with the existing `Lambda.bits` in `Start/ChaitinOmega.lean`, so `Start/Capstones.lean` did not compile. Its code and the related lemmas are renamed (`Lambda.sizeBits`, `sizeBits_append_inj`, `minSizeProg`, and so on), with the registry and documents updated.
+- Five unfinished modules for the converse direction `L ⊆ LOGSPACE` (`Start/SpaceProgCounter.lean`, `SpaceProgDispatch.lean`, `LogspaceToSpaceTape.lean`, `LogspaceToSpace.lean`, `LogspaceToSpaceStep.lean`) were not imported anywhere, so the closure check failed. They are now imported and registered. The converse itself is still not proved; the `M27-LOGSPACE-TRANSFER` row now lists these pieces and names the next missing one: a tape program for one whole simulated transition.
+
+**Records.** Each finished row has an evidence file under `docs/goal/evidence/`, and its terminal statements are listed in `Start/Capstones.lean`. `docs/current-goal-state.md` has been regenerated, and six main theorems are marked proved in the Properties table. Everything is committed.
+
+# Summary of changes for run 41d24fa3-b128-4a8b-8caa-75ecbf05d2c0
+
+
+## Suggested follow-up
+
+I reached this run’s time limit. Send “continue” to pick up where I left off.
+
+# Summary of changes for run dbac3655-524f-4042-8462-50b418e95c8f
+是的，已经吸收完成，我刚才重新检查过一遍。
+
+- openai/math（提交 3014888）里 L = RL = BPL 的 Logspace 证明已经放进项目，共 40 个 `Start/Logspace*.lean` 文件。这些文件里都没有 `sorry`。
+- `lake build Start.LogspaceEquality` 编译通过。
+- 两个最终定理都在 `Start/LogspaceEquality.lean` 里：
+  - `ExactDerandomization.BPL_subset_L : BPL ⊆ L`
+  - `ExactDerandomization.exact_logarithmic_space_derandomization : L = RL ∧ RL = BPL`
+- 我用 `#print axioms` 查过，这两个定理只依赖 `propext`、`Classical.choice`、`Quot.sound` 这三个标准公理。
+- 工作区没有未提交的改动。
+
+这次我只做了检查，没有修改任何文件。
+
+# Summary of changes for run 09049798-e579-4c30-8a95-c3515ea63c99
+The equality \(\mathsf L = \mathsf{RL} = \mathsf{BPL}\) is now proved in our namespace with no `sorry`. I absorbed the Logspace proof from openai/math commit 3014888 into ordinary `Start` modules, and `lake build Start` succeeds (10545 jobs). Both task-board rows are closed.
+
+**Terminal theorems** (in `Start/LogspaceEquality.lean`):
+- `ExactDerandomization.BPL_subset_L : BPL ⊆ L`
+- `ExactDerandomization.exact_logarithmic_space_derandomization : L = RL ∧ RL = BPL`
+
+Both depend only on `propext`, `Classical.choice` and `Quot.sound` (checked with `#print axioms`). That matches the axioms the comparator permits. All 25 definitions in upstream's comparator spec, `Word` through `BPL`, appear unchanged (up to whitespace) in our existing `Start/LogspaceDeterministic.lean`. So the theorem states exactly the comparator's claim. I did not import or copy the comparator stub. As upstream notes, the paper's explicit compiler and running-time bounds are not stated separately.
+
+**What was absorbed**
+- The 38 new upstream modules became `Start/Logspace<Name>.lean`. The `OAI` namespace was dropped and imports were renamed. Each file has a header crediting openai/math, its original path, family 103, the paper title "Exact Derandomization of Logarithmic Space: L = RL = BPL" and commit 3014888.
+- The existing `Deterministic.lean` port was reused. Upstream did not change it; I only updated its header to name commit 3014888.
+- Two changes were needed for our Lean v4.33.0 / Mathlib v4.33.0 pins:
+  - the same scripted renaming as for earlier directories: `ite_eq_left`, `ite_eq_right`, `dite_eq_left`, `dite_eq_right` became `if_pos`, `if_neg`, `dif_pos`, `dif_neg`;
+  - one proof, `cord_mono` in `Start/LogspaceRecursivePrograms.lean`, needed an added `all_goals norm_num` for a leftover `1 ≤ 2` side goal. Its header records this.
+
+**Reconciling the two amplification files.** Upstream's `Amplification.lean` ends with `ExactDerandomization.RL_subset_BPL`, the same name and statement our `Start/LogspaceAmplification.lean` already proves. Upstream's file is absorbed as `Start/LogspaceTableAmplification.lean` with that last theorem left out, so nothing is declared twice. `Start/LogspaceEquality.lean` uses our existing `RL_subset_BPL` instead. No public statement was weakened or renamed.
+
+**Wiring and records**
+- `Start/LogspaceEquality.lean` is imported from `Start.lean`. `Start/Capstones.lean` registers both terminal theorems (with their full types) and `Table.TM.prob_twice`, and its Logspace section is rewritten.
+- `M26-LOGSPACE-CONVERSE` and `M26-OAI-LOGSPACE` are now DONE_STRONG with empty open boundaries. `docs/current-goal-state.md` has been regenerated.
+- `NOTICE`, `README.md` and the header of `Start/LogspaceAmplification.lean` are updated. In `docs/goal/evidence/M26-OAI-ABSORPTION.md` I marked the earlier "no upstream Lean proof" conclusion as applying only to commit adc7f1241, and added a section on this absorption.
+- `check_sorry.py`, `check_closure.py`, `goal_state.py validate` and `pack_gate.sh HEAD` all pass.
+- In the Properties table, the `BPL ⊆ L` row and a new row for the full equality are marked proved.
+
+The absorbed files print many style-linter warnings (spacing, line length) because the code is upstream's formatting, kept unchanged. Everything is committed.
+
+# Summary of changes for run 52f044d5-26c5-476d-bce2-871845e70d68
+不能直接吸收。原因是上游根本没有能吸收的 Lean 证明。这次我重新查了随项目附带的上游快照，结论如下。这一轮没有改动任何 Lean 文件，也没有新提交。
+
+**上游有什么**
+- 上游 `Logspace/` 目录只有一个 Lean 文件，即 `Computability/Logspace/Deterministic.lean`。快照的 README 里也写着这个目录只有 1 个文件。
+- 这个文件里与包含关系有关的只有两条：`L_subset_RL` 和 `L_subset_BPL`，都是“确定性 ⊆ 随机”这一个方向。此外是几条概率小引理：`inverse_cubic_le_eighth`、`no_input_approximation_bound`、`yes_input_approximation_bound`、`two_trial_probability_gap`。
+- 我在整个快照里搜索了 `BPL`、`RL`、`catalytic` 等关键词。命中的只有这个文件、README 和论文的 LaTeX 源码，没有任何 Lean 文件陈述或证明 `BPL ⊆ L` 或 `RL ⊆ L`。
+- 论文《Exact Derandomization of Logarithmic Space: L = RL = BPL》共约 8,100 行 LaTeX，分 15 个 section。我搜索了 `Lean`、`formaliz`、`mechaniz`，零命中，说明论文本身也没有提到任何形式化。
+
+**本项目已经有什么**
+- 上游这个文件的内容已全部迁入 `Start/LogspaceDeterministic.lean`，上面列出的每条定理都在。可以吸收的部分已经吸收完了。
+- `Start/LogspaceAmplification.lean` 是本项目自己补的。它证明了 `RL ⊆ BPL`，以及条件结论：只要有 `BPL ⊆ L`，就得到 `L = RL = BPL`。
+
+**还缺什么**
+- 唯一缺的是 `BPL ⊆ L`，也就是论文的主定理。要补上，只能对照这约 8,100 行论文从头写出 Lean 证明，包括 property (T) 混合、指纹比较和催化式对数空间控制器。这是新的形式化工作，不是搬运。
+- 另外要注意：`BPL ⊆ L` 一直被视为复杂性理论里的开放问题。这篇论文是 2026 年 9 月的预印本，我没有看到同行评审的信息。
+
+Properties 表里 `BPL ⊆ L` 那条仍是 in_progress，其余几条的状态和现有证明一致，我都没有改。如果需要，我可以按论文的章节结构开始分阶段形式化，先从模型、算术和平均化这几节的基础引理做起，再推进到指纹和控制器部分。
+
+# Summary of changes for run fac1baa7-4f9a-4111-9cfb-4c8ab4540d53
+你说得对，上次交付的吸收并没有完成。这次我处理了你指出的两处缺口：DegreeRigidity 已经完整吸收；Logspace 的反向包含仍未完成，现在缺的只剩一条 `BPL ⊆ L`。
+
+**DegreeRigidity：已吸收**
+- 上游 975 个文件全部迁成 `Start/Rigidity<文件名>.lean`。做法和之前的目录一样：去掉 `OAI` 命名空间，每个文件加署名头。证明都沿用上游，只改了因版本不同而变化的名字：
+  - 94 个文件做了 `ite_eq_left`/`ite_eq_right`、`dite_eq_left`/`dite_eq_right` 到 `if_pos`/`if_neg`、`dif_pos`/`dif_neg` 的脚本替换；
+  - 2 个文件把 `Filter.eventuallyEqSet_iff` 改成 `Filter.eventuallyEq_set`；
+  - 7 个文件把 `Measurable.of_eval` 改成 `measurable_pi_lambda`；
+  - 1 个文件把归纳分支名 `ind` 改成 `h`。
+  - 后三类共 10 个文件，各自在文件头里记录了改动。
+- 主定理 `TuringRigidity.ManuscriptMain.rigidity` 已在本项目中编译通过，内容是：集合的图灵度上的每个序自同构都是恒等映射。
+- 新增 `Start/RigidityBridge.lean`。它说明上游的 `Degree` 和本库原有的 `Lambda.Oracle.SetDegree` 是同一个商：`setDegreeOrderIso` 就是恒等映射。由此证明了任务板上的退出条件 `Lambda.Oracle.setDegreeRigidity : SetDegreeRigidity`。
+- 主定理没有导入的唯一一个上游模块 `RigidityArithmeticRepresentation` 也已接到 `Start.lean`。所有新模块都已登记在 `Start/Capstones.lean`。
+- 任务板上 `M26-OAI-DEGREE-RIGIDITY` 改为 DONE_STRONG。
+
+**Logspace：反向包含仍未完成**
+- 上游 Lean 里本来就没有 `RL ⊆ L` 或 `BPL ⊆ L` 的证明，所以这部分没有东西可以吸收。它是论文的主定理，论文正文约 7,900 行 LaTeX，用到 property (T) 混合、指纹比较、催化式对数空间控制器等。我没有把它形式化。
+- 我新增的是 `Start/LogspaceAmplification.lean`，用的是上游自己的机器模型：
+  - `RL_subset_BPL : RL ⊆ BPL`。构造是让两个副本在互不相交的工作带和输入头上交替运行，分别读取偶数位和奇数位的硬币，只要有一个接受就接受。已证明：若原机器在 \(T\) 步内停机，新机器在 \(2T\) 步内停机；接受概率是 \(1-(1-p)^2\)；所用空间不超过两个副本之和。
+  - `RL_subset_L_of_BPL_subset_L` 和 `L_eq_RL_and_L_eq_BPL_of_BPL_subset_L`：只要再有 `BPL ⊆ L`，就能得到 `L = RL = BPL`。
+- `M26-LOGSPACE-CONVERSE` 仍是 TODO_NEEDS_DESIGN，`M26-OAI-LOGSPACE` 仍是 DONE_WEAK，任务板上的说明已经更新。
+
+**验证**
+- `lake build Start` 成功（10507 个任务）。
+- `check_sorry.py`（1788 个模块）、`check_closure.py`（1787 个模块）、`goal_state.py validate` 和 `pack_gate.sh HEAD` 都通过。
+- 上述各个定理的 `#print axioms` 都只有 `propext`、`Classical.choice`、`Quot.sound`。
+
+`NOTICE`、`README.md`、证据文件 `docs/goal/evidence/M26-OAI-ABSORPTION.md`（它原来"不值得吸收"的结论已标为作废）、`docs/current-goal-state.md` 都已更新。`NOTICE` 原本漏列的 DepthThree 也补上了。Properties 表里新增了几条：`RL ⊆ BPL`、条件等式、上游的 rigidity 和 `setDegreeRigidity`，状态都是 proved；`BPL ⊆ L` 单独一条，状态 in_progress。所有改动都已提交。
+
+# Summary of changes for run 79ddcf9b-59ab-4dbe-ad7b-c84b3cc9dc17
+I absorbed the first four directories on your list (TypeSystem, Logspace, SolenoidalRecorder, StarHeight, WeisfeilerLeman, DepthThree), plus a Lean comparison of the two degree definitions. DegreeRigidity is not absorbed: my answer to whether it is worth it is no (last paragraph). `lake build Start` succeeds (9530 jobs), and `check_sorry.py` (811 modules), `check_closure.py` (810 modules), `goal_state.py validate` (294 tasks) and `scripts/pack_gate.sh HEAD` all pass. Every terminal theorem below depends only on `propext`, `Classical.choice` and `Quot.sound`. Everything is committed.
+
+**The Degree question.** The two oracle functions are the same term:
+- theirs: `def oracleFunction (A : Oracle) : ℕ →. ℕ := fun n => Part.some (if A n then 1 else 0)`, with `abbrev Oracle := ℕ → Bool`;
+- ours: `def oracleFun (A : ℕ → Bool) : ℕ →. ℕ := fun n => Part.some (if A n then 1 else 0)`.
+
+So their `Reduces A B := TuringReducible (oracleFunction A) (oracleFunction B)` unfolds to our relation. The degree types differ, and neither wraps the other:
+- theirs: `def Degree := Antisymmetrization Oracle Reduces`, a quotient of total 0/1 oracles;
+- ours: mathlib's `TuringDegree := Antisymmetrization (ℕ →. ℕ) TuringReducible`, a quotient of all partial functions.
+
+`Start/OracleDegreeBridge.lean` restates their five definitions, proves `oracleFunction_eq` (`rfl`), and builds an order embedding `SetDegree.toTuringDegree : SetDegree ↪o TuringDegree` whose range is exactly the degrees containing a 0/1 oracle (`range_toTuringDegree`). I did not settle whether the embedding is onto. Their definitions therefore port directly, and every statement about their `Degree` is a statement about our degrees of sets.
+
+**What was absorbed, and under what names.** 298 files became flat `Start/` modules; the `OAI` namespace was dropped and each file has an attribution header. They are imported from `Start.lean` and registered in `Start/Capstones.lean`. Verbatim terminal statements:
+- **TypeSystem → `Start/PTS*.lean`:** `theorem weak_implies_strong {S : Type u} (P : Specification S) (h : SystemWeaklyNormalizing P) : SystemStronglyNormalizing P`.
+- **Logspace → `Start/LogspaceDeterministic.lean`:** `theorem L_subset_RL : L ⊆ RL` and `theorem L_subset_BPL : L ⊆ BPL`. As you suspected, the file carries only these easy inclusions, not L = RL = BPL.
+- **SolenoidalRecorder → `Start/Solenoidal*.lean`:** `theorem halting_iff (w : List M.Symbol) (r₀ : ℤ) (hr₀ : 2 ≤ r₀) : (∃ (N : ℕ) (c : Config M), Steps N (initial w r₀) c ∧ Terminal c) ↔ M.Halts w`, together with `nonhalting_execution`.
+- **StarHeight → `Start/StarHeight*.lean`:** `theorem main {Alphabet : Type u} [Finite Alphabet] (L : Language Alphabet) (hL : L.IsRegular) : HasHeightAtMost L 3`.
+- **WeisfeilerLeman → `Start/WL*.lean`:** `theorem WLTime.unconditional_time_lower_bound : WLTime.MainClaim`. The family-133 paper is not in the snapshot, so its header says so instead of naming a title.
+- **DepthThree → `Start/DepthThree*.lean`:** `theorem exists_polynomial_time_language_depth_three_lower_bound : ∃ (L : List Bool → Bool) (M : FiniteMultiTapeMachine) (C a : ℕ), 0 < C ∧ 0 < a ∧ (∀ w, MultiTapeHaltsIn M w (L w) (C * (w.length + 1) ^ a)) ∧ ∀ A : ℝ, 0 < A → ∃ N, ∀ n, N ≤ n → ∀ D : Circuit3 (Fin n), D.Computes (fun x => L (List.ofFn x)) → (2 : ℝ) ^ (A * Real.sqrt n) < D.gateCount`. The circuits are OR-of-AND-of-OR with unbounded fan-in, in upstream's own model. That model and upstream's machine model are not yet connected to `Start/PolyCircuit.lean` or `Start/UniformCircuit.lean`.
+
+On λΠ: `Start/LambdaPiSN.lean` stays an independent proof. Using `weak_implies_strong` would need weak normalization of λΠ, and that is only available as a consequence of strong normalization, so it would be circular. Instead, `Start/PTSLambdaPi.lean` (our own code) makes λΠ an instance of the PTS framework. It defines `lambdaPiSpec`, translates framework derivations into our λΠ derivations, and proves `lambdaPi_systemStronglyNormalizing : SystemStronglyNormalizing lambdaPiSpec` from `LambdaPi.Typing.sn`.
+
+Bookkeeping:
+- The board has milestone M26 with 9 rows:
+  - DONE_STRONG: the Degree question, TypeSystem, SolenoidalRecorder, StarHeight, WeisfeilerLeman, DepthThree.
+  - DONE_WEAK: Logspace. It depends on a new row, `M26-LOGSPACE-CONVERSE` (TODO_NEEDS_DESIGN), for RL ⊆ L and BPL ⊆ L, which are not in upstream Lean.
+  - TODO_NEEDS_DESIGN: DegreeRigidity.
+
+  No earlier M26 row existed, so there was nothing to preserve.
+- New files: `NOTICE`, a README section that credits these results as upstream's (not this library's), and `docs/goal/evidence/M26-OAI-ABSORPTION.md`.
+- I rewrote `scripts/check_closure.py`'s name-matching step to run in linear time. With 810 modules it had grown to about 4 minutes; it now takes about 3 seconds, and its output is identical to the old version.
+- The Properties table lists the new results.
+- `oai-math-relevant.bundle.json` and the restore script came committed in the repository, and I left them in place.
+
+**What was reconstructed rather than adapted.** Nothing; every absorbed proof is upstream's, adapted. The changes needed for our pin were:
+- `dite_eq_left`, `dite_eq_right`, `ite_eq_left`, `ite_eq_right` renamed to `dif_pos`, `dif_neg`, `if_pos`, `if_neg`;
+- `Finset.prod_le_prod₀` renamed to `Finset.prod_le_prod`;
+- upstream's one-hypothesis `Finset.prod_le_prod` changed to `Finset.prod_le_prod'`;
+- `Finset.prod_le_one₀` renamed to `Finset.prod_le_one`;
+- the import `Mathlib.Basic.Real.Basic`, which does not exist on our pin, replaced by `import Mathlib` in five files.
+
+Each file that needed a fix beyond the scripted renaming records it in its header. The new code that is ours, not upstream's, is `Start/PTSLambdaPi.lean` and the bridge in `Start/OracleDegreeBridge.lean`.
+
+**Is DegreeRigidity worth absorbing? Not into `Start`.** It is 975 files and 84,104 lines, about 54% of the library's size before this milestone. Of that, 674 files (57.7k lines) are a ZF set-model, constructibility and forcing development that nothing else here uses, and the recursion-theory part imports it throughout, so it cannot be split off. The work itself would probably be cheap, given that the 298 files above needed only a handful of renamings. The real cost is weight: 975 more modules for the gates, a much longer clean build, and a set-theory subtree that every future pin change has to carry, all for one theorem. That theorem is already stated in our namespace as `Lambda.Oracle.SetDegreeRigidity`, tied exactly to our degrees by the embedding. If you want it proved, I'd host it as a separate library target in this repository and leave `Start` untouched. That choice is yours, so the row stays TODO_NEEDS_DESIGN.
+
+# Summary of changes for run ffb9579d-5d45-4b21-b15c-fa46cda39086
+我查过了当前项目，里面没有 `.zip` 文件。这次你的 zip 没有传到我这里，所以我看不到它的内容。我也没有修改项目，没有运行构建。
+
+**怎么把文件交给我**（以下根据 Aristotle 公开文档）：
+- **用整个文件夹提交（最简单）**：先在本地把 zip 解压，然后用 Python SDK 的 `Project.create_from_directory(prompt=..., project_dir="./解压后的文件夹")` 提交。见 https://aristotle.harmonic.fun/docs/api
+- **用压缩包提交**：文档写明 `Project.create(prompt, tar_file_path=...)` 接受的是 **`.tar.gz`** 格式的附加文件。可以先把 zip 解压，再重新打包，例如 `tar -czf files.tar.gz 文件夹名`。见 https://aristotle.harmonic.fun/docs/api
+- **在现有项目里继续**：项目空闲时，可以用 `project.ask(prompt, files=...)` 附带文件。见 https://aristotle.harmonic.fun/docs/api
+- 安装 CLI、设置 API key 的方法见 https://aristotle.harmonic.fun/docs/installation
+
+文档里没有说明是否能直接上传 `.zip`，所以我无法确认 zip 能不能用。稳妥的做法是解压后按文件夹提交，或者改成 `.tar.gz`。
+
+文件放进项目后重新提交，我就能处理里面的内容。比如把它整合进现有的 Lean 项目，或者继续做任务板上剩下的条目。
+
+# Summary of changes for run 425a42f7-5b78-4784-92ae-249c60c5c086
+不可以。在这个会话里我不能访问 GitHub，也不能访问其他外部网站。我不能克隆、拉取或推送仓库，也不能浏览 issue、PR 或网页内容。我只能处理你上传的这个项目（当前的 Lean 项目文件夹）。完成后，修改过的项目会返回给你。
+
+如果你想让我处理 GitHub 上的内容，可以这样做：
+- 把相关仓库或文件放进项目后重新提交；
+- 或者把需要的代码或文字直接粘贴到请求里。
+
+本次没有修改项目，也没有运行新的构建。之前的工作情况记录在 `ARISTOTLE_SUMMARY.md` 中。如果你想继续推进任务板上剩下的条目（例如排名最靠前的 `M14-KRIVINE-SPACE-CLASS`），告诉我就行。
+
 # Summary of changes for run f7ae9ba4-73d1-4b52-a5ea-78c3569e4644
 I finished the interrupted Shamir milestone. The library now has a complete, sorry-free proof of **IP = PSPACE**.
 

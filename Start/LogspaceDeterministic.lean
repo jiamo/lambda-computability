@@ -1,9 +1,10 @@
 import Mathlib
 
 /-
-Absorbed from github.com/openai/math (commit adc7f1241, Apache-2.0),
-directory `lean/OAI/Computability/Logspace/Deterministic.lean`, family 103,
-paper "Exact derandomization of logarithmic space, L = RL = BPL".
+Absorbed from github.com/openai/math (commit adc7f1241, Apache-2.0; the file is unchanged at
+commit 3014888, i.e. 301488868beec11bfd897168433b0a64f5258559), original path
+`lean/OAI/Computability/Logspace/Deterministic.lean`, family 103,
+paper "Exact Derandomization of Logarithmic Space: L = RL = BPL".
 Adapted to this library's Lean v4.33.0 / Mathlib `v4.33.0` pin: the `OAI` namespace was dropped,
 imports were renamed to `Start.Logspace*`, and proofs were repaired where the pin required it.
 See `NOTICE` at the repository root.

@@ -589,14 +589,14 @@ Public Lean 4 developments in this area, and how they relate (repository file li
 ## Results absorbed from openai/math (not this library's own)
 
 The following results are **not** original to this library.  They were adapted, proofs included,
-from [github.com/openai/math](https://github.com/openai/math) (commit adc7f1241, Apache-2.0) to
+from [github.com/openai/math](https://github.com/openai/math) (commit adc7f1241; `Logspace` from commit 3014888; Apache-2.0) to
 this repository's Lean/Mathlib pin, and they are listed with their upstream directory and family
 in [`NOTICE`](NOTICE) and in `docs/goal/evidence/M26-OAI-ABSORPTION.md`.
 
 | upstream directory, family | modules | theorem (upstream's) |
 | --- | --- | --- |
 | `TypeSystem`, 245 | `Start/PTS*.lean` | `PureTypeSystem.weak_implies_strong`: in every pure type system, weak normalization implies strong normalization |
-| `Logspace`, 103 | `Start/LogspaceDeterministic.lean` | `ExactDerandomization.L_subset_RL`, `L_subset_BPL` (only these inclusions are in upstream Lean; the paper's `RL, BPL ⊆ L` is not) |
+| `Logspace`, 103 (commit 3014888) | `Start/Logspace*.lean` (39 upstream modules; except `Start/LogspaceAmplification.lean`) | `ExactDerandomization.BPL_subset_L : BPL ⊆ L` and `ExactDerandomization.exact_logarithmic_space_derandomization : L = RL ∧ RL = BPL` (paper: "Exact Derandomization of Logarithmic Space: L = RL = BPL"), plus `L_subset_RL`, `L_subset_BPL` |
 | `SolenoidalRecorder`, 376 | `Start/Solenoidal*.lean` | `Solenoidal.Recorder.halting_iff`: the recorder machine terminates iff the simulated Turing machine halts |
 | `StarHeight`, 134 | `Start/StarHeight*.lean` | `GeneralizedStarHeight.main`: every regular language has generalized star height at most 3 |
 | `WeisfeilerLeman`, 133 | `Start/WL*.lean` | `WLTime.unconditional_time_lower_bound`: deciding k-dimensional WL equivalence needs time `n^(ck)` |
@@ -608,8 +608,9 @@ its strong normalization in the PTS sense is derived from `Start/LambdaPiSN.lean
 the absorbed theorem), `Start/OracleDegreeBridge.lean` (openai/math's degrees of sets embed into
 mathlib's `TuringDegree` used here), `Start/RigidityBridge.lean` (the absorbed rigidity theorem
 restated and proved as `Lambda.Oracle.setDegreeRigidity`), and `Start/LogspaceAmplification.lean`
-(`ExactDerandomization.RL_subset_BPL` by two-trial amplification, so that `BPL ⊆ L` alone would
-give `L = RL = BPL`; `BPL ⊆ L` itself, the paper's main theorem, is **not** proved here).
+(`ExactDerandomization.RL_subset_BPL` by two-trial amplification; the absorbed
+`Start/LogspaceEquality.lean` uses it, together with upstream's `BPL_subset_L`, to conclude
+`L = RL = BPL`).
 
 ## Map of the library
 
