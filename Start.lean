@@ -596,5 +596,11 @@ import Start.SpaceToLogspaceRun
 import Start.SpaceToLogspaceTransfer
 import Start.LogspaceToSpaceStep
 import Start.LogspaceTransferRandomized
+import Start.LogspaceToSpaceTransition
+import Start.LogspaceToSpaceInit
+import Start.LogspaceToSpaceCompile
+import Start.LogspaceTransferEquiv
 import Start.KolmogorovCount
+import Start.PTSLambdaPiEmbed
+import Start.PTSFOmegaKinds
 import Start.Capstones

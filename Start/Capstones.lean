@@ -241,7 +241,13 @@ import Start.PTSHurkens
 import Start.SpaceToLogspaceTransfer
 import Start.LogspaceToSpaceStep
 import Start.LogspaceTransferRandomized
+import Start.LogspaceToSpaceTransition
+import Start.LogspaceToSpaceInit
+import Start.LogspaceToSpaceCompile
+import Start.LogspaceTransferEquiv
 import Start.KolmogorovCount
+import Start.PTSLambdaPiEmbed
+import Start.PTSFOmegaKinds
 
 /-! ## Interfaces of the untyped calculus
 
@@ -3304,6 +3310,57 @@ programs for the phases of one simulated transition (`Start/LogspaceToSpaceStep.
 #check @Complexity.Space.FromLogspace.runs_setFlags
 #check @Complexity.Space.FromLogspace.runs_tapesOp
 #check @Complexity.Space.FromLogspace.runs_headsOp
+
+/-!
+## M27: the converse `L ⊆ LOGSPACE`, and host `LOGSPACE = L = RL = BPL` (this library's own)
+
+`Start/LogspaceToSpaceTransition.lean` assembles one full upstream transition as a tape program
+(`stepProg`): a finite dispatch tree on the unary state, the symbols under the input heads (read
+through counted seeks of the host input head) and the bits under the work heads, whose leaves run
+the four phases of the transition found in the finite table.  `Start/LogspaceToSpaceInit.lean`
+builds the initial register file from the blank tape, with the window radius
+`winR c₀ n = c₀ (⌊log₂ (n + 1)⌋ + 1) = c₀ ⌈log₂ (n + 2)⌉`.  `Start/LogspaceToSpaceCompile.lean`
+compiles a `LogSpace` decider into a well-formed deterministic host machine (a `loop` of the two
+programs), proves acceptance preservation and an explicit bound on every reachable host
+configuration, and concludes `L ⊆ LOGSPACE`.  `Start/LogspaceTransferEquiv.lean` states the three
+equivalences.
+-/
+
+#check @Complexity.Space.FromLogspace.runs_stepProg
+#check @Complexity.Space.FromLogspace.runs_stepProg_det
+#check @Complexity.Space.FromLogspace.runs_initProg
+#check @Complexity.Space.FromLogspace.winR_eq_clog
+#check @Complexity.Space.FromLogspace.compile
+#check @Complexity.Space.FromLogspace.compile_wellFormed
+#check @Complexity.Space.FromLogspace.compile_deterministic
+#check @Complexity.Space.FromLogspace.compile_accepts_iff
+#check @Complexity.Space.FromLogspace.compile_spaceBoundedOn
+#check @Complexity.Space.FromLogspace.spaceB_le
+#check @Complexity.Space.FromLogspace.spaceB_le_log
+#check @Complexity.Space.FromLogspace.logspace_of_L
+#check @Complexity.Space.mem_L_iff_logspace
+#check @Complexity.Space.mem_RL_iff_logspace
+#check @Complexity.Space.mem_BPL_iff_logspace
+
+/-!
+## M23: the library's `λΠ` embeds in the `λP` corner; kinds and constructors of `F^ω`
+
+`Start/PTSLambdaPiEmbed.lean` translates the `λΠ` syntax into the framework syntax (`ofTm`,
+inverse to `toTm`) and every `λΠ` derivation in a well-formed context into a derivation of the
+`λP` corner.  `Start/PTSFOmegaKinds.lean` classifies the `systemFOmega`-legal kinds (`IsKind`) and
+type constructors (`IsConstr`); strong normalization of `F^ω` is not proved.
+-/
+
+#check @PureTypeSystem.toTm_ofTm
+#check @PureTypeSystem.ofTm_toTm
+#check @PureTypeSystem.ofTm_subst
+#check @PureTypeSystem.conv_ofTm
+#check @PureTypeSystem.typing_ofTm
+#check @PureTypeSystem.wf_ofTm
+#check @PureTypeSystem.hasType_iff_typing
+#check @PureTypeSystem.hasType_box_iff_isKind
+#check @PureTypeSystem.isConstr_of_hasType
+#check @PureTypeSystem.systemFOmega_constr
 
 /-!
 ## M19: description-cost audit of `kolm` and `kolmCond` (this library's own)

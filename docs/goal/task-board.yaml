@@ -5416,16 +5416,37 @@ tasks:
 
   # --- M23: lambda-calculus and type theory: the cube, identity types, optimal reduction ---
 
+  - id: M23-LAMBDAPI-EMBED
+    priority: P1
+    status: DONE_STRONG
+    track: theory/types
+    title: "The library's lambda-Pi embeds in the lambdaP corner"
+    terminal_statement: "PureTypeSystem.ofTm : LambdaPi.Tm -> Expr Srt with toTm_ofTm and ofTm_toTm (mutually inverse with toTm), ofTm_rename, ofTm_subst, ofTm_inst, step_ofTm, conv_ofTm and converts_iff_conv; PureTypeSystem.typing_ofTm : LambdaPi.Typing Γ t A -> LambdaPi.Wf Γ -> HasType (cubeSpec lambdaP) (Γ.map ofTm) (ofTm t) (ofTm A); wf_ofTm (well-formed contexts translate to valid contexts); hasType_iff_typing (for a valid context, HasType (cubeSpec lambdaP) Γ M A <-> LambdaPi.Typing (Γ.map toTm) (toTm M) (toTm A)) (Start/PTSLambdaPiEmbed.lean)"
+    latest_evidence: "docs/goal/evidence/M23-LAMBDAPI-EMBED.md"
+    open_boundary: ""
+    milestone: M23
+    depends_on: []
+    rank: 1995
+    exit_criteria:
+      - "A translation of LambdaPi.Tm into Expr Srt, inverse to PureTypeSystem.toTm, compatible with renaming, substitution and conversion."
+      - "Every derivation LambdaPi.Typing Γ t A with LambdaPi.Wf Γ translates to a HasType (cubeSpec lambdaP) derivation of the translated judgement."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
   - id: M23-PTS
     priority: P1
     status: DONE_STRONG
     track: theory/types
     title: "Pure type systems, with the lambda-cube as instances"
-    terminal_statement: "PureTypeSystem.cubeSpec : CubeFeatures -> Specification Srt with the eight corners; PureTypeSystem.cube_inclusion (adding product rules preserves derivations); PureTypeSystem.lambdaPiSpec_eq_cube and cube_lambdaP_toTyping (lambda-Pi is the lambdaP corner, with a derivation translation into LambdaPi.Typing); PureTypeSystem.FElab.elaborate, elaborate_ctx, elaborate_corner (derivation-directed elaboration of Curry System F into annotated systemF-corner derivations with erase M = t); subject reduction from the absorbed framework"
+    terminal_statement: "PureTypeSystem.cubeSpec : CubeFeatures -> Specification Srt with the eight corners; PureTypeSystem.cube_inclusion (adding product rules preserves derivations); PureTypeSystem.lambdaPiSpec_eq_cube and cube_lambdaP_toTyping (lambda-Pi is the lambdaP corner, with a derivation translation into LambdaPi.Typing; conversely PureTypeSystem.typing_ofTm embeds every LambdaPi.Typing derivation in a well-formed context into HasType (cubeSpec lambdaP), row M23-LAMBDAPI-EMBED); PureTypeSystem.FElab.elaborate, elaborate_ctx, elaborate_corner (derivation-directed elaboration of Curry System F into annotated systemF-corner derivations with erase M = t); subject reduction from the absorbed framework"
     latest_evidence: "docs/goal/evidence/M23-PTS.md"
     open_boundary: ""
     milestone: M23
-    depends_on: []
+    depends_on:
+      - M23-LAMBDAPI-EMBED
     rank: 2000
     exit_criteria:
       - "A generic pure type system (sorts, axioms, rules) with its typing judgement, substitution and subject reduction."
@@ -5441,8 +5462,8 @@ tasks:
     status: TODO_READY
     track: theory/types
     title: "System F-omega: type operators and strong normalization"
-    latest_evidence: "docs/goal/proposed-M21-M24.md"
-    open_boundary: "The corner systemFOmega of PureTypeSystem.cubeSpec (Start/PTSCube.lean) gives F-omega with its kinding and substitution through the generic PTS metatheory. Strong normalization is not proved: the first missing lemma is the classification of systemFOmega-legal expressions into kinds, constructors and terms (constructors never contain term-level subexpressions), needed to index reducibility candidates by kinds; no candidate interpretation for the PTS syntax exists yet."
+    latest_evidence: "docs/goal/evidence/M23-FOMEGA.md"
+    open_boundary: "The corner systemFOmega of PureTypeSystem.cubeSpec (Start/PTSCube.lean) gives F-omega with its kinding and substitution through the generic PTS metatheory. The classification of kinds and constructors is proved in Start/PTSFOmegaKinds.lean: hasType_box_iff_isKind (in a valid context, Γ ⊢ K : □ iff K is built from ∗ by products) and isConstr_of_hasType / systemFOmega_constr (every expression whose type has type □ is a type constructor over the kind-declared variables of its context, with no sort and no term-level subexpression). Strong normalization is not proved: the first missing construction is the interpretation of kinds as candidate spaces (saturated sets of strongly normalizing expressions for ∗, functions between candidate spaces for K₁ → K₂) and of constructors under a kind-respecting valuation, with its substitution lemma."
     milestone: M23
     depends_on:
       - M23-PTS
@@ -6303,11 +6324,12 @@ tasks:
 
   - id: M27-SPACE-MODEL-COMPILE
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: research/model-transfer
     title: "Concrete space-bounded compiler from upstream finite machines to the host model"
-    latest_evidence: "docs/goal/evidence/M27-LOGSPACE-TRANSFER.md"
-    open_boundary: "Not done: this row is the upstream-to-host direction (ExactDerandomization.Machine into Complexity.Space.Machine). The delivery's Complexity.Space.ToLogspace.compile goes the other way and is credited to M27-SPACE-MODEL-TOTALIZE. Building blocks exist: bijective base-two counters with increment/decrement and a counted input seek (Start/SpaceProgCounter.lean), finite dispatch (Start/SpaceProgDispatch.lean), a two-sided windowed tape in two registers (Start/LogspaceToSpaceTape.lean), the register-file encoding FromLogspace.encR (Start/LogspaceToSpace.lean) and tape programs for the phases of one transition, runs_setState, runs_setFlags, runs_tapesOp, runs_headsOp (Start/LogspaceToSpaceStep.lean). First missing construction: the tape program for one full upstream transition (read the symbols, dispatch, run the phases) with its specification on encR; then the loop over the run and the logarithmic bound on the registers."
+    terminal_statement: "Complexity.Space.FromLogspace.runs_stepProg (one full upstream transition as a tape program: dispatch tree on the unary state, the h input symbols read by counted seeks and the w work bits, leaves running the four phases from the finite table M.transition; from encC W c to encC W (M.step x false c) within (N + 3)(2K + 1) cells); runs_initProg (blank tape to encC of M.initial, window radius winR c0 n = c0 * clog2 (n + 2), winR_eq_clog); FromLogspace.compile M c0 with compile_wellFormed, compile_deterministic, compile_accepts_iff (M.Decides A -> (compile M c0).Accepts x <-> x in A) and compile_spaceBoundedOn (every reachable host configuration within spaceB q w h c0 |x|); spaceB_le : spaceB q w h c0 n <= 2 (q + 6) (2 (7 + h + 2 w) + 1) (c0 * clog2 (n + 2) + log2 (n + 2) + 1); spaceB_le_log; logspace_of_L : {x | A x} in ExactDerandomization.L -> LOGSPACE A"
+    latest_evidence: "docs/goal/evidence/M27-LOGSPACE-EQUIV.md"
+    open_boundary: ""
     milestone: M27
     depends_on: []
     rank: 2510
@@ -6342,12 +6364,12 @@ tasks:
 
   - id: M27-LOGSPACE-TRANSFER
     priority: P1
-    status: DONE_WEAK
+    status: DONE_STRONG
     track: research/model-transfer
     title: "Transfer the derandomization equality to the host LOGSPACE class"
-    terminal_statement: "Complexity.Space.ToLogspace.logspace_subset_L : LOGSPACE A -> {x | A x} in ExactDerandomization.L; logspace_subset_RL and logspace_subset_BPL through the absorbed exact_logarithmic_space_derandomization"
-    latest_evidence: "docs/goal/evidence/M27-LOGSPACE-TRANSFER.md"
-    open_boundary: "Only host LOGSPACE into ExactDerandomization.L, RL and BPL is proved (logspace_subset_L, logspace_subset_RL, logspace_subset_BPL). The converse ExactDerandomization.L subset LOGSPACE is open; it waits on the upstream-to-host compiler M27-SPACE-MODEL-COMPILE, whose open boundary names the first missing construction."
+    terminal_statement: "Complexity.Space.mem_L_iff_logspace (A : Language) : {x | A x} in ExactDerandomization.L <-> LOGSPACE A; mem_RL_iff_logspace : {x | A x} in ExactDerandomization.RL <-> LOGSPACE A; mem_BPL_iff_logspace : {x | A x} in ExactDerandomization.BPL <-> LOGSPACE A (Start/LogspaceTransferEquiv.lean, from FromLogspace.logspace_of_L, ToLogspace.logspace_subset_L and exact_logarithmic_space_derandomization)"
+    latest_evidence: "docs/goal/evidence/M27-LOGSPACE-EQUIV.md"
+    open_boundary: ""
     milestone: M27
     depends_on:
       - M27-SPACE-MODEL-COMPILE
@@ -6402,6 +6424,25 @@ tasks:
       - "python3 scripts/check_sorry.py"
       - "lake build"
 
+  - id: M19-TERM-COUNT-LOWER
+    priority: P1
+    status: TODO_READY
+    track: research/information
+    title: "Exponential lower bound on the number of lambda terms of size at most m"
+    latest_evidence: "docs/goal/evidence/M19-DESCRIPTION-COST-AUDIT.md"
+    open_boundary: "First missing lemma for the second exit criterion of M19-DESCRIPTION-COST-AUDIT: an explicit lower bound c^m <= Nat.card {t : Lambda // size t <= m} (for all large m, with an explicit base c > 1) matching the proved upper bound Lambda.card_size_le up to the base. Without it the quantitative target (constant on the counting term) for M19-SYMMETRY-HARD-HALF cannot be justified or corrected."
+    milestone: M19
+    depends_on: []
+    rank: 1385
+    exit_criteria:
+      - "An explicit base c > 1 and a proof that at least c^m terms (and at least c^m numbers under kolm) have size, respectively complexity, at most m for all sufficiently large m."
+      - "A statement of the resulting quantitative target for M19-SYMMETRY-HARD-HALF, comparing c with the base 4 of Lambda.card_size_le."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
   - id: M19-DESCRIPTION-COST-AUDIT
     priority: P1
     status: DONE_WEAK
@@ -6411,7 +6452,8 @@ tasks:
     latest_evidence: "docs/goal/evidence/M19-DESCRIPTION-COST-AUDIT.md"
     open_boundary: "The counting bounds and the comparison with bit length are proved in Start/KolmogorovCount.lean. The bound 4^m is not shown to be tight (no matching lower bound on the number of terms of size m is proved), so whether the correct constant for the symmetry law of kolm is 2 or smaller is open."
     milestone: M19
-    depends_on: []
+    depends_on:
+      - M19-TERM-COUNT-LOWER
     rank: 1390
     exit_criteria:
       - "Prove finite counting/encoding bounds for closed lambda terms under Lambda.size and explicit comparisons with the binary-description complexity machinery."
