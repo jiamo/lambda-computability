@@ -128,7 +128,7 @@ theorem encR_upd_ST (v : ℕ) :
   funext r
   by_cases hr : r = 2
   · subst hr; simp
-  · rw [Function.update_of_ne hr]; simp only [encR]; split_ifs <;> first | rfl | omega
+  · rw [Function.update_of_ne hr]; simp only [encR]; split_ifs <;> rfl
 
 theorem encR_upd_flags (fs' : Fin (q + 1)) (hfs : M.output fs = none) :
     Function.update (Function.update (encR M W fs st pos tp hp) 0
@@ -141,7 +141,7 @@ theorem encR_upd_flags (fs' : Fin (q + 1)) (hfs : M.output fs = none) :
   · rw [Function.update_of_ne hr1]
     by_cases hr0 : r = 0
     · subst hr0; simp
-    · rw [Function.update_of_ne hr0]; simp only [encR]; split_ifs <;> first | rfl | omega
+    · rw [Function.update_of_ne hr0]; simp only [encR]; split_ifs <;> rfl
 
 end enc
 

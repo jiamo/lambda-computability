@@ -248,6 +248,19 @@ import Start.LogspaceTransferEquiv
 import Start.KolmogorovCount
 import Start.PTSLambdaPiEmbed
 import Start.PTSFOmegaKinds
+import Start.CoCModel
+import Start.CoCSN
+import Start.SpaceRandomized
+import Start.RandSpaceUpstreamProb
+import Start.RandSpaceToUpstream
+import Start.RandSpaceToUpstreamSim
+import Start.RandSpaceToUpstreamSpace
+import Start.SpaceRandomizedRuns
+import Start.RandUpstreamToSpace
+import Start.RandUpstreamToSpaceSeg
+import Start.RandUpstreamToSpaceSim
+import Start.RandUpstreamToSpaceClass
+import Start.SpaceRandomizedLogspace
 
 /-! ## Interfaces of the untyped calculus
 
@@ -3363,6 +3376,28 @@ type constructors (`IsConstr`); strong normalization of `F^ω` is not proved.
 #check @PureTypeSystem.systemFOmega_constr
 
 /-!
+## M23: strong normalization of the calculus of constructions (this library's own)
+
+`Start/CoCModel.lean` and `Start/CoCSN.lean` follow Geuvers' saturated-set model: kinds are
+interpreted through their skeletons, constructors ignore object arguments, and kinds, types and
+`□` are interpreted by saturated sets for the PTS's own `Beta`.  The fundamental lemma covers
+every legal expression, kinds and constructors included.  Every corner, `systemFOmega` among
+them, follows by `cube_sn_mono`; consistency follows with `no_normal_closed_bot`.
+-/
+
+#check @PureTypeSystem.CoC.type_unique
+#check @PureTypeSystem.CoC.classify
+#check @PureTypeSystem.CoC.cl_beta
+#check @PureTypeSystem.CoC.cl_subst
+#check @PureTypeSystem.CoC.interp_subst
+#check @PureTypeSystem.CoC.interp_conv
+#check @PureTypeSystem.CoC.fundamental
+#check @PureTypeSystem.coc_stronglyNormalizing
+#check @PureTypeSystem.cube_stronglyNormalizing
+#check @PureTypeSystem.systemFOmega_stronglyNormalizing
+#check @PureTypeSystem.coc_consistent
+
+/-!
 ## M19: description-cost audit of `kolm` and `kolmCond` (this library's own)
 
 `Start/KolmogorovCount.lean` compares the raw syntax size used by `kolm` with an explicit
@@ -3411,3 +3446,43 @@ administrative transitions, the codes met in a run never exceeding the size of `
 
 #check @CEK.run_length_le
 #check @CEK.run_length_le_of_cbvIn
+
+/-!
+## M27: randomized logarithmic space on the host machine (this library's own)
+
+`Start/SpaceRandomized.lean` defines fair-coin host machines (at most two instructions in every
+situation, each taken with probability `1/2`), the probability `acceptWithin` of reaching an
+accepting state within a clock, and the classes `HostRL` and `HostBPL`, using nothing from
+`Start/Logspace*.lean`.  `Start/RandSpaceToUpstream*.lean` compile a fair-coin host machine into an
+upstream probabilistic machine that reads its coin exactly at the steps resolving a host branching,
+with the exact equation `(rcompile M).acceptanceProbability x t = M.acceptWithin x T init` for
+`t ≥ 2 T + 2`.
+-/
+
+#check @Complexity.Space.HostRL
+#check @Complexity.Space.HostBPL
+#check @ExactDerandomization.Machine.acceptanceProbability_eq_probFrom
+#check @Complexity.Space.RandToLogspace.rcompile_acceptanceProbability
+#check @Complexity.Space.RandToLogspace.rcompile_haltsBy
+#check @Complexity.Space.RandToLogspace.rcompile_logSpace
+#check @Complexity.Space.RandToLogspace.hostRL_subset_RL
+#check @Complexity.Space.RandToLogspace.hostBPL_subset_BPL
+
+/-!
+In the other direction, `Start/RandUpstreamToSpace*.lean` extend the upstream-to-host compiler
+with one fair branching per simulated upstream step and a halting rejecting state for output
+`false`; the exact equation is
+`(rcompile M c₀).acceptWithin x (timeB M c₀ |x|) init = M.acceptanceProbability x t₀`, the run
+length bound coming from counting configurations.  Neither direction imports
+`Start/LogspaceEquality.lean`; the corollaries `hostRL_iff_logspace` and `hostBPL_iff_logspace`
+(`Start/SpaceRandomizedLogspace.lean`) then use `mem_RL_iff_logspace` and `mem_BPL_iff_logspace`.
+-/
+
+#check @Complexity.Space.Machine.runsWithin_cfgBound
+#check @Complexity.Space.RandFromLogspace.rcompile_acceptWithin
+#check @Complexity.Space.RandFromLogspace.RL_subset_hostRL
+#check @Complexity.Space.RandFromLogspace.BPL_subset_hostBPL
+#check @Complexity.Space.hostRL_iff
+#check @Complexity.Space.hostBPL_iff
+#check @Complexity.Space.hostRL_iff_logspace
+#check @Complexity.Space.hostBPL_iff_logspace

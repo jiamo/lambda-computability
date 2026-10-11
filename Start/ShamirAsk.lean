@@ -106,7 +106,7 @@ theorem eval_stepA (s : Word × Word) (x r t : Word) :
   · simp [hs]
   · simp only [hs, if_false, eval_packT, List.map_cons, List.map_nil, Cob.eval_recSkipT, h0,
       Cob.eval_dropBy, h1, Cob.eval_comp, Cob.eval_proj, List.getD_cons_zero, List.getD_cons_succ,
-      eval_kbT, length_un, packP]
+      eval_kbT, length_un]
 
 theorem iterate_stepA (s : Word × Word) (x r t : Word) (j : ℕ) :
     (fun w => stepA.eval (w :: [x, r, t]))^[j] (packP s) =
@@ -195,7 +195,7 @@ theorem eval_askT (x r : Word) (L : List (Word × Word)) :
     eval_unpackT (ws := [[], r.drop (8 * (x.length + 1) * L.length)]) hc (by simp)
   rw [askT, Cob.eval_comp]
   simp only [List.map_cons, List.map_nil, Cob.eval_takeBy, hu, Cob.eval_comp, Cob.eval_proj,
-    List.getD_cons_zero, eval_kbT, length_un, eval_pT_cons, hpT]
+    List.getD_cons_zero, eval_kbT, length_un, hpT]
   exact eval_decPT hpr.pos _
 
 /-! ### The verifier -/

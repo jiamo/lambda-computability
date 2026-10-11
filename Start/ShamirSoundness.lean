@@ -43,7 +43,7 @@ theorem mW_congr (P : Prover) (M : ℕ) {vs ws : List ℕ} {k : ℕ}
   have h2 : vs.getD k 0 = ws.getD k 0 := by
     have e : ∀ l : List ℕ, l.getD k 0 = (l.take (k + 1)).getD k 0 := by
       intro l
-      simp [List.getD_eq_getElem?_getD, List.getElem?_take]
+      simp [List.getD_eq_getElem?_getD]
     rw [e vs, e ws, h]
   simp only [mW, h1, h2]
 
@@ -109,7 +109,7 @@ theorem blocks_eq_bvs (p kb : ℕ) : ∀ (n : ℕ) (r : Word), blocks p kb n r =
   | n + 1, r => by
       rw [blocks, blocks_eq_bvs p kb n (r.drop kb), bvs, bvs, List.range_succ_eq_map,
         List.map_cons, List.map_map]
-      simp only [bv, List.drop_drop, mul_zero, List.drop_zero, Function.comp, List.cons.injEq,
+      simp only [bv, mul_zero, List.drop_zero, List.cons.injEq,
         true_and]
       apply List.map_congr_left
       intro k _
@@ -165,7 +165,7 @@ every prover is accepted with probability at most `1/3`. -/
 theorem accProb_shamirV_le (q : QBF) (hc : q.Closed) (hf : ¬ TQBF q) (P : Prover) :
     shamirV.accProb P (QBF.enc q) ≤ 1 / 3 := by
   obtain ⟨-, hpr, hp1, hp2⟩ := primeOf_spec (QBF.enc q)
-  haveI : Fact (primeOf (QBF.enc q)).Prime := ⟨hpr⟩
+  have : Fact (primeOf (QBF.enc q)).Prime := ⟨hpr⟩
   have hRle := rdsOf_le_mul q
   set x := QBF.enc q with hx
   set n := x.length with hn

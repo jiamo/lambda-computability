@@ -86,7 +86,7 @@ lemma coast_true (K): p.y.rk p.S K=coast p K:= by
       · rw [lt_max_iff,lt_max_iff]; have hg:=h.hp.trans ht
         rw [rank_gt hg,rank_gt hg,hv ht]
       have ht:x<b:=by linarith
-      simp [lt_max_iff,ht]
+      simp [ht]
    change u=v; rcases lt_trichotomy u v with he|he|he
    · exact False.elim (lt_irrefl _ ((hh u).2 he))
    · exact he

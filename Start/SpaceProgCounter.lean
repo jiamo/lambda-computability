@@ -410,11 +410,9 @@ theorem bdecr_shape (pre : List Bool) (m : ℕ) (hpre : pre = [] ∨ ∃ t, pre 
   rcases hpre with rfl | ⟨t, rfl⟩
   · simp [decrR_replicate_nil, decrHead, decrCarry]
   · rw [List.reverse_append, List.reverse_replicate, List.reverse_append]
-    simp only [List.reverse_singleton, List.singleton_append, decrR_replicate_true,
-      List.reverse_append, List.reverse_replicate, List.reverse_cons, decrHead, decrCarry]
+    simp only [List.reverse_cons, decrHead, decrCarry]
     simp only [List.append_eq_nil_iff, List.cons_ne_nil, and_false, if_false,
-      List.dropLast_concat, List.reverse_cons, List.reverse_nil, List.nil_append,
-      List.reverse_reverse]
+      List.dropLast_concat, List.reverse_nil, List.nil_append]
     rw [List.singleton_append, decrR_replicate_true]
     simp
 
@@ -424,7 +422,7 @@ theorem bval_bdecr (l : List Bool) : bval (bdecr l) = bval l - 1 := by
   have h1 := bval_replicate_false m pre
   rcases hpre with rfl | ⟨t, rfl⟩
   · simp only [decrHead, decrCarry, if_true, List.nil_append]
-    simp only [bval_nil, mul_one, List.nil_append] at h1
+    simp only [bval_nil, List.nil_append] at h1
     cases m with
     | zero => simp
     | succ m =>
@@ -554,7 +552,7 @@ theorem runs_decr (R : ℕ → List Bool) (j c f : ℕ) (hj : j < K) (hc : c < K
         refine (runs_skip _ 0 i).of_eq rfl ?_
         have hm : m ≠ 0 := by intro h; subst h; rw [upd3_c hcf] at hne; simp at hne
         obtain ⟨m', rfl⟩ : ∃ m', m = m' + 1 := ⟨m - 1, by omega⟩
-        simp [decrCarry, decrHead, List.replicate_succ', List.dropLast_concat]
+        simp [decrCarry, decrHead, List.replicate_succ']
       · rw [upd3_c hcf] at he
         have hm : m = 0 := by simpa using he
         subst hm
@@ -592,7 +590,7 @@ variable (R : ℕ → List Bool) (j s c f : ℕ) (hj : j < K) (hs : s < K) (hc :
 include hs hc hf hsc hsf hcf hRc hRf hB
 
 theorem wl_moveBy_right (hN : ∀ l : List Bool, l.length ≤ (R j).length → l.length + 1 ≤ N)
-    (hjN : (R j).length + 1 ≤ N) :
+    (_hjN : (R j).length + 1 ≤ N) :
     ∀ (r : ℕ) (l : List Bool) (i : ℕ), bval l = r → l.length ≤ (R j).length →
       i + r ≤ x.length →
       WL x B K s (.seq (decr K s c f) (imove .right)) (Function.update R s l) i
@@ -650,7 +648,7 @@ theorem wl_moveBy_left (hN : ∀ l : List Bool, l.length ≤ (R j).length → l.
       simp only [Function.update_self, Function.update_idem] at hd
       exact hd.seq (runs_imoveL _ 0 i)
 
-include hj hjs hjc hjf hRs in
+include hj hjs hRs in
 theorem runs_seekCounter_right (hN : (R j).length + 1 ≤ N) (i : ℕ)
     (hi : i + (bval (R j) - 1) ≤ x.length) :
     Runs x B (seekCounter K j s c f .right) ⟨lay K R, 0, i⟩
@@ -673,7 +671,7 @@ theorem runs_seekCounter_right (hN : (R j).length + 1 ≤ N) (i : ℕ)
   refine (runs_whileNE_of_wl hs hwB hw).of_eq rfl ?_
   rw [← hRs, Function.update_eq_self]
 
-include hj hjs hjc hjf hRs in
+include hj hjs hRs in
 theorem runs_seekCounter_left (hN : (R j).length + 1 ≤ N) (i : ℕ) :
     Runs x B (seekCounter K j s c f .left) ⟨lay K R, 0, i⟩
       ⟨lay K R, 0, i - (bval (R j) - 1)⟩ := by
@@ -706,15 +704,15 @@ def readSym (K j s c f : ℕ) (cont : Option Bool → Prog) : Prog :=
         (.seq (seekCounter K j s c f .left) (cont none))))
 
 theorem runs_readSym (R : ℕ → List Bool) (j s c f : ℕ) (hj : j < K) (hs : s < K) (hc : c < K)
-    (hf : f < K) (hjs : j ≠ s) (hjc : j ≠ c) (hjf : j ≠ f) (hsc : s ≠ c) (hsf : s ≠ f)
+    (hf : f < K) (hjs : j ≠ s) (_hjc : j ≠ c) (_hjf : j ≠ f) (hsc : s ≠ c) (hsf : s ≠ f)
     (hcf : c ≠ f) (hRs : R s = []) (hRc : R c = []) (hRf : R f = []) (N : ℕ)
     (hB : (N + 3) * wd K ≤ B) (hN : (R j).length + 1 ≤ N) (hv : bval (R j) - 1 ≤ x.length)
     (cont : Option Bool → Prog) (s' : TState)
     (hcont : Runs x B (cont x[bval (R j) - 1]?) ⟨lay K R, 0, 0⟩ s') :
     Runs x B (readSym K j s c f cont) ⟨lay K R, 0, 0⟩ s' := by
-  have hr := runs_seekCounter_right (x := x) R j s c f hj hs hc hf hjs hjc hjf hsc hsf hcf hRs
+  have hr := runs_seekCounter_right (x := x) R j s c f hj hs hc hf hjs hsc hsf hcf hRs
     hRc hRf N hB hN 0 (by omega)
-  have hl := runs_seekCounter_left (x := x) R j s c f hj hs hc hf hjs hjc hjf hsc hsf hcf hRs
+  have hl := runs_seekCounter_left (x := x) R j s c f hj hs hc hf hjs hsc hsf hcf hRs
     hRc hRf N hB hN (0 + (bval (R j) - 1))
   simp only [zero_add, Nat.sub_self] at hr hl
   refine hr.seq ?_
@@ -724,7 +722,7 @@ theorem runs_readSym (R : ℕ → List Bool) (j s c f : ℕ) (hj : j < K) (hs : 
   · have : x[bval (R j) - 1]? = some false := by simpa using ht'
     rw [this] at hcont; exact hl.seq hcont
   · have : x[bval (R j) - 1]? = none := by
-      simp only [beq_iff_eq] at ht ht'
+      simp only at ht ht'
       cases h : x[bval (R j) - 1]? with
       | none => rfl
       | some b => cases b <;> simp_all

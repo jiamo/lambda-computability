@@ -133,7 +133,7 @@ theorem runs_readAll {α : Type} (rd : ℕ → (α → Prog) → Prog) (dflt : �
       convert h using 2
       funext i
       simp only [Function.update_apply]
-      split_ifs <;> first | (subst_vars; rfl) | omega | rfl
+      split_ifs <;> first | (subst_vars; rfl) | omega
 
 end Tracks
 

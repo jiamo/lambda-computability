@@ -82,7 +82,7 @@ theorem qsF_round (P : Prover) (M : ℕ) (vs : List ℕ) {k : ℕ} (hk : k < vs.
   rw [qsF_pairsW _ L _ (by
     have := length_pairsW_ge L
     simp only [List.length_append, length_encMsg]
-    omega), hL', List.take_succ, List.getElem?_eq_getElem hk]
+    omega), hL', List.take_add_one, List.getElem?_eq_getElem hk]
   simp [List.getD_eq_getElem?_getD, hk]
 
 /-! ### Lengths of honest messages -/
@@ -143,7 +143,7 @@ theorem idxStrat_eq (p : ℕ) (msgW : ℕ → Word) (H : List (List (ZMod p))) (
 
 theorem getD_eq_take_getD {α : Type*} (l : List α) (i : ℕ) (x : α) :
     l.getD i x = (l.take (i + 1)).getD i x := by
-  simp [List.getD_eq_getElem?_getD, List.getElem?_take]
+  simp [List.getD_eq_getElem?_getD]
 
 section Honest
 
@@ -221,7 +221,7 @@ some prover is accepted with probability `1`. -/
 theorem accProb_shamirV_complete (q : QBF) (hc : q.Closed) (ht : TQBF q) :
     ∃ P : Prover, shamirV.accProb P (QBF.enc q) = 1 := by
   obtain ⟨-, hpr, -, -⟩ := primeOf_spec (QBF.enc q)
-  haveI : Fact (primeOf (QBF.enc q)).Prime := ⟨hpr⟩
+  have : Fact (primeOf (QBF.enc q)).Prime := ⟨hpr⟩
   have hsz := QBF.size_le_length_enc q
   have h1 := one_le_size q
   set x := QBF.enc q with hx
