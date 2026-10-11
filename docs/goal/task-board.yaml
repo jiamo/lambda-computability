@@ -5459,11 +5459,12 @@ tasks:
 
   - id: M23-FOMEGA
     priority: P2
-    status: TODO_READY
+    status: DONE_STRONG
     track: theory/types
     title: "System F-omega: type operators and strong normalization"
+    terminal_statement: "PureTypeSystem.systemFOmega_stronglyNormalizing : SystemStronglyNormalizing (cubeSpec systemFOmega) (Start/CoCSN.lean), from coc_stronglyNormalizing by cube_sn_mono; the model is a kind-indexed candidate model (Start/CoCModel.lean: candidate spaces V k over kind skeletons, saturated sets at *, functions between candidate spaces at products of kinds, kind-respecting valuations, interpretation of constructors with interp_subst and interp_conv)"
     latest_evidence: "docs/goal/evidence/M23-FOMEGA.md"
-    open_boundary: "The corner systemFOmega of PureTypeSystem.cubeSpec (Start/PTSCube.lean) gives F-omega with its kinding and substitution through the generic PTS metatheory. The classification of kinds and constructors is proved in Start/PTSFOmegaKinds.lean: hasType_box_iff_isKind (in a valid context, Γ ⊢ K : □ iff K is built from ∗ by products) and isConstr_of_hasType / systemFOmega_constr (every expression whose type has type □ is a type constructor over the kind-declared variables of its context, with no sort and no term-level subexpression). Strong normalization is not proved: the first missing construction is the interpretation of kinds as candidate spaces (saturated sets of strongly normalizing expressions for ∗, functions between candidate spaces for K₁ → K₂) and of constructors under a kind-respecting valuation, with its substitution lemma."
+    open_boundary: ""
     milestone: M23
     depends_on:
       - M23-PTS
@@ -5479,11 +5480,12 @@ tasks:
 
   - id: M23-COC-SN
     priority: P1
-    status: TODO_READY
+    status: IN_PROGRESS
     track: theory/types
     title: "Strong normalization of the calculus of constructions"
-    latest_evidence: "docs/goal/proposed-M21-M24.md"
-    open_boundary: "The coc corner is defined (Start/PTSCube.lean) and cube_sn_mono would transfer SN to every corner. SN of coc is not proved: the generic weak_implies_strong needs system-wide WN, which is not available. The first missing construction is the classification lemma for coc (each legal term is a kind, constructor or object, stable under reduction) followed by Geuvers saturated-set interpretation of kinds and its fundamental lemma."
+    terminal_statement: "PureTypeSystem.coc_stronglyNormalizing : SystemStronglyNormalizing (cubeSpec coc); PureTypeSystem.cube_stronglyNormalizing (f : CubeFeatures) : SystemStronglyNormalizing (cubeSpec f); PureTypeSystem.coc_consistent : ¬ ∃ M, HasType (cubeSpec coc) ([]) M (.pi (.sort .star) (.var 0)) (Start/CoCSN.lean)"
+    latest_evidence: "docs/goal/evidence/M23-COC-SN.md"
+    open_boundary: "Strong normalization (no hypothesis), every corner and consistency are proved (Start/CoCModel.lean, Start/CoCSN.lean; Geuvers' saturated-set model). Decidable type checking for coc is not started: the first missing piece is a normalization function for legal expressions defined by well-founded recursion on StronglyNormalizing (Acc of the converse of Beta) with its correctness lemma (it returns a normal form reachable by Reduces), from which conversion of legal types is decided by comparing normal forms (Reduces.confluent / Normal.eq_of_converts), followed by a complete inference function in the shape of decidableTyping, decidableTypable and decidableWf of Start/LambdaPiInfer.lean."
     milestone: M23
     depends_on:
       - M23-PTS
@@ -6384,6 +6386,47 @@ tasks:
       - "python3 scripts/check_sorry.py"
       - "lake build"
 
+  - id: M27-HOST-RANDOMIZED-SPACE
+    priority: P1
+    status: DONE_STRONG
+    track: research/model-transfer
+    title: "Randomized logarithmic space on the host machine, defined independently, equals upstream RL and BPL"
+    terminal_statement: "Complexity.Space.hostRL_iff (A : Language) : HostRL A <-> {x | A x} in ExactDerandomization.RL; hostBPL_iff (A : Language) : HostBPL A <-> {x | A x} in ExactDerandomization.BPL (Start/RandUpstreamToSpaceClass.lean, no import of Start/LogspaceEquality.lean); hostRL_iff_logspace : HostRL A <-> LOGSPACE A; hostBPL_iff_logspace : HostBPL A <-> LOGSPACE A (Start/SpaceRandomizedLogspace.lean). Host definitions in Start/SpaceRandomized.lean (Machine.FairCoin, Machine.acceptWithin, Machine.RunsWithin, HostRL, HostBPL). Exact probability equations: RandToLogspace.rcompile_acceptanceProbability ((rcompile M).acceptanceProbability x t = M.acceptWithin x T init for t >= 2T+2) and RandFromLogspace.rcompile_acceptWithin ((rcompile M c0).acceptWithin x (timeB M c0 |x|) init = M.acceptanceProbability x t0)."
+    latest_evidence: "docs/goal/evidence/M27-HOST-RANDOMIZED-SPACE.md"
+    open_boundary: ""
+    milestone: M27
+    depends_on:
+      - M27-LOGSPACE-TRANSFER
+    rank: 2535
+    exit_criteria:
+      - "Define fair-coin machines, acceptance probability within a clock, and the classes RL and BPL on the machine of Start/SpaceMachine.lean, using nothing from Start/Logspace*.lean."
+      - "Prove each host class equal to upstream's (ExactDerandomization.RL, ExactDerandomization.BPL) by explicit simulations in both directions that preserve acceptance probability exactly, log space and polynomial time, without depending on Start/LogspaceEquality.lean."
+      - "Conclude that host RL and host BPL equal host LOGSPACE."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M27-POLYTIME-TO-COBHAM
+    priority: P1
+    status: TODO_READY
+    track: research/model-transfer
+    title: "Polynomial-time multi-tape machines decide languages in Cobham's P"
+    latest_evidence: "docs/goal/evidence/M26-OAI-ABSORPTION.md"
+    open_boundary: "No translation from a machine model into Cobham's P exists in the library; P is defined by Cobham terms only."
+    milestone: M27
+    depends_on: []
+    rank: 2538
+    exit_criteria:
+      - "For upstream's FiniteMultiTapeMachine (Start/DepthThreeModel.lean), a language decided within a polynomial number of steps (MultiTapeHaltsIn) is in Complexity.InP."
+      - "The step function is a Cobham term on an explicit encoding of configurations, iterated a polynomially bounded number of times, and the polynomial is stated."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
   - id: M27-POLYTIME-MODEL-EQUIV
     priority: P1
     status: TODO_NEEDS_DESIGN
@@ -6392,7 +6435,8 @@ tasks:
     latest_evidence: "docs/goal/evidence/M26-OAI-ABSORPTION.md"
     open_boundary: "The exact source tape-machine representation and effective compilation interface need to be selected; computability results alone do not prove polynomial-time equivalence."
     milestone: M27
-    depends_on: []
+    depends_on:
+      - M27-POLYTIME-TO-COBHAM
     rank: 2540
     exit_criteria:
       - "Fix the concrete finite tape-machine model and binary language/input encoding, and give the two translations with explicit polynomial bounds."
@@ -6405,14 +6449,14 @@ tasks:
 
   - id: M27-DEPTH3-HOST
     priority: P1
-    status: TODO_NEEDS_DESIGN
+    status: TODO_READY
     track: research/model-transfer
     title: "State the absorbed depth-three lower bound in the host complexity/circuit theory"
     latest_evidence: "docs/goal/evidence/M26-OAI-ABSORPTION.md"
-    open_boundary: "Upstream Circuit3 has unbounded fan-in OR/AND/OR layers and its own gate count; existing binary-gate interfaces cannot be identified with it while preserving depth without proof."
+    open_boundary: "depthThree_lower_bound_host : ∃ L : Language, InP L ∧ ∀ A : ℝ, 0 < A → ∃ N : ℕ, ∀ n, N ≤ n → ∀ C : ACCirc, C.IsSigma3 → (∀ x : Word, x.length = n → (C.eval x = true ↔ L x)) → (2 : ℝ) ^ (A * Real.sqrt n) < C.size, where IsSigma3 C means C.depth ≤ 3 and the output gate of C.nnf (positive polarity) is an OR, a literal or a constant."
     milestone: M27
     depends_on:
-      - M27-POLYTIME-MODEL-EQUIV
+      - M27-POLYTIME-TO-COBHAM
       - M26-OAI-DEPTHTHREE
     rank: 2550
     exit_criteria:

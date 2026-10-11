@@ -34,7 +34,7 @@ theorem stg_succ {α : Type} (m : ℕ) (f g : ℕ → α) :
     Function.update (stg m f g) m (f m) = stg (m + 1) f g := by
   funext k
   simp only [stg, Function.update_apply]
-  split_ifs <;> first | (subst_vars; rfl) | omega | rfl
+  split_ifs <;> first | (subst_vars; rfl) | omega
 
 theorem stg_of_le {α : Type} (m : ℕ) (f g : ℕ → α) (k : ℕ) (hk : m ≤ k) : stg m f g k = g k := by
   simp [stg, show ¬ k < m by omega]

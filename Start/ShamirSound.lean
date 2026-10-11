@@ -40,7 +40,7 @@ theorem foldl_take_stepT (P : Prover) (M : ℕ) (vs : List ℕ) :
       obtain ⟨v, vs', rfl⟩ : ∃ v vs', vs = v :: vs' := List.exists_cons_of_length_pos h
       simp [stepT, mW, tr]
   | k + 1, h => by
-      rw [List.take_succ, List.foldl_append, foldl_take_stepT P M vs k (by omega),
+      rw [List.take_add_one, List.foldl_append, foldl_take_stepT P M vs k (by omega),
         List.getElem?_eq_getElem h]
       simp only [Option.toList_some, List.foldl_cons, List.foldl_nil, stepT]
       rw [tr_add]

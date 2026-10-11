@@ -200,7 +200,7 @@ theorem sigmaAt_bounded_closure : ∀ n : ℕ,
         constructor
         · intro h
           by_contra hcon
-          push_neg at hcon
+          push Not at hcon
           exact h fun y hy => hcon y hy
         · rintro ⟨y, hy, hRy⟩ hall
           exact hRy (hall y hy)
@@ -290,7 +290,7 @@ theorem PiAt.ball_lt {n : ℕ} {Q : ℕ → Prop} (hQ : PiAt n Q) {b : ℕ → �
   constructor
   · intro h
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     exact h fun y hy => hcon y hy
   · rintro ⟨y, hy, hQy⟩ hall
     exact hQy (hall y hy)

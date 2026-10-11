@@ -90,3 +90,11 @@ part that does not need that bridge: `P ⊆ P^A`, `NP ⊆ NP^A`, `PSPACE ⊆ PSP
 `lake build` (whole tree, no errors and no new warnings), `python3 scripts/check_sorry.py`,
 `python3 scripts/check_closure.py`, `python3 scripts/goal_state.py validate`,
 `python3 scripts/check_manifest.py`.
+
+## Closure (M15-ORACLE-PROG)
+
+The last exit criterion, `P^A ⊆ NP^A ⊆ PSPACE^A`, is complete:
+`Complexity.Space.inPSPACE_rel_of_inP_rel` and `Complexity.Space.inPSPACE_rel_of_inNP_rel`
+(`Start/OracleNPSpace.lean`, evidence `docs/goal/evidence/M15-ORACLE-PROG.md`) prove
+`P^A ⊆ PSPACE^A` and `NP^A ⊆ PSPACE^A` for every oracle `A`, on the oracle machines of
+`Start/OracleSpace.lean`.  The row is DONE_STRONG with an empty open boundary.

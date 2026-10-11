@@ -101,6 +101,8 @@ theorem heq_iso_ext {X Δ : D} {A B : S.Ty Δ} (h : A = B) {I : X ≅ S.ext Δ A
 -- A universe linter may see the three universes only inside the `max` of `Model`'s own type
 -- and report them as inseparable; they are in fact independent (they are chosen separately in
 -- the fields), exactly as for `CategoryTheory.Cat`.
+-- As for `CategoryTheory.Cat`, the universes are independent but the linter only sees them
+-- inside a `max`; mathlib disables the check for `Cat` in the same way.
 set_option linter.checkUnivs false in
 /-- A **model of a dependent type theory**: a category of contexts together with a
 category-with-attributes structure on it. -/

@@ -270,7 +270,7 @@ theorem encC_initial {q w h : ℕ} (M : ExactDerandomization.Machine q w h) (W :
   split_ifs <;> first
     | rfl
     | omega
-    | (simp [lftOf, rgtOf, cells_const_false]; done)
+    | simp [lftOf, rgtOf, cells_const_false]
 
 theorem runs_flagsInit {q w h : ℕ} (M : ExactDerandomization.Machine q w h) (R : ℕ → List Bool)
     (hR0 : R 0 = []) (hR1 : R 1 = []) (N : ℕ) (hB : (N + 3) * wd (regK h w) ≤ B) (hN1 : 1 ≤ N)

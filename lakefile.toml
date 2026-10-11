@@ -6,10 +6,7 @@ defaultTargets = ["Start"]
 [leanOptions]
 pp.unicode.fun = true # pretty-prints `fun a ↦ b`
 relaxedAutoImplicit = false
-weak.linter.mathlibStandardSet = true
-# `linter.style.header` enforces the Mathlib repository's own copyright-header
-# convention, which does not apply to this project.
-weak.linter.style.header = false
+# Mathlib's standard linter set is off: it enforces Mathlib's own style conventions.
 maxSynthPendingDepth = 3
 
 [[require]]

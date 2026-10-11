@@ -26,7 +26,8 @@ shipped archive failed it, because the gated tree and the packed tree were not t
 first — uncommitted work is not in `HEAD` and is not delivered.  `pack_gate.sh` is also the only
 thing that catches a `lake-manifest.json` disagreeing with `lakefile.toml`.  Run
 `scripts/install_hooks.sh` once per clone so that `.githooks/pre-commit` calls the gate on every
-commit; see `docs/RELEASING.md`.
+commit; see `docs/RELEASING.md`.  `lake build --wfail` must pass before packaging, because that
+is what CI builds.
 
 ## Task Board Rule
 

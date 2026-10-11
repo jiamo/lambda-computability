@@ -371,9 +371,11 @@ theorem e_combT {xT yT : Cob} {x y : ℕ} (hx : xT.eval (encArgs p N d s) = un x
     simp only [hb]
     exact Cob.eval_fMul hp hx hy hP
 
+omit hp in
 theorem e_ajT : ajT.eval (encArgs p N d s) = un (fieldAt s.J.length s.A) := by
   simp [ajT]
 
+omit hp in
 theorem e_varChkT : varChkT.eval (encArgs p N d s) =
     bw (decide (fieldAt (lead1 (s.C.drop 2)) s.A = s.V.length)) := by
   simp [varChkT, Cob.eval_eqU]
@@ -390,8 +392,8 @@ theorem e_linChkT : linChkT.eval (encArgs p N d s) =
         s.V.length)) := by
   have h1 : (uC 1).eval (encArgs p N d s) = List.replicate 1 true := by simp [un_eq]
   have hP : sP.eval (encArgs p N d s) = List.replicate p true := by simp [un_eq]
-  rw [linChkT, Cob.eval_eqU, Cob.eval_fAdd hp (Cob.eval_fMul hp (e_ajT N d s hp) (e_h1T N d s hp) hP)
-    (Cob.eval_fMul hp (Cob.eval_fSub hp h1 (e_ajT N d s hp) hP) (e_h0T N d s hp) hP) hP]
+  rw [linChkT, Cob.eval_eqU, Cob.eval_fAdd hp (Cob.eval_fMul hp (e_ajT N d s) (e_h1T N d s hp) hP)
+    (Cob.eval_fMul hp (Cob.eval_fSub hp h1 (e_ajT N d s) hP) (e_h0T N d s hp) hP) hP]
   simp [fadd, fmul, fsub]
 
 theorem e_quantChkT : quantChkT.eval (encArgs p N d s) =
@@ -402,7 +404,7 @@ theorem e_quantChkT : quantChkT.eval (encArgs p N d s) =
 
 /-- **The branch number is computed by `caseT`.** -/
 theorem eval_caseT : caseT.eval (encArgs p N d s) = un (caseW p N d s) := by
-  simp only [caseT, Cob.eval_iteT_word, e_varChkT N d s hp, e_binChkT N d s hp,
+  simp only [caseT, Cob.eval_iteT_word, e_varChkT N d s, e_binChkT N d s hp,
     e_linChkT N d s hp, e_quantChkT N d s hp, Cob.eval_nthBit, e_sC, e_sH, Cob.eval_ltU, e_sJ,
     e_sN, Cob.eval_dropFsU, e_msgT, bw_eq_nil_iff, e_uC, e_sD, Cob.eval_comp, List.map_cons,
     List.map_nil, Cob.eval_app, List.getD_cons_zero, List.length_cons, length_un]

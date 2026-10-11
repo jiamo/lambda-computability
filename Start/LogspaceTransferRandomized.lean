@@ -9,9 +9,11 @@ This library's own corollary (task `M27-LOGSPACE-TRANSFER`): combining the expli
 `ExactDerandomization.exact_logarithmic_space_derandomization` (openai/math, see `NOTICE`), every
 host `LOGSPACE` language lies in `ExactDerandomization.RL` and `ExactDerandomization.BPL`.
 
-The converse inclusions (`ExactDerandomization.L ⊆ LOGSPACE`) still require a host tape program
-simulating several two-sided work tapes and read-only input heads with binary position counters;
-they are not claimed here.
+The converse inclusion (`ExactDerandomization.L ⊆ LOGSPACE`) is not proved in this module, but
+it is no longer open: `Complexity.Space.FromLogspace.logspace_of_L`
+(`Start/LogspaceToSpaceCompile.lean`) compiles every upstream logspace decider into a host
+`LOGSPACE` machine, and `Start/LogspaceTransferEquiv.lean` combines both directions into
+`mem_L_iff_logspace`, `mem_RL_iff_logspace` and `mem_BPL_iff_logspace`.
 -/
 
 set_option autoImplicit false

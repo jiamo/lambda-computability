@@ -318,7 +318,7 @@ lemma tonic_up (P : Const) : Nonempty (Tonic P) := by
    obtain ⟨q,-,hq⟩:=frag_switch (by norm_num : (1/2:ℝ)<4/5)
    obtain ⟨r,-,hr⟩:=frag_switch (by norm_num : (1/4:ℝ)<1/2)
    let R:=max x (max y (max z (max g (max q r))))
-   have hl : x≤R ∧ y≤R ∧ z≤R ∧ g≤R ∧ q≤R ∧ r≤R := by simp [R,le_max_iff]
+   have hl : x≤R ∧ y≤R ∧ z≤R ∧ g≤R ∧ q≤R ∧ r≤R := by simp [R]
    have hu {v A : ℝ} (h:Surround v C A) (e:A≤R):Surround v C R :=
          ⟨fun b=>(h.pre b).extend e,fun f ht hv b=>(h.main f ht hv b).extend e,h.more.extend e⟩
    have H (v:Kind) : Surround v.theta C R := by

@@ -122,7 +122,7 @@ lemma staged (f:Pt→ℝ)(hf:f (line v.b)=v.b)(k):
    let a:=rank v.P (listP v f) k; let b:=rank v.S (fun j=>f (v.raw.ts j)) k
    have hh{x}: (x < max v.b a) ↔ (x < max v.b b):=by
       by_cases hv:x<v.b
-      · simp [lt_max_iff,hv]
+      · simp [hv]
       rw [lt_max_iff,lt_max_iff]; exact or_congr Iff.rfl (h0 (le_of_not_gt hv))
    change max v.b a= max v.b b
    rcases lt_trichotomy (max v.b a) (max v.b b) with he|he|he
