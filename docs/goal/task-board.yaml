@@ -1,7 +1,7 @@
 version: 2
 source_protocol: docs/goal/goal-prompt.md
 active_milestone: M14
-milestone_order: ["M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10", "M11", "M12", "M13", "M14", "M15", "M16", "M17", "M18", "M19", "M20", "M21", "M22", "M23", "M24", "M25", "M26", "M27"]
+milestone_order: ["M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10", "M11", "M12", "M13", "M14", "M15", "M16", "M17", "M18", "M19", "M20", "M21", "M22", "M23", "M24", "M25", "M26", "M27", "M28"]
 tasks:
   - id: M1-BOUNDARY-SORRY-CLOSURE
     priority: P0
@@ -5480,12 +5480,12 @@ tasks:
 
   - id: M23-COC-SN
     priority: P1
-    status: IN_PROGRESS
+    status: DONE_STRONG
     track: theory/types
     title: "Strong normalization of the calculus of constructions"
-    terminal_statement: "PureTypeSystem.coc_stronglyNormalizing : SystemStronglyNormalizing (cubeSpec coc); PureTypeSystem.cube_stronglyNormalizing (f : CubeFeatures) : SystemStronglyNormalizing (cubeSpec f); PureTypeSystem.coc_consistent : ¬ ∃ M, HasType (cubeSpec coc) ([]) M (.pi (.sort .star) (.var 0)) (Start/CoCSN.lean)"
+    terminal_statement: "PureTypeSystem.coc_stronglyNormalizing : SystemStronglyNormalizing (cubeSpec coc); PureTypeSystem.cube_stronglyNormalizing (f : CubeFeatures) : SystemStronglyNormalizing (cubeSpec f); PureTypeSystem.coc_consistent : ¬ ∃ M, HasType (cubeSpec coc) ([]) M (.pi (.sort .star) (.var 0)) (Start/CoCSN.lean); decidable type checking: PureTypeSystem.CoCInfer.decidableTyping (f) (Γ) (hΓ : ValidContext (cubeSpec f) Γ) (M T) : Decidable (HasType (cubeSpec f) Γ M T), decidableTypable, decidableWf, coc_decidableTyping (Start/CoCInfer.lean), via normalize by well-founded recursion on StronglyNormalizing (Start/PTSNormalize.lean)"
     latest_evidence: "docs/goal/evidence/M23-COC-SN.md"
-    open_boundary: "Strong normalization (no hypothesis), every corner and consistency are proved (Start/CoCModel.lean, Start/CoCSN.lean; Geuvers' saturated-set model). Decidable type checking for coc is not started: the first missing piece is a normalization function for legal expressions defined by well-founded recursion on StronglyNormalizing (Acc of the converse of Beta) with its correctness lemma (it returns a normal form reachable by Reduces), from which conversion of legal types is decided by comparing normal forms (Reduces.confluent / Normal.eq_of_converts), followed by a complete inference function in the shape of decidableTyping, decidableTypable and decidableWf of Start/LambdaPiInfer.lean."
+    open_boundary: ""
     milestone: M23
     depends_on:
       - M23-PTS
@@ -6410,11 +6410,12 @@ tasks:
 
   - id: M27-POLYTIME-TO-COBHAM
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: research/model-transfer
     title: "Polynomial-time multi-tape machines decide languages in Cobham's P"
-    latest_evidence: "docs/goal/evidence/M26-OAI-ABSORPTION.md"
-    open_boundary: "No translation from a machine model into Cobham's P exists in the library; P is defined by Cobham terms only."
+    terminal_statement: "Complexity.MultiTapeCobham.inP_of_multiTapeHaltsIn (M : FiniteMultiTapeMachine) (L : Language) (p : ℕ → ℕ) (hp : PolyBound p) (hM : ∀ x, ∃ b, MultiTapeHaltsIn M x b (p x.length) ∧ (L x ↔ b = true)) : InP L; one step is the Cobham term stepTerm M (eval_stepTerm) on the encoding Rep M of configurations, iterated a (n + 1)^k times where p n ≤ a (n + 1)^k (eval_decider) (Start/MultiTapeCobham.lean)"
+    latest_evidence: "docs/goal/evidence/M27-POLYTIME-TO-COBHAM.md"
+    open_boundary: ""
     milestone: M27
     depends_on: []
     rank: 2538
@@ -6449,11 +6450,12 @@ tasks:
 
   - id: M27-DEPTH3-HOST
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: research/model-transfer
     title: "State the absorbed depth-three lower bound in the host complexity/circuit theory"
-    latest_evidence: "docs/goal/evidence/M26-OAI-ABSORPTION.md"
-    open_boundary: "depthThree_lower_bound_host : ∃ L : Language, InP L ∧ ∀ A : ℝ, 0 < A → ∃ N : ℕ, ∀ n, N ≤ n → ∀ C : ACCirc, C.IsSigma3 → (∀ x : Word, x.length = n → (C.eval x = true ↔ L x)) → (2 : ℝ) ^ (A * Real.sqrt n) < C.size, where IsSigma3 C means C.depth ≤ 3 and the output gate of C.nnf (positive polarity) is an OR, a literal or a constant."
+    terminal_statement: "Complexity.DepthThreeHost.depthThree_lower_bound_host : ∃ L : Language, InP L ∧ ∀ A : ℝ, 0 < A → ∃ N : ℕ, ∀ n, N ≤ n → ∀ C : ACCirc, C.IsSigma3 → (∀ x : Word, x.length = n → (C.eval x = true ↔ L x)) → (2 : ℝ) ^ (A * Real.sqrt n) < C.size; translation toCircuit3_eval, toCircuit3_gateCount ≤ 2 * size + 1 (Start/DepthThreeHost.lean)"
+    latest_evidence: "docs/goal/evidence/M27-DEPTH3-HOST.md"
+    open_boundary: ""
     milestone: M27
     depends_on:
       - M27-POLYTIME-TO-COBHAM
@@ -6467,6 +6469,69 @@ tasks:
       - "python3 scripts/check_closure.py"
       - "python3 scripts/check_sorry.py"
       - "lake build"
+
+  # --- M28: generalized star height two ---------------------------------------------------
+
+  - id: M28-STARHEIGHT-SINGLE-SPLIT
+    priority: P1
+    status: DONE_STRONG
+    track: research/open-problems
+    title: "Reduce generalized star height two to one split available on every episode"
+    terminal_statement: "GeneralizedStarHeight.SingleSplit (verbatim as specified); height_two_of_singleSplit (T : FreeMonoid Alphabet →* M) (hT : SingleSplit T) (F : Set M) : HasHeightAtMost {w | T (FreeMonoid.ofList w) ∈ F} 2; main_two_of_singleSplit (h : ∀ M [Monoid M] [Fintype M] T, SingleSplit T) (L) (hL : L.IsRegular) : HasHeightAtMost L 2 (Start/StarHeightSingleSplit.lean). Failing upstream lemma: OuterStream.word_available gives SplitAvailable complete failedDomain only; it fails on the episodes of failedDomain (A.Failed: unstable end search Z, or exceptional residue / inner marker failure Star)."
+    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-SINGLE-SPLIT.md"
+    open_boundary: ""
+    milestone: M28
+    depends_on:
+      - M26-OAI-STARHEIGHT
+    rank: 2600
+    exit_criteria:
+      - "SingleSplit T is defined for a morphism T from the free monoid into a finite monoid. It requires: a prefix code E of height at most one, whose remainder fibers have height at most one; deterministic updates G on a finite state set; tests of height at most one that are SplitSound on E and SplitAvailable on E with no skipped episodes; and every fiber of T on E∗ a finite union of intersections of two graph languages of G over E."
+      - "height_two_of_singleSplit and main_two_of_singleSplit are proved, and the evidence file names the upstream lemma that fails to give SingleSplit and the episodes on which it fails."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M28-STARHEIGHT-TWO-CLASS
+    priority: P1
+    status: DONE_WEAK
+    track: research/open-problems
+    title: "Generalized star height at most two for the languages recognized by a class of finite monoids with nontrivial subgroups"
+    terminal_statement: "GeneralizedStarHeight.height_two_of_comm (hM : ∀ x y : M, x * y = y * x) (T : FreeMonoid Alphabet →* M) (F : Set M) : HasHeightAtMost {w | T (FreeMonoid.ofList w) ∈ F} 2, through singleSplit_of_comm and height_two_of_singleSplit; also height_one_of_comm and comm_class_nontrivial_subgroup (Start/StarHeightCommutative.lean). Not new: height one is classical for commutative monoids."
+    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-TWO-CLASS.md"
+    open_boundary: "Proved for finite commutative monoids (C contains Z/2), which is inside known height-one results. Open: a class not covered by Pin-Straubing-Therien, e.g. one containing S3; first target: every language recognized by S3 has height at most two."
+    milestone: M28
+    depends_on:
+      - M28-STARHEIGHT-SINGLE-SPLIT
+    rank: 2610
+    exit_criteria:
+      - "For a class C of finite monoids, defined by an algebraic property independent of the split construction and containing a monoid with a nontrivial subgroup, every language recognized by a monoid in C has height at most two."
+      - "The evidence file states what the literature already gives for C (in particular Pin, Straubing and Therien 1992, Theorems 7.3 and 7.8) and whether the result is new."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M28-STARHEIGHT-TWO
+    priority: P1
+    status: TODO_READY
+    track: research/open-problems
+    title: "Generalized star height at most two for every regular language"
+    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-TWO.md"
+    open_boundary: "Open problem; main gives three. First missing lemma: theorem singleSplit_of_finite {Alphabet : Type u} [Finite Alphabet] [Nonempty Alphabet] (M : Type) [Monoid M] [Fintype M] (T : FreeMonoid Alphabet →* M) : SingleSplit T (then main_two_of_singleSplit gives main_two)."
+    milestone: M28
+    depends_on:
+      - M28-STARHEIGHT-SINGLE-SPLIT
+    rank: 2620
+    exit_criteria:
+      - "GeneralizedStarHeight.main_two : L.IsRegular -> HasHeightAtMost L 2 is proved over every finite alphabet, against the definitions of Start/StarHeightModel.lean unchanged, with only the standard axioms."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
 
   - id: M19-TERM-COUNT-LOWER
     priority: P1

@@ -616,4 +616,13 @@ import Start.RandUpstreamToSpaceSeg
 import Start.RandUpstreamToSpaceSim
 import Start.RandUpstreamToSpaceClass
 import Start.SpaceRandomizedLogspace
+import Start.StarHeightSingleSplit
+import Start.StarHeightCommutative
+import Start.MacroTransducer
+import Start.CobhamMacro
+import Start.MultiTapeMacro
+import Start.MultiTapeCobham
+import Start.DepthThreeHost
+import Start.PTSNormalize
+import Start.CoCInfer
 import Start.Capstones
