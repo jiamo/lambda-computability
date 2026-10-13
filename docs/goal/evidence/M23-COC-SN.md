@@ -40,7 +40,38 @@ theorem PureTypeSystem.coc_consistent :
   expressions), hence `CoC.sn_of_hasType` and `CoC.systemStronglyNormalizing`.
 * (e) consistency from SN and `no_normal_closed_bot`.
 
-## Not done
+## (f) Decidable type checking
 
-(f) decidable type checking for coc is not started; the row's open boundary names the first
-missing piece.
+* `Start/PTSNormalize.lean` (any PTS): `Expr.step?` (computable leftmost-outermost step finder,
+  `step?_sound`, `step?_none`); `normalize M (h : StronglyNormalizing M)`, defined by well-founded
+  recursion on `h` (accessibility for the converse of `Beta`), computable;
+  `normalize_spec : Reduces M (normalize M h) ∧ Normal (normalize M h)`;
+  `converts_iff_normalize_eq` (by `Reduces.confluent` / `Normal.eq_of_converts`) and
+  `decConverts : Decidable (Converts M N)` for strongly normalizing `M`, `N`.
+* `Start/CoCInfer.lean` (every corner `f` of the cube, in particular `coc`):
+  `CoCInfer.infer f Γ hΓ M : PSum (Inferred f Γ M) (∀ T, ¬ HasType (cubeSpec f) Γ M T)` — a
+  structural type inference algorithm (by well-founded recursion on the total size of context and
+  expression), returning a type together with its sort, or a proof of untypability; conversion
+  tests compare normal forms, which exist by `cube_stronglyNormalizing`.  Completeness of each
+  failure branch uses generation, `CoC.type_unique`, subject reduction and `CoC.not_conv_box`.
+* Decision procedures, in the shape of `Start/LambdaPiInfer.lean`:
+
+```lean
+def CoCInfer.decidableTypable (f) (Γ) (hΓ : ValidContext (cubeSpec f) Γ) (M) :
+    Decidable (∃ T, HasType (cubeSpec f) Γ M T)
+def CoCInfer.decidableTyping (f) (Γ) (hΓ : ValidContext (cubeSpec f) Γ) (M T) :
+    Decidable (HasType (cubeSpec f) Γ M T)
+def CoCInfer.decidableWf (f) : (Γ : List (Expr Srt)) → Decidable (ValidContext (cubeSpec f) Γ)
+def CoCInfer.coc_decidableTyping (Γ) (hΓ : ValidContext (cubeSpec coc) Γ) (M T) :
+    Decidable (HasType (cubeSpec coc) Γ M T)
+```
+
+  plus the instance `decidableClosedTyping f M T : Decidable (HasType (cubeSpec f) ([]) M T)`.
+  All are computable: e.g. `decide (HasType (cubeSpec coc) ([]) (λA:∗. λx:A. x) (ΠA:∗. A → A))`
+  evaluates to `true`, and to `false` in `λ→`.
+
+`#print axioms` for `normalize_spec`, `decConverts`, `CoCInfer.decidableTyping`,
+`CoCInfer.decidableTypable`, `CoCInfer.decidableWf`: `[propext, Classical.choice, Quot.sound]`.
+
+All exit criteria of the row are met (the calculus of constructions as the top corner, strong
+normalization, consistency and decidable type checking).

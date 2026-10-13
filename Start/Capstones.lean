@@ -261,6 +261,15 @@ import Start.RandUpstreamToSpaceSeg
 import Start.RandUpstreamToSpaceSim
 import Start.RandUpstreamToSpaceClass
 import Start.SpaceRandomizedLogspace
+import Start.StarHeightSingleSplit
+import Start.StarHeightCommutative
+import Start.MacroTransducer
+import Start.CobhamMacro
+import Start.MultiTapeMacro
+import Start.MultiTapeCobham
+import Start.DepthThreeHost
+import Start.PTSNormalize
+import Start.CoCInfer
 
 /-! ## Interfaces of the untyped calculus
 
@@ -3486,3 +3495,71 @@ length bound coming from counting configurations.  Neither direction imports
 #check @Complexity.Space.hostBPL_iff
 #check @Complexity.Space.hostRL_iff_logspace
 #check @Complexity.Space.hostBPL_iff_logspace
+
+/-!
+## Generalized star height two from a single split (M28)
+
+`Start/StarHeightSingleSplit.lean` defines `SingleSplit T` for a morphism `T` from the free monoid
+into a finite monoid: one prefix code `E` of height at most one with remainder fibers of height at
+most one, deterministic updates with tests of height at most one that are `SplitSound` on `E` and
+`SplitAvailable` on every episode of `E` (no skipped class), and every fiber of `T` on `E∗` a finite
+union of intersections of two graph languages.  One application of `split_height` (with no
+skipped episodes) then gives height two: `height_two_of_singleSplit`, and, if every morphism
+admits a single split, `main_two_of_singleSplit`.
+
+`Start/StarHeightCommutative.lean` proves `SingleSplit T` for every morphism into a finite
+commutative monoid (via `singleSplit_of_fiber_height`, the first-return code to `1`), hence height
+at most two (`height_two_of_comm`); it also proves the stronger height-one bound
+`height_one_of_comm`, which is classical.  `GeneralizedStarHeight.main_two` is not proved.
+-/
+
+#check @GeneralizedStarHeight.SingleSplit
+#check @GeneralizedStarHeight.single_split_graph_height
+#check @GeneralizedStarHeight.height_two_of_singleSplit
+#check @GeneralizedStarHeight.main_two_of_singleSplit
+#check @GeneralizedStarHeight.singleSplit_of_fiber_height
+#check @GeneralizedStarHeight.fiber_height_one_of_comm
+#check @GeneralizedStarHeight.height_one_of_comm
+#check @GeneralizedStarHeight.singleSplit_of_comm
+#check @GeneralizedStarHeight.height_two_of_comm
+#check @GeneralizedStarHeight.comm_class_nontrivial_subgroup
+
+/-!
+## Polynomial-time multi-tape machines decide languages in Cobham's `P` (M27)
+
+`Start/MultiTapeCobham.lean` encodes a configuration of upstream's `FiniteMultiTapeMachine`
+(`Start/DepthThreeModel.lean`) as a word, computes one step by a Cobham term (`stepTerm`, via the
+finite-state macro transducers of `Start/MacroTransducer.lean`, `Start/CobhamMacro.lean` and
+`Start/MultiTapeMacro.lean`), iterates it `a · (n + 1)^k` times (`eval_decider`), and concludes
+`inP_of_multiTapeHaltsIn`: a language decided within a polynomial number of steps is in `InP`.
+
+## The depth-three lower bound in the host theory (M27)
+
+`Start/DepthThreeHost.lean` translates every `Σ₃` host circuit (`ACCirc.IsSigma3`) on `n` inputs
+into an upstream `Circuit3` computing the same function with at most `2 · size + 1` gates, and
+places upstream's hard language in host `P`: `depthThree_lower_bound_host`.
+
+## Decidable type checking for the calculus of constructions (M23)
+
+`Start/PTSNormalize.lean` defines `normalize` by well-founded recursion on strong normalization
+and decides conversion of strongly normalizing expressions; `Start/CoCInfer.lean` gives a type
+inference algorithm for every corner of the cube and decides typability, typing and context
+validity.
+-/
+
+#check @Complexity.MultiTapeCobham.eval_stepTerm
+#check @Complexity.MultiTapeCobham.eval_decider
+#check @Complexity.MultiTapeCobham.inP_of_multiTapeHaltsIn
+#check @Complexity.ACCirc.IsSigma3
+#check @Complexity.DepthThreeHost.toCircuit3_eval
+#check @Complexity.DepthThreeHost.toCircuit3_gateCount
+#check @Complexity.DepthThreeHost.depthThree_lower_bound_host
+#check @PureTypeSystem.normalize
+#check @PureTypeSystem.normalize_spec
+#check @PureTypeSystem.converts_iff_normalize_eq
+#check @PureTypeSystem.decConverts
+#check @PureTypeSystem.CoCInfer.infer
+#check @PureTypeSystem.CoCInfer.decidableTypable
+#check @PureTypeSystem.CoCInfer.decidableTyping
+#check @PureTypeSystem.CoCInfer.decidableWf
+#check @PureTypeSystem.CoCInfer.coc_decidableTyping
