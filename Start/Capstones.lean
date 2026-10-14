@@ -270,6 +270,8 @@ import Start.MultiTapeCobham
 import Start.DepthThreeHost
 import Start.PTSNormalize
 import Start.CoCInfer
+import Start.PTSExpansion
+import Start.StarHeightGroups
 
 /-! ## Interfaces of the untyped calculus
 
@@ -3563,3 +3565,29 @@ validity.
 #check @PureTypeSystem.CoCInfer.decidableTyping
 #check @PureTypeSystem.CoCInfer.decidableWf
 #check @PureTypeSystem.CoCInfer.coc_decidableTyping
+
+/-! ## Expansion postponement for pure type systems (M29)
+
+`Start/PTSExpansion.lean` defines the reduction-only typing judgement `HasTypeR` and
+`ExpansionPostponement` (TLCA open problem 23), proves soundness (`HasTypeR.toHasType`), the
+substitution and generation lemmas of `HasTypeR`, and, for every specification, the equivalence
+of expansion postponement with closure of `HasTypeR` under reduction of sort-typed subjects.
+Poll's theorem for normalizing systems is not proved; see `docs/goal/evidence/M29-EP.md`.
+
+## The single split from the first-return code (M28)
+
+`Start/StarHeightGroups.lean` proves `singleSplit_of_firstReturn`: height one of the first-return
+code to `1` and of the remainder fibers gives `SingleSplit T`, hence height two.
+-/
+
+#check @PureTypeSystem.HasTypeR
+#check @PureTypeSystem.ExpansionPostponement
+#check @PureTypeSystem.HasTypeR.toHasType
+#check @PureTypeSystem.HasTypeR.subst
+#check @PureTypeSystem.HasTypeR.generation_lam
+#check @PureTypeSystem.SortedSubjectReductionR
+#check @PureTypeSystem.expansionPostponement_of_sortedSubjectReductionR
+#check @PureTypeSystem.expansionPostponement_iff_sortedSubjectReductionR
+#check @GeneralizedStarHeight.singleSplit_of_firstReturn
+#check @GeneralizedStarHeight.firstReturn_height_of_fiber_one
+#check @GeneralizedStarHeight.height_two_of_firstReturn

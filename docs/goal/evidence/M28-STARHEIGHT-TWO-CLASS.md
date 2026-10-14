@@ -87,3 +87,46 @@ The exit criteria are met literally (an algebraic class containing a nontrivial 
 height at most two, and this file states the literature). The row is marked `DONE_WEAK`
 because the class is inside known height-one results; its open boundary names the next
 target (a class with a non-nilpotent group, such as one containing `S3`).
+
+## M28-STARHEIGHT-TWO-GROUPS (groups beyond nilpotency class two)
+
+Module: `Start/StarHeightGroups.lean` (new; no existing module edited).
+
+Step 1 is proved:
+
+```lean
+theorem singleSplit_of_firstReturn {M : Type} [Monoid M] [Fintype M]
+    (T : FreeMonoid Alphabet →* M)
+    (hE1 : HasHeightAtMost (firstReturn T) 1)
+    (hrem : ∀ d, HasHeightAtMost
+      {w | w ∈ remainder (firstReturn T) ∧ T (FreeMonoid.ofList w) = d} 1) :
+    SingleSplit T
+
+theorem firstReturn_height_of_fiber_one {M : Type} [Monoid M] (T : FreeMonoid Alphabet →* M)
+    (h1 : HasHeightAtMost {w | T (FreeMonoid.ofList w) = 1} 1) :
+    HasHeightAtMost (firstReturn T) 1
+
+theorem height_two_of_firstReturn [Finite Alphabet] {M : Type} [Monoid M] [Fintype M]
+    (T : FreeMonoid Alphabet →* M) (hE1 : ...) (hrem : ...) (F : Set M) :
+    HasHeightAtMost {w | T (FreeMonoid.ofList w) ∈ F} 2
+```
+
+The split is the one of `singleSplit_of_fiber_height`: `E = firstReturn T`, one state, tests
+`P () = E`, `Q () = 1`. Only the two listed height-one facts are used.
+
+Step 2 (the height-one facts for `S3` or a larger class of groups) is **not** done, and no group
+class has been reached. What the literature gives: height one for nilpotent groups of class at
+most two (Pin, Straubing and Thérien). We know of no published bound below three for languages
+recognized by `S3`; this should be checked against Bourne's thesis and later work. Under the
+stop rule, the first missing lemmas, which with the step-1 theorems give height two for every
+language recognized by `S3`, are:
+
+```lean
+theorem fiber_one_height_one_perm3 {Alphabet : Type u} [Finite Alphabet]
+    (T : FreeMonoid Alphabet →* Equiv.Perm (Fin 3)) :
+    HasHeightAtMost {w | T (FreeMonoid.ofList w) = 1} 1
+
+theorem remainder_fiber_height_one_perm3 {Alphabet : Type u} [Finite Alphabet]
+    (T : FreeMonoid Alphabet →* Equiv.Perm (Fin 3)) (d : Equiv.Perm (Fin 3)) :
+    HasHeightAtMost {w | w ∈ remainder (firstReturn T) ∧ T (FreeMonoid.ofList w) = d} 1
+```
