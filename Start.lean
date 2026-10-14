@@ -626,5 +626,10 @@ import Start.DepthThreeHost
 import Start.PTSNormalize
 import Start.CoCInfer
 import Start.PTSExpansion
+import Start.PTSExpansionLevels
+import Start.PTSExpansionBeyondPoll
+import Start.PTSExpansionPoll
+import Start.SwitchingLemma
+import Start.ParityNotAC0
 import Start.StarHeightGroups
 import Start.Capstones
