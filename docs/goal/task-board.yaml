@@ -1,7 +1,7 @@
 version: 2
 source_protocol: docs/goal/goal-prompt.md
 active_milestone: M14
-milestone_order: ["M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10", "M11", "M12", "M13", "M14", "M15", "M16", "M17", "M18", "M19", "M20", "M21", "M22", "M23", "M24", "M25", "M26", "M27", "M28"]
+milestone_order: ["M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10", "M11", "M12", "M13", "M14", "M15", "M16", "M17", "M18", "M19", "M20", "M21", "M22", "M23", "M24", "M25", "M26", "M27", "M28", "M29"]
 tasks:
   - id: M1-BOUNDARY-SORRY-CLOSURE
     priority: P0
@@ -6504,6 +6504,7 @@ tasks:
     milestone: M28
     depends_on:
       - M28-STARHEIGHT-SINGLE-SPLIT
+      - M28-STARHEIGHT-TWO-GROUPS
     rank: 2610
     exit_criteria:
       - "For a class C of finite monoids, defined by an algebraic property independent of the split construction and containing a monoid with a nontrivial subgroup, every language recognized by a monoid in C has height at most two."
@@ -6527,6 +6528,88 @@ tasks:
     rank: 2620
     exit_criteria:
       - "GeneralizedStarHeight.main_two : L.IsRegular -> HasHeightAtMost L 2 is proved over every finite alphabet, against the definitions of Start/StarHeightModel.lean unchanged, with only the standard axioms."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M28-STARHEIGHT-TWO-GROUPS
+    priority: P1
+    status: IN_PROGRESS
+    track: research/open-problems
+    title: "Generalized star height at most two for languages recognized by finite groups beyond nilpotency class two"
+    terminal_statement: "Step 1 done: GeneralizedStarHeight.singleSplit_of_firstReturn, firstReturn_height_of_fiber_one and height_two_of_firstReturn (Start/StarHeightGroups.lean). No group class reached."
+    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-TWO-CLASS.md"
+    open_boundary: "Height one is classical for nilpotent groups of class at most two (Pin, Straubing and Therien). The library has no bound below three for any other group. First missing lemma (with singleSplit_of_firstReturn and firstReturn_height_of_fiber_one it gives S3): theorem fiber_one_height_one_perm3 {Alphabet : Type u} [Finite Alphabet] (T : FreeMonoid Alphabet →* Equiv.Perm (Fin 3)) : HasHeightAtMost {w | T (FreeMonoid.ofList w) = 1} 1, together with theorem remainder_fiber_height_one_perm3 {Alphabet : Type u} [Finite Alphabet] (T : FreeMonoid Alphabet →* Equiv.Perm (Fin 3)) (d : Equiv.Perm (Fin 3)) : HasHeightAtMost {w | w ∈ remainder (firstReturn T) ∧ T (FreeMonoid.ofList w) = d} 1."
+    milestone: M28
+    depends_on:
+      - M28-STARHEIGHT-SINGLE-SPLIT
+    rank: 2605
+    exit_criteria:
+      - "For a class C of finite groups containing a group that is not nilpotent of class at most two (the symmetric group on three letters is the smallest), every language recognized by a group in C has height at most two."
+      - "The evidence file states what the literature gives for C and whether the result is new."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M29-EP-STATEMENT
+    priority: P1
+    status: IN_PROGRESS
+    track: research/open-problems
+    title: "Expansion postponement: the reduction-only judgement, and Poll's theorem for normalizing PTSs"
+    terminal_statement: "PureTypeSystem.HasTypeR, ExpansionPostponement, HasTypeR.toHasType, and expansionPostponement_iff_sortedSubjectReductionR : ExpansionPostponement P <-> SortedSubjectReductionR P for every Specification (Start/PTSExpansion.lean). Poll's theorem is not proved."
+    latest_evidence: "docs/goal/evidence/M29-EP.md"
+    open_boundary: "Exit criterion 1 is met. Exit criterion 2 (expansionPostponement_of_sn, expansionPostponement_of_wn) is not: by expansionPostponement_iff_sortedSubjectReductionR and weak_implies_strong, both follow from the first missing lemma: theorem sortedSubjectReductionR_of_sn {S : Type u} {P : Specification S} (hsn : SystemStronglyNormalizing P) : SortedSubjectReductionR P."
+    milestone: M29
+    depends_on:
+      - M23-PTS
+    rank: 2700
+    exit_criteria:
+      - "HasTypeR (the rules of HasType with the conversion rule replaced by beta-reduction of the type) and ExpansionPostponement are defined against Start/PTSBasic.lean, and HasTypeR.toHasType is proved."
+      - "expansionPostponement_of_sn : SystemStronglyNormalizing P -> ExpansionPostponement P and expansionPostponement_of_wn : SystemWeaklyNormalizing P -> ExpansionPostponement P (Poll 1998) are proved for every Specification; any extra hypothesis that Poll's proof needs is stated in both."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M29-EP-CLASS
+    priority: P1
+    status: TODO_READY
+    track: research/open-problems
+    title: "Expansion postponement for a class of non-normalizing, non-injective PTSs"
+    latest_evidence: "docs/goal/evidence/M29-EP.md"
+    open_boundary: "Expansion postponement is known only for weakly normalizing PTSs (Poll 1998) and injective PTSs (Barthe 1998). Not started: no route was written down. First missing lemma, for a class C: theorem sortedSubjectReductionR_of_class {S : Type u} {P : Specification S} (hC : C P) : SortedSubjectReductionR P (then expansionPostponement_of_sortedSubjectReductionR closes the row)."
+    milestone: M29
+    depends_on:
+      - M29-EP-STATEMENT
+    rank: 2710
+    exit_criteria:
+      - "For a predicate C on specifications, defined independently of the conclusion and satisfied by some specification that is neither weakly normalizing nor injective in Barthe's sense, every P with C P satisfies ExpansionPostponement P."
+      - "The evidence file states Barthe's notion of injectivity, what the literature gives for C, and whether the result is new."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M29-EP
+    priority: P1
+    status: TODO_READY
+    track: research/open-problems
+    title: "Expansion postponement for every PTS (TLCA problem 23)"
+    latest_evidence: "docs/goal/evidence/M29-EP.md"
+    open_boundary: "Open problem since Pollack (1992); TLCA open problem 23. Equivalent form proved: expansionPostponement_iff_sortedSubjectReductionR. First missing lemma: theorem sortedSubjectReductionR_all {S : Type u} (P : Specification S) : SortedSubjectReductionR P."
+    milestone: M29
+    depends_on:
+      - M29-EP-STATEMENT
+    rank: 2720
+    exit_criteria:
+      - "Either expansionPostponement_all : ∀ {S : Type u} (P : Specification S), ExpansionPostponement P, or an explicit Specification P with finitely many sorts together with a judgement HasType P Γ M A such that ¬ ∃ B, Relation.ReflTransGen Beta A B ∧ HasTypeR P Γ M B."
+      - "Only the standard axioms; the definitions of Start/PTSBasic.lean are unchanged."
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"

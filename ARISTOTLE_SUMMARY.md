@@ -1,3 +1,31 @@
+# Summary of changes for run 537c39f4-0e9e-4f56-bcb1-7b300b6e55c9
+**Stage A (M29-EP-STATEMENT): only partly closed.** Poll's theorem is not proved.
+
+`Start/PTSExpansion.lean` defines `HasTypeR` and `ExpansionPostponement` exactly as in your instruction (the form is unchanged). It proves `HasTypeR.toHasType` from `regularity` and `subject_reduction`. It also proves substitution, weakening and generation lemmas for `HasTypeR`, and one result that holds for every `Specification`, with no normalization or functionality hypothesis:
+
+`expansionPostponement_iff_sortedSubjectReductionR : ExpansionPostponement P ↔ SortedSubjectReductionR P`
+
+Here `SortedSubjectReductionR P` means that `HasTypeR P Γ M (sort s)` and `Beta M M'` give `HasTypeR P Γ M' (sort s)`.
+
+There is no theorem named `expansionPostponement_of_sn` or `expansionPostponement_of_wn` in the library. With the equivalence and `weak_implies_strong`, both follow from the first missing lemma: `theorem sortedSubjectReductionR_of_sn {S : Type u} {P : Specification S} (hsn : SystemStronglyNormalizing P) : SortedSubjectReductionR P`. I found no extra hypothesis (such as functionality) that the proof would need.
+
+Normalization enters at the head-redex case \((\lambda x{:}X.\,c)\,a\): the body \(c\) has to be retyped in the context \(x : Z\), where \(Z\) is a reduct of \(X\), and then the reducts of \(c[a/x]\) have to be typed. Strong normalization gives a well-founded induction on the subject for this. The attempt still fails at the abstraction premise \(\Pi A\,B : s\): \(B\) is the type of the body, and no order on subjects controls it. The evidence file `docs/goal/evidence/M29-EP.md` sets this out. It also writes out the argument that `ExpansionPostponement` is TLCA's statement; that equivalence with the derivation-shaped formulation is not proved in Lean. The row is `IN_PROGRESS`.
+
+**Stages B and C.** No class was reached and M29-EP is not closed in either direction; I did not search for counterexample specifications. The first missing lemmas, recorded in the rows and the evidence file, are `sortedSubjectReductionR_of_class (hC : C P) : SortedSubjectReductionR P` and `sortedSubjectReductionR_all (P : Specification S) : SortedSubjectReductionR P`. The evidence file gives Barthe's injectivity as I remember it and says this needs checking against his paper. On that reading, System U⁻ looks injective, so a Stage B witness would need extra axioms or rules.
+
+**M28 groups.** `Start/StarHeightGroups.lean` proves `singleSplit_of_firstReturn`, `firstReturn_height_of_fiber_one` and `height_two_of_firstReturn`. No group class was reached. The first missing lemmas for S3, in the row and in `docs/goal/evidence/M28-STARHEIGHT-TWO-CLASS.md`, are `fiber_one_height_one_perm3` and `remainder_fiber_height_one_perm3`. The new row is in the `depends_on` of M28-STARHEIGHT-TWO-CLASS.
+
+**Queue.** M22-SWITCHING-LEMMA and M22-PARITY-NOT-AC0 were not attempted and are still `TODO_READY`.
+
+**Edits to existing modules.** Only `Start.lean` and `Start/Capstones.lean` changed, to import and register the two new modules. `Start/PTSBasic.lean` and every existing statement are untouched, and no axiom was added.
+
+**Checks.**
+- `lake build --wfail` succeeded with no warnings.
+- `check_manifest.py`, `check_sorry.py`, `check_closure.py` and `goal_state.py validate` all pass.
+- `#print axioms` shows only `propext`, `Quot.sound` and `Classical.choice` for `toHasType`, the two equivalence theorems and the three star-height theorems.
+- `M29` was added to `milestone_order`, and `latest_evidence` points at the evidence files.
+- The work is committed, `pack_gate.sh HEAD` passed, and `delivery.tar.gz` was produced.
+
 # Summary of changes for run a47d95c1-a70e-43a9-84de-21dacd4e986f
 `GeneralizedStarHeight.main_two` is **not** proved. Stage A is closed, Stage B closed only for a class that is not new, and Stage C stopped under the stop rule. All three queue rows are closed. `lake build --wfail` passes on the full tree (10594 jobs, no warnings), and `check_manifest.py`, `check_sorry.py`, `check_closure.py` and `goal_state.py validate` all pass. `scripts/pack_gate.sh HEAD && git archive --format=tar.gz HEAD -o delivery.tar.gz` ran cleanly and the work is committed. `#print axioms` on every theorem named below reports only `[propext, Classical.choice, Quot.sound]`.
 

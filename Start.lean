@@ -625,4 +625,6 @@ import Start.MultiTapeCobham
 import Start.DepthThreeHost
 import Start.PTSNormalize
 import Start.CoCInfer
+import Start.PTSExpansion
+import Start.StarHeightGroups
 import Start.Capstones
