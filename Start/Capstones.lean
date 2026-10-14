@@ -271,6 +271,11 @@ import Start.DepthThreeHost
 import Start.PTSNormalize
 import Start.CoCInfer
 import Start.PTSExpansion
+import Start.PTSExpansionLevels
+import Start.PTSExpansionBeyondPoll
+import Start.PTSExpansionPoll
+import Start.SwitchingLemma
+import Start.ParityNotAC0
 import Start.StarHeightGroups
 
 /-! ## Interfaces of the untyped calculus
@@ -3591,3 +3596,72 @@ code to `1` and of the remainder fibers gives `SingleSplit T`, hence height two.
 #check @GeneralizedStarHeight.singleSplit_of_firstReturn
 #check @GeneralizedStarHeight.firstReturn_height_of_fiber_one
 #check @GeneralizedStarHeight.height_two_of_firstReturn
+
+/-! ## Expansion postponement: stratified systems, a system beyond Poll, and Poll's theorem (M29)
+
+`Start/PTSExpansionLevels.lean` proves expansion postponement for every stratified specification
+(bounded sort levels, axioms one level up, no product with codomain above its domain), with no
+normalization hypothesis; System U⁻ and the non-dependent cube corners are stratified.
+`Start/PTSExpansionBeyondPoll.lean` gives the stratified, non-functional, non-normalizing
+specification `W`, in which a well-typed closed type has no normal form, and proves expansion
+postponement for it.  `Start/PTSExpansionPoll.lean` reduces Poll's theorem, for weakly normalizing
+specifications, to `ProductNormalizationR`.
+-/
+
+#check @PureTypeSystem.Stratification
+#check @PureTypeSystem.Stratification.level_unique
+#check @PureTypeSystem.Stratification.conv_level
+#check @PureTypeSystem.Stratification.core
+#check @PureTypeSystem.expansionPostponement_of_stratification
+#check @PureTypeSystem.Hurkens.uMinus_stratified
+#check @PureTypeSystem.cube_expansionPostponement
+#check @PureTypeSystem.cube_not_stratified
+#check @PureTypeSystem.lambdaStar_not_stratified
+#check @PureTypeSystem.BeyondPoll.W
+#check @PureTypeSystem.BeyondPoll.W_stratified
+#check @PureTypeSystem.BeyondPoll.W_not_functional
+#check @PureTypeSystem.BeyondPoll.W_hurkens_typed
+#check @PureTypeSystem.BeyondPoll.W_not_wn
+#check @PureTypeSystem.BeyondPoll.W_closed_normal_not_o
+#check @PureTypeSystem.BeyondPoll.W_type_not_wn
+#check @PureTypeSystem.BeyondPoll.W_typed_type_not_wn
+#check @PureTypeSystem.BeyondPoll.W_expansionPostponement
+#check @PureTypeSystem.BeyondPoll.W_in_class
+#check @PureTypeSystem.BeyondPoll.Wdep_not_stratified
+#check @PureTypeSystem.BeyondPoll.Wdep_not_wn
+#check @PureTypeSystem.ProductNormalizationR
+#check @PureTypeSystem.expansionPostponement_iff_productNormalizationR
+#check @PureTypeSystem.expansionPostponement_of_productNormalizationR_sn
+
+/-! ## Håstad's switching lemma by Razborov's encoding (M22)
+
+`Start/SwitchingLemma.lean` counts restrictions: Razborov's encoding is an injection from the bad
+restrictions with `ℓ` free variables into restrictions with `ℓ - s` free variables paired with
+code words of length `s` (`card_bad_le`), and for `2ℓ ≤ n` the fraction of bad restrictions is
+at most `(16 k ℓ / n)^s` (`switching_lemma`).
+-/
+
+#check @Complexity.Switching.cdt_computes
+#check @Complexity.Switching.encode_injOn
+#check @Complexity.Switching.encode_mem
+#check @Complexity.Switching.card_bad_le
+#check @Complexity.Switching.card_R
+#check @Complexity.Switching.switching_lemma
+
+/-! ## Parity is not in `AC⁰` (M22)
+
+`Start/ParityNotAC0.lean`: the switching lemma relative to a restriction, applied round by round
+to a circuit in negation normal form; a small-width DNF cannot compute parity on more free
+variables than its width.
+-/
+
+#check @Complexity.Switching.card_RR
+#check @Complexity.Switching.switching_rel
+#check @Complexity.Parity.round
+#check @Complexity.Parity.dnf_not_parity
+#check @Complexity.Parity
+#check @Complexity.parity_depth_le_one
+#check @Complexity.parity_circuit_bound
+#check @Complexity.parity_log_size_lower_bound
+#check @Complexity.parity_size_lower_bound
+#check @Complexity.parity_not_AC0

@@ -5356,10 +5356,11 @@ tasks:
 
   - id: M22-SWITCHING-LEMMA
     priority: P2
-    status: TODO_READY
+    status: DONE_STRONG
     track: theory/circuits
     title: "Hastad's switching lemma, by Razborov's counting argument"
-    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    terminal_statement: "Complexity.Switching (Start/SwitchingLemma.lean): Restriction n := Fin n -> Option Bool, R n l (restrictions with l free variables), IsKDNF, DTree, Computes, cdt with cdt_computes; Razborov's encoding encode with encode_mem and encode_injOn; card_bad_le : (Bad F l s).card <= (R n (l - s)).card * (4 * k) ^ s; card_R : (R n l).card = n.choose l * 2 ^ (n - l); switching_lemma : 2 * l <= n -> ((Bad F l s).card : Q) / (R n l).card <= (16 * k * l / n : Q) ^ s, i.e. (c p k)^s with p = l / n, c = 16."
+    latest_evidence: "docs/goal/evidence/M22-SWITCHING-LEMMA.md"
     open_boundary: ""
     milestone: M22
     depends_on:
@@ -5376,10 +5377,11 @@ tasks:
 
   - id: M22-PARITY-NOT-AC0
     priority: P2
-    status: TODO_READY
+    status: DONE_STRONG
     track: theory/circuits
     title: "Parity is not in AC0"
-    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    terminal_statement: "Start/ParityNotAC0.lean: Complexity.Parity : Language := fun x => x.count true % 2 = 1; Complexity.parity_not_AC0 : not InAC0 Parity; Complexity.parity_circuit_bound : C.depth <= d -> 2 <= d -> C computes Parity on length n -> n < (32 * (Nat.log2 C.size + 2)) ^ (d - 1); parity_size_lower_bound : (2:R) ^ (n ^ (1/(d-1)) / 32 - 2) < C.size, i.e. size 2^(Omega(n^(1/(d-1)))); parity_depth_le_one. Proof via the relative switching lemma Complexity.Switching.switching_rel (refinements of a restriction) and Complexity.Parity.round."
+    latest_evidence: "docs/goal/evidence/M22-PARITY-NOT-AC0.md"
     open_boundary: ""
     milestone: M22
     depends_on:
@@ -6560,9 +6562,9 @@ tasks:
     status: IN_PROGRESS
     track: research/open-problems
     title: "Expansion postponement: the reduction-only judgement, and Poll's theorem for normalizing PTSs"
-    terminal_statement: "PureTypeSystem.HasTypeR, ExpansionPostponement, HasTypeR.toHasType, and expansionPostponement_iff_sortedSubjectReductionR : ExpansionPostponement P <-> SortedSubjectReductionR P for every Specification (Start/PTSExpansion.lean). Poll's theorem is not proved."
+    terminal_statement: "PureTypeSystem.HasTypeR, ExpansionPostponement, HasTypeR.toHasType, expansionPostponement_iff_sortedSubjectReductionR (Start/PTSExpansion.lean); ProductNormalizationR and expansionPostponement_iff_productNormalizationR (hw : SystemWeaklyNormalizing P) : ExpansionPostponement P <-> ProductNormalizationR P (Start/PTSExpansionPoll.lean). Poll's theorem is not proved."
     latest_evidence: "docs/goal/evidence/M29-EP.md"
-    open_boundary: "Exit criterion 1 is met. Exit criterion 2 (expansionPostponement_of_sn, expansionPostponement_of_wn) is not: by expansionPostponement_iff_sortedSubjectReductionR and weak_implies_strong, both follow from the first missing lemma: theorem sortedSubjectReductionR_of_sn {S : Type u} {P : Specification S} (hsn : SystemStronglyNormalizing P) : SortedSubjectReductionR P."
+    open_boundary: "Exit criterion 1 is met. Exit criterion 2 is not. Stage A outcome (this delivery): no route closed. Route (a) (relaxed nf-abstraction) makes the substitution lemma and |- in |-nf immediate, but the abstraction case of the bridge |-nf in |-r is exactly ProductNormalizationR; route (b) (Stage B induction with B' = nf(B)) fails for lack of a measure once rules are dependent; no route (c). Proved: for weakly normalizing P, ExpansionPostponement P <-> ProductNormalizationR P. First missing lemma: theorem productNormalizationR_of_wn {S : Type u} {P : Specification S} (hw : SystemWeaklyNormalizing P) : ProductNormalizationR P. Verdict: the gap in Poll's Lemma 10 (abstraction case: the premise Pi A[s] nf(B[s']) : s is needed, only Pi A[s] B[s'] : s is available, and closing it is Theorem 11) is genuine as far as his argument goes, and was not repaired."
     milestone: M29
     depends_on:
       - M23-PTS
@@ -6578,11 +6580,12 @@ tasks:
 
   - id: M29-EP-CLASS
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: research/open-problems
     title: "Expansion postponement for a class of non-normalizing, non-injective PTSs"
     latest_evidence: "docs/goal/evidence/M29-EP.md"
-    open_boundary: "Expansion postponement is known only for weakly normalizing PTSs (Poll 1998) and injective PTSs (Barthe 1998). Not started: no route was written down. First missing lemma, for a class C: theorem sortedSubjectReductionR_of_class {S : Type u} {P : Specification S} (hC : C P) : SortedSubjectReductionR P (then expansionPostponement_of_sortedSubjectReductionR closes the row)."
+    terminal_statement: "PureTypeSystem.expansionPostponement_of_stratification (L : Stratification P) : ExpansionPostponement P (Start/PTSExpansionLevels.lean), with C P := Nonempty (Stratification P); BeyondPoll.W_in_class : Nonempty (Stratification W) /\ not SystemWeaklyNormalizing W /\ W not functional (Start/PTSExpansionBeyondPoll.lean). Literature (docs/goal/evidence/M29-EP.md): Poll (1998) proves EP for PTSs with normalising types (every A with G |- a : A has a normal form); Barthe (1999) proves it for a variant of injective PTSs, as far as is known (a clause of the abstraction rule replaced by constraints on two syntactically computed sorts; injective PTSs are functional as far as we know); Song (1997) gives necessary and sufficient conditions and sufficient conditions, not known to us in detail. Novelty is not claimed."
+    open_boundary: ""
     milestone: M29
     depends_on:
       - M29-EP-STATEMENT
@@ -6596,13 +6599,34 @@ tasks:
       - "python3 scripts/check_sorry.py"
       - "lake build --wfail"
 
+  - id: M29-EP-BEYOND-POLL
+    priority: P1
+    status: DONE_STRONG
+    track: research/open-problems
+    title: "Expansion postponement for a PTS in which a well-typed type has no normal form"
+    terminal_statement: "PureTypeSystem.BeyondPoll: W (5 sorts), W_type_not_wn : HasType W [] typeA (.sort .o) /\\ not WeaklyNormalizing typeA, W_typed_type_not_wn : exists G a T, HasType W G a T /\\ not WeaklyNormalizing T, W_not_functional, W_expansionPostponement : ExpansionPostponement W (Start/PTSExpansionBeyondPoll.lean). Original open boundary: Poll (1998) proves expansion postponement for PTSs with normalising types: every A with G |- a : A has a normal form. The library had no result for a system outside that hypothesis."
+    latest_evidence: "docs/goal/evidence/M29-EP.md"
+    open_boundary: ""
+    milestone: M29
+    depends_on:
+      - M29-EP-STATEMENT
+    rank: 2715
+    exit_criteria:
+      - "An explicit Specification W with finitely many sorts, a judgement HasType W Γ a A with ¬ WeaklyNormalizing A, a Lean proof that W is not functional, and ExpansionPostponement W."
+      - "The evidence file states Poll's hypothesis and what Barthe and Song prove, and explains why neither covers W."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
   - id: M29-EP
     priority: P1
     status: TODO_READY
     track: research/open-problems
     title: "Expansion postponement for every PTS (TLCA problem 23)"
     latest_evidence: "docs/goal/evidence/M29-EP.md"
-    open_boundary: "Open problem since Pollack (1992); TLCA open problem 23. Equivalent form proved: expansionPostponement_iff_sortedSubjectReductionR. First missing lemma: theorem sortedSubjectReductionR_all {S : Type u} (P : Specification S) : SortedSubjectReductionR P."
+    open_boundary: "Open problem since Pollack (1992); TLCA open problem 23. Equivalent form proved: expansionPostponement_iff_sortedSubjectReductionR. Closed for stratified specifications (expansionPostponement_of_stratification, M29-EP-CLASS), so an open case has dependent rules, unbounded levels or no stratification. Stage C (this delivery) stopped under the stop rule: no measure and no counterexample route found for Wdep := W + (o,t,t) (Wdep_not_stratified, Wdep_not_wn) or for lambda-star. First missing lemma: theorem Wdep_expansionPostponement : ExpansionPostponement BeyondPoll.Wdep; in general: theorem sortedSubjectReductionR_all {S : Type u} (P : Specification S) : SortedSubjectReductionR P."
     milestone: M29
     depends_on:
       - M29-EP-STATEMENT

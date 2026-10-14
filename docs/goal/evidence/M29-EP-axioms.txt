@@ -1,0 +1,91 @@
+# #print axioms for the theorems of this delivery (lake env lean, Lean 4.33.0, after lake build --wfail)
+# Only propext, Classical.choice and Quot.sound occur; no sorryAx, no custom axiom.
+
+#print axioms PureTypeSystem.expansionPostponement_of_stratification
+#print axioms PureTypeSystem.Stratification.level_unique
+#print axioms PureTypeSystem.Stratification.conv_level
+#print axioms PureTypeSystem.Stratification.core
+#print axioms PureTypeSystem.Stratification.validContextR
+#print axioms PureTypeSystem.BeyondPoll.W_stratified
+#print axioms PureTypeSystem.BeyondPoll.W_not_functional
+#print axioms PureTypeSystem.BeyondPoll.W_hurkens_typed
+#print axioms PureTypeSystem.BeyondPoll.W_not_wn
+#print axioms PureTypeSystem.BeyondPoll.W_closed_normal_not_o
+#print axioms PureTypeSystem.BeyondPoll.W_type_not_wn
+#print axioms PureTypeSystem.BeyondPoll.W_typed_type_not_wn
+#print axioms PureTypeSystem.BeyondPoll.W_expansionPostponement
+#print axioms PureTypeSystem.BeyondPoll.W_in_class
+#print axioms PureTypeSystem.BeyondPoll.Wdep_not_stratified
+#print axioms PureTypeSystem.BeyondPoll.Wdep_not_wn
+#print axioms PureTypeSystem.Hurkens.uMinus_stratified
+#print axioms PureTypeSystem.cube_stratified
+#print axioms PureTypeSystem.cube_expansionPostponement
+#print axioms PureTypeSystem.cube_not_stratified
+#print axioms PureTypeSystem.not_stratified_of_dependent_rule
+#print axioms PureTypeSystem.not_stratified_of_axiom_self
+#print axioms PureTypeSystem.lambdaStar_not_stratified
+#print axioms PureTypeSystem.expansionPostponement_iff_sortedSubjectReductionR
+#print axioms PureTypeSystem.productNormalizationR_of_expansionPostponement
+#print axioms PureTypeSystem.expansionPostponement_of_productNormalizationR
+#print axioms PureTypeSystem.expansionPostponement_iff_productNormalizationR
+#print axioms PureTypeSystem.expansionPostponement_of_productNormalizationR_sn
+#print axioms Complexity.Switching.cdt_computes
+#print axioms Complexity.Switching.encode_injOn
+#print axioms Complexity.Switching.card_bad_le
+#print axioms Complexity.Switching.card_R
+#print axioms Complexity.Switching.switching_lemma
+#print axioms Complexity.Switching.card_RR
+#print axioms Complexity.Switching.switching_rel
+#print axioms Complexity.Parity.round
+#print axioms Complexity.Parity.dnf_not_parity
+#print axioms Complexity.parity_depth_le_one
+#print axioms Complexity.parity_circuit_bound
+#print axioms Complexity.parity_log_size_lower_bound
+#print axioms Complexity.parity_size_lower_bound
+#print axioms Complexity.parity_not_AC0
+
+# Output:
+'PureTypeSystem.expansionPostponement_of_stratification' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.Stratification.level_unique' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.Stratification.conv_level' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.Stratification.core' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.Stratification.validContextR' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.BeyondPoll.W_stratified' does not depend on any axioms
+'PureTypeSystem.BeyondPoll.W_not_functional' does not depend on any axioms
+'PureTypeSystem.BeyondPoll.W_hurkens_typed' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.BeyondPoll.W_not_wn' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.BeyondPoll.W_closed_normal_not_o' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.BeyondPoll.W_type_not_wn' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.BeyondPoll.W_typed_type_not_wn' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.BeyondPoll.W_expansionPostponement' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.BeyondPoll.W_in_class' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.BeyondPoll.Wdep_not_stratified' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.BeyondPoll.Wdep_not_wn' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.Hurkens.uMinus_stratified' does not depend on any axioms
+'PureTypeSystem.cube_stratified' depends on axioms: [propext]
+'PureTypeSystem.cube_expansionPostponement' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.cube_not_stratified' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.not_stratified_of_dependent_rule' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.not_stratified_of_axiom_self' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.lambdaStar_not_stratified' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.expansionPostponement_iff_sortedSubjectReductionR' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.productNormalizationR_of_expansionPostponement' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.expansionPostponement_of_productNormalizationR' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.expansionPostponement_iff_productNormalizationR' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.expansionPostponement_of_productNormalizationR_sn' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'Complexity.Switching.cdt_computes' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.Switching.encode_injOn' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.Switching.card_bad_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.Switching.card_R' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.Switching.switching_lemma' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.Switching.card_RR' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.Switching.switching_rel' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.Parity.round' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.Parity.dnf_not_parity' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.parity_depth_le_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.parity_circuit_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.parity_log_size_lower_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.parity_size_lower_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.parity_not_AC0' depends on axioms: [propext, Classical.choice, Quot.sound]
