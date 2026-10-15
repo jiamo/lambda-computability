@@ -1,3 +1,52 @@
+# Summary of changes for run ce756e59-c4ad-4172-b9bf-096ba787109d
+I finished one more task from the board, **M19-TERM-COUNT-LOWER**, and marked it `DONE_STRONG`. It asked for exponential lower bounds, with explicit bases, to go with the existing upper bounds of \(4^m\) in `Start/KolmogorovCount.lean`. The full `lake build` passes (10603 jobs, no warnings). There is no `sorry` in the library, and the closure and task-board checks pass. The headline theorems depend only on `propext`, `Classical.choice` and `Quot.sound`.
+
+**New module `Start/KolmogorovCountLower.lean`:**
+- **Counting terms by exact size.** `Lambda.termCount` counts terms using the recursion \(c(n+1) = 1 + c(n) + \sum_{a\le n} c(a)\,c(n-a)\), written so that Lean's kernel can evaluate it. `Lambda.termCount_le_card` proves that at least `termCount n` terms have size exactly `n`.
+- **Combining counts.** `Lambda.card_size_eq_pow_le` shows that if \(N\) terms have size exactly \(s\), then at least \(N^j\) terms have size at most \((s+1)j+1\). The proof chains the terms together as \(a_1(a_2(\dots(a_j\,0)))\).
+- **Terms.** `Lambda.three_pow_le_card_size_le`: for every \(m \ge 3334\), at least \(3^m\) terms have size at most \(m\). With the existing upper bound, the count lies between \(3^m\) and \(4^m\). This uses a kernel check that \(3^{101}\cdot 30 \le\) `termCount 100`. By floating-point calculation only (not proved), the true growth rate is about 3.38.
+- **Numbers.** Two closed terms compute \(n \mapsto 2n\) (size 36) and \(n \mapsto 2n+1\) (size 54). Writing numbers in binary with them gives `Lambda.two_pow_le_card_kolm_le`: at least \(2^j\) numbers have complexity at most \(3 + 55j\). The packaged form is `Lambda.two_pow_le_card_kolm_le_pow`: \(2^m \le (\#\{s : K(s)\le m\})^{110}\) for \(m \ge 114\), so the explicit base is \(2^{1/110}\). This base is far below 4.
+
+**Second exit criterion (target for the symmetry-of-information task).** This is answered in prose in `docs/goal/evidence/M19-TERM-COUNT-LOWER.md`, not by a theorem. For terms, the base 4 cannot be lowered below 3. The constant on the counting term in the hard half of symmetry of information depends on how cheaply an index below \(N\) can be written as a term. The binary terms above cost about \(55\log_2 N\), so arguments built on them carry a multiplicative constant rather than the classical constant 1.
+
+**Board and registry updates:**
+- `Start.lean` and `Start/Capstones.lean` now include the module and its results.
+- A new task, **M19-INDEX-CODE-RATE**, asks for a shorter way to write indices. M19-DESCRIPTION-COST-AUDIT stays `DONE_WEAK`, now depends on that task, and its open boundary describes the remaining gap.
+- `docs/current-goal-state.md` is re-rendered.
+- The three main theorems are registered in the Properties table as proved.
+
+Everything is committed and pushed, and `delivery.tar.gz` was regenerated after the packaging gate passed.
+
+# Summary of changes for run 7c27b8b7-036a-4c51-bec4-d7a0466b84de
+**M29-SD-COMPLETE (closed, DONE_STRONG).** The new module `Start/PTSSyntaxDirected.lean` contains `WhBeta`, `WhReduces`, `Functional` and `HasTypeSD`. They match your text character for character, with one exception: the empty context is written `([])` instead of `[]`. With this library's imports, `HasTypeSD P []` does not parse, and the rest of the library writes `([])` for the same reason. The meaning is unchanged.
+
+The module proves `HasTypeSD.toHasType` (Poll's Theorem 15), `Converts.whReduces_pi` (the standardization lemma), `HasType.type_unique_of_functional` and `theorem sd_complete_of_stratification (hf : Functional P) (L : Stratification P) (h : HasType P Γ M A) : ∃ A', HasTypeSD P Γ M A' ∧ Converts A' A`. That last theorem has no normalization hypothesis.
+
+No case of your sketch needed a repair. There are three changes of form:
+- Step 1 uses confluence plus an inductive standard-reduction relation (`StdRed`, `Reduces.stdRed`, in the style of Kashima and Loader) instead of Takahashi's parallel-reduction factorization.
+- In the product case, `reduces_sort` gives the generation sorts directly, so `sort_inj` is not needed.
+- The measure is `bound + 2 − level`, the convention of `core_aux`, rather than `bound + 3`.
+
+Functionality is used only in the abstraction case, through uniqueness of types.
+
+Corollaries: `Hurkens.uMinus_sd_complete`, `cube_sd_complete` (the four corners without the dependent rule), and `BeyondPoll.W0_sd_complete`. Here `W0` is a new specification with sorts `o, t, k, u`, and `W0_in_class` shows it is functional and stratified and has a closed type of sort `o` with no normal form.
+
+Literature, in `docs/goal/evidence/M29-SD-COMPLETE.md`: I worked without the papers' texts. As far as I know, van Benthem Jutting–McKinna–Pollack cover only normalizing systems, and I could not confirm whether their completeness result is for `⊢sd` or for a modified algorithm. Barthe treats a variant algorithm, and U⁻ and `W0` may fall under his class of injective systems. No novelty is claimed. The row's evidence file is that new file rather than `M29-EP.md`, following your instruction to give each row its own file.
+
+**M29-EP-NOTE.** Written: `docs/goal/evidence/M29-EP-NOTE.md`, about 1,700 words (roughly three pages). It covers the definitions, both theorems, the case-by-case proof including the uniqueness-of-levels repair, the witnesses `W` and `W₀`, the Lean theorem behind each claim, and what is not known.
+
+**M29-EP.** No route, so I stopped under the stop rule and the row is unchanged. A short paragraph about your observation is appended to `M29-EP.md`.
+
+**Queue rows.** None closed. I did not start M14-KRIVINE-SPACE-CLASS: it needs a tape program carrying out a Krivine transition plus garbage collection on the binary state encoding, and that is too large to finish in this delivery. It stays TODO_READY.
+
+**Edits to existing files.** Only `Start.lean` and `Start/Capstones.lean` changed (an import and `#check` lines), plus the board, the regenerated `docs/current-goal-state.md` and the evidence files. I also restored the execute bit on `scripts/pack_gate.sh` (mode 100755), which my copy had lost again.
+
+**Checks.**
+- `lake build --wfail` succeeded (10602 jobs, no warnings).
+- `check_manifest.py`, `check_sorry.py`, `check_closure.py` and `goal_state.py validate` all pass.
+- `#print axioms` on every new theorem shows only `propext`, `Classical.choice` and `Quot.sound` (output in `docs/goal/evidence/M29-SD-COMPLETE-axioms.txt`).
+- Everything is committed. `scripts/pack_gate.sh HEAD && git archive --format=tar.gz HEAD -o delivery.tar.gz` ran exactly as given and produced `delivery.tar.gz`.
+
 # Summary of changes for run 5d69326d-aa15-41c3-a361-76085ff54f48
 **Stage B (closed).** `Start/PTSExpansionLevels.lean` contains `Stratification`, exactly as in your instruction, and `theorem expansionPostponement_of_stratification (L : Stratification P) : ExpansionPostponement P`. It has no normalization hypothesis. It follows your route: the term level is a relation, `TypeLevel`, and the core lemma is a well-founded induction on (bound + 3 − level, size of the subject). One step needed a repair: proving the level is unique (`level_unique`). Plain induction on derivations goes in a circle in the conversion case, so that proof uses a downward induction on the level. No case of the core lemma itself needed a repair. Also proved: U⁻ is stratified (`Hurkens.uMinus_stratified`); the cube corners without the dependent rule are stratified and have expansion postponement; λP and CoC are not stratified (a dependent rule), and neither is λ* (∗ : ∗). The witness `W` is in `Start/PTSExpansionBeyondPoll.lean`. Its binders were renamed `a b`; the meaning is unchanged. Proved for it: `W_stratified`, `W_not_functional`, the shifted Hurkens term has the stated type, `W_not_wn`, no closed normal term has type `o`, `W_type_not_wn` (the type `typeA` has type `o` and no normal form), `W_typed_type_not_wn` and `W_expansionPostponement`. M29-EP-CLASS and M29-EP-BEYOND-POLL are both DONE_STRONG. There is one conflict with your instructions: the board validator only accepts an empty `open_boundary` on a DONE_STRONG row. So M29-EP-CLASS's corrected literature statement (Poll: normalising types; Barthe: a variant of injective PTSs, as far as is known; Song: conditions) is in its `terminal_statement`, and the full version is in `docs/goal/evidence/M29-EP.md`. Literature check: Poll's paper has neither the level argument nor this class. For Barthe and Song I only know the abstracts, and the evidence file says so. No novelty is claimed.
 

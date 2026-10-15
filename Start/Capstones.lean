@@ -246,6 +246,7 @@ import Start.LogspaceToSpaceInit
 import Start.LogspaceToSpaceCompile
 import Start.LogspaceTransferEquiv
 import Start.KolmogorovCount
+import Start.KolmogorovCountLower
 import Start.PTSLambdaPiEmbed
 import Start.PTSFOmegaKinds
 import Start.CoCModel
@@ -274,6 +275,7 @@ import Start.PTSExpansion
 import Start.PTSExpansionLevels
 import Start.PTSExpansionBeyondPoll
 import Start.PTSExpansionPoll
+import Start.PTSSyntaxDirected
 import Start.SwitchingLemma
 import Start.ParityNotAC0
 import Start.StarHeightGroups
@@ -3434,6 +3436,21 @@ for the actual measure: at most `4^m` terms of size `≤ m`, hence at most `4^m`
 #check @Lambda.kolmBits_le_two_mul_kolm
 
 /-!
+`Start/KolmogorovCountLower.lean` (task `M19-TERM-COUNT-LOWER`) proves exponential lower bounds
+with explicit bases: at least `termCount n` terms have size exactly `n` (an exact recursion
+evaluated in the kernel), supermultiplicativity `(#size = s)^j ≤ #(size ≤ (s+1) j + 1)`, hence at
+least `3^m` terms of size `≤ m` for `m ≥ 3334`; and at least `2^j` numbers of complexity
+`≤ 3 + 55 j`, i.e. `2^m ≤ (#{s | kolm s ≤ m})^110` for `m ≥ 114`.
+-/
+
+#check @Lambda.termCount_succ
+#check @Lambda.termCount_le_card
+#check @Lambda.card_size_eq_pow_le
+#check @Lambda.three_pow_le_card_size_le
+#check @Lambda.two_pow_le_card_kolm_le
+#check @Lambda.two_pow_le_card_kolm_le_pow
+
+/-!
 ## M25: call-by-value and the CEK machine (this library's own)
 
 `Start/CbvMachine.lean` defines Plotkin's call-by-value reduction (values are abstractions and
@@ -3665,3 +3682,31 @@ variables than its width.
 #check @Complexity.parity_log_size_lower_bound
 #check @Complexity.parity_size_lower_bound
 #check @Complexity.parity_not_AC0
+
+/-! ## Completeness of Pollack's syntax-directed type checking (M29)
+
+`Start/PTSSyntaxDirected.lean` defines Pollack's syntax-directed system `HasTypeSD` (Poll 1998,
+Definition 14, de Bruijn form), proves it sound (`HasTypeSD.toHasType`), and proves it complete
+for every functional specification with a `Stratification` (`sd_complete_of_stratification`),
+with no normalization hypothesis.  Ingredients: standardization (`Reduces.stdRed`,
+`Converts.whReduces_pi`) and uniqueness of types for functional specifications
+(`HasType.type_unique_of_functional`).
+-/
+
+#check @PureTypeSystem.WhBeta
+#check @PureTypeSystem.WhReduces
+#check @PureTypeSystem.Functional
+#check @PureTypeSystem.HasTypeSD
+#check @PureTypeSystem.HasTypeSD.toHasType
+#check @PureTypeSystem.Reduces.stdRed
+#check @PureTypeSystem.Converts.whReduces_pi
+#check @PureTypeSystem.HasType.type_unique_of_functional
+#check @PureTypeSystem.Stratification.sd_core
+#check @PureTypeSystem.sd_complete_of_stratification
+#check @PureTypeSystem.Hurkens.uMinus_sd_complete
+#check @PureTypeSystem.cube_sd_complete
+#check @PureTypeSystem.BeyondPoll.W0_functional
+#check @PureTypeSystem.BeyondPoll.W0_stratified
+#check @PureTypeSystem.BeyondPoll.W0_type_not_wn
+#check @PureTypeSystem.BeyondPoll.W0_in_class
+#check @PureTypeSystem.BeyondPoll.W0_sd_complete

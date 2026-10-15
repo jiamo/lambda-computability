@@ -601,6 +601,7 @@ import Start.LogspaceToSpaceInit
 import Start.LogspaceToSpaceCompile
 import Start.LogspaceTransferEquiv
 import Start.KolmogorovCount
+import Start.KolmogorovCountLower
 import Start.PTSLambdaPiEmbed
 import Start.PTSFOmegaKinds
 import Start.CoCModel
@@ -629,6 +630,7 @@ import Start.PTSExpansion
 import Start.PTSExpansionLevels
 import Start.PTSExpansionBeyondPoll
 import Start.PTSExpansionPoll
+import Start.PTSSyntaxDirected
 import Start.SwitchingLemma
 import Start.ParityNotAC0
 import Start.StarHeightGroups
