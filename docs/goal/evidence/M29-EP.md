@@ -446,3 +446,92 @@ All of the following report `[propext, Classical.choice, Quot.sound]` or a subse
   of `D` is not bounded by the level measure), nor a candidate term on which both places fail.
   The row M29-EP is unchanged; its first missing lemmas remain `Wdep_expansionPostponement` and
   `sortedSubjectReductionR_all`.
+
+## M29-EP-LOCAL: levels without a bound (DONE_STRONG)
+
+Module `Start/PTSExpansionLocal.lean`.  No normalization hypothesis, no bound on the levels.
+
+* `expansionPostponement_of_levels (level : S → ℕ) (hax : ∀ s t, P.axioms s t → level t = level s + 1)
+  (hrule : ∀ s₁ s₂ s₃, P.rule s₁ s₂ s₃ → level s₃ = level s₂ ∧ level s₂ ≤ level s₁) :
+  ExpansionPostponement P`.
+* `sd_complete_of_levels (hf : Functional P) level hax hrule (h : HasType P Γ M T) :
+  ∃ T', HasTypeSD P Γ M T' ∧ Converts T' T`.
+
+Proof, as in the route of the instruction:
+
+1. `HasType.finite_support` (`Start/PTSRestriction.lean`) gives a derivation of the same judgement
+   in `P.restrict A R` with `A`, `R` finite.
+2. `levelsStratification`: on `P.restrict A R`, `fun s => min (level s) N`, with `N =
+   levelsBound level A R` the largest level occurring in `A` and `R`, is a `Stratification`
+   (every sort of a restricted axiom or rule has level `≤ N`, so the truncation does not change
+   it there).
+3. The bounded theorems `expansionPostponement_of_stratification` and
+   `sd_complete_of_stratification` apply to the restriction; `Functional.restrict` transfers
+   functionality.
+4. The results are transported back to `P` by the two monotonicity lemmas `HasTypeR.monotone`
+   and `HasTypeSD.monotone`.
+
+**Poll's Open Problem 6** (for `HasTypeR`), proved for *every* specification with
+`ExpansionPostponement P`:
+
+* `HasTypeR.weak_subject_reduction : HasTypeR P Γ a A → Reduces a a' → ∃ A', Reduces A A' ∧
+  HasTypeR P Γ a' A'` (soundness, `subject_reduces`, then expansion postponement);
+* `HasTypeR.correctness_of_types : HasTypeR P Γ a A → (∃ s, A = .sort s) ∨ ∃ s, HasTypeR P Γ A
+  (.sort s)` (soundness, `regularity`, then expansion postponement at a sort, which is normal).
+
+So both halves hold for every stratified specification and every specification in the class of
+this row.
+
+**Example.** `NatHierarchy.natHier`: sorts `ℕ`, axioms `n : n+1`, rules `(m, n, n)` for `n ≤ m`.
+It is functional, has infinitely many sorts, all used by axioms (`natHier_infinite`), and has no
+`Stratification` (`natHier_not_stratified`: a stratification would give `n ≤ level n ≤ bound` for
+all `n`).  With `level = id` it is in the class: `natHier_expansionPostponement`,
+`natHier_sd_complete`, `natHier_weak_subject_reduction`, `natHier_correctness_of_types`.
+
+## M29-EP-CUBE: the dependent corners (TODO_READY, stopped under the stop rule)
+
+Module `Start/PTSExpansionCube.lean`.
+
+* `cube_expansionPostponement_iff_productNormalizationR (f) : ExpansionPostponement (cubeSpec f)
+  ↔ ProductNormalizationR (cubeSpec f)`, for every corner, dependent or not.
+* `cube_productNormalizationR (f) (hf : f.dep = false)` (from the stratified case).
+
+**Use of normalization.** The equivalence uses strong normalization of the cube
+(`cube_stronglyNormalizing`, `Start/CoCSN.lean`) in exactly one place: in the abstraction case of
+`expansionPostponement_of_productNormalizationR` (`Start/PTSExpansionPoll.lean`), to reduce the
+type `B` of the body to its normal form `B'` so that the two reducts of `B` (the one given by the
+induction hypothesis and `B'`) can be joined at `B'`.  No other case uses normalization.
+
+**First missing lemma** (for λP):
+
+```lean
+theorem lambdaP_productNormalizationR : ProductNormalizationR (cubeSpec lambdaP)
+```
+
+With it, `cube_expansionPostponement_of_productNormalizationR lambdaP` gives
+`ExpansionPostponement (cubeSpec lambdaP)`; the same statement for `λP2`, `λPω̲`, `coc` gives the
+other dependent corners.
+
+**Why we stopped.** Unfolding `ProductNormalizationR` through `generation_pi`, what is needed is:
+`HasTypeR P (A :: Γ) B (.sort s₂) → Reduces B B' → Normal B' → HasTypeR P (A :: Γ) B' (.sort s₂)`,
+i.e. sorted subject reduction for `HasTypeR` at a normal reduct.  The natural attempt is an
+induction on normal subjects, typed at normal types in an `HasTypeR`-valid context:
+
+```lean
+theorem normal_typing (hΓ : ValidContextR P Γ) (hM : Normal M) (hT : Normal T)
+    (h : HasType P Γ M T) : HasTypeR P Γ M T
+```
+
+Its abstraction case `λA. b : Π A. B''` calls the lemma on `Π A. B''`, which is not a subterm,
+and its application case `x N₁ … Nₖ` calls it on the arguments `Nᵢ` at the normal forms of the
+domains.  In the cube one would order the calls by the degree of Barendregt's classification
+(objects, constructors, kinds), but in λP the arguments `Nᵢ` of a type family have *lower* degree
+than the family application, so neither the lexicographic order (degree, size) nor (size,
+degree) decreases along both kinds of call.  The erasure lead of the instruction (erasing λP
+types to simple types, invariant under conversion) suggests ordering object arguments by their
+erased types and the families by their position in the context, but we could not write the
+measure as a Lean statement whose decrease we could check in both cases, so under the stop rule
+we did not continue.  The `Wdep` lead (the same measure without normalization) is therefore not
+reached either; M29-EP is unchanged.
+
+`#print axioms` output for the terminal theorems of this delivery: `docs/goal/evidence/M29-PART1-axioms.txt` (only `propext`, `Classical.choice`, `Quot.sound`; no `sorryAx`).

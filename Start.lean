@@ -631,6 +631,12 @@ import Start.PTSExpansionLevels
 import Start.PTSExpansionBeyondPoll
 import Start.PTSExpansionPoll
 import Start.PTSSyntaxDirected
+import Start.PTSExpansionLocal
+import Start.PTSSyntaxDirectedFunctional
+import Start.PTSExpansionCube
+import Start.KolmogorovIndexCode
+import Start.ResolutionPHP
+import Start.CwaId
 import Start.SwitchingLemma
 import Start.ParityNotAC0
 import Start.StarHeightGroups
