@@ -276,6 +276,12 @@ import Start.PTSExpansionLevels
 import Start.PTSExpansionBeyondPoll
 import Start.PTSExpansionPoll
 import Start.PTSSyntaxDirected
+import Start.PTSExpansionLocal
+import Start.PTSSyntaxDirectedFunctional
+import Start.PTSExpansionCube
+import Start.KolmogorovIndexCode
+import Start.ResolutionPHP
+import Start.CwaId
 import Start.SwitchingLemma
 import Start.ParityNotAC0
 import Start.StarHeightGroups
@@ -3710,3 +3716,97 @@ with no normalization hypothesis.  Ingredients: standardization (`Reduces.stdRed
 #check @PureTypeSystem.BeyondPoll.W0_type_not_wn
 #check @PureTypeSystem.BeyondPoll.W0_in_class
 #check @PureTypeSystem.BeyondPoll.W0_sd_complete
+
+/-! ## Levels without a bound (M29-EP-LOCAL)
+
+`Start/PTSExpansionLocal.lean` removes the bound on the levels: for every level assignment
+`level : S → ℕ` with axioms going up one level and rules `(s₁, s₂, s₃)` with
+`level s₃ = level s₂ ≤ level s₁`, expansion postponement holds
+(`expansionPostponement_of_levels`), and for functional specifications Pollack's syntax-directed
+system is complete (`sd_complete_of_levels`).  Poll's Open Problem 6 (weak subject reduction and
+correctness of types for the reduction-only system) holds for every specification with expansion
+postponement.  `NatHierarchy.natHier` is an infinite example with no `Stratification`.
+-/
+
+#check @PureTypeSystem.HasTypeR.monotone
+#check @PureTypeSystem.HasTypeSD.monotone
+#check @PureTypeSystem.Functional.restrict
+#check @PureTypeSystem.levelsStratification
+#check @PureTypeSystem.expansionPostponement_of_levels
+#check @PureTypeSystem.sd_complete_of_levels
+#check @PureTypeSystem.HasTypeR.weak_subject_reduction
+#check @PureTypeSystem.HasTypeR.correctness_of_types
+#check @PureTypeSystem.NatHierarchy.natHier
+#check @PureTypeSystem.NatHierarchy.natHier_not_stratified
+#check @PureTypeSystem.NatHierarchy.natHier_expansionPostponement
+#check @PureTypeSystem.NatHierarchy.natHier_sd_complete
+#check @PureTypeSystem.NatHierarchy.natHier_weak_subject_reduction
+#check @PureTypeSystem.NatHierarchy.natHier_correctness_of_types
+
+/-! ## Functionality is necessary for syntax-directed completeness (M29-SD-FUNCTIONAL)
+
+`Start/PTSSyntaxDirectedFunctional.lean` gives a stratified, non-functional specification `F`
+with five sorts and a derivable judgement that has no syntax-directed type.  Since `F` is
+stratified it has expansion postponement, so expansion postponement does not imply completeness
+of `HasTypeSD`.
+-/
+
+#check @PureTypeSystem.HasTypeSD.sort_inv
+#check @PureTypeSystem.NonFunctional.F
+#check @PureTypeSystem.NonFunctional.F_stratified
+#check @PureTypeSystem.NonFunctional.F_not_functional
+#check @PureTypeSystem.NonFunctional.F_hasType
+#check @PureTypeSystem.NonFunctional.F_hasTypeR
+#check @PureTypeSystem.NonFunctional.F_not_sd
+#check @PureTypeSystem.NonFunctional.sd_incomplete_stratified
+#check @PureTypeSystem.NonFunctional.sd_complete_not_of_expansionPostponement
+
+/-! ## The dependent corners of the cube: reduction to one lemma (M29-EP-CUBE)
+
+`Start/PTSExpansionCube.lean`: for every corner of the cube, expansion postponement is equivalent
+to product normalization (strong normalization is used in the abstraction case only).  The
+dependent corners remain open; the first missing lemma is
+`ProductNormalizationR (cubeSpec lambdaP)`.
+-/
+
+#check @PureTypeSystem.cube_expansionPostponement_iff_productNormalizationR
+#check @PureTypeSystem.cube_expansionPostponement_of_productNormalizationR
+#check @PureTypeSystem.cube_productNormalizationR
+
+/-! ## A short index code (M19-INDEX-CODE-RATE)
+
+`Start/KolmogorovIndexCode.lean`: binding the two digit realizers once makes each bit cost at most
+`3`, so every `i < N` has `kolm i ≤ 3 log₂ N + 100`; no rate below `1/2` per bit is possible.
+-/
+
+#check @Lambda.binProg_isProgramFor
+#check @Lambda.size_binProg_le
+#check @Lambda.kolm_le_of_lt_two_pow_index
+#check @Lambda.kolm_le_three_log
+#check @Lambda.kolm_index_rate_lower
+
+/-! ## The pigeonhole principle needs exponential resolution refutations (M22-HAKEN-PHP)
+
+`Start/ResolutionPHP.lean`: `PHP(n+1, n)` is unsatisfiable, and every refutation of it (in the
+tree-shaped derivations of `Start/Resolution.lean`) has at least `2^n` nodes, by the
+Prover–Delayer argument.
+-/
+
+#check @Complexity.Sat.PHP.php
+#check @Complexity.Sat.PHP.php_unsat
+#check @Complexity.Sat.PHP.size_ge_of_falsifies
+#check @Complexity.Sat.PHP.php_refutation_size
+#check @Complexity.Sat.PHP.haken_php
+
+/-! ## Identity types for categories with attributes (M23-ID-TYPES)
+
+`Start/CwaId.lean`: an identity-type structure on a category with attributes (formation over
+`Γ.A.A⁺`, reflexivity over the diagonal, `J` with its computation rule, all stable under
+substitution), UIP as a property of such a structure, and the families model as an instance
+satisfying UIP.
+-/
+
+#check @Cwa.IdStruct
+#check @Cwa.IdStruct.UIP
+#check @CwaType.idStruct
+#check @CwaType.idStruct_UIP

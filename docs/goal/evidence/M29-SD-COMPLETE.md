@@ -176,3 +176,46 @@ instead of `reduces_sort` followed by `sort_inj`.
 non-normalizing systems (U⁻; `W0`, which has a well-typed type with no normal form), which the
 normalization-based results above do not; whether Barthe (1999) or later work already implies
 completeness of `⊢sd` for stratified functional PTSs we do not know.
+
+## M29-SD-FUNCTIONAL: functionality is necessary, even with expansion postponement (DONE_STRONG)
+
+Module `Start/PTSSyntaxDirectedFunctional.lean`, namespace `PureTypeSystem.NonFunctional`.  The
+candidate of the instruction was checked in Lean and works as given.
+
+* `F : Specification FSort`, sorts `o, a, a', b, b'`, levels `0, 1, 1, 2, 2`; axioms `o : a`,
+  `o : a'`, `a : b`, `a' : b'`; rules `(b, a, a)`, `(b', b', b')`.  `F_finite`, `F_stratified`,
+  `F_expansionPostponement`, `F_not_functional` (`o` has the two types `a`, `a'`).
+* `Γ = [R, a']` (newest first: `z : a'`, `x : R`) with `R = (λy:a'. o) z`;
+  `M = λw:a. x`; `A = Πw:a. o`.
+* `F_hasType : HasType F Γ M A` — `x : o` by conversion (`R →β o`, `o : a`), `Πw:a. o : a` by the
+  rule `(b, a, a)`, then abstraction.  `F_hasTypeR : HasTypeR F Γ M A` (expansion postponement,
+  `A` is normal).
+* `F_not_sd : ¬ ∃ T, HasTypeSD F Γ M T`.  The proof inverts the syntax-directed rules exactly as
+  in the instruction: sd-abstraction forces the body type to be the declared type of `x`
+  (`R`, shifted), sd-formation of `Πw:a. R` needs the sd-type of `R` to reduce to `a` (the only
+  rule with first sort `b`, the type of `a`, is `(b, a, a)`), and the sd-type of `R` is `a'`
+  (sd-abstraction on `λy:a'. o` needs `Πy:a'. t : s` for the sd-type `t ∈ {a, a'}` of `o`, and
+  the only rule with first sort `b'` is `(b', b', b')`, forcing `t = a'`).  The one new inversion
+  lemma is `HasTypeSD.sort_inv` (a sort is sd-typed only by an axiom), plus
+  `WhReduces.pi_eq` (a product is weak-head normal).
+* `sd_incomplete_stratified : Finite FSort ∧ Nonempty (Stratification F) ∧ HasType F Γ M A ∧
+  ¬ ∃ T, HasTypeSD F Γ M T`.
+* `sd_complete_not_of_expansionPostponement : ¬ ∀ P : Specification FSort,
+  ExpansionPostponement P → ∀ Γ M A, HasType P Γ M A → ∃ T, HasTypeSD P Γ M T`.
+
+**Consequence.** Expansion postponement does not imply completeness of `HasTypeSD`: `⊢r` may
+reduce the body type `R` to `o` before the abstraction, `⊢sd` may not, and without functionality
+the unreduced `R` and its reduct `o` have different sets of types (`R : a'` only, `o : a` and
+`o : a'`).  So `sd_complete_of_stratification` (and `sd_complete_of_levels`) cannot drop the
+functionality hypothesis.
+
+**Comparison with Pollack (1992).** We worked without the text of Pollack's paper.  As far as we
+know, Pollack observed that his syntax-directed system is not complete for non-functional PTSs,
+and the mechanism usually cited is the same as here: the abstraction rule of `⊢sd` takes the
+type of the body as computed, without reduction, and in a non-functional system a term and its
+reduct may have different sorts as types.  We cannot confirm whether his counterexample is
+stratified or what its sorts are, so we do not claim that `F` differs from it or improves on it;
+what `F` adds, as far as we can check, is that the failure happens in a system that has expansion
+postponement (it is stratified), which separates the two properties.
+
+`#print axioms` output for the terminal theorems of this delivery: `docs/goal/evidence/M29-PART1-axioms.txt` (only `propext`, `Classical.choice`, `Quot.sound`; no `sorryAx`).

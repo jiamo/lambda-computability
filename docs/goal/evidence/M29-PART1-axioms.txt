@@ -1,0 +1,98 @@
+# #print axioms for the terminal theorems of the rows closed in this delivery
+# (M29-EP-LOCAL, M29-SD-FUNCTIONAL, M29-EP-CUBE partial, M19-INDEX-CODE-RATE, M22-HAKEN-PHP, M23-ID-TYPES)
+# Generated with: lake env lean on a scratch file importing the six modules.
+
+import Start.PTSExpansionLocal
+import Start.PTSSyntaxDirectedFunctional
+import Start.PTSExpansionCube
+import Start.KolmogorovIndexCode
+import Start.ResolutionPHP
+import Start.CwaId
+#print axioms PureTypeSystem.HasTypeR.monotone
+#print axioms PureTypeSystem.HasTypeSD.monotone
+#print axioms PureTypeSystem.Functional.restrict
+#print axioms PureTypeSystem.levelsStratification
+#print axioms PureTypeSystem.expansionPostponement_of_levels
+#print axioms PureTypeSystem.sd_complete_of_levels
+#print axioms PureTypeSystem.HasTypeR.weak_subject_reduction
+#print axioms PureTypeSystem.HasTypeR.correctness_of_types
+#print axioms PureTypeSystem.NatHierarchy.natHier
+#print axioms PureTypeSystem.NatHierarchy.natHier_not_stratified
+#print axioms PureTypeSystem.NatHierarchy.natHier_expansionPostponement
+#print axioms PureTypeSystem.NatHierarchy.natHier_sd_complete
+#print axioms PureTypeSystem.NatHierarchy.natHier_weak_subject_reduction
+#print axioms PureTypeSystem.NatHierarchy.natHier_correctness_of_types
+#print axioms PureTypeSystem.HasTypeSD.sort_inv
+#print axioms PureTypeSystem.NonFunctional.F
+#print axioms PureTypeSystem.NonFunctional.F_stratified
+#print axioms PureTypeSystem.NonFunctional.F_not_functional
+#print axioms PureTypeSystem.NonFunctional.F_hasType
+#print axioms PureTypeSystem.NonFunctional.F_hasTypeR
+#print axioms PureTypeSystem.NonFunctional.F_not_sd
+#print axioms PureTypeSystem.NonFunctional.sd_incomplete_stratified
+#print axioms PureTypeSystem.NonFunctional.sd_complete_not_of_expansionPostponement
+#print axioms PureTypeSystem.cube_expansionPostponement_iff_productNormalizationR
+#print axioms PureTypeSystem.cube_expansionPostponement_of_productNormalizationR
+#print axioms PureTypeSystem.cube_productNormalizationR
+#print axioms Lambda.binProg_isProgramFor
+#print axioms Lambda.size_binProg_le
+#print axioms Lambda.kolm_le_of_lt_two_pow_index
+#print axioms Lambda.kolm_le_three_log
+#print axioms Lambda.kolm_index_rate_lower
+#print axioms Complexity.Sat.PHP.php
+#print axioms Complexity.Sat.PHP.php_unsat
+#print axioms Complexity.Sat.PHP.size_ge_of_falsifies
+#print axioms Complexity.Sat.PHP.php_refutation_size
+#print axioms Complexity.Sat.PHP.haken_php
+#print axioms Cwa.IdStruct
+#print axioms Cwa.IdStruct.UIP
+#print axioms CwaType.idStruct
+#print axioms CwaType.idStruct_UIP
+
+# Output:
+'PureTypeSystem.HasTypeR.monotone' does not depend on any axioms
+'PureTypeSystem.HasTypeSD.monotone' does not depend on any axioms
+'PureTypeSystem.Functional.restrict' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.levelsStratification' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.expansionPostponement_of_levels' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.sd_complete_of_levels' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.HasTypeR.weak_subject_reduction' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.HasTypeR.correctness_of_types' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.NatHierarchy.natHier' does not depend on any axioms
+'PureTypeSystem.NatHierarchy.natHier_not_stratified' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.NatHierarchy.natHier_expansionPostponement' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.NatHierarchy.natHier_sd_complete' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.NatHierarchy.natHier_weak_subject_reduction' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.NatHierarchy.natHier_correctness_of_types' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.HasTypeSD.sort_inv' does not depend on any axioms
+'PureTypeSystem.NonFunctional.F' does not depend on any axioms
+'PureTypeSystem.NonFunctional.F_stratified' does not depend on any axioms
+'PureTypeSystem.NonFunctional.F_not_functional' does not depend on any axioms
+'PureTypeSystem.NonFunctional.F_hasType' does not depend on any axioms
+'PureTypeSystem.NonFunctional.F_hasTypeR' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.NonFunctional.F_not_sd' depends on axioms: [propext]
+'PureTypeSystem.NonFunctional.sd_incomplete_stratified' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.NonFunctional.sd_complete_not_of_expansionPostponement' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'PureTypeSystem.cube_expansionPostponement_iff_productNormalizationR' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'PureTypeSystem.cube_expansionPostponement_of_productNormalizationR' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'PureTypeSystem.cube_productNormalizationR' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Lambda.binProg_isProgramFor' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Lambda.size_binProg_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Lambda.kolm_le_of_lt_two_pow_index' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Lambda.kolm_le_three_log' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Lambda.kolm_index_rate_lower' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.Sat.PHP.php' does not depend on any axioms
+'Complexity.Sat.PHP.php_unsat' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.Sat.PHP.size_ge_of_falsifies' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.Sat.PHP.php_refutation_size' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.Sat.PHP.haken_php' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Cwa.IdStruct' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Cwa.IdStruct.UIP' depends on axioms: [propext, Classical.choice, Quot.sound]
+'CwaType.idStruct' depends on axioms: [propext, Classical.choice, Quot.sound]
+'CwaType.idStruct_UIP' depends on axioms: [propext, Classical.choice, Quot.sound]

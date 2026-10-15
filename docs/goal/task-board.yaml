@@ -4557,7 +4557,7 @@ tasks:
     track: theory/computability
     title: "Kreisel-Lacombe-Shoenfield: an effective operation on total computable functions is continuous"
     latest_evidence: "docs/goal/evidence/M11-MYHILL-SHEPHERDSON.md"
-    open_boundary: ""
+    open_boundary: "Left TODO_READY in a later delivery under the queue rule (too large for the time left). First missing lemma (KLS continuity, with Nat.Partrec.Code as indices): theorem kls_continuous (F : Nat.Partrec.Code → Nat.Partrec.Code) (hF : Computable F) (hext : ∀ a b : Nat.Partrec.Code, (∀ n, (a.eval n).Dom) → (∀ n, (b.eval n).Dom) → a.eval = b.eval → (F a).eval = (F b).eval) (a : Nat.Partrec.Code) (ha : ∀ n, (a.eval n).Dom) (n : ℕ) : ∃ m, ∀ b : Nat.Partrec.Code, (∀ k, (b.eval k).Dom) → (∀ k < m, b.eval k = a.eval k) → (F b).eval n = (F a).eval n."
     milestone: M18
     depends_on: []
     rank: 1300
@@ -5299,7 +5299,7 @@ tasks:
     track: theory/proof-complexity
     title: "Resolution is a Cook-Reckhow proof system"
     latest_evidence: "docs/goal/evidence/M22-RESOLUTION.md"
-    open_boundary: ""
+    open_boundary: "Left TODO_READY in a later delivery under the queue rule (too large for the time left); it needs a Cobham-term checker for resolution steps. First missing lemma: theorem Complexity.resolution_checker : ∃ f : Complexity.Cob, Complexity.IsProofSystem f ∧ ∀ (x : Complexity.Word) (d : Complexity.Sat.Refutation (Complexity.Sat.decode x)), ∃ π, f.eval [π] = x ∧ π.length ≤ 64 * (x.length + 1) ^ 2 * (d.size + 1)."
     milestone: M22
     depends_on:
       - M22-RESOLUTION
@@ -5316,10 +5316,11 @@ tasks:
 
   - id: M22-HAKEN-PHP
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: theory/proof-complexity
     title: "Haken: the pigeonhole principle needs exponential-size resolution refutations"
-    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    terminal_statement: "Complexity.Sat.PHP.php n (the CNF PHP(n+1, n)), php_unsat : forall s, cnfVal s (php n) = false, php_refutation_size (d : Refutation (php n)) : 2 ^ n <= d.size, packaged as haken_php (c = 1), by the Prover-Delayer argument as an induction on derivations (size_ge_of_falsifies) (Start/ResolutionPHP.lean). The refutations of Start/Resolution.lean are trees, so this is the tree-like lower bound; DAG-like resolution is not formulated in the library (docs/goal/evidence/M22-HAKEN-PHP.md)."
+    latest_evidence: "docs/goal/evidence/M22-HAKEN-PHP.md"
     open_boundary: ""
     milestone: M22
     depends_on:
@@ -5526,11 +5527,12 @@ tasks:
 
   - id: M23-ID-TYPES
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: theory/types
     title: "Identity types for categories with attributes"
-    latest_evidence: "docs/goal/proposed-M21-M24.md"
-    open_boundary: "The library's type theories (lambda-Pi, System F) have no identity types, so this row is a prerequisite and not a formality."
+    terminal_statement: "Cwa.IdStruct T (fields Id over Γ.A.A⁺, refl over Cwa.diag, J with J_comp, and Id_sub, refl_sub, J_sub for stability under substitution along Cwa.liftLift), Cwa.IdStruct.UIP (in context Γ, x y : A, q r : Id x y the type Id q r has a term), CwaType.idStruct : IdStruct CwaType.families (Id A ⟨⟨x, a⟩, b⟩ = (a = b)) and CwaType.idStruct_UIP (Start/CwaId.lean)."
+    latest_evidence: "docs/goal/evidence/M23-ID-TYPES.md"
+    open_boundary: ""
     milestone: M23
     depends_on: []
     rank: 2040
@@ -5751,7 +5753,7 @@ tasks:
     track: theory/randomness
     title: "Van Lambalgen's theorem"
     latest_evidence: "docs/goal/proposed-M21-M24.md"
-    open_boundary: ""
+    open_boundary: "Left TODO_READY in a later delivery under the queue rule (too large for the time left); relativized tests are not defined yet. First missing lemma (the unrelativized half): theorem Lambda.MLRandom.join_left (A B : ℕ → Bool) : Lambda.MLRandom (fun n => if n % 2 = 0 then A (n / 2) else B (n / 2)) → Lambda.MLRandom A."
     milestone: M24
     depends_on: []
     rank: 2250
@@ -5769,7 +5771,7 @@ tasks:
     track: theory/randomness
     title: "Kucera-Gacs: every set is computable from a Martin-Loef random set"
     latest_evidence: "docs/goal/proposed-M21-M24.md"
-    open_boundary: ""
+    open_boundary: "Left TODO_READY in a later delivery under the queue rule (too large for the time left). First missing lemma (a universal Martin-Loef test): theorem Lambda.exists_universal_MLTest : ∃ U : Lambda.MLTest, ∀ X, Lambda.MLRandom X ↔ ∃ c, X ∉ U.level c."
     milestone: M24
     depends_on: []
     rank: 2260
@@ -6626,7 +6628,7 @@ tasks:
     track: research/open-problems
     title: "Expansion postponement for every PTS (TLCA problem 23)"
     latest_evidence: "docs/goal/evidence/M29-EP.md"
-    open_boundary: "Open problem since Pollack (1992); TLCA open problem 23. Equivalent form proved: expansionPostponement_iff_sortedSubjectReductionR. Closed for stratified specifications (expansionPostponement_of_stratification, M29-EP-CLASS), so an open case has dependent rules, unbounded levels or no stratification. Stage C (this delivery) stopped under the stop rule: no measure and no counterexample route found for Wdep := W + (o,t,t) (Wdep_not_stratified, Wdep_not_wn) or for lambda-star. First missing lemma: theorem Wdep_expansionPostponement : ExpansionPostponement BeyondPoll.Wdep; in general: theorem sortedSubjectReductionR_all {S : Type u} (P : Specification S) : SortedSubjectReductionR P."
+    open_boundary: "Open problem since Pollack (1992); TLCA open problem 23. Equivalent form proved: expansionPostponement_iff_sortedSubjectReductionR. Closed for stratified specifications (expansionPostponement_of_stratification, M29-EP-CLASS), so an open case has dependent rules, unbounded levels or no stratification. Stage C (this delivery) stopped under the stop rule: no measure and no counterexample route found for Wdep := W + (o,t,t) (Wdep_not_stratified, Wdep_not_wn) or for lambda-star. First missing lemma: theorem Wdep_expansionPostponement : ExpansionPostponement BeyondPoll.Wdep; in general: theorem sortedSubjectReductionR_all {S : Type u} (P : Specification S) : SortedSubjectReductionR P. Later delivery: unbounded levels closed (M29-EP-LOCAL, expansionPostponement_of_levels); dependent cube corners reduced to ProductNormalizationR (M29-EP-CUBE, stopped under the stop rule); the Wdep lead was not reached."
     milestone: M29
     depends_on:
       - M29-EP-STATEMENT
@@ -6662,6 +6664,68 @@ tasks:
       - "python3 scripts/check_sorry.py"
       - "lake build --wfail"
 
+  - id: M29-EP-LOCAL
+    priority: P1
+    status: DONE_STRONG
+    track: research/open-problems
+    title: "Expansion postponement and syntax-directed completeness for level assignments without a bound"
+    terminal_statement: "PureTypeSystem.expansionPostponement_of_levels (level : S -> Nat) (hax : axioms s t -> level t = level s + 1) (hrule : rule s1 s2 s3 -> level s3 = level s2 /\\ level s2 <= level s1) : ExpansionPostponement P; sd_complete_of_levels (hf : Functional P) level hax hrule (h : HasType P G M T) : exists T', HasTypeSD P G M T' /\\ Converts T' T; via HasType.finite_support, levelsStratification (truncated levels on P.restrict A R), HasTypeR.monotone, HasTypeSD.monotone, Functional.restrict. Poll's Open Problem 6 for every P with ExpansionPostponement P: HasTypeR.weak_subject_reduction, HasTypeR.correctness_of_types. Example NatHierarchy.natHier (sorts Nat, axioms n : n+1, rules (m,n,n) for n <= m): natHier_not_stratified, natHier_expansionPostponement, natHier_sd_complete, natHier_weak_subject_reduction, natHier_correctness_of_types (Start/PTSExpansionLocal.lean). Original open boundary: expansionPostponement_of_stratification and sd_complete_of_stratification assume a global bound on the levels; infinite non-dependent hierarchies are not covered."
+    latest_evidence: "docs/goal/evidence/M29-EP.md"
+    open_boundary: ""
+    milestone: M29
+    depends_on:
+      - M29-SD-COMPLETE
+    rank: 2740
+    exit_criteria:
+      - "For every P and every level : S → ℕ with axioms s t → level t = level s + 1 and rule s₁ s₂ s₃ → level s₃ = level s₂ ∧ level s₂ ≤ level s₁: ExpansionPostponement P, and, if P is functional, the completeness of HasTypeSD."
+      - "An explicit specification with infinitely many sorts in this class, and Poll's Open Problem 6 for it: weak subject reduction and correctness of types for HasTypeR."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M29-SD-FUNCTIONAL
+    priority: P1
+    status: DONE_STRONG
+    track: research/open-problems
+    title: "Pollack's syntax-directed system is incomplete for some stratified non-functional PTS"
+    terminal_statement: "PureTypeSystem.NonFunctional.sd_incomplete_stratified : Finite FSort /\\ Nonempty (Stratification F) /\\ HasType F G M A /\\ not (exists T, HasTypeSD F G M T), for F with sorts o, a, a', b, b', axioms o:a, o:a', a:b, a':b', rules (b,a,a), (b',b',b'), G = [(lam y:a'. o) z, a'], M = lam w:a. x, A = Pi w:a. o; F_not_functional, F_expansionPostponement, F_hasTypeR, HasTypeSD.sort_inv, and sd_complete_not_of_expansionPostponement (expansion postponement does not imply completeness of HasTypeSD) (Start/PTSSyntaxDirectedFunctional.lean). Comparison with Pollack 1992 in docs/goal/evidence/M29-SD-COMPLETE.md. Original open boundary: sd_complete_of_stratification assumes functionality; it is not known in the library whether stratification alone (which gives expansion postponement) suffices."
+    latest_evidence: "docs/goal/evidence/M29-SD-COMPLETE.md"
+    open_boundary: ""
+    milestone: M29
+    depends_on:
+      - M29-SD-COMPLETE
+    rank: 2745
+    exit_criteria:
+      - "An explicit Specification F with finitely many sorts, a Stratification F, and Γ M A with HasType F Γ M A and ¬ ∃ T, HasTypeSD F Γ M T."
+      - "The evidence file compares F with Pollack's (1992) non-functional counterexample as far as is known, and states the consequence: expansion postponement does not imply completeness of HasTypeSD."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M29-EP-CUBE
+    priority: P1
+    status: TODO_READY
+    track: research/open-problems
+    title: "Expansion postponement for the dependent corners of the lambda cube"
+    latest_evidence: "docs/goal/evidence/M29-EP.md"
+    open_boundary: "cube_expansionPostponement covers the four corners without the rule (∗,□). The dependent corners (λP, λP2, λPω̲, λC) are normalizing, so Poll's theorem covers them on paper, but the library has no proof and Poll's Lemma 10 has a gap. Proved (Start/PTSExpansionCube.lean): cube_expansionPostponement_iff_productNormalizationR f : ExpansionPostponement (cubeSpec f) <-> ProductNormalizationR (cubeSpec f) for every corner, using strong normalization (cube_stronglyNormalizing) only in the abstraction case, to normalize the body type. Stopped under the stop rule (no measure for the normal-subject induction in lambdaP written as Lean statements; see docs/goal/evidence/M29-EP.md). First missing lemma: theorem lambdaP_productNormalizationR : ProductNormalizationR (cubeSpec lambdaP)."
+    milestone: M29
+    depends_on:
+      - M29-EP-STATEMENT
+    rank: 2750
+    exit_criteria:
+      - "ExpansionPostponement (cubeSpec f) for every f with f.dep = true, or for a stated subset (λP at least), with the first missing lemma for the rest."
+      - "The evidence file says whether the proof uses normalization, and where."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
   - id: M19-TERM-COUNT-LOWER
     priority: P1
     status: DONE_STRONG
@@ -6684,11 +6748,12 @@ tasks:
 
   - id: M19-INDEX-CODE-RATE
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: research/information
     title: "A short index code: closed terms for numbers below N of size about log4 N"
-    latest_evidence: "docs/goal/evidence/M19-TERM-COUNT-LOWER.md"
-    open_boundary: "Named gap of M19-DESCRIPTION-COST-AUDIT. Start/KolmogorovCountLower.lean writes a number below 2^j as a closed term of size 3 + 55 j (realizers of n -> 2n and n -> 2n+1 of sizes 36 and 54). The counting bounds 3^m <= #(size <= m) <= 4^m show that no code beats log4 N up to a factor log 4 / log 3. Missing: either a family of index codes whose size is log4 N + o(log N) (or an explicit smaller constant, e.g. base-b digit realizers with small size per digit), or a proof that kolm i >= c log N for most i < N with c above 1/log 4, deciding which constant the counting term of the symmetry law of kolm carries."
+    terminal_statement: "Lambda.kolm_le_three_log (N) : forall i < N, kolm i <= 3 * Nat.log 2 N + 100 (C = 3, via the index code binProg, which binds the digit realizers dblTerm and dblOneTerm once so that each bit costs at most 3: binProg_isProgramFor, size_binProg_le, kolm_le_of_lt_two_pow_index); Lambda.kolm_index_rate_lower (2p < q) : no c with q * kolm i <= p * Nat.log 2 N + c for all i < N (no constant below 1/2, from card_kolm_le) (Start/KolmogorovIndexCode.lean). Counting-term constant for M19-SYMMETRY-HARD-HALF against card_kolm_le: factor 6 relative to log4 N (docs/goal/evidence/M19-INDEX-CODE-RATE.md). Original open boundary: named gap of M19-DESCRIPTION-COST-AUDIT; the binary realizers cost 55 per bit."
+    latest_evidence: "docs/goal/evidence/M19-INDEX-CODE-RATE.md"
+    open_boundary: ""
     milestone: M19
     depends_on:
       - M19-TERM-COUNT-LOWER

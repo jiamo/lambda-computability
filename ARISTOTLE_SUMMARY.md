@@ -1,3 +1,49 @@
+# Summary of changes for run a13c770c-05e2-4422-884f-9090afd18508
+R1, R2 and R4 are closed, along with Part II rows M22-HAKEN-PHP and M23-ID-TYPES. R3 is reduced to one missing lemma and left open under the stop rule. `lake build --wfail` succeeded (10609 jobs), and `check_manifest`, `check_sorry`, `check_closure` and `goal_state.py validate` all pass. `#print axioms` on every terminal theorem shows only `propext`, `Classical.choice` and `Quot.sound`, with no `sorryAx`; the output is in `docs/goal/evidence/M29-PART1-axioms.txt`. Everything is committed, and `scripts/pack_gate.sh HEAD && git archive --format=tar.gz HEAD -o delivery.tar.gz` ran successfully.
+
+**R1 (M29-EP-LOCAL): DONE_STRONG, in `Start/PTSExpansionLocal.lean`.** This follows the route you gave:
+- A derivation only uses finitely many axioms and rules, so I restrict to those and cap the levels at the largest one occurring. That gives a stratification, so the bounded theorems apply.
+- The result is transported back to P with new monotonicity lemmas `HasTypeR.monotone` and `HasTypeSD.monotone`. `Functional.restrict` shows functionality passes to restrictions.
+- This gives `expansionPostponement_of_levels` and, for functional P, `sd_complete_of_levels`.
+- Poll's Open Problem 6 holds for every P with expansion postponement: `HasTypeR.weak_subject_reduction` and `HasTypeR.correctness_of_types`.
+- Example: `NatHierarchy.natHier` (sorts ℕ, axioms \(n : n+1\), rules \((m,n,n)\) for \(n \le m\)). It is proved functional, infinite and not stratified, and gets EP, completeness of the syntax-directed system, and both Open Problem 6 lemmas.
+
+**R2 (M29-SD-FUNCTIONAL): DONE_STRONG, in `Start/PTSSyntaxDirectedFunctional.lean`.** Your candidate works as written.
+- `NonFunctional.F` (five sorts) is stratified and not functional, and `HasType F Γ M A` holds.
+- `F_not_sd` shows there is no syntax-directed type, using a new inversion lemma `HasTypeSD.sort_inv`.
+- Packaged as `sd_incomplete_stratified`. The consequence is `sd_complete_not_of_expansionPostponement`: expansion postponement does not imply completeness of `HasTypeSD`.
+- The comparison with Pollack (1992) is in `docs/goal/evidence/M29-SD-COMPLETE.md`.
+
+**R3 (M29-EP-CUBE and the dependent case of M29-EP): TODO_READY, stopped under the stop rule.**
+- `Start/PTSExpansionCube.lean` proves `cube_expansionPostponement_iff_productNormalizationR`: for every cube corner, EP is equivalent to `ProductNormalizationR`. The evidence file notes that normalization would enter only through this lemma.
+- The first missing lemma is `lambdaP_productNormalizationR : ProductNormalizationR (cubeSpec lambdaP)`. I did not find a measure for λP built on the erasure to simple types, so the Wdep lead was not reached.
+- The row, the M29-EP boundary note and `M29-EP.md` all record this.
+
+**R4 (M19-INDEX-CODE-RATE): DONE_STRONG, in `Start/KolmogorovIndexCode.lean`.**
+- `kolm_le_three_log`: every \(i < N\) has \(\mathrm{kolm}\,i \le 3\log_2 N + 100\). This comes from `kolm_le_of_lt_two_pow_index`, with the two digit realizers bound once so each bit costs at most 3.
+- `kolm_index_rate_lower`: no rate below 1/2 per bit is possible.
+
+**Part II:**
+- M22-RESOLUTION-PROOF-SYSTEM: TODO_READY. Skipped as too large (it needs a Cobham-term checker); the first missing lemma (`Complexity.resolution_checker`) is in `open_boundary`.
+- M22-HAKEN-PHP: closed, DONE_STRONG (`Start/ResolutionPHP.lean`, `haken_php`: PHP(n+1,n) is unsatisfiable and every refutation has size at least \(2^n\)). The library's refutations are tree-shaped, so this is the tree-like bound; this is noted in the row.
+- M22-NONDET-PROG: not started.
+- M22-IMMERMAN-SZELEPCSENYI: not started.
+- M22-SPACE-HIERARCHY: not started.
+- M24-KUCERA-GACS: TODO_READY, first missing lemma (a universal Martin-Löf test, `Lambda.exists_universal_MLTest`) in `open_boundary`.
+- M24-VAN-LAMBALGEN: TODO_READY, first missing lemma (`Lambda.MLRandom.join_left`) in `open_boundary`.
+- M18-KLS: TODO_READY, first missing lemma (`kls_continuous`, stated over `Nat.Partrec.Code`) in `open_boundary`.
+- M24-ARITH-THEORY: not started.
+- M24-GODEL2-ARITH: not started.
+- M24-GL: not started.
+- M23-ID-TYPES: closed, DONE_STRONG (`Start/CwaId.lean`: `Cwa.IdStruct` with formation, reflexivity, J and its computation rule, all stable under substitution; `IdStruct.UIP`; the families-model instance `CwaType.idStruct` with `CwaType.idStruct_UIP`).
+- M23-GROUPOID-MODEL: not started.
+- M23-UIP-INDEPENDENT: not started.
+- M15-TIME-HIERARCHY-REL: not started.
+
+The four first-missing-lemma statements type-check against the library, though none is in a committed module. No row title or exit criteria were changed.
+
+**Edits to existing files:** only the registration of the six new modules in `Start.lean` and `Start/Capstones.lean` (imports plus `#check` sections), the task board, the evidence files, and making `scripts/pack_gate.sh` executable. No existing Lean statement was changed and no axiom was added.
+
 # Summary of changes for run ce756e59-c4ad-4172-b9bf-096ba787109d
 I finished one more task from the board, **M19-TERM-COUNT-LOWER**, and marked it `DONE_STRONG`. It asked for exponential lower bounds, with explicit bases, to go with the existing upper bounds of \(4^m\) in `Start/KolmogorovCount.lean`. The full `lake build` passes (10603 jobs, no warnings). There is no `sorry` in the library, and the closure and task-board checks pass. The headline theorems depend only on `propext`, `Classical.choice` and `Quot.sound`.
 
