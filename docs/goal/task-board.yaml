@@ -6640,19 +6640,62 @@ tasks:
       - "python3 scripts/check_sorry.py"
       - "lake build --wfail"
 
+  - id: M29-SD-COMPLETE
+    priority: P1
+    status: DONE_STRONG
+    track: research/open-problems
+    title: "Completeness of Pollack's syntax-directed type checking for stratified functional PTSs"
+    terminal_statement: "PureTypeSystem.HasTypeSD (Pollack's syntax-directed system, Poll 1998 Definition 14, de Bruijn form), HasTypeSD.toHasType, Converts.whReduces_pi (weak-head standardization), HasType.type_unique_of_functional, sd_complete_of_stratification (hf : Functional P) (L : Stratification P) (h : HasType P G M A) : exists A', HasTypeSD P G M A' /\\ Converts A' A; corollaries Hurkens.uMinus_sd_complete, cube_sd_complete, BeyondPoll.W0_sd_complete with BeyondPoll.W0_in_class (W0 functional, stratified, with a well-typed type that has no normal form) (Start/PTSSyntaxDirected.lean). Original open boundary: Poll (1998, Open Problem 16): completeness of Pollack's (1992) syntax-directed system for functional PTSs is open; the library had no syntax-directed system. Literature and novelty in docs/goal/evidence/M29-SD-COMPLETE.md; novelty is not claimed."
+    latest_evidence: "docs/goal/evidence/M29-SD-COMPLETE.md"
+    open_boundary: ""
+    milestone: M29
+    depends_on:
+      - M29-EP-CLASS
+    rank: 2730
+    exit_criteria:
+      - "HasTypeSD is Pollack's system as given in Poll 1998, Definition 14 (de Bruijn form), with soundness HasTypeSD.toHasType."
+      - "For every functional P with a Stratification, HasType P Γ M A gives ∃ A', HasTypeSD P Γ M A' ∧ Converts A' A; corollaries for System U⁻ and for a functional specification with a well-typed type that has no normal form."
+      - "The evidence file states what Pollack 1992, van Benthem Jutting-McKinna-Pollack 1993, Poll 1998 and Barthe 1999 prove about this algorithm, and whether the result is new."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
   - id: M19-TERM-COUNT-LOWER
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: research/information
     title: "Exponential lower bound on the number of lambda terms of size at most m"
-    latest_evidence: "docs/goal/evidence/M19-DESCRIPTION-COST-AUDIT.md"
-    open_boundary: "First missing lemma for the second exit criterion of M19-DESCRIPTION-COST-AUDIT: an explicit lower bound c^m <= Nat.card {t : Lambda // size t <= m} (for all large m, with an explicit base c > 1) matching the proved upper bound Lambda.card_size_le up to the base. Without it the quantitative target (constant on the counting term) for M19-SYMMETRY-HARD-HALF cannot be justified or corrected."
+    terminal_statement: "Lambda.termCount_le_card (at least termCount n terms of size exactly n); Lambda.card_size_eq_pow_le (supermultiplicativity); Lambda.three_pow_le_card_size_le (3^m <= #(size <= m) for m >= 3334); Lambda.two_pow_le_card_kolm_le (2^j numbers of complexity <= 3 + 55 j); Lambda.two_pow_le_card_kolm_le_pow (2^m <= #(kolm <= m)^110 for m >= 114)"
+    latest_evidence: "docs/goal/evidence/M19-TERM-COUNT-LOWER.md"
+    open_boundary: ""
     milestone: M19
     depends_on: []
     rank: 1385
     exit_criteria:
       - "An explicit base c > 1 and a proof that at least c^m terms (and at least c^m numbers under kolm) have size, respectively complexity, at most m for all sufficiently large m."
       - "A statement of the resulting quantitative target for M19-SYMMETRY-HARD-HALF, comparing c with the base 4 of Lambda.card_size_le."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M19-INDEX-CODE-RATE
+    priority: P1
+    status: TODO_READY
+    track: research/information
+    title: "A short index code: closed terms for numbers below N of size about log4 N"
+    latest_evidence: "docs/goal/evidence/M19-TERM-COUNT-LOWER.md"
+    open_boundary: "Named gap of M19-DESCRIPTION-COST-AUDIT. Start/KolmogorovCountLower.lean writes a number below 2^j as a closed term of size 3 + 55 j (realizers of n -> 2n and n -> 2n+1 of sizes 36 and 54). The counting bounds 3^m <= #(size <= m) <= 4^m show that no code beats log4 N up to a factor log 4 / log 3. Missing: either a family of index codes whose size is log4 N + o(log N) (or an explicit smaller constant, e.g. base-b digit realizers with small size per digit), or a proof that kolm i >= c log N for most i < N with c above 1/log 4, deciding which constant the counting term of the symmetry law of kolm carries."
+    milestone: M19
+    depends_on:
+      - M19-TERM-COUNT-LOWER
+    rank: 1386
+    exit_criteria:
+      - "An explicit constant C and a proof that every i < N has kolm i <= C log2 N + O(1), with C below the 27.5 of the binary realizers, or a proof that no constant below a stated bound is possible."
+      - "The resulting constant on the counting term of M19-SYMMETRY-HARD-HALF, stated against Lambda.card_kolm_le."
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
@@ -6666,10 +6709,11 @@ tasks:
     title: "Prove counting and coding bounds for the actual Kolmogorov description measures"
     terminal_statement: "Lambda.sizeBits_append_inj (prefix-free bit code of terms); Lambda.size_le_length_sizeBits and Lambda.length_sizeBits_le (size t <= |bits t| <= 2 size t); Lambda.card_size_le (at most 4^m terms of size <= m); Lambda.card_kolm_le and Lambda.card_kolmCond_le (at most 4^m numbers of complexity <= m); Lambda.exists_le_four_pow_kolm_gt and exists_le_four_pow_kolmCond_gt; Lambda.kolm_le_kolmBits and kolmBits_le_two_mul_kolm"
     latest_evidence: "docs/goal/evidence/M19-DESCRIPTION-COST-AUDIT.md"
-    open_boundary: "The counting bounds and the comparison with bit length are proved in Start/KolmogorovCount.lean. The bound 4^m is not shown to be tight (no matching lower bound on the number of terms of size m is proved), so whether the correct constant for the symmetry law of kolm is 2 or smaller is open."
+    open_boundary: "The counting bounds and the comparison with bit length are proved in Start/KolmogorovCount.lean, and the matching lower bounds in Start/KolmogorovCountLower.lean (M19-TERM-COUNT-LOWER): between 3^m and 4^m terms of size <= m, at least 2^m <= (count)^110, i.e. base 2^(1/110), numbers of complexity <= m. What remains for the second exit criterion is the coding rate of indices: the binary realizers cost 55 log2 N + O(1) to write an index below N, so the constant on the counting term of the symmetry law is only justified up to that factor; deciding whether the constant 1 is attainable needs an index code of size log4 N + o(log N), which is not formalised."
     milestone: M19
     depends_on:
       - M19-TERM-COUNT-LOWER
+      - M19-INDEX-CODE-RATE
     rank: 1390
     exit_criteria:
       - "Prove finite counting/encoding bounds for closed lambda terms under Lambda.size and explicit comparisons with the binary-description complexity machinery."

@@ -1,0 +1,20 @@
+# #print axioms for M29-SD-COMPLETE (lake env lean on a file importing Start.PTSSyntaxDirected)
+'PureTypeSystem.HasTypeSD.toHasType' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.Reduces.stdRed' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.Reduces.whReduces_pi' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.Converts.whReduces_pi' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.HasType.type_unique_of_functional' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.Stratification.sd_core' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.sd_complete_of_stratification' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.Hurkens.uMinus_functional' does not depend on any axioms
+'PureTypeSystem.Hurkens.uMinus_sd_complete' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.cube_functional' does not depend on any axioms
+'PureTypeSystem.cube_sd_complete' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.BeyondPoll.W0_functional' does not depend on any axioms
+'PureTypeSystem.BeyondPoll.W0_stratified' does not depend on any axioms
+'PureTypeSystem.BeyondPoll.W0_hurkens_typed' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.BeyondPoll.W0_not_wn' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.BeyondPoll.W0_closed_normal_not_o' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.BeyondPoll.W0_type_not_wn' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.BeyondPoll.W0_sd_complete' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.BeyondPoll.W0_in_class' depends on axioms: [propext, Quot.sound]

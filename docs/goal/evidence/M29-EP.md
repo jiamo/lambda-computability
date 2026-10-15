@@ -427,3 +427,22 @@ All of the following report `[propext, Classical.choice, Quot.sound]` or a subse
 `expansionPostponement_iff_productNormalizationR`,
 `expansionPostponement_of_productNormalizationR_sn`.  The exact output is in
 `docs/goal/evidence/M29-EP-axioms.txt`.
+
+## Later delivery: syntax-directed completeness, the note, and the dependent case
+
+* **M29-SD-COMPLETE (DONE_STRONG).**  `Start/PTSSyntaxDirected.lean` proves completeness of
+  Pollack's syntax-directed system `HasTypeSD` for every functional stratified PTS
+  (`sd_complete_of_stratification`), with corollaries for U⁻, the non-dependent cube corners and
+  `W₀` (functional, stratified, a well-typed type with no normal form).  Details and literature:
+  `docs/goal/evidence/M29-SD-COMPLETE.md`.
+* **M29-EP-NOTE.**  A self-contained mathematical note on the level argument, both theorems and
+  the witnesses: `docs/goal/evidence/M29-EP-NOTE.md`.
+* **M29-EP, dependent case: no route.**  Under the stop rule we continued only while a route was
+  written as Lean lemma statements; none was.  The instruction's observation locates the two
+  places where a call one level up is needed in `⊢r` (exposing a `Π` in the type of a function,
+  and retyping the codomain `D` of an application in the context `x : W` for a reduct `W` of the
+  domain `X`).  We could not state, for a dependent system such as `Wdep`, an invariant that
+  controls the second place at every level (the argument sits at a lower level, so the retyping
+  of `D` is not bounded by the level measure), nor a candidate term on which both places fail.
+  The row M29-EP is unchanged; its first missing lemmas remain `Wdep_expansionPostponement` and
+  `sortedSubjectReductionR_all`.
