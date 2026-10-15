@@ -1,0 +1,30 @@
+# #print axioms for the terminal theorems of this delivery (lake env lean, Lean 4.33.0, after lake build --wfail)
+# Rows: M29-EP-CUBE (DONE_STRONG), M28-STARHEIGHT-TWO-GROUPS (DONE_STRONG), M22-HAKEN-PHP-DAG exit criterion 1 (row TODO_READY).
+# Only propext, Classical.choice and Quot.sound occur; no sorryAx, no custom axiom.
+
+#print axioms PureTypeSystem.lambdaP_expansionPostponement
+#print axioms PureTypeSystem.lambdaP_productNormalizationR
+#print axioms PureTypeSystem.HasTypeNR.hsubst
+#print axioms PureTypeSystem.HasTypeR.normalizeNR
+#print axioms PureTypeSystem.HasTypeR.ctx_expand
+#print axioms GeneralizedStarHeight.height_two_of_abelian_index_three
+#print axioms GeneralizedStarHeight.height_two_alternatingGroup_four
+#print axioms GeneralizedStarHeight.bmod_height
+#print axioms GeneralizedStarHeight.rcountMod_height
+#print axioms Complexity.Sat.DagRefutation.unsat
+#print axioms Complexity.Sat.Refutation.toDag_size
+#print axioms Complexity.Sat.Refutation.exists_dag_size_le
+
+# Output:
+'PureTypeSystem.lambdaP_expansionPostponement' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.lambdaP_productNormalizationR' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.HasTypeNR.hsubst' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.HasTypeR.normalizeNR' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.HasTypeR.ctx_expand' depends on axioms: [propext, Quot.sound]
+'GeneralizedStarHeight.height_two_of_abelian_index_three' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.height_two_alternatingGroup_four' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.bmod_height' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.rcountMod_height' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.Sat.DagRefutation.unsat' depends on axioms: [propext, Quot.sound]
+'Complexity.Sat.Refutation.toDag_size' depends on axioms: [propext]
+'Complexity.Sat.Refutation.exists_dag_size_le' depends on axioms: [propext]

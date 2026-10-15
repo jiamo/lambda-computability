@@ -5316,15 +5316,16 @@ tasks:
 
   - id: M22-HAKEN-PHP
     priority: P1
-    status: DONE_STRONG
+    status: DONE_WEAK
     track: theory/proof-complexity
     title: "Haken: the pigeonhole principle needs exponential-size resolution refutations"
     terminal_statement: "Complexity.Sat.PHP.php n (the CNF PHP(n+1, n)), php_unsat : forall s, cnfVal s (php n) = false, php_refutation_size (d : Refutation (php n)) : 2 ^ n <= d.size, packaged as haken_php (c = 1), by the Prover-Delayer argument as an induction on derivations (size_ge_of_falsifies) (Start/ResolutionPHP.lean). The refutations of Start/Resolution.lean are trees, so this is the tree-like lower bound; DAG-like resolution is not formulated in the library (docs/goal/evidence/M22-HAKEN-PHP.md)."
     latest_evidence: "docs/goal/evidence/M22-HAKEN-PHP.md"
-    open_boundary: ""
+    open_boundary: "Named gap: M22-HAKEN-PHP-DAG. Deriv in Start/Resolution.lean is a tree, so haken_php is the tree-like bound. Haken's theorem concerns general resolution, where a derived clause is reused; a DAG-like refutation of size s can unfold into a tree of size up to 2^s, so the tree-like bound does not imply it."
     milestone: M22
     depends_on:
       - M22-RESOLUTION
+      - M22-HAKEN-PHP-DAG
     rank: 1860
     exit_criteria:
       - "The CNF PHP(n+1, n) is defined and proved unsatisfiable."
@@ -5334,6 +5335,26 @@ tasks:
       - "python3 scripts/check_closure.py"
       - "python3 scripts/check_sorry.py"
       - "lake build"
+
+  - id: M22-HAKEN-PHP-DAG
+    priority: P1
+    status: TODO_READY
+    track: theory/proof-complexity
+    title: "Haken's theorem for general (DAG-like) resolution"
+    latest_evidence: "docs/goal/evidence/M22-HAKEN-PHP.md"
+    open_boundary: "Named gap of M22-HAKEN-PHP: Start/ResolutionPHP.lean proves the tree-like bound, because Deriv in Start/Resolution.lean is a tree. Exit criterion 1 is met in Start/ResolutionDag.lean: DagDeriv, DagRefutation (size = number of clauses), DagRefutation.unsat, Refutation.toDag and Refutation.toDag_size (d.toDag.size = d.size). Exit criterion 2 is open. First missing lemma (Beame-Pitassi monotone width bound): theorem Complexity.Sat.PHP.dag_exists_wide_monotone (n : ℕ) (hn : 2 ≤ n) (R : DagRefutation (php n)) : ∃ C ∈ R.lines, 2 * n ^ 2 ≤ 9 * (monoVars n C).card, where monoVars n C : Finset (ℕ × ℕ) is the set of pairs (i, j) such that x_(i,j) occurs in the monotone translation of C (a positive x_(i,j), or a negative x_(i',j) with i' ≠ i)."
+    milestone: M22
+    depends_on:
+      - M22-RESOLUTION
+    rank: 1858
+    exit_criteria:
+      - "DAG-like refutations are defined: a list of clauses, each an initial clause or a resolvent of two earlier ones, ending with the empty clause, with size the length of the list. Every tree-like refutation gives one of size at most its tree size."
+      - "Every DAG-like refutation of PHP(n+1, n) has size at least 2^(c n) for an explicit c > 0. Use Haken's bottleneck counting, or Beame–Pitassi: critical assignments, the monotone translation, a monotone width lower bound of order n², and a greedy restriction that kills wide clauses."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
 
   - id: M22-AC0-DEF
     priority: P2
@@ -6540,12 +6561,12 @@ tasks:
 
   - id: M28-STARHEIGHT-TWO-GROUPS
     priority: P1
-    status: IN_PROGRESS
+    status: DONE_STRONG
     track: research/open-problems
     title: "Generalized star height at most two for languages recognized by finite groups beyond nilpotency class two"
-    terminal_statement: "Step 1 done: GeneralizedStarHeight.singleSplit_of_firstReturn, firstReturn_height_of_fiber_one and height_two_of_firstReturn (Start/StarHeightGroups.lean). No group class reached."
+    terminal_statement: "GeneralizedStarHeight.height_two_of_abelian_index_three [Finite Alphabet] {G} [Group G] [Fintype G] (N : Subgroup G) [N.Normal] (hab : abelian N) (hidx : N.index = 3) (T : FreeMonoid Alphabet →* G) (F : Set G) : HasHeightAtMost {w | T (FreeMonoid.ofList w) ∈ F} 2, and height_two_alternatingGroup_four for alternatingGroup (Fin 4) with its Klein four subgroup (Start/StarHeightIndexThree.lean, with the reset counting of Start/StarHeightResetCount.lean). The class contains A4, which is not nilpotent. The only height-2 star counts first-return blocks modulo |N| (bmod_height)."
     latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-TWO-CLASS.md"
-    open_boundary: "Height one is classical for nilpotent groups of class at most two (Pin, Straubing and Therien). The library has no bound below three for any other group. First missing lemma (with singleSplit_of_firstReturn and firstReturn_height_of_fiber_one it gives S3): theorem fiber_one_height_one_perm3 {Alphabet : Type u} [Finite Alphabet] (T : FreeMonoid Alphabet →* Equiv.Perm (Fin 3)) : HasHeightAtMost {w | T (FreeMonoid.ofList w) = 1} 1, together with theorem remainder_fiber_height_one_perm3 {Alphabet : Type u} [Finite Alphabet] (T : FreeMonoid Alphabet →* Equiv.Perm (Fin 3)) (d : Equiv.Perm (Fin 3)) : HasHeightAtMost {w | w ∈ remainder (firstReturn T) ∧ T (FreeMonoid.ofList w) = d} 1."
+    open_boundary: ""
     milestone: M28
     depends_on:
       - M28-STARHEIGHT-SINGLE-SPLIT
@@ -6553,6 +6574,25 @@ tasks:
     exit_criteria:
       - "For a class C of finite groups containing a group that is not nilpotent of class at most two (the symmetric group on three letters is the smallest), every language recognized by a group in C has height at most two."
       - "The evidence file states what the literature gives for C and whether the result is new."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M28-STARHEIGHT-ONE-A4
+    priority: P1
+    status: TODO_READY
+    track: research/open-problems
+    title: "Generalized star height at most one for the languages recognized by A4 (Bourne's Question 5.9)"
+    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-TWO-CLASS.md"
+    open_boundary: "Height two is proved for groups with an abelian normal subgroup of index 3; the second star counts first-return blocks modulo m. Height one is open (Bourne 2017, Conjecture 4.11 for AbGrp * Z3)."
+    milestone: M28
+    depends_on:
+      - M28-STARHEIGHT-TWO-GROUPS
+    rank: 2606
+    exit_criteria:
+      - "Every language recognized by alternatingGroup (Fin 4) has height at most one, or an explicit A4 language with a proof that it has no expression of height one."
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
@@ -6708,11 +6748,12 @@ tasks:
 
   - id: M29-EP-CUBE
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: research/open-problems
     title: "Expansion postponement for the dependent corners of the lambda cube"
+    terminal_statement: "PureTypeSystem.lambdaP_expansionPostponement : ExpansionPostponement (cubeSpec lambdaP), from lambdaP_productNormalizationR and cube_expansionPostponement_of_productNormalizationR (Start/PTSExpansionLambdaP.lean). Route: a canonical judgement HasTypeNR (normal subjects, types and contexts, no reduction rule; HasTypeNR.toHasTypeR), hereditary substitution HasTypeNR.hsubst by induction on the erasure of the substituted variable's type to a simple type, HasTypeR.normalizeNR (every λP HasTypeR derivation normalizes to a canonical one) and context expansion HasTypeR.ctx_expand. Stated subset: λP; the other dependent corners are M29-EP-CUBE-REST."
     latest_evidence: "docs/goal/evidence/M29-EP.md"
-    open_boundary: "cube_expansionPostponement covers the four corners without the rule (∗,□). The dependent corners (λP, λP2, λPω̲, λC) are normalizing, so Poll's theorem covers them on paper, but the library has no proof and Poll's Lemma 10 has a gap. Proved (Start/PTSExpansionCube.lean): cube_expansionPostponement_iff_productNormalizationR f : ExpansionPostponement (cubeSpec f) <-> ProductNormalizationR (cubeSpec f) for every corner, using strong normalization (cube_stronglyNormalizing) only in the abstraction case, to normalize the body type. Stopped under the stop rule (no measure for the normal-subject induction in lambdaP written as Lean statements; see docs/goal/evidence/M29-EP.md). First missing lemma: theorem lambdaP_productNormalizationR : ProductNormalizationR (cubeSpec lambdaP)."
+    open_boundary: ""
     milestone: M29
     depends_on:
       - M29-EP-STATEMENT
@@ -6720,6 +6761,25 @@ tasks:
     exit_criteria:
       - "ExpansionPostponement (cubeSpec f) for every f with f.dep = true, or for a stated subset (λP at least), with the first missing lemma for the rest."
       - "The evidence file says whether the proof uses normalization, and where."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M29-EP-CUBE-REST
+    priority: P1
+    status: TODO_READY
+    track: research/open-problems
+    title: "Expansion postponement for λP2, λPω̲ and the Calculus of Constructions"
+    latest_evidence: "docs/goal/evidence/M29-EP.md"
+    open_boundary: "λP is closed by hereditary substitution, by induction on the erasure to simple types. λPω̲ is predicative, and hereditary substitution at both the type level and the object level should apply. λP2 and λC are impredicative: substituting a type for a type variable changes erasures, so the measure fails, and a normalization argument (Poll's) is needed."
+    milestone: M29
+    depends_on:
+      - M29-EP-CUBE
+    rank: 2755
+    exit_criteria:
+      - "ExpansionPostponement (cubeSpec f) for f ∈ {lambdaP2, lambdaPOmegaBar, coc}, or for a stated subset, with the first missing lemma for the rest."
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"

@@ -285,6 +285,10 @@ import Start.CwaId
 import Start.SwitchingLemma
 import Start.ParityNotAC0
 import Start.StarHeightGroups
+import Start.PTSExpansionLambdaP
+import Start.StarHeightResetCount
+import Start.StarHeightIndexThree
+import Start.ResolutionDag
 
 /-! ## Interfaces of the untyped calculus
 
@@ -3810,3 +3814,48 @@ satisfying UIP.
 #check @Cwa.IdStruct.UIP
 #check @CwaType.idStruct
 #check @CwaType.idStruct_UIP
+
+/-! ## Expansion postponement for λP (M29-EP-CUBE)
+
+`Start/PTSExpansionLambdaP.lean`: a canonical typing judgement `HasTypeNR` (normal subjects, types
+and contexts; no conversion rule), hereditary substitution by induction on the erasure of the
+substituted variable's type to a simple type, normalization of `HasTypeR` derivations for λP, and
+expansion postponement for λP.
+-/
+
+#check @PureTypeSystem.HasTypeNR.toHasTypeR
+#check @PureTypeSystem.HasTypeNR.hsubst
+#check @PureTypeSystem.HasTypeR.normalizeNR
+#check @PureTypeSystem.HasTypeR.ctx_expand
+#check @PureTypeSystem.lambdaP_productNormalizationR
+#check @PureTypeSystem.lambdaP_expansionPostponement
+
+/-! ## Generalized star height two for groups with an abelian normal subgroup of index 3
+(M28-STARHEIGHT-TWO-GROUPS)
+
+`Start/StarHeightResetCount.lean`: counting, modulo `m`, the positions at which a reset automaton
+reads a given letter in a given state, at height one.  `Start/StarHeightIndexThree.lean`: counting
+blocks of a prefix code modulo `m` at height two, the telescoping of block values in `N`, and
+height at most two for every language recognized by a finite group with an abelian normal subgroup
+of index 3; the corollary for `A₄`.
+-/
+
+#check @GeneralizedStarHeight.rcountMod_height
+#check @GeneralizedStarHeight.bmod_height
+#check @GeneralizedStarHeight.kstar_firstReturn_group
+#check @GeneralizedStarHeight.block_value
+#check @GeneralizedStarHeight.height_two_of_abelian_index_three
+#check @GeneralizedStarHeight.height_two_alternatingGroup_four
+
+/-! ## DAG-like resolution (M22-HAKEN-PHP-DAG)
+
+`Start/ResolutionDag.lean`: DAG-like resolution refutations (lists of clauses, each initial or a
+resolvent of two earlier ones, ending with the empty clause), their soundness, and the listing of
+a tree-like refutation as a DAG-like refutation of the same size.
+-/
+
+#check @Complexity.Sat.DagDeriv
+#check @Complexity.Sat.DagRefutation
+#check @Complexity.Sat.DagRefutation.unsat
+#check @Complexity.Sat.Refutation.toDag_size
+#check @Complexity.Sat.Refutation.exists_dag_size_le
