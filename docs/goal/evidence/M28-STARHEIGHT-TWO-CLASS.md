@@ -130,3 +130,98 @@ theorem remainder_fiber_height_one_perm3 {Alphabet : Type u} [Finite Alphabet]
     (T : FreeMonoid Alphabet →* Equiv.Perm (Fin 3)) (d : Equiv.Perm (Fin 3)) :
     HasHeightAtMost {w | w ∈ remainder (firstReturn T) ∧ T (FreeMonoid.ofList w) = d} 1
 ```
+
+## M28-STARHEIGHT-TWO-GROUPS closed: an abelian normal subgroup of index 3 (this delivery)
+
+Modules: `Start/StarHeightResetCount.lean` and `Start/StarHeightIndexThree.lean` (new; no existing
+module edited).
+
+```lean
+theorem height_two_of_abelian_index_three [Finite Alphabet] {G : Type} [Group G] [Fintype G]
+    (N : Subgroup G) [N.Normal] (hab : ∀ x ∈ N, ∀ y ∈ N, x * y = y * x) (hidx : N.index = 3)
+    (T : FreeMonoid Alphabet →* G) (F : Set G) :
+    HasHeightAtMost {w | T (FreeMonoid.ofList w) ∈ F} 2
+
+theorem height_two_alternatingGroup_four [Finite Alphabet]
+    (T : FreeMonoid Alphabet →* alternatingGroup (Fin 4)) (F : Set (alternatingGroup (Fin 4))) :
+    HasHeightAtMost {w | T (FreeMonoid.ofList w) ∈ F} 2
+```
+
+The class contains `A₄` (Klein four subgroup, index 3), which is not nilpotent, so the exit
+criterion is met.
+
+### Construction, against the sketch
+
+* (a) Blocks.  `ψ = psi N T : FreeMonoid → G ⧸ N`, `E = firstReturn ψ`;
+  `kstar_firstReturn_group : E∗ = ψ⁻¹(1) = T⁻¹(N)`.  `E` and `E∗` have height ≤ 1 because
+  `G ⧸ N` has order 3 and is commutative (`q3_comm`, `height_one_of_comm`,
+  `firstReturn_height_of_fiber_one`).  (We used height one for `E` instead of an explicit
+  star-free expression: it suffices, since only height ≤ 1 of the blocks is needed.)
+* (b)/(d) Inside a block the walk in `G ⧸ N ≅ Z/3` avoids `1`, and there it *is* a reset automaton
+  (`walk_reset`): a letter with `ψ b = 1` keeps the state, any other letter `b` sends every
+  non-identity state to `(ψ b)⁻¹` (the unique state ≠ 1 from which `b` does not return).
+  `Start/StarHeightResetCount.lean` proves that "the number of positions reading `a` in state `q`
+  is `r` mod `m`" has height ≤ 1 for any reset automaton (`rcountMod_height`, a copy of the
+  `countIs`/`countMod` construction with the letter replaced by a (state, letter) pair), and that
+  "the state after `v` is `q'`" is star-free (`stateIs_height`).
+* (c) Telescoping.  `rep : G ⧸ N → G` with `rep 1 = 1`, `cv q a = rep q · T a · rep (q ψ a)⁻¹ ∈ N`
+  (`cv_mem`), `telescope`; in the abelian `N` the product depends only on the counts modulo `|N|`
+  (`list_prod_cv`, `valN`).  `block_value`: for a block `x :: (v ++ [y])` with `ψ x ≠ 1`,
+  `T(block) = cv 1 x · valN(residues of the counts along v from ψ x) · cv (ψ y)⁻¹ y`;
+  `rem_value` is the same for a nonempty remainder, ending with `rep (state)`.
+* (d) `Bv_height`: the blocks of each value `g` form a finite union of
+  `E ⊓ {[x]}` and `E ⊓ ({[x]} · (⋂ residue conditions) · {[y]})`, of height ≤ 1.
+* (e) `bmod_height`: for a prefix code `E` with `E∗` of height ≤ 1 and a subcode `L` of height
+  ≤ 1, "the number of `L`-blocks is `r` mod `m`" is `(Y^m)∗ · Y^r · D` with
+  `D = E∗ ∩ (E∗ L A∗)ᶜ`, `Y = D L`, of height 2.  `Av_eq`: the words of `E∗` with value `d` are a
+  finite union over residue vectors `res : N → Fin |N|` with `∏ g^(res g) = d` of
+  `⋂_g bmod E (Bv g) |N| (res g)` (uniqueness of the factorization by `flatten_injective`).
+* (f) `Rv_height`: remainders of each value have height ≤ 1 (finite union of
+  `remainder E ⊓ ({[x]} · (residue conditions ⊓ final state))`, plus `{[]}` for value 1).
+* (g) `height_two_of_split`: as in `height_two_of_singleSplit`, by `factor_remainder`.
+
+The only height-2 star is the block-count star `(Y^m)∗` of (e).
+
+### Literature (checked by the task author; recorded here)
+
+* Henneman (1971): languages recognized by commutative groups have generalized star height ≤ 1.
+* Pin, Straubing and Thérien, "Some results on the generalized star-height problem", Information
+  and Computation 101 (1992): height ≤ 1 for nilpotent groups of class 2, for every group dividing
+  a semidirect product of a commutative group by `(Z/2Z)^n`, and for every group of order < 12.
+  So `S₃`, all dihedral groups and every group with an abelian subgroup of index 2 are classical;
+  the `S₃` lead of the earlier open boundary is therefore classical and has been dropped.
+* T. Bourne, PhD thesis, St Andrews (2017): groups of order 12–15 are resolved except `A₄` and
+  `Dic₃` (Question 5.9); Conjecture 4.11 (open): every language recognized by a monoid in
+  `AbGrp ∗ Z₃` has height ≤ 1.
+* As far as we know, no bound below 3 was known for `A₄`, so height ≤ 2 for `A₄` would be new.
+  This is stated with that caveat: we have not surveyed the literature after Bourne's thesis.
+
+### Stretch (stop rule): first missing lemmas
+
+* Height one for `A₄` (Bourne's Question 5.9), row M28-STARHEIGHT-ONE-A4.  The only obstruction
+  in our expression is the block-count star.  First missing lemma:
+
+  ```lean
+  theorem bmod_height_one {E L : Language Alphabet} (hE : PrefixCode E) (hL : L ≤ E)
+      (hEs : HasHeightAtMost E∗ 1) (hLh : HasHeightAtMost L 1) {m r : ℕ} (hr : r < m) :
+      HasHeightAtMost (bmod E L m r) 1
+  ```
+
+  (for `E = firstReturn (psi N T)` and `L = Bv N T g`; in this generality it is probably false,
+  and a proof must use the structure of the blocks).
+* Prime index `p ≥ 5`: inside a block the walk in `Z/p ∖ {0}` is no longer a reset automaton
+  (`walk_reset` uses `|G ⧸ N| = 3`), and the state is a bounded counter.  First missing lemma:
+
+  ```lean
+  theorem walk_count_height {p : ℕ} [Fact p.Prime] (ψ : FreeMonoid Alphabet →* Multiplicative (ZMod p))
+      (q qs : Multiplicative (ZMod p)) (a : Alphabet) (m r : ℕ) (hr : r < m) :
+      HasHeightAtMost {v | (∀ u, u <+: v → q * ψ (FreeMonoid.ofList u) ≠ 1) ∧
+        (countAt ψ q qs a v) % m = r} 1
+  ```
+
+  where `countAt ψ q qs a v` counts the positions of `v` reading `a` in the state `qs` of the walk
+  from `q`.
+* Index 2 by the same proof (optional) was not done; it is classical with height ≤ 1.
+
+`#print axioms`: `docs/goal/evidence/M29-M28-axioms.txt` (only `propext`, `Classical.choice`,
+`Quot.sound`).

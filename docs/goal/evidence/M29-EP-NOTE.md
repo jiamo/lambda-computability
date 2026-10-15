@@ -143,3 +143,18 @@ at levels `0, 1, 1, 2, 3`, axioms `o : t`, `o : t'`, `t : k`, `k : u`, rules `(o
 * The dependent case (rules with `ℓ(s₂) > ℓ(s₁)`, e.g. `λP`, `λC`, or `W` plus `(o,t,t)`) is not
   settled: there the application case calls on the argument at a lower level, and the measure
   fails.
+
+## 6. Related work
+
+The TLCA list of open problems (problem 23) credits partial solutions to Poll (1998), for PTSs
+with weakly normalizing types, and to Barthe (1998), for injective PTSs.  Gutiérrez and Ruiz,
+"Expansion postponement via cut elimination in sequent calculi for pure type systems" (ICALP 2003,
+LNCS 2719, 956–968), derive expansion postponement from cut elimination in a sequent calculus for
+PTSs, and prove cut elimination for normalizing systems.  Their "Order functional pure type
+systems" (ENTCS, 2002) assigns orders to sorts, with `@s = μ + @s'` for an axiom `s : s'` and
+`@s₃` determined by `(@s₁, @s₂)` for a rule `(s₁, s₂, s₃)`; this is close to our Stratification.
+As far as we can tell, the stratified result (M29-EP-CLASS) is new only through dropping
+normalization, as the witness `W` shows (`W_type_not_wn`: `W` is stratified and has types without
+normal form).  This must be confirmed against the full texts of Barthe and of Gutiérrez–Ruiz,
+which we have not read.
+

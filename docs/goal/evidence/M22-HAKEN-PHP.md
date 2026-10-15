@@ -48,3 +48,40 @@ not formulated here; it would need a line-based notion of refutation (a list of 
 axiom or a resolvent of two earlier ones) and is a natural follow-up row.
 
 `#print axioms` output for the terminal theorems of this delivery: `docs/goal/evidence/M29-PART1-axioms.txt` (only `propext`, `Classical.choice`, `Quot.sound`; no `sorryAx`).
+
+## Correction (this delivery): M22-HAKEN-PHP is DONE_WEAK, gap M22-HAKEN-PHP-DAG
+
+`Deriv` in `Start/Resolution.lean` is a tree, so `haken_php` is the tree-like bound.  Haken's
+theorem concerns general resolution, where a derived clause is reused; a DAG-like refutation of
+size `s` can unfold into a tree of size up to `2^s`, so the tree-like bound does not imply it.
+M22-HAKEN-PHP is therefore `DONE_WEAK` (terminal statement unchanged) and depends on the new row
+M22-HAKEN-PHP-DAG.
+
+### M22-HAKEN-PHP-DAG: exit criterion 1 (`Start/ResolutionDag.lean`)
+
+```lean
+def DagStep (F : Cnf) (prev : List Clause) (C : Clause) : Prop   -- initial, or resolvent of two of prev
+inductive DagDeriv (F : Cnf) : List Clause → Prop                -- nil, snoc
+structure DagRefutation (F : Cnf) where
+  lines : List Clause
+  valid : DagDeriv F lines
+  last : lines.getLast? = some []
+def DagRefutation.size (R : DagRefutation F) : ℕ := R.lines.length
+
+theorem DagRefutation.unsat (R : DagRefutation F) : ∀ σ, cnfVal σ F = false
+theorem Refutation.toDag_size (d : Refutation F) : d.toDag.size = d.size
+theorem Refutation.exists_dag_size_le (d : Refutation F) : ∃ R : DagRefutation F, R.size ≤ d.size
+```
+
+`Refutation.toDag` lists the clauses of the tree in postorder.
+
+### Exit criterion 2: open.  First missing lemma (Beame–Pitassi monotone width bound)
+
+```lean
+theorem Complexity.Sat.PHP.dag_exists_wide_monotone (n : ℕ) (hn : 2 ≤ n) (R : DagRefutation (php n)) :
+    ∃ C ∈ R.lines, 2 * n ^ 2 ≤ 9 * (monoVars n C).card
+```
+
+where `monoVars n C : Finset (ℕ × ℕ)` is the set of pairs `(i, j)` such that `x_(i,j)` occurs in
+the monotone translation of `C` (a positive `x_(i,j)`, or a negative `x_(i',j)` with `i' ≠ i`).
+The rest of the argument is the greedy restriction that kills the wide clauses.

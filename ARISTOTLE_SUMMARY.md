@@ -1,3 +1,38 @@
+# Summary of changes for run ac8b13cc-1c1c-4994-b3bf-174011591fe7
+All work is committed and pushed. `lake build --wfail` succeeds with no warnings. `check_manifest`, `check_sorry`, `check_closure` and `goal_state.py validate` all pass, and so does `scripts/pack_gate.sh HEAD`. `delivery.tar.gz` was produced with the exact command you gave. `#print axioms` output for the terminal theorems is saved in `docs/goal/evidence/M29-M28-axioms.txt`; only `propext`, `Classical.choice` and `Quot.sound` appear.
+
+**R1 (M29-EP-CUBE): DONE_STRONG for λP.** New module `Start/PTSExpansionLambdaP.lean`, with the main result `lambdaP_expansionPostponement : ExpansionPostponement (cubeSpec lambdaP)` (from `lambdaP_productNormalizationR`). The proof follows your plan with one change. The plan's steps 4 (regularity) and 5 (completeness on normal subjects) are replaced by `HasTypeR.normalizeNR`, which turns every λP derivation directly into a canonical one. The pieces are:
+- the erasure `Expr.erase` and the invariant `ErGood`;
+- the canonical judgement `HasTypeNR`, whose application rule also requires the argument to erase to `base` (always true in λP);
+- hereditary substitution `HasTypeNR.hsubst`, by induction on the erasure;
+- context expansion `HasTypeR.ctx_expand`.
+
+Normalization of λP is used only to normalize the type `B[a]` of a neutral application; subjects are normalized by hereditary substitution itself. This is a formal proof of a result already known on paper, and no novelty is claimed. Row M29-EP-CUBE-REST was added exactly as you gave it. λPω̲ was not attempted; its first missing lemma is `theorem lambdaPOmegaBar_productNormalizationR : ProductNormalizationR (cubeSpec lambdaPOmegaBar)`. The stretch goal was not attempted; its first missing lemma is `lambdaP_sd_complete : HasType (cubeSpec lambdaP) Γ M A → ∃ A', HasTypeSD (cubeSpec lambdaP) Γ M A' ∧ Converts A A'`. Both are recorded in `docs/goal/evidence/M29-EP.md`.
+
+**R2 (M28-STARHEIGHT-TWO-GROUPS): DONE_STRONG.** `height_two_of_abelian_index_three` is proved with exactly your signature, plus the corollary `height_two_alternatingGroup_four` for A4. They are in `Start/StarHeightIndexThree.lean`, with the counting machinery in `Start/StarHeightResetCount.lean`. Your steps (a)–(g) were followed, with two changes:
+- For (b), the blocks only need height ≤ 1, which comes from `G ⧸ N` being commutative; no explicit star-free expression was written.
+- Inside a block, the walk in `G ⧸ N` turns out to be a reset automaton (`walk_reset`), which makes the per-state counting in (d) work at height 1.
+
+The only height-2 star counts blocks modulo `|N|` (`bmod_height`). Row M28-STARHEIGHT-ONE-A4 was added. The literature, the caveat on novelty, and the first missing lemmas for the stretch goals (`bmod_height_one`, and `walk_count_height` for prime index p ≥ 5) are in `docs/goal/evidence/M28-STARHEIGHT-TWO-CLASS.md`.
+
+**R3: done.** Section "6. Related work" was added to `docs/goal/evidence/M29-EP-NOTE.md` with the points you listed, including that the claim must be checked against the full texts of Barthe and Gutiérrez–Ruiz.
+
+**Part II**
+- 0. M22-HAKEN-PHP is now DONE_WEAK with its terminal statement unchanged, and depends on the new row M22-HAKEN-PHP-DAG. That row stays TODO_READY:
+  - Exit criterion 1 is met by the new module `Start/ResolutionDag.lean`, which defines DAG-like refutations and proves `DagRefutation.unsat` and `Refutation.toDag_size` (DAG size equals tree size).
+  - The first missing lemma for criterion 2 is `Complexity.Sat.PHP.dag_exists_wide_monotone`, stated in the row's `open_boundary`. I added the side condition `2 ≤ n` without checking whether the statement needs it (or holds as written).
+- M22-NONDET-PROG, M22-IMMERMAN-SZELEPCSENYI, M22-SPACE-HIERARCHY, M24-ARITH-THEORY, M24-GODEL2-ARITH, M24-GL, M23-GROUPOID-MODEL, M23-UIP-INDEPENDENT, M15-TIME-HIERARCHY-REL, M15-BGS-EQUAL, M24-K-TRIVIAL, M24-OMEGA-MODELS, M23-LAMBDA-MU, M25-CBNEED-MACHINE, M25-CBNEED-COST, M25-CBPV, M17-EXREG-PROJ-REGULAR, M17-EXREG-UNIVERSAL: not started.
+- Lambda.MLRandom.join_left, Lambda.exists_universal_MLTest, kls_continuous: not started.
+
+**Edits to existing files**
+- No existing Lean statement or protected module was changed.
+- `Start.lean` and `Start/Capstones.lean` now import and register the four new modules.
+- `docs/goal/task-board.yaml` and `docs/current-goal-state.md` were updated (re-rendered).
+- Evidence files were extended.
+- `scripts/pack_gate.sh` was made executable (file mode only) so the delivery command runs as written.
+
+The Properties table now lists the new results as proved, and the existing Haken entry was relabelled as the tree-like bound.
+
 # Summary of changes for run a13c770c-05e2-4422-884f-9090afd18508
 R1, R2 and R4 are closed, along with Part II rows M22-HAKEN-PHP and M23-ID-TYPES. R3 is reduced to one missing lemma and left open under the stop rule. `lake build --wfail` succeeded (10609 jobs), and `check_manifest`, `check_sorry`, `check_closure` and `goal_state.py validate` all pass. `#print axioms` on every terminal theorem shows only `propext`, `Classical.choice` and `Quot.sound`, with no `sorryAx`; the output is in `docs/goal/evidence/M29-PART1-axioms.txt`. Everything is committed, and `scripts/pack_gate.sh HEAD && git archive --format=tar.gz HEAD -o delivery.tar.gz` ran successfully.
 

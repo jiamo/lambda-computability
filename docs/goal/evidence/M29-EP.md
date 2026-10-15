@@ -535,3 +535,77 @@ we did not continue.  The `Wdep` lead (the same measure without normalization) i
 reached either; M29-EP is unchanged.
 
 `#print axioms` output for the terminal theorems of this delivery: `docs/goal/evidence/M29-PART1-axioms.txt` (only `propext`, `Classical.choice`, `Quot.sound`; no `sorryAx`).
+
+## M29-EP-CUBE closed for λP (DONE_STRONG; this delivery)
+
+Module `Start/PTSExpansionLambdaP.lean` (new; no existing module edited).
+
+```lean
+theorem lambdaP_productNormalizationR : ProductNormalizationR (cubeSpec lambdaP)
+theorem lambdaP_expansionPostponement : ExpansionPostponement (cubeSpec lambdaP)
+```
+
+This is a complete formal proof of a result known on paper (Poll 1998 for normalizing PTSs;
+Barthe for injective PTSs); no novelty is claimed.
+
+**Route (canonical forms, after Watkins–Cervesato–Pfenning–Walker and Harper–Licata).**
+
+1. *Erasure* `Expr.erase : Expr S → STy` (Harper–Honsell–Plotkin): `pi A B ↦ arr (erase A)
+   (erase B)`, `lam _ F ↦ erase F`, `app F _ ↦ erase F`, otherwise `base`.  `Expr.ErGood M`
+   says that every application argument inside `M` erases to `base`.  Erasure is invariant under
+   renaming, under substitution of base-erased terms (`Expr.erase_subst`), and under reduction of
+   `ErGood` terms (`Reduces.erGood_erase`).
+2. *Canonical judgement* `HasTypeNR P Γ M T`: the rules of `HasTypeR` without the reduction rule;
+   the application rule normalizes `B[a]`, requires `app F a` normal, and (a change with respect
+   to the plan) requires the argument to erase to `base`.  All subjects, types and context entries
+   are normal (`HasTypeNR.normal`), and `HasTypeNR.toHasTypeR` is soundness.  For λP the side
+   condition `a.erase = base` always holds (`HasTypeNR.erase_base`, `lambdaP_kind_not_star`:
+   arguments are objects, typed by types of sort `∗`).
+3. *Hereditary substitution* `HasTypeNR.hsubst` (`hsubst_aux`): induction on the size of the
+   erasure of the type of the substituted variable, then on the derivation.  The head case
+   `x Q₁ … Qₖ` with `N = λy:C. e` fires the redex and recurses with `y : C`, whose erasure is a
+   proper part of the erasure of `Π y:C. D` (`STy.ArrSuffix.dom_lt`); later arguments are typed
+   at domains whose erasure is a suffix of it (`ArrSuffix`).  The Π premise of an abstraction is a
+   premise of the canonical rule, so it is substituted hereditarily, and the gap of Poll's Lemma
+   10 does not arise.
+4. *Normalization of derivations* `HasTypeR.normalizeNR` (λP): every `HasTypeR` derivation
+   normalizes to a canonical derivation, in a pointwise reduct of the context, of a reduct of the
+   subject at a reduct of the type.  This replaces steps 4 (regularity) and 5 (completeness on
+   normal subjects) of the plan: no induction on normal subjects is needed, and so the measure
+   problem of the previous delivery does not occur.
+5. *Context expansion* `HasTypeR.ctx_expand`: a `HasTypeR` derivation in a pointwise reduct of a
+   valid context is a derivation in the context itself.
+6. `lambdaP_productNormalizationR` combines 4, 5 and soundness with `generation_pi`, and
+   `cube_expansionPostponement_of_productNormalizationR lambdaP` gives EP.
+
+**Use of normalization (exit criterion 2).**  Weak normalization of λP
+(`lambdaP_weaklyNormalizing`, from `cube_lambdaP_sn`, `Start/CoCSN.lean`) is used in exactly two
+places, both to normalize the *type* `B[a]` of a neutral application `F a` (the canonical
+application rule needs a normal type): in the neutral case of `hsubst_aux`, and in the application
+case of `HasTypeR.normalizeNR`.  It is also used, as before, in the abstraction case of
+`expansionPostponement_of_productNormalizationR`.  The *subjects* are normalized by hereditary substitution itself,
+by the erasure measure, without appeal to the normalization theorem.
+
+**λPω̲ (not attempted in this delivery).**  In λPω̲ type variables can be substituted by type
+constructors, and the erasure `erase` of this module is not invariant under such a substitution
+(the substituted variable can sit in head position of a type).  The measure needs a level-stratified
+erasure (kinds to simple kinds for constructor variables, types to simple types for object
+variables), with hereditary substitution at both levels.  First missing lemma:
+
+```lean
+theorem lambdaPOmegaBar_productNormalizationR : ProductNormalizationR (cubeSpec lambdaPOmegaBar)
+```
+
+recorded in the new row M29-EP-CUBE-REST, with `lambdaP2` and `coc` (impredicative; the erasure
+measure fails, and a normalization argument in the style of Poll is needed).
+
+**Stretch (completeness of `HasTypeSD` for λP, Poll's Open Problem 16) — not attempted.**  First
+missing lemma:
+
+```lean
+theorem lambdaP_sd_complete {Γ : List (Expr Srt)} {M A : Expr Srt}
+    (h : HasType (cubeSpec lambdaP) Γ M A) :
+    ∃ A', HasTypeSD (cubeSpec lambdaP) Γ M A' ∧ Converts A A'
+```
+
+`#print axioms`: `docs/goal/evidence/M29-M28-axioms.txt`.

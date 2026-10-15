@@ -640,4 +640,8 @@ import Start.CwaId
 import Start.SwitchingLemma
 import Start.ParityNotAC0
 import Start.StarHeightGroups
+import Start.PTSExpansionLambdaP
+import Start.StarHeightResetCount
+import Start.StarHeightIndexThree
+import Start.ResolutionDag
 import Start.Capstones
