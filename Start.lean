@@ -667,6 +667,8 @@ import Start.StarHeightIndexThreeAll
 import Start.StarHeightBourne
 import Start.GroupOrderLtTwenty
 import Start.StarHeightOrderLtTwenty
+import Start.StarHeightIndexFour
+import Start.StarHeightZ4Core
 import Start.PTSExpansionLambdaPOmegaBarCanon
 import Start.PTSExpansionLambdaPOmegaBarObj
 import Start.Capstones
