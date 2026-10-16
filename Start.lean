@@ -644,4 +644,14 @@ import Start.PTSExpansionLambdaP
 import Start.StarHeightResetCount
 import Start.StarHeightIndexThree
 import Start.ResolutionDag
+import Start.StarHeightClosure
+import Start.StarHeightTransfer
+import Start.StarHeightPrimeCount
+import Start.StarHeightPrimeIndex
+import Start.StarHeightA4Core
+import Start.ResolutionPHPWidth
+import Start.ResolutionPHPDag
+import Start.PTSExpansionLambdaPOmegaBar
+import Start.StarHeightWreathStep
+import Start.SpaceNProg
 import Start.Capstones

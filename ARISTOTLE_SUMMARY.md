@@ -1,3 +1,30 @@
+# Summary of changes for run de893bbc-5077-4c72-ac05-a4bdda293e17
+`lake build --wfail` succeeds with 10623 jobs. `check_manifest.py`, `check_sorry.py`, `check_closure.py` and `goal_state.py validate` all pass. No axioms were added, and no protected module was changed. The `#print axioms` output for the closed rows is in `docs/goal/evidence/M28-M22-axioms.txt`: only `propext`, `Classical.choice` and `Quot.sound` appear. Everything is committed and pushed, `scripts/pack_gate.sh HEAD` passes, and `delivery.tar.gz` was produced with the exact command you gave.
+
+**R0.** In `docs/goal/evidence/M28-STARHEIGHT-TWO-CLASS.md`, the "As far as we know…" bullet is now a Correction paragraph. It covers Bourne §4.2.2, the wreath product principle (PST §5), and the fact that `height_two_of_abelian_index_three` is the first formal proof of a known bound. I made the same correction in the Properties table. Row statuses are unchanged.
+
+**R1 (closed, DONE_STRONG; every prime p is covered).** The new modules are `StarHeightClosure`, `StarHeightTransfer`, `StarHeightPrimeCount` and `StarHeightPrimeIndex`.
+- Tools: letter quotients, inverse alphabetic morphisms, the Transfer Lemma (`transfer_height_one`), and star-freeness of `t∗` for primitive `t`.
+- Main theorem: `height_one_of_prime_index_pure`, with exactly the signature you gave.
+- Corollaries: index two, `QuaternionGroup n` (so Dic3), `DihedralGroup n`, and A4 when every letter lies in `V ∪ σV`.
+- The evidence file `M28-STARHEIGHT-ONE.md` is written, and the row has been added.
+
+**R2 (stop rule).** In `StarHeightA4Core`, `height_one_alternatingGroup_four_of_core` proves that if `coreLang k 2` has height at most one for `k < 2`, every A4 language does. Its general form is `height_one_of_index_three_exponent_two_of_core`. Letters in `V` are handled outright, by the Transfer Lemma on the first-return code. M28-STARHEIGHT-ONE-A4 is now IN_PROGRESS. **First missing lemma:** `theorem coreLang_height_one (k : ℕ) (hk : k < 2) : HasHeightAtMost (coreLang k 2) 1`. For the stretch item, I recorded your obstruction analysis in the evidence file; I made no Lean attack on `coreLang`.
+
+**R3 (closed).** Haken's theorem for DAG-like resolution, via Beame–Pitassi:
+- `dag_exists_wide_monotone` (`ResolutionPHPWidth`): every DAG refutation of PHP(n+1, n), n ≥ 2, has a clause `C` with `2n² ≤ 9·|monoVars n C|`.
+- `php_dag_size (n) (R : DagRefutation (php n)) : 2 ^ (n / 32) ≤ R.size` (`ResolutionPHPDag`). The restriction step is done without building restricted refutations: the complexity measure is taken relative to the partial matching chosen so far.
+- M22-HAKEN-PHP-DAG and M22-HAKEN-PHP are both DONE_STRONG, and the DAG theorem is in M22-HAKEN-PHP's terminal statement.
+
+**R4 (stop rule).** `PTSExpansionLambdaPOmegaBar` proves the classification of legal terms (`cube_classification`) and that kind erasure is unchanged by substitution (`eraseK_subst`). I did not build a canonical judgement for λPω̲ or either level of hereditary substitution. **First missing lemma:** `theorem lambdaPOmegaBar_productNormalizationR : ProductNormalizationR (cubeSpec lambdaPOmegaBar)`. M29-EP-CUBE-REST is now IN_PROGRESS. M29-EP-IMPREDICATIVE was not added, because λPω̲ did not close.
+
+**Part II:**
+- M28-STARHEIGHT-WREATH-STEP: closed (DONE_STRONG). `height_succ_of_abelian_normal` gives the wreath step, and `height_two_of_commutator_abelian` gives height at most two for groups with abelian commutator subgroup.
+- M22-NONDET-PROG: in progress, exit criterion 1 met (`SpaceNProg`: programs with a choice instruction, their semantics, compiler correctness, well-formed machines). **First missing lemma:** `NProg.exec_of_accepts (p) (x) (h : p.machine.Accepts x) : ∃ c', NProg.Exec x (fun _ => True) p init c'`.
+- All remaining rows, from M22-IMMERMAN-SZELEPCSENYI to the M18-KLS lemmas: not started.
+
+**Edits to existing files:** none to any Lean module, apart from registering the new modules in `Start.lean` and `Start/Capstones.lean`. Outside Lean, `scripts/pack_gate.sh` was not executable, so your packing command failed; I set its executable bit (a mode change only) so that the command runs.
+
 # Summary of changes for run ac8b13cc-1c1c-4994-b3bf-174011591fe7
 All work is committed and pushed. `lake build --wfail` succeeds with no warnings. `check_manifest`, `check_sorry`, `check_closure` and `goal_state.py validate` all pass, and so does `scripts/pack_gate.sh HEAD`. `delivery.tar.gz` was produced with the exact command you gave. `#print axioms` output for the terminal theorems is saved in `docs/goal/evidence/M29-M28-axioms.txt`; only `propext`, `Classical.choice` and `Quot.sound` appear.
 

@@ -193,8 +193,16 @@ The only height-2 star is the block-count star `(Y^m)∗` of (e).
 * T. Bourne, PhD thesis, St Andrews (2017): groups of order 12–15 are resolved except `A₄` and
   `Dic₃` (Question 5.9); Conjecture 4.11 (open): every language recognized by a monoid in
   `AbGrp ∗ Z₃` has height ≤ 1.
-* As far as we know, no bound below 3 was known for `A₄`, so height ≤ 2 for `A₄` would be new.
-  This is stated with that caveat: we have not surveyed the literature after Bourne's thesis.
+
+**Correction.** An earlier version of this file said that, as far as we knew, no bound below 3 was
+known for `A₄`, so that height ≤ 2 for `A₄` would be new. That is wrong. Bourne (PhD thesis,
+St Andrews 2017, §4.2.2) gives an expression (4.3) for the counting languages behind
+`AbGrp ⋊ Z₃` and notes that it has generalized star height two; together with his reduction of
+Conjecture 4.11 to Conjecture 4.12, this gives height ≤ 2 for those groups. More generally, if
+`N` is an abelian normal subgroup of `G`, then the height for `G` is at most the height for
+`G ⧸ N` plus one (the wreath product principle; Pin, Straubing and Thérien 1992, §5), so every
+metabelian group gives height ≤ 2. `height_two_of_abelian_index_three` is therefore the first
+formal proof of a known bound, not a new bound.
 
 ### Stretch (stop rule): first missing lemmas
 
