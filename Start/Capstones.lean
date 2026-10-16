@@ -312,6 +312,8 @@ import Start.StarHeightIndexThreeAll
 import Start.StarHeightBourne
 import Start.GroupOrderLtTwenty
 import Start.StarHeightOrderLtTwenty
+import Start.StarHeightIndexFour
+import Start.StarHeightZ4Core
 import Start.PTSExpansionLambdaPOmegaBarCanon
 import Start.PTSExpansionLambdaPOmegaBarObj
 
@@ -4043,6 +4045,25 @@ by such a group has height at most one.
 
 #check @GeneralizedStarHeight.exists_abelian_normal_index_le_three
 #check @GeneralizedStarHeight.height_one_of_card_lt_twenty
+
+/-! ## Abelian-by-`Z₄` and the Frobenius group `F₂₀` (M28-STARHEIGHT-INDEX-FOUR, conditional)
+
+`Start/StarHeightIndexFour.lean`: under `Z4CoreHeightOne` (letter-in-state-`0` counts of translation
+automata on `ZMod 4` have height at most one modulo every `n`), every language recognized by a
+finite group with an abelian normal subgroup of index `4` and cyclic quotient has height at most
+one; `F20` (the affine maps `x ↦ a·x + b` of `ZMod 5`) is such a group.
+`Start/StarHeightZ4Core.lean`: the core when the displacements take at most one nonzero value
+(`0/1`, `0/3`, `0/2`), and `Z4CoreHeightOne` from the two open cases `Z4CoreRot2` (a letter of
+displacement `2` with a letter of odd displacement) and `Z4CorePM1` (displacements `1` and `3`).
+-/
+
+#check @GeneralizedStarHeight.height_one_of_abelian_cyclic_index_four
+#check @GeneralizedStarHeight.height_one_F20_of_core
+#check @GeneralizedStarHeight.z4core_rot01
+#check @GeneralizedStarHeight.z4core_rot03
+#check @GeneralizedStarHeight.z4core_rot02
+#check @GeneralizedStarHeight.z4core_of_rot2_pm1
+#check @GeneralizedStarHeight.height_one_F20_of_rot2_pm1
 
 /-! ## λPω̲: canonical judgement and object-level hereditary substitution (M29-EP-CUBE-REST, partial)
 

@@ -1,0 +1,33 @@
+# #print axioms for the new terminal theorems of M28-STARHEIGHT-INDEX-FOUR, M28-STARHEIGHT-Z4-CORE
+# and M28-STARHEIGHT-Z4-CORE-ONE-ROTATION.
+# Command: lake env lean on a file importing Start with the #print axioms lines below.
+
+import Start
+#print axioms GeneralizedStarHeight.height_one_of_abelian_cyclic_index_four
+#print axioms GeneralizedStarHeight.vcount_z4_height_of_core
+#print axioms GeneralizedStarHeight.height_one_F20_of_core
+#print axioms GeneralizedStarHeight.F20.card
+#print axioms GeneralizedStarHeight.F20.transl_index
+#print axioms GeneralizedStarHeight.F20.quotient_isCyclic
+#print axioms GeneralizedStarHeight.Alang_height_four
+#print axioms GeneralizedStarHeight.z4core_rot01
+#print axioms GeneralizedStarHeight.z4core_rot03
+#print axioms GeneralizedStarHeight.z4core_rot02
+#print axioms GeneralizedStarHeight.z4core_of_rot2_pm1
+#print axioms GeneralizedStarHeight.height_one_F20_of_rot2_pm1
+
+# Output
+'GeneralizedStarHeight.height_one_of_abelian_cyclic_index_four' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'GeneralizedStarHeight.vcount_z4_height_of_core' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.height_one_F20_of_core' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.F20.card' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.F20.transl_index' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.F20.quotient_isCyclic' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.Alang_height_four' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.z4core_rot01' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.z4core_rot03' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.z4core_rot02' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.z4core_of_rot2_pm1' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.height_one_F20_of_rot2_pm1' depends on axioms: [propext, Classical.choice, Quot.sound]

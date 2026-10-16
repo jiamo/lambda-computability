@@ -6706,6 +6706,110 @@ tasks:
       - "python3 scripts/check_closure.py"
       - "python3 scripts/check_sorry.py"
       - "lake build --wfail"
+  - id: M28-STARHEIGHT-Z4-ROT2
+    priority: P1
+    status: TODO_READY
+    track: research/open-problems
+    title: "The Z4 core with a letter of rotation 2 and a letter of odd rotation (needed for F20 = AGL(1,5))"
+    terminal_statement: "First missing lemma: theorem z4Rot2Abc : GeneralizedStarHeight.Z4Rot2Abc, that is ∀ n k : ℕ, k < n → HasHeightAtMost {w : List (Fin 3) | vcount (![0, 1, 2] : Fin 3 → ZMod 4) 0 0 w % n = k} 1 (letters a, b, c with displacements 0, 1, 2; counted letter a in state 0; n = 2 is Z2 wr Z4, n = 5 an F20 instance). General form: theorem z4core_rot2 : GeneralizedStarHeight.Z4CoreRot2 (Start/StarHeightZ4Core.lean; z4Rot2Abc_of_rot2 shows the instance is a special case)."
+    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-Z4-axioms.txt"
+    open_boundary: "Open. No height-one expression known. Obstruction (proof by hand in the evidence file): a code Y whose blocks return to 0 and whose star contains every word in state 0 contains b c^(2i+1) b but not b c^(2i) b, so Y ∩ b c* b = b c (cc)* b and Y is not star-free; the A4/PM1 method (block classes of a state-tracking star-free code plus Z2 and letter counts) is unavailable. Computation (not Lean-verified): on the 2463 returning words of length ≤ 8, N is not in the rational span of letter counts, all letter-in-state counts of the 21 single-rotation ZMod 4 counters, and the first-return classes to the even states read from the prefixes '' and b; it already fails at length ≤ 6; adding factor counts (length ≤ 4) or factor-at-counter-state counts (length ≤ 3) does not help. Needed: a height-one quantity seeing the characters i^(B+2C) without a state-tracking code."
+    milestone: M28
+    depends_on:
+      - M28-STARHEIGHT-Z4-CORE-ONE-ROTATION
+    rank: 2601
+    exit_criteria:
+      - "z4Rot2Abc is proved, or a proof that its language has no expression of height one."
+      - "Then z4core_rot2 : Z4CoreRot2 is proved."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M28-STARHEIGHT-Z4-PM1
+    priority: P1
+    status: TODO_READY
+    track: research/open-problems
+    title: "The Z4 core with rotations 1 and 3 and no rotation 2"
+    terminal_statement: "theorem z4core_pm1 : GeneralizedStarHeight.Z4CorePM1 (Start/StarHeightZ4Core.lean). After erasing neutral letters and using q ↦ -q, two three-letter cases with b (+1), d (-1): (a) counted letter x fixed, (m) counted letter a moving (+1)."
+    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-Z4-axioms.txt"
+    open_boundary: "Open in Lean; the mathematics is settled up to one common lemma. First missing lemma: the first-return code X to state 0 of the ±1 walk on ZMod 4 (and, for (a), its blocks not reading x at 0) is star-free: while the walk avoids 0 the automaton is a 3-state path, whose transition monoid is aperiodic, but the repository has no aperiodic-implies-star-free theorem and the A4 code relied on a reset automaton. With it, (a) is B0lang_eq/V0lang_eq verbatim. For (m) the identity 2·N0(u) = Z2(u) + #C+(u) - #C-(u) - #{blocks of bb·u equal to ad} on words u in state 0 (C+: blocks starting with a whose last two letters are not a then an up letter; C-: blocks starting with b or d whose last two letters are a then an up letter; Z2(u) = a at even positions) holds on all 298936 returning words of length ≤ 12 and on random words up to length 400, and C+, C-, C+*, C-* have aperiodic minimal automata (computation, not Lean-verified; docs/goal/evidence/M28-STARHEIGHT-Z4-search.py). Remaining: these star-freeness facts in Lean, the identity as an automaton invariant, the assembly as in coreK_eq."
+    milestone: M28
+    depends_on:
+      - M28-STARHEIGHT-Z4-CORE-ONE-ROTATION
+    rank: 2602
+    exit_criteria:
+      - "z4core_pm1 : Z4CorePM1 is proved."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M28-STARHEIGHT-Z4-CORE-ONE-ROTATION
+    priority: P1
+    status: DONE_STRONG
+    track: research/open-problems
+    title: "The Z4 core when the displacements take at most one nonzero value"
+    terminal_statement: "GeneralizedStarHeight.z4core_rot01 {α : Type u} [Finite α] [DecidableEq α] (δ : α → ZMod 4) (hδ : ∀ y, δ y = 0 ∨ δ y = 1) (x : α) (n k : ℕ) (hk : k < n) : HasHeightAtMost {w : List α | vcount δ 0 x w % n = k} 1, and z4core_rot03 (δ y = 0 ∨ δ y = 3), z4core_rot02 (δ y = 0 ∨ δ y = 2) with the same conclusion (Start/StarHeightZ4Core.lean). Fixed counted letter: pcount_fixed_height_one (PST Proposition 6.6, Blang_height for p = 4). Moving counted letter: Alang_height_four, from 2·cnt4(h) = cnt2(h mod 2) + Σ_t c_t·n_t with c_t = [t_h] - [t_(h+2)] on 4-blocks (two_mul_pcount_four_eq); c_t ≠ 0 makes t primitive (primitive_of_coef4_ne). Rotation 3 through q ↦ -q, rotation 2 is the Z2 case."
+    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-Z4-axioms.txt"
+    open_boundary: ""
+    milestone: M28
+    depends_on:
+      - M28-STARHEIGHT-ONE-PURE
+    rank: 2613
+    exit_criteria:
+      - "z4core_rot01, z4core_rot03, z4core_rot02 are proved."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M28-STARHEIGHT-Z4-CORE
+    priority: P1
+    status: DONE_WEAK
+    track: research/open-problems
+    title: "The Z4 core: letter-in-state-0 counts of translation automata on ZMod 4 have height one modulo every n"
+    terminal_statement: "Target: Z4CoreHeightOne (Start/StarHeightIndexFour.lean). Proved: GeneralizedStarHeight.z4core_of_rot2_pm1 (h2 : Z4CoreRot2) (h1 : Z4CorePM1) : Z4CoreHeightOne (Start/StarHeightZ4Core.lean), from the one-rotation cases z4core_rot01, z4core_rot03, z4core_rot02."
+    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-Z4-axioms.txt"
+    open_boundary: "Z4CoreHeightOne is proved only from the two open cases Z4CoreRot2 (M28-STARHEIGHT-Z4-ROT2: a letter of rotation 2 with a letter of odd rotation) and Z4CorePM1 (M28-STARHEIGHT-Z4-PM1: rotations 1 and 3, no 2). Every other case is proved (M28-STARHEIGHT-Z4-CORE-ONE-ROTATION)."
+    milestone: M28
+    depends_on:
+      - M28-STARHEIGHT-Z4-ROT2
+      - M28-STARHEIGHT-Z4-PM1
+      - M28-STARHEIGHT-Z4-CORE-ONE-ROTATION
+    rank: 2614
+    exit_criteria:
+      - "theorem z4core_height_one : Z4CoreHeightOne is proved without hypotheses."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M28-STARHEIGHT-INDEX-FOUR
+    priority: P1
+    status: DONE_WEAK
+    track: research/open-problems
+    title: "Generalized star height one for abelian-by-Z4 groups (abelian normal subgroup of index 4, cyclic quotient), and for F20"
+    terminal_statement: "GeneralizedStarHeight.height_one_of_abelian_cyclic_index_four (hcore : Z4CoreHeightOne) [Finite Alphabet] {G : Type} [Group G] [Fintype G] (N : Subgroup G) [N.Normal] (hab : ∀ x ∈ N, ∀ y ∈ N, x * y = y * x) (hidx : N.index = 4) (hcyc : IsCyclic (G ⧸ N)) (T : FreeMonoid Alphabet →* G) (F : Set G) : HasHeightAtMost {w | T (FreeMonoid.ofList w) ∈ F} 1 and height_one_F20_of_core (hcore : Z4CoreHeightOne) (T : FreeMonoid Alphabet →* F20) (F : Set F20) (Start/StarHeightIndexFour.lean); F20 = affine maps x ↦ a·x + b of ZMod 5 (F20.card, F20.transl_comm, F20.transl_index, F20.quotient_isCyclic); height_one_F20_of_rot2_pm1 (Start/StarHeightZ4Core.lean). Other states from state 0: vcount_z4_height_of_core."
+    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-Z4-axioms.txt"
+    open_boundary: "Conditional on Z4CoreHeightOne (M28-STARHEIGHT-Z4-CORE), which reduces to the open rows M28-STARHEIGHT-Z4-ROT2 and M28-STARHEIGHT-Z4-PM1. F20 needs both (x ↦ -x has rotation 2, x ↦ 2x rotation 1)."
+    milestone: M28
+    depends_on:
+      - M28-STARHEIGHT-Z4-CORE
+      - M28-STARHEIGHT-BOURNE-411
+    rank: 2615
+    exit_criteria:
+      - "height_one_of_abelian_cyclic_index_four and height_one_F20_of_core are proved without the core hypothesis."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
   - id: M29-EP-STATEMENT
     priority: P1
     status: IN_PROGRESS
