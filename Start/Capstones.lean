@@ -289,6 +289,16 @@ import Start.PTSExpansionLambdaP
 import Start.StarHeightResetCount
 import Start.StarHeightIndexThree
 import Start.ResolutionDag
+import Start.StarHeightClosure
+import Start.StarHeightTransfer
+import Start.StarHeightPrimeCount
+import Start.StarHeightPrimeIndex
+import Start.StarHeightA4Core
+import Start.ResolutionPHPWidth
+import Start.ResolutionPHPDag
+import Start.PTSExpansionLambdaPOmegaBar
+import Start.StarHeightWreathStep
+import Start.SpaceNProg
 
 /-! ## Interfaces of the untyped calculus
 
@@ -3859,3 +3869,82 @@ a tree-like refutation as a DAG-like refutation of the same size.
 #check @Complexity.Sat.DagRefutation.unsat
 #check @Complexity.Sat.Refutation.toDag_size
 #check @Complexity.Sat.Refutation.exists_dag_size_le
+
+/-! ## Generalized star height one for an abelian normal subgroup of prime index
+(M28-STARHEIGHT-ONE-PURE)
+
+`Start/StarHeightClosure.lean`: letter quotients, reversal and inverse alphabetic morphisms do not
+increase generalized star height.  `Start/StarHeightTransfer.lean`: the Transfer Lemma (Pin,
+Straubing and Thérien 1992, Lemma 6.1) and star-freeness of `t∗` for primitive `t`.
+`Start/StarHeightPrimeCount.lean`: counting the letters read in a given state of a cyclic counter of
+prime order, at height one.  `Start/StarHeightPrimeIndex.lean`: height one when every letter lies in
+`N` or in one coset `gN`; corollaries for index two, dicyclic and dihedral groups, and `A₄` with
+letters in `V ∪ σV`.
+-/
+
+#check @GeneralizedStarHeight.HasHeightAtMost.leftQuot
+#check @GeneralizedStarHeight.HasHeightAtMost.rightQuot
+#check @GeneralizedStarHeight.HasHeightAtMost.invAlph
+#check @GeneralizedStarHeight.transfer_height_one
+#check @GeneralizedStarHeight.kstar_singleton_starFree
+#check @GeneralizedStarHeight.primitive_of_prime_length
+#check @GeneralizedStarHeight.pcount_height_one
+#check @GeneralizedStarHeight.height_one_of_prime_index_pure
+#check @GeneralizedStarHeight.height_one_of_abelian_index_two
+#check @GeneralizedStarHeight.height_one_quaternionGroup_three
+#check @GeneralizedStarHeight.height_one_dihedralGroup
+#check @GeneralizedStarHeight.height_one_alternatingGroup_four_pure
+
+/-! ## Reducing `A₄` to one three-letter language (M28-STARHEIGHT-ONE-A4)
+
+`Start/StarHeightA4Core.lean`: if `coreLang k 2` (alphabet `Fin 3`, letters `0`, `1` add `1` and
+letter `2` adds `2` to a state in `ZMod 3`; the number of positions reading `0` in state `0` is `k`
+mod `2`) has height at most one for `k < 2`, then every language recognized by `A₄` has height at
+most one.  The general form: any finite group with a normal subgroup of index three and exponent
+two.
+-/
+
+#check @GeneralizedStarHeight.coreLang
+#check @GeneralizedStarHeight.zcount_height_one_of_core
+#check @GeneralizedStarHeight.height_one_of_index_three_exponent_two_of_core
+#check @GeneralizedStarHeight.height_one_alternatingGroup_four_of_core
+
+/-! ## Haken's theorem for DAG-like resolution (M22-HAKEN-PHP-DAG)
+
+`Start/ResolutionPHPWidth.lean`: critical assignments, the complexity measure and the Beame–Pitassi
+monotone width bound.  `Start/ResolutionPHPDag.lean`: the measure relative to a partial matching,
+the greedy restriction, and the exponential lower bound.
+-/
+
+#check @Complexity.Sat.PHP.dag_exists_wide_monotone
+#check @Complexity.Sat.PHP.php_dag_size
+
+/-! ## Toward expansion postponement for λPω̲ (M29-EP-CUBE-REST)
+
+`Start/PTSExpansionLambdaPOmegaBar.lean`: classification of legal terms of the cube into kinds,
+constructors and objects, and the kind erasure with its invariance under substitution (the measure
+of constructor-level hereditary substitution).  Expansion postponement for λPω̲ is not proved.
+-/
+
+#check @PureTypeSystem.cube_classification
+#check @PureTypeSystem.Expr.eraseK_subst
+
+/-! ## An abelian normal subgroup adds at most one to generalized star height
+(M28-STARHEIGHT-WREATH-STEP)
+
+`Start/StarHeightWreathStep.lean`: the wreath product step, and height at most two for every finite
+group with abelian commutator subgroup.
+-/
+
+#check @GeneralizedStarHeight.height_succ_of_abelian_normal
+#check @GeneralizedStarHeight.height_two_of_commutator_abelian
+
+/-! ## Nondeterministic tape programs (M22-NONDET-PROG, first exit criterion)
+
+`Start/SpaceNProg.lean`: tape programs with a nondeterministic choice, their big-step semantics,
+and compilation into well-formed nondeterministic offline machines with compiler correctness.
+-/
+
+#check @Complexity.Space.NProg.path_of_exec
+#check @Complexity.Space.NProg.machine_wellFormed
+#check @Complexity.Space.NProg.accepts_of_exec

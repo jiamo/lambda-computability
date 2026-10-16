@@ -85,3 +85,34 @@ theorem Complexity.Sat.PHP.dag_exists_wide_monotone (n : ℕ) (hn : 2 ≤ n) (R 
 where `monoVars n C : Finset (ℕ × ℕ)` is the set of pairs `(i, j)` such that `x_(i,j)` occurs in
 the monotone translation of `C` (a positive `x_(i,j)`, or a negative `x_(i',j)` with `i' ≠ i`).
 The rest of the argument is the greedy restriction that kills the wide clauses.
+
+## Update: general (DAG-like) resolution (M22-HAKEN-PHP-DAG, closed)
+
+The caveat above is resolved.  `Start/ResolutionDag.lean` defines DAG-like refutations
+(`DagRefutation`, size = number of lines; `Refutation.toDag_size`), and
+
+* **`Complexity.Sat.PHP.php_dag_size (n : ℕ) (R : DagRefutation (php n)) : 2 ^ (n / 32) ≤ R.size`**
+  (`Start/ResolutionPHPDag.lean`)
+
+is Haken's theorem for general resolution, by the Beame–Pitassi argument ("Simplified and improved
+resolution lower bounds", 1996):
+
+1. Critical assignments (`IsCrit P H i g`: a bijection `P ∖ {i} → H`), `crit_exists`.
+2. The complexity `μ(C)` (`mu`, relativized to a partial matching as `muR`): least `|S|` such that
+   every `i`-critical assignment with `i ∉ S` satisfies `C`.  `μ ≤ 1` on the clauses of the formula,
+   `μ([]) = |P|`, `μ(resolvent) ≤ μ(C₁) + μ(C₂)`.
+3. A line with `|P|/3 < μ ≤ 2|P|/3` (`exists_mid_mu`, `exists_mid_muR`; induction on the DAG).
+4. Width: `μ(C)(|P| − μ(C)) ≤ |monoVars C|` (`mu_mul_le_monoVars`), by moving the hole of a pigeon
+   `j ∉ S` to a pigeon `i ∈ S` (`moveHole`, `mem_monoVars_of_flip`).  Hence
+   `dag_exists_wide_monotone : ∃ C ∈ R.lines, 2 n² ≤ 9 |monoVars n C|` (`Start/ResolutionPHPWidth.lean`).
+5. Restriction is done semantically, without building restricted refutations: the measure `muR` is
+   taken over critical assignments of the remaining pigeons and holes extended by the partial
+   matching `m` chosen so far.  A line whose monotone translation contains a matched pair has
+   `muR = 0` (`muR_killed`), so the mid-complexity line of step 3 is never killed.
+6. Greedy restriction (`stage`): with `D = n(n+1)` and `w = ⌈D/8⌉`, a pair lying in at least a
+   `w/D` fraction of the alive wide lines exists by averaging (`exists_heavy_pair`); after
+   `r = 6⌊n/32⌋` rounds, `#alive wide lines · D^r ≤ |R| (D − w)^r`.  At that stage the mid-complexity
+   line is wide and alive (`final_alive`, `final_arith`), so `(8/7)^r ≤ |R|`, and
+   `2 · 7⁶ ≤ 8⁶` gives `2^(n/32) ≤ |R|`.
+
+No `sorry`; `#print axioms`: `docs/goal/evidence/M28-M22-axioms.txt`.

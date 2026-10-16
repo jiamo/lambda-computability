@@ -1,0 +1,23 @@
+# #print axioms for the terminal theorems of this delivery (lake env lean, after lake build --wfail)
+'GeneralizedStarHeight.height_one_of_prime_index_pure' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.height_one_of_abelian_index_two' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.height_one_quaternionGroup_three' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.height_one_dihedralGroup' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.height_one_alternatingGroup_four_pure' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.transfer_height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.HasHeightAtMost.leftQuot' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.HasHeightAtMost.rightQuot' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.HasHeightAtMost.invAlph' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.kstar_singleton_starFree' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.height_one_alternatingGroup_four_of_core' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'GeneralizedStarHeight.height_succ_of_abelian_normal' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.height_two_of_commutator_abelian' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.Sat.PHP.dag_exists_wide_monotone' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.Sat.PHP.php_dag_size' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.Sat.PHP.php_refutation_size' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.cube_classification' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.Expr.eraseK_subst' depends on axioms: [propext]
+'Complexity.Space.NProg.path_of_exec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.Space.NProg.accepts_of_exec' depends on axioms: [propext, Classical.choice, Quot.sound]

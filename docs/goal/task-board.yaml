@@ -5172,11 +5172,11 @@ tasks:
 
   - id: M22-NONDET-PROG
     priority: P1
-    status: TODO_READY
+    status: IN_PROGRESS
     track: theory/complexity
     title: "Nondeterministic tape programs: a guess instruction for Complexity.Space.Prog"
     latest_evidence: "docs/goal/proposed-M21-M24.md"
-    open_boundary: ""
+    open_boundary: "Exit criterion 1 is met in Start/SpaceNProg.lean: NProg (Prog plus choose p q), NProg.ofProg, the big-step semantics NProg.Exec with the while rule, the compiled table NProg.delta and machine NProg.machine, compiler correctness NProg.path_of_exec, machine_wellFormed, loop_seg, loop_exit and accepts_of_exec. Exit criterion 2 (NSPACE from the loop form) is open: NSPACE needs every run of the nondeterministic machine to be accepted only through an execution and to stay in space, so the converse of compiler correctness is needed. First missing lemma: theorem Complexity.Space.NProg.exec_of_accepts (p : NProg) (x : List Bool) (h : p.machine.Accepts x) : ∃ c', NProg.Exec x (fun _ => True) p init c'."
     milestone: M22
     depends_on:
       - M14-SPACE-COMPILE
@@ -5316,12 +5316,12 @@ tasks:
 
   - id: M22-HAKEN-PHP
     priority: P1
-    status: DONE_WEAK
+    status: DONE_STRONG
     track: theory/proof-complexity
     title: "Haken: the pigeonhole principle needs exponential-size resolution refutations"
-    terminal_statement: "Complexity.Sat.PHP.php n (the CNF PHP(n+1, n)), php_unsat : forall s, cnfVal s (php n) = false, php_refutation_size (d : Refutation (php n)) : 2 ^ n <= d.size, packaged as haken_php (c = 1), by the Prover-Delayer argument as an induction on derivations (size_ge_of_falsifies) (Start/ResolutionPHP.lean). The refutations of Start/Resolution.lean are trees, so this is the tree-like lower bound; DAG-like resolution is not formulated in the library (docs/goal/evidence/M22-HAKEN-PHP.md)."
+    terminal_statement: "Complexity.Sat.PHP.php n (the CNF PHP(n+1, n)), php_unsat : forall s, cnfVal s (php n) = false. Tree-like: php_refutation_size (d : Refutation (php n)) : 2 ^ n <= d.size, packaged as haken_php (c = 1), by the Prover-Delayer argument (Start/ResolutionPHP.lean). General (DAG-like) resolution: php_dag_size (n : ℕ) (R : DagRefutation (php n)) : 2 ^ (n / 32) <= R.size (Start/ResolutionPHPDag.lean, Beame-Pitassi: critical assignments, the monotone width bound dag_exists_wide_monotone of Start/ResolutionPHPWidth.lean, and a greedy restriction), with DagRefutation and Refutation.toDag_size of Start/ResolutionDag.lean."
     latest_evidence: "docs/goal/evidence/M22-HAKEN-PHP.md"
-    open_boundary: "Named gap: M22-HAKEN-PHP-DAG. Deriv in Start/Resolution.lean is a tree, so haken_php is the tree-like bound. Haken's theorem concerns general resolution, where a derived clause is reused; a DAG-like refutation of size s can unfold into a tree of size up to 2^s, so the tree-like bound does not imply it."
+    open_boundary: ""
     milestone: M22
     depends_on:
       - M22-RESOLUTION
@@ -5338,11 +5338,12 @@ tasks:
 
   - id: M22-HAKEN-PHP-DAG
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
+    terminal_statement: "Complexity.Sat.PHP.php_dag_size (n : ℕ) (R : DagRefutation (php n)) : 2 ^ (n / 32) <= R.size (Start/ResolutionPHPDag.lean). Steps: IsCrit, crit_exists, mu, mu_resolvent, mu_nil, exists_mid_mu, mu_mul_le_monoVars and dag_exists_wide_monotone (n) (hn : 2 <= n) (R : DagRefutation (php n)) : exists C in R.lines, 2 * n ^ 2 <= 9 * (monoVars n C).card (Start/ResolutionPHPWidth.lean); the measure muR relative to a partial matching (muR_php_le_one, muR_killed), exists_heavy_pair (averaging), stage (greedy restriction: after s rounds the alive wide clauses number at most |R| (D - w)^s / D^s) and final_alive (Start/ResolutionPHPDag.lean). Exit criterion 1: DagRefutation, Refutation.toDag_size (Start/ResolutionDag.lean)."
     track: theory/proof-complexity
     title: "Haken's theorem for general (DAG-like) resolution"
     latest_evidence: "docs/goal/evidence/M22-HAKEN-PHP.md"
-    open_boundary: "Named gap of M22-HAKEN-PHP: Start/ResolutionPHP.lean proves the tree-like bound, because Deriv in Start/Resolution.lean is a tree. Exit criterion 1 is met in Start/ResolutionDag.lean: DagDeriv, DagRefutation (size = number of clauses), DagRefutation.unsat, Refutation.toDag and Refutation.toDag_size (d.toDag.size = d.size). Exit criterion 2 is open. First missing lemma (Beame-Pitassi monotone width bound): theorem Complexity.Sat.PHP.dag_exists_wide_monotone (n : ℕ) (hn : 2 ≤ n) (R : DagRefutation (php n)) : ∃ C ∈ R.lines, 2 * n ^ 2 ≤ 9 * (monoVars n C).card, where monoVars n C : Finset (ℕ × ℕ) is the set of pairs (i, j) such that x_(i,j) occurs in the monotone translation of C (a positive x_(i,j), or a negative x_(i',j) with i' ≠ i)."
+    open_boundary: ""
     milestone: M22
     depends_on:
       - M22-RESOLUTION
@@ -6582,17 +6583,59 @@ tasks:
 
   - id: M28-STARHEIGHT-ONE-A4
     priority: P1
-    status: TODO_READY
+    status: IN_PROGRESS
     track: research/open-problems
     title: "Generalized star height at most one for the languages recognized by A4 (Bourne's Question 5.9)"
-    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-TWO-CLASS.md"
-    open_boundary: "Height two is proved for groups with an abelian normal subgroup of index 3; the second star counts first-return blocks modulo m. Height one is open (Bourne 2017, Conjecture 4.11 for AbGrp * Z3)."
+    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-ONE.md"
+    open_boundary: "Reduced to one three-letter language: height_one_alternatingGroup_four_of_core (hcore : forall k < 2, HasHeightAtMost (coreLang k 2) 1) gives height at most one for every language recognized by alternatingGroup (Fin 4) (Start/StarHeightA4Core.lean); letters in V are handled outright by the Transfer Lemma on the first-return code. First missing lemma: theorem coreLang_height_one (k : ℕ) (hk : k < 2) : HasHeightAtMost (coreLang k 2) 1. Counting first-return block classes plus letter counts (PST Proposition 6.2) cannot work (obstruction in the evidence file); other counts are needed."
     milestone: M28
     depends_on:
       - M28-STARHEIGHT-TWO-GROUPS
     rank: 2606
     exit_criteria:
       - "Every language recognized by alternatingGroup (Fin 4) has height at most one, or an explicit A4 language with a proof that it has no expression of height one."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M28-STARHEIGHT-ONE-PURE
+    priority: P1
+    status: DONE_STRONG
+    track: research/open-problems
+    title: "Generalized star height one for an abelian normal subgroup N of prime index when every letter lies in N or in one coset gN"
+    terminal_statement: "GeneralizedStarHeight.height_one_of_prime_index_pure [Finite Alphabet] {G : Type} [Group G] [Fintype G] (N : Subgroup G) [N.Normal] (hab : forall x in N, forall y in N, x * y = y * x) {p : ℕ} [Fact p.Prime] (hidx : N.index = p) (g : G) (T : FreeMonoid Alphabet →* G) (hT : forall a, T (FreeMonoid.of a) ∈ N ∨ g⁻¹ * T (FreeMonoid.of a) ∈ N) (F : Set G) : HasHeightAtMost {w | T (FreeMonoid.ofList w) ∈ F} 1, for every prime p (Start/StarHeightPrimeIndex.lean). Tools: HasHeightAtMost.leftQuot, rightQuot, invAlph (Start/StarHeightClosure.lean); transfer_height_one (PST Lemma 6.1), kstar_singleton_starFree, primitive_of_prime_length (Start/StarHeightTransfer.lean); pcount_height_one (Start/StarHeightPrimeCount.lean). Corollaries: height_one_of_abelian_index_two, height_one_quaternionGroup (QuaternionGroup 3 in particular), height_one_dihedralGroup, height_one_alternatingGroup_four_pure. PST 1992 prove the index-2 case (Theorem 7.6, Proposition 6.10); letters in two different nontrivial cosets are the open case (M28-STARHEIGHT-ONE-A4)."
+    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-ONE.md"
+    open_boundary: ""
+    milestone: M28
+    depends_on:
+      - M28-STARHEIGHT-TWO-GROUPS
+    rank: 2607
+    exit_criteria:
+      - "The Transfer Lemma (PST Lemma 6.1), closure of HasHeightAtMost under letter quotients and inverse alphabetic morphisms, and star-freeness of t∗ for primitive t are proved."
+      - "For a finite group G, an abelian normal subgroup N of prime index p, g ∈ G and T : FreeMonoid Alphabet →* G sending every letter into N ∪ gN, every language recognized by T has height at most one. Corollaries: every group with an abelian normal subgroup of index 2, QuaternionGroup 3, DihedralGroup n, and A4 for letters in V ∪ σV."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M28-STARHEIGHT-WREATH-STEP
+    priority: P2
+    status: DONE_STRONG
+    terminal_statement: "GeneralizedStarHeight.height_succ_of_abelian_normal [Finite Alphabet] {G : Type} [Group G] [Fintype G] (N : Subgroup G) [N.Normal] (hab : forall x in N, forall y in N, x * y = y * x) {k : ℕ} (hk : forall (T' : FreeMonoid Alphabet →* G ⧸ N) (F : Set (G ⧸ N)), HasHeightAtMost {w | T' (FreeMonoid.ofList w) ∈ F} k) (T : FreeMonoid Alphabet →* G) (F : Set G) : HasHeightAtMost {w | T (FreeMonoid.ofList w) ∈ F} (k + 1), and height_two_of_commutator_abelian (hab : abelian (commutator G)) : HasHeightAtMost {w | T (FreeMonoid.ofList w) ∈ F} 2 (Start/StarHeightWreathStep.lean). The count of positions reading a in state q is qcount; its residue classes are U₀ a (U a)^r ((U a)^m)∗ Z (qcount_after_mod, qcount_mod_eq), with U, Z languages of G ⧸ N (qcount_height). Folklore (wreath product principle; Pin-Straubing-Thérien 1992, §5)."
+    track: research/open-problems
+    title: "An abelian normal subgroup adds at most one to generalized star height"
+    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-ONE.md"
+    open_boundary: ""
+    milestone: M28
+    depends_on:
+      - M28-STARHEIGHT-TWO-GROUPS
+    rank: 2608
+    exit_criteria:
+      - "If N is an abelian normal subgroup of a finite group G and every language recognized by a morphism into G ⧸ N has height at most k, then every language recognized by a morphism into G has height at most k + 1."
+      - "Corollary: every language recognized by a finite group with abelian commutator subgroup has height at most two."
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
@@ -6769,11 +6812,11 @@ tasks:
 
   - id: M29-EP-CUBE-REST
     priority: P1
-    status: TODO_READY
+    status: IN_PROGRESS
     track: research/open-problems
     title: "Expansion postponement for λP2, λPω̲ and the Calculus of Constructions"
     latest_evidence: "docs/goal/evidence/M29-EP.md"
-    open_boundary: "λP is closed by hereditary substitution, by induction on the erasure to simple types. λPω̲ is predicative, and hereditary substitution at both the type level and the object level should apply. λP2 and λC are impredicative: substituting a type for a type variable changes erasures, so the measure fails, and a normalization argument (Poll's) is needed."
+    open_boundary: "λPω̲ (stop rule fired this delivery): steps 1-2 of the two-level hereditary substitution are proved in Start/PTSExpansionLambdaPOmegaBar.lean: cube_classification (every legal term is a kind, a constructor or an object) and Expr.eraseK with eraseK_subst (kind erasure is invariant under substitutions of non-kinds with trivial kind erasure). Not done: a canonical judgement for λPω̲ (HasTypeNR requires base-erased arguments, which fails for constructor arguments), object-level hereditary substitution (step 3) and constructor-level hereditary substitution by eraseK of the kind (step 4). First missing lemma: theorem lambdaPOmegaBar_productNormalizationR : ProductNormalizationR (cubeSpec lambdaPOmegaBar), which with cube_expansionPostponement_of_productNormalizationR gives ExpansionPostponement (cubeSpec lambdaPOmegaBar). λP2 and λC are impredicative: substituting a type for a type variable changes erasures, so a normalization argument (Poll) is needed."
     milestone: M29
     depends_on:
       - M29-EP-CUBE

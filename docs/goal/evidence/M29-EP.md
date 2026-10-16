@@ -609,3 +609,27 @@ theorem lambdaP_sd_complete {Γ : List (Expr Srt)} {M A : Expr Srt}
 ```
 
 `#print axioms`: `docs/goal/evidence/M29-M28-axioms.txt`.
+
+## M29-EP-CUBE-REST: λPω̲ (stop rule fired)
+
+`Start/PTSExpansionLambdaPOmegaBar.lean` proves steps 1–2 of the two-level hereditary substitution
+plan:
+
+* `cube_classification`: in every corner of the cube a legal term is a kind (`T = □`), a
+  constructor (`Γ ⊢ T : □`) or an object (`Γ ⊢ T : ∗`); from `HasType.regularity`.
+* `Expr.eraseK` (object binders dropped, constructor binders become arrows) and `eraseK_subst`:
+  kind erasure is invariant under every substitution of non-kinds with trivial kind erasure
+  (`NoKindSubst`), which covers the objects and constructors of λPω̲ (no rule `(□,∗)`).
+
+Not done: a canonical judgement for λPω̲ (the λP judgement `HasTypeNR` requires base-erased
+application arguments, which fails for constructor arguments `α G`), object-level hereditary
+substitution (step 3) and constructor-level hereditary substitution by `eraseK` of the kind
+(step 4).  First missing lemma:
+
+```
+theorem lambdaPOmegaBar_productNormalizationR : ProductNormalizationR (cubeSpec lambdaPOmegaBar)
+```
+
+with which `cube_expansionPostponement_of_productNormalizationR` gives
+`ExpansionPostponement (cubeSpec lambdaPOmegaBar)`.  The row M29-EP-IMPREDICATIVE was not added,
+since λPω̲ did not close.
