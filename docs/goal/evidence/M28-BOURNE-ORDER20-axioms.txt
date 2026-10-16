@@ -1,0 +1,19 @@
+# #print axioms for the terminal theorems of M28-STARHEIGHT-BOURNE-411, M28-STARHEIGHT-ORDER-LT-20
+# and the new λPω̲ lemma HasTypeNW.hsubst_obj (M29-EP-CUBE-REST, partial).
+# Command: lake env lean on a file importing Start with the #print axioms lines below.
+
+import Start
+#print axioms GeneralizedStarHeight.vcount_height_one
+#print axioms GeneralizedStarHeight.height_one_of_abelian_normal_exponent_three
+#print axioms GeneralizedStarHeight.exists_abelian_normal_index_le_three
+#print axioms GeneralizedStarHeight.height_one_of_card_lt_twenty
+#print axioms PureTypeSystem.HasTypeNW.hsubst_obj
+
+# Output
+'GeneralizedStarHeight.vcount_height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.height_one_of_abelian_normal_exponent_three' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'GeneralizedStarHeight.exists_abelian_normal_index_le_three' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.height_one_of_card_lt_twenty' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.HasTypeNW.hsubst_obj' depends on axioms: [propext, Classical.choice, Quot.sound]

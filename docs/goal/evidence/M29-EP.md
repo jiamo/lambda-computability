@@ -633,3 +633,55 @@ theorem lambdaPOmegaBar_productNormalizationR : ProductNormalizationR (cubeSpec 
 with which `cube_expansionPostponement_of_productNormalizationR` gives
 `ExpansionPostponement (cubeSpec lambdaPOmegaBar)`.  The row M29-EP-IMPREDICATIVE was not added,
 since λPω̲ did not close.
+
+### This delivery: the corrected measure (stop rule fired again)
+
+The previous measure `eraseK` drops object binders, so it does not decrease when a constructor
+`λy:A. G'` is applied to an object.  `Start/PTSExpansionLambdaPOmegaBarSkel.lean` adds the kind
+skeleton, which keeps them:
+
+* `Expr.skelK`: `skel ∗ = base`, `skel (Π x:A. K) = arr base (skel K)` (A not a kind; this encodes
+  `obj (skel K)`), `skel (Π α:K₁. K₂) = arr (skel K₁) (skel K₂)`, and `base` on non-kinds;
+* `skelK_rename`, `skelK_subst`: invariant under renaming and under every `NoKindSubst`
+  substitution (objects and constructors of λPω̲), same proof as `eraseK_subst`;
+* `skelK_size_pi_obj`, `skelK_size_pi_kind`: the skeletons of the body (and the domain, for a
+  constructor binder) of a product kind are strictly smaller.
+
+Still missing: the canonical λPω̲ judgement (β-normal subjects and types; application result by
+hereditary substitution at the argument's level; no base-erasure restriction), object-level
+hereditary substitution by erasure of the variable's type, and constructor-level hereditary
+substitution by `skelK` of the variable's kind.  First missing lemma (unchanged):
+
+```
+theorem lambdaPOmegaBar_productNormalizationR : ProductNormalizationR (cubeSpec lambdaPOmegaBar)
+```
+
+M29-EP-CUBE-REST stays IN_PROGRESS; M29-EP-IMPREDICATIVE was not added, since λPω̲ did not close.
+
+## λPω̲: canonical judgement and object-level hereditary substitution (this delivery)
+
+* Step 1. `Start/PTSExpansionLambdaPOmegaBarCanon.lean` defines the canonical judgement
+  `HasTypeNW`: the rules of `HasTypeR` without the conversion rule; subjects and types are
+  β-normal; in the application rule the result type is a normal form of `B[a]`; arguments are not
+  restricted to base-erased ones.  Proved: `toHasTypeR`, `normal`, `rename`, `lam_inv`,
+  `HasTypeNR.toHasTypeNW`, `app_type_exists`.
+* Step 2. `Start/PTSExpansionLambdaPOmegaBarObj.lean` proves `HasTypeNW.hsubst_obj`
+  (object-level hereditary substitution `x := N` in λPω̲), by strong induction on the size of the
+  erasure of the type of `x`.  Key facts: `not_vis_of_typed` (an object variable never occurs at
+  a position the erasure inspects in a constructor, kind or type, so object substitution never
+  changes the erasure of a normal type: `erase_isKindB_reduces_subst`), and `head_lookup_obj`
+  (the type of a spine headed by an object variable is, up to erasure, a codomain of the
+  variable's type, so a created redex is at a strictly smaller erasure).
+* Stop rule.  Step 3 (constructor-level hereditary substitution by induction on `skelK`) is not
+  done.  First missing lemma:
+
+```lean
+theorem HasTypeNW.hsubst_con {Γ : List (Expr Srt)} {N K M B : Expr Srt}
+    (hK : K.isKindB = true) (hN : HasTypeNW PWbar Γ N K)
+    (hM : HasTypeNW PWbar (K :: Γ) M B) :
+    ∃ M' B', Reduces (M.instantiate N) M' ∧ Reduces (B.instantiate N) B' ∧
+      HasTypeNW PWbar Γ M' B'
+```
+
+  followed by `normalizeNR` for λPω̲, `lambdaPOmegaBar_productNormalizationR` and
+  `cube_expansionPostponement_of_productNormalizationR`.

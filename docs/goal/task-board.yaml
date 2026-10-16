@@ -5172,11 +5172,12 @@ tasks:
 
   - id: M22-NONDET-PROG
     priority: P1
-    status: IN_PROGRESS
+    status: DONE_STRONG
     track: theory/complexity
     title: "Nondeterministic tape programs: a guess instruction for Complexity.Space.Prog"
-    latest_evidence: "docs/goal/proposed-M21-M24.md"
-    open_boundary: "Exit criterion 1 is met in Start/SpaceNProg.lean: NProg (Prog plus choose p q), NProg.ofProg, the big-step semantics NProg.Exec with the while rule, the compiled table NProg.delta and machine NProg.machine, compiler correctness NProg.path_of_exec, machine_wellFormed, loop_seg, loop_exit and accepts_of_exec. Exit criterion 2 (NSPACE from the loop form) is open: NSPACE needs every run of the nondeterministic machine to be accepted only through an execution and to stay in space, so the converse of compiler correctness is needed. First missing lemma: theorem Complexity.Space.NProg.exec_of_accepts (p : NProg) (x : List Bool) (h : p.machine.Accepts x) : ∃ c', NProg.Exec x (fun _ => True) p init c'."
+    terminal_statement: "Complexity.Space.NProg.nspace_loop {t : Test} {body : NProg} {I : List Bool → Config → Prop} {B : List Bool → ℕ} {s : ℕ → ℕ} {L : Language} (h0 : ∀ x, I x init) (hsp : ∀ x c, I x c → c.space ≤ B x) (hbody : ∀ x c, I x c → t (rdIn x c) (rdW c) = true → ∀ n d, Reach.steps (body.machine.Step x) n ((touch x c).at 0) d → d.space ≤ B x ∧ (d.state = body.size → I x (d.at 0))) (hL : ∀ x, L x ↔ ∃ c', Exec x (fun _ => True) (loop t body) init c') (hB : ∀ x, B x ≤ s x.length) : NSPACE s L (Start/SpaceNProgLoop.lean). Route: NProg.exec_of_accepts (p.machine.Accepts x → ∃ c', Exec x (fun _ => True) p init c'), from the run decomposition NProg.exec_of_run, and NProg.nspace_of_exec (Start/SpaceNProgConverse.lean); NProg.delta_shift (relocation of the compiled table) and NProg.loop_reach_inv (invariant of the reachable configurations of a compiled loop). Exit criterion 1 is Start/SpaceNProg.lean."
+    latest_evidence: "docs/goal/evidence/M22-NONDET-PROG.md"
+    open_boundary: ""
     milestone: M22
     depends_on:
       - M14-SPACE-COMPILE
@@ -6583,11 +6584,12 @@ tasks:
 
   - id: M28-STARHEIGHT-ONE-A4
     priority: P1
-    status: IN_PROGRESS
+    status: DONE_STRONG
     track: research/open-problems
     title: "Generalized star height at most one for the languages recognized by A4 (Bourne's Question 5.9)"
+    terminal_statement: "GeneralizedStarHeight.height_one_alternatingGroup_four {Alphabet : Type u} [Finite Alphabet] (T : FreeMonoid Alphabet →* alternatingGroup (Fin 4)) (F : Set (alternatingGroup (Fin 4))) : HasHeightAtMost {w | T (FreeMonoid.ofList w) ∈ F} 1, from coreLang_height_one (k : ℕ) (hk : k < 2) : HasHeightAtMost (coreLang k 2) 1 and coreLang_height_one_all (n k : ℕ) (hk : k < n) : HasHeightAtMost (coreLang k n) 1 (Start/StarHeightCoreHeight.lean) with height_one_alternatingGroup_four_of_core. Route: the first-return code coreX to state 0 is a star-free prefix code (Start/StarHeightCoreCode.lean); for u in state 0, 3·coreCount u + acCount u = |u|₀ + Σᵢ dᵢ·Nᵢ(u), where acCount counts the factor 02 read from state 1 and Nᵢ the blocks in twelve classes Fᵢ (core_identity, Start/StarHeightCoreIdentity.lean); each Fᵢ is star-free and each Fᵢ∗ is strictly locally testable (Fcls_kstar_eq, Start/StarHeightCoreClasses.lean, checked on finite automata in Start/StarHeightCoreClassCheck.lean); the counts mod 3n have height one (bmodF_height, acCount_height); right quotients by 2 and 1 cover states 1 and 2. The identity and the classes were supplied with the instruction (found by computer search); the Lean proof is the verification."
     latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-ONE.md"
-    open_boundary: "Reduced to one three-letter language: height_one_alternatingGroup_four_of_core (hcore : forall k < 2, HasHeightAtMost (coreLang k 2) 1) gives height at most one for every language recognized by alternatingGroup (Fin 4) (Start/StarHeightA4Core.lean); letters in V are handled outright by the Transfer Lemma on the first-return code. First missing lemma: theorem coreLang_height_one (k : ℕ) (hk : k < 2) : HasHeightAtMost (coreLang k 2) 1. Counting first-return block classes plus letter counts (PST Proposition 6.2) cannot work (obstruction in the evidence file); other counts are needed."
+    open_boundary: ""
     milestone: M28
     depends_on:
       - M28-STARHEIGHT-TWO-GROUPS
@@ -6642,6 +6644,68 @@ tasks:
       - "python3 scripts/check_sorry.py"
       - "lake build --wfail"
 
+  - id: M28-STARHEIGHT-INDEX-THREE
+    priority: P1
+    status: DONE_STRONG
+    track: research/open-problems
+    title: "Generalized star height one for every finite group with an abelian normal subgroup of index 3 (Bourne's Conjectures 4.11 and 4.12)"
+    terminal_statement: "GeneralizedStarHeight.coreLang_height_one_all (n k : ℕ) (hk : k < n) : HasHeightAtMost (coreLang k n) 1 (Start/StarHeightCoreHeight.lean; Bourne's Conjecture 4.12 for r = 1) and GeneralizedStarHeight.height_one_of_abelian_index_three [Finite Alphabet] {G : Type} [Group G] [Fintype G] (N : Subgroup G) [N.Normal] (hab : ∀ x ∈ N, ∀ y ∈ N, x * y = y * x) (hidx : N.index = 3) (T : FreeMonoid Alphabet →* G) (F : Set G) : HasHeightAtMost {w | T (FreeMonoid.ofList w) ∈ F} 1 (Start/StarHeightIndexThreeAll.lean; Bourne's Conjecture 4.11, for groups). Bourne (PhD thesis, St Andrews 2017, §4.2.2) reduces Conjecture 4.11 (AbGrp ⋊ Z3) to Conjecture 4.12 (the counting languages of cyclic automata over Z3); the identity 3·coreCount = |u|₀ − acCount + Σ dᵢNᵢ with twelve strictly locally testable classes (M28-STARHEIGHT-ONE-A4) gives every modulus. The group theorem follows height_one_of_index_three_exponent_two_of_core with counts modulo Nat.card N (zcount_height_one_mod)."
+    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-ONE.md"
+    open_boundary: ""
+    milestone: M28
+    depends_on:
+      - M28-STARHEIGHT-ONE-A4
+    rank: 2609
+    exit_criteria:
+      - "coreLang k n has height at most one for every n and every k < n."
+      - "Every language recognized by a finite group with an abelian normal subgroup of index 3 has height at most one."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M28-STARHEIGHT-BOURNE-411
+    priority: P1
+    status: DONE_STRONG
+    track: research/open-problems
+    title: "Bourne's Conjectures 4.11 and 4.12 in full: height one for AbGrp * Z3 (abelian normal subgroup, quotient elementary abelian of exponent 3)"
+    terminal_statement: "GeneralizedStarHeight.vcount_height_one {α : Type u} [Finite α] [DecidableEq α] {V : Type} [AddCommGroup V] [Module (ZMod 3) V] [Finite V] (δ : α → V) (q : V) (x : α) (n k : ℕ) (hk : k < n) : HasHeightAtMost {w : List α | vcount δ q x w % n = k} 1 and GeneralizedStarHeight.height_one_of_abelian_normal_exponent_three [Finite Alphabet] {G : Type} [Group G] [Fintype G] (N : Subgroup G) [N.Normal] (hab : ∀ x ∈ N, ∀ y ∈ N, x * y = y * x) (hcomm : ∀ x y : G, x * y * x⁻¹ * y⁻¹ ∈ N) (hexp : ∀ x : G, x ^ 3 ∈ N) (T : FreeMonoid Alphabet →* G) (F : Set G) : HasHeightAtMost {w | T (FreeMonoid.ofList w) ∈ F} 1 (Start/StarHeightBourne.lean). vcount δ q x w := #{i < |w| | w[i]? = some x ∧ ((w.take i).map δ).sum = q}. Route: with D the dual of V and |D| = 3c, the character identity charSum_zcount: Σ_{φ ∈ D} zcount (φ ∘ δ) (φ q) x 0 w = c·|w|ₓ + 2c·vcount δ q x w; each zcount has height one modulo every m (zcount_height_one_mod, M28-STARHEIGHT-INDEX-THREE), so all counts are taken modulo 2cn (height_one_of_residues); V = 0 is the letter count. The group theorem takes counts of (coset, letter) pairs modulo Nat.card N, each a vcount on Additive (G ⧸ N), a ZMod 3-module by hcomm and hexp."
+    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-ONE.md"
+    open_boundary: ""
+    milestone: M28
+    depends_on:
+      - M28-STARHEIGHT-INDEX-THREE
+    rank: 2611
+    exit_criteria:
+      - "vcount_height_one: every letter-in-state count of a translation automaton on a finite ZMod 3-vector space has height at most one modulo every n."
+      - "Every language recognized by a finite group with an abelian normal subgroup N such that G/N is abelian of exponent 3 has height at most one."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M28-STARHEIGHT-ORDER-LT-20
+    priority: P1
+    status: DONE_STRONG
+    track: research/open-problems
+    title: "Generalized star height at most one for every language recognized by a finite group of order less than 20"
+    terminal_statement: "GeneralizedStarHeight.exists_abelian_normal_index_le_three {G : Type} [Group G] [Fintype G] (hG : Fintype.card G < 20) : ∃ N : Subgroup G, N.Normal ∧ (∀ x ∈ N, ∀ y ∈ N, x * y = y * x) ∧ N.index ≤ 3 (Start/GroupOrderLtTwenty.lean) and GeneralizedStarHeight.height_one_of_card_lt_twenty [Finite Alphabet] {G : Type} [Group G] [Fintype G] (hG : Fintype.card G < 20) (T : FreeMonoid Alphabet →* G) (F : Set G) : HasHeightAtMost {w | T (FreeMonoid.ofList w) ∈ F} 1 (Start/StarHeightOrderLtTwenty.lean). Group theory: orders 1, p, p² abelian; 6, 10, 14, 18 a subgroup of order n/2 of index 2; 15 the normal Sylow 5-subgroup; 8 and 16 centralizers via comm_of_le_central (a subgroup H with a central subgroup K and |H| ≤ 2|K| is abelian), for |Z(G)| = 2 in order 16 through an element whose class in G/Z(G) is central; 12: Sylow 3-subgroup normal (centralizer of its generator, index ≤ 2) or four Sylow 3-subgroups (eight elements of order 3, so the Sylow 2-subgroup is unique). Height: index 1 height_one_of_comm, index 2 height_one_of_abelian_index_two, index 3 height_one_of_abelian_index_three."
+    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-ONE.md"
+    open_boundary: ""
+    milestone: M28
+    depends_on:
+      - M28-STARHEIGHT-INDEX-THREE
+    rank: 2612
+    exit_criteria:
+      - "exists_abelian_normal_index_le_three: every finite group of order less than 20 has an abelian normal subgroup of index at most 3."
+      - "height_one_of_card_lt_twenty: every language recognized by a finite group of order less than 20 has height at most one."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
   - id: M29-EP-STATEMENT
     priority: P1
     status: IN_PROGRESS
@@ -6816,7 +6880,7 @@ tasks:
     track: research/open-problems
     title: "Expansion postponement for λP2, λPω̲ and the Calculus of Constructions"
     latest_evidence: "docs/goal/evidence/M29-EP.md"
-    open_boundary: "λPω̲ (stop rule fired this delivery): steps 1-2 of the two-level hereditary substitution are proved in Start/PTSExpansionLambdaPOmegaBar.lean: cube_classification (every legal term is a kind, a constructor or an object) and Expr.eraseK with eraseK_subst (kind erasure is invariant under substitutions of non-kinds with trivial kind erasure). Not done: a canonical judgement for λPω̲ (HasTypeNR requires base-erased arguments, which fails for constructor arguments), object-level hereditary substitution (step 3) and constructor-level hereditary substitution by eraseK of the kind (step 4). First missing lemma: theorem lambdaPOmegaBar_productNormalizationR : ProductNormalizationR (cubeSpec lambdaPOmegaBar), which with cube_expansionPostponement_of_productNormalizationR gives ExpansionPostponement (cubeSpec lambdaPOmegaBar). λP2 and λC are impredicative: substituting a type for a type variable changes erasures, so a normalization argument (Poll) is needed."
+    open_boundary: "λPω̲ (stop rule fired this delivery after steps 1 and 2 of the plan). Proved before: cube_classification, eraseK_subst (Start/PTSExpansionLambdaPOmegaBar.lean), the kind skeleton Expr.skelK with skelK_subst, skelK_size_pi_obj and skelK_size_pi_kind (Start/PTSExpansionLambdaPOmegaBarSkel.lean). New: step 1, the canonical judgement HasTypeNW (β-normal subjects and types, application result type a normal form of the instantiated codomain, no base-erasure restriction on arguments) with toHasTypeR, normal, rename, lam_inv and HasTypeNR.toHasTypeNW (Start/PTSExpansionLambdaPOmegaBarCanon.lean); step 2, object-level hereditary substitution HasTypeNW.hsubst_obj for PWbar = cubeSpec lambdaPOmegaBar, by induction on the erasure of the variable's type, with not_vis_of_typed (object substitution never changes the erasure of a normal type) (Start/PTSExpansionLambdaPOmegaBarObj.lean). First missing lemma (step 3, constructor-level hereditary substitution by induction on skelK of the kind): theorem HasTypeNW.hsubst_con {Γ : List (Expr Srt)} {N K M B : Expr Srt} (hK : K.isKindB = true) (hN : HasTypeNW PWbar Γ N K) (hM : HasTypeNW PWbar (K :: Γ) M B) : ∃ M' B', Reduces (M.instantiate N) M' ∧ Reduces (B.instantiate N) B' ∧ HasTypeNW PWbar Γ M' B'. Then normalizeNR for λPω̲, theorem lambdaPOmegaBar_productNormalizationR : ProductNormalizationR (cubeSpec lambdaPOmegaBar), and cube_expansionPostponement_of_productNormalizationR. λP2 and λC are impredicative: substituting a type for a type variable changes erasures, so a normalization argument (Poll) is needed."
     milestone: M29
     depends_on:
       - M29-EP-CUBE

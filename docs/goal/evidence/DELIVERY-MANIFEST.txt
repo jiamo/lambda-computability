@@ -1,0 +1,19 @@
+# Delivery manifest
+# git log --oneline -3 (at the commit preceding the manifest commit):
+0c6eff4 Axioms evidence; regenerate current goal state
+8bf4794 Register λPω̲ Canon/Obj modules; M29-EP-CUBE-REST open boundary
+efd2645 λPω̲: canonical judgement and object-level hereditary substitution
+
+# sha256sum of every file added or changed in this delivery (relative to 8cf2970, excluding this manifest and delivery.tar.gz):
+b0bf873635a2dfda267c1445638cc7a7df2bae290f8841003abb6f357f62e2e4  Start.lean
+c76e55c0cdfa7b95724496f576ee435f3af7072319ba59dd75e84d79911d7265  Start/Capstones.lean
+ba4452f0c5096d12c0cbd5fa86b05ca7885ddc1e4c9a16998b3ad3d17732b742  Start/GroupOrderLtTwenty.lean
+5209c3e2e479b089cab8d6fc9b4a9361d18546de532b4bf8b8ba771af065a81f  Start/PTSExpansionLambdaPOmegaBarCanon.lean
+29a02d04b8a4dd7582979ce9e8ada3c5b710ac6ec9dd34a3eacb591bc9c6f834  Start/PTSExpansionLambdaPOmegaBarObj.lean
+b3e8873d94cd107b91c32176398b2a07c634206723c07d0da2fadab0ba4f58dc  Start/StarHeightBourne.lean
+fcb13effe04c0ae3919cae55362e813dd6bdbcd227bf092604719d6b51e6dfa2  Start/StarHeightOrderLtTwenty.lean
+aabf5434b971738ce00d2fb942f381f4bac6d4596c7d9b405ad6fc5ffa269e87  docs/current-goal-state.md
+1d61255936bb8cb87080f9eb3866e73ba1832ecc7481e8ba9f1e33de3a7dddaa  docs/goal/evidence/M28-BOURNE-ORDER20-axioms.txt
+6ba549a9c6cd8c0f0b5463599c9ff296e7ef8bee070c1e29f4152f7e2cb746fe  docs/goal/evidence/M28-STARHEIGHT-ONE.md
+e8140d229f6aff99303538a719c3f1825114002a71f0cf95df5faafbddb922a3  docs/goal/evidence/M29-EP.md
+a3a02284c222580138eeb82100ed376c0c829bc0efb20766f543be59b359ed15  docs/goal/task-board.yaml
