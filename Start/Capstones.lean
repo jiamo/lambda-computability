@@ -297,8 +297,23 @@ import Start.StarHeightA4Core
 import Start.ResolutionPHPWidth
 import Start.ResolutionPHPDag
 import Start.PTSExpansionLambdaPOmegaBar
+import Start.PTSExpansionLambdaPOmegaBarSkel
 import Start.StarHeightWreathStep
 import Start.SpaceNProg
+import Start.SpaceNProgConverse
+import Start.SpaceNProgLoop
+import Start.StarHeightLocalDFA
+import Start.StarHeightCoreCode
+import Start.StarHeightCoreIdentity
+import Start.StarHeightCoreClassCheck
+import Start.StarHeightCoreClasses
+import Start.StarHeightCoreHeight
+import Start.StarHeightIndexThreeAll
+import Start.StarHeightBourne
+import Start.GroupOrderLtTwenty
+import Start.StarHeightOrderLtTwenty
+import Start.PTSExpansionLambdaPOmegaBarCanon
+import Start.PTSExpansionLambdaPOmegaBarObj
 
 /-! ## Interfaces of the untyped calculus
 
@@ -3948,3 +3963,97 @@ and compilation into well-formed nondeterministic offline machines with compiler
 #check @Complexity.Space.NProg.path_of_exec
 #check @Complexity.Space.NProg.machine_wellFormed
 #check @Complexity.Space.NProg.accepts_of_exec
+
+/-! ## Generalized star height one for `coreLang` and `A₄` (M28-STARHEIGHT-ONE-A4)
+
+`Start/StarHeightLocalDFA.lean`: finite-state checks and strictly locally testable languages.
+`Start/StarHeightCoreCode.lean`: the first-return code `coreX` to state `0` (a star-free prefix
+code) and the factorization of every word.  `Start/StarHeightCoreIdentity.lean`: the identity
+`3·coreCount u + acCount u = |u|₀ + Σᵢ dᵢ·Nᵢ(u)` for words in state `0`.
+`Start/StarHeightCoreClassCheck.lean`, `Start/StarHeightCoreClasses.lean`: the twelve classes are
+star-free and their stars are strictly locally testable; the counting languages have height one.
+`Start/StarHeightCoreHeight.lean`: `coreLang k n` has height at most one for every `n`, and every
+language recognized by `A₄` has height at most one.
+-/
+
+#check @GeneralizedStarHeight.coreX_prefixCode
+#check @GeneralizedStarHeight.coreX_height
+#check @GeneralizedStarHeight.core_identity
+#check @GeneralizedStarHeight.Fcls_kstar_eq
+#check @GeneralizedStarHeight.acCount_height
+#check @GeneralizedStarHeight.coreLang_height_one_all
+#check @GeneralizedStarHeight.coreLang_height_one
+#check @GeneralizedStarHeight.height_one_alternatingGroup_four
+
+/-! ## Abelian normal subgroups of index three (M28-STARHEIGHT-INDEX-THREE)
+
+`Start/StarHeightIndexThreeAll.lean`: every language recognized by a finite group with an abelian
+normal subgroup of index `3` has generalized star height at most one.
+-/
+
+#check @GeneralizedStarHeight.zcount_height_one_mod
+#check @GeneralizedStarHeight.height_one_of_abelian_index_three
+
+/-! ## The kind skeleton for λPω̲ (M29-EP-CUBE-REST, partial)
+
+`Start/PTSExpansionLambdaPOmegaBarSkel.lean`: the kind skeleton (object binders kept) is invariant
+under substitution of objects and constructors; it is the measure of constructor-level hereditary
+substitution.  Expansion postponement for λPω̲ is not proved.
+-/
+
+#check @PureTypeSystem.Expr.skelK_subst
+#check @PureTypeSystem.Expr.skelK_size_pi_kind
+
+/-! ## Nondeterministic tape programs: completeness of acceptance (M22-NONDET-PROG, partial)
+
+`Start/SpaceNProgConverse.lean`: every accepting run of the machine compiled from a
+nondeterministic program comes from an execution of the program, and the resulting `NSPACE`
+membership given a space bound on the compiled machine.
+-/
+
+#check @Complexity.Space.NProg.exec_of_accepts
+#check @Complexity.Space.NProg.nspace_of_exec
+
+/-! ## Nondeterministic tape programs: `NSPACE` from the loop form (M22-NONDET-PROG)
+
+`Start/SpaceNProgLoop.lean`: relocation of the compiled table, the invariant of reachable
+configurations of a compiled loop, and membership in `NSPACE` from the loop form.
+-/
+
+#check @Complexity.Space.NProg.nspace_loop
+
+/-! ## Bourne's Conjectures 4.11 and 4.12 in full (M28-STARHEIGHT-BOURNE-411)
+
+`Start/StarHeightBourne.lean`: every letter-in-state count of a translation automaton on a finite
+`ZMod 3`-vector space has height at most one modulo every `n` (character sums over the dual
+reduce to one dimension), and every language recognized by a finite group with an abelian normal
+subgroup `N` such that `G ⧸ N` is abelian of exponent `3` has height at most one.
+-/
+
+#check @GeneralizedStarHeight.charSum_zcount
+#check @GeneralizedStarHeight.vcount_height_one
+#check @GeneralizedStarHeight.height_one_of_abelian_normal_exponent_three
+
+/-! ## Groups of order less than `20` (M28-STARHEIGHT-ORDER-LT-20)
+
+`Start/GroupOrderLtTwenty.lean`: every finite group of order less than `20` has an abelian normal
+subgroup of index at most `3`.  `Start/StarHeightOrderLtTwenty.lean`: every language recognized
+by such a group has height at most one.
+-/
+
+#check @GeneralizedStarHeight.exists_abelian_normal_index_le_three
+#check @GeneralizedStarHeight.height_one_of_card_lt_twenty
+
+/-! ## λPω̲: canonical judgement and object-level hereditary substitution (M29-EP-CUBE-REST, partial)
+
+`Start/PTSExpansionLambdaPOmegaBarCanon.lean`: the canonical judgement `HasTypeNW` (β-normal
+subjects and types; in the application rule the result type is a normal form of the instantiated
+codomain; arguments are not restricted to base-erased ones).
+`Start/PTSExpansionLambdaPOmegaBarObj.lean`: object-level hereditary substitution for λPω̲, by
+induction on the erasure of the substituted variable's type; object substitution never changes the
+erasure of a normal type.  Constructor-level hereditary substitution and expansion postponement
+for λPω̲ are not proved.
+-/
+
+#check @PureTypeSystem.HasTypeNW.toHasTypeR
+#check @PureTypeSystem.HasTypeNW.hsubst_obj
