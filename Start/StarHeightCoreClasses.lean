@@ -5,7 +5,8 @@ import Start.StarHeightCoreClassCheck
 
 * `Fcls_height`, `Fco_height`: each class `Fᵢ` and its complement in `coreX` are star-free.
 * `Fcls_kstar_eq`: each `Fᵢ∗` is the strictly locally testable language with the data `fData i`
-  (prefixes, suffixes, forbidden factors), checked on the product of two finite automata.
+  (prefixes, suffixes, forbidden factors), checked on the product of two finite automata
+  (`f_agree`).
   Hence `Fᵢ∗` is star-free (`Fcls_kstar_height`).
 * `bmodF_height`: counting the blocks in `Fᵢ` modulo `m` has height at most one (Transfer Lemma).
 * `acCount_height`: the words with `acCount u ≡ r (mod m)` have height at most one.
@@ -207,7 +208,7 @@ theorem Fcls_kstar_eq (i : Fin 12) :
   ext u
   obtain ⟨hP, hS, hG⟩ := fData_ok i
   rw [mem_kstar_Fcls_iff, mem_sltLang_iff hP hS hG, sltState_eq_foldl hG, fState_eq_foldl,
-    pairCheck_spec letters3 (f_check i) u]
+    f_agree i u]
 
 theorem Fcls_kstar_height (i : Fin 12) : HasHeightAtMost (Fcls i)∗ 0 := by
   rw [Fcls_kstar_eq]; exact sltLang_height _ _ _ _
