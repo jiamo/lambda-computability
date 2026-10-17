@@ -6712,8 +6712,8 @@ tasks:
     track: research/open-problems
     title: "The Z4 core with a letter of rotation 2 and a letter of odd rotation (needed for F20 = AGL(1,5))"
     terminal_statement: "First missing lemma: theorem z4Rot2Abc : GeneralizedStarHeight.Z4Rot2Abc, that is ∀ n k : ℕ, k < n → HasHeightAtMost {w : List (Fin 3) | vcount (![0, 1, 2] : Fin 3 → ZMod 4) 0 0 w % n = k} 1 (letters a, b, c with displacements 0, 1, 2; counted letter a in state 0; n = 2 is Z2 wr Z4, n = 5 an F20 instance). General form: theorem z4core_rot2 : GeneralizedStarHeight.Z4CoreRot2 (Start/StarHeightZ4Core.lean; z4Rot2Abc_of_rot2 shows the instance is a special case)."
-    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-Z4.md"
-    open_boundary: "Open. No height-one expression known. Obstruction (proof by hand in the evidence file): a code Y whose blocks return to 0 and whose star contains every word in state 0 contains b c^(2i+1) b but not b c^(2i) b, so Y ∩ b c* b = b c (cc)* b and Y is not star-free; the A4/PM1 method (block classes of a state-tracking star-free code plus Z2 and letter counts) is unavailable. Computation (not Lean-verified): on the 2463 returning words of length ≤ 8, N is not in the rational span of letter counts, all letter-in-state counts of the 21 single-rotation ZMod 4 counters, and the first-return classes to the even states read from the prefixes '' and b; it already fails at length ≤ 6; adding factor counts (length ≤ 4) or factor-at-counter-state counts (length ≤ 3) does not help. Needed: a height-one quantity seeing the characters i^(B+2C) without a state-tracking code."
+    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-ROT2-OBSTRUCTION.md"
+    open_boundary: "Open (not to be attacked by the Transfer-Lemma method). Why that method is blocked: docs/goal/evidence/M28-STARHEIGHT-ROT2-OBSTRUCTION.md. Lean part: aperiodic_of_starFree (star-free implies aperiodic, Start/StarHeightStarFreeAperiodic.lean), rot2_Xc_not_starFree (the first-return code to 0 for displacements ![0,1,2] is not star-free) and rot2_no_long_c_run (a star-free language on which #b + 2#c is constant modulo 4 has no factor c^N) in Start/StarHeightRot2Obstruction.lean. Informal part (not Lean-verified): any identity N = Σ c_j Q_j with Transfer-Lemma quantities needs a star-free code automaton tracking i^(#b+2#c) on a recurrent class (twisted transfer operator with eigenvalue 1), which the two lemmas exclude; F20 (via a letter x ↦ -x + β with a letter of odd rotation) and S4 meet the same obstruction. Earlier search (not Lean-verified): on the 2463 returning words of length ≤ 8, N is not in the rational span of letter counts, all letter-in-state counts of the 21 single-rotation ZMod 4 counters, and the first-return classes to the even states read from the prefixes '' and b."
     milestone: M28
     depends_on:
       - M28-STARHEIGHT-Z4-CORE-ONE-ROTATION
@@ -6825,6 +6825,89 @@ tasks:
     rank: 2615
     exit_criteria:
       - "height_one_of_abelian_cyclic_index_four and height_one_F20_of_core are proved without the core hypothesis."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M28-STARHEIGHT-INDEX-FOUR-LETTERS
+    priority: P1
+    status: DONE_STRONG
+    track: research/open-problems
+    title: "Generalized star height one for abelian-by-Z4 groups when the letters avoid the element of order 2, or the elements of order 4, of the quotient; F20 corollary"
+    terminal_statement: "GeneralizedStarHeight.height_one_of_abelian_cyclic_index_four_of_letters [Finite Alphabet] {G : Type} [Group G] [Fintype G] (N : Subgroup G) [N.Normal] (hab : ∀ x ∈ N, ∀ y ∈ N, x * y = y * x) (hidx : N.index = 4) (hcyc : IsCyclic (G ⧸ N)) (T : FreeMonoid Alphabet →* G) (hlet : (∀ a, orderOf (psi N T (FreeMonoid.of a)) ≠ 2) ∨ (∀ a, orderOf (psi N T (FreeMonoid.of a)) ≠ 4)) (F : Set G) : HasHeightAtMost {w | T (FreeMonoid.ofList w) ∈ F} 1, and height_one_F20_of_letters (T : FreeMonoid Alphabet →* F20) (hlet : (∀ a, (T (FreeMonoid.of a)).a ≠ -1) ∨ (∀ a, ((T (FreeMonoid.of a)).a : ZMod 5) ≠ 2 ∧ ((T (FreeMonoid.of a)).a : ZMod 5) ≠ 3)) (F : Set F20) (Start/StarHeightIndexFourLetters.lean). No core hypothesis. The reduction of Start/StarHeightIndexFour.lean (vcount_z4_height_of_core) prepends a fresh letter of displacement -q, which for q = 2 creates a rotation-2 instance; it is redone here (vcount_z4_height_of_fresh) with fresh letters respecting the condition: case (a) (-q).val copies of displacement 1, then z4core_no2 from z4core_pm1, z4core_rot01, z4core_rot03; case (b) one fresh letter of displacement 2 for q ∈ {0, 2} and z4core_rot02, the count being 0 for odd q."
+    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-Z5.md"
+    open_boundary: ""
+    milestone: M28
+    depends_on:
+      - M28-STARHEIGHT-Z4-PM1
+      - M28-STARHEIGHT-Z4-CORE-ONE-ROTATION
+    rank: 2616
+    exit_criteria:
+      - "height_one_of_abelian_cyclic_index_four_of_letters and height_one_F20_of_letters are proved without the core hypothesis."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M28-STARHEIGHT-Z5-CORE
+    priority: P1
+    status: DONE_STRONG
+    track: research/open-problems
+    title: "The Z5 core (Bourne, Question 5.8, r = 5), and the Z_p core for every prime p"
+    terminal_statement: "theorem z5core : GeneralizedStarHeight.Z5CoreHeightOne, with def Z5CoreHeightOne : Prop := ∀ (α : Type) [Fintype α] [DecidableEq α] (δ : α → ZMod 5) (x : α) (n k : ℕ), k < n → HasHeightAtMost {w : List α | vcount δ 0 x w % n = k} 1; and theorem zpcore (p : ℕ) [Fact p.Prime] : ZpCoreHeightOne p (Start/StarHeightZpCoreHeight.lean). δ x = 0: zpcore_fixed (blocks {[x]} of the first-return code zpX, Transfer Lemma). δ x = 1, other letters of nonzero displacement: zpcore_moving from the identity zp_identity_aux, p·N0 + Σ_(a≠x,x) φ(s) = |u|_x + Σ_(x,c≠x) φ(s) + [u ends with x]·φ(σ u) with φ(s) = (-s).val (Start/StarHeightZpCore.lean); pair counts are block counts of pcls = zpX ⊓ PairEnd on the word shifted by a fresh letter (pcB_eq_bcount), with pcls and pcls∗ star-free (pcls_kstar_starFree, Start/StarHeightZpPairs.lean) and zpX, zpNR star-free (Start/StarHeightZpWalk.lean). Reductions: scaling by (δ x)⁻¹, erasing neutral letters."
+    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-Z5.md"
+    open_boundary: ""
+    milestone: M28
+    depends_on:
+      - M28-STARHEIGHT-APERIODIC
+      - M28-STARHEIGHT-BOURNE-411
+    rank: 2617
+    exit_criteria:
+      - "z5core : Z5CoreHeightOne is proved."
+      - "Stretch: the core for every prime p (zpcore)."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M28-STARHEIGHT-INDEX-FIVE
+    priority: P1
+    status: DONE_STRONG
+    track: research/open-problems
+    title: "Generalized star height one for finite groups with an abelian normal subgroup of index 5, and of any prime index"
+    terminal_statement: "GeneralizedStarHeight.height_one_of_abelian_index_five [Finite Alphabet] {G : Type} [Group G] [Fintype G] (N : Subgroup G) [N.Normal] (hab : ∀ x ∈ N, ∀ y ∈ N, x * y = y * x) (hidx : N.index = 5) (T : FreeMonoid Alphabet →* G) (F : Set G) : HasHeightAtMost {w | T (FreeMonoid.ofList w) ∈ F} 1; height_one_of_abelian_prime_index (same, with {p : ℕ} [Fact p.Prime] (hidx : N.index = p)); height_one_G55 (T : FreeMonoid Alphabet →* G55) (F : Set G55), G55 = Z11 ⋊ Z5 of order 55, nonabelian (Start/StarHeightIndexPrime.lean). Assembly of Start/StarHeightIndexFour.lean with G ⧸ N cyclic of prime order and every state reached by a fresh letter (vcount_zp_height from zpcore)."
+    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-Z5.md"
+    open_boundary: ""
+    milestone: M28
+    depends_on:
+      - M28-STARHEIGHT-Z5-CORE
+    rank: 2618
+    exit_criteria:
+      - "height_one_of_abelian_index_five is proved, with a concrete nonabelian corollary."
+      - "Stretch: height_one_of_abelian_prime_index for every prime p."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M28-STARHEIGHT-ROT2-OBSTRUCTION
+    priority: P1
+    status: DONE_STRONG
+    track: research/open-problems
+    title: "Star-free implies aperiodic, and the formal part of the ROT2 obstruction"
+    terminal_statement: "GeneralizedStarHeight.aperiodic_of_starFree {A : Type u} {L : Language A} (h : HasHeightAtMost L 0) : ∃ N : ℕ, ∀ u v w : List A, u ++ wpow v N ++ w ∈ L ↔ u ++ wpow v (N + 1) ++ w ∈ L (Start/StarHeightStarFreeAperiodic.lean); rot2_Xc_not_starFree : ¬ HasHeightAtMost (Xc σr2) 0 and rot2_no_long_c_run {Y : Language (Fin 3)} (hY : HasHeightAtMost Y 0) (hconst : ∀ y ∈ Y, ∀ z ∈ Y, rot2Weight y % 4 = rot2Weight z % 4) : ∃ N : ℕ, ∀ s t : List (Fin 3), s ++ List.replicate N 2 ++ t ∉ Y (Start/StarHeightRot2Obstruction.lean), σr2 = ![0, 1, 2]. The informal argument built on them is in the evidence file and is not Lean-verified."
+    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-ROT2-OBSTRUCTION.md"
+    open_boundary: ""
+    milestone: M28
+    depends_on: []
+    rank: 2619
+    exit_criteria:
+      - "aperiodic_of_starFree, rot2_Xc_not_starFree and rot2_no_long_c_run are proved."
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"

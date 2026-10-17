@@ -1,0 +1,47 @@
+# #print axioms for the new terminal theorems of M28-STARHEIGHT-ROT2-OBSTRUCTION, M28-STARHEIGHT-INDEX-FOUR-LETTERS,
+# M28-STARHEIGHT-Z5-CORE and M28-STARHEIGHT-INDEX-FIVE.
+# Command: lake env lean on a file with the lines below.
+
+import Start.StarHeightStarFreeAperiodic
+import Start.StarHeightRot2Obstruction
+import Start.StarHeightZpCoreHeight
+import Start.StarHeightIndexPrime
+import Start.StarHeightIndexFourLetters
+open GeneralizedStarHeight
+#print axioms aperiodic_of_starFree
+#print axioms rot2_Xc_not_starFree
+#print axioms rot2_no_long_c_run
+#print axioms zpX_starFree
+#print axioms bcount_split_height
+#print axioms pcls_kstar_starFree
+#print axioms zp_identity_aux
+#print axioms zpcore_moving
+#print axioms zpcore_fixed
+#print axioms zpcore
+#print axioms z5core
+#print axioms height_one_of_abelian_prime_index
+#print axioms height_one_of_abelian_index_five
+#print axioms height_one_G55
+#print axioms height_one_of_abelian_cyclic_index_four_of_letters
+#print axioms height_one_F20_of_letters
+
+# Output
+
+'GeneralizedStarHeight.aperiodic_of_starFree' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.rot2_Xc_not_starFree' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.rot2_no_long_c_run' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.zpX_starFree' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.bcount_split_height' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.pcls_kstar_starFree' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.zp_identity_aux' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.zpcore_moving' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.zpcore_fixed' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.zpcore' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.z5core' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.height_one_of_abelian_prime_index' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.height_one_of_abelian_index_five' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.height_one_G55' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.height_one_of_abelian_cyclic_index_four_of_letters' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'GeneralizedStarHeight.height_one_F20_of_letters' depends on axioms: [propext, Classical.choice, Quot.sound]

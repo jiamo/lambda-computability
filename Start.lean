@@ -674,6 +674,14 @@ import Start.StarHeightZ4Walk
 import Start.StarHeightZ4Classes
 import Start.StarHeightZ4Moving
 import Start.StarHeightZ4PM1
+import Start.StarHeightStarFreeAperiodic
+import Start.StarHeightRot2Obstruction
+import Start.StarHeightZpWalk
+import Start.StarHeightZpPairs
+import Start.StarHeightZpCore
+import Start.StarHeightZpCoreHeight
+import Start.StarHeightIndexPrime
+import Start.StarHeightIndexFourLetters
 import Start.PTSExpansionLambdaPOmegaBarCanon
 import Start.PTSExpansionLambdaPOmegaBarObj
 import Start.Capstones
