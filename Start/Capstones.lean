@@ -316,6 +316,14 @@ import Start.StarHeightIndexFour
 import Start.StarHeightZ4Core
 import Start.StarHeightAperiodic
 import Start.StarHeightZ4PM1
+import Start.StarHeightStarFreeAperiodic
+import Start.StarHeightRot2Obstruction
+import Start.StarHeightZpWalk
+import Start.StarHeightZpPairs
+import Start.StarHeightZpCore
+import Start.StarHeightZpCoreHeight
+import Start.StarHeightIndexPrime
+import Start.StarHeightIndexFourLetters
 import Start.PTSExpansionLambdaPOmegaBarCanon
 import Start.PTSExpansionLambdaPOmegaBarObj
 
@@ -4076,6 +4084,46 @@ depend only on `Z4CoreRot2`.
 #check @GeneralizedStarHeight.z4core_pm1
 #check @GeneralizedStarHeight.z4core_of_rot2
 #check @GeneralizedStarHeight.height_one_F20_of_rot2
+
+/-! ## Star-free implies aperiodic; the `ROT2` obstruction (M28-STARHEIGHT-ROT2-OBSTRUCTION)
+
+`Start/StarHeightStarFreeAperiodic.lean`: the converse of Schützenberger's theorem, in
+combinatorial form (`u vᴺ w ∈ L ↔ u vᴺ⁺¹ w ∈ L` for star-free `L`).
+`Start/StarHeightRot2Obstruction.lean`: for the displacements `(0, 1, 2)` on `ZMod 4`, the
+first-return code to `0` is not star-free, and a star-free language on which `#b + 2#c` is
+constant modulo `4` contains no long run of `c`.
+-/
+
+#check @GeneralizedStarHeight.aperiodic_of_starFree
+#check @GeneralizedStarHeight.rot2_Xc_not_starFree
+#check @GeneralizedStarHeight.rot2_no_long_c_run
+
+/-! ## Index four under a condition on the letters (M28-STARHEIGHT-INDEX-FOUR-LETTERS)
+
+`Start/StarHeightIndexFourLetters.lean`: abelian-by-`Z₄` with cyclic quotient, unconditionally,
+when no letter maps to the element of order `2` of the quotient, or no letter maps to an element
+of order `4`; for `F20`, when no letter is `x ↦ -x + β`, or no letter is `x ↦ ±2x + β`.
+-/
+
+#check @GeneralizedStarHeight.height_one_of_abelian_cyclic_index_four_of_letters
+#check @GeneralizedStarHeight.height_one_F20_of_letters
+
+/-! ## The `Z_p` core and abelian normal subgroups of prime index (M28-STARHEIGHT-Z5-CORE,
+M28-STARHEIGHT-INDEX-FIVE)
+
+`Start/StarHeightZpWalk.lean`, `Start/StarHeightZpPairs.lean`, `Start/StarHeightZpCore.lean`,
+`Start/StarHeightZpCoreHeight.lean`: letter-in-state-`0` counts of translation automata on
+`ZMod p` have height at most one modulo every `n`, for every prime `p` (`zpcore`; `p = 5`:
+`z5core`, Bourne's Question 5.8 for `r = 5`).
+`Start/StarHeightIndexPrime.lean`: every finite group with an abelian normal subgroup of prime
+index; index `5`; the nonabelian group `Z₁₁ ⋊ Z₅` of order `55`.
+-/
+
+#check @GeneralizedStarHeight.zpcore
+#check @GeneralizedStarHeight.z5core
+#check @GeneralizedStarHeight.height_one_of_abelian_prime_index
+#check @GeneralizedStarHeight.height_one_of_abelian_index_five
+#check @GeneralizedStarHeight.height_one_G55
 
 /-! ## λPω̲: canonical judgement and object-level hereditary substitution (M29-EP-CUBE-REST, partial)
 
