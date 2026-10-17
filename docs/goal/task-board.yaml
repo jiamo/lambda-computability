@@ -6727,17 +6727,38 @@ tasks:
       - "python3 scripts/check_sorry.py"
       - "lake build --wfail"
 
+  - id: M28-STARHEIGHT-APERIODIC
+    priority: P1
+    status: DONE_STRONG
+    track: research/open-problems
+    title: "Schützenberger's theorem, direction aperiodic implies star-free, with a decidable automaton certificate"
+    terminal_statement: "GeneralizedStarHeight.Aperiodic.starFree_of_aperiodic {A : Type u} [Finite A] {M : Type u} [Monoid M] [Finite M] (hM : ∀ x : M, ∃ n : ℕ, x ^ (n + 1) = x ^ n) (φ : FreeMonoid A →* M) (m : M) : HasHeightAtMost {w : List A | φ (FreeMonoid.ofList w) = m} 0, and GeneralizedStarHeight.Aperiodic.starFree_of_dfa [DecidableEq Q] (qs : List Q) (hqs : ∀ q, q ∈ qs) (letters : List A) (hl : ∀ a, a ∈ letters) (δ : Q → A → Q) (R : List (Q → Q)) (N : ℕ) (hR : certOK qs letters δ R N = true) (q₀ : Q) (P : Q → Prop) : HasHeightAtMost {w : List A | P (w.foldl δ q₀)} 0, with starFree_of_dfa_closed for a transition-closed list of states (Start/StarHeightAperiodic.lean). certOK: R contains the identity, is closed under right composition with every letter, and f^[N+1] = f^[N] for each f ∈ R (compared on qs); dfaCert computes R by breadth-first search, so each application is one decide. Proof: local divisors (Diekert–Kufleitner), induction on |M| and inside on the letters used."
+    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-APERIODIC.md"
+    open_boundary: ""
+    milestone: M28
+    depends_on: []
+    rank: 2603
+    exit_criteria:
+      - "starFree_of_aperiodic is proved for every finite alphabet and finite aperiodic monoid."
+      - "A decidable automaton certificate (starFree_of_dfa) is proved."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
   - id: M28-STARHEIGHT-Z4-PM1
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: research/open-problems
     title: "The Z4 core with rotations 1 and 3 and no rotation 2"
-    terminal_statement: "theorem z4core_pm1 : GeneralizedStarHeight.Z4CorePM1 (Start/StarHeightZ4Core.lean). After erasing neutral letters and using q ↦ -q, two three-letter cases with b (+1), d (-1): (a) counted letter x fixed, (m) counted letter a moving (+1)."
+    terminal_statement: "theorem z4core_pm1 : GeneralizedStarHeight.Z4CorePM1 (Start/StarHeightZ4PM1.lean). After erasing neutral letters, merging the +1 and -1 letters and using q ↦ -q (pm1_core_of_nonneg), two three-letter cases with b (+1), d (-1): (a) counted letter x fixed, zcA_height (Start/StarHeightZ4Walk.lean), first-return code Xc = {x} + XcA1 and the Transfer Lemma; (m) counted letter a moving (+1), zcM_height (Start/StarHeightZ4Moving.lean) from pm1_identity: dsum4 σm u = 0 → 2·zc σm 0 u = Z2 u + Ncl 1 u - Ncl 2 u - ad2 u (automaton invariant id4_check), Z2 by Alang_height (p = 2), ad2 by a left quotient bb and the block {ad}, Ncl 1/Ncl 2 by transfer over the code with C+ and C- (Start/StarHeightZ4Classes.lean). Star-freeness of Xc, NR, C+, C-, Xc ∖ C±, C+*, C-* by the aperiodic certificates of M28-STARHEIGHT-APERIODIC (one kernel decide per automaton). Corollaries: z4core_of_rot2 (h2 : Z4CoreRot2) : Z4CoreHeightOne and height_one_F20_of_rot2 (h2 : Z4CoreRot2) (T : FreeMonoid Alphabet →* F20) (F : Set F20) : HasHeightAtMost {w | T (FreeMonoid.ofList w) ∈ F} 1."
     latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-Z4.md"
-    open_boundary: "Open in Lean; the mathematics is settled up to one common lemma. First missing lemma: the first-return code X to state 0 of the ±1 walk on ZMod 4 (and, for (a), its blocks not reading x at 0) is star-free: while the walk avoids 0 the automaton is a 3-state path, whose transition monoid is aperiodic, but the repository has no aperiodic-implies-star-free theorem and the A4 code relied on a reset automaton. With it, (a) is B0lang_eq/V0lang_eq verbatim. For (m) the identity 2·N0(u) = Z2(u) + #C+(u) - #C-(u) - #{blocks of bb·u equal to ad} on words u in state 0 (C+: blocks starting with a whose last two letters are not a then an up letter; C-: blocks starting with b or d whose last two letters are a then an up letter; Z2(u) = a at even positions) holds on all 298936 returning words of length ≤ 12 and on random words up to length 400, and C+, C-, C+*, C-* have aperiodic minimal automata (computation, not Lean-verified; docs/goal/evidence/M28-STARHEIGHT-Z4-search.py). Remaining: these star-freeness facts in Lean, the identity as an automaton invariant, the assembly as in coreK_eq."
+    open_boundary: ""
     milestone: M28
     depends_on:
       - M28-STARHEIGHT-Z4-CORE-ONE-ROTATION
+      - M28-STARHEIGHT-APERIODIC
     rank: 2602
     exit_criteria:
       - "z4core_pm1 : Z4CorePM1 is proved."
@@ -6772,9 +6793,9 @@ tasks:
     status: DONE_WEAK
     track: research/open-problems
     title: "The Z4 core: letter-in-state-0 counts of translation automata on ZMod 4 have height one modulo every n"
-    terminal_statement: "Target: Z4CoreHeightOne (Start/StarHeightIndexFour.lean). Proved: GeneralizedStarHeight.z4core_of_rot2_pm1 (h2 : Z4CoreRot2) (h1 : Z4CorePM1) : Z4CoreHeightOne (Start/StarHeightZ4Core.lean), from the one-rotation cases z4core_rot01, z4core_rot03, z4core_rot02."
+    terminal_statement: "Target: Z4CoreHeightOne (Start/StarHeightIndexFour.lean). Proved: GeneralizedStarHeight.z4core_of_rot2 (h2 : Z4CoreRot2) : Z4CoreHeightOne (Start/StarHeightZ4PM1.lean), from z4core_of_rot2_pm1 (Start/StarHeightZ4Core.lean), the one-rotation cases z4core_rot01, z4core_rot03, z4core_rot02 and z4core_pm1 : Z4CorePM1."
     latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-Z4.md"
-    open_boundary: "Z4CoreHeightOne is proved only from the two open cases Z4CoreRot2 (M28-STARHEIGHT-Z4-ROT2: a letter of rotation 2 with a letter of odd rotation) and Z4CorePM1 (M28-STARHEIGHT-Z4-PM1: rotations 1 and 3, no 2). Every other case is proved (M28-STARHEIGHT-Z4-CORE-ONE-ROTATION)."
+    open_boundary: "Z4CoreHeightOne is proved only from the one open case Z4CoreRot2 (M28-STARHEIGHT-Z4-ROT2: a letter of rotation 2 with a letter of odd rotation). Every other case is proved (M28-STARHEIGHT-Z4-CORE-ONE-ROTATION, M28-STARHEIGHT-Z4-PM1)."
     milestone: M28
     depends_on:
       - M28-STARHEIGHT-Z4-ROT2
@@ -6794,9 +6815,9 @@ tasks:
     status: DONE_WEAK
     track: research/open-problems
     title: "Generalized star height one for abelian-by-Z4 groups (abelian normal subgroup of index 4, cyclic quotient), and for F20"
-    terminal_statement: "GeneralizedStarHeight.height_one_of_abelian_cyclic_index_four (hcore : Z4CoreHeightOne) [Finite Alphabet] {G : Type} [Group G] [Fintype G] (N : Subgroup G) [N.Normal] (hab : ∀ x ∈ N, ∀ y ∈ N, x * y = y * x) (hidx : N.index = 4) (hcyc : IsCyclic (G ⧸ N)) (T : FreeMonoid Alphabet →* G) (F : Set G) : HasHeightAtMost {w | T (FreeMonoid.ofList w) ∈ F} 1 and height_one_F20_of_core (hcore : Z4CoreHeightOne) (T : FreeMonoid Alphabet →* F20) (F : Set F20) (Start/StarHeightIndexFour.lean); F20 = affine maps x ↦ a·x + b of ZMod 5 (F20.card, F20.transl_comm, F20.transl_index, F20.quotient_isCyclic); height_one_F20_of_rot2_pm1 (Start/StarHeightZ4Core.lean). Other states from state 0: vcount_z4_height_of_core."
+    terminal_statement: "GeneralizedStarHeight.height_one_of_abelian_cyclic_index_four (hcore : Z4CoreHeightOne) [Finite Alphabet] {G : Type} [Group G] [Fintype G] (N : Subgroup G) [N.Normal] (hab : ∀ x ∈ N, ∀ y ∈ N, x * y = y * x) (hidx : N.index = 4) (hcyc : IsCyclic (G ⧸ N)) (T : FreeMonoid Alphabet →* G) (F : Set G) : HasHeightAtMost {w | T (FreeMonoid.ofList w) ∈ F} 1 and height_one_F20_of_core (hcore : Z4CoreHeightOne) (T : FreeMonoid Alphabet →* F20) (F : Set F20) (Start/StarHeightIndexFour.lean); F20 = affine maps x ↦ a·x + b of ZMod 5 (F20.card, F20.transl_comm, F20.transl_index, F20.quotient_isCyclic); height_one_F20_of_rot2_pm1 (Start/StarHeightZ4Core.lean); height_one_F20_of_rot2 (h2 : Z4CoreRot2) (T : FreeMonoid Alphabet →* F20) (F : Set F20) : HasHeightAtMost {w | T (FreeMonoid.ofList w) ∈ F} 1 (Start/StarHeightZ4PM1.lean). Other states from state 0: vcount_z4_height_of_core."
     latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-Z4.md"
-    open_boundary: "Conditional on Z4CoreHeightOne (M28-STARHEIGHT-Z4-CORE), which reduces to the open rows M28-STARHEIGHT-Z4-ROT2 and M28-STARHEIGHT-Z4-PM1. F20 needs both (x ↦ -x has rotation 2, x ↦ 2x rotation 1)."
+    open_boundary: "Conditional on Z4CoreHeightOne (M28-STARHEIGHT-Z4-CORE), which now reduces to the single open row M28-STARHEIGHT-Z4-ROT2 (Z4CorePM1 is proved). F20 needs it (x ↦ -x has rotation 2): height_one_F20_of_rot2 assumes only Z4CoreRot2."
     milestone: M28
     depends_on:
       - M28-STARHEIGHT-Z4-CORE

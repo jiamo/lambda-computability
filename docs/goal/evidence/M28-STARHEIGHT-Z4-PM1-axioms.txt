@@ -1,0 +1,33 @@
+# #print axioms for the new terminal theorems of M28-STARHEIGHT-APERIODIC and M28-STARHEIGHT-Z4-PM1.
+# Command: lake env lean on a file with the lines below.
+
+import Start.StarHeightZ4PM1
+open GeneralizedStarHeight
+#print axioms Aperiodic.starFree_of_aperiodic
+#print axioms Aperiodic.starFree_of_dfa
+#print axioms Aperiodic.starFree_of_dfa_closed
+#print axioms zcA_height
+#print axioms pm1_identity
+#print axioms zcM_height
+#print axioms z4core_pm1
+#print axioms z4core_of_rot2
+#print axioms height_one_F20_of_rot2
+#print axioms Xc_starFree_m
+#print axioms NR_starFree_m
+#print axioms Xc_starFree_a
+#print axioms Ccl_kstar_starFree
+
+# Output
+'GeneralizedStarHeight.Aperiodic.starFree_of_aperiodic' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.Aperiodic.starFree_of_dfa' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.Aperiodic.starFree_of_dfa_closed' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.zcA_height' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.pm1_identity' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.zcM_height' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.z4core_pm1' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.z4core_of_rot2' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.height_one_F20_of_rot2' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.Xc_starFree_m' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.NR_starFree_m' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.Xc_starFree_a' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.Ccl_kstar_starFree' depends on axioms: [propext, Classical.choice, Quot.sound]
