@@ -1,8 +1,10 @@
-# M28-STARHEIGHT-Z4: abelian-by-Z₄ groups and the Frobenius group F₂₀ (open)
+# M28-STARHEIGHT-Z4: abelian-by-Z₄ groups and the Frobenius group F₂₀ (open: ROT2 only)
 
 Rows: M28-STARHEIGHT-INDEX-FOUR (DONE_WEAK), M28-STARHEIGHT-Z4-CORE (DONE_WEAK),
-M28-STARHEIGHT-Z4-CORE-ONE-ROTATION (DONE_STRONG), M28-STARHEIGHT-Z4-PM1 (open),
-M28-STARHEIGHT-Z4-ROT2 (open, head of the M28 queue).
+M28-STARHEIGHT-Z4-CORE-ONE-ROTATION (DONE_STRONG), M28-STARHEIGHT-Z4-PM1 (DONE_STRONG),
+M28-STARHEIGHT-Z4-ROT2 (open, head of the M28 queue).  The tool used for PM1,
+Schützenberger's theorem, is M28-STARHEIGHT-APERIODIC (DONE_STRONG,
+`docs/goal/evidence/M28-STARHEIGHT-APERIODIC.md`).
 
 "Height" is generalized star height (`GeneralizedStarHeight.HasHeightAtMost`); "star-free" is
 `HasHeightAtMost _ 0`.  `vcount δ q x w` (`Start/StarHeightBourne.lean`) is the number of positions
@@ -10,7 +12,8 @@ of `w` reading `x` in state `q` of the translation automaton with displacements 
 
 ## What is proved (lake build --wfail, no sorry, axioms propext, Classical.choice, Quot.sound)
 
-Axioms: `docs/goal/evidence/M28-STARHEIGHT-Z4-axioms.txt`.
+Axioms: `docs/goal/evidence/M28-STARHEIGHT-Z4-axioms.txt` (earlier rows) and
+`docs/goal/evidence/M28-STARHEIGHT-Z4-PM1-axioms.txt` (this delivery).
 
 ### Reduction to the Z₄ core (`Start/StarHeightIndexFour.lean`)
 
@@ -71,53 +74,61 @@ lemma z4Rot2Abc_of_rot2 (h : Z4CoreRot2) : Z4Rot2Abc
 ```
 
 F₂₀ needs both: `x ↦ −x` has rotation `2`, `x ↦ 2x` rotation `1`, `x ↦ 3x` rotation `3`.
+`Z4CorePM1` is now proved (next section), so (`Start/StarHeightZ4PM1.lean`):
 
-## M28-STARHEIGHT-Z4-PM1 (rotations ±1, no rotation 2): open, with an identity found
+```
+theorem z4core_pm1 : Z4CorePM1
+theorem z4core_of_rot2 (h2 : Z4CoreRot2) : Z4CoreHeightOne
+theorem height_one_F20_of_rot2 (h2 : Z4CoreRot2) {Alphabet : Type u} [Finite Alphabet]
+    (T : FreeMonoid Alphabet →* F20) (F : Set F20) :
+    HasHeightAtMost {w | T (FreeMonoid.ofList w) ∈ F} 1
+```
 
-Neutral letters can be erased by an inverse alphabetic morphism, and `q ↦ −q` swaps `1` and `3`.
-So both sub-cases are three-letter problems on `ZMod 4`, with `b` (+1) and `d` (−1):
+## M28-STARHEIGHT-Z4-PM1 (rotations ±1, no rotation 2): DONE_STRONG
 
-* fixed counted letter `x` (δ = 0) — the user's case (a);
-* moving counted letter `a` (δ = 1) — the `Z₄` analogue of the A₄ core.
+`theorem z4core_pm1 : Z4CorePM1` (`Start/StarHeightZ4PM1.lean`), with
+`Start/StarHeightZ4Walk.lean`, `Start/StarHeightZ4Classes.lean`, `Start/StarHeightZ4Moving.lean`.
+Alphabet `Fin 3`: letter `0` is the counted letter, `1` is `b` (+1), `2` is `d` (−1);
+`σa = ![0, 1, 3]` (case (a), counted letter fixed) and `σm = ![1, 1, 3]` (case (m), counted
+letter `a` moving by +1).  `zc σ 0 u` counts the letter `0` read in state `0`.
 
-**Star-freeness (the common missing lemma).** While a walk with steps `±1` avoids `0`, its integer
-partial sums stay in `{1,2,3}` or in `{−3,−2,−1}`, so the restricted automaton is a 3-state path,
-whose transition monoid consists of order-preserving partial maps and is aperiodic.  Hence:
+**Reduction** (`pm1_core_of_nonneg`, `vcountFrom_filterMap_zc`).  Neutral letters other than `x`
+are erased and the ±1 letters other than `x` are merged into `b`, `d` by one inverse alphabetic
+morphism `α → Option (Fin 3)`; if `δ x = 3`, `q ↦ −q` (`vcountFrom_hom`) gives `δ x = 1`.
 
-* the first-return code `X` to `0` is star-free;
-* for case (a), the returns `P` that do not read `x` at `0` are star-free.
+**Walk automaton** (`Start/StarHeightZ4Walk.lean`).  `Xc σ` (first-return code to `0`), `NR σ`
+(no nonempty prefix in state `0`) and the factorization `splitW σ u = (e₁ … e_r, t)`
+(`splitW_spec`, `splitW_flatten`, `Xc_prefixCode`).  A six-state automaton `walk4St σ` recognizes
+both (`Xc_eq_walk`, `NR_eq_walk`); its transition monoid is aperiodic, checked by one
+`decide +kernel` per displacement map (`walk_cert_m`, `walk_cert_a`), so `Xc σ`, `NR σ` are
+star-free (`Xc_starFree_m`, `NR_starFree_m`, `Xc_starFree_a`, via `starFree_of_dfa`).
+`zcK_quot`/`zc_height_of_zcK`: all words reduce to words in state `0` by right quotients by `d`.
 
-This is checked by machine on the minimal automata (search script), but it is not proved in Lean.
-There is no Lean theorem "aperiodic ⇒ star-free" in the repository, and the A₄ code used a reset
-automaton (`walk_eq_reset`), which a 3-state path is not.  With this lemma, case (a) is exactly
-`B0lang_eq`/`V0lang_eq` (PST's `[(P∗ x P∗)ⁿ]∗ S⁻¹`).
+**Case (a)** (`zcA_height`).  In state `0` the count is the number of blocks `[0]`
+(`zcK_a_eq`: `zcK σa n k = bmod (Xc σa) {[0]} n k`); Transfer Lemma with `L₀ = {[0]}`,
+`L₁ = Xc σa ∖ {[0]}`, `L₀∗ = {[0]}∗` star-free.
 
-**The identity (moving case; computer-found, checked, not Lean-verified).**  Alphabet
-`a` (+1, counted), `b` (+1), `d` (−1).  Let `u` be a word in state `0`, and factor it into blocks of
-`X`.  Define:
+**Case (m)** (`zcM_height`).  The identity, for `u` in state `0`:
 
-* `Z₂(u)` = the number of `a` at even positions, i.e. `N₀ + N₂`; it has height one by `pcount`
-  with `p = 2`;
-* `C⁺` = the blocks starting with `a` whose last two letters are not (`a`, then an up letter);
-* `C⁻` = the blocks starting with `b` or `d` whose last two letters are `a` then an up letter;
-* `ad₂(u)` = the blocks equal to `ad` in the factorization of `bb·u`.  These are the factors `ad`
-  whose `a` is read in state `2`, a shifted-start count like A₄'s `acCount`.
+```
+theorem pm1_identity {u : List (Fin 3)} (h : dsum4 σm u = 0) :
+    2 * (zc σm 0 u : ℤ) = (Z2 u : ℤ) + (Ncl 1 u : ℤ) - (Ncl 2 u : ℤ) - (ad2 u : ℤ)
+```
 
-Then
+* `Z2 u`: letters `a` at even positions (`pcount … 2`), height one (`Z2_height`, `p = 2`);
+* `Ncl 1`, `Ncl 2`: blocks of class `C⁺`, `C⁻` (`bcls`, from the first letter and the last two
+  letters); counted by `transfer_height_one` (`bmodC_height`) with `C±` and `Xc ∖ C±` star-free
+  (`Ccl_starFree`, `Cco_starFree`) and `C±∗` star-free (`Ccl_kstar_starFree`: a scanning automaton
+  is compared with a six-state automaton by `pairCheck`, whose monoid is certified aperiodic);
+* `ad2 u = ad0 (b b u)` (`ad2_eq`), `ad0` = blocks `ad` of the factorization (`ad0_eq_Nad`);
+  two left quotients and the Transfer Lemma for `{ad}` (`kstar_singleton_starFree`).
 
-    2·N₀(u) = Z₂(u) + #C⁺(u) − #C⁻(u) − ad₂(u).
+The identity is an invariant of a scanning automaton (walk state, first/last letter of the current
+block, potential), checked on its reachable states by `checkInv` (`id4_check`, kernel `decide`).
+Assembly modulo `2n` (`zcK_m_eq`, as `coreK_eq`), then the tail by `zc_height_of_zcK`.
 
-Proof idea: `N₀ − N₂ = #(blocks starting with a) − N₂`.  An `a` read in state `2` goes to `3` and is
-followed either by `d` (an `ad` read in state `2`), or by an up letter that ends the block.  In the
-second case it is the penultimate letter of a block ending with an up letter.
-
-The identity holds on all 298,936 returning words of length ≤ 12 (2,690,420 of length ≤ 14 in a
-longer run) and on random returning words up to length 400.  The minimal automata of `X`, `C⁺`,
-`C⁻`, `C⁺∗`, `C⁻∗` are aperiodic, so the Transfer Lemma applies to `C±` (`L₁ = X ∖ C±`), and
-`{ad}∗` is star-free (`ad` is primitive).
-
-Gap (Lean): star-freeness of `X`, `P`, `C±`, `C±∗`; the identity as an automaton invariant (as
-`id_check` in A₄); the assembly as in `coreK_eq`.
+Every kernel `decide` is per automaton (walk σm, walk σa, C⁺ agreement, C⁻ agreement, C⁺ cert,
+C⁻ cert, identity).  Memory: see `docs/goal/evidence/M28-STARHEIGHT-APERIODIC.md`.
 
 ## M28-STARHEIGHT-Z4-ROT2 (a rotation-2 letter with an odd one): open
 
