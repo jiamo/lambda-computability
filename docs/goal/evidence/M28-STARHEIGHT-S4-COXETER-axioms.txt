@@ -1,0 +1,42 @@
+# #print axioms for the new terminal theorems of M28-STARHEIGHT-S4-COXETER, M28-STARHEIGHT-LIFT
+# and the R3 classes.  Command: lake env lean on a file with the lines below.
+
+import Start.StarHeightS4ThreeHitsA
+import Start.StarHeightS4ThreeHitsB
+#print axioms GeneralizedStarHeight.height_one_of_determined
+#print axioms GeneralizedStarHeight.height_one_of_lift
+#print axioms GeneralizedStarHeight.S4Cox.coxT_eq_dec
+#print axioms GeneralizedStarHeight.S4Cox.height_one_S4_coxeter
+#print axioms GeneralizedStarHeight.S4Three.good_baseN
+#print axioms GeneralizedStarHeight.S4Three.C0132_0213_1230.height_one
+#print axioms GeneralizedStarHeight.S4Three.C0132_0213_1320.height_one
+#print axioms GeneralizedStarHeight.S4Three.C0132_0213_2103.height_one
+#print axioms GeneralizedStarHeight.S4Three.C0132_0231_1023.height_one
+#print axioms GeneralizedStarHeight.S4Three.C0132_1023_1230.height_one
+#print axioms GeneralizedStarHeight.S4Three.C0132_1203_1320.height_one
+#print axioms GeneralizedStarHeight.S4Three.C0132_1203_2310.height_one
+#print axioms GeneralizedStarHeight.S4Three.C0132_1203_3021.height_one
+#print axioms GeneralizedStarHeight.S4Three.C0231_1203_2310.height_one
+#print axioms GeneralizedStarHeight.S4Three.C0231_1302_2310.height_one
+
+# Output:
+
+'GeneralizedStarHeight.height_one_of_determined' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.height_one_of_lift' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Cox.coxT_eq_dec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Cox.height_one_S4_coxeter' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.good_baseN' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.C0132_0213_1230.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.C0132_0213_1320.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.C0132_0213_2103.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.C0132_0231_1023.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.C0132_1023_1230.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.C0132_1203_1320.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.C0132_1203_2310.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.C0132_1203_3021.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.C0231_1203_2310.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.C0231_1302_2310.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+
+# Max RSS of `lake env lean <file>` (MiB): import Mathlib baseline 7877; StarHeightLift 7945;
+# StarHeightS4Coxeter 8487; StarHeightS4ThreeBase 7956; StarHeightS4ThreeHitsA 8386;
+# StarHeightS4ThreeHitsB 8387 (at most 610 MiB above the baseline).

@@ -342,6 +342,11 @@ import Start.StarHeightCosetFamily
 import Start.StarHeightRenaming
 import Start.StarHeightS4Classes
 import Start.StarHeightS4TwoLetters
+import Start.StarHeightLift
+import Start.StarHeightS4Coxeter
+import Start.StarHeightS4ThreeBase
+import Start.StarHeightS4ThreeHitsA
+import Start.StarHeightS4ThreeHitsB
 import Start.PTSExpansionLambdaPOmegaBarCanon
 import Start.PTSExpansionLambdaPOmegaBarObj
 
@@ -4172,6 +4177,14 @@ generalized star height.
 `Start/StarHeightS4Classes.lean`, `Start/StarHeightS4TwoLetters.lean`: the five generating pairs of
 `S₄` up to conjugation and a swap; every language over two letters recognized by `S₄` has height at
 most one.
+`Start/StarHeightLift.lean`: observers of words that determine the value give height one; the lift
+theorem (good coset automata of a finite group `E` over `G` whose good subgroups meet in `ker π`).
+`Start/StarHeightS4Coxeter.lean`: every language recognized by `S₄` over the Coxeter transpositions
+`(0 1)`, `(1 2)`, `(2 3)` has height at most one (two auxiliary 4-state automata, the pairing
+automaton and the length parity determine the element).
+`Start/StarHeightS4ThreeBase.lean`, `Start/StarHeightS4ThreeHitsA.lean`,
+`Start/StarHeightS4ThreeHitsB.lean`: the same for ten further classes of generating triples of `S₄`
+whose good coset automata do not separate `S₄`, through signed lifts of order `192`.
 -/
 
 #check @GeneralizedStarHeight.vcount_height_one_prime
@@ -4218,6 +4231,21 @@ most one.
 #check @GeneralizedStarHeight.S4Two.height_one_S4_two_letters
 #check @GeneralizedStarHeight.S4Two.height_one_S4_two_values
 #check @GeneralizedStarHeight.S4Two.height_one_S4_card_two
+#check @GeneralizedStarHeight.height_one_of_determined
+#check @GeneralizedStarHeight.height_one_of_lift
+#check @GeneralizedStarHeight.S4Cox.coxT_eq_dec
+#check @GeneralizedStarHeight.S4Cox.height_one_S4_coxeter
+#check @GeneralizedStarHeight.S4Three.good_baseN
+#check @GeneralizedStarHeight.S4Three.C0132_0213_1230.height_one
+#check @GeneralizedStarHeight.S4Three.C0132_0213_1320.height_one
+#check @GeneralizedStarHeight.S4Three.C0132_0213_2103.height_one
+#check @GeneralizedStarHeight.S4Three.C0132_0231_1023.height_one
+#check @GeneralizedStarHeight.S4Three.C0132_1023_1230.height_one
+#check @GeneralizedStarHeight.S4Three.C0132_1203_1320.height_one
+#check @GeneralizedStarHeight.S4Three.C0132_1203_2310.height_one
+#check @GeneralizedStarHeight.S4Three.C0132_1203_3021.height_one
+#check @GeneralizedStarHeight.S4Three.C0231_1203_2310.height_one
+#check @GeneralizedStarHeight.S4Three.C0231_1302_2310.height_one
 
 /-! ## λPω̲: canonical judgement and object-level hereditary substitution (M29-EP-CUBE-REST, partial)
 

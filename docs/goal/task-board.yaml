@@ -6713,7 +6713,7 @@ tasks:
     title: "The Z4 core with a letter of rotation 2 and a letter of odd rotation (needed for F20 = AGL(1,5))"
     terminal_statement: "First missing lemma: theorem z4Rot2Abc : GeneralizedStarHeight.Z4Rot2Abc, that is ∀ n k : ℕ, k < n → HasHeightAtMost {w : List (Fin 3) | vcount (![0, 1, 2] : Fin 3 → ZMod 4) 0 0 w % n = k} 1 (letters a, b, c with displacements 0, 1, 2; counted letter a in state 0; n = 2 is Z2 wr Z4, n = 5 an F20 instance). General form: theorem z4core_rot2 : GeneralizedStarHeight.Z4CoreRot2 (Start/StarHeightZ4Core.lean; z4Rot2Abc_of_rot2 shows the instance is a special case)."
     latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-ROT2-OBSTRUCTION.md"
-    open_boundary: "Open (not to be attacked by the Transfer-Lemma method). Why that method is blocked: docs/goal/evidence/M28-STARHEIGHT-ROT2-OBSTRUCTION.md. Lean part: aperiodic_of_starFree (star-free implies aperiodic, Start/StarHeightStarFreeAperiodic.lean), rot2_Xc_not_starFree (the first-return code to 0 for displacements ![0,1,2] is not star-free) and rot2_no_long_c_run (a star-free language on which #b + 2#c is constant modulo 4 has no factor c^N) in Start/StarHeightRot2Obstruction.lean. Informal part (not Lean-verified): any identity N = Σ c_j Q_j with Transfer-Lemma quantities needs a star-free code automaton tracking i^(#b+2#c) on a recurrent class (twisted transfer operator with eigenvalue 1), which the two lemmas exclude; F20 (via a letter x ↦ -x + β with a letter of odd rotation) and S4 meet the same obstruction. Earlier search (not Lean-verified): on the 2463 returning words of length ≤ 8, N is not in the rational span of letter counts, all letter-in-state counts of the 21 single-rotation ZMod 4 counters, and the first-return classes to the even states read from the prefixes '' and b. F20 = AGL(1,5) over two letters has 7 conjugacy classes of generating pairs; 5 have D = 1 (intersection of the good subgroups) and are reachable by height_one_of_coset_family, the two failing ones being <x -> 2x, x -> 1 - x> and <x -> 3x, x -> 1 - x>, both with |D| = 5 (computation supplied with the task, re-checked for the first class). With three letters 11 classes have D = 1 and 38 do not; with the universal alphabet |D| = 5. For <x -> 2x, x -> 1 - x> all 599,081 single auxiliary automata on 2..4 DFA states or 5..6 permutation points were searched and none determines the element (docs/goal/evidence/M28-STARHEIGHT-S4-AUX-SEARCH.md)."
+    open_boundary: "Open (not to be attacked by the Transfer-Lemma method). Why that method is blocked: docs/goal/evidence/M28-STARHEIGHT-ROT2-OBSTRUCTION.md. Lean part: aperiodic_of_starFree (star-free implies aperiodic, Start/StarHeightStarFreeAperiodic.lean), rot2_Xc_not_starFree (the first-return code to 0 for displacements ![0,1,2] is not star-free) and rot2_no_long_c_run (a star-free language on which #b + 2#c is constant modulo 4 has no factor c^N) in Start/StarHeightRot2Obstruction.lean. Informal part (not Lean-verified): any identity N = Σ c_j Q_j with Transfer-Lemma quantities needs a star-free code automaton tracking i^(#b+2#c) on a recurrent class (twisted transfer operator with eigenvalue 1), which the two lemmas exclude; F20 (via a letter x ↦ -x + β with a letter of odd rotation) and S4 meet the same obstruction. Earlier search (not Lean-verified): on the 2463 returning words of length ≤ 8, N is not in the rational span of letter counts, all letter-in-state counts of the 21 single-rotation ZMod 4 counters, and the first-return classes to the even states read from the prefixes '' and b. F20 = AGL(1,5) over two letters has 7 conjugacy classes of generating pairs; 5 have D = 1 (intersection of the good subgroups) and are reachable by height_one_of_coset_family, the two failing ones being <x -> 2x, x -> 1 - x> and <x -> 3x, x -> 1 - x>, both with |D| = 5 (computation supplied with the task, re-checked for the first class). With three letters 11 classes have D = 1 and 38 do not; with the universal alphabet |D| = 5. For <x -> 2x, x -> 1 - x> all 599,081 single auxiliary automata on 2..4 DFA states or 5..6 permutation points were searched and none determines the element (docs/goal/evidence/M28-STARHEIGHT-S4-AUX-SEARCH.md). Lift searches for <x -> 2x, x -> 1 - x> found no hit (docs/goal/evidence/M28-STARHEIGHT-LIFT-R3R4.md)."
     milestone: M28
     depends_on:
       - M28-STARHEIGHT-Z4-CORE-ONE-ROTATION
@@ -6986,7 +6986,7 @@ tasks:
     title: "The S3-core, and its smallest open instance: one S3 coset count modulo 3"
     terminal_statement: "HCoreHeightOne (Equiv.Perm (Fin 3)), and first its smallest open instance: ∀ k < 3, HasHeightAtMost {w : List GeneralizedStarHeight.PST.AB | PST.b0count 0 w % 3 = k} 1, the number of b read in state 0 of the automaton a = (0 1), b = (0 2) (Start/StarHeightPSTLanguage.lean), counted modulo 3; by PST.b0count_eq_hcount it is the S3 coset count hcount rho3 1 b + hcount rho3 (Equiv.swap 1 2) b."
     latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-PST-HEIGHT-ONE.md"
-    open_boundary: "Open. The modulus-2 instance PST.K is proved (PST.K_height_one, M28-STARHEIGHT-PST-CANDIDATE). Smallest open instance: K3 k = {w | b0count 0 w % 3 = k}. Computational (not Lean): within the transition group G of K3 (order 162, 142 subgroups) only 5 coset automata are good (star-free first returns or abelian quotient) and their stabilizers meet in a subgroup of order 9 that does not fix the count; no single automaton, pair, or triple (two on ≤ 4 points) of the 149 star-free-return permutation automata on ≤ 5 points, together with stateOf 0, |w|_a mod 2 and |w|_b mod 6, determines K3. The full S3-core would give every S4 language (height_one_S4_of_core). Re-run of the auxiliary search with the exact criterion (docs/goal/evidence/M28-STARHEIGHT-S4-AUX-SEARCH.md): all 599,081 single auxiliary automata that are complete DFAs on 2..4 states or permutation automata on 5..6 points, of which 143,209 have star-free first returns; none, together with the good coset automata of the order-162 transition group, determines the count. Pairs were not searched in this run."
+    open_boundary: "Open. The modulus-2 instance PST.K is proved (PST.K_height_one, M28-STARHEIGHT-PST-CANDIDATE). Smallest open instance: K3 k = {w | b0count 0 w % 3 = k}. Computational (not Lean): within the transition group G of K3 (order 162, 142 subgroups) only 5 coset automata are good (star-free first returns or abelian quotient) and their stabilizers meet in a subgroup of order 9 that does not fix the count; no single automaton, pair, or triple (two on ≤ 4 points) of the 149 star-free-return permutation automata on ≤ 5 points, together with stateOf 0, |w|_a mod 2 and |w|_b mod 6, determines K3. The full S3-core would give every S4 language (height_one_S4_of_core). Re-run of the auxiliary search with the exact criterion (docs/goal/evidence/M28-STARHEIGHT-S4-AUX-SEARCH.md): all 599,081 single auxiliary automata that are complete DFAs on 2..4 states or permutation automata on 5..6 points, of which 143,209 have star-free first returns; none, together with the good coset automata of the order-162 transition group, determines the count. Pairs were not searched in this run. Lift search for K3 (docs/goal/evidence/M28-STARHEIGHT-LIFT-R3R4.md, not Lean-verified): no hit with S3 letter pairs; signed lifts not searched (ambient of order 2^9 * 162 too large for full subgroup enumeration)."
     milestone: M28
     depends_on:
       - M28-STARHEIGHT-HCORE-REDUCTION
@@ -7102,14 +7102,55 @@ tasks:
       - "python3 scripts/check_sorry.py"
       - "lake build --wfail"
 
+  - id: M28-STARHEIGHT-LIFT
+    priority: P1
+    status: DONE_STRONG
+    track: research/open-problems
+    title: "The lift theorem: good coset automata of a finite group over G whose good subgroups meet in the kernel"
+    terminal_statement: "GeneralizedStarHeight.height_one_of_lift {G E : Type*} [Group G] [Group E] [Fintype E] (T : FreeMonoid α →* G) (S : FreeMonoid α →* E) (π : E →* G) (hπ : π.comp S = T) {ι : Type*} [Fintype ι] (H : ι → Subgroup E) (hgood : ∀ i (g : E), HasHeightAtMost {w | S (FreeMonoid.ofList w) ∈ (H i : Set E) * {g}} 1) (hD : ⨅ i, H i ≤ π.ker) (F : Set G) : HasHeightAtMost {w | T (FreeMonoid.ofList w) ∈ F} 1 (Start/StarHeightLift.lean), through height_one_of_determined: finitely many observers of words with finite value types and height-one fibres that determine T w give height one."
+    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-S4-COXETER.md"
+    open_boundary: ""
+    milestone: M28
+    depends_on:
+      - M28-STARHEIGHT-COSET-FAMILY
+    rank: 2756
+    exit_criteria:
+      - "height_one_of_lift is proved without sorry."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M28-STARHEIGHT-S4-COXETER
+    priority: P1
+    status: DONE_STRONG
+    track: research/open-problems
+    title: "S4 over the three Coxeter transpositions: every recognized language has generalized star height at most 1"
+    terminal_statement: "GeneralizedStarHeight.S4Cox.height_one_S4_coxeter (F : Set (Equiv.Perm (Fin 4))) : HasHeightAtMost {w : List (Fin 3) | coxT (FreeMonoid.ofList w) ∈ F} 1, with coxT := FreeMonoid.lift ![Equiv.swap 0 1, Equiv.swap 1 2, Equiv.swap 2 3] (Start/StarHeightS4Coxeter.lean). Certificate: two 4-state automata A1, A2 (coset automata of the order-192 signed lift E), the 3-state pairing automaton and the length parity determine coxT w (coxT_eq_dec, decoding table on all 96 observation tuples, dec_step by decide +kernel); aperiodicity certificates certA1, certA2, certP. Also ten further classes of generating triples (S4Three.C*.height_one, Start/StarHeightS4ThreeHitsA.lean and B)."
+    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-S4-COXETER.md"
+    open_boundary: ""
+    milestone: M28
+    depends_on:
+      - M28-STARHEIGHT-LIFT
+      - M28-STARHEIGHT-S4-TWO-LETTERS
+    rank: 2757
+    exit_criteria:
+      - "height_one_S4_coxeter is proved without sorry."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
   - id: M28-STARHEIGHT-S4
     priority: P1
     status: TODO_READY
     track: research/open-problems
     title: "Every language recognized by S4, over every alphabet"
-    terminal_statement: "theorem height_one_S4 {α : Type} [Finite α] (T : FreeMonoid α →* Equiv.Perm (Fin 4)) (F : Set (Equiv.Perm (Fin 4))) : HasHeightAtMost {w | T (FreeMonoid.ofList w) ∈ F} 1. Two letters are done (M28-STARHEIGHT-S4-TWO-LETTERS)."
-    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-S4-AUX-SEARCH.md"
-    open_boundary: "Open from three letters on. Computational (not Lean-verified), with D the intersection of all good subgroups (star-free first returns of the coset automaton, or normal with abelian quotient): of the 70 conjugacy classes of generating triples of S4 (computation supplied with the task), 40 have D = 1 and are covered by height_one_of_coset_family; 30 do not, nearly all with |D| = 4. Smallest open instance: the three Coxeter transpositions (0 1), (1 2), (2 3), |D| = 4 (the Klein group). With the universal alphabet (all 23 non-identity elements) only A4 and S4 are good, so |D| = 12. Any height-one proof therefore needs an automaton whose transition group is not a quotient of S4. Searched and excluded for the Coxeter triple (docs/goal/evidence/M28-STARHEIGHT-S4-AUX-SEARCH.md): all 1,761,571 single auxiliary automata that are complete DFAs on 2..3 states or permutation automata on 4..5 points, of which 179,399 have star-free first returns; none, together with the good coset automata, determines the element. Pairs of auxiliary automata were not searched. No height-two obstruction is known."
+    terminal_statement: "theorem height_one_S4 {α : Type} [Finite α] (T : FreeMonoid α →* Equiv.Perm (Fin 4)) (F : Set (Equiv.Perm (Fin 4))) : HasHeightAtMost {w | T (FreeMonoid.ofList w) ∈ F} 1. Two letters are done (M28-STARHEIGHT-S4-TWO-LETTERS); the Coxeter triple and ten further three-letter classes are done (M28-STARHEIGHT-S4-COXETER)."
+    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-LIFT-R3R4.md"
+    open_boundary: "Open from three letters on. Done in Lean: the Coxeter class (0 1), (1 2), (2 3) and ten further classes of generating triples with D != 1, by signed lifts of order 192 (M28-STARHEIGHT-S4-COXETER). Computational (not Lean-verified; docs/goal/evidence/M28-STARHEIGHT-LIFT-R3R4.md, classes as image tuples in the right-action convention; the set is closed under inverting the letters): of the 70 classes of generating triples without identity or repeated letters, 40 have D = 1 (reachable by height_one_of_coset_family, not formalized class by class) and 30 do not; 11 of the 30 hit with signed lifts; the 19 open classes are 0132 0213 1032, 0132 0213 2301, 0132 0231 1032, 0132 0231 2301, 0132 0231 3210, 0132 1032 1203, 0132 1032 1230, 0132 1203 2301, 0132 1203 3210, 0132 1230 2301, 0132 1230 3210, 0231 1032 1230, 0231 1032 1302, 0231 1032 2031, 0231 1032 2310, 0231 1032 3012, 0231 1032 3201, 1032 1230 1302, 1032 1230 2310. For these, exhaustive without a hit: all signed lifts (up to diagonal conjugation), GL(2,3), binary octahedral 2.S4, K = S3 and K = S4 letter pairs; Z4-monomial lifts (one label per cycle) only sampled (about 130 to 160 per class, most with |E| > 800 skipped). Universal alphabet: Coxeter-word lifts and 2 x 2000 random signed lifts all give |D| = 96. No height-two obstruction is known."
     milestone: M28
     depends_on:
       - M28-STARHEIGHT-S4-TWO-LETTERS

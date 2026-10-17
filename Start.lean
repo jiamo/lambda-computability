@@ -700,6 +700,11 @@ import Start.StarHeightCosetFamily
 import Start.StarHeightRenaming
 import Start.StarHeightS4Classes
 import Start.StarHeightS4TwoLetters
+import Start.StarHeightLift
+import Start.StarHeightS4Coxeter
+import Start.StarHeightS4ThreeBase
+import Start.StarHeightS4ThreeHitsA
+import Start.StarHeightS4ThreeHitsB
 import Start.PTSExpansionLambdaPOmegaBarCanon
 import Start.PTSExpansionLambdaPOmegaBarObj
 import Start.Capstones
