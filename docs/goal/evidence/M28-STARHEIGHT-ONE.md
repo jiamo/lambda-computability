@@ -353,3 +353,8 @@ As far as we know, every finite group of order less than 20 is now settled.
 - Bourne (2017) left A₄ open (Question 5.9).
 - The smallest group not covered is the Frobenius group Z₅ ⋊ Z₄ of order 20.
 - At order 24, S₄ and SL(2,3) are not covered either.
+
+## Order 20 (F₂₀): see `docs/goal/evidence/M28-STARHEIGHT-Z4.md`
+
+The reduction of abelian-by-`Z₄` groups (F₂₀ in particular) to the `Z₄` core, the proved cases of
+the core and the two open cases are recorded there.
