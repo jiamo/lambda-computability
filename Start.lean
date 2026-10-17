@@ -689,8 +689,13 @@ import Start.StarHeightPSTLanguage
 import Start.StarHeightPST
 import Start.StarHeightPSTObstruction
 import Start.StarHeightPSTReturns
+import Start.StarHeightDFAReturns
+import Start.StarHeightPSTHeightOne
+import Start.StarHeightPSTRecognizer
 import Start.GroupOrderLtTwentyFour
 import Start.StarHeightOrderLtTwentyFour
+import Start.GroupOrderTwentyF20
+import Start.StarHeightOrderLtTwentyFourF20
 import Start.PTSExpansionLambdaPOmegaBarCanon
 import Start.PTSExpansionLambdaPOmegaBarObj
 import Start.Capstones
