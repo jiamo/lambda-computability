@@ -1,0 +1,40 @@
+# #print axioms for the new terminal theorems of M28-STARHEIGHT-PST-CANDIDATE (L_PST has height exactly 1),
+# M28-STARHEIGHT-STARFREE-RETURNS, M28-STARHEIGHT-PST-RECOGNIZER and M28-STARHEIGHT-ORDER-LT-24.
+# Command: lake env lean on a file with the lines below.
+
+import Start.StarHeightPSTRecognizer
+import Start.StarHeightOrderLtTwentyFourF20
+open GeneralizedStarHeight
+#print axioms GeneralizedStarHeight.height_one_of_starFree_returns
+#print axioms GeneralizedStarHeight.DFAReturn.runQ_eq_kstar_mul
+#print axioms GeneralizedStarHeight.PST.b0count_mod_two
+#print axioms GeneralizedStarHeight.PST.s4state_height
+#print axioms GeneralizedStarHeight.PST.K_height_one
+#print axioms GeneralizedStarHeight.PST.LPST_height_one
+#print axioms GeneralizedStarHeight.PST.LPST_not_starFree
+#print axioms GeneralizedStarHeight.PST.recog_languages_height_one
+#print axioms GeneralizedStarHeight.PST.pstS4_languages_height_one
+#print axioms GeneralizedStarHeight.mulEquiv_F20_of_centralizer
+#print axioms GeneralizedStarHeight.height_one_of_card_lt_twentyfour
+#print axioms GeneralizedStarHeight.height_one_of_card_lt_twentyfour_of_rot2
+
+# Output:
+
+'GeneralizedStarHeight.height_one_of_starFree_returns' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.DFAReturn.runQ_eq_kstar_mul' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.PST.b0count_mod_two' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.PST.s4state_height' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.PST.K_height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.PST.LPST_height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.PST.LPST_not_starFree' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.PST.recog_languages_height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.PST.pstS4_languages_height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.mulEquiv_F20_of_centralizer' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.height_one_of_card_lt_twentyfour' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.height_one_of_card_lt_twentyfour_of_rot2' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+
+# Max RSS of `lake env lean <file>` (MiB): import Mathlib baseline 7876; StarHeightDFAReturns 7920;
+# StarHeightPSTHeightOne 8070; StarHeightPSTRecognizer 8077; GroupOrderTwentyF20 7992;
+# StarHeightOrderLtTwentyFourF20 7960 (at most 201 MiB above the baseline).

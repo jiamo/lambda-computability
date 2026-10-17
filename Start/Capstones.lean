@@ -331,8 +331,13 @@ import Start.StarHeightPSTLanguage
 import Start.StarHeightPST
 import Start.StarHeightPSTObstruction
 import Start.StarHeightPSTReturns
+import Start.StarHeightDFAReturns
+import Start.StarHeightPSTHeightOne
+import Start.StarHeightPSTRecognizer
 import Start.GroupOrderLtTwentyFour
 import Start.StarHeightOrderLtTwentyFour
+import Start.GroupOrderTwentyF20
+import Start.StarHeightOrderLtTwentyFourF20
 import Start.PTSExpansionLambdaPOmegaBarCanon
 import Start.PTSExpansionLambdaPOmegaBarObj
 
@@ -4148,6 +4153,14 @@ automaton, its recognizer `S₄ × Z₂`, and its reductions to `S₄` and to on
 no metabelian group, and in no permutation recognizer is its first-return code star-free.
 `Start/GroupOrderLtTwentyFour.lean`, `Start/StarHeightOrderLtTwentyFour.lean`: groups of order
 `< 24`, with a centralizer hypothesis in order `20` that excludes `F₂₀`.
+`Start/StarHeightDFAReturns.lean`: star-free first returns give height one, for any automaton.
+`Start/StarHeightPSTHeightOne.lean`: `L_PST` has generalized star height exactly one (three
+automata with height-one state languages; the `S₄` one has star-free first returns).
+`Start/StarHeightPSTRecognizer.lean`: every language recognized by the PST morphism `S₄ × Z₂` has
+height at most one.
+`Start/GroupOrderTwentyF20.lean`, `Start/StarHeightOrderLtTwentyFourF20.lean`: a group of order `20`
+with a self-centralizing Sylow `5`-subgroup is `F₂₀`; hence every group of order `< 24` other than
+`F₂₀`, and under `Z4CoreRot2` every group of order `< 24`.
 -/
 
 #check @GeneralizedStarHeight.vcount_height_one_prime
@@ -4170,6 +4183,18 @@ no metabelian group, and in no permutation recognizer is its first-return code s
 #check @GeneralizedStarHeight.PST.pst_not_abelian_by_abelian
 #check @GeneralizedStarHeight.PST.pst_firstReturn_not_starFree
 #check @GeneralizedStarHeight.height_one_of_card_lt_twentyfour_of_centralizer
+#check @GeneralizedStarHeight.height_one_of_starFree_returns
+#check @GeneralizedStarHeight.DFAReturn.runQ_eq_kstar_mul
+#check @GeneralizedStarHeight.PST.b0count_mod_two
+#check @GeneralizedStarHeight.PST.s4state_height
+#check @GeneralizedStarHeight.PST.K_height_one
+#check @GeneralizedStarHeight.PST.LPST_height_one
+#check @GeneralizedStarHeight.PST.LPST_not_starFree
+#check @GeneralizedStarHeight.PST.recog_languages_height_one
+#check @GeneralizedStarHeight.PST.pstS4_languages_height_one
+#check @GeneralizedStarHeight.mulEquiv_F20_of_centralizer
+#check @GeneralizedStarHeight.height_one_of_card_lt_twentyfour
+#check @GeneralizedStarHeight.height_one_of_card_lt_twentyfour_of_rot2
 
 /-! ## λPω̲: canonical judgement and object-level hereditary substitution (M29-EP-CUBE-REST, partial)
 

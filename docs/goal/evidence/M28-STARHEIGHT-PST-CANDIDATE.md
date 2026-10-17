@@ -1,7 +1,7 @@
 # M28-STARHEIGHT-PST-CANDIDATE and M28-STARHEIGHT-S3-CORE
 
 `L_PST = (a b* a ∪ b a* b (a b* a)* b a* b)*` is Pin–Straubing–Thérien's candidate for star
-height `2`. The terminal statement `HasHeightAtMost LPST 1` (or its negation) is **open**.
+height `2`. It has height exactly `1` (§4, `M28-STARHEIGHT-PST-HEIGHT-ONE.md`).
 
 Section 1 is Lean-verified, with no `sorry`, no `native_decide` and no new axioms (see
 `M28-STARHEIGHT-ELEMENTARY-axioms.txt`). Sections 2 and 3 are informal or computational.
@@ -115,11 +115,8 @@ Results:
 
 ## 4. Status
 
-- No height-one expression for `L_PST` or `K` was found. The exact gap is
-  `HasHeightAtMost PST.K 1`, which is equivalent to `HasHeightAtMost PST.LPST 1`.
-- Any proof must use a quantity that is:
-  - neither a metabelian-group language (Obstruction 1);
-  - nor a stabilizer, in a permutation recognizer of `L_PST`, written as the star of a star-free
-    code (Obstruction 2).
-- A proof of height `2` would need an invariant of height-one languages that separates `S₄` from
-  the groups handled so far. None is known.
+- **Settled**: `L_PST` has generalized star height exactly 1 (`PST.LPST_height_one`,
+  `PST.LPST_not_starFree`); see `M28-STARHEIGHT-PST-HEIGHT-ONE.md`. The proof uses three automata,
+  each with height-one state languages, none of which recognizes `L_PST`, so neither obstruction
+  applies. Sections 2 and 3 record the methods that did not work.
+- Still open: the `S₃`-core, first `K3 k = {w | b0count 0 w % 3 = k}` (M28-STARHEIGHT-S3-CORE).

@@ -6959,18 +6959,20 @@ tasks:
 
   - id: M28-STARHEIGHT-PST-CANDIDATE
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: research/open-problems
-    title: "Pin-Straubing-Thérien's candidate L_PST = (ab*a ∪ ba*b(ab*a)*ba*b)* for star height 2"
-    terminal_statement: "GeneralizedStarHeight.PST.LPST : Language AB, or its negation: HasHeightAtMost PST.LPST 1 or ¬ HasHeightAtMost PST.LPST 1. Proved reductions: PST.LPST_eq : LPST = {u | stateOf 0 u = 0 ∧ b0count 0 u % 2 = 0} (Start/StarHeightPSTLanguage.lean); PST.LPST_recognized (recognizer FreeMonoid AB →* Perm (Fin 4) × Multiplicative (ZMod 2)); PST.pst_candidate_height_one_of_S4 (h : ∀ {A : Type} [Finite A] (T : FreeMonoid A →* Equiv.Perm (Fin 4)) (F : Set (Equiv.Perm (Fin 4))), HasHeightAtMost {w | T (FreeMonoid.ofList w) ∈ F} 1) : HasHeightAtMost LPST 1; PST.pst_candidate_height_one_of_core : HCoreHeightOne (Equiv.Perm (Fin 3)) → HasHeightAtMost LPST 1; PST.pst_candidate_iff : HasHeightAtMost LPST 1 ↔ HasHeightAtMost K 1 (Start/StarHeightPST.lean). Obstructions: PST.pst_not_metabelian, PST.pst_not_abelian_by_abelian (no metabelian recognizer, Start/StarHeightPSTObstruction.lean); PST.pst_firstReturn_not_starFree (no permutation recognizer with a star-free first-return code, Start/StarHeightPSTReturns.lean)."
-    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-PST-CANDIDATE.md"
-    open_boundary: "Open: HasHeightAtMost PST.LPST 1, equivalently HasHeightAtMost PST.K 1 (M28-STARHEIGHT-S3-CORE). Not a Boolean combination of metabelian-group languages, and not the star of a star-free first-return code in any permutation recognizer (both Lean). No linear identity in letter, factor (length ≤ 3), Z2/Z3 counter, Transfer block and run-length-mod-4 counts on returning words of length ≤ 10; residue-only Boolean combinations of all these collide modulo 2 and 4; no exact collision up to length 18 (computational, not Lean)."
+    title: "Pin-Straubing-Thérien's candidate L_PST = (ab*a ∪ ba*b(ab*a)*ba*b)* has generalized star height exactly 1"
+    terminal_statement: "GeneralizedStarHeight.PST.LPST_height_one : HasHeightAtMost LPST 1 and GeneralizedStarHeight.PST.LPST_not_starFree : ¬ HasHeightAtMost LPST 0 (Start/StarHeightPSTHeightOne.lean). Route: PST.b0count_mod_two (w : List AB) : b0count 0 w % 2 = (w.count b + if s4state w ∈ Qs (stateOf 0 w) then 1 else 0) % 2, with move4 a = (0 1), move4 b = (0 1 2 3), s4state w = w.foldl move4 0, Qs = ![{1, 2}, {0, 2}, {2, 3}]; PST.s4state_height (q : Fin 4) : HasHeightAtMost {w : List AB | s4state w = q} 1 by height_one_of_starFree_returns (M28-STARHEIGHT-STARFREE-RETURNS); PST.K_height_one : HasHeightAtMost K 1 (K a finite union of intersections of state languages of |w|_b mod 2, stateOf 0 and s4state); then pst_candidate_iff. Earlier reductions and obstructions: PST.LPST_eq, PST.LPST_recognized, PST.pst_candidate_iff (Start/StarHeightPST.lean), PST.pst_not_metabelian (Start/StarHeightPSTObstruction.lean), PST.pst_firstReturn_not_starFree (Start/StarHeightPSTReturns.lean); neither obstruction applies, because no single factor automaton recognizes L_PST."
+    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-PST-HEIGHT-ONE.md"
+    open_boundary: ""
     milestone: M28
     depends_on:
       - M28-STARHEIGHT-HCORE-REDUCTION
+      - M28-STARHEIGHT-STARFREE-RETURNS
     rank: 2623
     exit_criteria:
       - "HasHeightAtMost PST.LPST 1 is proved, or its negation."
+      - "¬ HasHeightAtMost PST.LPST 0 is proved."
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
@@ -6981,16 +6983,16 @@ tasks:
     priority: P1
     status: TODO_READY
     track: research/open-problems
-    title: "The S3-core, and its smallest open instance: one S3 coset count modulo 2, equivalent to L_PST"
-    terminal_statement: "HCoreHeightOne (Equiv.Perm (Fin 3)), and first its smallest instance HasHeightAtMost GeneralizedStarHeight.PST.K 1, where PST.K = {w : List AB | (hcount rho3 1 b w + hcount rho3 (Equiv.swap 1 2) b w) % 2 = 0}, rho3 a = Equiv.swap 0 1, rho3 b = Equiv.swap 0 2 (Start/StarHeightPST.lean). PST.pst_candidate_iff : HasHeightAtMost LPST 1 ↔ HasHeightAtMost K 1, and PST.b0count_eq_hcount: the count is the number of b read in state 0."
-    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-PST-CANDIDATE.md"
-    open_boundary: "Open. The instance α = {a, b}, ρ = rho3, x = b, g ∈ {1, (1 2)}, n = 2 of HCoreHeightOne (Equiv.Perm (Fin 3)) implies HasHeightAtMost PST.K 1, which is equivalent to the PST candidate. The full S3-core would give every S4 language (height_one_S4_of_core)."
+    title: "The S3-core, and its smallest open instance: one S3 coset count modulo 3"
+    terminal_statement: "HCoreHeightOne (Equiv.Perm (Fin 3)), and first its smallest open instance: ∀ k < 3, HasHeightAtMost {w : List GeneralizedStarHeight.PST.AB | PST.b0count 0 w % 3 = k} 1, the number of b read in state 0 of the automaton a = (0 1), b = (0 2) (Start/StarHeightPSTLanguage.lean), counted modulo 3; by PST.b0count_eq_hcount it is the S3 coset count hcount rho3 1 b + hcount rho3 (Equiv.swap 1 2) b."
+    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-PST-HEIGHT-ONE.md"
+    open_boundary: "Open. The modulus-2 instance PST.K is proved (PST.K_height_one, M28-STARHEIGHT-PST-CANDIDATE). Smallest open instance: K3 k = {w | b0count 0 w % 3 = k}. Computational (not Lean): within the transition group G of K3 (order 162, 142 subgroups) only 5 coset automata are good (star-free first returns or abelian quotient) and their stabilizers meet in a subgroup of order 9 that does not fix the count; no single automaton, pair, or triple (two on ≤ 4 points) of the 149 star-free-return permutation automata on ≤ 5 points, together with stateOf 0, |w|_a mod 2 and |w|_b mod 6, determines K3. The full S3-core would give every S4 language (height_one_S4_of_core)."
     milestone: M28
     depends_on:
       - M28-STARHEIGHT-HCORE-REDUCTION
     rank: 2624
     exit_criteria:
-      - "HasHeightAtMost PST.K 1 is proved or refuted."
+      - "HasHeightAtMost {w | PST.b0count 0 w % 3 = k} 1 is proved or refuted."
       - "Stretch: HCoreHeightOne (Equiv.Perm (Fin 3))."
     required_gates:
       - "python3 scripts/goal_state.py validate"
@@ -7000,18 +7002,58 @@ tasks:
 
   - id: M28-STARHEIGHT-ORDER-LT-24
     priority: P2
-    status: DONE_WEAK
+    status: DONE_STRONG
     track: research/open-problems
     title: "Generalized star height one for every group of order less than 24 except F20"
-    terminal_statement: "GeneralizedStarHeight.height_one_of_card_lt_twentyfour_of_centralizer [Finite Alphabet] {G : Type} [Group G] [Fintype G] (hG : Fintype.card G < 24) (hC : Fintype.card G = 20 → ∀ P : Sylow 5 G, 5 < Nat.card (Subgroup.centralizer (P : Set G))) (T : FreeMonoid Alphabet →* G) (F : Set G) : HasHeightAtMost {w | T (FreeMonoid.ofList w) ∈ F} 1 (Start/StarHeightOrderLtTwentyFour.lean), from exists_abelian_normal_index_le_three_of_lt_24 (Start/GroupOrderLtTwentyFour.lean): order 21 Sylow 7 normal of index 3, order 22 index 2, order 23 cyclic, order 20 with |C(P)| ∈ {10, 20}."
-    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-ELEMENTARY.md"
-    open_boundary: "The hypothesis hF : IsEmpty (G ≃* F20) of the request is replaced by the centralizer hypothesis hC, as the request allowed; that hC fails only for F20 is not formalized. F20 itself remains open (Z4CoreRot2)."
+    terminal_statement: "GeneralizedStarHeight.height_one_of_card_lt_twentyfour [Finite Alphabet] {G : Type} [Group G] [Fintype G] (hG : Fintype.card G < 24) (hF : IsEmpty (G ≃* F20)) (T : FreeMonoid Alphabet →* G) (F : Set G) : HasHeightAtMost {w | T (FreeMonoid.ofList w) ∈ F} 1 (Start/StarHeightOrderLtTwentyFourF20.lean), from height_one_of_card_lt_twentyfour_of_centralizer (Start/StarHeightOrderLtTwentyFour.lean) and mulEquiv_F20_of_centralizer {G : Type*} [Group G] [Fintype G] (hG : Fintype.card G = 20) (P : Sylow 5 G) (hC : Nat.card (centralizer (P : Set G)) = 5) : Nonempty (G ≃* F20) (Start/GroupOrderTwentyF20.lean: P = ⟨x⟩ is normal and self-centralizing, some y conjugates x to x², y⁴ = 1, and ⟨b, a⟩ ↦ x^b y^(log₂ a) is an injective morphism F20 →* G). Composite: height_one_of_card_lt_twentyfour_of_rot2 (h2 : Z4CoreRot2) : the same conclusion for every group of order < 24, F20 included (height_one_F20_of_rot2)."
+    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-PST-HEIGHT-ONE.md"
+    open_boundary: ""
     milestone: M28
     depends_on:
       - M28-STARHEIGHT-INDEX-FIVE
     rank: 2625
     exit_criteria:
       - "height_one_of_card_lt_twentyfour is proved with hF : IsEmpty (G ≃* F20), or with the centralizer hypothesis."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M28-STARHEIGHT-STARFREE-RETURNS
+    priority: P1
+    status: DONE_STRONG
+    track: research/open-problems
+    title: "Star-free first returns give generalized star height one, for any automaton"
+    terminal_statement: "GeneralizedStarHeight.height_one_of_starFree_returns {Q α : Type*} (δ : Q → α → Q) (q₀ q : Q) (hX : HasHeightAtMost (DFAReturn.firstReturn δ q₀) 0) (hP : HasHeightAtMost (DFAReturn.avoidTo δ q₀ q) 0) : HasHeightAtMost {w | DFAReturn.runQ δ q₀ w = q} 1 (Start/StarHeightDFAReturns.lean), from DFAReturn.runQ_eq_kstar_mul : {w | runQ δ q₀ w = q} = (firstReturn δ q₀)∗ * avoidTo δ q₀ q (factor at the last visit to q₀). DFAReturn.firstReturn_eq_retAut and avoidTo_eq_retAut express both factors as languages of one automaton retAut δ q₀, for Aperiodic.starFree_of_dfa_closed certificates. No hypothesis on δ: letters need not act bijectively, Q need not be finite, and [Finite α] is not needed. Instance: PST.s4state_height. The optional corollary for letters acting as transpositions (q₀ q) was not done."
+    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-PST-HEIGHT-ONE.md"
+    open_boundary: ""
+    milestone: M28
+    depends_on:
+      - M28-STARHEIGHT-HCORE-REDUCTION
+    rank: 2626
+    exit_criteria:
+      - "height_one_of_starFree_returns is proved for every automaton, and s4state_height is derived from it."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M28-STARHEIGHT-PST-RECOGNIZER
+    priority: P2
+    status: DONE_STRONG
+    track: research/open-problems
+    title: "Every language recognized by the PST morphism into S4 × Z2 has generalized star height at most 1"
+    terminal_statement: "GeneralizedStarHeight.PST.recog_languages_height_one (F : Set (Equiv.Perm (Fin 4) × Multiplicative (ZMod 2))) : HasHeightAtMost {w | recog (FreeMonoid.ofList w) ∈ F} 1 and PST.pstS4_languages_height_one (F : Set (Equiv.Perm (Fin 4))) : HasHeightAtMost {w | pstS4 (FreeMonoid.ofList w) ∈ F} 1, with a ↦ (2 3), b ↦ (0 1 2 3) (Start/StarHeightPSTRecognizer.lean). PST.recog_eq_of_jstate: the joint state of |w|_a mod 2, |w|_b mod 2, stateOf 0 and s4state determines recog w (finite check jstep_check on the 48 joint states, all reachable)."
+    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-PST-HEIGHT-ONE.md"
+    open_boundary: ""
+    milestone: M28
+    depends_on:
+      - M28-STARHEIGHT-PST-CANDIDATE
+    rank: 2627
+    exit_criteria:
+      - "Every language recognized by PST.recog has height at most one."
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
