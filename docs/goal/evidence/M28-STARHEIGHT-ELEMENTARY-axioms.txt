@@ -1,0 +1,73 @@
+# #print axioms for the new terminal theorems of M28-STARHEIGHT-ELEMENTARY-QUOTIENT, M28-STARHEIGHT-HCORE-REDUCTION,
+# M28-STARHEIGHT-PST-CANDIDATE, M28-STARHEIGHT-S3-CORE and M28-STARHEIGHT-ORDER-LT-24.
+# Command: lake env lean on a file with the lines below.
+
+import Start.StarHeightElementary
+import Start.StarHeightHCore
+import Start.StarHeightS4
+import Start.StarHeightPST
+import Start.StarHeightPSTObstruction
+import Start.StarHeightPSTReturns
+import Start.StarHeightOrderLtTwentyFour
+open GeneralizedStarHeight
+#print axioms vcount_height_one_prime
+#print axioms height_one_of_abelian_normal_exponent_prime
+#print axioms height_one_of_abelian_normal_exponent_two
+#print axioms height_one_of_abelian_normal_exponent_three_of_prime
+#print axioms height_one_G3025
+#print axioms hcore_zmod_four_iff
+#print axioms hcore_zmod_prime
+#print axioms HCoreHeightOne.of_mulEquiv
+#print axioms height_one_of_abelian_normal_of_core
+#print axioms height_one_of_abelian_normal_of_core_equiv
+#print axioms height_one_S4_of_core
+#print axioms height_one_prod
+#print axioms PST.LPST_eq
+#print axioms PST.LPST_recognized
+#print axioms PST.pst_candidate_height_one_of_S4
+#print axioms PST.pst_candidate_height_one_of_core
+#print axioms PST.pst_candidate_iff
+#print axioms PST.stateOf_height
+#print axioms PST.pst_not_metabelian
+#print axioms PST.pst_not_abelian_by_abelian
+#print axioms PST.pst_firstReturn_not_starFree
+#print axioms exists_abelian_normal_index_le_three_of_lt_24
+#print axioms height_one_of_card_lt_twentyfour_of_centralizer
+
+# Output:
+
+'GeneralizedStarHeight.vcount_height_one_prime' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.height_one_of_abelian_normal_exponent_prime' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'GeneralizedStarHeight.height_one_of_abelian_normal_exponent_two' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'GeneralizedStarHeight.height_one_of_abelian_normal_exponent_three_of_prime' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'GeneralizedStarHeight.height_one_G3025' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.hcore_zmod_four_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.hcore_zmod_prime' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.HCoreHeightOne.of_mulEquiv' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.height_one_of_abelian_normal_of_core' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.height_one_of_abelian_normal_of_core_equiv' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'GeneralizedStarHeight.height_one_S4_of_core' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.height_one_prod' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.PST.LPST_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.PST.LPST_recognized' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.PST.pst_candidate_height_one_of_S4' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.PST.pst_candidate_height_one_of_core' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.PST.pst_candidate_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.PST.stateOf_height' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.PST.pst_not_metabelian' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.PST.pst_not_abelian_by_abelian' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.PST.pst_firstReturn_not_starFree' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.exists_abelian_normal_index_le_three_of_lt_24' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'GeneralizedStarHeight.height_one_of_card_lt_twentyfour_of_centralizer' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]

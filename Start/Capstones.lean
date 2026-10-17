@@ -324,6 +324,15 @@ import Start.StarHeightZpCore
 import Start.StarHeightZpCoreHeight
 import Start.StarHeightIndexPrime
 import Start.StarHeightIndexFourLetters
+import Start.StarHeightElementary
+import Start.StarHeightHCore
+import Start.StarHeightS4
+import Start.StarHeightPSTLanguage
+import Start.StarHeightPST
+import Start.StarHeightPSTObstruction
+import Start.StarHeightPSTReturns
+import Start.GroupOrderLtTwentyFour
+import Start.StarHeightOrderLtTwentyFour
 import Start.PTSExpansionLambdaPOmegaBarCanon
 import Start.PTSExpansionLambdaPOmegaBarObj
 
@@ -4124,6 +4133,43 @@ index; index `5`; the nonabelian group `Z₁₁ ⋊ Z₅` of order `55`.
 #check @GeneralizedStarHeight.height_one_of_abelian_prime_index
 #check @GeneralizedStarHeight.height_one_of_abelian_index_five
 #check @GeneralizedStarHeight.height_one_G55
+
+/-! ## Elementary abelian quotients, the `H`-core, and the PST candidate
+(M28-STARHEIGHT-ELEMENTARY-QUOTIENT, M28-STARHEIGHT-HCORE-REDUCTION, M28-STARHEIGHT-PST-CANDIDATE,
+M28-STARHEIGHT-S3-CORE, M28-STARHEIGHT-ORDER-LT-24)
+
+`Start/StarHeightElementary.lean`: abelian normal subgroups with elementary abelian quotient, for
+every prime; `p = 2` and `p = 3` as corollaries; `(Z₁₁ × Z₁₁) ⋊ (Z₅ × Z₅)`.
+`Start/StarHeightHCore.lean`: the `H`-core and the reduction of every abelian-by-`H` group to it.
+`Start/StarHeightS4.lean`: `S₄` over the `S₃`-core.
+`Start/StarHeightPSTLanguage.lean`, `Start/StarHeightPST.lean`: the PST candidate `L_PST`, its
+automaton, its recognizer `S₄ × Z₂`, and its reductions to `S₄` and to one `S₃` coset count.
+`Start/StarHeightPSTObstruction.lean`, `Start/StarHeightPSTReturns.lean`: `L_PST` is recognized by
+no metabelian group, and in no permutation recognizer is its first-return code star-free.
+`Start/GroupOrderLtTwentyFour.lean`, `Start/StarHeightOrderLtTwentyFour.lean`: groups of order
+`< 24`, with a centralizer hypothesis in order `20` that excludes `F₂₀`.
+-/
+
+#check @GeneralizedStarHeight.vcount_height_one_prime
+#check @GeneralizedStarHeight.height_one_of_abelian_normal_exponent_prime
+#check @GeneralizedStarHeight.height_one_of_abelian_normal_exponent_two
+#check @GeneralizedStarHeight.height_one_of_abelian_normal_exponent_three_of_prime
+#check @GeneralizedStarHeight.height_one_G3025
+#check @GeneralizedStarHeight.HCoreHeightOne
+#check @GeneralizedStarHeight.hcore_zmod_four_iff
+#check @GeneralizedStarHeight.hcore_zmod_prime
+#check @GeneralizedStarHeight.height_one_of_abelian_normal_of_core
+#check @GeneralizedStarHeight.height_one_of_abelian_normal_of_core_equiv
+#check @GeneralizedStarHeight.height_one_S4_of_core
+#check @GeneralizedStarHeight.PST.LPST_eq
+#check @GeneralizedStarHeight.PST.LPST_recognized
+#check @GeneralizedStarHeight.PST.pst_candidate_height_one_of_S4
+#check @GeneralizedStarHeight.PST.pst_candidate_height_one_of_core
+#check @GeneralizedStarHeight.PST.pst_candidate_iff
+#check @GeneralizedStarHeight.PST.pst_not_metabelian
+#check @GeneralizedStarHeight.PST.pst_not_abelian_by_abelian
+#check @GeneralizedStarHeight.PST.pst_firstReturn_not_starFree
+#check @GeneralizedStarHeight.height_one_of_card_lt_twentyfour_of_centralizer
 
 /-! ## λPω̲: canonical judgement and object-level hereditary substitution (M29-EP-CUBE-REST, partial)
 

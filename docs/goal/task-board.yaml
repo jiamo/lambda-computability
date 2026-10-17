@@ -6914,6 +6914,110 @@ tasks:
       - "python3 scripts/check_sorry.py"
       - "lake build --wfail"
 
+  - id: M28-STARHEIGHT-ELEMENTARY-QUOTIENT
+    priority: P1
+    status: DONE_STRONG
+    track: research/open-problems
+    title: "Generalized star height one for abelian-by-(Z_p)^r groups, every prime p"
+    terminal_statement: "GeneralizedStarHeight.vcount_height_one_prime {α : Type u} [Finite α] [DecidableEq α] {p : ℕ} [Fact p.Prime] {V : Type} [AddCommGroup V] [Module (ZMod p) V] [Finite V] (δ : α → V) (q : V) (x : α) (n k : ℕ) (hk : k < n) : HasHeightAtMost {w : List α | vcount δ q x w % n = k} 1; height_one_of_abelian_normal_exponent_prime [Finite Alphabet] {G : Type} [Group G] [Fintype G] (N : Subgroup G) [N.Normal] (hab : ∀ x ∈ N, ∀ y ∈ N, x * y = y * x) (hcomm : ∀ x y : G, x * y * x⁻¹ * y⁻¹ ∈ N) {p : ℕ} [Fact p.Prime] (hexp : ∀ x : G, x ^ p ∈ N) (T : FreeMonoid Alphabet →* G) (F : Set G) : HasHeightAtMost {w | T (FreeMonoid.ofList w) ∈ F} 1 (Start/StarHeightElementary.lean). Character identity charSum_vcount (|D| = p·c): Σ_φ vcount (φ ∘ δ) (φ q) x w = c·|w|_x + (p − 1)·c·vcount δ q x w, each term a ZMod p count at the state φ q (vcount_zp_height from zpcore). Corollaries: height_one_of_abelian_normal_exponent_three_of_prime (Bourne, p = 3; the old name is unchanged), height_one_of_abelian_normal_exponent_two (PST's Gcom ∗ (Z/2)^r, no commutator hypothesis), height_one_G3025 for (Z11 × Z11) ⋊ (Z5 × Z5), which has no abelian normal subgroup of prime index (comment, not formalized)."
+    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-ELEMENTARY.md"
+    open_boundary: ""
+    milestone: M28
+    depends_on:
+      - M28-STARHEIGHT-Z5-CORE
+      - M28-STARHEIGHT-BOURNE-411
+    rank: 2621
+    exit_criteria:
+      - "vcount_height_one_prime and height_one_of_abelian_normal_exponent_prime are proved for every prime p."
+      - "The cases p = 2 and p = 3 are one-line corollaries, and a group not covered by prime index is exhibited."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M28-STARHEIGHT-HCORE-REDUCTION
+    priority: P1
+    status: DONE_STRONG
+    track: research/open-problems
+    title: "The H-core: every abelian-by-H group reduces to prefix-product counts of H; S4 over the S3-core"
+    terminal_statement: "def HCoreHeightOne (H : Type) [Group H] : Prop := ∀ (α : Type) [Fintype α] [DecidableEq α] (ρ : α → H) (x : α) (g : H) (n k : ℕ), k < n → HasHeightAtMost {w : List α | hcount ρ g x w % n = k} 1, hcount ρ g x w = #{i | w[i] = x ∧ ((w.take i).map ρ).prod = g}; theorem height_one_of_abelian_normal_of_core [Finite Alphabet] {G : Type} [Group G] [Fintype G] (N : Subgroup G) [N.Normal] (hab : ∀ x ∈ N, ∀ y ∈ N, x * y = y * x) (hcore : HCoreHeightOne (G ⧸ N)) (T : FreeMonoid Alphabet →* G) (F : Set G) : HasHeightAtMost {w | T (FreeMonoid.ofList w) ∈ F} 1, and the version height_one_of_abelian_normal_of_core_equiv with e : G ⧸ N ≃* H (Start/StarHeightHCore.lean). Wreath product principle (telescope, pair counts modulo |N|); the final state from the pair counts modulo 2 by flow_identity. Bridges: hcore_zmod_four_iff : HCoreHeightOne (Multiplicative (ZMod 4)) ↔ Z4CoreHeightOne; hcore_zmod_prime p : HCoreHeightOne (Multiplicative (ZMod p)). Instance: height_one_S4_of_core (hcore : HCoreHeightOne (Equiv.Perm (Fin 3))) (T : FreeMonoid Alphabet →* Equiv.Perm (Fin 4)) (F) : HasHeightAtMost {w | T (FreeMonoid.ofList w) ∈ F} 1 (Start/StarHeightS4.lean), with V4 = ker of the action on pairings. SL(2,3) over the A4-core was not done."
+    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-ELEMENTARY.md"
+    open_boundary: ""
+    milestone: M28
+    depends_on:
+      - M28-STARHEIGHT-INDEX-FIVE
+    rank: 2622
+    exit_criteria:
+      - "HCoreHeightOne is defined, Z4CoreHeightOne is shown to be an instance, and height_one_of_abelian_normal_of_core is proved."
+      - "height_one_S4_of_core is proved."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M28-STARHEIGHT-PST-CANDIDATE
+    priority: P1
+    status: TODO_READY
+    track: research/open-problems
+    title: "Pin-Straubing-Thérien's candidate L_PST = (ab*a ∪ ba*b(ab*a)*ba*b)* for star height 2"
+    terminal_statement: "GeneralizedStarHeight.PST.LPST : Language AB, or its negation: HasHeightAtMost PST.LPST 1 or ¬ HasHeightAtMost PST.LPST 1. Proved reductions: PST.LPST_eq : LPST = {u | stateOf 0 u = 0 ∧ b0count 0 u % 2 = 0} (Start/StarHeightPSTLanguage.lean); PST.LPST_recognized (recognizer FreeMonoid AB →* Perm (Fin 4) × Multiplicative (ZMod 2)); PST.pst_candidate_height_one_of_S4 (h : ∀ {A : Type} [Finite A] (T : FreeMonoid A →* Equiv.Perm (Fin 4)) (F : Set (Equiv.Perm (Fin 4))), HasHeightAtMost {w | T (FreeMonoid.ofList w) ∈ F} 1) : HasHeightAtMost LPST 1; PST.pst_candidate_height_one_of_core : HCoreHeightOne (Equiv.Perm (Fin 3)) → HasHeightAtMost LPST 1; PST.pst_candidate_iff : HasHeightAtMost LPST 1 ↔ HasHeightAtMost K 1 (Start/StarHeightPST.lean). Obstructions: PST.pst_not_metabelian, PST.pst_not_abelian_by_abelian (no metabelian recognizer, Start/StarHeightPSTObstruction.lean); PST.pst_firstReturn_not_starFree (no permutation recognizer with a star-free first-return code, Start/StarHeightPSTReturns.lean)."
+    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-PST-CANDIDATE.md"
+    open_boundary: "Open: HasHeightAtMost PST.LPST 1, equivalently HasHeightAtMost PST.K 1 (M28-STARHEIGHT-S3-CORE). Not a Boolean combination of metabelian-group languages, and not the star of a star-free first-return code in any permutation recognizer (both Lean). No linear identity in letter, factor (length ≤ 3), Z2/Z3 counter, Transfer block and run-length-mod-4 counts on returning words of length ≤ 10; residue-only Boolean combinations of all these collide modulo 2 and 4; no exact collision up to length 18 (computational, not Lean)."
+    milestone: M28
+    depends_on:
+      - M28-STARHEIGHT-HCORE-REDUCTION
+    rank: 2623
+    exit_criteria:
+      - "HasHeightAtMost PST.LPST 1 is proved, or its negation."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M28-STARHEIGHT-S3-CORE
+    priority: P1
+    status: TODO_READY
+    track: research/open-problems
+    title: "The S3-core, and its smallest open instance: one S3 coset count modulo 2, equivalent to L_PST"
+    terminal_statement: "HCoreHeightOne (Equiv.Perm (Fin 3)), and first its smallest instance HasHeightAtMost GeneralizedStarHeight.PST.K 1, where PST.K = {w : List AB | (hcount rho3 1 b w + hcount rho3 (Equiv.swap 1 2) b w) % 2 = 0}, rho3 a = Equiv.swap 0 1, rho3 b = Equiv.swap 0 2 (Start/StarHeightPST.lean). PST.pst_candidate_iff : HasHeightAtMost LPST 1 ↔ HasHeightAtMost K 1, and PST.b0count_eq_hcount: the count is the number of b read in state 0."
+    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-PST-CANDIDATE.md"
+    open_boundary: "Open. The instance α = {a, b}, ρ = rho3, x = b, g ∈ {1, (1 2)}, n = 2 of HCoreHeightOne (Equiv.Perm (Fin 3)) implies HasHeightAtMost PST.K 1, which is equivalent to the PST candidate. The full S3-core would give every S4 language (height_one_S4_of_core)."
+    milestone: M28
+    depends_on:
+      - M28-STARHEIGHT-HCORE-REDUCTION
+    rank: 2624
+    exit_criteria:
+      - "HasHeightAtMost PST.K 1 is proved or refuted."
+      - "Stretch: HCoreHeightOne (Equiv.Perm (Fin 3))."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M28-STARHEIGHT-ORDER-LT-24
+    priority: P2
+    status: DONE_WEAK
+    track: research/open-problems
+    title: "Generalized star height one for every group of order less than 24 except F20"
+    terminal_statement: "GeneralizedStarHeight.height_one_of_card_lt_twentyfour_of_centralizer [Finite Alphabet] {G : Type} [Group G] [Fintype G] (hG : Fintype.card G < 24) (hC : Fintype.card G = 20 → ∀ P : Sylow 5 G, 5 < Nat.card (Subgroup.centralizer (P : Set G))) (T : FreeMonoid Alphabet →* G) (F : Set G) : HasHeightAtMost {w | T (FreeMonoid.ofList w) ∈ F} 1 (Start/StarHeightOrderLtTwentyFour.lean), from exists_abelian_normal_index_le_three_of_lt_24 (Start/GroupOrderLtTwentyFour.lean): order 21 Sylow 7 normal of index 3, order 22 index 2, order 23 cyclic, order 20 with |C(P)| ∈ {10, 20}."
+    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-ELEMENTARY.md"
+    open_boundary: "The hypothesis hF : IsEmpty (G ≃* F20) of the request is replaced by the centralizer hypothesis hC, as the request allowed; that hC fails only for F20 is not formalized. F20 itself remains open (Z4CoreRot2)."
+    milestone: M28
+    depends_on:
+      - M28-STARHEIGHT-INDEX-FIVE
+    rank: 2625
+    exit_criteria:
+      - "height_one_of_card_lt_twentyfour is proved with hF : IsEmpty (G ≃* F20), or with the centralizer hypothesis."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
   - id: M29-EP-STATEMENT
     priority: P1
     status: IN_PROGRESS
