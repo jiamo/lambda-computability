@@ -682,6 +682,15 @@ import Start.StarHeightZpCore
 import Start.StarHeightZpCoreHeight
 import Start.StarHeightIndexPrime
 import Start.StarHeightIndexFourLetters
+import Start.StarHeightElementary
+import Start.StarHeightHCore
+import Start.StarHeightS4
+import Start.StarHeightPSTLanguage
+import Start.StarHeightPST
+import Start.StarHeightPSTObstruction
+import Start.StarHeightPSTReturns
+import Start.GroupOrderLtTwentyFour
+import Start.StarHeightOrderLtTwentyFour
 import Start.PTSExpansionLambdaPOmegaBarCanon
 import Start.PTSExpansionLambdaPOmegaBarObj
 import Start.Capstones
