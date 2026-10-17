@@ -696,6 +696,10 @@ import Start.GroupOrderLtTwentyFour
 import Start.StarHeightOrderLtTwentyFour
 import Start.GroupOrderTwentyF20
 import Start.StarHeightOrderLtTwentyFourF20
+import Start.StarHeightCosetFamily
+import Start.StarHeightRenaming
+import Start.StarHeightS4Classes
+import Start.StarHeightS4TwoLetters
 import Start.PTSExpansionLambdaPOmegaBarCanon
 import Start.PTSExpansionLambdaPOmegaBarObj
 import Start.Capstones
