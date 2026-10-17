@@ -1,0 +1,39 @@
+# #print axioms for the new terminal theorems of M28-STARHEIGHT-S4-TWO-LETTERS and
+# M28-STARHEIGHT-COSET-FAMILY.
+# Command: lake env lean on a file with the lines below.
+
+import Start.StarHeightS4TwoLetters
+open GeneralizedStarHeight
+#print axioms GeneralizedStarHeight.height_one_of_separating_family
+#print axioms GeneralizedStarHeight.height_one_of_three_observers
+#print axioms GeneralizedStarHeight.height_one_of_coset_family
+#print axioms GeneralizedStarHeight.obs_runQ
+#print axioms GeneralizedStarHeight.stab_coset_eq_runQ
+#print axioms GeneralizedStarHeight.HasHeightAtMost.map_equiv
+#print axioms GeneralizedStarHeight.HasHeightAtMost.comap_equiv
+#print axioms GeneralizedStarHeight.HasHeightAtMost.comap
+#print axioms GeneralizedStarHeight.S4Two.classify_pairs
+#print axioms GeneralizedStarHeight.S4Two.height_one_of_mem_proper
+#print axioms GeneralizedStarHeight.S4Two.height_one_S4_two_letters
+#print axioms GeneralizedStarHeight.S4Two.height_one_S4_two_values
+#print axioms GeneralizedStarHeight.S4Two.height_one_S4_card_two
+
+# Output:
+
+'GeneralizedStarHeight.height_one_of_separating_family' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.height_one_of_three_observers' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.height_one_of_coset_family' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.obs_runQ' depends on axioms: [propext, Quot.sound]
+'GeneralizedStarHeight.stab_coset_eq_runQ' depends on axioms: [propext, Quot.sound]
+'GeneralizedStarHeight.HasHeightAtMost.map_equiv' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.HasHeightAtMost.comap_equiv' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.HasHeightAtMost.comap' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Two.classify_pairs' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Two.height_one_of_mem_proper' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Two.height_one_S4_two_letters' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Two.height_one_S4_two_values' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Two.height_one_S4_card_two' depends on axioms: [propext, Classical.choice, Quot.sound]
+
+# Max RSS of `lake env lean <file>` (MiB): import Mathlib baseline 7876; StarHeightCosetFamily
+# 7953; StarHeightRenaming 7953; StarHeightS4Classes 8177; StarHeightS4TwoLetters 8073 (at most
+# 301 MiB above the baseline).

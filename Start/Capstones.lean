@@ -338,6 +338,10 @@ import Start.GroupOrderLtTwentyFour
 import Start.StarHeightOrderLtTwentyFour
 import Start.GroupOrderTwentyF20
 import Start.StarHeightOrderLtTwentyFourF20
+import Start.StarHeightCosetFamily
+import Start.StarHeightRenaming
+import Start.StarHeightS4Classes
+import Start.StarHeightS4TwoLetters
 import Start.PTSExpansionLambdaPOmegaBarCanon
 import Start.PTSExpansionLambdaPOmegaBarObj
 
@@ -4161,6 +4165,13 @@ height at most one.
 `Start/GroupOrderTwentyF20.lean`, `Start/StarHeightOrderLtTwentyFourF20.lean`: a group of order `20`
 with a self-centralizing Sylow `5`-subgroup is `F₂₀`; hence every group of order `< 24` other than
 `F₂₀`, and under `Z4CoreRot2` every group of order `< 24`.
+`Start/StarHeightCosetFamily.lean`: a separating family of height-one observers (in particular the
+cosets of subgroups meeting in `{1}`) gives height one; the bridge from a permutation automaton.
+`Start/StarHeightRenaming.lean`: reading the letters through any map of a finite alphabet preserves
+generalized star height.
+`Start/StarHeightS4Classes.lean`, `Start/StarHeightS4TwoLetters.lean`: the five generating pairs of
+`S₄` up to conjugation and a swap; every language over two letters recognized by `S₄` has height at
+most one.
 -/
 
 #check @GeneralizedStarHeight.vcount_height_one_prime
@@ -4195,6 +4206,18 @@ with a self-centralizing Sylow `5`-subgroup is `F₂₀`; hence every group of o
 #check @GeneralizedStarHeight.mulEquiv_F20_of_centralizer
 #check @GeneralizedStarHeight.height_one_of_card_lt_twentyfour
 #check @GeneralizedStarHeight.height_one_of_card_lt_twentyfour_of_rot2
+#check @GeneralizedStarHeight.height_one_of_separating_family
+#check @GeneralizedStarHeight.height_one_of_three_observers
+#check @GeneralizedStarHeight.height_one_of_coset_family
+#check @GeneralizedStarHeight.obs_runQ
+#check @GeneralizedStarHeight.stab_coset_eq_runQ
+#check @GeneralizedStarHeight.HasHeightAtMost.map_equiv
+#check @GeneralizedStarHeight.HasHeightAtMost.comap
+#check @GeneralizedStarHeight.S4Two.classify_pairs
+#check @GeneralizedStarHeight.S4Two.height_one_of_mem_proper
+#check @GeneralizedStarHeight.S4Two.height_one_S4_two_letters
+#check @GeneralizedStarHeight.S4Two.height_one_S4_two_values
+#check @GeneralizedStarHeight.S4Two.height_one_S4_card_two
 
 /-! ## λPω̲: canonical judgement and object-level hereditary substitution (M29-EP-CUBE-REST, partial)
 
