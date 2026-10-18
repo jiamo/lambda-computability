@@ -7143,17 +7143,59 @@ tasks:
       - "python3 scripts/check_sorry.py"
       - "lake build --wfail"
 
+  - id: M28-STARHEIGHT-S4-THREE
+    priority: P1
+    status: DONE_STRONG
+    track: research/open-problems
+    title: "S4 over three letters, no letter a double transposition: every recognized language has generalized star height at most 1"
+    terminal_statement: "GeneralizedStarHeight.S4Three.height_one_S4_three_letters (T : FreeMonoid (Fin 3) →* Equiv.Perm (Fin 4)) (hT : ∀ x, T (FreeMonoid.of x) ∉ dbl) (F : Set (Equiv.Perm (Fin 4))) : HasHeightAtMost {w : List (Fin 3) | T (FreeMonoid.ofList w) ∈ F} 1, with dbl := {σ | σ * σ = 1 ∧ ∀ i, σ i ≠ i}; and height_one_S4_three_letters_or_proper, whose hypothesis is (∀ x, T (FreeMonoid.of x) ∉ dbl) ∨ Subgroup.closure (Set.range fun x => T (FreeMonoid.of x)) ≠ ⊤ (Start/StarHeightS4ThreeLetters.lean). Reduction in three stages (conjugate the first letter, then the second modulo its centralizer, then explicit witnesses for the 43 x 24 completions) to 56 class representatives: 45 with D = 1 (K01-K45, StarHeightS4ThreeCertsA-E, coset automata on 4, 3, 2 or 4, 4, 2 states, combined by height_one_of_tableOK in StarHeightS4ThreeTable), the 10 lift classes of StarHeightS4ThreeHitsA/B and the Coxeter class. Axioms: propext, Classical.choice, Quot.sound."
+    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-S4-THREE.md"
+    open_boundary: ""
+    milestone: M28
+    depends_on:
+      - M28-STARHEIGHT-S4-COXETER
+      - M28-STARHEIGHT-S4-TWO-LETTERS
+    rank: 2758
+    exit_criteria:
+      - "height_one_S4_three_letters is proved without sorry."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M28-STARHEIGHT-S4-DOUBLE-TRANSPOSITION
+    priority: P1
+    status: TODO_READY
+    track: research/open-problems
+    title: "S4 over three letters with a double-transposition letter: no finite family of good automata determines T"
+    terminal_statement: "Open: GeneralizedStarHeight.S4Dbl.FamilyObstruction Tsmall (Start/StarHeightS4DoubleTransposition.lean), i.e. ∀ (m : ℕ) (ns : Fin m → ℕ) (δs : ∀ i, Fin (ns i) → Fin 3 → Fin (ns i)) (q₀s : ∀ i, Fin (ns i)), (∀ i, Good (δs i) (q₀s i)) → ∃ u v : List (Fin 3), Tsmall (FreeMonoid.ofList u) ≠ Tsmall (FreeMonoid.ofList v) ∧ ∀ i, DFAReturn.runQ (δs i) (q₀s i) u = DFAReturn.runQ (δs i) (q₀s i) v, with Tsmall := FreeMonoid.lift ![Equiv.swap 2 3, Equiv.swap 1 2, Equiv.swap 0 1 * Equiv.swap 2 3]; more generally FamilyObstruction T for every onto T with a double-transposition letter. Proved for one automaton: not_determined_single, not_determined_small, dbl_obstruction (every d in V4 is the value of a word returning a CycleLetters automaton to its base; cycleLetters_of_good)."
+    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-S4-DOUBLE-TRANSPOSITION.md"
+    open_boundary: "Open for families of two or more good automata (the single-automaton trichotomy fails on mixed coordinates and on CRT mismatches of cycle lengths). Informal reduction (not Lean): a family gives W = 1 iff its joint state determines the coset Stab(p)·T w for some point p, i.e. the state of the 4-state point automaton B_p, in which the double-transposition letter has no fixed point; so the open question is whether a finite family of good automata can determine B_p (one automaton cannot: its x0-cycle would cover it and map onto one x0-orbit of size 2). Computational (not Lean-verified; scripts in docs/goal/evidence/M28-STARHEIGHT-S4-search/): no family separating V4 among letter-cycle automata (single, n <= 4; all pairs, n <= 3; about 1.52 million random families of 2-3 automata on 2-7 states; all 19 classes). Observers beyond good automata, five classes with an S3 point stabilizer: markers (first occurrence of a letter), Transfer-Lemma counters with 20 star-free block codes, off-base counters, forward and reversed good pairs: no hit. zpcore/Bourne do not apply (transposition letters; pairing automaton not good at the a-base). Candidate for generalized star height 2 (no lower bound proved; an obstruction to this method is not a lower bound): L_0 = {w | Tsmall w fixes 0} = (a + b + c(a + b((a+c)b*(a+c))*b)*c)* (4-state permutation automaton), and {w | Tsmall w = 1} = L_0 ∩ L_1 ∩ L_2. No earlier candidate of this kind found."
+    milestone: M28
+    depends_on:
+      - M28-STARHEIGHT-S4-THREE
+    rank: 2759
+    exit_criteria:
+      - "FamilyObstruction Tsmall is proved in Lean, or a finite family of good automata with W = 1 is given (which then closes that class as in M28-STARHEIGHT-S4-THREE)."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
   - id: M28-STARHEIGHT-S4
     priority: P1
     status: TODO_READY
     track: research/open-problems
     title: "Every language recognized by S4, over every alphabet"
-    terminal_statement: "theorem height_one_S4 {α : Type} [Finite α] (T : FreeMonoid α →* Equiv.Perm (Fin 4)) (F : Set (Equiv.Perm (Fin 4))) : HasHeightAtMost {w | T (FreeMonoid.ofList w) ∈ F} 1. Two letters are done (M28-STARHEIGHT-S4-TWO-LETTERS); the Coxeter triple and ten further three-letter classes are done (M28-STARHEIGHT-S4-COXETER)."
-    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-LIFT-R3R4.md"
-    open_boundary: "Open from three letters on. Done in Lean: the Coxeter class (0 1), (1 2), (2 3) and ten further classes of generating triples with D != 1, by signed lifts of order 192 (M28-STARHEIGHT-S4-COXETER). Computational (not Lean-verified; docs/goal/evidence/M28-STARHEIGHT-LIFT-R3R4.md, classes as image tuples in the right-action convention; the set is closed under inverting the letters): of the 70 classes of generating triples without identity or repeated letters, 40 have D = 1 (reachable by height_one_of_coset_family, not formalized class by class) and 30 do not; 11 of the 30 hit with signed lifts; the 19 open classes are 0132 0213 1032, 0132 0213 2301, 0132 0231 1032, 0132 0231 2301, 0132 0231 3210, 0132 1032 1203, 0132 1032 1230, 0132 1203 2301, 0132 1203 3210, 0132 1230 2301, 0132 1230 3210, 0231 1032 1230, 0231 1032 1302, 0231 1032 2031, 0231 1032 2310, 0231 1032 3012, 0231 1032 3201, 1032 1230 1302, 1032 1230 2310. For these, exhaustive without a hit: all signed lifts (up to diagonal conjugation), GL(2,3), binary octahedral 2.S4, K = S3 and K = S4 letter pairs; Z4-monomial lifts (one label per cycle) only sampled (about 130 to 160 per class, most with |E| > 800 skipped). Universal alphabet: Coxeter-word lifts and 2 x 2000 random signed lifts all give |D| = 96. No height-two obstruction is known."
+    terminal_statement: "theorem height_one_S4 {α : Type} [Finite α] (T : FreeMonoid α →* Equiv.Perm (Fin 4)) (F : Set (Equiv.Perm (Fin 4))) : HasHeightAtMost {w | T (FreeMonoid.ofList w) ∈ F} 1. Two letters are done (M28-STARHEIGHT-S4-TWO-LETTERS). Three letters are done except the 19 classes of generating triples with a double-transposition letter (M28-STARHEIGHT-S4-THREE; those classes: M28-STARHEIGHT-S4-DOUBLE-TRANSPOSITION)."
+    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-S4-THREE.md"
+    open_boundary: "Open: (1) three letters, the 19 classes of generating triples with a double-transposition letter (each has D = V4; no finite family of good automata is known to determine T, and one good automaton provably does not; M28-STARHEIGHT-S4-DOUBLE-TRANSPOSITION); (2) four or more letters; (3) the universal alphabet (Coxeter-word lifts and 2 x 2000 random signed lifts all give |D| = 96). Done in Lean for three letters: every triple without a double-transposition letter, and every non-generating triple (height_one_S4_three_letters, height_one_S4_three_letters_or_proper; M28-STARHEIGHT-S4-THREE). The 19 open classes, as image tuples in the right-action convention: 0132 0213 1032, 0132 0213 2301, 0132 0231 1032, 0132 0231 2301, 0132 0231 3210, 0132 1032 1203, 0132 1032 1230, 0132 1203 2301, 0132 1203 3210, 0132 1230 2301, 0132 1230 3210, 0231 1032 1230, 0231 1032 1302, 0231 1032 2031, 0231 1032 2310, 0231 1032 3012, 0231 1032 3201, 1032 1230 1302, 1032 1230 2310. Exhaustive without a hit for these (not Lean-verified, docs/goal/evidence/M28-STARHEIGHT-LIFT-R3R4.md): all signed lifts, GL(2,3), 2.S4, K = S3 and K = S4 letter pairs; Z4-monomial lifts only sampled. No height-two lower bound is known; candidate in M28-STARHEIGHT-S4-DOUBLE-TRANSPOSITION."
     milestone: M28
     depends_on:
       - M28-STARHEIGHT-S4-TWO-LETTERS
+      - M28-STARHEIGHT-S4-THREE
     rank: 2630
     exit_criteria:
       - "The three Coxeter transpositions (0 1), (1 2), (2 3) are settled."

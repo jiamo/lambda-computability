@@ -1,0 +1,123 @@
+# #print axioms for the new terminal theorems of M28-STARHEIGHT-S4-THREE and
+# M28-STARHEIGHT-S4-DOUBLE-TRANSPOSITION.  Command: lake env lean on a file with the lines below.
+
+import Start.StarHeightS4DoubleTransposition
+#print axioms GeneralizedStarHeight.S4Three.height_one_of_tableOK
+#print axioms GeneralizedStarHeight.S4Three.height_one_S4_three_letters
+#print axioms GeneralizedStarHeight.S4Three.height_one_S4_three_letters_or_proper
+#print axioms GeneralizedStarHeight.S4Dbl.cycleLetters_of_good
+#print axioms GeneralizedStarHeight.S4Dbl.trichotomy
+#print axioms GeneralizedStarHeight.S4Dbl.mem_of_trichotomy
+#print axioms GeneralizedStarHeight.S4Dbl.dbl_obstruction
+#print axioms GeneralizedStarHeight.S4Dbl.not_determined_single
+#print axioms GeneralizedStarHeight.S4Dbl.not_determined_small
+#print axioms GeneralizedStarHeight.S4Three.K01.height_one
+#print axioms GeneralizedStarHeight.S4Three.K02.height_one
+#print axioms GeneralizedStarHeight.S4Three.K03.height_one
+#print axioms GeneralizedStarHeight.S4Three.K04.height_one
+#print axioms GeneralizedStarHeight.S4Three.K05.height_one
+#print axioms GeneralizedStarHeight.S4Three.K06.height_one
+#print axioms GeneralizedStarHeight.S4Three.K07.height_one
+#print axioms GeneralizedStarHeight.S4Three.K08.height_one
+#print axioms GeneralizedStarHeight.S4Three.K09.height_one
+#print axioms GeneralizedStarHeight.S4Three.K10.height_one
+#print axioms GeneralizedStarHeight.S4Three.K11.height_one
+#print axioms GeneralizedStarHeight.S4Three.K12.height_one
+#print axioms GeneralizedStarHeight.S4Three.K13.height_one
+#print axioms GeneralizedStarHeight.S4Three.K14.height_one
+#print axioms GeneralizedStarHeight.S4Three.K15.height_one
+#print axioms GeneralizedStarHeight.S4Three.K16.height_one
+#print axioms GeneralizedStarHeight.S4Three.K17.height_one
+#print axioms GeneralizedStarHeight.S4Three.K18.height_one
+#print axioms GeneralizedStarHeight.S4Three.K19.height_one
+#print axioms GeneralizedStarHeight.S4Three.K20.height_one
+#print axioms GeneralizedStarHeight.S4Three.K21.height_one
+#print axioms GeneralizedStarHeight.S4Three.K22.height_one
+#print axioms GeneralizedStarHeight.S4Three.K23.height_one
+#print axioms GeneralizedStarHeight.S4Three.K24.height_one
+#print axioms GeneralizedStarHeight.S4Three.K25.height_one
+#print axioms GeneralizedStarHeight.S4Three.K26.height_one
+#print axioms GeneralizedStarHeight.S4Three.K27.height_one
+#print axioms GeneralizedStarHeight.S4Three.K28.height_one
+#print axioms GeneralizedStarHeight.S4Three.K29.height_one
+#print axioms GeneralizedStarHeight.S4Three.K30.height_one
+#print axioms GeneralizedStarHeight.S4Three.K31.height_one
+#print axioms GeneralizedStarHeight.S4Three.K32.height_one
+#print axioms GeneralizedStarHeight.S4Three.K33.height_one
+#print axioms GeneralizedStarHeight.S4Three.K34.height_one
+#print axioms GeneralizedStarHeight.S4Three.K35.height_one
+#print axioms GeneralizedStarHeight.S4Three.K36.height_one
+#print axioms GeneralizedStarHeight.S4Three.K37.height_one
+#print axioms GeneralizedStarHeight.S4Three.K38.height_one
+#print axioms GeneralizedStarHeight.S4Three.K39.height_one
+#print axioms GeneralizedStarHeight.S4Three.K40.height_one
+#print axioms GeneralizedStarHeight.S4Three.K41.height_one
+#print axioms GeneralizedStarHeight.S4Three.K42.height_one
+#print axioms GeneralizedStarHeight.S4Three.K43.height_one
+#print axioms GeneralizedStarHeight.S4Three.K44.height_one
+#print axioms GeneralizedStarHeight.S4Three.K45.height_one
+
+# Output:
+
+'GeneralizedStarHeight.S4Three.height_one_of_tableOK' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.height_one_S4_three_letters' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.height_one_S4_three_letters_or_proper' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'GeneralizedStarHeight.S4Dbl.cycleLetters_of_good' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Dbl.trichotomy' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Dbl.mem_of_trichotomy' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Dbl.dbl_obstruction' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Dbl.not_determined_single' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Dbl.not_determined_small' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K01.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K02.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K03.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K04.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K05.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K06.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K07.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K08.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K09.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K10.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K11.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K12.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K13.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K14.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K15.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K16.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K17.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K18.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K19.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K20.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K21.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K22.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K23.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K24.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K25.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K26.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K27.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K28.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K29.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K30.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K31.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K32.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K33.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K34.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K35.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K36.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K37.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K38.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K39.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K40.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K41.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K42.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K43.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K44.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.S4Three.K45.height_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+
+# Max RSS of `lake env lean <file>` (MiB): import Mathlib baseline 7874;
+# StarHeightS4ThreeTable 7966; StarHeightS4ThreeCertsA 8242; StarHeightS4ThreeCertsB 8328;
+# StarHeightS4ThreeCertsC 8323; StarHeightS4ThreeCertsD 8361; StarHeightS4ThreeCertsE 8742;
+# StarHeightS4ThreeLetters 8194; StarHeightS4DoubleTransposition 8064.
+# Largest excess over the baseline: CertsE, 868 MiB (a return monoid with 93 elements).

@@ -347,6 +347,14 @@ import Start.StarHeightS4Coxeter
 import Start.StarHeightS4ThreeBase
 import Start.StarHeightS4ThreeHitsA
 import Start.StarHeightS4ThreeHitsB
+import Start.StarHeightS4ThreeTable
+import Start.StarHeightS4ThreeCertsA
+import Start.StarHeightS4ThreeCertsB
+import Start.StarHeightS4ThreeCertsC
+import Start.StarHeightS4ThreeCertsD
+import Start.StarHeightS4ThreeCertsE
+import Start.StarHeightS4ThreeLetters
+import Start.StarHeightS4DoubleTransposition
 import Start.PTSExpansionLambdaPOmegaBarCanon
 import Start.PTSExpansionLambdaPOmegaBarObj
 
@@ -4185,6 +4193,13 @@ automaton and the length parity determine the element).
 `Start/StarHeightS4ThreeBase.lean`, `Start/StarHeightS4ThreeHitsA.lean`,
 `Start/StarHeightS4ThreeHitsB.lean`: the same for ten further classes of generating triples of `S₄`
 whose good coset automata do not separate `S₄`, through signed lifts of order `192`.
+`Start/StarHeightS4ThreeTable.lean`, `Start/StarHeightS4ThreeCertsA.lean`–`E`,
+`Start/StarHeightS4ThreeLetters.lean` (M28-STARHEIGHT-S4-THREE): every language over three letters
+recognized by `S₄`, none of whose letters is a double transposition, has height at most one (a
+three-stage reduction to `56` class representatives up to conjugation and renaming of letters).
+`Start/StarHeightS4DoubleTransposition.lean` (M28-STARHEIGHT-S4-DOUBLE-TRANSPOSITION, partial): if
+a letter is a double transposition and `T` is onto `S₄`, no single good automaton (letters cycles
+through the base) separates `V₄`; the statement for finite families (`FamilyObstruction`) is open.
 -/
 
 #check @GeneralizedStarHeight.vcount_height_one_prime
@@ -4246,6 +4261,17 @@ whose good coset automata do not separate `S₄`, through signed lifts of order 
 #check @GeneralizedStarHeight.S4Three.C0132_1203_3021.height_one
 #check @GeneralizedStarHeight.S4Three.C0231_1203_2310.height_one
 #check @GeneralizedStarHeight.S4Three.C0231_1302_2310.height_one
+#check @GeneralizedStarHeight.S4Three.height_one_of_tableOK
+#check @GeneralizedStarHeight.S4Three.classHeight
+#check @GeneralizedStarHeight.S4Three.height_one_S4_three_letters
+#check @GeneralizedStarHeight.S4Three.height_one_S4_three_letters_or_proper
+#check @GeneralizedStarHeight.S4Dbl.cycleLetters_of_good
+#check @GeneralizedStarHeight.S4Dbl.trichotomy
+#check @GeneralizedStarHeight.S4Dbl.mem_of_trichotomy
+#check @GeneralizedStarHeight.S4Dbl.dbl_obstruction
+#check @GeneralizedStarHeight.S4Dbl.not_determined_single
+#check @GeneralizedStarHeight.S4Dbl.not_determined_small
+#check @GeneralizedStarHeight.S4Dbl.FamilyObstruction
 
 /-! ## λPω̲: canonical judgement and object-level hereditary substitution (M29-EP-CUBE-REST, partial)
 

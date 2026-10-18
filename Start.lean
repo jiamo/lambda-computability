@@ -705,6 +705,14 @@ import Start.StarHeightS4Coxeter
 import Start.StarHeightS4ThreeBase
 import Start.StarHeightS4ThreeHitsA
 import Start.StarHeightS4ThreeHitsB
+import Start.StarHeightS4ThreeTable
+import Start.StarHeightS4ThreeCertsA
+import Start.StarHeightS4ThreeCertsB
+import Start.StarHeightS4ThreeCertsC
+import Start.StarHeightS4ThreeCertsD
+import Start.StarHeightS4ThreeCertsE
+import Start.StarHeightS4ThreeLetters
+import Start.StarHeightS4DoubleTransposition
 import Start.PTSExpansionLambdaPOmegaBarCanon
 import Start.PTSExpansionLambdaPOmegaBarObj
 import Start.Capstones
