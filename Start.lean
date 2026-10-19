@@ -713,6 +713,9 @@ import Start.StarHeightS4ThreeCertsD
 import Start.StarHeightS4ThreeCertsE
 import Start.StarHeightS4ThreeLetters
 import Start.StarHeightS4DoubleTransposition
+import Start.StarHeightNilpotent
+import Start.StarHeightUT4
+import Start.StarHeightNilpotentFour
 import Start.PTSExpansionLambdaPOmegaBarCanon
 import Start.PTSExpansionLambdaPOmegaBarObj
 import Start.Capstones

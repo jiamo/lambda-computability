@@ -1,0 +1,177 @@
+p=2 mode=shapes assumed=() rank=217 of 256
+   content (1, 1, 1, 1): 24 words, missing 3
+       +1adbc +1adcb +1bcad +1bcda +1cbad +1cbda +1dabc +1dacb
+       +1acbd +1acdb +1bdac +1bdca +1cabd +1cadb +1dbac +1dbca
+       +1abcd +1abdc +1bacd +1badc +1cdab +1cdba +1dcab +1dcba
+   content (2, 1, 1): 12 words, missing 1
+       +1abac +1abca +1acab +1acba +1baac +1baca +1caab +1caba
+   content (2, 2): 6 words, missing 2
+       +1abab +1abba +1baab +1baba
+       +1aabb +1bbaa
+   content (3, 1): 4 words, missing 0
+   content (4,): 1 words, missing 0
+p=2 mode=shapes assumed=((2, 2), (2, 1, 1)) rank=255 of 256
+   content (1, 1, 1, 1): 24 words, missing 1
+       +1abcd +1abdc +1acbd +1acdb +1adbc +1adcb +1bacd +1badc +1bcad +1bcda +1bdac +1bdca +1cabd +1cadb +1cbad +1cbda +1cdab +1cdba +1dabc +1dacb +1dbac +1dbca +1dcab +1dcba
+   content (2, 1, 1): 12 words, missing 0
+   content (2, 2): 6 words, missing 0
+   content (3, 1): 4 words, missing 0
+   content (4,): 1 words, missing 0
+p=2 mode=closed assumed=() rank=217 of 256
+   content (1, 1, 1, 1): 24 words, missing 3
+       +1adbc +1adcb +1bcad +1bcda +1cbad +1cbda +1dabc +1dacb
+       +1acbd +1acdb +1bdac +1bdca +1cabd +1cadb +1dbac +1dbca
+       +1abcd +1abdc +1bacd +1badc +1cdab +1cdba +1dcab +1dcba
+   content (2, 1, 1): 12 words, missing 1
+       +1abac +1abca +1acab +1acba +1baac +1baca +1caab +1caba
+   content (2, 2): 6 words, missing 2
+       +1abab +1abba +1baab +1baba
+       +1aabb +1bbaa
+   content (3, 1): 4 words, missing 0
+   content (4,): 1 words, missing 0
+p=2 mode=closed assumed=((2, 2), (2, 1, 1)) rank=255 of 256
+   content (1, 1, 1, 1): 24 words, missing 1
+       +1abcd +1abdc +1acbd +1acdb +1adbc +1adcb +1bacd +1badc +1bcad +1bcda +1bdac +1bdca +1cabd +1cadb +1cbad +1cbda +1cdab +1cdba +1dabc +1dacb +1dbac +1dbca +1dcab +1dcba
+   content (2, 1, 1): 12 words, missing 0
+   content (2, 2): 6 words, missing 0
+   content (3, 1): 4 words, missing 0
+   content (4,): 1 words, missing 0
+p=2 mode=closed with the abelian-Frattini words abab, abba (and renamings) rank=223
+   content (1, 1, 1, 1): 24 words, missing 3
+       +1adbc +1adcb +1bcad +1bcda +1cbad +1cbda +1dabc +1dacb
+       +1acbd +1acdb +1bdac +1bdca +1cabd +1cadb +1dbac +1dbca
+       +1abcd +1abdc +1bacd +1badc +1cdab +1cdba +1dcab +1dcba
+   content (2, 1, 1): 12 words, missing 1
+       +1abac +1abca +1acab +1acba +1baac +1baca +1caab +1caba
+   content (2, 2): 6 words, missing 1
+       +1aabb +1bbaa
+   content (3, 1): 4 words, missing 0
+   content (4,): 1 words, missing 0
+p=3 mode=shapes assumed=() rank=241 of 256
+   content (1, 1, 1, 1): 24 words, missing 3
+       +1adbc -1adcb -1bcad +1bcda +1cbad -1cbda -1dabc +1dacb
+       -1acbd +1acdb +1bdac -1bdca +1cabd -1cadb -1dbac +1dbca
+       -1abcd +1abdc +1bacd -1badc +1cdab -1cdba -1dcab +1dcba
+   content (2, 1, 1): 12 words, missing 1
+       -1abac +1abca +1acab -1acba +1baac -1baca -1caab +1caba
+   content (2, 2): 6 words, missing 0
+   content (3, 1): 4 words, missing 0
+   content (4,): 1 words, missing 0
+p=3 mode=shapes assumed=((2, 2), (2, 1, 1)) rank=256 of 256
+   content (1, 1, 1, 1): 24 words, missing 0
+   content (2, 1, 1): 12 words, missing 0
+   content (2, 2): 6 words, missing 0
+   content (3, 1): 4 words, missing 0
+   content (4,): 1 words, missing 0
+p=3 mode=closed assumed=() rank=241 of 256
+   content (1, 1, 1, 1): 24 words, missing 3
+       +1adbc -1adcb -1bcad +1bcda +1cbad -1cbda -1dabc +1dacb
+       -1acbd +1acdb +1bdac -1bdca +1cabd -1cadb -1dbac +1dbca
+       -1abcd +1abdc +1bacd -1badc +1cdab -1cdba -1dcab +1dcba
+   content (2, 1, 1): 12 words, missing 1
+       -1abac +1abca +1acab -1acba +1baac -1baca -1caab +1caba
+   content (2, 2): 6 words, missing 0
+   content (3, 1): 4 words, missing 0
+   content (4,): 1 words, missing 0
+p=3 mode=closed assumed=((2, 2), (2, 1, 1)) rank=256 of 256
+   content (1, 1, 1, 1): 24 words, missing 0
+   content (2, 1, 1): 12 words, missing 0
+   content (2, 2): 6 words, missing 0
+   content (3, 1): 4 words, missing 0
+   content (4,): 1 words, missing 0
+p=5 mode=shapes assumed=() rank=241 of 256
+   content (1, 1, 1, 1): 24 words, missing 3
+       +1adbc -1adcb -1bcad +1bcda +1cbad -1cbda -1dabc +1dacb
+       -1acbd +1acdb +1bdac -1bdca +1cabd -1cadb -1dbac +1dbca
+       -1abcd +1abdc +1bacd -1badc +1cdab -1cdba -1dcab +1dcba
+   content (2, 1, 1): 12 words, missing 1
+       -1abac +1abca +1acab -1acba +1baac -1baca -1caab +1caba
+   content (2, 2): 6 words, missing 0
+   content (3, 1): 4 words, missing 0
+   content (4,): 1 words, missing 0
+p=5 mode=shapes assumed=((2, 2), (2, 1, 1)) rank=256 of 256
+   content (1, 1, 1, 1): 24 words, missing 0
+   content (2, 1, 1): 12 words, missing 0
+   content (2, 2): 6 words, missing 0
+   content (3, 1): 4 words, missing 0
+   content (4,): 1 words, missing 0
+p=5 mode=closed assumed=() rank=241 of 256
+   content (1, 1, 1, 1): 24 words, missing 3
+       +1adbc -1adcb -1bcad +1bcda +1cbad -1cbda -1dabc +1dacb
+       -1acbd +1acdb +1bdac -1bdca +1cabd -1cadb -1dbac +1dbca
+       -1abcd +1abdc +1bacd -1badc +1cdab -1cdba -1dcab +1dcba
+   content (2, 1, 1): 12 words, missing 1
+       -1abac +1abca +1acab -1acba +1baac -1baca -1caab +1caba
+   content (2, 2): 6 words, missing 0
+   content (3, 1): 4 words, missing 0
+   content (4,): 1 words, missing 0
+p=5 mode=closed assumed=((2, 2), (2, 1, 1)) rank=256 of 256
+   content (1, 1, 1, 1): 24 words, missing 0
+   content (2, 1, 1): 12 words, missing 0
+   content (2, 2): 6 words, missing 0
+   content (3, 1): 4 words, missing 0
+   content (4,): 1 words, missing 0
+p=7 mode=shapes assumed=() rank=241 of 256
+   content (1, 1, 1, 1): 24 words, missing 3
+       +1adbc -1adcb -1bcad +1bcda +1cbad -1cbda -1dabc +1dacb
+       -1acbd +1acdb +1bdac -1bdca +1cabd -1cadb -1dbac +1dbca
+       -1abcd +1abdc +1bacd -1badc +1cdab -1cdba -1dcab +1dcba
+   content (2, 1, 1): 12 words, missing 1
+       -1abac +1abca +1acab -1acba +1baac -1baca -1caab +1caba
+   content (2, 2): 6 words, missing 0
+   content (3, 1): 4 words, missing 0
+   content (4,): 1 words, missing 0
+p=7 mode=shapes assumed=((2, 2), (2, 1, 1)) rank=256 of 256
+   content (1, 1, 1, 1): 24 words, missing 0
+   content (2, 1, 1): 12 words, missing 0
+   content (2, 2): 6 words, missing 0
+   content (3, 1): 4 words, missing 0
+   content (4,): 1 words, missing 0
+p=7 mode=closed assumed=() rank=241 of 256
+   content (1, 1, 1, 1): 24 words, missing 3
+       +1adbc -1adcb -1bcad +1bcda +1cbad -1cbda -1dabc +1dacb
+       -1acbd +1acdb +1bdac -1bdca +1cabd -1cadb -1dbac +1dbca
+       -1abcd +1abdc +1bacd -1badc +1cdab -1cdba -1dcab +1dcba
+   content (2, 1, 1): 12 words, missing 1
+       -1abac +1abca +1acab -1acba +1baac -1baca -1caab +1caba
+   content (2, 2): 6 words, missing 0
+   content (3, 1): 4 words, missing 0
+   content (4,): 1 words, missing 0
+p=7 mode=closed assumed=((2, 2), (2, 1, 1)) rank=256 of 256
+   content (1, 1, 1, 1): 24 words, missing 0
+   content (2, 1, 1): 12 words, missing 0
+   content (2, 2): 6 words, missing 0
+   content (3, 1): 4 words, missing 0
+   content (4,): 1 words, missing 0
+p=10007 mode=shapes assumed=() rank=241 of 256
+   content (1, 1, 1, 1): 24 words, missing 3
+       +1adbc -1adcb -1bcad +1bcda +1cbad -1cbda -1dabc +1dacb
+       -1acbd +1acdb +1bdac -1bdca +1cabd -1cadb -1dbac +1dbca
+       -1abcd +1abdc +1bacd -1badc +1cdab -1cdba -1dcab +1dcba
+   content (2, 1, 1): 12 words, missing 1
+       -1abac +1abca +1acab -1acba +1baac -1baca -1caab +1caba
+   content (2, 2): 6 words, missing 0
+   content (3, 1): 4 words, missing 0
+   content (4,): 1 words, missing 0
+p=10007 mode=shapes assumed=((2, 2), (2, 1, 1)) rank=256 of 256
+   content (1, 1, 1, 1): 24 words, missing 0
+   content (2, 1, 1): 12 words, missing 0
+   content (2, 2): 6 words, missing 0
+   content (3, 1): 4 words, missing 0
+   content (4,): 1 words, missing 0
+p=10007 mode=closed assumed=() rank=241 of 256
+   content (1, 1, 1, 1): 24 words, missing 3
+       +1adbc -1adcb -1bcad +1bcda +1cbad -1cbda -1dabc +1dacb
+       -1acbd +1acdb +1bdac -1bdca +1cabd -1cadb -1dbac +1dbca
+       -1abcd +1abdc +1bacd -1badc +1cdab -1cdba -1dcab +1dcba
+   content (2, 1, 1): 12 words, missing 1
+       -1abac +1abca +1acab -1acba +1baac -1baca -1caab +1caba
+   content (2, 2): 6 words, missing 0
+   content (3, 1): 4 words, missing 0
+   content (4,): 1 words, missing 0
+p=10007 mode=closed assumed=((2, 2), (2, 1, 1)) rank=256 of 256
+   content (1, 1, 1, 1): 24 words, missing 0
+   content (2, 1, 1): 12 words, missing 0
+   content (2, 2): 6 words, missing 0
+   content (3, 1): 4 words, missing 0
+   content (4,): 1 words, missing 0

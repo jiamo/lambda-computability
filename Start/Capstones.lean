@@ -355,6 +355,9 @@ import Start.StarHeightS4ThreeCertsD
 import Start.StarHeightS4ThreeCertsE
 import Start.StarHeightS4ThreeLetters
 import Start.StarHeightS4DoubleTransposition
+import Start.StarHeightNilpotent
+import Start.StarHeightUT4
+import Start.StarHeightNilpotentFour
 import Start.PTSExpansionLambdaPOmegaBarCanon
 import Start.PTSExpansionLambdaPOmegaBarObj
 
@@ -4272,6 +4275,31 @@ through the base) separates `V₄`; the statement for finite families (`FamilyOb
 #check @GeneralizedStarHeight.S4Dbl.not_determined_single
 #check @GeneralizedStarHeight.S4Dbl.not_determined_small
 #check @GeneralizedStarHeight.S4Dbl.FamilyObstruction
+
+/-! ## Scattered subword counts: length at most three, and the unitriangular group `UT(4, Z/n)`
+
+`Start/StarHeightNilpotent.lean` (M28-STARHEIGHT-NILPOTENT-THREE): `scount w u` counts the
+occurrences of `w` as a scattered subword of `u`.  For distinct letters `a, b, c` and the letter
+map `ψ` sending `c` to `a`, `scount [a,b,c] u + scount [a,a,b] (ψ u) = |u|_c · scount [a,b] u +
+scount [a,a,b] u + scount [c,c,b] u`; with PST Theorem 7.4 for every modulus this gives height at
+most one for `{u | scount w u ≡ k (mod n)}` whenever `|w| ≤ 3`, for every `n`.
+`Start/StarHeightUT4.lean`: every language recognized by `UT(4, Z/n)` has height at most one.
+`Start/StarHeightNilpotentFour.lean` (M28-STARHEIGHT-NILPOTENT-FOUR, partial): the shapes
+`xⁱ y zʲ` (`i, j < p`) modulo a prime `p`, and every word of length four over two letters modulo an
+odd prime.  Open: `L(abac, k, p)` and the other length-four words with a nonzero coefficient in a
+Lie bracket `[[x,y],[z,t]]`.
+-/
+
+#check @GeneralizedStarHeight.scount
+#check @GeneralizedStarHeight.scount_abc_identity
+#check @GeneralizedStarHeight.height_one_scount_pst
+#check @GeneralizedStarHeight.height_one_scount_le_three
+#check @GeneralizedStarHeight.height_one_abc_mod_four
+#check @GeneralizedStarHeight.UT4
+#check @GeneralizedStarHeight.height_one_UT4
+#check @GeneralizedStarHeight.height_one_scount_xyz_mod_prime
+#check @GeneralizedStarHeight.height_one_aabb_mod_prime
+#check @GeneralizedStarHeight.height_one_two_letters_length_four_mod_prime
 
 /-! ## λPω̲: canonical judgement and object-level hereditary substitution (M29-EP-CUBE-REST, partial)
 

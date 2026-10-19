@@ -7206,6 +7206,89 @@ tasks:
       - "python3 scripts/check_sorry.py"
       - "lake build --wfail"
 
+  - id: M28-STARHEIGHT-NILPOTENT-THREE
+    priority: P1
+    status: DONE_STRONG
+    track: research/open-problems
+    title: "Scattered subword counts of length at most 3, every modulus (PST 1992 open case, Bourne Question 5.2); UT(4, Z/n)"
+    terminal_statement: "GeneralizedStarHeight.height_one_scount_le_three {α : Type*} [Finite α] [DecidableEq α] (w : List α) (hw : w.length ≤ 3) {n k : ℕ} (hk : k < n) : HasHeightAtMost {u : List α | scount w u % n = k} 1; height_one_abc_mod_four {k : ℕ} (hk : k < 4) : HasHeightAtMost {u : List (Fin 3) | scount [0, 1, 2] u % 4 = k} 1; height_one_scount_pst (hxy : x ≠ y) (i j : ℕ) (hk : k < n) : HasHeightAtMost {u | scount (List.replicate i x ++ y :: List.replicate j x) u % n = k} 1 (PST Theorem 7.4, every n); scount_abc_identity (hab : a ≠ b) (hbc : b ≠ c) (hac : a ≠ c) (u : List α) : scount [a, b, c] u + scount [a, a, b] (u.map fun z => if z = c then a else z) = u.count c * scount [a, b] u + scount [a, a, b] u + scount [c, c, b] u (Start/StarHeightNilpotent.lean); height_one_UT4 {Alphabet : Type*} [Finite Alphabet] (n : ℕ) [NeZero n] (T : FreeMonoid Alphabet →* UT4 n) (F : Set (UT4 n)) : HasHeightAtMost {w | T (FreeMonoid.ofList w) ∈ F} 1 (Start/StarHeightUT4.lean). Axioms: propext, Classical.choice, Quot.sound. The class-3 statement for all nilpotent groups follows from Thérien's theorem (cited, not formalized)."
+    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-NILPOTENT.md"
+    open_boundary: ""
+    milestone: M28
+    depends_on:
+      - M28-STARHEIGHT-ELEMENTARY-QUOTIENT
+      - M28-STARHEIGHT-Z4-CORE-ONE-ROTATION
+    rank: 2760
+    exit_criteria:
+      - "height_one_scount_le_three and height_one_UT4 are proved without sorry."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M28-STARHEIGHT-NILPOTENT-ABAC
+    priority: P1
+    status: TODO_READY
+    track: research/open-problems
+    title: "L(abac, k, p) for an odd prime p: the Lie bracket [[a,b],[a,c]] frontier at length 4"
+    terminal_statement: "First missing lemma: theorem height_one_abac_mod_prime (p : ℕ) [Fact p.Prime] (hp : p ≠ 2) {k : ℕ} (hk : k < p) : HasHeightAtMost {u : List (Fin 3) | scount [0, 1, 0, 2] u % p = k} 1 (first instance p = 3). Sufficient: the Heisenberg letter-in-state count is good modulo p, i.e. with hstate : List (Fin 3) → ZMod p × ZMod p × ZMod p := List.foldl (fun s x => if x = 0 then (s.1 + 1, s.2.1, s.2.2) else if x = 2 then (s.1, s.2.1 + 1, s.2.2 + s.1) else s) (0, 0, 0) and hcount q u := ((Finset.range u.length).filter (fun t => u[t]? = some 1 ∧ hstate (u.take t) = q)).card, theorem hcount_height_one (q : ZMod p × ZMod p × ZMod p) {k : ℕ} (hk : k < p) : HasHeightAtMost {u : List (Fin 3) | hcount q u % p = k} 1. Then scount abac u ≡ Σ_q W(q, |u|_2, scount [0,2] u) · hcount q u (mod p), from scount abac u = Σ over the b's of A_t (S - S_t - A_t (C - C_t)) (checked numerically, docs/goal/evidence/M28-STARHEIGHT-NILPOTENT-search/state_checks.py)."
+    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-NILPOTENT.md"
+    open_boundary: "Open. The span computation (not Lean) shows that for odd p every content of length 4 except (2,1,1) and (1,1,1,1) is reachable, (2,1,1) misses exactly the dual of [[a,b],[a,c]], and (1,1,1,1) becomes reachable once (2,2) and (2,1,1) are. So height_one_abac_mod_prime (with its renamings) would close length 4 modulo every odd prime. Why the known methods stop: the group recognizing L(abac, k, p) has non-abelian Frattini subgroup ([[a,b],[a,c]] ≠ 1), so height_one_of_abelian_normal_exponent_prime does not apply; the zpcore fixed-letter argument needs a star-free first-return code, which fails for the non-cyclic H(Z/p); the character sum fails because the non-linear characters of H(Z/p) vanish off the centre."
+    milestone: M28
+    depends_on:
+      - M28-STARHEIGHT-NILPOTENT-THREE
+    rank: 2598
+    exit_criteria:
+      - "height_one_abac_mod_prime is proved, or a proof that L(abac, k, p) has no expression of height one."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M28-STARHEIGHT-NILPOTENT-AABB-TWO
+    priority: P1
+    status: TODO_READY
+    track: research/open-problems
+    title: "L(aabb, k, 2): the first two-letter case of length 4 modulo 2"
+    terminal_statement: "First missing lemma: theorem height_one_aabb_mod_two {k : ℕ} (hk : k < 2) : HasHeightAtMost {u : List (Fin 2) | scount [0, 0, 1, 1] u % 2 = k} 1. Sufficient (same reduction as height_one_scount_xyz_mod_prime): theorem vcount_Z4Z2_height_one (q : ZMod 4 × ZMod 2) {k : ℕ} (hk : k < 2) : HasHeightAtMost {u : List (Fin 2) | vcount (![(1, 0), (0, 1)] : Fin 2 → ZMod 4 × ZMod 2) q 1 u % 2 = k} 1 (the moving letter 1 counted in the states of Z/4 × Z/2)."
+    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-NILPOTENT.md"
+    open_boundary: "Open. Span (not Lean): modulo 2, content (2,2) misses aabb + bbaa and abab + abba + baab + baba; the second is reached if the prime-index theorem is applied to the recognizing groups of L(abab, k, 2) and L(abba, k, 2) (abelian Frattini subgroup, group computation not in Lean). aabb + bbaa does not reduce to the Z4 cores of M28-STARHEIGHT-Z4-ROT2, even granting Z4CoreRot2: at the level of state counts, the cyclic-quotient counts span rank 6 in F_2^8 and the needed N(2,B) + N(3,B) is outside (state_checks.py)."
+    milestone: M28
+    depends_on:
+      - M28-STARHEIGHT-NILPOTENT-THREE
+    rank: 2599
+    exit_criteria:
+      - "height_one_aabb_mod_two is proved, or a proof that L(aabb, k, 2) has no expression of height one."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M28-STARHEIGHT-NILPOTENT-FOUR
+    priority: P1
+    status: DONE_WEAK
+    track: research/open-problems
+    title: "Scattered subword counts of length 4 (Bourne Question 5.3)"
+    terminal_statement: "Proved (Start/StarHeightNilpotentFour.lean): height_one_scount_xyz_mod_prime [Finite α] (p : ℕ) [Fact p.Prime] {i j : ℕ} (hi : i < p) (hj : j < p) (x y z : α) {k : ℕ} (hk : k < p) : HasHeightAtMost {u : List α | scount (List.replicate i x ++ y :: List.replicate j z) u % p = k} 1; height_one_aabb_mod_prime (p : ℕ) [Fact p.Prime] (hp : p ≠ 2) {k : ℕ} (hk : k < p) : HasHeightAtMost {u : List (Fin 2) | scount [0, 0, 1, 1] u % p = k} 1; height_one_two_letters_length_four_mod_prime (p : ℕ) [Fact p.Prime] (hp : p ≠ 2) (x y : α) (w : List α) (hw : w.length = 4) (hxy : ∀ z ∈ w, z = x ∨ z = y) {k : ℕ} (hk : k < p) : HasHeightAtMost {u : List α | scount w u % p = k} 1. With M28-STARHEIGHT-NILPOTENT-THREE, also every PST shape of length 4 for every modulus. Target: every L(w, k, p) with |w| = 4 and p prime. Axioms: propext, Classical.choice, Quot.sound."
+    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-NILPOTENT.md"
+    open_boundary: "Open for odd p: the words of length 4 with a nonzero coefficient in some [[x,y],[z,t]] (classes abac, abbc, abca, abcd up to renaming and reversal), first lemma height_one_abac_mod_prime (M28-STARHEIGHT-NILPOTENT-ABAC). The (2,1,1) words with zero bracket coefficient (aabc, aacb, bcaa, cbaa and renamings) are R2 shapes and are done; the (1,1,1,1) words are reachable by the span computation once (2,1,1) is, but that step is not formalized. Open for p = 2: height_one_aabb_mod_two (M28-STARHEIGHT-NILPOTENT-AABB-TWO), the (2,1,1) direction (sum of the abac family) and the (1,1,1,1) directions. Only prime moduli are targeted: by Eilenberg the languages of p-groups are Boolean combinations of L(w, k, p), p prime."
+    milestone: M28
+    depends_on:
+      - M28-STARHEIGHT-NILPOTENT-THREE
+      - M28-STARHEIGHT-NILPOTENT-ABAC
+      - M28-STARHEIGHT-NILPOTENT-AABB-TWO
+    rank: 2761
+    exit_criteria:
+      - "Every L(w, k, p) with |w| = 4 and p prime has height at most one, in Lean."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
   - id: M29-EP-STATEMENT
     priority: P1
     status: IN_PROGRESS
