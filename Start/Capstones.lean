@@ -365,6 +365,8 @@ import Start.StarHeightColouredPairs
 import Start.StarHeightCoreModTwo
 import Start.StarHeightOrderEightCores
 import Start.StarHeightLieBarrier
+import Start.StarHeightAabbTwo
+import Start.StarHeightGroupHeightOne
 import Start.PTSExpansionLambdaPOmegaBarCanon
 import Start.PTSExpansionLambdaPOmegaBarObj
 
@@ -4395,6 +4397,38 @@ by any finite group whose `2`-subgroups are metabelian (e.g. products of copies 
 #check @GeneralizedStarHeight.TwoSubgroupsMetabelian.of_metabelian
 #check @GeneralizedStarHeight.TwoSubgroupsMetabelian.of_card_dvd_eight
 #check @GeneralizedStarHeight.twoSubgroupsMetabelian_perm_four
+
+/-! ## `L(aabb, k, 2)` and good groups (M28-STARHEIGHT-NILPOTENT-AABB-TWO, M28-STARHEIGHT-GROUP-HEIGHT-ONE)
+
+`Start/StarHeightAabbTwo.lean`: modulo 2 the two `Z₄ × Z₂` counts of `aabb` are three `Z₄` counts
+plus a function of the letter counts modulo 8 (identity (I), `aabb_z4z2_cast_z4`), so
+`L(aabb, k, 2)` has height at most one, and every two-letter word of length 4 is done modulo
+every prime.
+`Start/StarHeightGroupHeightOne.lean`: `GroupHeightOne G` (every language recognized by `G` has
+height at most one) is closed under isomorphisms, subgroups, quotients and finite products.
+-/
+
+#check @GeneralizedStarHeight.aabb_z4z2_cast_z4
+#check @GeneralizedStarHeight.goodMod_aabb_two
+#check @GeneralizedStarHeight.goodMod_bbaa_two
+#check @GeneralizedStarHeight.height_one_aabb_mod_two
+#check @GeneralizedStarHeight.height_one_two_letters_length_four_mod_two_all
+#check @GeneralizedStarHeight.height_one_two_letters_length_four_mod_prime_all
+#check @GeneralizedStarHeight.GroupHeightOne
+#check @GeneralizedStarHeight.GroupHeightOne.univ
+#check @GeneralizedStarHeight.GroupHeightOne.of_mulEquiv
+#check @GeneralizedStarHeight.GroupHeightOne.of_injective
+#check @GeneralizedStarHeight.GroupHeightOne.of_surjective
+#check @GeneralizedStarHeight.GroupHeightOne.prod
+#check @GeneralizedStarHeight.GroupHeightOne.pi
+#check @GeneralizedStarHeight.GroupHeightOne.of_dvd_pi
+#check @GeneralizedStarHeight.groupHeightOne_of_comm
+#check @GeneralizedStarHeight.groupHeightOne_Z2WrZ4
+#check @GeneralizedStarHeight.groupHeightOne_UT4
+#check @GeneralizedStarHeight.groupHeightOne_alternatingGroup_four
+#check @GeneralizedStarHeight.groupHeightOne_of_abelian_prime_index
+#check @GeneralizedStarHeight.groupHeightOne_of_frattini_abelian
+#check @GeneralizedStarHeight.groupHeightOne_of_exponent_two_normal_z4
 
 /-! ## λPω̲: canonical judgement and object-level hereditary substitution (M29-EP-CUBE-REST, partial)
 

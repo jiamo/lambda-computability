@@ -1,0 +1,15 @@
+aaaa letters 1 |syntactic group| 8 A2A4 True
+aaab letters 2 |syntactic group| 64 A2A4 True W-test in var(WR+UT+FA): True
+aaba letters 2 |syntactic group| 64 A2A4 True W-test in var(WR+UT+FA): True
+aabb letters 2 |syntactic group| 256 A2A4 True W-test in var(WR+UT+FA): True
+aabc letters 3 |syntactic group| 512 A2A4 True
+abaa letters 2 |syntactic group| 64 A2A4 True W-test in var(WR+UT+FA): True
+abab letters 2 |syntactic group| 16 A2A4 False
+abac letters 3 |syntactic group| 128 A2A4 False
+abba letters 2 |syntactic group| 64 A2A4 False
+abbb letters 2 |syntactic group| 64 A2A4 True W-test in var(WR+UT+FA): True
+abbc letters 3 |syntactic group| 512 A2A4 False
+abca letters 3 |syntactic group| 512 A2A4 False
+abcb letters 3 |syntactic group| 128 A2A4 False
+abcc letters 3 |syntactic group| 512 A2A4 True
+abcd letters 4 |syntactic group| 1024 A2A4 False

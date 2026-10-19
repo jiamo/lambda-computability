@@ -1,0 +1,8 @@
+Magnus: rank of M in F2[Q]^2: 17 (17 means faithful)
+FA: dim of M cap Phi(W)' = 12 ; functionals of FA family: rank 5
+E4: rank 8 ; inside span of WR: True
+UT4(F2): rank 3 ; WR + UT rank 8
+count of b at (0, 1) : |syntactic group| 1024 ; rank on M 6 ; (family, in variety, dim of common kernel): [('WR', False, 9), ('UT', False, 14), ('WR+UT', False, 9), ('FA', False, 12), ('WR+FA', False, 9), ('WR+UT+FA', False, 9)]
+count of a at (0, 0) : |syntactic group| 256 ; rank on M 5 ; (family, in variety, dim of common kernel): [('WR', False, 9), ('UT', False, 14), ('WR+UT', False, 9), ('FA', False, 12), ('WR+FA', False, 9), ('WR+UT+FA', False, 9)]
+count of b at (2, 1) : |syntactic group| 1024 ; rank on M 6 ; (family, in variety, dim of common kernel): [('WR', False, 9), ('UT', False, 14), ('WR+UT', False, 9), ('FA', False, 12), ('WR+FA', False, 9), ('WR+UT+FA', False, 9)]
+count of b at (3, 1) : |syntactic group| 1024 ; rank on M 6 ; (family, in variety, dim of common kernel): [('WR', False, 9), ('UT', False, 14), ('WR+UT', False, 9), ('FA', False, 12), ('WR+FA', False, 9), ('WR+UT+FA', False, 9)]

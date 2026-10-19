@@ -1,0 +1,7 @@
+WR rank after each 500 samples: [28, 28, 28, 28, 28, 28] ; UT: [11, 11, 11]
+Magnus: rank of M: 129
+FA: dim of M cap Phi(W)' (in Schreier-value coordinates): 112
+aabc |syntactic group| 512 ; rank of its functionals 5 ; in variety (sampled homs for WR, UT): [('WR', False), ('WR+UT', False), ('FA', False), ('WR+UT+FA', False)]
+abcc |syntactic group| 512 ; rank of its functionals 5 ; in variety (sampled homs for WR, UT): [('WR', False), ('WR+UT', False), ('FA', False), ('WR+UT+FA', False)]
+sanity: aabb third letter one ; in var(WR): True
+sanity: aabb third letter copy ; in var(WR): True

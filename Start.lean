@@ -723,6 +723,8 @@ import Start.StarHeightColouredPairs
 import Start.StarHeightCoreModTwo
 import Start.StarHeightOrderEightCores
 import Start.StarHeightLieBarrier
+import Start.StarHeightAabbTwo
+import Start.StarHeightGroupHeightOne
 import Start.PTSExpansionLambdaPOmegaBarCanon
 import Start.PTSExpansionLambdaPOmegaBarObj
 import Start.Capstones

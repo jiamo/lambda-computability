@@ -1,0 +1,6 @@
+(1) rank of all homs F2 -> Z2wrZ4 on M: 8 of 17; rank of G(aabb): 4 ; G(aabb) in var(Z2wrZ4): True
+(2) homs (a, b) -> Z2wrZ4, elements (f, k): [((0, 1), (0, 0)), ((0, 0), (0, 1)), ((0, 0), (1, 1)), ((0, 1), (1, 0)), ((0, 1), (1, 1)), ((1, 0), (0, 1))]
+    joint group 2048 ; Z2wrZ4^6 part 2048 ; determines G(aabb): True
+(3) identity (I): step cases failing 0 of 64; words of length <= 14: 32767 mismatches 0
+(4) count of a at state g: (g, |syntactic group|, in var(Z2wrZ4)): [((0, 0), 256, False), ((0, 1), 256, False), ((1, 0), 256, False), ((1, 1), 256, False), ((2, 0), 256, False), ((2, 1), 256, False), ((3, 0), 256, False), ((3, 1), 256, False)]
+(4) count of b at state g: (g, |syntactic group|, in var(Z2wrZ4)): [((0, 0), 1024, False), ((0, 1), 1024, False), ((1, 0), 1024, False), ((1, 1), 1024, False), ((2, 0), 1024, False), ((2, 1), 1024, False), ((3, 0), 1024, False), ((3, 1), 1024, False)]
