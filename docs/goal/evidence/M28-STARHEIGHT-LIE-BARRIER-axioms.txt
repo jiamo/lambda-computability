@@ -1,0 +1,30 @@
+# #print axioms for the new theorems of M28-STARHEIGHT-LIE-BARRIER.  Command: lake env lean on a file with the lines below.
+
+import Start.StarHeightLieBarrier
+#print axioms GeneralizedStarHeight.UT5.double_commutator_ne_one
+#print axioms GeneralizedStarHeight.abacHom_a04
+#print axioms GeneralizedStarHeight.abac_separate
+#print axioms GeneralizedStarHeight.abacHom_eq_of_T_eq
+#print axioms GeneralizedStarHeight.not_recognizes_abac
+#print axioms GeneralizedStarHeight.TwoSubgroupsMetabelian.pi
+#print axioms GeneralizedStarHeight.TwoSubgroupsMetabelian.prod
+#print axioms GeneralizedStarHeight.TwoSubgroupsMetabelian.of_metabelian
+#print axioms GeneralizedStarHeight.TwoSubgroupsMetabelian.of_card_dvd_eight
+#print axioms GeneralizedStarHeight.twoSubgroupsMetabelian_perm_four
+#print axioms GeneralizedStarHeight.not_recognizes_abac_pi
+#print axioms GeneralizedStarHeight.not_recognizes_abac_perm_four
+
+# Output:
+
+'GeneralizedStarHeight.UT5.double_commutator_ne_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.abacHom_a04' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.abac_separate' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.abacHom_eq_of_T_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.not_recognizes_abac' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.TwoSubgroupsMetabelian.pi' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.TwoSubgroupsMetabelian.prod' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.TwoSubgroupsMetabelian.of_metabelian' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.TwoSubgroupsMetabelian.of_card_dvd_eight' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.twoSubgroupsMetabelian_perm_four' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.not_recognizes_abac_pi' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.not_recognizes_abac_perm_four' depends on axioms: [propext, Classical.choice, Quot.sound]

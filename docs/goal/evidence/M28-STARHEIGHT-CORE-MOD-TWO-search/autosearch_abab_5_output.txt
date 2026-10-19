@@ -1,0 +1,23 @@
+target abab H-states 8192 paired 0
+  HIT n 2 a (0, 1) b (1, 0)
+  HIT n 2 a (1, 0) b (0, 1)
+  HIT n 2 a (1, 0) b (1, 0)
+n 2 pairs 4 good 3 hits 3
+  HIT n 3 a (0, 1, 2) b (1, 2, 0)
+  HIT n 3 a (0, 1, 2) b (2, 0, 1)
+  HIT n 3 a (1, 0, 2) b (1, 2, 0)
+  HIT n 3 a (1, 0, 2) b (2, 0, 1)
+  HIT n 3 a (1, 0, 2) b (2, 1, 0)
+n 3 pairs 24 good 10 hits 10
+  HIT n 4 a (0, 1, 2, 3) b (1, 2, 3, 0)
+  HIT n 4 a (0, 1, 2, 3) b (1, 3, 0, 2)
+  HIT n 4 a (0, 1, 2, 3) b (2, 0, 3, 1)
+  HIT n 4 a (0, 1, 2, 3) b (2, 3, 1, 0)
+  HIT n 4 a (0, 1, 2, 3) b (3, 0, 1, 2)
+n 4 pairs 168 good 39 hits 39
+  HIT n 5 a (0, 1, 2, 3, 4) b (1, 2, 3, 4, 0)
+  HIT n 5 a (0, 1, 2, 3, 4) b (1, 2, 4, 0, 3)
+  HIT n 5 a (0, 1, 2, 3, 4) b (1, 3, 0, 4, 2)
+  HIT n 5 a (0, 1, 2, 3, 4) b (1, 3, 4, 2, 0)
+  HIT n 5 a (0, 1, 2, 3, 4) b (1, 4, 0, 2, 3)
+n 5 pairs 1440 good 171 hits 171

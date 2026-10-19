@@ -362,6 +362,9 @@ import Start.StarHeightNilpotentFourTwo
 import Start.StarHeightShear
 import Start.StarHeightZ4ModTwo
 import Start.StarHeightColouredPairs
+import Start.StarHeightCoreModTwo
+import Start.StarHeightOrderEightCores
+import Start.StarHeightLieBarrier
 import Start.PTSExpansionLambdaPOmegaBarCanon
 import Start.PTSExpansionLambdaPOmegaBarObj
 
@@ -4351,6 +4354,47 @@ pair sums over prefixes; modulo 2 every coloured pair count of the parity walk i
 #check @GeneralizedStarHeight.goodMod_two_cpair_col
 #check @GeneralizedStarHeight.cpair_mod_two_reduce
 #check @GeneralizedStarHeight.cpair_mod_two_iff_abac
+
+/-! ## The core modulo 2, the order-eight cores, and the Lie barrier
+
+`Start/StarHeightCoreModTwo.lean` (M28-STARHEIGHT-CORE-MOD-TWO): `HCoreModTwo H` (every prefix-product
+count of `H` has height at most one modulo 2); the `ZMod 4` and `ZMod p` instances; the wreath
+product principle at exponent 2 with the quotient's core modulo 2 (no hypothesis on the walk);
+`S₄` from the `S₃`-core modulo 2; central extensions by `Z₂` (e.g. of `A₄`).
+`Start/StarHeightOrderEightCores.lean`: `L(aabb, k, 2)` is a count on `Z₄ × Z₂` and `L(abac, k, 2)`
+a count on `Z₂ ≀ Z₂` (order 8), so both follow from the corresponding core modulo 2.
+`Start/StarHeightLieBarrier.lean` (M28-STARHEIGHT-LIE-BARRIER): `L(abac, 1, 2)` is not recognized
+by any finite group whose `2`-subgroups are metabelian (e.g. products of copies of `S₄`).
+-/
+
+#check @GeneralizedStarHeight.HCoreModTwo
+#check @GeneralizedStarHeight.HCoreHeightOne.modTwo
+#check @GeneralizedStarHeight.HCoreModTwo.of_mulEquiv
+#check @GeneralizedStarHeight.hcoreModTwo_zmod_four
+#check @GeneralizedStarHeight.hcoreModTwo_zmod_prime
+#check @GeneralizedStarHeight.height_one_of_exponent_two_normal_of_core_mod_two
+#check @GeneralizedStarHeight.height_one_of_exponent_two_normal_of_core_mod_two_equiv
+#check @GeneralizedStarHeight.height_one_S4_of_core_mod_two
+#check @GeneralizedStarHeight.height_one_of_central_order_two_of_core_mod_two
+#check @GeneralizedStarHeight.height_one_of_central_order_two_over_A4_of_core_mod_two
+#check @GeneralizedStarHeight.scount_aabb_eq_psum
+#check @GeneralizedStarHeight.scount_aabb_cast_z4z2
+#check @GeneralizedStarHeight.aabb_mod_two_iff_z4z2
+#check @GeneralizedStarHeight.aabb_mod_two_of_core
+#check @GeneralizedStarHeight.height_one_two_letters_length_four_mod_two_of_core
+#check @GeneralizedStarHeight.Z2WrZ2
+#check @GeneralizedStarHeight.cpair_abac_cast_wreath
+#check @GeneralizedStarHeight.abac_mod_two_iff_wreath
+#check @GeneralizedStarHeight.abac_mod_two_of_core
+#check @GeneralizedStarHeight.TwoSubgroupsMetabelian
+#check @GeneralizedStarHeight.not_recognizes_abac
+#check @GeneralizedStarHeight.not_recognizes_abac_pi
+#check @GeneralizedStarHeight.not_recognizes_abac_perm_four
+#check @GeneralizedStarHeight.TwoSubgroupsMetabelian.pi
+#check @GeneralizedStarHeight.TwoSubgroupsMetabelian.prod
+#check @GeneralizedStarHeight.TwoSubgroupsMetabelian.of_metabelian
+#check @GeneralizedStarHeight.TwoSubgroupsMetabelian.of_card_dvd_eight
+#check @GeneralizedStarHeight.twoSubgroupsMetabelian_perm_four
 
 /-! ## λPω̲: canonical judgement and object-level hereditary substitution (M29-EP-CUBE-REST, partial)
 

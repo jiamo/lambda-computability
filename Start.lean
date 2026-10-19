@@ -720,6 +720,9 @@ import Start.StarHeightNilpotentFourTwo
 import Start.StarHeightShear
 import Start.StarHeightZ4ModTwo
 import Start.StarHeightColouredPairs
+import Start.StarHeightCoreModTwo
+import Start.StarHeightOrderEightCores
+import Start.StarHeightLieBarrier
 import Start.PTSExpansionLambdaPOmegaBarCanon
 import Start.PTSExpansionLambdaPOmegaBarObj
 import Start.Capstones

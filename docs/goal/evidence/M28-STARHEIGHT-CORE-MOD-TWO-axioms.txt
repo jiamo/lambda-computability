@@ -1,0 +1,46 @@
+# #print axioms for the new theorems of M28-STARHEIGHT-CORE-MOD-TWO.  Command: lake env lean on a file with the lines below.
+
+import Start.StarHeightOrderEightCores
+#print axioms GeneralizedStarHeight.HCoreHeightOne.modTwo
+#print axioms GeneralizedStarHeight.HCoreModTwo.of_mulEquiv
+#print axioms GeneralizedStarHeight.hcoreModTwo_zmod_four
+#print axioms GeneralizedStarHeight.hcoreModTwo_zmod_prime
+#print axioms GeneralizedStarHeight.height_one_of_exponent_two_normal_of_core_mod_two
+#print axioms GeneralizedStarHeight.height_one_of_exponent_two_normal_of_core_mod_two_equiv
+#print axioms GeneralizedStarHeight.height_one_S4_of_core_mod_two
+#print axioms GeneralizedStarHeight.height_one_of_central_order_two_of_core_mod_two
+#print axioms GeneralizedStarHeight.height_one_of_central_order_two_over_A4_of_core_mod_two
+#print axioms GeneralizedStarHeight.scount_aabb_eq_psum
+#print axioms GeneralizedStarHeight.scount_aabb_cast_z4z2
+#print axioms GeneralizedStarHeight.goodMod_aabb_iff_z4z2
+#print axioms GeneralizedStarHeight.aabb_mod_two_iff_z4z2
+#print axioms GeneralizedStarHeight.goodMod_aabb_of_core
+#print axioms GeneralizedStarHeight.aabb_mod_two_of_core
+#print axioms GeneralizedStarHeight.height_one_two_letters_length_four_mod_two_of_core
+#print axioms GeneralizedStarHeight.Z2WrZ2.card
+#print axioms GeneralizedStarHeight.cpair_abac_cast_wreath
+#print axioms GeneralizedStarHeight.abac_mod_two_iff_wreath
+#print axioms GeneralizedStarHeight.abac_mod_two_of_core
+
+# Output:
+
+'GeneralizedStarHeight.HCoreHeightOne.modTwo' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.HCoreModTwo.of_mulEquiv' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.hcoreModTwo_zmod_four' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.hcoreModTwo_zmod_prime' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.height_one_of_exponent_two_normal_of_core_mod_two' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.height_one_of_exponent_two_normal_of_core_mod_two_equiv' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.height_one_S4_of_core_mod_two' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.height_one_of_central_order_two_of_core_mod_two' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.height_one_of_central_order_two_over_A4_of_core_mod_two' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.scount_aabb_eq_psum' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.scount_aabb_cast_z4z2' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.goodMod_aabb_iff_z4z2' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.aabb_mod_two_iff_z4z2' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.goodMod_aabb_of_core' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.aabb_mod_two_of_core' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.height_one_two_letters_length_four_mod_two_of_core' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.Z2WrZ2.card' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.cpair_abac_cast_wreath' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.abac_mod_two_iff_wreath' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.abac_mod_two_of_core' depends on axioms: [propext, Classical.choice, Quot.sound]

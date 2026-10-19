@@ -1,0 +1,7 @@
+target aabb H-states 8192 paired 8192
+n 2 pairs 4 good 3 hits 0
+n 3 pairs 24 good 10 hits 0
+n 4 pairs 168 good 39 hits 0
+n 5 pairs 1440 good 171 hits 0
+n 6 pairs 13680 good 830 hits 0
+n 7 pairs 151200 good 4503 hits 0

@@ -1,0 +1,16 @@
+w     |G|   |G'|  |G''| |Z|  span  central involutions flipping the count
+aaaa  8     1     1     8    yes   1 of 1
+aaab  64    8     1     2    yes   1 of 1
+aaba  64    8     1     2    yes   1 of 1
+aabb  256   16    1     2    yes   1 of 1
+aabc  512   32    1     2    yes   1 of 1
+abaa  64    8     1     2    yes   1 of 1
+abab  16    4     1     2    yes   1 of 1
+abac  128   16    2     2    yes   1 of 1
+abba  64    8     1     4    yes   1 of 3
+abbb  64    8     1     2    yes   1 of 1
+abbc  512   32    2     2    yes   1 of 1
+abca  512   64    2     4    yes   1 of 3
+abcb  128   16    2     2    yes   1 of 1
+abcc  512   32    1     2    yes   1 of 1
+abcd  1024  64    2     2    yes   1 of 1

@@ -1,0 +1,8 @@
+(A) element orders of the cocycle extensions of V4 by Z2
+  Z2^3   orders [1, 2, 2, 2, 2, 2, 2, 2] abelian True
+  Z4xZ2  orders [1, 2, 2, 2, 4, 4, 4, 4] abelian True
+  D4     orders [1, 2, 2, 2, 2, 2, 4, 4] abelian False
+  Q8     orders [1, 2, 4, 4, 4, 4, 4, 4] abelian False
+(B) Q8 = D4 + Z4xZ2 (mod 2): trials 3000 mismatches 0
+(C) Z2WrZ2 orders [1, 2, 2, 2, 2, 2, 4, 4] abelian False (D4: [1,2,2,2,2,2,4,4], non-abelian)
+(D) Z8 identity [s=q] = [R=q mod 4] + [R=q+4] + [R=q mod 4]C: 128 cases, mismatches 0
