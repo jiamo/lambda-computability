@@ -87,3 +87,20 @@ divisible by 8 on `abc`); no single good automaton on ≤ 7 points (with counts 
 points with cycles of length 1, 2, 4, 8 does it.  If it closed: `L(abac, k, 2)`, `L(abca, k, 2)`
 and renamings, hence (span, not Lean) the `(2,1,1)` direction at `p = 2`; length 4 mod 2 would
 then miss `L(aabb, k, 2)` and the `(1,1,1,1)` sum of all 24 permutations.
+
+## 5. R2: coloured pair counts (`Start/StarHeightColouredPairs.lean`, Lean, no `sorry`)
+
+`cpair col x y e f u = #{i < j : u_i = x, u_j = y, col (u.take i) = e, col (u.take j) = f}`
+(as nested position sums `psum`, `wpair`).  Exact over `ℕ` (`A_i = |u.take i|_a`):
+`scount abac = Σ_{i<j, b, c} A_i(A_j − A_i)` (`a ≠ b`), `scount aabb = Σ_{i<j, b, b} C(A_i, 2)`.
+Modulo 2: `scount abac ≡ cpair (|·|_a mod 2) b c 1 0` and `scount aabb ≡` pairs (`b` at
+`A ≡ 2, 3 mod 4`) before (any `b`).  For the parity colour and distinct `a, b, c` the row and column
+sums are good modulo 2 (`goodMod_two_cpair_row`: count of `c` at `(f, 1)` in `(A, B) mod 2`;
+`goodMod_two_cpair_col`: from the exact `rows + Σ_b C_i = #b(e)·|u|_c`), so each of the four
+`cpair b c e f` is `cpair b c 1 0` plus a good count (`cpair_mod_two_reduce`) and is good modulo 2
+iff `L(abac, k, 2)` has height ≤ 1 (`cpair_mod_two_iff_abac`).  Coloured counts of length 1 are the
+letter-in-state counts (the `Z₄` core); of length 2 on the parity walk, the shear count.
+
+**Monolithic obstruction** (from the brief, not rechecked): if the target group has a unique minimal
+normal subgroup (shear group, aabb's group, SL(2,3), F20), every family of good automata that
+determines the target is a lift of it; this explains the failed covering searches, so none was run.

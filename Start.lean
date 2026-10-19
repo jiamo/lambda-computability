@@ -718,6 +718,8 @@ import Start.StarHeightUT4
 import Start.StarHeightNilpotentFour
 import Start.StarHeightNilpotentFourTwo
 import Start.StarHeightShear
+import Start.StarHeightZ4ModTwo
+import Start.StarHeightColouredPairs
 import Start.PTSExpansionLambdaPOmegaBarCanon
 import Start.PTSExpansionLambdaPOmegaBarObj
 import Start.Capstones

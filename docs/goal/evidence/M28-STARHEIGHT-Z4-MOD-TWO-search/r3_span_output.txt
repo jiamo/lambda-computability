@@ -1,0 +1,28 @@
+control: Z4 mod 2, a:1 b:2 x:0, R1 pieces removed: mod 2, torus (Z/8)^3, counted letter 2: pieces span 29, with targets 29, deficiency 0
+(a) Z8, a:1 x:0: mod 2, torus (Z/8)^2, counted letter 1: pieces span 13, with targets 13, deficiency 0
+(a) Z8, a:1 b:2 x:0: mod 2, torus (Z/8)^3, counted letter 2: pieces span 29, with targets 33, deficiency 4
+(a) Z8, a:1 c:4 x:0: mod 2, torus (Z/8)^3, counted letter 2: pieces span 29, with targets 31, deficiency 2
+(a) Z8, a:1 b:3 x:0: mod 2, torus (Z/8)^3, counted letter 2: pieces span 29, with targets 33, deficiency 4
+(a) Z8, a:1 x:1 (moving): mod 2, torus (Z/8)^2, counted letter 1: pieces span 13, with targets 17, deficiency 4
+(b) Z4xZ2, a:(1,0) c:(0,1) x:(0,0), all 8 states: mod 2, torus (Z/8)^3, counted letter 2: pieces span 29, with targets 31, deficiency 2
+(b) Z4xZ2, state (0,1) only: mod 2, torus (Z/8)^3, counted letter 2: pieces span 29, with targets 30, deficiency 1
+(b) Z4xZ2, state (1,1) only: mod 2, torus (Z/8)^3, counted letter 2: pieces span 29, with targets 30, deficiency 1
+(b) Z4xZ2, state (2,1) only: mod 2, torus (Z/8)^3, counted letter 2: pieces span 29, with targets 30, deficiency 1
+(b) Z4xZ2, state (3,1) only: mod 2, torus (Z/8)^3, counted letter 2: pieces span 29, with targets 30, deficiency 1
+(b) Z4xZ2, a:(1,0) c:(0,1) x:(1,1) (moving), all states: mod 2, torus (Z/8)^3, counted letter 2: pieces span 29, with targets 31, deficiency 2
+(b) Z4 mod 4, a:1 b:2 x:0 (Z4Rot2Abc), all 4 states: mod 4, torus (Z/8)^3, counted letter 2: pieces span 70, with targets 71, deficiency 1
+(b) Z4 mod 4, a:1 b:2 x:0, state 0 only: mod 4, torus (Z/8)^3, counted letter 2: pieces span 70, with targets 71, deficiency 1
+control: Z4 mod 2, a:1 b:2 x:0, R1 pieces removed: mod 2, torus (Z/16)^3, counted letter 2: pieces span 53, with targets 53, deficiency 0
+(a) Z8, a:1 x:0: mod 2, torus (Z/16)^2, counted letter 1: pieces span 21, with targets 21, deficiency 0
+(a) Z8, a:1 b:2 x:0: mod 2, torus (Z/16)^3, counted letter 2: pieces span 53, with targets 57, deficiency 4
+(a) Z8, a:1 c:4 x:0: mod 2, torus (Z/16)^3, counted letter 2: pieces span 53, with targets 55, deficiency 2
+(a) Z8, a:1 b:3 x:0: mod 2, torus (Z/16)^3, counted letter 2: pieces span 53, with targets 57, deficiency 4
+(a) Z8, a:1 x:1 (moving): mod 2, torus (Z/16)^2, counted letter 1: pieces span 21, with targets 25, deficiency 4
+(b) Z4xZ2, a:(1,0) c:(0,1) x:(0,0), all 8 states: mod 2, torus (Z/16)^3, counted letter 2: pieces span 53, with targets 55, deficiency 2
+(b) Z4xZ2, state (0,1) only: mod 2, torus (Z/16)^3, counted letter 2: pieces span 53, with targets 54, deficiency 1
+(b) Z4xZ2, state (1,1) only: mod 2, torus (Z/16)^3, counted letter 2: pieces span 53, with targets 54, deficiency 1
+(b) Z4xZ2, state (2,1) only: mod 2, torus (Z/16)^3, counted letter 2: pieces span 53, with targets 54, deficiency 1
+(b) Z4xZ2, state (3,1) only: mod 2, torus (Z/16)^3, counted letter 2: pieces span 53, with targets 54, deficiency 1
+(b) Z4xZ2, a:(1,0) c:(0,1) x:(1,1) (moving), all states: mod 2, torus (Z/16)^3, counted letter 2: pieces span 53, with targets 55, deficiency 2
+(b) Z4 mod 4, a:1 b:2 x:0 (Z4Rot2Abc), all 4 states: mod 4, torus (Z/16)^3, counted letter 2: pieces span 118, with targets 119, deficiency 1
+(b) Z4 mod 4, a:1 b:2 x:0, state 0 only: mod 4, torus (Z/16)^3, counted letter 2: pieces span 118, with targets 119, deficiency 1

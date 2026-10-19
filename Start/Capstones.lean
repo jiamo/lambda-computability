@@ -360,6 +360,8 @@ import Start.StarHeightUT4
 import Start.StarHeightNilpotentFour
 import Start.StarHeightNilpotentFourTwo
 import Start.StarHeightShear
+import Start.StarHeightZ4ModTwo
+import Start.StarHeightColouredPairs
 import Start.PTSExpansionLambdaPOmegaBarCanon
 import Start.PTSExpansionLambdaPOmegaBarObj
 
@@ -4322,6 +4324,33 @@ prime `p`; at `p = 2` the reduction is an equivalence.  Open: `shear_height_one`
 #check @GeneralizedStarHeight.height_one_abac_of_shear
 #check @GeneralizedStarHeight.height_one_abca_of_shear
 #check @GeneralizedStarHeight.shear_mod_two_iff_abac
+
+/-! ## The `Z₄` core modulo 2, and coloured pair counts
+
+`Start/StarHeightZ4ModTwo.lean` (M28-STARHEIGHT-Z4-MOD-TWO): the identity
+`vcount δ q x ≡ vcount δ₂ q̄ x + vcount δ₁ (q + 2) x + vcount δ₃ (q̄, 1) x (mod 2)` splits a letter-in-state
+count on `ZMod 4` into two translation automata on `(Z/2)ʳ` and a walk without rotation `2`; hence
+the `Z₄` core modulo 2 (so `Z4Rot2Abc` modulo 2), abelian-by-`Z₄` groups whose kernel has
+exponent 2, the wreath product principle at exponent 2, and `Z₂ ≀ Z₄`.
+`Start/StarHeightColouredPairs.lean` (M28-STARHEIGHT-SHEAR, R2): `scount abac` and `scount aabb` as
+pair sums over prefixes; modulo 2 every coloured pair count of the parity walk is as hard as
+`L(abac, k, 2)`.
+-/
+
+#check @GeneralizedStarHeight.vcount_z4_mod_two
+#check @GeneralizedStarHeight.z4core_mod_two
+#check @GeneralizedStarHeight.z4Rot2Abc_mod_two
+#check @GeneralizedStarHeight.height_one_of_abelian_cyclic_index_four_two
+#check @GeneralizedStarHeight.height_one_of_exponent_two_kernel
+#check @GeneralizedStarHeight.height_one_Z2_wr_Z4
+#check @GeneralizedStarHeight.scount_abac_eq_wpair
+#check @GeneralizedStarHeight.scount_aabb_eq_wpair
+#check @GeneralizedStarHeight.scount_abac_cast_cpair
+#check @GeneralizedStarHeight.scount_aabb_cast_cpair
+#check @GeneralizedStarHeight.goodMod_two_cpair_row
+#check @GeneralizedStarHeight.goodMod_two_cpair_col
+#check @GeneralizedStarHeight.cpair_mod_two_reduce
+#check @GeneralizedStarHeight.cpair_mod_two_iff_abac
 
 /-! ## λPω̲: canonical judgement and object-level hereditary substitution (M29-EP-CUBE-REST, partial)
 

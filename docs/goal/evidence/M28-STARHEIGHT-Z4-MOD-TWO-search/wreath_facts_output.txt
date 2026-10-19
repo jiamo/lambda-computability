@@ -1,0 +1,8 @@
+order 64
+lower central series sizes [64, 8, 4, 2, 1] -> nilpotency class 4
+Frattini subgroup Phi = G^2 [G,G]: order 16 , abelian: False
+|G/Phi| = 4
+subgroups of index 2: 3 , abelian ones: 0
+abelian normal subgroups containing Phi: none (Phi itself is not abelian)
+element orders {1: 1, 2: 19, 4: 28, 8: 16}
+centre order 2

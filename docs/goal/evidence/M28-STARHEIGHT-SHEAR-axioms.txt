@@ -16,3 +16,26 @@ import Start.StarHeightShear
 'GeneralizedStarHeight.scount_abca_cast' depends on axioms: [propext, Classical.choice, Quot.sound]
 'GeneralizedStarHeight.shcount_two_cast' depends on axioms: [propext, Classical.choice, Quot.sound]
 'GeneralizedStarHeight.shear_mod_two_iff_abac' depends on axioms: [propext, Classical.choice, Quot.sound]
+
+# R2 (coloured pair counts).  Command: lake env lean on a file with the lines below.
+
+import Start.StarHeightColouredPairs
+#print axioms GeneralizedStarHeight.scount_abac_eq_wpair
+#print axioms GeneralizedStarHeight.scount_aabb_eq_wpair
+#print axioms GeneralizedStarHeight.scount_abac_cast_cpair
+#print axioms GeneralizedStarHeight.scount_aabb_cast_cpair
+#print axioms GeneralizedStarHeight.goodMod_two_cpair_row
+#print axioms GeneralizedStarHeight.goodMod_two_cpair_col
+#print axioms GeneralizedStarHeight.cpair_mod_two_reduce
+#print axioms GeneralizedStarHeight.cpair_mod_two_iff_abac
+
+# Output:
+
+'GeneralizedStarHeight.scount_abac_eq_wpair' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.scount_aabb_eq_wpair' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.scount_abac_cast_cpair' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.scount_aabb_cast_cpair' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.goodMod_two_cpair_row' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.goodMod_two_cpair_col' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.cpair_mod_two_reduce' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.cpair_mod_two_iff_abac' depends on axioms: [propext, Classical.choice, Quot.sound]

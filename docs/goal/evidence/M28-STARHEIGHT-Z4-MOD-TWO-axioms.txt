@@ -1,0 +1,18 @@
+# #print axioms for the new theorems of M28-STARHEIGHT-Z4-MOD-TWO.  Command: lake env lean on a file with the lines below.
+
+import Start.StarHeightZ4ModTwo
+#print axioms GeneralizedStarHeight.vcount_z4_mod_two
+#print axioms GeneralizedStarHeight.z4core_mod_two
+#print axioms GeneralizedStarHeight.z4Rot2Abc_mod_two
+#print axioms GeneralizedStarHeight.height_one_of_abelian_cyclic_index_four_two
+#print axioms GeneralizedStarHeight.height_one_of_exponent_two_kernel
+#print axioms GeneralizedStarHeight.height_one_Z2_wr_Z4
+
+# Output:
+
+'GeneralizedStarHeight.vcount_z4_mod_two' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.z4core_mod_two' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.z4Rot2Abc_mod_two' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.height_one_of_abelian_cyclic_index_four_two' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.height_one_of_exponent_two_kernel' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.height_one_Z2_wr_Z4' depends on axioms: [propext, Classical.choice, Quot.sound]
