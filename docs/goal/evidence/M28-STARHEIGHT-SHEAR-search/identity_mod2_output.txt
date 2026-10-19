@@ -1,0 +1,1 @@
+words checked: 20000 x 4 states, failures: 0

@@ -1,0 +1,23 @@
+# filter8.c + imtest8.c (gcc -O2), single good automaton Y on 8 points, letters identity or one
+# cycle through 0 of length 2, 4 or 8, a in canonical form (4 x 5258 x 5258 = 110,586,256 triples).
+# Counters: scount acc, bac, ccc mod 2 (their loops have image {1, z} in G).
+
+## without base counts: ./filter8 > survivors8.txt; ./imtest8 0 < survivors8.txt
+## (8-cycle condition on abc, bac, abaca, acaba is necessary here: the counters have exponent 4)
+checked 110586256, survivors 1016145 (transitive, 8-cycle condition, short-word aperiodicity)
+tested 1016145, z not in Im for 0
+
+## with the parities of the letters fixing 0 read at 0: ./filter8 1 A | ./imtest8 1, A = 0..3
+A = 0: tested 6607440, z not in Im for 0
+A = 1: tested 6608160, z not in Im for 0
+A = 2: tested 853656, z not in Im for 0
+A = 3: tested 154171, z not in Im for 0
+
+## positive control: the target automaton itself as Y
+45670123 10234567 01236745 |Im| = 1 (z not in Im)
+
+## with |u|_a, |u|_b, |u|_c mod 8 added: ./filter8 1 A | sed 's/^/8 /' | ./imtest_gen, A = 0..3
+A = 0: tested 6607440, z not in Im for 0
+A = 1: tested 6608160, z not in Im for 0
+A = 2: tested 853656, z not in Im for 0
+A = 3: tested 154171, z not in Im for 0

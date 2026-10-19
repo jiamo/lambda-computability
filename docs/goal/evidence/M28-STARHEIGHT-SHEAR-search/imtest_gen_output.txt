@@ -1,0 +1,9 @@
+# imtest_gen.c: single transitive automaton (letters identity or one cycle through 0, any length,
+# a canonical) with counters |u|_a, |u|_b, |u|_c mod 8 and scount acc, bac, ccc mod 2.
+## python3 gen_automata.py 2 5 | ./imtest_gen
+tested 19756, z not in Im for 0
+## python3 gen_automata.py 6 6 | ./imtest_gen
+tested 579049, z not in Im for 0
+## python3 gen_automata.py 7 7 | ./imtest_gen
+tested 24716560, z not in Im for 0
+## positive control: echo '8 45670123 10234567 01236745' | ./imtest_gen -> |Im| = 1

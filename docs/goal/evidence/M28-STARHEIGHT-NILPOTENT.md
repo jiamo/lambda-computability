@@ -2,7 +2,7 @@
 
 `scount w u` = number of occurrences of `w` as a scattered subword of `u`;
 `L(w, k, n) = {u | scount w u ≡ k mod n}`.  Lean: `Start/StarHeightNilpotent.lean`,
-`Start/StarHeightUT4.lean`, `Start/StarHeightNilpotentFour.lean`.  Axioms of every terminal
+`Start/StarHeightUT4.lean`, `Start/StarHeightNilpotentFour.lean`, `...FourTwo.lean`.  Axioms of every terminal
 theorem: `propext, Classical.choice, Quot.sound` (`M28-STARHEIGHT-NILPOTENT-axioms.txt`).
 
 ## R1: length at most 3, every modulus (M28-STARHEIGHT-NILPOTENT-THREE)
@@ -91,10 +91,8 @@ These are exactly the length-4 words with a nonzero coefficient in some `[[x,y],
 frontier and the failure of the prime-index method coincide.  `H(Z/p)` itself and `UT(4,Z/p)`
 (`[G,G]` abelian) are covered by that theorem; the obstruction is one level up.
 Heisenberg form (`state_checks.py`, checked): `scount abac u = Σ_{u_t=b} A_t(S − S_t − A_t(C − C_t))`
-with `(A,C,S) = (|·|_a, |·|_c, scount[a,c])`, the `H(Z/p)` counter.  Why the known methods stop:
-the first-return code of a non-cyclic group is not star-free (an element outside `⟨T w⟩` never
-returns), so the `zpcore` fixed-letter argument fails; the character sum fails because the
-non-linear characters of `H(Z/p)` vanish off the centre.  Not closed.  If the `H(Z/p)` count were
+with `(A,C,S) = (|·|_a, |·|_c, scount[a,c])`, the `H(Z/p)` counter.
+Why the known methods stop: `M28-STARHEIGHT-SHEAR.md`.  Not closed.  If the `H(Z/p)` count were
 good mod `p`, (2,1,1) would follow, and then (1,1,1,1) (table, last row): all of length 4 mod odd `p`.
 
 **(c) p = 2.**  `abab`, `abba` have abelian `Φ` (2-group), so `height_one_of_abelian_normal_exponent_two`
@@ -106,6 +104,19 @@ open `Z4CoreRot2` configuration, cf. `Z4Rot2Abc`) and the `(Z/2)²` counts — h
 `F₂⁸`, and the needed `N(2,B) + N(3,B)` is outside (rank 7).  So it does not reduce to the Z4 cores
 on the board, even granting `Z4CoreRot2`; it needs a letter-in-state count on `Z/4 × Z/2`.
 
-**(d) Programme.**  Finite nilpotent ⇒ product of `p`-groups; by Eilenberg the `p`-group languages
-are Boolean combinations of `L(w,k,p)`.  First cases not reached: `p = 2`, `L(aabb,k,2)` (two
-letters); odd `p`, `L(abac,k,3)` (three letters).
+**(d) Programme.**  By Eilenberg the `p`-group languages are Boolean combinations of
+`L(w,k,p)`.  First open cases: `L(aabb,k,2)`; `L(abac,k,p)` (reduced to the shear count,
+`M28-STARHEIGHT-SHEAR.md`).
+
+## R4: two letters modulo 2 (M28-STARHEIGHT-NILPOTENT-FOUR-TWO-LETTERS)
+
+`Start/StarHeightNilpotentFourTwo.lean`.  Exact in ℕ, `x ≠ y`:
+
+    C(scount[x,y], 2) = 2xxyy + xyxy + xxy + xyy                        (choose_scount_xy)
+    |u|_x·scount[x,y,y] = 2xxyy + xyxy + xyyx + xyy                    (count_mul_scount_xyy)
+    xxyy + yyxx + xyy + yxx + C(|u|_x,2)·C(|u|_y,2) = |u|_x·xyy + |u|_y·yxx
+
+(the last is `scount_xxyy_add_yyxx`).  `C(g,i)` is good when `g` is (`GoodCount.choose`).
+Theorems: `height_one_two_letters_length_four_mod_two` (every two-letter `w`, `|w| = 4`, except
+`xxyy`, `yyxx`), `goodMod_xxyy_iff` (every `n`), `GoodCount.of_mul_eq`,
+`height_one_of_frattini_abelian`.  Two letters, length 4, prime modulus: only `L(aabb,k,2)` open.

@@ -1,0 +1,11 @@
+shcount (0, 0) mod 2: |G| = 128, element orders {1: 1, 2: 43, 4: 68, 8: 16}, |N| = 16, N abelian: False
+   subgroups 576; good (index, starfree, abelian quotient): [(1, True, True), (2, True, True), (4, False, True), (8, False, True)]; count 16; |D| = 16, D = N: True, D fixes target: False
+shcount (0, 1) mod 2: |G| = 128, element orders {1: 1, 2: 43, 4: 68, 8: 16}, |N| = 16, N abelian: False
+   subgroups 576; good (index, starfree, abelian quotient): [(1, True, True), (2, True, True), (4, False, True), (8, False, True)]; count 16; |D| = 16, D = N: True, D fixes target: False
+shcount (1, 0) mod 2: |G| = 128, element orders {1: 1, 2: 43, 4: 68, 8: 16}, |N| = 16, N abelian: False
+   subgroups 576; good (index, starfree, abelian quotient): [(1, True, True), (2, True, True), (4, False, True), (8, False, True)]; count 16; |D| = 16, D = N: True, D fixes target: False
+shcount (1, 1) mod 2: |G| = 128, element orders {1: 1, 2: 43, 4: 68, 8: 16}, |N| = 16, N abelian: False
+   subgroups 576; good (index, starfree, abelian quotient): [(1, True, True), (2, True, True), (4, False, True), (8, False, True)]; count 16; |D| = 16, D = N: True, D fixes target: False
+scount abac mod 2: |G| = 128, element orders {1: 1, 2: 43, 4: 68, 8: 16}, |N| = 16, N abelian: False
+   subgroups 576; good (index, starfree, abelian quotient): [(1, True, True), (2, True, True), (4, False, True), (8, False, True)]; count 16; |D| = 16, D = N: True, D fixes target: False
+scount abca mod 2: |G| = 512, element orders {1: 1, 2: 127, 4: 320, 8: 64}, |N| = 64, N abelian: False

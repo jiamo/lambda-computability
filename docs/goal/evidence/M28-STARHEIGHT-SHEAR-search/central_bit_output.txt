@@ -1,0 +1,9 @@
+z = (1, 0, 3, 2, 5, 4, 7, 6) central: True
+n = 2, base counts False: z in Im_Y for 7 automata; good with z not in Im_Y: 0
+n = 2, base counts True: z in Im_Y for 7 automata; good with z not in Im_Y: 0
+n = 3, base counts False: z in Im_Y for 64 automata; good with z not in Im_Y: 0
+n = 3, base counts True: z in Im_Y for 64 automata; good with z not in Im_Y: 0
+n = 4, base counts False: z in Im_Y for 889 automata; good with z not in Im_Y: 0
+n = 4, base counts True: z in Im_Y for 889 automata; good with z not in Im_Y: 0
+n = 5, base counts False: z in Im_Y for 18796 automata; good with z not in Im_Y: 0
+n = 5, base counts True: z in Im_Y for 18796 automata; good with z not in Im_Y: 0

@@ -1,0 +1,18 @@
+# #print axioms for the new theorems of M28-STARHEIGHT-SHEAR.  Command: lake env lean on a file with the lines below.
+
+import Start.StarHeightShear
+#print axioms GeneralizedStarHeight.height_one_abac_of_shear
+#print axioms GeneralizedStarHeight.height_one_abca_of_shear
+#print axioms GeneralizedStarHeight.scount_abac_cast
+#print axioms GeneralizedStarHeight.scount_abca_cast
+#print axioms GeneralizedStarHeight.shcount_two_cast
+#print axioms GeneralizedStarHeight.shear_mod_two_iff_abac
+
+# Output:
+
+'GeneralizedStarHeight.height_one_abac_of_shear' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.height_one_abca_of_shear' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.scount_abac_cast' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.scount_abca_cast' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.shcount_two_cast' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.shear_mod_two_iff_abac' depends on axioms: [propext, Classical.choice, Quot.sound]

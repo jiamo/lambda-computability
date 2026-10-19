@@ -24,3 +24,21 @@ import Start.StarHeightUT4
 'GeneralizedStarHeight.height_one_two_letters_length_four_mod_prime' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
+
+# #print axioms for the new terminal theorems of M28-STARHEIGHT-NILPOTENT-FOUR-TWO-LETTERS.
+# Command: lake env lean on a file with the lines below.
+
+import Start.StarHeightNilpotentFourTwo
+#print axioms GeneralizedStarHeight.GoodCount.of_mul_eq
+#print axioms GeneralizedStarHeight.height_one_two_letters_length_four_mod_two
+#print axioms GeneralizedStarHeight.goodMod_xxyy_iff
+#print axioms GeneralizedStarHeight.height_one_of_frattini_abelian
+
+# Output:
+
+'GeneralizedStarHeight.GoodCount.of_mul_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.height_one_two_letters_length_four_mod_two' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'GeneralizedStarHeight.goodMod_xxyy_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.height_one_of_frattini_abelian' depends on axioms: [propext, Classical.choice, Quot.sound]

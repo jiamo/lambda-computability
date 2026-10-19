@@ -716,6 +716,8 @@ import Start.StarHeightS4DoubleTransposition
 import Start.StarHeightNilpotent
 import Start.StarHeightUT4
 import Start.StarHeightNilpotentFour
+import Start.StarHeightNilpotentFourTwo
+import Start.StarHeightShear
 import Start.PTSExpansionLambdaPOmegaBarCanon
 import Start.PTSExpansionLambdaPOmegaBarObj
 import Start.Capstones

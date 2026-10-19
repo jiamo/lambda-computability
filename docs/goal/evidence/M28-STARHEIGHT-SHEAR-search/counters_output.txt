@@ -1,0 +1,8 @@
+level 0, 39 counters, q = (0, 0): determined = False, joint states explored 3991, witness ('acacbab', 'babcaca')
+level 0, 39 counters, q = (0, 1): determined = False, joint states explored 3991, witness ('acacbab', 'babcaca')
+level 0, 39 counters, q = (1, 0): determined = False, joint states explored 3991, witness ('acacbab', 'babcaca')
+level 0, 39 counters, q = (1, 1): determined = False, joint states explored 3991, witness ('acacbab', 'babcaca')
+level 1, 39 counters, q = (0, 0): determined = False, joint states explored 49714, witness ('abcbbacab', 'bacabbcba')
+level 1, 39 counters, q = (0, 1): determined = False, joint states explored 49714, witness ('abcbbacab', 'bacabbcba')
+level 1, 39 counters, q = (1, 0): determined = False, joint states explored 49714, witness ('abcbbacab', 'bacabbcba')
+level 1, 39 counters, q = (1, 1): determined = False, joint states explored 49714, witness ('abcbbacab', 'bacabbcba')

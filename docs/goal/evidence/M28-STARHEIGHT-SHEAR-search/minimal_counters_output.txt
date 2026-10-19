@@ -1,0 +1,4 @@
+center size 2
+[3, 3, 3, 3, 5, 5, 7, 7, 7, 7, 9, 9, 9, 9, 9, 9] ['bcabcabca', 'abcabcabc', 'babcaba', 'bacabcabc', 'acabcac', 'abaca', 'bca', 'babcabcac', 'bcabacabc', 'cabacac', 'cab', 'bac', 'ababcab', 'cabcabcab', 'abc', 'acaba']
+w^4 = z for all: True
+minimal counters: ['sc(acc,2)', 'sc(bac,2)', 'sc(ccc,2)'] orbit 256 |Im| 2
