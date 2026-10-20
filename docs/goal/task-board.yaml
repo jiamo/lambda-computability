@@ -5637,7 +5637,7 @@ tasks:
     track: theory/types
     title: "Sigma-types in the groupoid model"
     latest_evidence: "docs/goal/evidence/M23-GROUPOID-MODEL.md"
-    open_boundary: "Gap row of M23-GROUPOID-PI-NATURAL (DONE_WEAK, round 7). Target: GrpdModel.grpdSigmaStruct : Cwa.SigmaStruct grpdCwa, with Σ as the Grothendieck construction of B over A. Round 8 (Start/GrpdSigma.lean): the generic Grothendieck functoriality GrpdModel.sigMap K F G θ B : GObj (F ⋙ B) ⥤ GObj (G ⋙ B) with its functor laws (the composite of Mathlib's Grothendieck.pre and Grothendieck.map, rebuilt for the library's GObj), the fibre transformation sigTheta A g, and the object and morphism parts sigObj, sigMapG of SigF A B. Round 9 (row M23-GROUPOID-SIGMA-FUNCTOR, Start/GrpdSigmaFun.lean): sigTheta_id, sigTheta_comp, sigMapG_id, sigMapG_comp and the functor GrpdModel.SigF A B : Γ ⥤ Grpd. First missing lemma: the pairing isomorphism GObj B ≅ GObj (SigF A B) over Γ (the comprehension of B over the comprehension of A is the comprehension of Σ A B); then pair_disp, the substitution law Sig_sub, and grpdSigmaStruct."
+    open_boundary: "Gap row of M23-GROUPOID-PI-NATURAL (DONE_WEAK, round 7). Target: GrpdModel.grpdSigmaStruct : Cwa.SigmaStruct grpdCwa. Round 8 (Start/GrpdSigma.lean): sigMap, sigTheta, sigObj, sigMapG. Round 9 (row M23-GROUPOID-SIGMA-FUNCTOR, Start/GrpdSigmaFun.lean): the functor laws and SigF A B : Γ ⥤ Grpd. Round 10 (Start/GrpdSigmaPair.lean): ghom_factor (a morphism (g, φ) of ∫ A is sigTheta A g at the source followed by the fibre inclusion of φ); the object parts pairObj, unpairObj of the pairing ∫ B ≅ ∫ (SigF A B) with both round trips (rfl) and pairObj_base; the morphism map pairHom with pairHom_base and the identity law pairHom_id. First missing lemma: pairHom_comp (the composition law of the pairing functor, an HEq computation through sigMap_key and ghom_factor); then the unpairing functor and the morphism round trips (the isomorphism pair A B : GObj B ≅ GObj (SigF A B)), pair_disp, Sig_sub, grpdSigmaStruct."
     milestone: M23
     depends_on: []
     rank: 2051
@@ -5757,7 +5757,7 @@ tasks:
     track: theory/types
     title: "Completeness and termination of type-directed βη-equivalence for LF"
     latest_evidence: "docs/goal/evidence/M23-LF-EQUIV.md"
-    open_boundary: "Gap row of M23-LF-EQUIV (DONE_WEAK, round 7). Targets: typed soundness of LambdaPi.AlgEq for LambdaPi.TEq; completeness by the fundamental lemma of LambdaPi.LR; termination on well-typed terms, hence decidability of TEq on well-typed λΠ terms. Round 8: the PER property is proved (row M23-LF-EQUIV-PER, Start/LambdaPiLFEquivPER.lean: WhStep.det, WhRed.whnf_unique, Eqv.symm, Eqv.trans, LR.symm, LR.trans), with the side condition skel Δ A = skel Δ A' added to Eqv.basePi (without it symmetry fails at that rule). Round 9 (row M23-LF-FUNDAMENTAL-TYPING, Start/LambdaPiLFFundamental.lean): related substitutions LambdaPi.RelSub with rename/cons/up/ids, skel_subst_typeLevel, and LambdaPi.LR.fundamental for typing derivations, Typing Γ t A → Wf Γ → RelSub Γ Δ σ τ → LR (skel (skelCtx Γ) A) Δ (t[σ]) (t[τ]), hence AlgEq.refl_of_typing (reflexivity of the algorithm on well-typed terms). First missing lemma: skel_teq, invariance of the skeleton under TEq at the type level (skel Δ A = skel Δ A' when Γ ⊢ A ≡ A' : type), needed for the conversion rules of TEq; then LR.fundamental for TEq (completeness), typed soundness, termination, decidability."
+    open_boundary: "Gap row of M23-LF-EQUIV (DONE_WEAK, round 7). Targets: typed soundness of AlgEq for TEq; completeness by the fundamental lemma of LR; termination on well-typed terms; decidability of TEq. Round 8: PER property (row M23-LF-EQUIV-PER). Round 9 (row M23-LF-FUNDAMENTAL-TYPING): RelSub, skel_subst_typeLevel, LR.fundamental for typing derivations, AlgEq.refl_of_typing. Round 10 (Start/LambdaPiLFSkelTEq.lean): skel is invariant under raw η (LambdaPi.skel_eta) but not under raw β (LambdaPi.skel_beta_raw_counterexample: (λx:∗. x) (Πy:∗. ∗) ⟶ Πy:∗. ∗ changes base to base → base), so not under raw βη-conversion (skel_not_betaEta_invariant): skel_teq cannot come from TEq.betaEtaConv and needs the typing of every type-level redex of a TEq derivation. First missing lemma: validity of TEq at type level, TEq.typeLevel : TEq Γ M N T → Wf Γ → (T a kind or □) → TypeLevel Γ M ∧ TypeLevel Γ N; it fails for the β-conversion typing Typing at TEq.app (f' a' is typed at B[a'], βη- but not β-convertible to B[a]), so it needs a βη-conversion typing judgement with weakening, substitution, context conversion, type validity and Church–Rosser for βη. Then skel_teq by induction on TEq (skel_step for β, skel_eta for η), LR.fundamental for TEq, typed soundness, termination, decidability (none proved)."
     milestone: M23
     depends_on: []
     rank: 2073
@@ -5815,7 +5815,7 @@ tasks:
     title: "Decidable βη-equivalence for LF (λΠ) by the type-directed algorithm (Harper and Pfenning)"
     terminal_statement: "LambdaPi.Eqv.sound {k : EqvKind} {Δ : List STy} {M N : Tm} {τ : STy} (h : Eqv k Δ M N τ) : BetaEtaConv M N; LambdaPi.LR.escape (h : LR τ Δ M N) : AlgEq Δ M N τ; LambdaPi.LR.reflect (h : PathEq Δ p q τ) : LR τ Δ p q; LambdaPi.TEq.betaEtaConv (h : TEq Γ M N A) : BetaEtaConv M N"
     latest_evidence: "docs/goal/evidence/M23-LF-EQUIV.md"
-    open_boundary: "Proved round 7 (Start/LambdaPiLFEquiv.lean): weak head reduction; the algorithm LambdaPi.Eqv; Eqv.sound; Eqv.rename; the Kripke logical relation LambdaPi.LR with LR.escape, LR.reflect, LR.var, LR.rename and closure under weak head expansion; the declarative typed equality LambdaPi.TEq and TEq.betaEtaConv. Round 8: Eqv.basePi carries the decidable side condition skel Δ A = skel Δ A'; the algorithm and the logical relation are PERs (row M23-LF-EQUIV-PER). Open (gap row M23-LF-EQUIV-COMPLETE): typed soundness, completeness (fundamental lemma), termination; round 9: LR.fundamental for typing derivations and AlgEq.refl_of_typing (row M23-LF-FUNDAMENTAL-TYPING); first missing lemma skel_teq (skeleton invariance under TEq), then LR.fundamental for TEq."
+    open_boundary: "Proved round 7 (Start/LambdaPiLFEquiv.lean): weak head reduction; the algorithm LambdaPi.Eqv; Eqv.sound; Eqv.rename; the Kripke logical relation LambdaPi.LR with LR.escape, LR.reflect, LR.var, LR.rename and closure under weak head expansion; TEq and TEq.betaEtaConv. Round 8: Eqv.basePi with the side condition skel Δ A = skel Δ A'; PERs (row M23-LF-EQUIV-PER). Round 9: LR.fundamental for typing derivations (row M23-LF-FUNDAMENTAL-TYPING). Round 10: skel_eta, skel_beta_raw_counterexample, skel_not_betaEta_invariant. Open (gap row M23-LF-EQUIV-COMPLETE): first missing lemma TEq.typeLevel (validity of TEq at type level, needs a βη-conversion typing judgement), then skel_teq, LR.fundamental for TEq (completeness), typed soundness, termination, decidability."
     milestone: M23
     depends_on:
       - M23-LF-EQUIV-COMPLETE
@@ -6371,9 +6371,9 @@ tasks:
     status: DONE_WEAK
     track: theory/types
     title: "Coherence with superclasses when instances of subclasses exist"
-    terminal_statement: "TypeClass.coherence_unannotated_superInst {E : Env} {P : List Cstr} (hE : EnvGood E) (hN : NormalSuperFields E) (hF : SuperInstFragment E P) {Γ : List Mty} {e : Sexp} {τ : Mty} (hB : Bidi E false Γ e τ) (hS : STyping E P Γ e τ) : (∃ t, ElabS E P Γ e τ t) ∧ ∀ t t', ElabS E P Γ e τ t → ElabS E P Γ e τ t' → Lambda.Conv t t'; TypeClass.DEnt.normalize_super {E : Env} (hE : EnvGood E) (hN : NormalSuperFields E) {P : List Cstr} {n : ℕ} {C : Cstr} {d : Lambda} (h : DEnt E P n C d) : ∃ b d', DEntN E P n b C d' ∧ Lambda.reduces d d'; TypeClass.DEnt.conv_superInst; TypeClass.DEntN.unique; TypeClass.SuperFragment.toSuperInst; TypeClass.SuperFragment.normalSuperFields; Lambda.substEnv_reduces"
+    terminal_statement: "TypeClass.coherence_unannotated_superInst {E : Env} {P : List Cstr} (hE : EnvGood E) (hN : NormalSuperFields E) (hF : SuperInstFragment E P) {Γ : List Mty} {e : Sexp} {τ : Mty} (hB : Bidi E false Γ e τ) (hS : STyping E P Γ e τ) : (∃ t, ElabS E P Γ e τ t) ∧ ∀ t t', ElabS E P Γ e τ t → ElabS E P Γ e τ t' → Lambda.Conv t t'; TypeClass.DEnt.normalize_super {E : Env} (hE : EnvGood E) (hN : NormalSuperFields E) {P : List Cstr} {n : ℕ} {C : Cstr} {d : Lambda} (h : DEnt E P n C d) : ∃ b d', DEntN E P n b C d' ∧ Lambda.reduces d d'; TypeClass.DEnt.conv_superInst; TypeClass.DEntN.unique; TypeClass.SuperFragment.toSuperInst; TypeClass.SuperFragment.normalSuperFields; Lambda.substEnv_reduces; TypeClass.example_superInst_coherence; TypeClass.exampleEnv_normalSuperFields; TypeClass.exampleEnv_superInstFragment"
     latest_evidence: "docs/goal/evidence/M25-TYPECLASS-COHERENCE.md"
-    open_boundary: "Gap row of M25-TYPECLASS-COHERENCE-SUPER (DONE_WEAK, round 6). Round 8 (Start/TypeClassSuperNorm.lean): DEntN, NormalSuperFields E, DEntN.supInst_contract. Round 9 (Start/TypeClassSuperNormalize.lean): the congruence Lambda.substEnv_reduces (Lambda.reduces (substEnv u t) (substEnv u' t) when every u k reduces to u' k); DEnt.normalize_super under NormalSuperFields; the fragment SuperInstFragment E P (no overlap, superclass closures of distinct hypotheses disjoint and avoiding instance heads; instances of subclasses allowed), with SuperFragment.toSuperInst and SuperFragment.normalSuperFields (it extends the round-6 fragment); DEntN.unique, DEnt.conv_superInst, AElab.conv_superInst and coherence_unannotated_superInst (coherence for unambiguous judgements in environments with instances of subclasses). DONE_WEAK: the exit criterion asks for instances well formed for their superclass (SuperField); the theorem assumes the stronger NormalSuperFields (superclass fields stored as closed normal dictionary derivations). Gap row M25-TYPECLASS-SUPER-FIELD."
+    open_boundary: "Gap row of M25-TYPECLASS-COHERENCE-SUPER (DONE_WEAK, round 6). Round 8 (Start/TypeClassSuperNorm.lean): DEntN, NormalSuperFields E, DEntN.supInst_contract. Round 9 (Start/TypeClassSuperNormalize.lean): the congruence Lambda.substEnv_reduces (Lambda.reduces (substEnv u t) (substEnv u' t) when every u k reduces to u' k); DEnt.normalize_super under NormalSuperFields; the fragment SuperInstFragment E P (no overlap, superclass closures of distinct hypotheses disjoint and avoiding instance heads; instances of subclasses allowed), with SuperFragment.toSuperInst and SuperFragment.normalSuperFields (it extends the round-6 fragment); DEntN.unique, DEnt.conv_superInst, AElab.conv_superInst and coherence_unannotated_superInst (coherence for unambiguous judgements in environments with instances of subclasses). Round 10 (Start/TypeClassSuperExample.lean): non-vacuity, the example environment (Eq, Ord <: Eq, instances Eq Base, Eq (a → b), Ord Base whose Eq field is the Eq Base dictionary) satisfies EnvGood, NormalSuperFields and SuperInstFragment, and coherence_unannotated_superInst applies to the method eq at Base (example_superInst_coherence). DONE_WEAK: the exit criterion asks for instances well formed for their superclass (SuperField); the theorem assumes the stronger NormalSuperFields (superclass fields stored as closed normal dictionary derivations). Gap row M25-TYPECLASS-SUPER-FIELD."
     milestone: M25
     depends_on:
       - M25-TYPECLASS-SUPER-FIELD
@@ -6392,7 +6392,7 @@ tasks:
     track: theory/types
     title: "Coherence with instances of subclasses under SuperField alone"
     latest_evidence: "docs/goal/evidence/M25-TYPECLASS-COHERENCE.md"
-    open_boundary: "Gap row of M25-TYPECLASS-SUPER-INST (DONE_WEAK, round 9). Target: coherence_unannotated_superInst with NormalSuperFields E replaced by SuperField E (superclass fields of an instance are any dictionary derivations, possibly using the instance context). First missing lemma: DEnt.normalize_super under SuperField, a termination order for the normalisation of DEnt derivations combining Paterson's measure on instance contexts with the size of the superclass field dictionaries (the round-9 proof uses that NormalSuperFields fields are closed and normal, so contracting sup-of-inst creates no new redex)."
+    open_boundary: "Gap row of M25-TYPECLASS-SUPER-INST (DONE_WEAK). Target: coherence_unannotated_superInst with NormalSuperFields E replaced by SuperField E. First missing lemma: DEnt.normalize_super under SuperField. Round 10 analysis of the termination order (not formalized): the first case where the order does not decrease is the superclass projection of an instance, sup (inst I ds). Contracting it calls normalization on the field derivation sd of I (a derivation of ⟨d, I.head⟩ from I.ctxt) with its hypotheses replaced by the context derivations ds: the constraint ⟨d, I.head[s]⟩ has the same type as the redex, so Paterson's measure on instance contexts does not decrease; the derivation size does not decrease either (sd may be larger than the instance node and may use a hypothesis several times, duplicating ds); the size of the dictionary term decreases at this step (sd is a strict subterm of I.dict) but fails at the inst case, whose recursive calls on context dictionaries not used by I.dict are not subterms. A working order needs a measure on derivations stable under substitution of hypotheses, e.g. a multiset of (Paterson size, field depth) pairs."
     milestone: M25
     depends_on: []
     rank: 2381
@@ -6469,12 +6469,13 @@ tasks:
     status: DONE_WEAK
     track: theory/types
     title: "Subtyping in full System F-sub is undecidable (Pierce)"
-    terminal_statement: "FsubPierce.simulation : ∃ enc : CM → ℕ → ℕ → Goal, (∀ M a b, CM.Halts M a b ↔ DRun (enc M a b)) ∧ ∀ M a b, Sub (enc M a b) → SubD (enc M a b); FsubPierce.rowingFirstLemma : RowingFirstLemma; FsubPierce.cm_halts_iff_sub (M : CM) (a b : ℕ) : CM.Halts M a b ↔ Sub (enc M a b)"
+    terminal_statement: "FsubPierce.simulation : ∃ enc : CM → ℕ → ℕ → Goal, (∀ M a b, CM.Halts M a b ↔ DRun (enc M a b)) ∧ ∀ M a b, Sub (enc M a b) → SubD (enc M a b); FsubPierce.rowingFirstLemma : RowingFirstLemma; FsubPierce.cm_halts_iff_sub (M : CM) (a b : ℕ) : CM.Halts M a b ↔ Sub (enc M a b); Minsky.Universal.cm_halts_undecidable : ¬ ComputablePred (fun ab : ℕ × ℕ => CM.Halts M_u ab.1 ab.2); Minsky.Universal.universal_dom_iff_sub (m : ℕ) : (uCode.eval m).Dom ↔ Sub (FsubPierce.enc M_u (3 ^ m) 0)"
     latest_evidence: "docs/goal/evidence/M25-FSUB-UNDECIDABLE.md"
-    open_boundary: "Rounds 5-6: FsubGhelli (ghelli_not_acc, CM, Sub, RowingFirstLemma), FsubRowing (F<:^D, SubD.toSub, subD_iff_run, rowingFirstLemma_of_simulation). Round 7 (Start/FsubPierce.lean): D1/D3 closed, the CPS encoding of a two-counter machine as an F<:^D goal, the step lemma sim_step (two calls per increment, four per zero test), halts_iff_drun, conservativity enc_conservative (from the general sub_to_subD_of_noStuck), simulation, rowingFirstLemma : RowingFirstLemma, and the reduction cm_halts_iff_sub : CM.Halts M a b ↔ Sub (enc M a b). Open: the undecidability of CM.Halts (gap row M25-COUNTER-MACHINE-UNDECIDABLE, itself DONE_WEAK), hence of Sub; the link from Sub to cslib's declarative Fsub (gap row M25-FSUB-CSLIB-LINK); kernel F<: termination (F3) not formalized."
+    open_boundary: "Rounds 5-6: FsubGhelli (ghelli_not_acc, CM, Sub, RowingFirstLemma), FsubRowing (F<:^D, SubD.toSub, subD_iff_run, rowingFirstLemma_of_simulation). Round 7 (Start/FsubPierce.lean): the CPS encoding of a two-counter machine as an F<:^D goal, simulation, rowingFirstLemma and cm_halts_iff_sub : CM.Halts M a b ↔ Sub (enc M a b). Round 10: two-counter halting is undecidable for a fixed machine (rows M25-KCM-UNIVERSAL and M25-COUNTER-MACHINE-UNDECIDABLE, DONE_STRONG: Minsky.Universal.cm_halts_undecidable), and the many-one reduction Minsky.Universal.universal_dom_iff_sub : (uCode.eval m).Dom ↔ Sub (FsubPierce.enc M_u (3 ^ m) 0). Open: ¬ ComputablePred for Sub itself (gap row M25-FSUB-SUB-NONCOMPUTABLE: a Primcodable encoding of FsubGhelli goals and the computability of m ↦ FsubPierce.enc M_u (3 ^ m) 0); the link from Sub to cslib's declarative Fsub (gap row M25-FSUB-CSLIB-LINK); kernel F<: termination (F3) not formalized."
     milestone: M25
     depends_on:
       - M25-COUNTER-MACHINE-UNDECIDABLE
+      - M25-FSUB-SUB-NONCOMPUTABLE
       - M25-FSUB-CSLIB-LINK
     rank: 2390
     exit_criteria:
@@ -6489,12 +6490,12 @@ tasks:
 
   - id: M25-COUNTER-MACHINE-UNDECIDABLE
     priority: P1
-    status: DONE_WEAK
+    status: DONE_STRONG
     track: theory/types
     title: "Halting of two-counter machines is undecidable"
-    terminal_statement: "Minsky.sim_step {M : KM} {k : ℕ} (hk : RegsBelow M k) {c c' : KConf} (hs : KM.Step M c c') : Relation.TransGen (CM.Step (compile M)) (encC M k c) (encC M k c'); Minsky.halts_iff {M : KM} {k : ℕ} (hk : RegsBelow M k) (r : ℕ → ℕ) : KM.Halts M r ↔ CM.Halts (compile M) (godel k r) 0"
+    terminal_statement: "Minsky.Universal.cm_halts_undecidable : ¬ ComputablePred (fun ab : ℕ × ℕ => CM.Halts M_u ab.1 ab.2); Minsky.sim_step {M : KM} {k : ℕ} (hk : RegsBelow M k) {c c' : KConf} (hs : KM.Step M c c') : Relation.TransGen (CM.Step (compile M)) (encC M k c) (encC M k c'); Minsky.halts_iff {M : KM} {k : ℕ} (hk : RegsBelow M k) (r : ℕ → ℕ) : KM.Halts M r ↔ CM.Halts (compile M) (godel k r) 0"
     latest_evidence: "docs/goal/evidence/M25-FSUB-UNDECIDABLE.md"
-    open_boundary: "Gap row of M25-FSUB-UNDECIDABLE (step D4). Proved round 7, step B1 (Start/Minsky.lean): k-counter machines Minsky.KM, their compilation into FsubGhelli.CM by Gödel numbering over the Fermat numbers with multiply/divide loops, Minsky.sim_step and Minsky.halts_iff, Minsky.halts_iff_sub. Round 8 (Start/MinskyMacros.lean): the first register-machine macros (clear, transfer, copy, multiplication) of the compilation of Nat.Partrec.Code. Open (gap row M25-KCM-UNIVERSAL): a source of undecidability for k-counter machines, hence FsubGhelli.cm_halts_undecidable : ¬ ComputablePred (fun p : CM × ℕ × ℕ => CM.Halts p.1 p.2.1 p.2.2); first missing macro the pairing macro."
+    open_boundary: ""
     milestone: M25
     depends_on:
       - M25-KCM-UNIVERSAL
@@ -6509,16 +6510,17 @@ tasks:
 
   - id: M25-KCM-UNIVERSAL
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: theory/types
     title: "A universal source of undecidability for k-counter machines"
+    terminal_statement: "Minsky.Universal.cm_halts_undecidable : ¬ ComputablePred (fun ab : ℕ × ℕ => CM.Halts M_u ab.1 ab.2); Minsky.Universal.M_u_halts_iff (m : ℕ) : CM.Halts M_u (3 ^ m) 0 ↔ (uCode.eval m).Dom; Minsky.Prog.good_compile : ∀ (c : Code) {inp out b : ℕ}, inp < b → out < b → inp ≠ out → Good (compile c inp out b) c.eval inp out b; Minsky.Prog.exec_unpairM; Minsky.Prog.halts_iff_exec (p : Prog) (r : ℕ → ℕ) : KM.Halts (p.code 0 p.len) r ↔ ∃ r', Exec p r r'; Minsky.Prog.exec_of_stepsIn; Minsky.Prog.Exec.run"
     latest_evidence: "docs/goal/evidence/M25-FSUB-UNDECIDABLE.md"
-    open_boundary: "Gap row of M25-COUNTER-MACHINE-UNDECIDABLE (DONE_WEAK, round 7; step B2). Target: FsubGhelli.cm_halts_undecidable : ¬ ComputablePred (fun p : CM × ℕ × ℕ => CM.Halts p.1 p.2.1 p.2.2), then ¬ ComputablePred for Sub of full F<: through cm_halts_iff_sub. Path chosen (round 8): compile Nat.Partrec.Code into Minsky.KM by Shepherdson–Sturgis macros. Proved round 8 (Start/MinskyMacros.lean): Macro.clear_run, Macro.transfer_run, Macro.transfer2_run, Macro.copy_run, Macro.mul_run (run lemmas in place). First macro not built: the pairing macro r k := Nat.pair (r i) (r j) (needs a comparison loop); then Nat.unpair, the compilation of zero/succ/left/right/pair/comp/prec/rfind' with a frame stack in one register, its simulation lemma, Primcodable KM and the computability of the compilation, of Minsky.compile and of Minsky.godel. Round 9 (row M25-KCM-PAIR, Start/MinskyPair.lean and Start/MinskyUniversal.lean): the comparison loop Macro.cmp_run and the pairing macro Macro.pair_run (r k += Nat.pair (r i) (r j), scratch registers restored to 0, frame AgreeOff); the fixed universal code Minsky.Universal.exists_universal_code (u.eval (Nat.pair (encode c) x) = c.eval x, from Code.exists_code and Code.eval_part) and universal_dom_undecidable (¬ ComputablePred (fun m => (u.eval m).Dom)). Revised target (stronger, no computability of the compiler): a fixed machine M_u with ¬ ComputablePred (fun ab : ℕ × ℕ => CM.Halts M_u ab.1 ab.2), by compiling u once; the compiler needs correctness for all codes, not computability. First missing macro: unpair (integer square root loop). First compiler constructor whose simulation lemma is not built: left (needs unpair); zero, succ are not built either. Then cm_halts_undecidable and ¬ ComputablePred for Sub of full F<: through cm_halts_iff_sub."
+    open_boundary: ""
     milestone: M25
     depends_on: []
     rank: 2387
     exit_criteria:
-      - "Halting of k-counter machines (Minsky.KM) is proved not computable by a computable reduction from an undecidable problem of Mathlib or of the library, giving FsubGhelli.cm_halts_undecidable with Minsky.halts_iff."
+      - "Revised target (round 9): a fixed two-counter machine M_u with ¬ ComputablePred (fun ab : ℕ × ℕ => CM.Halts M_u ab.1 ab.2), from universal_dom_undecidable by compiling a fixed universal code once (the compiler correct for all codes, completeness and soundness), then Minsky.halts_iff."
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
@@ -6538,6 +6540,24 @@ tasks:
     rank: 2386
     exit_criteria:
       - "A k-counter-machine macro computing Nat.pair of two registers into a third, with a run lemma that restores its scratch registers and leaves all other registers unchanged; a fixed universal Nat.Partrec.Code whose halting set is not computable."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M25-FSUB-SUB-NONCOMPUTABLE
+    priority: P1
+    status: TODO_READY
+    track: theory/types
+    title: "Subtyping in full F<: is not computable (from the fixed machine M_u)"
+    latest_evidence: "docs/goal/evidence/M25-FSUB-UNDECIDABLE.md"
+    open_boundary: "Gap row of M25-FSUB-UNDECIDABLE (DONE_WEAK). Proved round 10: Minsky.Universal.universal_dom_iff_sub (m : ℕ) : (uCode.eval m).Dom ↔ Sub (FsubPierce.enc M_u (3 ^ m) 0), a many-one reduction of the halting set of a universal code to F<: subtyping. Target: ¬ ComputablePred (fun g : Goal => Sub g). First missing construction: a Primcodable instance for FsubGhelli.Ty and FsubGhelli.Goal (de Bruijn types and contexts), then the computability of m ↦ FsubPierce.enc M_u (3 ^ m) 0 (enc is a structural recursion over the fixed machine with the counters as unary types), then composition with universal_dom_undecidable."
+    milestone: M25
+    depends_on: []
+    rank: 2388
+    exit_criteria:
+      - "¬ ComputablePred (fun g : FsubGhelli.Goal => FsubGhelli.Sub g) for a Primcodable encoding of goals, by a computable reduction from an undecidable problem of the library."
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
@@ -8104,13 +8124,14 @@ tasks:
     status: DONE_WEAK
     track: research/open-problems
     title: "Expansion postponement for λP2, λPω̲ and the Calculus of Constructions"
-    terminal_statement: "PureTypeSystem.lambdaPOmegaBar_expansionPostponement : ExpansionPostponement (cubeSpec lambdaPOmegaBar); PureTypeSystem.lambdaPOmegaBar_productNormalizationR : ProductNormalizationR (cubeSpec lambdaPOmegaBar); PureTypeSystem.HasTypeNW.hsubst_con; PureTypeSystem.HasTypeR.normalizeNW"
+    terminal_statement: "PureTypeSystem.lambdaPOmegaBar_expansionPostponement : ExpansionPostponement (cubeSpec lambdaPOmegaBar); PureTypeSystem.lambdaPOmegaBar_productNormalizationR : ProductNormalizationR (cubeSpec lambdaPOmegaBar); PureTypeSystem.lambdaP2_expansionPostponement : ExpansionPostponement (cubeSpec lambdaP2); PureTypeSystem.hsubstPi_lambdaP2 : HSubstPi (cubeSpec lambdaP2); PureTypeSystem.HasTypeNW.hsubst_con; PureTypeSystem.HasTypeR.normalizeNW"
     latest_evidence: "docs/goal/evidence/M29-EP.md"
-    open_boundary: "λPω̲ is closed: HasTypeNW.hsubst_con, HasTypeR.normalizeNW, lambdaPOmegaBar_productNormalizationR and lambdaPOmegaBar_expansionPostponement. Open: the impredicative corners λP2 and coc (rule (□,∗)), row M29-EP-IMPREDICATIVE; round 4 reduced both to HSubstPi (cubeSpec f); round 5 proved HSubstPi (cubeSpec f) ↔ HSubstSort (cubeSpec f); round 6 proved pollProductCanon_iff_hsubstPi; round 7 (route (ii)) proved RouteII.Good_subst and hsubstSort_iff_sortFundamental; round 8 proved the erasure of λP2 to λ2 (row M29-EP-ERASURE-P2) and re-indexed route (ii) by it (RouteII.GoodE, GoodE.tyApp), and located a first failing step at CR3 for neutral applications; round 9 (row M29-EP-TWO-LEVEL-CR) proved that step without HSubstSort (RouteII.cr3_var_app) and built the two-level relation of type and term reducibility (RouteII.TRed, RouteII.GoodP with CR1-CR3); next step: the erasure ErasureP2.erP into SkP with its commutation lemmas, then the fundamental lemma; for coc, er_beta_fails_coc. First missing lemma theorem hsubstPi_lambdaP2 : HSubstPi (cubeSpec lambdaP2)."
+    open_boundary: "Closed corners: λPω̲ (HasTypeNW.hsubst_con, HasTypeR.normalizeNW, lambdaPOmegaBar_productNormalizationR, lambdaPOmegaBar_expansionPostponement) and, round 10, λP2 (row M29-EP-LAMBDAP2: hsubstPi_lambdaP2 and lambdaP2_expansionPostponement, through the erasure ErasureP2.erP/erK and the fundamental lemma RouteII.fundamental of the two-level relation). Open: coc (gap row M29-EP-COC). First missing lemma: ErasureCoC.erω_conv: an erasure of coc constructors into Fω type constructors (with their kinds), commuting with substitution and invariant under conversion only modulo Fω β-conversion, together with the invariance of the term relation under Fω β (GoodPω_beta: the reducibility predicate at an Fω skeleton applied to a constructor redex is that at its contractum); by er_beta_fails_coc the λ2/SkP erasure of λP2 is not β-invariant in coc, because type variables may be bound by (□,□) abstractions and applied."
     milestone: M29
     depends_on:
       - M29-EP-CUBE
       - M29-EP-IMPREDICATIVE
+      - M29-EP-COC
     rank: 2755
     exit_criteria:
       - "ExpansionPostponement (cubeSpec f) for f ∈ {lambdaP2, lambdaPOmegaBar, coc}, or for a stated subset, with the first missing lemma for the rest."
@@ -8122,16 +8143,56 @@ tasks:
 
   - id: M29-EP-IMPREDICATIVE
     priority: P1
-    status: TODO_READY
+    status: DONE_WEAK
     track: research/open-problems
     title: "Expansion postponement for the impredicative corners λP2 and the Calculus of Constructions"
+    terminal_statement: "PureTypeSystem.lambdaP2_expansionPostponement : ExpansionPostponement (cubeSpec lambdaP2); PureTypeSystem.hsubstPi_lambdaP2 : HSubstPi (cubeSpec lambdaP2)"
     latest_evidence: "docs/goal/evidence/M29-EP.md"
-    open_boundary: "Reduced (rounds 2, 4) to HSubstPi (cubeSpec f), which gives ProductNormalizationR and ExpansionPostponement (cube_expansionPostponement_of_hsubstPi); equivalent to HSubstSort (round 5), PollProductCanon (round 6), SortFundamental (round 7). Route (ii): round 7 RouteII.Good with typed Kripke candidates (Start/PTSExpansionRouteII.lean); round 8 the λP2 erasure (row M29-EP-ERASURE-P2) and RouteII.GoodE (Start/PTSRouteIIErased.lean); for coc the λ2 erasure fails (er_beta_fails_coc). Round 9 (row M29-EP-TWO-LEVEL-CR, Start/PTSRouteIITwoLevel.lean): the round-8 failing step, NormNW (cubeSpec lambdaP2) Γ (.app (.var x) N) (B.instantiate N), is not the open lemma: HasTypeNW.application needs only a normal form of B[N], so RouteII.cr3_var_app proves it in every corner without HSubstSort. The one-level relation needs HSubstSort only in its type-application clause, at reducible arguments in reducible types; the two-level relation (type reducibility RouteII.TRed on semantic kinds, term reducibility RouteII.GoodP on skeletons SkP recording kind skeletons, CR1-CR3 proved) supplies it by TRed.app. No case of the two-level relation was found to fail. First missing lemma: the erasure ErasureP2.erP Δ ρ T : SkP (erK for kinds into KSkP) with the analogues of er_instantiate_obj, er_instantiate and er_conv; then the fundamental lemma for valid contexts and reducible substitutions, hsubstSort for lambdaP2 by the identity substitution, theorem hsubstPi_lambdaP2 : HSubstPi (cubeSpec lambdaP2), lambdaP2_expansionPostponement; then coc (not started, stop rule)."
+    open_boundary: "Split round 10. The λP2 half is closed (row M29-EP-LAMBDAP2, DONE_STRONG): the erasure ErasureP2.erP into SkP and erK into KSkP with erP_subst, erP_instantiate_obj, erP_instantiate, erK_instantiate, erP_conv, erK_conv (Start/PTSErasureP2Kind.lean); the fundamental lemma RouteII.fundamental for HasType (cubeSpec lambdaP2) under reducible substitutions SubstOK (Start/PTSRouteIIFundamental.lean); hsubstSort_lambdaP2 by the identity substitution; hsubstPi_lambdaP2 : HSubstPi (cubeSpec lambdaP2) and lambdaP2_expansionPostponement : ExpansionPostponement (cubeSpec lambdaP2). Open: coc (gap row M29-EP-COC). First missing lemma for coc: ErasureCoC.erω_conv: an erasure of coc constructors into Fω type constructors (with their kinds), commuting with substitution and invariant under conversion only modulo Fω β-conversion, together with the invariance of the term relation under Fω β (GoodPω_beta: the reducibility predicate at an Fω skeleton applied to a constructor redex is that at its contractum); by er_beta_fails_coc the λ2/SkP erasure of λP2 is not β-invariant in coc, because type variables may be bound by (□,□) abstractions and applied."
     milestone: M29
-    depends_on: []
+    depends_on:
+      - M29-EP-LAMBDAP2
+      - M29-EP-COC
     rank: 2756
     exit_criteria:
       - "ExpansionPostponement (cubeSpec lambdaP2) and ExpansionPostponement (cubeSpec coc), or one of them with the first missing lemma for the other."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M29-EP-LAMBDAP2
+    priority: P1
+    status: DONE_STRONG
+    track: research/open-problems
+    title: "Expansion postponement for λP2 (TLCA open problem 23, corner λP2)"
+    terminal_statement: "PureTypeSystem.hsubstPi_lambdaP2 : HSubstPi (cubeSpec lambdaP2); PureTypeSystem.lambdaP2_expansionPostponement : ExpansionPostponement (cubeSpec lambdaP2); PureTypeSystem.hsubstSort_lambdaP2 : HSubstSort (cubeSpec lambdaP2); PureTypeSystem.lambdaP2_productNormalizationR; PureTypeSystem.RouteII.fundamental {Γ : List (Expr Srt)} {M T : Expr Srt} (h : HasType P2 Γ M T) : ∀ {Δ : List (Expr Srt)} {σ : ℕ → Expr Srt} {ξ : ℕ → Cand}, SubstOK Γ Δ σ ξ → Sem Γ ξ Δ M T σ; PureTypeSystem.ErasureP2.erP_subst; PureTypeSystem.ErasureP2.erP_instantiate_obj; PureTypeSystem.ErasureP2.erP_instantiate; PureTypeSystem.ErasureP2.erK_instantiate; PureTypeSystem.ErasureP2.erP_conv; PureTypeSystem.ErasureP2.erK_conv"
+    latest_evidence: "docs/goal/evidence/M29-EP.md"
+    open_boundary: ""
+    milestone: M29
+    depends_on: []
+    rank: 2752
+    exit_criteria:
+      - "ExpansionPostponement (cubeSpec lambdaP2), with HSubstPi (cubeSpec lambdaP2), as defined in the repository, with no extra hypothesis."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M29-EP-COC
+    priority: P1
+    status: TODO_READY
+    track: research/open-problems
+    title: "Expansion postponement for the Calculus of Constructions"
+    latest_evidence: "docs/goal/evidence/M29-EP.md"
+    open_boundary: "Gap row of M29-EP-IMPREDICATIVE (DONE_WEAK, round 10) and of M29-EP-CUBE-REST. Target: theorem hsubstPi_coc : HSubstPi (cubeSpec coc), then coc_expansionPostponement : ExpansionPostponement (cubeSpec coc) through cube_expansionPostponement_of_hsubstPi. The λP2 proof (row M29-EP-LAMBDAP2) does not transfer: its skeletons SkP are λ2 types with kind-annotated quantifiers, and er_beta_fails_coc shows that such an erasure is not invariant under β in coc. First missing lemma: ErasureCoC.erω_conv: an erasure of coc constructors into Fω type constructors (with their kinds), commuting with substitution and invariant under conversion only modulo Fω β-conversion, together with the invariance of the term relation under Fω β (GoodPω_beta: the reducibility predicate at an Fω skeleton applied to a constructor redex is that at its contractum); by er_beta_fails_coc the λ2/SkP erasure of λP2 is not β-invariant in coc, because type variables may be bound by (□,□) abstractions and applied; then the coc analogues of TRed and GoodP over Fω skeletons and of RouteII.fundamental."
+    milestone: M29
+    depends_on: []
+    rank: 2752
+    exit_criteria:
+      - "ExpansionPostponement (cubeSpec coc), as defined in the repository, with no extra hypothesis."
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"

@@ -126,3 +126,30 @@ So the missing lemma is the skeleton invariance under `TEq` at type level, prove
 `TEq` with typing premises for the β-case only, or a validity lemma for `TEq` against a
 βη-conversion typing judgement.  Then completeness, typed soundness, termination, decidability
 (none proved).
+
+## Round 10 — the skeleton under raw β and η (`Start/LambdaPiLFSkelTEq.lean`)
+
+M23-LF-EQUIV-COMPLETE stays TODO_READY, M23-LF-EQUIV stays DONE_WEAK.  Axioms in
+`M23-LF-EQUIV-COMPLETE-axioms.txt`.
+
+The question first: is `skel` invariant under single raw β- and η-steps?
+
+* **η: yes.** `skel_eta : skel Γs (λA. (↑f) 0) = skel Γs f` for every raw `f` (`skel_rename_succ`).
+* **β: no.** `skel_beta_raw_counterexample`: the step `(λx:∗. x) (Πy:∗. ∗) ⟶ Πy:∗. ∗` changes the
+  skeleton from `base` to `base → base`: the bound variable occurs in a skeleton-relevant (head)
+  position of the body and the argument there has an arrow skeleton.  Hence
+  `skel_not_betaEta_invariant`: the skeleton is not invariant under raw βη-conversion, and
+  `skel_teq` cannot be derived from `TEq.betaEtaConv`.
+
+In a well-typed type-level redex the bound variable is an object variable (λ-domains have sort
+`∗`) and never occurs in a skeleton-relevant position; `skel_step` uses exactly this through
+`TypeLevel`.  So `skel_teq` needs the typing of every type-level redex in a `TEq` derivation.  The
+leaves of `TEq` are typed (`refl`, `beta`, `eta` carry typing premises), but `symm`, `trans` and
+the congruences do not propagate typing, so an induction on `TEq` needs validity.
+
+**First missing lemma**: `TEq.typeLevel : TEq Γ M N T → Wf Γ → (T a kind or □) → TypeLevel Γ M ∧
+TypeLevel Γ N`.  It is false for the β-conversion typing `Typing` (at `TEq.app`, `f' a'` is typed at
+`B[a']`, βη- but not β-convertible to `B[a]`), so it needs a βη-conversion typing judgement with
+weakening, substitution, context conversion, type validity and Church–Rosser for βη.  With it,
+`skel_teq` follows by induction on `TEq` (`skel_step` at β, `skel_eta` at η), then
+`LR.fundamental` for `TEq`, typed soundness, termination and decidability (none proved).

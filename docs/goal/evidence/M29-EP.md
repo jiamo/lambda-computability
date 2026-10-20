@@ -1302,3 +1302,72 @@ constructors and `NormNW` for kinds; then `hsubstSort` for λP2 by the identity 
 `lambdaP2_expansionPostponement`.  None of these is proved this round.
 
 coc: not started (stop rule: only if A closes for λP2).
+
+## Round 10 — expansion postponement for λP2
+
+Modules: `Start/PTSErasureP2Kind.lean` (A1), `Start/PTSRouteIIFundamental.lean` (A2–A4), and a
+change to `Start/PTSRouteIITwoLevel.lean`.  Status: the row is split.  New **DONE_STRONG** row
+M29-EP-LAMBDAP2 for the λP2 corner; M29-EP-IMPREDICATIVE becomes **DONE_WEAK** with the new gap row
+M29-EP-COC (coc); M29-EP-CUBE-REST stays **DONE_WEAK** (λPω̲ and λP2 closed, coc open).  Axioms in
+`M29-EP-LAMBDAP2-axioms.txt` (at most `propext, Classical.choice, Quot.sound`).
+
+### A1. The erasure into `SkP` and `KSkP`
+
+`ErasureP2.erP Δ ρ T : SkP` and `ErasureP2.erK Δ ρ K : KSkP` (mutual), indexed by the
+classification `Δ : ℕ → Cls` of the variables and an environment `ρ : ℕ → SkP` for the
+constructor variables:
+
+* `Π α:K. B` (rule `(□,∗)`) goes to `.all (erK K) (erP B)`; `Π x:A. B` (rule `(∗,∗)`) to an
+  arrow; object abstractions and applications are transparent, constructor applications erase
+  their object arguments;
+* `erK (Π x:A. K') = .pi (erP A) (erK K')`, `erK ∗ = .star`.
+
+Proved with no typing hypothesis: `erPK_rename`, `erPK_skRename`, `erPK_skSubst`; **`erP_subst` /
+`erK_subst`** (commutation with a substitution that respects the classification; one hypothesis
+more than round 8's `er_subst`: the target classification has no kind variables,
+`∀ n a, Δ' n ≠ .kind a`, which holds in λP2 because there are no `(□,□)` binders);
+**`erP_instantiate_obj` / `erK_instantiate_obj`** (invariance under object substitution);
+**`erP_instantiate` / `erK_instantiate`** (commutation with constructor substitution, with
+`SkP.subst` and `KSkP.subst`).  Proved for well-typed λP2 terms: `erPK_beta`, `erP_beta`,
+`erP_reduces`, **`erP_conv`**, `erK_beta`, `erK_reduces`, **`erK_conv`**.
+
+### A2. The fundamental lemma
+
+`RouteII.SemT Γ ξ Δ T X Y`: at `□`, `NormNW P2 Δ X Y`; at a kind `T`, `TRed (KSem (erK T) ξ) Δ X Y`;
+at a type `T`, `GoodP (erP T) ξ Δ X Y`.  `RouteII.SubstOK Γ Δ σ ξ`: every `ξ i` is a candidate,
+`Δ` reduces pointwise to a valid canonical context, and every declaration `n : A` of `Γ` is sent
+to `σ n` with `Sem Γ ξ Δ (var n) A σ`.  `SubstOK.tail`, `SubstOK.weaken` (Kripke),
+`SubstOK.cons`, `SubstOK.lift`.
+
+**`RouteII.fundamental`**: `HasType (cubeSpec lambdaP2) Γ M T → SubstOK Γ Δ σ ξ → Sem Γ ξ Δ M T σ`,
+one case per rule of `HasType`: axiom, variable, weakening, product (the three rules `(∗,∗)`,
+`(□,∗)`, `(∗,□)`), abstraction (Kripke: `body_inst`, with `TRed.lam` and `GoodP.lam_all`,
+`GoodP.lam_arr`), application (`GoodP.app`, `GoodP.tyApp` with `erP_instantiate`,
+`TRed.app` with `erK_instantiate`, object instantiation with `erP_instantiate_obj`), conversion
+(`erP_conv`, `erK_conv`, `TRed.convKind`, `SemT_srcConv`).  No case failed.
+
+One change to round 9 was needed: the candidates `IsCandN` carry one more closure property,
+**weakening** (`NormNW.weaken`), used by `SubstOK.weaken`; `isCandN_normNW` and
+`GoodP.isCandN` are updated.
+
+### A3–A4. The terminal statements
+
+* `RouteII.SubstOK.ids` — the identity substitution is reducible (`GoodP.var`, `TRed.var`);
+* `RouteII.sortFundamental_lambdaP2`, hence `hsubstSort_lambdaP2 : HSubstSort (cubeSpec lambdaP2)`
+  (through `hsubstSort_iff_sortFundamental`);
+* **`hsubstPi_lambdaP2 : HSubstPi (cubeSpec lambdaP2)`** (through `hsubstPi_iff_hsubstSort`);
+* **`lambdaP2_expansionPostponement : ExpansionPostponement (cubeSpec lambdaP2)`** (through
+  `cube_expansionPostponement_of_hsubstPi`), and `lambdaP2_productNormalizationR`.
+
+Both are the board's targets as defined in the repository, with no hypothesis.
+
+### coc: the first missing lemma
+
+By `er_beta_fails_coc` (round 8), an erasure of coc types into λ2-like skeletons is not
+invariant under β: coc has `(□,□)` abstractions, so a constructor variable can be bound by a
+type-level λ and applied, and the skeleton of `(λα:∗. α) X` must be the skeleton of `X`.  The
+skeletons must therefore be Fω type constructors modulo β.  **First missing lemma**:
+`ErasureCoC.erω_conv` — an erasure of coc constructors into Fω type constructors (with their
+kinds), commuting with substitution and invariant under conversion modulo Fω β-conversion —
+together with `GoodPω_beta`, the invariance of the term relation at an Fω skeleton under Fω β.
+Then the coc analogues of `TRed`, `GoodP` and `RouteII.fundamental`.  Row M29-EP-COC.

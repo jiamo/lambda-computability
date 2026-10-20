@@ -4,3 +4,12 @@
 'Minsky.Macro.transfer2_run' depends on axioms: [propext, Quot.sound]
 'Minsky.Macro.copy_run' depends on axioms: [propext, Quot.sound]
 'Minsky.Macro.mul_run' depends on axioms: [propext, Quot.sound]
+# round 10: #print axioms (lake env lean on a scratch file importing the round-10 modules, with #print axioms appended)
+'Minsky.Universal.cm_halts_undecidable' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Minsky.Universal.M_u_halts_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Minsky.Prog.good_compile' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Minsky.Prog.exec_unpairM' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Minsky.Prog.exec_pairAdd' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Minsky.Prog.halts_iff_exec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Minsky.Prog.exec_of_stepsIn' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Minsky.Prog.Exec.run' depends on axioms: [propext, Classical.choice, Quot.sound]

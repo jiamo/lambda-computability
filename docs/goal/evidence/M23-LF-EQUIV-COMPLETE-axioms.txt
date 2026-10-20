@@ -1,0 +1,4 @@
+# round 10: #print axioms (lake env lean on a scratch file importing the round-10 modules, with #print axioms appended)
+'LambdaPi.skel_eta' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LambdaPi.skel_beta_raw_counterexample' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LambdaPi.skel_not_betaEta_invariant' depends on axioms: [propext, Classical.choice, Quot.sound]

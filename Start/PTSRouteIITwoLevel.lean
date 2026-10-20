@@ -49,9 +49,10 @@ The two-level relation (types first, as in Abel–Öhman–Vezzosi):
 * `RouteII.GoodP_subst` / `RouteII.GoodP_inst` — the interpretation commutes with substitution of
   skeletons, and `RouteII.GoodP.tyApp_subst`.
 
-What is not built: the erasure of λP2 types into `SkP` (recording at `(□,∗)` the kind skeleton of
-the bound variable) with its commutation lemmas, and the fundamental lemma itself; see
-`docs/goal/evidence/M29-EP.md`, round 9, for the exact first missing lemma.
+Round 10: the candidates carry one more closure property, **weakening** (field `weaken` of
+`IsCandN`, from `NormNW.weaken`), which the Kripke extension of reducible substitutions needs.
+The erasure into `SkP` is `Start/PTSErasureP2Kind.lean` and the fundamental lemma, with
+expansion postponement for λP2, is `Start/PTSRouteIIFundamental.lean`.
 -/
 
 import Start.PTSRouteIIErased
@@ -221,13 +222,43 @@ theorem NeNW.app_wk (f : CubeFeatures) {Γ : List (Expr Srt)} {F T N A B : Expr 
 
 /-! ### The two-level relation: candidates with CR3, and type reducibility -/
 
+/-- **Weakening of normalization** along a context prefix whose extension normalizes to a
+canonical context (round 10). -/
+theorem NormNW.weaken {P : Specification Srt} {Γ : List (Expr Srt)} {F T : Expr Srt}
+    (h : NormNW P Γ F T) (Γ₀ : List (Expr Srt)) {Δ : List (Expr Srt)}
+    (hc : List.Forall₂ Reduces (Γ₀ ++ Γ) Δ) (hv : ValidContextNW P Δ) :
+    NormNW P (Γ₀ ++ Γ) (F.rename (wk Γ₀)) (T.rename (wk Γ₀)) := by
+  obtain ⟨Γ', F', T', hc', hF, hT, hNW⟩ := h
+  obtain ⟨Γ₀', Γ₃, rfl, hl, h₃⟩ := forall₂_reduces_append_split Γ₀ Γ Δ hc
+  have hΓ : Γ₃ = Γ' := forall₂_reduces_unique h₃ hc'
+    (fun X hX => hv.normal_entries X (List.mem_append_right _ hX)) hNW.normal.2.2
+  subst hΓ
+  have hwk : wk Γ₀ = wk Γ₀' := by funext n; simp [wk, hl]
+  refine ⟨Γ₀' ++ Γ₃, F'.rename (wk Γ₀), T'.rename (wk Γ₀), hc, hF.rename _, hT.rename _, ?_⟩
+  rw [hwk]
+  exact hNW.rename hv _ (declRenaming_wk Γ₃ Γ₀')
+
+/-- Composition of two weakening renamings (round 10). -/
+theorem rename_wk_wk (X : Expr Srt) (Γ₀ Γ₁ : List (Expr Srt)) :
+    (X.rename (wk Γ₀)).rename (wk Γ₁) = X.rename (wk (Γ₁ ++ Γ₀)) := by
+  rw [Expr.rename_comp]
+  congr 1
+  funext n
+  simp only [wk, Function.comp, List.length_append]
+  omega
+
 /-- **Candidates of the two-level relation** (for λP2): normalizable judgements, closed under
-conversion of the type, containing every neutral normalizable judgement (CR3). -/
+conversion of the type, containing every neutral normalizable judgement (CR3), closed under
+expansion of the subject and (round 10) under weakening into a normalizable context
+extension. -/
 structure IsCandN (C : Cand) : Prop where
   norm : ∀ {Γ M T}, C Γ M T → NormNW P2 Γ M T
   conv : ∀ {Γ M T T'}, C Γ M T → Converts T T' → C Γ M T'
   neutral : ∀ {Γ M T}, NeNW P2 Γ M T → C Γ M T
   expand : ∀ {Γ M M' T}, Reduces M M' → C Γ M' T → C Γ M T
+  weaken : ∀ {Γ M T} (Γ₀ : List (Expr Srt)) {Δ : List (Expr Srt)}, C Γ M T →
+    List.Forall₂ Reduces (Γ₀ ++ Γ) Δ → ValidContextNW P2 Δ →
+    C (Γ₀ ++ Γ) (M.rename (wk Γ₀)) (T.rename (wk Γ₀))
 
 /-- The base candidate: normalizable judgements. -/
 theorem isCandN_normNW : IsCandN (NormNW P2) where
@@ -235,6 +266,7 @@ theorem isCandN_normNW : IsCandN (NormNW P2) where
   conv h hc := h.convType hc
   neutral h := h.toNormNW
   expand hr h := NormNW.expand hr h
+  weaken := fun {_ _ _} Γ₀ {_} h hc hv => h.weaken Γ₀ hc hv
 
 /-- **Type reducibility** of a constructor `U` at a λP2 kind `K` (the judgement `Γ ⊢ U : K`),
 relative to the **semantic kind** `Cs`: the candidates interpreting the domains `A₁ … Aₙ` of
@@ -360,7 +392,11 @@ theorem GoodP.isCandN : ∀ (s : SkP) (ξ : ℕ → Cand), (∀ i, IsCandN (ξ i
       have hτ := GoodP.isCandN τ ξ hξ
       refine ⟨fun h => h.1, fun {Γ M T T'} h hc => ⟨h.1.convType hc, ?_⟩, fun {Γ M T} h => ?_,
         fun {Γ M M' T} hr h => ⟨NormNW.expand hr h.1, fun Γ₀ N A B hT hN =>
-          hτ.expand (Reduces.app (hr.rename _) .refl) (h.2 Γ₀ N A B hT hN)⟩⟩
+          hτ.expand (Reduces.app (hr.rename _) .refl) (h.2 Γ₀ N A B hT hN)⟩,
+        fun {Γ M T} Γ₀ {Δ} h hc hv => ⟨h.1.weaken Γ₀ hc hv, fun Γ₁ N A B hT hN => by
+          rw [rename_wk_wk] at hT ⊢
+          rw [← List.append_assoc] at hN ⊢
+          exact h.2 (Γ₁ ++ Γ₀) N A B hT hN⟩⟩
       · intro Γ₀ N A B hT' hN
         have hc' : Converts (T.rename (wk Γ₀)) (.pi A B) :=
           converts_trans (converts_rename hc _) (Reduces.converts hT')
@@ -373,7 +409,11 @@ theorem GoodP.isCandN : ∀ (s : SkP) (ξ : ℕ → Cand), (∀ i, IsCandN (ξ i
       refine ⟨fun h => h.1, fun {Γ M T T'} h hc => ⟨h.1.convType hc, ?_⟩, fun {Γ M T} h => ?_,
         fun {Γ M M' T} hr h => ⟨NormNW.expand hr h.1, fun Γ₀ U K B C hC hT hU =>
           (GoodP.isCandN τ (consC C ξ) (consC_isCandN hC hξ)).expand
-            (Reduces.app (hr.rename _) .refl) (h.2 Γ₀ U K B C hC hT hU)⟩⟩
+            (Reduces.app (hr.rename _) .refl) (h.2 Γ₀ U K B C hC hT hU)⟩,
+        fun {Γ M T} Γ₀ {Δ} h hc hv => ⟨h.1.weaken Γ₀ hc hv, fun Γ₁ U K B C hC hT hU => by
+          rw [rename_wk_wk] at hT ⊢
+          rw [← List.append_assoc] at hU ⊢
+          exact h.2 (Γ₁ ++ Γ₀) U K B C hC hT hU⟩⟩
       · intro Γ₀ U K B C hC hT' hU
         have hτ := GoodP.isCandN τ (consC C ξ) (consC_isCandN hC hξ)
         have hc' : Converts (T.rename (wk Γ₀)) (.pi K B) :=

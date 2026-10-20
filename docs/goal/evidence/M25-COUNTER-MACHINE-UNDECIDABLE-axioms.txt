@@ -2,3 +2,6 @@
 'Minsky.sim_step' depends on axioms: [propext, Classical.choice, Quot.sound]
 'Minsky.halts_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
 'Minsky.halts_iff_sub' depends on axioms: [propext, Classical.choice, Quot.sound]
+# round 10: #print axioms (lake env lean on a scratch file importing the round-10 modules, with #print axioms appended)
+'Minsky.Universal.cm_halts_undecidable' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Minsky.Universal.M_u_halts_iff' depends on axioms: [propext, Classical.choice, Quot.sound]

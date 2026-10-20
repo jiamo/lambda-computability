@@ -37,3 +37,6 @@
 'PureTypeSystem.RouteII.GoodE.app' depends on axioms: [propext, Quot.sound]
 'PureTypeSystem.RouteII.GoodE.tyApp' depends on axioms: [propext, Quot.sound]
 'PureTypeSystem.RouteII.NormNW.expand' does not depend on any axioms
+# round 10: #print axioms (lake env lean on a scratch file importing the round-10 modules, with #print axioms appended)
+'PureTypeSystem.hsubstPi_lambdaP2' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.lambdaP2_expansionPostponement' depends on axioms: [propext, Classical.choice, Quot.sound]

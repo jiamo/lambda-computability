@@ -217,3 +217,32 @@ instance of a subclass satisfying `SuperInstFragment` and `NormalSuperFields` is
 this round.  M25-TYPECLASS-COHERENCE-SUPER's exit criterion (fragment without overlap, with
 superclasses, instances well formed for their superclass) is the same `SuperField` condition, so
 it also stays DONE_WEAK; M25-TYPECLASS-COHERENCE depends on it.
+
+## Round 10 — non-vacuity, and the termination order under `SuperField`
+
+Module `Start/TypeClassSuperExample.lean`.  M25-TYPECLASS-SUPER-INST stays DONE_WEAK,
+M25-TYPECLASS-SUPER-FIELD stays TODO_READY.  Axioms appended to
+`M25-TYPECLASS-SUPER-INST-axioms.txt`.
+
+**E1 (proved).**  The example environment of `Start/TypeClassExample.lean` — `class Eq a`,
+`class Eq a => Ord a`, `instance Eq Base`, `instance Eq b => Eq (a → b)` and `instance Ord Base`
+whose superclass field is the `Eq Base` dictionary (`Base` in the role of `Int`) — satisfies
+`EnvGood` (`exampleEnv_good`, round 6), **`NormalSuperFields`** (`exampleEnv_normalSuperFields`,
+the field is the normal derivation `dentN_eqBase`) and **`SuperInstFragment`**
+(`exampleEnv_superInstFragment`).  `example_superInst_coherence` applies
+`coherence_unannotated_superInst` to the method `eq` at `Base`, whose constraint `Eq Base` is
+entailed both by its instance and through the superclass of `Ord Base`: an elaboration exists and
+any two are β-convertible.  So the hypotheses of the round-9 theorem are satisfiable by an
+environment with an instance of a subclass.
+
+**E2 (stop rule; analysis, not formalized).**  For `DEnt.normalize_super` under `SuperField`
+alone, the first case where the order does not decrease is the superclass projection of an
+instance, `sup (inst I ds)`.  Its contraction calls normalization on the field derivation `sd`
+of `I` (a derivation of `⟨d, I.head⟩` from `I.ctxt`) with its hypotheses replaced by the context
+derivations `ds`.  The constraint `⟨d, I.head[s]⟩` has the same type as the redex, so Paterson's
+measure on instance contexts does not decrease; the derivation size does not decrease either (`sd`
+may be larger than the instance node and may use a hypothesis several times, duplicating `ds`).
+The size of the dictionary term does decrease at this step (`sd` is a strict subterm of `I.dict`),
+but that measure fails at the `inst` case, whose recursive calls on context dictionaries not used
+by `I.dict` are not subterms.  A working order needs a measure on derivations that is stable under
+substitution of hypotheses (for instance a multiset of pairs of Paterson size and field depth).

@@ -2,3 +2,9 @@
 'GrpdModel.sigMap' depends on axioms: [propext, Classical.choice, Quot.sound]
 'GrpdModel.sigTheta' depends on axioms: [propext, Classical.choice, Quot.sound]
 'GrpdModel.sigMapG' depends on axioms: [propext, Classical.choice, Quot.sound]
+# round 10: #print axioms (lake env lean on a scratch file importing the round-10 modules, with #print axioms appended)
+'GrpdModel.ghom_factor' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GrpdModel.unpairObj_pairObj' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GrpdModel.pairObj_unpairObj' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GrpdModel.pairHom' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GrpdModel.pairHom_id' depends on axioms: [propext, Classical.choice, Quot.sound]

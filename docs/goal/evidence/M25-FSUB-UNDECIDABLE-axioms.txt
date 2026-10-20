@@ -18,3 +18,6 @@
 'FsubPierce.rowingFirstLemma' depends on axioms: [propext, Classical.choice, Quot.sound]
 'FsubPierce.cm_halts_iff_sub' depends on axioms: [propext, Classical.choice, Quot.sound]
 'FsubPierce.cm_halts_iff_subD' depends on axioms: [propext, Classical.choice, Quot.sound]
+# round 10: #print axioms (lake env lean on a scratch file importing the round-10 modules, with #print axioms appended)
+'Minsky.Universal.cm_halts_undecidable' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Minsky.Universal.universal_dom_iff_sub' depends on axioms: [propext, Classical.choice, Quot.sound]

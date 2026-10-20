@@ -422,6 +422,16 @@ import Start.MinskyUniversal
 import Start.LambdaPiLFFundamental
 import Start.GrpdSigmaFun
 import Start.TypeClassSuperNormalize
+import Start.PTSErasureP2Kind
+import Start.PTSRouteIIFundamental
+import Start.MinskyProg
+import Start.MinskyProgMacros
+import Start.MinskyUnpair
+import Start.MinskyCompile
+import Start.MinskyUndecidable
+import Start.LambdaPiLFSkelTEq
+import Start.GrpdSigmaPair
+import Start.TypeClassSuperExample
 
 /-! ## Interfaces of the untyped calculus
 
@@ -5153,3 +5163,71 @@ dictionaries, and coherence up to β with instances of subclasses.
 #check @TypeClass.DEntN.unique
 #check @TypeClass.DEnt.conv_superInst
 #check @TypeClass.coherence_unannotated_superInst
+
+/-! ## Expansion postponement for λP2 (M29-EP-IMPREDICATIVE, round 10)
+
+`Start/PTSErasureP2Kind.lean`: the erasure of λP2 objects into `SkP` and of kinds into `KSkP`,
+with substitution, instantiation and conversion lemmas.  `Start/PTSRouteIIFundamental.lean`:
+the fundamental lemma of the two-level relation for the conversion judgement of λP2,
+`hsubstSort` by the identity substitution, `hsubstPi_lambdaP2` and
+`lambdaP2_expansionPostponement`.
+-/
+
+#check @PureTypeSystem.ErasureP2.erP
+#check @PureTypeSystem.ErasureP2.erK
+#check @PureTypeSystem.ErasureP2.erP_subst
+#check @PureTypeSystem.ErasureP2.erP_instantiate
+#check @PureTypeSystem.ErasureP2.erK_instantiate
+#check @PureTypeSystem.ErasureP2.erP_conv
+#check @PureTypeSystem.ErasureP2.erK_conv
+#check @PureTypeSystem.RouteII.fundamental
+#check @PureTypeSystem.hsubstSort_lambdaP2
+#check @PureTypeSystem.hsubstPi_lambdaP2
+#check @PureTypeSystem.lambdaP2_expansionPostponement
+
+/-! ## Two-counter undecidability for a fixed machine (M25-KCM-UNIVERSAL, round 10)
+
+`Start/MinskyProg.lean`, `Start/MinskyProgMacros.lean`, `Start/MinskyUnpair.lean`: structured
+counter programs, their compilation with completeness and soundness, macros, and the unpairing
+macro.  `Start/MinskyCompile.lean`: the compiler of `Nat.Partrec.Code` and its simulation lemma.
+`Start/MinskyUndecidable.lean`: the fixed machine `M_u` and `cm_halts_undecidable`.
+-/
+
+#check @Minsky.Prog.halts_iff_exec
+#check @Minsky.Prog.exec_pairAdd
+#check @Minsky.Prog.exec_unpairM
+#check @Minsky.Prog.good_compile
+#check @Minsky.Universal.M_u
+#check @Minsky.Universal.M_u_halts_iff
+#check @Minsky.Universal.cm_halts_undecidable
+#check @Minsky.Universal.universal_dom_iff_sub
+
+/-! ## The skeleton under raw β and η (M23-LF-EQUIV-COMPLETE, round 10)
+
+`Start/LambdaPiLFSkelTEq.lean`.
+-/
+
+#check @LambdaPi.skel_eta
+#check @LambdaPi.skel_beta_raw_counterexample
+#check @LambdaPi.skel_not_betaEta_invariant
+
+/-! ## Towards the pairing isomorphism of Σ (M23-GROUPOID-SIGMA, round 10)
+
+`Start/GrpdSigmaPair.lean`.
+-/
+
+#check @GrpdModel.ghom_factor
+#check @GrpdModel.pairObj
+#check @GrpdModel.unpairObj_pairObj
+#check @GrpdModel.pairObj_unpairObj
+#check @GrpdModel.pairHom
+#check @GrpdModel.pairHom_id
+
+/-! ## Non-vacuity of coherence with instances of subclasses (M25-TYPECLASS-SUPER-INST, round 10)
+
+`Start/TypeClassSuperExample.lean`.
+-/
+
+#check @TypeClass.exampleEnv_normalSuperFields
+#check @TypeClass.exampleEnv_superInstFragment
+#check @TypeClass.example_superInst_coherence

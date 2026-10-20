@@ -262,3 +262,22 @@ Proved: `sigTheta_id` (the fibre transformation along `𝟙 γ` is an `eqToHom`)
 (object part `((γ, a), b) ↦ (γ, (a, b))`, its inverse, and the two round trips), from which
 `pair_disp` is immediate; then the Beck–Chevalley law `Sig_sub` (an equality of functors
 `σ ⋙ SigF A B = SigF (σ ⋙ A) (extend … ⋙ B)`), and `GrpdModel.grpdSigmaStruct`.  Not proved.
+
+## Round 10 — towards the pairing isomorphism of Σ (`Start/GrpdSigmaPair.lean`)
+
+M23-GROUPOID-SIGMA stays TODO_READY.  Axioms appended to `M23-GROUPOID-SIGMA-axioms.txt`.
+
+Proved:
+
+* `ghom_factor` — a morphism `(g, φ) : p ⟶ q` of `∫ A` is `(sigTheta A g).app p.fib ≫
+  (fibI A q.base).map φ`;
+* `pairObj : GObj B → GObj (SigF A B)`, `⟨⟨γ, a⟩, b⟩ ↦ ⟨γ, ⟨a, b⟩⟩`, and `unpairObj`, with both
+  round trips by `rfl` and `pairObj_base` (over `Γ`);
+* `pairHom_obj_eq`, `pairHomFib`, and the morphism map `pairHom : (x ⟶ y) → (pairObj x ⟶ pairObj y)`
+  (`⟨f.base.base, ⟨f.base.fib, eqToHom _ ≫ f.fib⟩⟩`, the transport by `ghom_factor` and
+  `B.map_comp`), with `pairHom_base` and **the identity law `pairHom_id`**.
+
+**First missing lemma**: `pairHom_comp`, the composition law of the pairing functor (an `HEq`
+computation combining `sigMap_key`, `ghom_factor` and `B.map_comp`).  Then the unpairing functor,
+the morphism round trips (the isomorphism `GObj B ≅ GObj (SigF A B)`), `pair_disp`, `Sig_sub` and
+`grpdSigmaStruct`.

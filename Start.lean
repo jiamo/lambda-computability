@@ -789,4 +789,14 @@ import Start.MinskyUniversal
 import Start.LambdaPiLFFundamental
 import Start.GrpdSigmaFun
 import Start.TypeClassSuperNormalize
+import Start.PTSErasureP2Kind
+import Start.PTSRouteIIFundamental
+import Start.MinskyProg
+import Start.MinskyProgMacros
+import Start.MinskyUnpair
+import Start.MinskyCompile
+import Start.MinskyUndecidable
+import Start.LambdaPiLFSkelTEq
+import Start.GrpdSigmaPair
+import Start.TypeClassSuperExample
 import Start.Capstones

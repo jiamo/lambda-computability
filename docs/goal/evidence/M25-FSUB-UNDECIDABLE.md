@@ -210,3 +210,49 @@ compiler cases `zero, succ, left, right, pair, comp, prec, rfind'` with a frame 
 compiler case is built this round, so the first constructor whose simulation lemma is missing is
 `left` (it needs unpairing); `zero` and `succ` need only the frame convention, which is not yet
 fixed in Lean.
+
+## Round 10 — two-counter undecidability for a fixed machine
+
+Modules: `Start/MinskyProg.lean`, `Start/MinskyProgMacros.lean`, `Start/MinskyUnpair.lean`,
+`Start/MinskyCompile.lean`, `Start/MinskyUndecidable.lean`.  Rows M25-KCM-UNIVERSAL and
+M25-COUNTER-MACHINE-UNDECIDABLE are **DONE_STRONG**; M25-FSUB-UNDECIDABLE stays **DONE_WEAK** with
+the new gap row M25-FSUB-SUB-NONCOMPUTABLE.  Axioms in `M25-KCM-UNIVERSAL-axioms.txt`.
+
+**Frame convention (B2).**  Rather than raw jump code, the compiler targets *structured*
+programs `Minsky.Prog` (`inc`, saturating `dec`, `seq`, `loop i p` = `while r i ≠ 0 do
+(r i -= 1; p)`), with a big-step semantics `Exec` that is deterministic (`Exec.det`).
+`Prog.code p o e` places `p` at offset `o` with exit `e`.  Completeness `Exec.run` (an execution is
+a run from `o` to `e` in any machine containing the block) and soundness `exec_of_stepsIn` (a run
+that stays in the block and leaves it, leaves at `e` with the registers of an execution) give
+`halts_iff_exec : KM.Halts (p.code 0 p.len) r ↔ ∃ r', Exec p r r'`.  The frame of a compiled code
+is `Prog.Good P f inp out b`: for every `r` with `r out = 0` and all registers `≥ b` zero,
+`Exec P r r' ↔ ∃ m ∈ f (r inp), r' = update r out m` — the input, the scratch registers and every
+other register are unchanged, and the block has no execution when `f (r inp)` is undefined.
+
+**Macros (B1).**  `clear`, `addTo`, `copy`, `mulAdd`, `ifPos`, `ltFlag` (comparison by truncated
+subtraction), `ite`, `pairAdd` (`r k += Nat.pair (r x) (r y)`), and the unpairing macro
+`unpairM n a b s` (`exec_unpairM`: `r a, r b := Nat.unpair (r n)`).  Deviation from the suggested
+square-root loop: `unpairM` counts up to `r n` along the enumeration of `Nat.pair`, each step
+computed from the previous pair by two comparisons (`unpair_succ`:
+`Nat.unpair (k + 1) = unpairNext (Nat.unpair k)`); this needs only `ltFlag` and no square root.
+
+**Compiler (B3).**  `Prog.compile c inp out b`, one case per constructor; **`good_compile`**: every
+case satisfies `Good` (zero, succ, left, right, pair, comp, prec, rfind' — all eight).  Both
+directions are in the `↔`: completeness (`m ∈ c.eval n → execution with output m`) and soundness
+(an execution forces `(c.eval n).Dom` with output the value), the latter by determinism of `Exec`
+and, for `rfind'`, induction on the loop execution (`rfindLoop_sound`).  `prec` uses
+`eval_prec_eq` (the recursion as an iteration `precIter` from `0`) and `precLoop_iff`.
+
+**The fixed machine (B4).**  `uCode` (a universal code), `uProg := compile uCode 0 1 2`,
+`KM_u := uProg.code 0 uProg.len`, `M_u := Minsky.compile KM_u` (Minsky's construction).
+`M_u_halts_iff : CM.Halts M_u (3 ^ m) 0 ↔ (uCode.eval m).Dom` (Gödel number of the initial
+registers is `3 ^ m`), and
+
+    theorem cm_halts_undecidable : ¬ ComputablePred (fun ab : ℕ × ℕ => CM.Halts M_u ab.1 ab.2)
+
+from `universal_dom_undecidable` composed with the primitive recursive `m ↦ (3 ^ m, 0)`.
+
+**F<: (B5).**  The many-one reduction `universal_dom_iff_sub (m : ℕ) : (uCode.eval m).Dom ↔
+Sub (FsubPierce.enc M_u (3 ^ m) 0)`.  Not proved: `¬ ComputablePred` for `Sub`, which needs a
+`Primcodable` encoding of `FsubGhelli` goals and the computability of
+`m ↦ FsubPierce.enc M_u (3 ^ m) 0` (row M25-FSUB-SUB-NONCOMPUTABLE).
