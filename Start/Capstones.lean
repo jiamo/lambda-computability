@@ -369,6 +369,10 @@ import Start.StarHeightAabbTwo
 import Start.StarHeightGroupHeightOne
 import Start.PTSExpansionLambdaPOmegaBarCanon
 import Start.PTSExpansionLambdaPOmegaBarObj
+import Start.PTSExpansionLambdaPOmegaBarCon
+import Start.PTSExpansionLambdaPOmegaBarEP
+import Start.LambdaMu
+import Start.LambdaMuCPS
 
 /-! ## Interfaces of the untyped calculus
 
@@ -4443,3 +4447,35 @@ for λPω̲ are not proved.
 
 #check @PureTypeSystem.HasTypeNW.toHasTypeR
 #check @PureTypeSystem.HasTypeNW.hsubst_obj
+
+/-! ## Expansion postponement for λPω̲ (M29-EP-CUBE-REST)
+
+`Start/PTSExpansionLambdaPOmegaBarCon.lean`: constructor-level hereditary substitution for λPω̲,
+by strong induction on the size of the kind skeleton of the substituted variable's kind; a created
+redex at an object binder is fired by `hsubst_obj`.
+`Start/PTSExpansionLambdaPOmegaBarEP.lean`: every reduction-only λPω̲ derivation normalizes to a
+canonical one (`HasTypeR.normalizeNW`), product normalization, and expansion postponement for
+λPω̲ (TLCA open problem 23, the λPω̲ corner of the cube).
+-/
+
+#check @PureTypeSystem.HasTypeNW.hsubst_con
+#check @PureTypeSystem.HasTypeR.normalizeNW
+#check @PureTypeSystem.lambdaPOmegaBar_productNormalizationR
+#check @PureTypeSystem.lambdaPOmegaBar_expansionPostponement
+
+/-! ## Parigot's λμ (M23-LAMBDA-MU)
+
+`Start/LambdaMu.lean`: typed λμ (terms and name variables in one de Bruijn space), β, structural
+and renaming reduction, subject reduction, and call/cc typed by Peirce's law in every context.
+`Start/LambdaMuCPS.lean`: a CPS translation into the Curry-style simply typed calculus with types
+`A ↦ ¬¬A*` (answer type the base type); it preserves typing, and every λμ step becomes a
+β-conversion of the images (β and renaming steps are forward reductions).  Strict simulation and
+strong normalization of typed λμ are not proved.
+-/
+
+#check @LambdaMu.subject_reduction
+#check @LambdaMu.typ_callcc
+#check @LambdaMu.typing_cps
+#check @LambdaMu.cps_step
+#check @LambdaMu.cps_beta
+#check @LambdaMu.cps_rename

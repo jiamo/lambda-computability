@@ -5610,17 +5610,38 @@ tasks:
 
   - id: M23-LAMBDA-MU
     priority: P2
-    status: TODO_READY
+    status: DONE_WEAK
     track: theory/lambda
     title: "Parigot's lambda-mu: classical Curry-Howard, and its CPS translation"
-    latest_evidence: "docs/goal/proposed-M21-M24.md"
-    open_boundary: ""
+    terminal_statement: "LambdaMu.subject_reduction : Typ Γ t A → Step t t' → Typ Γ t' A; LambdaMu.typ_callcc : Typ Γ Tm.callcc (.arr (.arr (.arr A B) A) A); LambdaMu.typing_cps : Typ Γ t A → Lambda.Typing (Γ.map entS) (cps t) (tyN A); LambdaMu.cps_step : Typ Γ t A → Step t t' → ∃ c, Lambda.reduces (cps t) c ∧ Lambda.reduces (cps t') c"
+    latest_evidence: "docs/goal/evidence/M23-LAMBDA-MU.md"
+    open_boundary: "Simulation is proved up to β-conversion (the images of a well-typed term and of its one-step reduct have a common β-reduct; β and renaming steps are forward reductions, cps_beta and cps_rename), not as strict simulation: a structural step (μα.c) u → μα.c[[α](w u)/[α]w] is only joinable, so strong normalization of typed λμ does not follow from Lambda.sn_of_typing. Gap row M23-LAMBDA-MU-SN."
     milestone: M23
-    depends_on: []
+    depends_on:
+      - M23-LAMBDA-MU-SN
     rank: 2070
     exit_criteria:
       - "Typed lambda-mu with subject reduction; call/cc typed by Peirce's law."
       - "A CPS translation into the simply typed calculus that preserves typing (with double negation of types) and simulates reduction."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build"
+
+  - id: M23-LAMBDA-MU-SN
+    priority: P2
+    status: TODO_READY
+    track: theory/lambda
+    title: "Strict CPS simulation for lambda-mu, and strong normalization of typed lambda-mu"
+    latest_evidence: "docs/goal/evidence/M23-LAMBDA-MU.md"
+    open_boundary: "First missing lemma: a translation (e.g. a colon/administrative-redex-free variant of LambdaMu.cps) with typing preservation and theorem LambdaMu.cps_step_strict {Γ : List Entry} {t t' : Tm} {A : Ty} (h : Typ Γ t A) (hs : Step t t') : Relation.TransGen Lambda.step (cps t) (cps t') (one λμ step becomes at least one β-step), or a direct proof of theorem LambdaMu.sn_of_typ {Γ : List Entry} {t : Tm} {A : Ty} (h : Typ Γ t A) : Acc (fun a b => Step b a) t (reducibility candidates for λμ)."
+    milestone: M23
+    depends_on: []
+    rank: 2071
+    exit_criteria:
+      - "Every λμ step of a well-typed term is simulated by at least one β-step of the CPS images, or typed λμ is proved strongly normalizing directly."
+      - "LambdaMu.sn_of_typ : every well-typed λμ term is strongly normalizing."
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
@@ -7613,17 +7634,37 @@ tasks:
 
   - id: M29-EP-CUBE-REST
     priority: P1
-    status: IN_PROGRESS
+    status: DONE_WEAK
     track: research/open-problems
     title: "Expansion postponement for λP2, λPω̲ and the Calculus of Constructions"
+    terminal_statement: "PureTypeSystem.lambdaPOmegaBar_expansionPostponement : ExpansionPostponement (cubeSpec lambdaPOmegaBar); PureTypeSystem.lambdaPOmegaBar_productNormalizationR : ProductNormalizationR (cubeSpec lambdaPOmegaBar); PureTypeSystem.HasTypeNW.hsubst_con; PureTypeSystem.HasTypeR.normalizeNW"
     latest_evidence: "docs/goal/evidence/M29-EP.md"
-    open_boundary: "λPω̲ (stop rule fired this delivery after steps 1 and 2 of the plan). Proved before: cube_classification, eraseK_subst (Start/PTSExpansionLambdaPOmegaBar.lean), the kind skeleton Expr.skelK with skelK_subst, skelK_size_pi_obj and skelK_size_pi_kind (Start/PTSExpansionLambdaPOmegaBarSkel.lean). New: step 1, the canonical judgement HasTypeNW (β-normal subjects and types, application result type a normal form of the instantiated codomain, no base-erasure restriction on arguments) with toHasTypeR, normal, rename, lam_inv and HasTypeNR.toHasTypeNW (Start/PTSExpansionLambdaPOmegaBarCanon.lean); step 2, object-level hereditary substitution HasTypeNW.hsubst_obj for PWbar = cubeSpec lambdaPOmegaBar, by induction on the erasure of the variable's type, with not_vis_of_typed (object substitution never changes the erasure of a normal type) (Start/PTSExpansionLambdaPOmegaBarObj.lean). First missing lemma (step 3, constructor-level hereditary substitution by induction on skelK of the kind): theorem HasTypeNW.hsubst_con {Γ : List (Expr Srt)} {N K M B : Expr Srt} (hK : K.isKindB = true) (hN : HasTypeNW PWbar Γ N K) (hM : HasTypeNW PWbar (K :: Γ) M B) : ∃ M' B', Reduces (M.instantiate N) M' ∧ Reduces (B.instantiate N) B' ∧ HasTypeNW PWbar Γ M' B'. Then normalizeNR for λPω̲, theorem lambdaPOmegaBar_productNormalizationR : ProductNormalizationR (cubeSpec lambdaPOmegaBar), and cube_expansionPostponement_of_productNormalizationR. λP2 and λC are impredicative: substituting a type for a type variable changes erasures, so a normalization argument (Poll) is needed."
+    open_boundary: "λPω̲ is closed: HasTypeNW.hsubst_con (constructor-level hereditary substitution, strong induction on the size of skelK of the variable's kind, created redexes at object binders fired by hsubst_obj; Start/PTSExpansionLambdaPOmegaBarCon.lean), HasTypeR.normalizeNW, lambdaPOmegaBar_productNormalizationR and lambdaPOmegaBar_expansionPostponement (Start/PTSExpansionLambdaPOmegaBarEP.lean). Open: the impredicative corners λP2 and coc (rule (□,∗)), row M29-EP-IMPREDICATIVE; first missing lemma theorem lambdaP2_productNormalizationR : ProductNormalizationR (cubeSpec lambdaP2)."
     milestone: M29
     depends_on:
       - M29-EP-CUBE
+      - M29-EP-IMPREDICATIVE
     rank: 2755
     exit_criteria:
       - "ExpansionPostponement (cubeSpec f) for f ∈ {lambdaP2, lambdaPOmegaBar, coc}, or for a stated subset, with the first missing lemma for the rest."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M29-EP-IMPREDICATIVE
+    priority: P1
+    status: TODO_READY
+    track: research/open-problems
+    title: "Expansion postponement for the impredicative corners λP2 and the Calculus of Constructions"
+    latest_evidence: "docs/goal/evidence/M29-EP.md"
+    open_boundary: "First missing lemma: theorem lambdaP2_productNormalizationR : ProductNormalizationR (cubeSpec lambdaP2), then theorem coc_productNormalizationR : ProductNormalizationR (cubeSpec coc); EP follows by cube_expansionPostponement_of_productNormalizationR. The erasure and skeleton measures fail (substituting a type for a type variable changes them). Recommended route (M29-EP.md, research section): normalization of HasType derivations by a Kripke-style typed candidate model, first lemma theorem HasType.normalizeNW_lambdaP2 {Γ : List (Expr Srt)} {M T : Expr Srt} (h : HasType (cubeSpec lambdaP2) Γ M T) : ∃ Γ' M' T', List.Forall₂ Reduces Γ Γ' ∧ Reduces M M' ∧ Reduces T T' ∧ HasTypeNW (cubeSpec lambdaP2) Γ' M' T' (HasTypeNW of Start/PTSExpansionLambdaPOmegaBarCanon.lean is already generic in the specification)."
+    milestone: M29
+    depends_on: []
+    rank: 2756
+    exit_criteria:
+      - "ExpansionPostponement (cubeSpec lambdaP2) and ExpansionPostponement (cubeSpec coc), or one of them with the first missing lemma for the other."
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"

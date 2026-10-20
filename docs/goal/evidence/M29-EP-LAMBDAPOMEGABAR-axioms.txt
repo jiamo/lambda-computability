@@ -1,0 +1,5 @@
+# #print axioms for M29-EP-CUBE-REST, λPω̲ (lake env lean on a file importing Start.PTSExpansionLambdaPOmegaBarEP)
+'PureTypeSystem.HasTypeNW.hsubst_con' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.HasTypeR.normalizeNW' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.lambdaPOmegaBar_productNormalizationR' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.lambdaPOmegaBar_expansionPostponement' depends on axioms: [propext, Classical.choice, Quot.sound]

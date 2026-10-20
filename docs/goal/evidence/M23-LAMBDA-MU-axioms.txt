@@ -1,0 +1,7 @@
+# #print axioms for M23-LAMBDA-MU (lake env lean on a file importing Start.LambdaMuCPS)
+'LambdaMu.subject_reduction' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LambdaMu.typ_callcc' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LambdaMu.typing_cps' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LambdaMu.cps_step' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LambdaMu.cps_beta' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LambdaMu.cps_rename' depends on axioms: [propext, Classical.choice, Quot.sound]

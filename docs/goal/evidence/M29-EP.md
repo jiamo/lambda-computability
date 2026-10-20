@@ -685,3 +685,107 @@ theorem HasTypeNW.hsubst_con {Γ : List (Expr Srt)} {N K M B : Expr Srt}
 
   followed by `normalizeNR` for λPω̲, `lambdaPOmegaBar_productNormalizationR` and
   `cube_expansionPostponement_of_productNormalizationR`.
+
+## λPω̲ closed: constructor-level hereditary substitution and EP (round 1, steps 3–5)
+
+* Step 3. `Start/PTSExpansionLambdaPOmegaBarCon.lean` proves the lemma recorded on the board,
+  with exactly the requested statement:
+
+```lean
+theorem HasTypeNW.hsubst_con {Γ : List (Expr Srt)} {N K M B : Expr Srt}
+    (hK : K.isKindB = true) (hN : HasTypeNW PWbar Γ N K)
+    (hM : HasTypeNW PWbar (K :: Γ) M B) :
+    ∃ M' B', Reduces (M.instantiate N) M' ∧ Reduces (B.instantiate N) B' ∧
+      HasTypeNW PWbar Γ M' B'
+```
+
+  Route as planned: the generalized form `hsubst_con_aux` (`Δ ++ K :: Γ`, `CtxSubstRed`), by
+  strong induction on `STy.size` of `K.skelK`, then on the derivation.  A constructor `N : K` is
+  not a kind (`NoKindVal`), so `skelK_subst'` keeps the skeleton of every kind.
+  `head_lookup_con` (with `ArrSuffix`) puts the type of a spine headed by the substituted variable
+  at a skeleton suffix of `skelK K`.  A created redex at a constructor binder recurses at the
+  smaller `K₁` (`skelK_size_pi_kind`), and one at an object binder is fired by `hsubst_obj`.
+  `K ≠ □` is an internal hypothesis of the aux lemma, derived in the wrapper.
+* Steps 4–5. `Start/PTSExpansionLambdaPOmegaBarEP.lean`:
+
+```lean
+theorem HasTypeR.normalizeNW {Γ : List (Expr Srt)} {M T : Expr Srt}
+    (h : HasTypeR PWbar Γ M T) :
+    ∃ Γ' M' T', List.Forall₂ Reduces Γ Γ' ∧ Reduces M M' ∧ Reduces T T' ∧
+      HasTypeNW PWbar Γ' M' T'
+theorem lambdaPOmegaBar_productNormalizationR : ProductNormalizationR (cubeSpec lambdaPOmegaBar)
+theorem lambdaPOmegaBar_expansionPostponement :
+    ExpansionPostponement (cubeSpec lambdaPOmegaBar)
+```
+
+  (`normalizeNW`, so that the name does not clash with the λP `HasTypeR.normalizeNR`.)  Axioms:
+  `[propext, Classical.choice, Quot.sound]` for all four (`M29-EP-LAMBDAPOMEGABAR-axioms.txt`).
+  EP now holds for every corner of the cube except λP2 and coc.  M29-EP-CUBE-REST is DONE_WEAK,
+  depending on the new row M29-EP-IMPREDICATIVE (first lemma
+  `lambdaP2_productNormalizationR : ProductNormalizationR (cubeSpec lambdaP2)`, then coc).
+
+## Research: routes for λP2 and coc (paper only, no Lean)
+
+These are checked against the repository's `HasTypeR` (reduction-only conversion) and `HasTypeNW`.
+Common obstruction: under (□,∗), substituting a type for a type variable changes erasures and
+skeletons, so neither measure bounds the created redexes.
+
+**(i) normalizeNR by induction on SN of the subject.**  The order is lexicographic: first the
+multiset of (reduction height, size) of the context entries and the subject, then the derivation.
+In the β case the head redex is fired by ordinary substitution.  The typing of the substituted
+body comes from the substitution lemma for `HasTypeR`, which holds because `Reduces` is closed
+under substitution; subject reduction for `HasTypeR` is never needed, so the argument is *not*
+circular.  The subject strictly reduces, so the measure decreases.
+*Fails at the abstraction case*: `HasTypeNW` needs `Π A' nf(B) : s` canonically.  `nf(B)` is
+neither a subterm nor a reduct of the subject, and B's SN height is unrelated to the measure:
+this is Poll's Lemma 10 gap again.  Adding types to the measure breaks the application premise
+`F : Π A B` instead.  With canonical regularity the route closes on paper.  First missing lemma:
+
+```lean
+theorem HasTypeNW.regular_lambdaP2 {Γ : List (Expr Srt)} {M T : Expr Srt}
+    (h : HasTypeNW (cubeSpec lambdaP2) Γ M T) :
+    T = .sort .box ∨ ∃ s, HasTypeNW (cubeSpec lambdaP2) Γ T (.sort s)
+```
+
+The proof of this lemma needs normalization of `B[a]` in the application rule, which is the same
+recursion again: a mutual-measure problem.
+
+**(ii) Tait/Girard predicate on derivations.**  Call a `HasType` derivation good if it
+normalizes (context, subject, type) to `HasTypeNW`.  In the abstraction case the premise
+`Π A B : s` is itself a subderivation, so the gap of (i) does not arise.  The application case is
+the reducibility clause.  The impredicative quantifier (rule (□,∗)) needs *typed* candidates:
+sets of good derivations indexed by context and type, closed under weakening (Kripke).  The
+untyped saturated sets of `Start/CoCSN.lean` lose the typing information that `HasTypeNW`
+demands.  Only the candidate structure (saturation, the Π clause, quantification over
+candidates of each kind) carries over.  No gap was found, but the construction is large: a
+typed copy of the CoCModel interpretation with its substitution and conversion lemmas.
+**Recommended route.**  First missing lemma:
+
+```lean
+theorem HasType.normalizeNW_lambdaP2 {Γ : List (Expr Srt)} {M T : Expr Srt}
+    (h : HasType (cubeSpec lambdaP2) Γ M T) :
+    ∃ Γ' M' T', List.Forall₂ Reduces Γ Γ' ∧ Reduces M M' ∧ Reduces T T' ∧
+      HasTypeNW (cubeSpec lambdaP2) Γ' M' T'
+```
+
+From it, `lambdaP2_productNormalizationR` follows exactly as for λP and λPω̲ (`generation_pi`,
+`normal_unique`, `toHasTypeR`, `ctx_expand`), after the `HasTypeR`-to-`HasType` inclusion.
+
+**(iii) Poll's Theorem 11 (strengthening with ⊢nf) proved simultaneously with Lemma 10.**  In the
+formulation by normalization of derivations, the abstraction gap disappears: the Π premise is a
+subderivation, as in (ii).  The difficulty moves to the application case.  There the canonical
+function type must be instantiated with a canonical argument, which is hereditary substitution.
+Theorem 11 supplies no measure for it: the derivation of the argument it produces is not a
+subderivation, and in λP2 the erasure of the instantiated codomain can grow.  So (iii) reduces to
+the missing lemma
+
+```lean
+theorem HasTypeNW.hsubst_lambdaP2 {Γ : List (Expr Srt)} {N A M B : Expr Srt}
+    (hN : HasTypeNW (cubeSpec lambdaP2) Γ N A)
+    (hM : HasTypeNW (cubeSpec lambdaP2) (A :: Γ) M B) :
+    ∃ M' B', Reduces (M.instantiate N) M' ∧ Reduces (B.instantiate N) B' ∧
+      HasTypeNW (cubeSpec lambdaP2) Γ M' B'
+```
+
+whose termination is exactly strong normalization of λP2.  Its proof must therefore go through a
+model, as in (ii); no syntactic measure is known.

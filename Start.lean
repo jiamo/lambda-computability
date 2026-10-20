@@ -727,4 +727,8 @@ import Start.StarHeightAabbTwo
 import Start.StarHeightGroupHeightOne
 import Start.PTSExpansionLambdaPOmegaBarCanon
 import Start.PTSExpansionLambdaPOmegaBarObj
+import Start.PTSExpansionLambdaPOmegaBarCon
+import Start.PTSExpansionLambdaPOmegaBarEP
+import Start.LambdaMu
+import Start.LambdaMuCPS
 import Start.Capstones
