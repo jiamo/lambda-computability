@@ -6,3 +6,7 @@
 'SizeChange.mem_closureFS_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
 'SizeChange.Criterion.decidable' depends on axioms: [propext, Classical.choice, Quot.sound]
 'SizeChange.SCT.decidable' depends on axioms: [propext, Classical.choice, Quot.sound]
+
+# round 8: #print axioms (lake env lean on a scratch file importing the round-8 modules, with #print axioms appended)
+'SizeChange.thread_of_idempotent_blocks' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SizeChange.CallGraph.sct_of_criterion' depends on axioms: [propext, Classical.choice, Quot.sound]

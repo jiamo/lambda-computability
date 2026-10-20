@@ -1,0 +1,5 @@
+# round 8: #print axioms (lake env lean on a scratch file importing the round-8 modules, with #print axioms appended)
+'TypeClass.DEntN.toDEnt' depends on axioms: [propext]
+'TypeClass.DEntN.subst_closed' depends on axioms: [propext]
+'TypeClass.NormalSuperFields.superField' depends on axioms: [propext]
+'TypeClass.DEntN.supInst_contract' depends on axioms: [propext, Classical.choice, Quot.sound]

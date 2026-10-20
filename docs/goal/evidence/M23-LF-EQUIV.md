@@ -74,3 +74,25 @@ Write `Γs := skelCtx Γ` and `⌊A⌋ := skel (skelCtx Γ) A` (`Start/LambdaPiS
 First missing lemma: `theorem LambdaPi.Eqv.symm` / `Eqv.trans` (the PER property of the
 algorithm), then `theorem LambdaPi.LR.fundamental : TEq Γ M N A → LR ⌊A⌋ Γs M N` (with its
 substitution generalisation).
+
+## Round 8 — the algorithm is a PER (`Start/LambdaPiLFEquivPER.lean`)
+
+* `WhStep.det` (weak head reduction is deterministic), `IsPath.whnf`, `WhRed.whnf_unique`
+  (weak head normal forms are unique), `Eqv.path_isPath`;
+* `Eqv.symm`, `Eqv.trans`, `Eqv.path_ty_unique` — **symmetry and transitivity** of algorithmic
+  and structural equivalence; `AlgEq.per`;
+* `LR.symm`, `LR.trans` — the Kripke logical relation is a PER.
+
+Change to the round-7 algorithm: the product rule `Eqv.basePi` now carries the decidable side
+condition `skel Δ A = skel Δ A'`.  Without it the codomains are compared in the context
+`skel Δ A :: Δ`, which remembers only the left domain, and symmetry fails at that rule (the
+skeleton of a λΠ type is not invariant under untyped β: `skel` of `(λx:C. b) a` uses `skel C`
+for `x`, `skel` of `b[a]` uses `skel a`).  For well-typed convertible domains the condition holds
+by `skel_conv`, so completeness is unaffected.  `Eqv.sound`, `Eqv.rename`, `LR.escape`,
+`LR.reflect`, `LR.rename` and the weak head expansion lemmas are re-proved unchanged in
+statement.
+
+Open, in order: `LR.fundamental` generalised to related substitutions — the first missing
+lemma, not started this round: `TEq Γ M N A → ∀ σ σ' related at Γ in Δ,
+LR (skel (skelCtx Γ) A) Δ (M[σ]) (N[σ'])` — then completeness `TEq Γ M N A → AlgEq`, typed
+soundness, termination on well-typed terms, decidability.

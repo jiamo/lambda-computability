@@ -776,4 +776,11 @@ import Start.GrpdPiNatural
 import Start.LambdaPiLFEquiv
 import Start.PTSExpansionRouteII
 import Start.SizeChange
+import Start.PTSErasureP2
+import Start.PTSRouteIIErased
+import Start.MinskyMacros
+import Start.LambdaPiLFEquivPER
+import Start.GrpdSigma
+import Start.TypeClassSuperNorm
+import Start.SizeChangeCallGraph
 import Start.Capstones

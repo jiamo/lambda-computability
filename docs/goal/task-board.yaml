@@ -5637,7 +5637,7 @@ tasks:
     track: theory/types
     title: "Sigma-types in the groupoid model"
     latest_evidence: "docs/goal/evidence/M23-GROUPOID-MODEL.md"
-    open_boundary: "Gap row of M23-GROUPOID-PI-NATURAL (DONE_WEAK, round 7). Target: GrpdModel.grpdSigmaStruct : Cwa.SigmaStruct grpdCwa, with Σ as the Grothendieck construction of B over A, pairing and projections through tmEquivSect, β and η. First missing construction: the functor SigF A B : Γ ⥤ Grpd sending γ to the Grothendieck construction of fibI A γ ⋙ B, with its map_comp (functoriality of the Grothendieck construction in the base), then the pairing isomorphism ext (ext Γ A) B ≅ ext Γ (SigF A B) over Γ (pair_disp)."
+    open_boundary: "Gap row of M23-GROUPOID-PI-NATURAL (DONE_WEAK, round 7). Target: GrpdModel.grpdSigmaStruct : Cwa.SigmaStruct grpdCwa, with Σ as the Grothendieck construction of B over A. Round 8 (Start/GrpdSigma.lean): the generic Grothendieck functoriality GrpdModel.sigMap K F G θ B : GObj (F ⋙ B) ⥤ GObj (G ⋙ B) with its functor laws (the composite of Mathlib's Grothendieck.pre and Grothendieck.map, rebuilt for the library's GObj), the fibre transformation sigTheta A g, and the object and morphism parts sigObj, sigMapG of SigF A B. First missing lemma: the functor laws of SigF, sigMapG A B (𝟙 γ) = 𝟭 and sigMapG A B (g ≫ h) = sigMapG A B g ⋙ sigMapG A B h (components (sigTheta A (𝟙 γ)).app a = eqToHom _ and sigTheta A (g ≫ h) = sigTheta A g ≫ whiskerLeft (A.map g) (sigTheta A h) up to the eqToHom of A.map_comp); then the pairing isomorphism (pair_disp) and grpdSigmaStruct."
     milestone: M23
     depends_on: []
     rank: 2051
@@ -5738,13 +5738,32 @@ tasks:
     track: theory/types
     title: "Completeness and termination of type-directed βη-equivalence for LF"
     latest_evidence: "docs/goal/evidence/M23-LF-EQUIV.md"
-    open_boundary: "Gap row of M23-LF-EQUIV (DONE_WEAK, round 7). Targets: typed soundness of LambdaPi.AlgEq for LambdaPi.TEq; completeness by the fundamental lemma of LambdaPi.LR (TEq Γ M N A → LR (skel (skelCtx Γ) A) (skelCtx Γ) M N, generalised to related substitutions, then LR.escape); termination on well-typed terms, hence decidability of TEq on well-typed λΠ terms. First missing lemma: the PER property of the algorithm, LambdaPi.Eqv.symm and LambdaPi.Eqv.trans (needs determinacy of weak head normal forms), then LambdaPi.LR.fundamental."
+    open_boundary: "Gap row of M23-LF-EQUIV (DONE_WEAK, round 7). Targets: typed soundness of LambdaPi.AlgEq for LambdaPi.TEq; completeness by the fundamental lemma of LambdaPi.LR; termination on well-typed terms, hence decidability of TEq on well-typed λΠ terms. Round 8: the PER property is proved (row M23-LF-EQUIV-PER, Start/LambdaPiLFEquivPER.lean: WhStep.det, WhRed.whnf_unique, Eqv.symm, Eqv.trans, LR.symm, LR.trans), with the side condition skel Δ A = skel Δ A' added to Eqv.basePi (without it symmetry fails at that rule). First missing lemma: LambdaPi.LR.fundamental, TEq Γ M N A → for substitutions σ σ' related at Γ in Δ, LR (skel (skelCtx Γ) A) Δ (M[σ]) (N[σ']); then completeness, typed soundness, termination, decidability."
     milestone: M23
     depends_on: []
     rank: 2073
     exit_criteria:
       - "Completeness: Γ ⊢ M ≡ N : A implies algorithmic equivalence at the skeleton of A, by a Kripke logical relation."
       - "Termination on well-typed terms, hence decidability of the typed βη-equality of λΠ."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M23-LF-EQUIV-PER
+    priority: P2
+    status: DONE_STRONG
+    track: theory/types
+    title: "The LF equivalence algorithm and its logical relation are partial equivalence relations"
+    terminal_statement: "LambdaPi.WhStep.det {t u v : Tm} (hu : WhStep t u) (hv : WhStep t v) : u = v; LambdaPi.WhRed.whnf_unique {t u v : Tm} (hu : WhRed t u) (hv : WhRed t v) (hnu : WhNF u) (hnv : WhNF v) : u = v; LambdaPi.Eqv.symm {k : EqvKind} {Δ : List STy} {M N : Tm} {τ : STy} (h : Eqv k Δ M N τ) : Eqv k Δ N M τ; LambdaPi.Eqv.trans {k : EqvKind} {Δ : List STy} {M N P : Tm} {τ : STy} (h : Eqv k Δ M N τ) (h' : Eqv k Δ N P τ) : Eqv k Δ M P τ; LambdaPi.LR.symm; LambdaPi.LR.trans"
+    latest_evidence: "docs/goal/evidence/M23-LF-EQUIV.md"
+    open_boundary: ""
+    milestone: M23
+    depends_on: []
+    rank: 2076
+    exit_criteria:
+      - "Determinacy of weak head reduction and uniqueness of weak head normal forms; symmetry and transitivity of the type-directed algorithm (algorithmic and structural equivalence) and of the Kripke logical relation."
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
@@ -5758,7 +5777,7 @@ tasks:
     title: "Decidable βη-equivalence for LF (λΠ) by the type-directed algorithm (Harper and Pfenning)"
     terminal_statement: "LambdaPi.Eqv.sound {k : EqvKind} {Δ : List STy} {M N : Tm} {τ : STy} (h : Eqv k Δ M N τ) : BetaEtaConv M N; LambdaPi.LR.escape (h : LR τ Δ M N) : AlgEq Δ M N τ; LambdaPi.LR.reflect (h : PathEq Δ p q τ) : LR τ Δ p q; LambdaPi.TEq.betaEtaConv (h : TEq Γ M N A) : BetaEtaConv M N"
     latest_evidence: "docs/goal/evidence/M23-LF-EQUIV.md"
-    open_boundary: "Proved round 7 (Start/LambdaPiLFEquiv.lean): weak head reduction; the algorithm LambdaPi.Eqv (AlgEq, type-directed by simple skeletons: extensionality at arrows, weak head normalization and structural comparison at the base; PathEq for paths); Eqv.sound (algorithmically equivalent terms are βη-convertible); Eqv.rename; the Kripke logical relation LambdaPi.LR with LR.escape, LR.reflect, LR.var, LR.rename and closure under weak head expansion; the declarative typed equality LambdaPi.TEq (typed β and η) and TEq.betaEtaConv. Raw βη decidability does not follow in a few lines (annotation erasure does not preserve βη-normality; counterexample in the note). Open (gap row M23-LF-EQUIV-COMPLETE): typed soundness, completeness (fundamental lemma), termination; first missing lemma Eqv.symm/Eqv.trans."
+    open_boundary: "Proved round 7 (Start/LambdaPiLFEquiv.lean): weak head reduction; the algorithm LambdaPi.Eqv; Eqv.sound; Eqv.rename; the Kripke logical relation LambdaPi.LR with LR.escape, LR.reflect, LR.var, LR.rename and closure under weak head expansion; the declarative typed equality LambdaPi.TEq and TEq.betaEtaConv. Round 8: Eqv.basePi carries the decidable side condition skel Δ A = skel Δ A'; the algorithm and the logical relation are PERs (row M23-LF-EQUIV-PER). Open (gap row M23-LF-EQUIV-COMPLETE): typed soundness, completeness (fundamental lemma), termination; first missing lemma LR.fundamental."
     milestone: M23
     depends_on:
       - M23-LF-EQUIV-COMPLETE
@@ -5777,7 +5796,7 @@ tasks:
     status: DONE_STRONG
     track: theory/types
     title: "Size-change termination (Lee, Jones and Ben-Amram)"
-    terminal_statement: "SizeChange.ramsey_pairs {α : Type} [Finite α] (c : ℕ → ℕ → α) : ∃ f : ℕ → ℕ, StrictMono f ∧ ∃ a : α, ∀ i j, i < j → c (f i) (f j) = a; SizeChange.sct_iff_criterion (𝒢 : Finset (SCG n)) : SCT 𝒢 ↔ Criterion 𝒢; SizeChange.mem_closureFS_iff : G ∈ closureFS 𝒢 ↔ InCl 𝒢 G; instance SizeChange.Criterion.decidable (𝒢 : Finset (SCG n)) : Decidable (Criterion 𝒢); instance SizeChange.SCT.decidable (𝒢 : Finset (SCG n)) : Decidable (SCT 𝒢)"
+    terminal_statement: "SizeChange.ramsey_pairs {α : Type} [Finite α] (c : ℕ → ℕ → α) : ∃ f : ℕ → ℕ, StrictMono f ∧ ∃ a : α, ∀ i j, i < j → c (f i) (f j) = a; SizeChange.sct_iff_criterion (𝒢 : Finset (SCG n)) : SCT 𝒢 ↔ Criterion 𝒢; SizeChange.mem_closureFS_iff : G ∈ closureFS 𝒢 ↔ InCl 𝒢 G; instance SizeChange.Criterion.decidable (𝒢 : Finset (SCG n)) : Decidable (Criterion 𝒢); instance SizeChange.SCT.decidable (𝒢 : Finset (SCG n)) : Decidable (SCT 𝒢); SizeChange.CallGraph.sct_of_criterion {𝒞 : CallGraph m n} (hc : Criterion 𝒞) : SCT 𝒞 (round 8: a parameter set per function, multipaths along call sequences, the closure criterion at each function)"
     latest_evidence: "docs/goal/evidence/M23-SIZE-CHANGE.md"
     open_boundary: ""
     milestone: M23
@@ -5787,6 +5806,7 @@ tasks:
       - "Size-change graphs over a finite set of parameters with strict and non-strict arcs, their composition, and the call-sequence semantics (every infinite multipath of graphs of the set has an infinite thread with infinitely many strict descents)."
       - "The closure criterion: the SCT property holds iff every idempotent graph G = G;G of the composition closure has a strict self-arc, with infinite Ramsey for pairs proved for the soundness direction."
       - "Decidability of the criterion, the closure being finite."
+      - "Round 8 extension: call graphs with a parameter set per function, size-change graphs between caller and callee parameters, multipaths along call sequences, and soundness of the per-function closure criterion (idempotent graphs at each function), reusing ramsey_pairs."
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
@@ -6314,7 +6334,7 @@ tasks:
     track: theory/types
     title: "Coherence with superclasses when instances of subclasses exist"
     latest_evidence: "docs/goal/evidence/M25-TYPECLASS-COHERENCE.md"
-    open_boundary: "Gap row of M25-TYPECLASS-COHERENCE-SUPER (DONE_WEAK, round 6). Target: coherence for unambiguous judgements when instances of classes with a superclass are allowed (instances satisfying SuperField). First missing lemma: theorem DEnt.normalize_super : DEnt E P n C d → ∃ d', DEnt E P n C d' ∧ NoSupInst d' ∧ Lambda.reduces d d' (every dictionary derivation β-reduces to one with no superclass projection of an instance dictionary, by super_coherent at each sup-of-inst), which needs a termination order: the substituted superclass field DEnt.subst of SuperField is not a sub-derivation, so the order must come from the instance contexts (e.g. Paterson's conditions, which EnvGood does not impose). With it, DEnt.unique_super applies to the normalised derivations. Round 7: not attempted (part G was cut under the round's time rule); the first missing lemma is unchanged."
+    open_boundary: "Gap row of M25-TYPECLASS-COHERENCE-SUPER (DONE_WEAK, round 6). Target: coherence for unambiguous judgements when instances of classes with a superclass are allowed. Round 8 (Start/TypeClassSuperNorm.lean): normal dictionary derivations TypeClass.DEntN (DEntN.toDEnt, DEntN.weaken_nil, DEntN.subst_closed); the termination condition as a hypothesis on the environment, NormalSuperFields E (superclass fields stored as closed normal derivations; implies SuperField); DEntN.supInst_contract (under NormalSuperFields a superclass projection of an instance dictionary reduces to a normal derivation, creating no new redex). First missing lemma: DEnt.normalize_super under NormalSuperFields, whose instance case needs the congruence of β-reduction for parallel substitution, Lambda.reduces (Lambda.substEnv u t) (Lambda.substEnv u' t) when each free u k reduces to u' k. Without closed superclass fields the order must combine Paterson's measure on instance contexts with the size of instance dictionaries. Coherence with instances of subclasses not extended."
     milestone: M25
     depends_on: []
     rank: 2382
@@ -6416,7 +6436,7 @@ tasks:
     title: "Halting of two-counter machines is undecidable"
     terminal_statement: "Minsky.sim_step {M : KM} {k : ℕ} (hk : RegsBelow M k) {c c' : KConf} (hs : KM.Step M c c') : Relation.TransGen (CM.Step (compile M)) (encC M k c) (encC M k c'); Minsky.halts_iff {M : KM} {k : ℕ} (hk : RegsBelow M k) (r : ℕ → ℕ) : KM.Halts M r ↔ CM.Halts (compile M) (godel k r) 0"
     latest_evidence: "docs/goal/evidence/M25-FSUB-UNDECIDABLE.md"
-    open_boundary: "Gap row of M25-FSUB-UNDECIDABLE (step D4). Proved round 7, step B1 (Start/Minsky.lean): k-counter machines Minsky.KM, their compilation into FsubGhelli.CM by Gödel numbering over the Fermat numbers with multiply/divide loops, the step-correctness lemma Minsky.sim_step and Minsky.halts_iff (KM.Halts M r ↔ CM.Halts (compile M) (godel k r) 0 for programs with registers below k), Minsky.halts_iff_sub. Open (gap row M25-KCM-UNIVERSAL): a source of undecidability for k-counter machines, hence FsubGhelli.cm_halts_undecidable : ¬ ComputablePred (fun p : CM × ℕ × ℕ => CM.Halts p.1 p.2.1 p.2.2)."
+    open_boundary: "Gap row of M25-FSUB-UNDECIDABLE (step D4). Proved round 7, step B1 (Start/Minsky.lean): k-counter machines Minsky.KM, their compilation into FsubGhelli.CM by Gödel numbering over the Fermat numbers with multiply/divide loops, Minsky.sim_step and Minsky.halts_iff, Minsky.halts_iff_sub. Round 8 (Start/MinskyMacros.lean): the first register-machine macros (clear, transfer, copy, multiplication) of the compilation of Nat.Partrec.Code. Open (gap row M25-KCM-UNIVERSAL): a source of undecidability for k-counter machines, hence FsubGhelli.cm_halts_undecidable : ¬ ComputablePred (fun p : CM × ℕ × ℕ => CM.Halts p.1 p.2.1 p.2.2); first missing macro the pairing macro."
     milestone: M25
     depends_on:
       - M25-KCM-UNIVERSAL
@@ -6435,7 +6455,7 @@ tasks:
     track: theory/types
     title: "A universal source of undecidability for k-counter machines"
     latest_evidence: "docs/goal/evidence/M25-FSUB-UNDECIDABLE.md"
-    open_boundary: "Gap row of M25-COUNTER-MACHINE-UNDECIDABLE (DONE_WEAK, round 7; step B2). Target: FsubGhelli.cm_halts_undecidable : ¬ ComputablePred (fun p : CM × ℕ × ℕ => CM.Halts p.1 p.2.1 p.2.2). First missing piece: a compilation of Mathlib's Nat.Partrec.Code (or of Turing.TM2, each stack a number in base k) into Minsky.KM preserving halting, with Primcodable instances for CM and KM and the computability of that compilation, of Minsky.compile and of Minsky.godel; then the reduction from ComputablePred.halting_problem or not_computablePred_codeConverges (Start/Undecidable.lean) through Minsky.halts_iff."
+    open_boundary: "Gap row of M25-COUNTER-MACHINE-UNDECIDABLE (DONE_WEAK, round 7; step B2). Target: FsubGhelli.cm_halts_undecidable : ¬ ComputablePred (fun p : CM × ℕ × ℕ => CM.Halts p.1 p.2.1 p.2.2), then ¬ ComputablePred for Sub of full F<: through cm_halts_iff_sub. Path chosen (round 8): compile Nat.Partrec.Code into Minsky.KM by Shepherdson–Sturgis macros. Proved round 8 (Start/MinskyMacros.lean): Macro.clear_run, Macro.transfer_run, Macro.transfer2_run, Macro.copy_run, Macro.mul_run (run lemmas in place). First macro not built: the pairing macro r k := Nat.pair (r i) (r j) (needs a comparison loop); then Nat.unpair, the compilation of zero/succ/left/right/pair/comp/prec/rfind' with a frame stack in one register, its simulation lemma, Primcodable KM and the computability of the compilation, of Minsky.compile and of Minsky.godel."
     milestone: M25
     depends_on: []
     rank: 2387
@@ -8009,7 +8029,7 @@ tasks:
     title: "Expansion postponement for λP2, λPω̲ and the Calculus of Constructions"
     terminal_statement: "PureTypeSystem.lambdaPOmegaBar_expansionPostponement : ExpansionPostponement (cubeSpec lambdaPOmegaBar); PureTypeSystem.lambdaPOmegaBar_productNormalizationR : ProductNormalizationR (cubeSpec lambdaPOmegaBar); PureTypeSystem.HasTypeNW.hsubst_con; PureTypeSystem.HasTypeR.normalizeNW"
     latest_evidence: "docs/goal/evidence/M29-EP.md"
-    open_boundary: "λPω̲ is closed: HasTypeNW.hsubst_con, HasTypeR.normalizeNW, lambdaPOmegaBar_productNormalizationR and lambdaPOmegaBar_expansionPostponement. Open: the impredicative corners λP2 and coc (rule (□,∗)), row M29-EP-IMPREDICATIVE; round 4 reduced both to HSubstPi (cubeSpec f); round 5 proved HSubstPi (cubeSpec f) ↔ HSubstSort (cubeSpec f); round 6 proved pollProductCanon_iff_hsubstPi; round 7 (route (ii), Start/PTSExpansionRouteII.lean) proved the substitution lemma of the typed-candidate interpretation at (□,∗) (RouteII.Good_subst) and hsubstSort_iff_sortFundamental (route (ii) at sort-typed judgements is the open lemma); first missing lemma theorem hsubstPi_lambdaP2 : HSubstPi (cubeSpec lambdaP2)."
+    open_boundary: "λPω̲ is closed: HasTypeNW.hsubst_con, HasTypeR.normalizeNW, lambdaPOmegaBar_productNormalizationR and lambdaPOmegaBar_expansionPostponement. Open: the impredicative corners λP2 and coc (rule (□,∗)), row M29-EP-IMPREDICATIVE; round 4 reduced both to HSubstPi (cubeSpec f); round 5 proved HSubstPi (cubeSpec f) ↔ HSubstSort (cubeSpec f); round 6 proved pollProductCanon_iff_hsubstPi; round 7 (route (ii)) proved RouteII.Good_subst and hsubstSort_iff_sortFundamental; round 8 proved the erasure of λP2 to λ2 (row M29-EP-ERASURE-P2) and re-indexed route (ii) by it (RouteII.GoodE, GoodE.tyApp), and located the first failing step of the fundamental lemma: CR3 at neutral applications needs HSubstSort at the codomain (M29-EP.md, round 8); for coc, er_beta_fails_coc. First missing lemma theorem hsubstPi_lambdaP2 : HSubstPi (cubeSpec lambdaP2)."
     milestone: M29
     depends_on:
       - M29-EP-CUBE
@@ -8029,12 +8049,31 @@ tasks:
     track: research/open-problems
     title: "Expansion postponement for the impredicative corners λP2 and the Calculus of Constructions"
     latest_evidence: "docs/goal/evidence/M29-EP.md"
-    open_boundary: "Reduced (rounds 2, 4) to HSubstPi (cubeSpec f), which gives ProductNormalizationR and ExpansionPostponement (cube_expansionPostponement_of_hsubstPi). Four equivalent formulations proved in every corner: HSubstPi ↔ HSubstSort (round 5, hsubstPi_iff_hsubstSort) ↔ PollProductCanon (round 6, pollProductCanon_iff_hsubstPi, the missing step of Poll's Lemma 10). Round 7, route (ii) (Start/PTSExpansionRouteII.lean): the Tait/Girard predicate RouteII.Good on HasTypeR judgements by recursion on skeletons, with typed Kripke candidates RouteII.IsCand at (□,∗); Good.isCand; the substitution lemma at (□,∗) named in round 2 is proved (Good_subst, Good_inst: ⟦τ[t/X]⟧ξ = ⟦τ⟧(ξ, X ↦ ⟦t⟧ξ)), with the type- and object-application cases Good.tyApp, Good.app; the product premise handled by the predicate on the product's own derivation (NormNW.abstraction, NormNW.product); and hsubstSort_iff_sortFundamental: the fundamental lemma of route (ii) at sort-typed judgements is equivalent to HSubstSort (a fifth formulation of the open lemma). First missing lemma of route (ii): the erasure of λP2 type-level terms to skeletons commuting with substitution (needs the classification of terms by degree), then CR3 for NormNW, HasTypeR.subst and the fundamental lemma. Open lemma unchanged: theorem hsubstPi_lambdaP2 : HSubstPi (cubeSpec lambdaP2); then the same for coc (docs/goal/evidence/M29-EP.md, round 7)."
+    open_boundary: "Reduced (rounds 2, 4) to HSubstPi (cubeSpec f), which gives ProductNormalizationR and ExpansionPostponement (cube_expansionPostponement_of_hsubstPi). Equivalent formulations proved in every corner: HSubstPi ↔ HSubstSort (round 5) ↔ PollProductCanon (round 6) ↔ SortFundamental (round 7, hsubstSort_iff_sortFundamental). Round 7, route (ii) (Start/PTSExpansionRouteII.lean): RouteII.Good with typed Kripke candidates, Good_subst/Good_inst at (□,∗), Good.tyApp, Good.app, NormNW.abstraction, NormNW.product. Round 8: the erasure of λP2 constructors to λ2 skeletons is proved (row M29-EP-ERASURE-P2, Start/PTSErasureP2.lean: er_subst, er_instantiate_obj, er_instantiate, er_beta, er_conv); route (ii) re-indexed by the erasure (Start/PTSRouteIIErased.lean: RouteII.GoodE, GoodE.reduceType, GoodE.app, GoodE.tyApp at (□,∗) with the candidate ⟦er U⟧ξ, NormNW.expand); for coc the λ2 erasure fails at the typed redex (λβ:∗. β) α (er_beta_fails_coc), Fω skeletons modulo β are needed. First failing step of the fundamental lemma (M29-EP.md, round 8): CR3 at neutral applications, the equation NormNW (cubeSpec lambdaP2) Γ (.app (.var x) N) (B.instantiate N) for x : Π A B, which needs a canonical derivation of the normal form of B[N], i.e. HSubstSort at B (the open lemma). Open lemma unchanged: theorem hsubstPi_lambdaP2 : HSubstPi (cubeSpec lambdaP2); then coc."
     milestone: M29
     depends_on: []
     rank: 2756
     exit_criteria:
       - "ExpansionPostponement (cubeSpec lambdaP2) and ExpansionPostponement (cubeSpec coc), or one of them with the first missing lemma for the other."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M29-EP-ERASURE-P2
+    priority: P1
+    status: DONE_STRONG
+    track: research/open-problems
+    title: "Erasure of λP2 constructors to λ2 skeletons, commuting with substitution and invariant under conversion"
+    terminal_statement: "PureTypeSystem.ErasureP2.er_subst (M : Expr Srt) : ∀ {Δ Δ' : ℕ → Cls} {ρ ρ' : ℕ → SkT} {σ : ℕ → Expr Srt}, (∀ n, cl Δ (σ n) = Δ' n) → (∀ n, IsC (Δ' n) → er Δ ρ (σ n) = ρ' n) → er Δ ρ (M.subst σ) = er Δ' ρ' M; PureTypeSystem.ErasureP2.er_instantiate_obj (B N : Expr Srt) (Δ : ℕ → Cls) (ρ : ℕ → SkT) (t : SkT) (hN : ¬ IsC (cl Δ N)) : er Δ ρ (B.instantiate N) = er (ncons (cl Δ N) Δ) (ncons t ρ) B; PureTypeSystem.ErasureP2.er_instantiate (B U : Expr Srt) (Δ : ℕ → Cls) (ρ : ℕ → SkT) : er Δ ρ (B.instantiate U) = (er (ncons (cl Δ U) Δ) (RouteII.upS ρ) B).subst (RouteII.single (er Δ ρ U)); PureTypeSystem.ErasureP2.er_conv (h : HasType (cubeSpec lambdaP2) Γ M X) (h' : HasType (cubeSpec lambdaP2) Γ M' X') (hc : Converts M M') (ρ : ℕ → SkT) : er (ctxCl Γ) ρ M = er (ctxCl Γ) ρ M'; PureTypeSystem.ErasureP2.er_beta_fails_coc"
+    latest_evidence: "docs/goal/evidence/M29-EP.md"
+    open_boundary: ""
+    milestone: M29
+    depends_on: []
+    rank: 2754
+    exit_criteria:
+      - "The classical erasure of λP2 type-level terms to λ2 skeletons (kinds by their kind skeletons, constructors to λ2 types), invariant under object substitution, commuting with constructor substitution, and invariant under β-conversion of well-typed constructors; with the first failing step for coc."
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"

@@ -100,10 +100,12 @@ inductive Eqv : EqvKind → List STy → Tm → Tm → STy → Prop
   /-- At the base: weak head normalize to the same sort. -/
   | baseSort {Δ : List STy} {M N : Tm} {s : Srt} : WhRed M (sort s) → WhRed N (sort s) →
       Eqv .alg Δ M N STy.base
-  /-- At the base: weak head normalize to two products with equivalent domains and codomains. -/
+  /-- At the base: weak head normalize to two products with equivalent domains (of the same
+  skeleton, a decidable side condition that holds for well-typed convertible domains by
+  `skel_conv`) and equivalent codomains. -/
   | basePi {Δ : List STy} {M N A B A' B' : Tm} : WhRed M (pi A B) → WhRed N (pi A' B') →
-      Eqv .alg Δ A A' STy.base → Eqv .alg (skel Δ A :: Δ) B B' STy.base →
-      Eqv .alg Δ M N STy.base
+      Eqv .alg Δ A A' STy.base → skel Δ A = skel Δ A' →
+      Eqv .alg (skel Δ A :: Δ) B B' STy.base → Eqv .alg Δ M N STy.base
   /-- A variable, with its skeleton. -/
   | var {Δ : List STy} (n : ℕ) : Eqv .path Δ (var n) (var n) (Δ.getD n STy.base)
   /-- An application of paths to algorithmically equivalent arguments. -/
@@ -129,7 +131,7 @@ theorem Eqv.sound {k : EqvKind} {Δ : List STy} {M N : Tm} {τ : STy} (h : Eqv k
         (BetaEtaConv.lamR _ ih)).trans (betaEtaConv_eta _ _)
   | basePath hM hN _ ih => exact (hM.betaEtaConv.trans ih).trans hN.betaEtaConv.symm
   | baseSort hM hN => exact hM.betaEtaConv.trans hN.betaEtaConv.symm
-  | basePi hM hN _ _ ihA ihB =>
+  | basePi hM hN _ _ _ ihA ihB =>
       exact (hM.betaEtaConv.trans ((BetaEtaConv.piL _ ihA).trans (BetaEtaConv.piR _ ihB))).trans
         hN.betaEtaConv.symm
   | var n => exact BetaEtaConv.refl _
@@ -169,13 +171,14 @@ theorem Eqv.rename {k : EqvKind} {Δ : List STy} {M N : Tm} {τ : STy} (h : Eqv 
   | baseSort hM hN =>
       intro ρ Δ' hρ
       exact Eqv.baseSort (by simpa using hM.rename ρ) (by simpa using hN.rename ρ)
-  | @basePi Δ M N A B A' B' hM hN _ _ ihA ihB =>
+  | @basePi Δ M N A B A' B' hM hN _ hsk _ ihA ihB =>
       intro ρ Δ' hρ
       have hs : skel Δ' (LambdaPi.rename ρ A) = skel Δ A := skel_rename hρ A
+      have hs' : skel Δ' (LambdaPi.rename ρ A') = skel Δ A' := skel_rename hρ A'
       have hρ' : RenS (upr ρ) (skel Δ A :: Δ) (skel Δ' (LambdaPi.rename ρ A) :: Δ') := by
         rw [hs]; exact hρ.up _
       exact Eqv.basePi (by simpa using hM.rename ρ) (by simpa using hN.rename ρ) (ihA hρ)
-        (ihB hρ')
+        (by rw [hs, hs', hsk]) (ihB hρ')
   | var n =>
       intro ρ Δ' hρ
       have := Eqv.var (Δ := Δ') (ρ n)
@@ -232,14 +235,14 @@ theorem Eqv.whExpand_left {Δ : List STy} {M M' N : Tm} (hs : WhStep M M')
   cases h with
   | basePath hM hN hp => exact Eqv.basePath (.head hs hM) hN hp
   | baseSort hM hN => exact Eqv.baseSort (.head hs hM) hN
-  | basePi hM hN hA hB => exact Eqv.basePi (.head hs hM) hN hA hB
+  | basePi hM hN hA hsk hB => exact Eqv.basePi (.head hs hM) hN hA hsk hB
 
 theorem Eqv.whExpand_right {Δ : List STy} {M N N' : Tm} (hs : WhStep N N')
     (h : AlgEq Δ M N' STy.base) : AlgEq Δ M N STy.base := by
   cases h with
   | basePath hM hN hp => exact Eqv.basePath hM (.head hs hN) hp
   | baseSort hM hN => exact Eqv.baseSort hM (.head hs hN)
-  | basePi hM hN hA hB => exact Eqv.basePi hM (.head hs hN) hA hB
+  | basePi hM hN hA hsk hB => exact Eqv.basePi hM (.head hs hN) hA hsk hB
 
 /-- **Closure of the logical relation under weak head expansion** (on the left). -/
 theorem LR.whExpand_left : ∀ {τ : STy} {Δ : List STy} {M M' N : Tm}, WhStep M M' →

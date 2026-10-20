@@ -409,6 +409,13 @@ import Start.GrpdPiNatural
 import Start.LambdaPiLFEquiv
 import Start.PTSExpansionRouteII
 import Start.SizeChange
+import Start.PTSErasureP2
+import Start.PTSRouteIIErased
+import Start.MinskyMacros
+import Start.LambdaPiLFEquivPER
+import Start.GrpdSigma
+import Start.TypeClassSuperNorm
+import Start.SizeChangeCallGraph
 
 /-! ## Interfaces of the untyped calculus
 
@@ -4978,3 +4985,87 @@ the infinite Ramsey theorem for pairs, the closure criterion (both directions), 
 #check @SizeChange.sct_iff_criterion
 #check @SizeChange.mem_closureFS_iff
 #check @SizeChange.SCT.decidable
+
+/-! ## Erasure of λP2 to λ2 and route (ii) by the erasure (M29-EP-IMPREDICATIVE, round 8)
+
+`Start/PTSErasureP2.lean`: the erasure of λP2 constructors to λ2 skeletons, its commutation with
+renaming and substitution (object and constructor substitution), its invariance under
+β-conversion of well-typed λP2 terms, and the typed coc redex where it fails.
+`Start/PTSRouteIIErased.lean`: the route (ii) predicate indexed by the erased skeleton, with the
+object- and type-application cases in erased form.
+-/
+
+#check @PureTypeSystem.ErasureP2.er
+#check @PureTypeSystem.ErasureP2.er_junk
+#check @PureTypeSystem.ErasureP2.er_subst
+#check @PureTypeSystem.ErasureP2.er_instantiate_obj
+#check @PureTypeSystem.ErasureP2.er_instantiate
+#check @PureTypeSystem.ErasureP2.er_beta
+#check @PureTypeSystem.ErasureP2.er_conv
+#check @PureTypeSystem.ErasureP2.er_beta_fails_coc
+#check @PureTypeSystem.RouteII.GoodE
+#check @PureTypeSystem.RouteII.GoodE.reduceType
+#check @PureTypeSystem.RouteII.GoodE.app
+#check @PureTypeSystem.RouteII.GoodE.tyApp
+#check @PureTypeSystem.RouteII.NormNW.expand
+
+/-! ## Register-machine macros (M25-KCM-UNIVERSAL, round 8)
+
+`Start/MinskyMacros.lean`: clearing, transfer, copy and multiplication macros for `k`-counter
+machines, each with its correctness lemma in place.
+-/
+
+#check @Minsky.Macro.clear_run
+#check @Minsky.Macro.transfer_run
+#check @Minsky.Macro.transfer2_run
+#check @Minsky.Macro.copy_run
+#check @Minsky.Macro.mul_run
+
+/-! ## The LF equivalence algorithm is a PER (M23-LF-EQUIV-COMPLETE, round 8)
+
+`Start/LambdaPiLFEquivPER.lean`: determinacy of weak head reduction, uniqueness of weak head
+normal forms, symmetry and transitivity of the algorithm and of the logical relation.
+-/
+
+#check @LambdaPi.WhStep.det
+#check @LambdaPi.WhRed.whnf_unique
+#check @LambdaPi.Eqv.symm
+#check @LambdaPi.Eqv.trans
+#check @LambdaPi.Eqv.path_ty_unique
+#check @LambdaPi.LR.symm
+#check @LambdaPi.LR.trans
+
+/-! ## Towards Σ in the groupoid model (M23-GROUPOID-SIGMA, round 8)
+
+`Start/GrpdSigma.lean`: the generic Grothendieck functoriality with its functor laws, the fibre
+transformation along a base morphism, and the object and morphism parts of `Σ A B`.
+-/
+
+#check @GrpdModel.sigMap
+#check @GrpdModel.sigTheta
+#check @GrpdModel.sigObj
+#check @GrpdModel.sigMapG
+
+/-! ## Normal dictionary derivations (M25-TYPECLASS-SUPER-INST, round 8)
+
+`Start/TypeClassSuperNorm.lean`: normal dictionary derivations, the termination condition
+`NormalSuperFields`, and the contraction of a superclass projection of an instance dictionary.
+-/
+
+#check @TypeClass.DEntN
+#check @TypeClass.DEntN.toDEnt
+#check @TypeClass.DEntN.subst_closed
+#check @TypeClass.NormalSuperFields
+#check @TypeClass.NormalSuperFields.superField
+#check @TypeClass.DEntN.supInst_contract
+
+/-! ## Size-change termination for call graphs (M23-SIZE-CHANGE, round 8)
+
+`Start/SizeChangeCallGraph.lean`: call graphs with a parameter set per function, multipaths along
+call sequences, and the per-function closure criterion.
+-/
+
+#check @SizeChange.thread_of_idempotent_blocks
+#check @SizeChange.CallGraph.SCT
+#check @SizeChange.CallGraph.Criterion
+#check @SizeChange.CallGraph.sct_of_criterion

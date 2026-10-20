@@ -61,3 +61,19 @@ The formalisation uses one parameter set for all graphs, so every sequence of gr
 multipath.  The program setting of the paper (a parameter set per function, graphs labelled by
 calls, multipaths restricted to paths of the call graph) is not formalised.  The row's exit criteria are
 stated for the single-set form.
+
+## Round 8 — call graphs with a parameter set per function (`Start/SizeChangeCallGraph.lean`)
+
+* `SizeChange.CallGraph m n` — functions `Fin m` with arities `≤ n`, calls `(f, g, G)`;
+  `CallGraph.WF` — arcs only from parameters of the caller to parameters of the callee;
+* `CallGraph.SCT` — every infinite call sequence `fn 0 → fn 1 → …` with graphs `g k` has an
+  eventual infinite thread with infinitely many strict descents;
+* `CallGraph.InCl 𝒞 f g G` — the composition closure along composable call sequences;
+  `CallGraph.Criterion` — every idempotent graph of the closure from a function to itself has a
+  strict self-arc;
+* `SizeChange.thread_of_idempotent_blocks` — the round-7 thread construction, factored out;
+* `CallGraph.sct_of_criterion` — **the per-function closure criterion implies SCT**, by
+  `ramsey_pairs` colouring `i < j` by `(fn i, compR g i (j - i - 1))`.
+
+The converse direction and decidability for call graphs were not formalised this round (the
+single-parameter-set versions are round 7's `criterion_of_sct` and `SCT.decidable`).

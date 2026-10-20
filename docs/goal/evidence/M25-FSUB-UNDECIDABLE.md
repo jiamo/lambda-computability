@@ -154,3 +154,21 @@ M25-KCM-UNIVERSAL.
 Status: M25-FSUB-UNDECIDABLE is DONE_WEAK (simulation, RowingFirstLemma and `CM.Halts ≤ Sub`
 proved; undecidability of `Sub` waits for the undecidability of `CM.Halts`, and the cslib link
 is open).  M25-COUNTER-MACHINE-UNDECIDABLE is DONE_WEAK (B1 proved; B2 open).
+
+## Round 8 — register-machine macros (`Start/MinskyMacros.lean`)
+
+Path chosen: compilation of `Nat.Partrec.Code` into `Minsky.KM` by Shepherdson–Sturgis macros.
+Proved, each as a run lemma *in place* (the macro's instructions at given labels of any program):
+
+* `Macro.clear_run` (`r i := 0`), `Macro.transfer_run` (`r j += r i; r i := 0`),
+  `Macro.transfer2_run` (`r j += r i; r t += r i; r i := 0`), `Macro.copy_run`
+  (`r j += r i` with `r i` restored through a zero scratch register), `Macro.mul_run`
+  (`r k += r i * r j`, `r j` preserved, `r i := 0`).
+
+First macro not built: **the pairing macro** `r k := Nat.pair (r i) (r j)`, which needs a
+comparison loop (`r i < r j`) besides `mul_run`; then `Nat.unpair` (an integer square root loop),
+then the compilation of `zero, succ, left, right, pair, comp, prec, rfind'` with a stack of
+frames stored in one register through `Nat.pair`, its simulation lemma, and the computability
+obligations (`Primcodable KM`, computability of the compilation, of `Minsky.compile` and of
+`Minsky.godel`).  `FsubGhelli.cm_halts_undecidable` and the undecidability of `Sub` are not
+derived this round.

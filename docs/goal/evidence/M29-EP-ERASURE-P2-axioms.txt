@@ -1,0 +1,7 @@
+# round 8: #print axioms (lake env lean on a scratch file importing the round-8 modules, with #print axioms appended)
+'PureTypeSystem.ErasureP2.er_subst' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.ErasureP2.er_instantiate_obj' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.ErasureP2.er_instantiate' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.ErasureP2.er_beta' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.ErasureP2.er_conv' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.ErasureP2.er_beta_fails_coc' depends on axioms: [propext]

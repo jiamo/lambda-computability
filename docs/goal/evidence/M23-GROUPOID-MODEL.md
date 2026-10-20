@@ -226,3 +226,23 @@ was defined.  First missing construction: the functor `SigF A B : Γ ⥤ Grpd` s
 Grothendieck construction of `fibI A γ ⋙ B`, with its `map_comp` (functoriality of the
 Grothendieck construction in the base), then the pairing isomorphism of groupoids over `Γ`.
 Gap row M23-GROUPOID-SIGMA; M23-GROUPOID-PI-NATURAL is DONE_WEAK.
+
+## Round 8 — towards Σ (`Start/GrpdSigma.lean`)
+
+* `GrpdModel.sigMap K F G θ B : GObj (F ⋙ B) ⥤ GObj (G ⋙ B)` — the generic Grothendieck
+  functoriality (change of base along `K`, change of fibre functor along `θ : F ⟶ K ⋙ G`; the
+  composite of Mathlib's `Grothendieck.pre` and `Grothendieck.map` for this library's `GObj`),
+  **with its functor laws** (`map_id`, `map_comp`, through `sigMap_key`, the naturality of `θ`
+  pushed through `B`);
+* `GrpdModel.sigTheta A g : fibI A γ ⟶ A.map g ⋙ fibI A γ'` — the fibre transformation;
+* `GrpdModel.sigObj A B γ = ∫ (fibI A γ ⋙ B)` and `GrpdModel.sigMapG A B g` — the object and
+  morphism parts of `SigF A B`, with `sigMapG_disp`.
+
+Mathlib's `Grothendieck.map`/`pre` were checked; they apply to functors into `Cat` and to
+Mathlib's `Grothendieck`, not to this library's `GObj`, so the composite was rebuilt for `GObj`.
+First missing lemma: **`SigF.map_id`/`map_comp`**, i.e. `sigMapG A B (𝟙 γ) = 𝟭` and
+`sigMapG A B (g ≫ h) = sigMapG A B g ⋙ sigMapG A B h` — equalities of functors between
+Grothendieck constructions whose components are `(sigTheta A (𝟙 γ)).app a = eqToHom _` and
+`sigTheta A (g ≫ h) = sigTheta A g ≫ whiskerLeft (A.map g) (sigTheta A h)` up to the
+`eqToHom` of `A.map_comp`; then the pairing isomorphism (`pair_disp`) and
+`GrpdModel.grpdSigmaStruct`.

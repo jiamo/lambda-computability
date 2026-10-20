@@ -1,0 +1,8 @@
+# round 8: #print axioms (lake env lean on a scratch file importing the round-8 modules, with #print axioms appended)
+'LambdaPi.WhStep.det' does not depend on any axioms
+'LambdaPi.WhRed.whnf_unique' does not depend on any axioms
+'LambdaPi.Eqv.symm' depends on axioms: [propext]
+'LambdaPi.Eqv.trans' depends on axioms: [propext]
+'LambdaPi.Eqv.path_ty_unique' depends on axioms: [propext]
+'LambdaPi.LR.symm' depends on axioms: [propext]
+'LambdaPi.LR.trans' depends on axioms: [propext]

@@ -1110,3 +1110,88 @@ Steps 1–4 were not attempted in Lean this round; on paper no obstruction was i
 which is not a proof.  The precise negative result of this
 round is the equivalence `hsubstSort_iff_sortFundamental` (route (ii) at its product premise is the
 open lemma), and the positive result is that the step at `(□,∗)` named in round 2 holds.
+
+## Round 8 — route (ii): the erasure, the predicate indexed by it, and the first failing step
+
+### A1. The erasure of λP2 constructors to λ2 skeletons (`Start/PTSErasureP2.lean`), proved
+
+The first missing lemma of round 7, step 1, is closed.  The classification is `CoC.cl` of
+`Start/CoCModel.lean` (kinds `.kind k`, constructors `.constr k`, objects `.obj`, with
+`CoC.classify`, `CoC.cl_beta`, `CoC.kind_beta`); kinds erase to their kind skeletons (`.kind k`).
+Constructors erase by
+
+* `ErasureP2.er Δ ρ M : RouteII.Sk`, where `Δ : ℕ → Cls` classifies the free variables and
+  `ρ : ℕ → Sk` gives the skeleton of each free constructor variable: a constructor variable to
+  `ρ n`; `Π x:A. B` with `A` not a kind to the arrow `er A ⇒ er B`; `Π α:K. B` with `K` a kind
+  (rule `(□,∗)`) to `∀. er B` (with `ρ` lifted by `upS`); object abstraction and object
+  application are forgotten; everything not classified as a constructor erases to the closed
+  junk skeleton `∀X. X` (`er_junk`).
+
+Proved, with no typing hypothesis:
+
+* `er_rename`, `er_skRename`, `er_skSubst` — commutation with renaming of expressions and with
+  renaming/substitution of skeletons;
+* `er_subst` — commutation with any substitution respecting the classification;
+* `er_instantiate_obj` — **invariance under object substitution**:
+  `er Δ ρ (B[N]) = er (ncons (cl Δ N) Δ) (ncons t ρ) B` for every `t` when `N` is not a
+  constructor (`er_obj_irrel`: the skeleton of an object variable is irrelevant);
+* `er_instantiate` — **commutation with constructor substitution**:
+  `er Δ ρ (B[U]) = (er (ncons (cl Δ U) Δ) (upS ρ) B)[er Δ ρ U]`.
+
+Proved for well-typed λP2 terms:
+
+* `er_beta`, `er_reduces`, `er_conv` — **invariance under β-reduction and β-conversion**.  The
+  only typed case is the head redex: `lam_dom_not_kind` shows that in λP2 (no rule `(□,□)`) a
+  typed abstraction classified as a constructor has a domain which is not a kind, so the
+  argument of a constructor-level redex is an object and `er_instantiate_obj` applies.
+
+coc: **the erasure does not extend as it stands** — `er_beta_fails_coc`: in `[α : ∗]`, the
+typed coc (already λω) redex `(λβ:∗. β) α` erases to the junk skeleton while its contractum `α`
+erases to the type variable.  The failing step is the head case of `er_beta` (the equation
+`er (app (lam K b) U) = er (b[U])` with `K` a kind).  λ2 skeletons have no type-level
+abstraction; the target has to be Fω types (with type-level λ and application) taken modulo β,
+and the predicate defined by recursion on their β-normal forms (normalization of the
+simply-typed type level), as in Geuvers' proof for coc.
+
+### A2. Route (ii) indexed by the erasure (`Start/PTSRouteIIErased.lean`), proved
+
+* `RouteII.GoodE ξ ρ Γ M T := Good (cubeSpec lambdaP2) (er (ctxCl Γ) ρ T) ξ Γ M T`;
+* `GoodE.reduceType` (invariance under reduction of a well-typed type), `GoodE.escape`,
+  `GoodE.typed`;
+* `GoodE.app` — the object-application case in erased form (`er_instantiate_obj`);
+* `GoodE.tyApp` — **the `(□,∗)` case in erased form**: the typed Kripke candidate chosen for
+  the bound variable is `⟦er U⟧ξ` and the skeleton of `B[U]` is `(er B)[er U]`
+  (`er_instantiate` with `Good_inst`);
+* `NormNW.expand` — CR3 in its head-expansion form for the base predicate.
+
+### A3. The fundamental lemma: the first failing step
+
+Not proved.  The exact first failing case is **CR3 at neutral applications** (the "reflect"
+half needed for variables at arrow skeletons and for the base candidates): for a variable
+`x : Π A B` of `Γ` and a normalizable argument `N : A`, the base predicate requires
+
+  `NormNW P Γ (app x N) (B[N])`,
+
+i.e. a canonical (`HasTypeNW`) judgement `Γ' ⊢ x N' : T'` with `T'` the **normal form of the type
+`B[N]`, carrying a canonical derivation of `T' : s`**.  Strong normalization
+(`cube_stronglyNormalizing`) gives the normal form of the term `B[N]` but not a canonical
+derivation of it; that derivation is exactly `HSubstSort` for the sort-typed judgement
+`B : s` and the substitution `N/x` — the open lemma itself (equivalently `SortFundamental`,
+round 7).  So the fundamental lemma of route (ii) at objects needs the open lemma at their types,
+and the round-7 note "CR3 uses SN to normalize the instantiated codomain" is corrected: SN
+normalizes the codomain as a term, not as a canonical judgement.  The equation that does not
+close is
+
+  `NormNW (cubeSpec lambdaP2) Γ (.app (.var x) N) (B.instantiate N)`
+
+for `HasTypeNW Γ (.var x) (.pi A B)` and `NormNW Γ N A`, and its missing ingredient is
+`HSubstSort (cubeSpec lambdaP2)` at `B`.  `hsubstPi_lambdaP2` and
+`lambdaP2_expansionPostponement` are therefore not derived; the open lemma is unchanged:
+`theorem hsubstPi_lambdaP2 : HSubstPi (cubeSpec lambdaP2)`.
+
+What would break the circularity: a predicate on *types* defined first (by recursion on the
+kind skeleton, `CoC.cl`'s `.kind k`) whose base case is `HSubstSort`-style canonicity of types
+under object substitution, proved by induction on the erasure of the type (`er`), before the
+object-level predicate; the object arguments occurring in λP2 types then need the object-level
+predicate at strictly smaller erased types.  Whether this mutual induction is well founded is the
+remaining question; it was not settled this round.

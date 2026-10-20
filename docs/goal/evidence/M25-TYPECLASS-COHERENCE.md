@@ -163,3 +163,23 @@ dictionaries — a derivation that is not a sub-derivation.  First missing lemma
 projections of instance dictionaries), which needs a termination order on instance contexts
 (e.g. Paterson's conditions, which `EnvGood` does not impose).  So M25-TYPECLASS-COHERENCE-SUPER is
 `DONE_WEAK` and M25-TYPECLASS-COHERENCE stays `DONE_WEAK`.
+
+## Round 8 — normal dictionary derivations (`Start/TypeClassSuperNorm.lean`)
+
+* `TypeClass.DEntN` — normal derivations (no superclass projection of an instance
+  dictionary), `DEntN.toDEnt`, `DEntN.weaken_nil`, `DEntN.subst_closed`;
+* `TypeClass.NormalSuperFields E` — **the termination condition, as a hypothesis on the
+  environment**: every instance of a class with a superclass stores its superclass field as a
+  closed normal derivation; `NormalSuperFields.superField` (it implies `SuperField`);
+* `TypeClass.DEntN.supInst_contract` — under `NormalSuperFields`, a superclass projection of an
+  instance dictionary reduces to a normal derivation of the superclass constraint, and creates
+  no new redex.
+
+`DEnt.normalize_super` itself is not proved.  Under `NormalSuperFields` the first missing lemma
+is the congruence of β-reduction for parallel substitution,
+`Lambda.reduces (Lambda.substEnv u t) (Lambda.substEnv u' t)` when each free `u k` reduces to
+`u' k` (the instance case, after normalizing the context dictionaries).  Paterson's conditions
+alone were not used: without closed superclass fields, substituting instance dictionaries for
+hypotheses under a superclass projection creates new redexes, and the order must combine
+Paterson's measure on instance contexts with the size of instance dictionaries.  Coherence for
+environments with instances of subclasses is therefore not extended this round.
