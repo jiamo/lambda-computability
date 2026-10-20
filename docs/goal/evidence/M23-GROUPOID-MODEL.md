@@ -81,3 +81,35 @@ action and the strict `λ`/`app`/β/η equations of `PiStruct`; the same transpo
 
 See `M23-GROUPOID-MODEL-axioms.txt` and `M23-UIP-INDEPENDENT-axioms.txt`: all four results use
 only `[propext, Classical.choice, Quot.sound]`.
+
+## Round 3 — Π: the Π-groupoid and its functoriality (row M23-GROUPOID-PI, still open)
+
+`Start/GrpdSect.lean`. For a family `F : D ⥤ Grpd`, `Sect F` is the groupoid of its sections. An
+object is a choice `s a ∈ F a` with morphism maps compatible with identities and composition. A
+morphism is a natural family. The instance is `Sect.groupoid`, with `toFunctor`/`ofOver`
+relating sections to functors over `D`. Transport along a natural transformation
+`θ : K ⋙ I ⟶ I'` is `GrpdModel.trans B K I I' θ : Sect (I ⋙ B) ⥤ Sect (I' ⋙ B)`, with the strict
+laws `trans_id`, `trans_comp` and `trans_congr`.
+
+`Start/GrpdPi.lean`. `fibI A γ : A γ ⥤ ∫ A` (inclusion of a fibre);
+`piTheta A g : A(g⁻¹) ⋙ fibI A γ ⟶ fibI A γ'`; and
+
+```lean
+def PiF : Γ ⥤ Grpd.{u, u}   -- obj γ := Grpd.of (Sect (fibI A γ ⋙ B)), map g := piMap A B g
+```
+
+with `map_id` and `map_comp` proved strictly.
+
+Still open: `def GrpdModel.grpdPiStruct : Cwa.PiStruct grpdCwa`. First missing lemma:
+
+```lean
+theorem PiF_sub (σ : Δ ⥤ Γ) (A : Γ ⥤ Grpd) (B : GObj A ⥤ Grpd) :
+    σ ⋙ PiF A B = PiF (σ ⋙ A) (extend σ A ⋙ B)
+```
+
+It does not hold by `rfl`. The functor `fibI (σ ⋙ A) δ ⋙ extend σ A` has base morphism
+`σ.map (𝟙 δ)` rather than `𝟙 (σ.obj δ)`, so the fibres agree only after a transport along
+`Functor.map_id σ` (through `trans_congr`). This has not been attempted in Lean, so we do not
+know whether it fails. After it come `lam`/`app`: a bijection between sections of `B` over `∫ A`
+and sections of `PiF A B` over `Γ`, given by an evaluation functor, together with `app_lam` and
+`lam_app`. Σ (`grpdSigmaStruct`) was not started.

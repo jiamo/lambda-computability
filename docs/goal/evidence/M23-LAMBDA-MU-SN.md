@@ -59,3 +59,15 @@ the structural step is only joinable under `LambdaMu.cps`.
 ## Axioms
 
 `M23-LAMBDA-MU-SN-axioms.txt` (for the lemmas above): `[propext]`.
+
+## Round 3 — the substitution calculus (`Start/LambdaMuSubstLemmas.lean`)
+
+Proved: `up_id`, `ren_id`, `up_comp`, `ren_ren`, `nameOf_ren`, `upS_up`, `subst_ren`, `ren_upS`,
+`ren_subst`, `upS_comp`, `subst_subst`, `subst_var`, `subst_single`, and `sstr_ren` (structural
+substitution commutes with an injective renaming).
+
+Still open: `LambdaMu.sn_of_typ`. The first missing lemma is the commutation `sstr ∘ subst` for a
+name-respecting `σ` (one that sends names to variables and is injective on names). After it
+come `Step.ren`, `Step.subst` (`Step t t' → Step (subst σ t) (subst σ t')` for name-respecting
+`σ`) and the structural analogue `Step t t' → TransGen Step (sstr a v t) (sstr a v t')`. Then
+the β- and μ-expansion lemmas, the fundamental lemma, and `sn_of_typ`.

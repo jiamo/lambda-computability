@@ -1,0 +1,12 @@
+# #print axioms for M25-TYPECLASS-DICT (lake env lean on a file importing Start)
+'TypeClass.dictTy_msubst' depends on axioms: [propext, Quot.sound]
+'TypeClass.typing_recMk' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TypeClass.typing_recProj' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TypeClass.ent_dict' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TypeClass.elab_typing' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TypeClass.elab_sn' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TypeClass.elab_program' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TypeClass.exampleEnv_good' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TypeClass.ent_eq_arrow' depends on axioms: [propext, Quot.sound]
+'TypeClass.ent_eq_of_ord' depends on axioms: [propext]
+'TypeClass.example_elab' depends on axioms: [propext, Classical.choice, Quot.sound]

@@ -2,3 +2,13 @@
 'GrpdModel.grpdCwa' depends on axioms: [propext, Classical.choice, Quot.sound]
 'GrpdModel.isPullbackG' depends on axioms: [propext, Classical.choice, Quot.sound]
 'GrpdModel.grpdIdStruct' depends on axioms: [propext, Classical.choice, Quot.sound]
+
+# round 3: sections groupoid and Pi functor (Start/GrpdSect.lean, Start/GrpdPi.lean)
+'GrpdModel.Sect.groupoid' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GrpdModel.trans' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GrpdModel.trans_id' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GrpdModel.trans_comp' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GrpdModel.trans_congr' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GrpdModel.fibI' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GrpdModel.piTheta' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GrpdModel.PiF' depends on axioms: [propext, Classical.choice, Quot.sound]

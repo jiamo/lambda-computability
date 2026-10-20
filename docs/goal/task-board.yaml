@@ -5574,7 +5574,7 @@ tasks:
     track: theory/types
     title: "Pi-types in the groupoid model"
     latest_evidence: "docs/goal/evidence/M23-GROUPOID-MODEL.md"
-    open_boundary: "First missing construction: def GrpdModel.grpdPiStruct : Cwa.PiStruct grpdCwa, natural if possible (NaturalPiStruct). Π A B at γ is the groupoid of sections of B over the fibre A γ (functors into the Grothendieck construction of B restricted to A γ, over the inclusion), with the action of γ ⟶ γ' by conjugation; the strict functoriality of this action and the strict λ/app/β/η equations are what remains. Tools: transportAlong, functor_ext, secOf, reindex (Start/GrpdGrothendieck.lean, Start/GrpdIdTypes.lean)."
+    open_boundary: "Partial (round 3): Start/GrpdSect.lean builds the groupoid Sect F of sections of a family F : D ⥤ Grpd (objects: object maps s a ∈ F a with compatible morphism maps; morphisms: natural families), with transport GrpdModel.trans along a natural transformation and its strict laws trans_id, trans_comp, trans_congr; Start/GrpdPi.lean builds the fibre inclusion fibI A γ : A γ ⥤ ∫ A, the comparison piTheta A g, and the Π-groupoid with its strict functoriality, GrpdModel.PiF A B : Γ ⥤ Grpd (PiF.obj γ = Sect (fibI A γ ⋙ B), map = transport). Open: def GrpdModel.grpdPiStruct : Cwa.PiStruct grpdCwa. First missing lemma: theorem GrpdModel.PiF_sub (σ : Δ ⥤ Γ) (A : Γ ⥤ Grpd) (B : ∫ A ⥤ Grpd) : σ ⋙ PiF A B = PiF (σ ⋙ A) (extend σ A ⋙ B) (the Pi_sub field). It is not definitional: fibI (σ ⋙ A) δ ⋙ extend σ A has base morphism σ.map (𝟙 δ), not 𝟙 (σ.obj δ), so it needs a transport along Functor.map_id σ through trans_congr. Then lam/app: the bijection between sections of B over ∫ A and sections of PiF A B over Γ (an evaluation functor), and app_lam, lam_app. Σ (grpdSigmaStruct) not started."
     milestone: M23
     depends_on: []
     rank: 2045
@@ -5656,7 +5656,7 @@ tasks:
     track: theory/lambda
     title: "Strict CPS simulation for lambda-mu, and strong normalization of typed lambda-mu"
     latest_evidence: "docs/goal/evidence/M23-LAMBDA-MU-SN.md"
-    open_boundary: "Partial (Start/LambdaMuSN.lean): SN (Acc of reverse Step) and its closure properties, VarHead spines and sn_app_varHead, the candidates Red with red_cr (CR1, CR2, reducibility of SN variable-headed spines) and the stack form red_iff_stk. Open: theorem LambdaMu.sn_of_typ {Γ : List Entry} {t : Tm} {A : Ty} (h : Typ Γ t A) : LambdaMu.SN t. First missing lemma: stability of reduction under name-respecting substitution, Step t t' → Step (subst σ t) (subst σ t') when σ sends every name of t to a variable, with its structural analogue Step t t' → TransGen Step (sstr a v t) (sstr a v t'); they need the commutation lemmas subst∘subst, sstr∘subst, sstr∘sstr, sstr∘ren, and are the base of the β- and μ-expansion lemmas (docs/goal/evidence/M23-LAMBDA-MU-SN.md)."
+    open_boundary: "Partial: Start/LambdaMuSN.lean (SN, closure properties, VarHead spines, sn_app_varHead, candidates Red with red_cr and red_iff_stk) and, round 3, Start/LambdaMuSubstLemmas.lean, the substitution calculus: up_id, ren_id, up_comp, ren_ren, nameOf_ren, upS_up, subst_ren, ren_upS, ren_subst, upS_comp, subst_subst, subst_var, subst_single, and sstr_ren (structural substitution commutes with injective renaming). Open: theorem LambdaMu.sn_of_typ {Γ : List Entry} {t : Tm} {A : Ty} (h : Typ Γ t A) : LambdaMu.SN t. First missing lemma: sstr∘subst commutation for a name-respecting σ (σ sends names to variables and is injective on names), followed by stability of Step under renaming and name-respecting substitution (Step t t' → Step (subst σ t) (subst σ t')) and its structural analogue (Step t t' → TransGen Step (sstr a v t) (sstr a v t')); these feed the β- and μ-expansion lemmas and the fundamental lemma (docs/goal/evidence/M23-LAMBDA-MU-SN.md)."
     milestone: M23
     depends_on: []
     rank: 2071
@@ -6065,7 +6065,7 @@ tasks:
     track: theory/complexity
     title: "A time cost model for call-by-need"
     latest_evidence: "docs/goal/evidence/M25-CBNEED.md"
-    open_boundary: "First missing result, in the form of M11-KRIVINE-INVARIANCE: the number of transitions of a lazy run LRun n b fs (LState.init t) s is bounded by a polynomial in b and the size of t (first lemma), the heap and stack stay polynomially bounded, and one transition of Start/LazyMachine.lean is realized by a tape program (Complexity.Space.Realizes, Start/SpaceCompile.lean) in polynomial time."
+    open_boundary: "First missing result, in the form of M11-KRIVINE-INVARIANCE: the number of transitions of a lazy run LRun n b fs (LState.init t) s is bounded by a polynomial in b and the size of t (first lemma), the heap and stack stay polynomially bounded, and one transition of Start/LazyMachine.lean is realized by a tape program (Complexity.Space.Realizes, Start/SpaceCompile.lean) in polynomial time. Round 3: not attempted (time spent on M25-TYPECLASS-DICT); boundary unchanged."
     milestone: M25
     depends_on:
       - M25-CBNEED-MACHINE
@@ -6117,6 +6117,44 @@ tasks:
       - "Value types and computation types, with thunk and force, and the typing judgement."
       - "The call-by-value translation and the call-by-name translation, each preserving typing."
       - "Each translation preserves reduction, so the two evaluation orders are two fragments of one calculus."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M25-TYPECLASS-DICT
+    priority: P2
+    status: DONE_STRONG
+    track: theory/types
+    title: "Type classes by dictionary passing into System F"
+    terminal_statement: "TypeClass.ent_dict (hE : EnvGood E) (h : Ent E P C) : ∀ Δ, ∃ d, Typing (Δ ++ P.map (dictTyC E)) d (dictTyC E C) (E2); TypeClass.elab_typing (hE : EnvGood E) (h : STyping E P Γ e τ) : ∃ t, Typing (tctx E P Γ) t (mtyF τ) (E1); TypeClass.elab_sn : ∃ t, Typing (tctx E P Γ) t (mtyF τ) ∧ Lambda.SN t (E3); TypeClass.elab_program : a closed program elaborates to a strongly normalizing term of its qualified type HM.allN K (C₁τ₁ → ⋯ → Cₙτₙ → ⟦τ⟧); TypeClass.example_elab (class Eq, class Eq a => Ord a, instance Eq b => Eq (a → b))"
+    latest_evidence: "docs/goal/evidence/M25-TYPECLASS-DICT.md"
+    open_boundary: ""
+    milestone: M25
+    depends_on: []
+    rank: 2382
+    exit_criteria:
+      - "A source calculus with single-parameter classes (method signatures, at most one superclass), instances with contexts, qualified types, and an entailment judgement built from instances and superclasses."
+      - "E1: elaboration preserves typing into SystemF.Typing; E2: every derivable constraint has a dictionary term of its dictionary type; E3: elaborated programs are strongly normalizing."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M25-TYPECLASS-COHERENCE
+    priority: P2
+    status: TODO_READY
+    track: theory/types
+    title: "Coherence of dictionary-passing elaboration"
+    latest_evidence: "docs/goal/evidence/M25-TYPECLASS-DICT.md"
+    open_boundary: "First missing result: for the fragment without overlapping instances, two elaborations of the same source typing judgement are β-convertible. It needs elaboration as a relation (or a function on derivations) rather than the existential of TypeClass.elab_typing, a uniqueness lemma for entailment derivations of a ground constraint up to the superclass paths (no overlap: at most one instance head unifies), and the β-equality recProj i (recMk ds) ≡ ds[i] to identify a superclass projection of an instance dictionary with the dictionary built directly."
+    milestone: M25
+    depends_on: []
+    rank: 2384
+    exit_criteria:
+      - "Without overlapping instances, any two elaborations of one source typing judgement are equal up to β (or βη) conversion."
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
@@ -7707,7 +7745,7 @@ tasks:
     track: research/open-problems
     title: "Expansion postponement for the impredicative corners λP2 and the Calculus of Constructions"
     latest_evidence: "docs/goal/evidence/M29-EP.md"
-    open_boundary: "Reduced to one lemma (Start/PTSExpansionLambdaP2.lean): lambdaP2_expansionPostponement_of_hsubst : HSubstNW (cubeSpec lambdaP2) → ProductNormalizationR (cubeSpec lambdaP2) ∧ ExpansionPostponement (cubeSpec lambdaP2), via HasTypeR.normalizeNW_of_hsubst (every corner of the cube); HSubstNW holds for λPω̲ (hsubstNW_lambdaPOmegaBar). First missing lemma: HSubstNW (cubeSpec lambdaP2), i.e. theorem HasTypeNW.hsubst_lambdaP2 {Γ : List (Expr Srt)} {N A M B : Expr Srt} (hN : HasTypeNW (cubeSpec lambdaP2) Γ N A) (hM : HasTypeNW (cubeSpec lambdaP2) (A :: Γ) M B) : ∃ M' B', Reduces (M.instantiate N) M' ∧ Reduces (B.instantiate N) B' ∧ HasTypeNW (cubeSpec lambdaP2) Γ M' B'. Its termination is SN of λP2; by route (ii) it needs a Kripke-style typed candidate interpretation of derivations whose first missing lemma is the commutation of the interpretation with type substitution at rule (□,∗) (M29-EP.md, λP2 round 2). Then coc_productNormalizationR."
+    open_boundary: "Reduced to one lemma (Start/PTSExpansionLambdaP2.lean): lambdaP2_expansionPostponement_of_hsubst : HSubstNW (cubeSpec lambdaP2) → ProductNormalizationR (cubeSpec lambdaP2) ∧ ExpansionPostponement (cubeSpec lambdaP2), via HasTypeR.normalizeNW_of_hsubst (every corner of the cube); HSubstNW holds for λPω̲ (hsubstNW_lambdaPOmegaBar). First missing lemma: HSubstNW (cubeSpec lambdaP2), i.e. theorem HasTypeNW.hsubst_lambdaP2 {Γ : List (Expr Srt)} {N A M B : Expr Srt} (hN : HasTypeNW (cubeSpec lambdaP2) Γ N A) (hM : HasTypeNW (cubeSpec lambdaP2) (A :: Γ) M B) : ∃ M' B', Reduces (M.instantiate N) M' ∧ Reduces (B.instantiate N) B' ∧ HasTypeNW (cubeSpec lambdaP2) Γ M' B'. Its termination is SN of λP2; by route (ii) it needs a Kripke-style typed candidate interpretation of derivations whose first missing lemma is the commutation of the interpretation with type substitution at rule (□,∗) (M29-EP.md, λP2 round 2). Then coc_productNormalizationR. Round 3: not attempted (time spent on M25-TYPECLASS-DICT); boundary unchanged."
     milestone: M29
     depends_on: []
     rank: 2756

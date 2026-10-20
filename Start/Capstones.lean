@@ -378,6 +378,9 @@ import Start.LazyCost
 import Start.CBPV
 import Start.LambdaMuSN
 import Start.PTSExpansionLambdaP2
+import Start.LambdaMuSubstLemmas
+import Start.GrpdPi
+import Start.TypeClassExample
 
 /-! ## Interfaces of the untyped calculus
 
@@ -4566,3 +4569,62 @@ proved.
 #check @PureTypeSystem.expansionPostponement_of_hsubst
 #check @PureTypeSystem.lambdaP2_expansionPostponement_of_hsubst
 #check @PureTypeSystem.hsubstNW_lambdaPOmegaBar
+
+/-! ## Π in the groupoid model: the Π-groupoid and its functoriality (M23-GROUPOID-PI)
+
+`Start/GrpdSect.lean`: the groupoid `Sect F` of sections of a functor `F : X ⥤ Grpd`, and
+transport of sections `trans B K i j θ` along a natural transformation, strictly functorial
+(`trans_id`, `trans_comp`, `trans_congr`).  `Start/GrpdPi.lean`: the fibre inclusion `fibI`, the
+comparison `piTheta` of two fibres along a morphism of the base, and the dependent product
+`PiF A B : Γ ⥤ Grpd`, whose `map_id` and `map_comp` hold strictly.  `Cwa.PiStruct grpdCwa` is not
+proved: the missing equation is the Beck–Chevalley law `σ ⋙ PiF A B = PiF (σ ⋙ A) (extend σ A ⋙ B)`.
+-/
+
+#check @GrpdModel.Sect
+#check @GrpdModel.Sect.groupoid
+#check @GrpdModel.trans
+#check @GrpdModel.trans_id
+#check @GrpdModel.trans_comp
+#check @GrpdModel.fibI
+#check @GrpdModel.piTheta
+#check @GrpdModel.PiF
+
+/-! ## The substitution calculus of λμ (M23-LAMBDA-MU-SN)
+
+`Start/LambdaMuSubstLemmas.lean`: the four composition laws of renaming and substitution for the
+λμ-terms of `Start/LambdaMu.lean`, where names and term variables share one index space, the unit
+laws, the β-commutation law `subst_single`, and the commutation of structural substitution with an
+injective renaming (`sstr_ren`).
+-/
+
+#check @LambdaMu.Tm.ren_ren
+#check @LambdaMu.Tm.subst_ren
+#check @LambdaMu.Tm.ren_subst
+#check @LambdaMu.Tm.subst_subst
+#check @LambdaMu.Tm.subst_single
+#check @LambdaMu.Tm.sstr_ren
+
+/-! ## Type classes by dictionary passing (M25-TYPECLASS-DICT)
+
+`Start/TypeClassDict.lean`: Church-encoded records in System F (`recTy`, `recMk`, `recProj`) and
+the dictionary type `dictTy E c τ` of a class at a type, which commutes with type substitution.
+`Start/TypeClassElab.lean`: the entailment judgement `Ent`, the source typing judgement `STyping`,
+and the elaboration theorems — every entailed constraint has a dictionary (`ent_dict`), every
+source derivation elaborates to a System F term of the translated type (`elab_typing`), which is
+therefore strongly normalizing (`elab_sn`), and a closed program has the qualified type
+`∀ᾱ. C₁τ₁ → ⋯ → Cₙτₙ → ⟦τ⟧` (`elab_program`).  `Start/TypeClassExample.lean`: a concrete
+environment with a superclass (`Ord` over `Eq`) and an instance with a context
+(`instance Eq b => Eq (a → b)`).
+-/
+
+#check @TypeClass.dictTy
+#check @TypeClass.dictTy_msubst
+#check @TypeClass.typing_recMk
+#check @TypeClass.typing_recProj
+#check @TypeClass.ent_dict
+#check @TypeClass.elab_typing
+#check @TypeClass.elab_sn
+#check @TypeClass.elab_program
+#check @TypeClass.exampleEnv_good
+#check @TypeClass.ent_eq_arrow
+#check @TypeClass.example_elab

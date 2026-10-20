@@ -742,4 +742,10 @@ import Start.LazyCost
 import Start.CBPV
 import Start.LambdaMuSN
 import Start.PTSExpansionLambdaP2
+import Start.LambdaMuSubstLemmas
+import Start.GrpdSect
+import Start.GrpdPi
+import Start.TypeClassDict
+import Start.TypeClassElab
+import Start.TypeClassExample
 import Start.Capstones

@@ -2,3 +2,12 @@
 'LambdaMu.red_cr' depends on axioms: [propext]
 'LambdaMu.red_iff_stk' depends on axioms: [propext]
 'LambdaMu.sn_app_varHead' depends on axioms: [propext]
+
+# round 3: substitution calculus (Start/LambdaMuSubstLemmas.lean)
+'LambdaMu.Tm.ren_ren' depends on axioms: [propext, Quot.sound]
+'LambdaMu.Tm.subst_ren' depends on axioms: [propext, Quot.sound]
+'LambdaMu.Tm.ren_subst' depends on axioms: [propext, Quot.sound]
+'LambdaMu.Tm.subst_subst' depends on axioms: [propext, Quot.sound]
+'LambdaMu.Tm.subst_var' depends on axioms: [propext, Quot.sound]
+'LambdaMu.Tm.subst_single' depends on axioms: [propext, Quot.sound]
+'LambdaMu.Tm.sstr_ren' depends on axioms: [propext, Classical.choice, Quot.sound]
