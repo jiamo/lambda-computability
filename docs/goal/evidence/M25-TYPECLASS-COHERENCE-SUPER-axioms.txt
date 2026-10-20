@@ -1,0 +1,5 @@
+# round 6: #print axioms for M25-TYPECLASS-COHERENCE-SUPER (lake env lean on a scratch file importing Start.TypeClassSuperCoh, with #print axioms appended)
+'TypeClass.superClosure_not_coherent' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TypeClass.DEnt.conv_super' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TypeClass.coherence_unannotated_super' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TypeClass.coherence_unannotated_super_conv' depends on axioms: [propext, Classical.choice, Quot.sound]

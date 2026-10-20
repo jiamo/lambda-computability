@@ -12,3 +12,6 @@
 'GrpdModel.fibI' depends on axioms: [propext, Classical.choice, Quot.sound]
 'GrpdModel.piTheta' depends on axioms: [propext, Classical.choice, Quot.sound]
 'GrpdModel.PiF' depends on axioms: [propext, Classical.choice, Quot.sound]
+
+# round 6: #print axioms (lake env lean on a scratch file importing the round-6 modules, with #print axioms appended)
+'GrpdModel.grpdPiStruct' depends on axioms: [propext, Classical.choice, Quot.sound]

@@ -21,3 +21,10 @@
 'LambdaMu.Tm.sstr_sstr' depends on axioms: [propext, Classical.choice, Quot.sound]
 'LambdaMu.Step.sstr' depends on axioms: [propext, Classical.choice, Quot.sound]
 'LambdaMu.Step.sstr_of_typ' depends on axioms: [propext, Classical.choice, Quot.sound]
+
+# round 6: #print axioms (lake env lean on a scratch file importing the round-6 modules, with #print axioms appended)
+'LambdaMu.sn_of_typ' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LambdaMu.fundamental' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LambdaMu.sn_apps_mu' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LambdaMu.sn_apps_beta' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LambdaMu.callcc_proof_normalizes' depends on axioms: [propext, Classical.choice, Quot.sound]

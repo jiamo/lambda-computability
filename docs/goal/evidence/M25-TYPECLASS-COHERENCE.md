@@ -119,3 +119,47 @@ theorem for unambiguous judgements in a fragment **with** superclasses.  First m
 (uniqueness up to β of dictionaries when superclass projections are allowed, by induction on the
 two derivations with `super_coherent` for the `sup`-of-`inst` against `inst` case, and a
 "no hypothesis is entailed by superclass from a different route" condition on `P`).
+
+## Round 6 — coherence with superclasses (`Start/TypeClassSuperCoh.lean`)
+
+`lake build --wfail`; axioms `propext, Classical.choice, Quot.sound`
+(`M25-TYPECLASS-COHERENCE-SUPER-axioms.txt`).
+
+**The round-5 statement of `DEnt.conv_super` needs a condition on the hypotheses.**
+`TypeClass.superClosure_not_coherent`: in the environment `supEnv` (classes `Eq`, `Ord <: Eq`,
+`Num <: Eq`, no instances, `EnvGood`) with hypotheses `supHyps = [Ord α, Num α]`, the constraint
+`Eq α` has the two dictionaries `recProj 1 0 (var 0)` (through `Ord α`) and `recProj 1 0 (var 1)`
+(through `Num α`); they are distinct normal forms, hence not β-convertible.
+
+**The fragment.** `TypeClass.SuperFragment E P`: `EnvOK E` (superclasses come earlier, so the
+superclass relation `SupStep` is functional and strictly decreasing), no overlapping instances,
+instances only for classes without a superclass, the superclass closures (`SupReach`) of distinct
+hypotheses at one type are disjoint, and no class in the superclass closure of a hypothesis is an
+instance of an instance head.  `TypeClass.superFragment_supEnv` shows it allows superclasses
+(`supEnv` under the single hypothesis `Ord α`).
+
+**Proved.** `TypeClass.DEnt.source` (a derivable constraint is an instance of a head or in the
+closure of a hypothesis), `TypeClass.SupReach.total` (two classes reachable from one are
+comparable), and
+
+```lean
+theorem TypeClass.DEnt.unique_super {E : Env} {P : List Cstr} {n : ℕ} (hF : SuperFragment E P)
+    {C : Cstr} {d d' : Lambda} (h : DEnt E P n C d) (h' : DEnt E P n C d') : d = d'
+theorem TypeClass.DEnt.conv_super {E : Env} {P : List Cstr} {n : ℕ} (hF : SuperFragment E P)
+    {C : Cstr} {d d' : Lambda} (h : DEnt E P n C d) (h' : DEnt E P n C d') : Lambda.Conv d d'
+theorem TypeClass.coherence_unannotated_super {E : Env} {P : List Cstr} (hF : SuperFragment E P)
+    {Γ : List Mty} {e : Sexp} {τ : Mty} (hB : Bidi E false Γ e τ) (hS : STyping E P Γ e τ) :
+    (∃ t, ElabS E P Γ e τ t) ∧ ∀ t t', ElabS E P Γ e τ t → ElabS E P Γ e τ t' → t = t'
+theorem TypeClass.coherence_unannotated_super_conv {E : Env} {P : List Cstr}
+    (hF : SuperFragment E P) {Γ : List Mty} {e : Sexp} {τ : Mty} (hB : Bidi E false Γ e τ)
+    {t t' : Lambda} (h : ElabS E P Γ e τ t) (h' : ElabS E P Γ e τ t') : Lambda.Conv t t'
+```
+
+**Open (gap row M25-TYPECLASS-SUPER-INST).** Instances of classes that have a superclass.  Then a
+dictionary for `d` can be the superclass projection of an instance dictionary, and
+`super_coherent` reduces it to the instance's superclass field substituted by the context
+dictionaries — a derivation that is not a sub-derivation.  First missing lemma:
+`DEnt.normalize_super` (every dictionary derivation β-reduces to one without superclass
+projections of instance dictionaries), which needs a termination order on instance contexts
+(e.g. Paterson's conditions, which `EnvGood` does not impose).  So M25-TYPECLASS-COHERENCE-SUPER is
+`DONE_WEAK` and M25-TYPECLASS-COHERENCE stays `DONE_WEAK`.

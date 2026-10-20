@@ -762,4 +762,12 @@ import Start.SystemFCTyCon
 import Start.TypeClassUnannotated
 import Start.TypeClassSuper
 import Start.FsubGhelli
+import Start.LambdaMuExpand
+import Start.LambdaMuFund
+import Start.GrpdPiApp
+import Start.PTSExpansionPollRepair
+import Start.FsubRowing
+import Start.TypeClassSuperCoh
+import Start.StlcNbE
+import Start.StlcNbEComplete
 import Start.Capstones

@@ -2,3 +2,9 @@
 'FsubGhelli.cycle_step' depends on axioms: [propext, Quot.sound]
 'FsubGhelli.ghelli_chain' depends on axioms: [propext, Quot.sound]
 'FsubGhelli.ghelli_not_acc' depends on axioms: [propext, Quot.sound]
+
+# round 6: #print axioms (lake env lean on a scratch file importing the round-6 modules, with #print axioms appended)
+'FsubRowing.SubD.toSub' depends on axioms: [propext]
+'FsubRowing.subD_iff_run' depends on axioms: [propext]
+'FsubRowing.DStep.deterministic' depends on axioms: [propext]
+'FsubRowing.rowingFirstLemma_of_simulation' depends on axioms: [propext]

@@ -72,3 +72,12 @@ theorem LambdaMu.cps_step_strict {Γ : List Entry} {t t' : Tm} {A : Ty} (h : Typ
 
 or, directly, `theorem LambdaMu.sn_of_typ {Γ : List Entry} {t : Tm} {A : Ty} (h : Typ Γ t A) :
 Acc (fun a b => Step b a) t`.
+
+## Round 6
+
+The gap row M23-LAMBDA-MU-SN is closed: `LambdaMu.sn_of_typ {Γ : List Entry} {t : Tm} {A : Ty}
+(h : Typ Γ t A) : SN t` (`Start/LambdaMuFund.lean`), proved directly by Kripke reducibility
+candidates with stacks (see `M23-LAMBDA-MU-SN.md`).  The CPS simulation stays as proved in earlier
+rounds (each step is simulated up to a common β-reduct, `cps_step`); strong normalization no longer
+depends on a strict simulation, which was the only reason this row was `DONE_WEAK`.  Status:
+`DONE_STRONG`.

@@ -169,3 +169,40 @@ application, the inverse `uncurry : Sect (PiF A B) → Sect B`, with object part
 `map_comp` (the functoriality of evaluation `ev : ∫ (PiF A B) ×_Γ ∫ A ⥤ ∫ B`).  Then `app_lam`
 and `lam_app` follow by making `curry`/`uncurry` an equivalence; `lam_sub` (NaturalPiStruct) and
 `grpdSigmaStruct` are not started.
+
+## Round 6 — application, β, η and the Π-structure (`Start/GrpdPiApp.lean`)
+
+`lake build --wfail`; axioms `propext, Classical.choice, Quot.sound` (`M23-GROUPOID-PI-axioms.txt`).
+
+* `GrpdModel.fibTil`, `GrpdModel.fibI_fibTil`, `GrpdModel.fibTil_unique`, `GrpdModel.fibTil_eq` —
+  every morphism `m : (γ, a) ⟶ (γ', a')` of `∫ A` factors uniquely as a fibre morphism followed by
+  the fibre comparison: `m = ι_γ(φ̃) ≫ θ_g(a')`.
+* Following the suggested route, the morphism part of application on `m` is the composite of the
+  **fibre part** `GrpdModel.appPhi σ γ` (the functor `A γ ⥤ ∫ B` given by the section `σ γ`) on
+  `φ̃`, and the **transport part** `GrpdModel.appPsi σ g a'` (the morphism of `∫ B` over
+  `θ_g(a')` given by the section's own morphism part `(σ.map g).app a'`).
+* `GrpdModel.appPsi_comp` (from `σ.map_comp` and `piTheta_comp_heq`, i.e. the strict laws
+  trans_comp/trans_congr), `GrpdModel.appPsi_nat` (naturality of `σ.map g`: the interchange of the
+  two parts), `GrpdModel.fibTil_comp`, hence `GrpdModel.umap_comp` (**the `map_comp` that failed in
+  round 5**) and `GrpdModel.umap_id`.
+* `GrpdModel.uncurryF σ : GObj A ⥤ GObj B` with `GrpdModel.uncurryF_disp` (it lies over `∫ A`), and
+  `GrpdModel.grpdApp : grpdCwa.Tm Γ (PiF A B) → grpdCwa.Tm (grpdCwa.ext Γ A) B`.
+* `GrpdModel.uncurryF_curry` (β on functors), `GrpdModel.umap_fibI`, `GrpdModel.umap_theta`;
+  β and η through `tmEquivSect`: `GrpdModel.grpd_app_lam : grpdApp A B (grpdLam A B b) = b` and
+  `GrpdModel.grpd_lam_app : grpdLam A B (grpdApp A B f) = f`.
+* **The terminal definition**:
+
+```lean
+def GrpdModel.grpdPiStruct : Cwa.PiStruct grpdCwa where
+  Pi A B := PiF A B
+  Pi_sub σ A B := PiF_sub σ A B
+  lam {_} {A} {B} b := grpdLam A B b
+  app {_} {A} {B} f := grpdApp A B f
+  app_lam {_} {A} {B} b := grpd_app_lam A B b
+  lam_app {_} {A} {B} f := grpd_lam_app A B f
+```
+
+Status: M23-GROUPOID-PI and M23-GROUPOID-MODEL are `DONE_STRONG` (the CwA, the identity types and
+Π-types).  Not done this round (new row M23-GROUPOID-PI-NATURAL, not a gap of either row): the
+substitution law of abstraction (`Cwa.NaturalPiStruct`, first missing lemma `grpdLam_sub`) and
+`grpdSigmaStruct`.

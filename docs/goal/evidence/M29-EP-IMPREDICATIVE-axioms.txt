@@ -16,3 +16,7 @@
 'PureTypeSystem.cube_expansionPostponement_of_hsubstSort' depends on axioms: [propext, Classical.choice, Quot.sound]
 'PureTypeSystem.HasTypeNW.not_lam_of_sort' depends on axioms: [propext]
 'PureTypeSystem.lambdaP2_upDown_not_acc' does not depend on any axioms
+
+# round 6: #print axioms (lake env lean on a scratch file importing the round-6 modules, with #print axioms appended)
+'PureTypeSystem.pollProductCanon_iff_hsubstPi' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.cube_expansionPostponement_of_pollProductCanon' depends on axioms: [propext, Classical.choice, Quot.sound]

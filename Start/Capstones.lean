@@ -395,6 +395,14 @@ import Start.SystemFCTyCon
 import Start.TypeClassUnannotated
 import Start.TypeClassSuper
 import Start.FsubGhelli
+import Start.LambdaMuExpand
+import Start.LambdaMuFund
+import Start.GrpdPiApp
+import Start.PTSExpansionPollRepair
+import Start.FsubRowing
+import Start.TypeClassSuperCoh
+import Start.StlcNbE
+import Start.StlcNbEComplete
 
 /-! ## Interfaces of the untyped calculus
 
@@ -4796,3 +4804,86 @@ infinite chain of reductions from Ghelli's goal; two-counter machines for the pl
 #check @FsubGhelli.cycle_step
 #check @FsubGhelli.ghelli_chain
 #check @FsubGhelli.ghelli_not_acc
+
+/-! ## Strong normalisation of typed λμ (M23-LAMBDA-MU-SN)
+
+`Start/LambdaMuExpand.lean`: the μ- and β-expansion lemmas with stacks, SN under renaming and
+under μ-abstraction.  `Start/LambdaMuFund.lean`: the simultaneous substitution of terms for term
+variables and stacks for names, the Kripke reducibility candidates, the fundamental lemma, and
+strong normalisation of every typed λμ-term, with normalisation of the classical proofs built
+with `call/cc`.
+-/
+
+#check @LambdaMu.sn_apps_mu
+#check @LambdaMu.sn_apps_beta
+#check @LambdaMu.sn_mu
+#check @LambdaMu.fundamental
+#check @LambdaMu.sn_of_typ
+#check @LambdaMu.callcc_proof_normalizes
+
+/-! ## Π-types in the groupoid model (M23-GROUPOID-PI)
+
+`Start/GrpdPiApp.lean`: application `uncurryF : Sect (Π A B) → (∫ A ⥤ ∫ B)`, from the unique
+factorisation of morphisms of `∫ A` into a fibre morphism and a fibre comparison; β and η; and the
+Π-structure of the groupoid model.
+-/
+
+#check @GrpdModel.fibI_fibTil
+#check @GrpdModel.uncurryF
+#check @GrpdModel.grpd_app_lam
+#check @GrpdModel.grpd_lam_app
+#check @GrpdModel.grpdPiStruct
+
+/-! ## Poll's Lemma 10 repaired (M29-EP-IMPREDICATIVE, M29-EP-CUBE-REST, route C2)
+
+`Start/PTSExpansionPollRepair.lean`: the missing step of Poll's Lemma 10 (canonicalisation of a
+sort-typed product judgement) is equivalent, in every corner of the cube, to hereditary
+substitution into product premises.
+-/
+
+#check @PureTypeSystem.PollProductCanon
+#check @PureTypeSystem.hsubstPi_of_pollProductCanon
+#check @PureTypeSystem.pollProductCanon_iff_hsubstPi
+#check @PureTypeSystem.cube_expansionPostponement_of_pollProductCanon
+
+/-! ## F<:^D and its embedding in full F<: (M25-FSUB-UNDECIDABLE, steps D1–D2)
+
+`Start/FsubRowing.lean`: the linear rules of the algorithm for full F<: (negation swaps the sides,
+a `Top`-bounded quantifier needs no bound check, promotion is forced), the deterministic fragment
+F<:^D, its embedding in full F<:, determinism of its runs, and the reduction of the first lemma of
+the undecidability proof to a machine simulation.
+-/
+
+#check @FsubRowing.sub_neg_iff
+#check @FsubRowing.SubD.toSub
+#check @FsubRowing.subD_iff_run
+#check @FsubRowing.DStep.deterministic
+#check @FsubRowing.rowingFirstLemma_of_simulation
+
+/-! ## Coherence with superclasses (M25-TYPECLASS-COHERENCE-SUPER)
+
+`Start/TypeClassSuperCoh.lean`: the counterexample showing that a condition on the superclass
+closures of the hypotheses is needed, the fragment with superclasses, uniqueness of dictionaries
+in it (`DEnt.conv_super`), and coherence for unambiguous judgements.
+-/
+
+#check @TypeClass.superClosure_not_coherent
+#check @TypeClass.superFragment_supEnv
+#check @TypeClass.DEnt.unique_super
+#check @TypeClass.DEnt.conv_super
+#check @TypeClass.coherence_unannotated_super
+#check @TypeClass.coherence_unannotated_super_conv
+
+/-! ## Normalization by evaluation for the simply typed λ-calculus (M23-NBE-STLC)
+
+`Start/StlcNbE.lean`: the Kripke model on renamings, evaluation, reflection and reification, the
+normalization function and its soundness by a Kripke logical relation.
+`Start/StlcNbEComplete.lean`: the Kripke PER with uniformity, completeness, and decidability of
+typed βη-conversion.
+-/
+
+#check @StlcNbE.nf
+#check @StlcNbE.nf_sound
+#check @StlcNbE.nf_complete
+#check @StlcNbE.conv_iff_nf_eq
+#check @StlcNbE.decidableConv

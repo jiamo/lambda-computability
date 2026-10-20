@@ -1,0 +1,5 @@
+# round 6: #print axioms for M23-NBE-STLC (lake env lean on a scratch file importing Start.StlcNbEComplete, with #print axioms appended)
+'StlcNbE.nf_sound' depends on axioms: [propext, Quot.sound]
+'StlcNbE.nf_complete' depends on axioms: [propext, Quot.sound]
+'StlcNbE.conv_iff_nf_eq' depends on axioms: [propext, Quot.sound]
+'StlcNbE.decidableConv' depends on axioms: [propext, Quot.sound]

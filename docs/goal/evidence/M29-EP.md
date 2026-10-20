@@ -975,3 +975,53 @@ would suffice to drop that premise from the canonical system and recover it a po
 type correctness (`HasType` gives `Γ ⊢ Π C E : s` in the full system).  Whether the canonical
 system without that premise still yields `ProductNormalizationR` is not checked: this is a
 suggestion, not attempted in Lean.
+
+## λP2 and coc, round 6 — route C2: Poll's Lemma 10 repaired is the open lemma (`Start/PTSExpansionPollRepair.lean`)
+
+Route chosen: (C2), Poll's proof.  Route (C1) was not pursued this round: its first missing lemma
+(the interpretation commutes with type substitution at (□,∗)) is unchanged.
+
+**The step of Lemma 10 that fails.**  The abstraction case: the induction hypothesis gives
+`Γ, Δσ ⊢nf Π Cσ. Bσ↑ : s`, and the abstraction rule of `⊢nf` needs `Γ, Δσ ⊢nf Π nf(Cσ). nf(Bσ↑) : s`.
+That step is a canonicalisation of a sort-typed *product* judgement.  Stated as a property of a
+specification:
+
+```lean
+def PureTypeSystem.PollProductCanon (P : Specification Srt) : Prop :=
+  ∀ {Γ Γ' : List (Expr Srt)} {C E : Expr Srt} {s : Srt},
+    HasType P Γ (.pi C E) (.sort s) → List.Forall₂ Reduces Γ Γ' → ValidContextNW P Γ' →
+    ∃ C' E', Reduces C C' ∧ Reduces E E' ∧ HasTypeNW P Γ' (.pi C' E') (.sort s)
+```
+
+**Can it be repaired with what is proved?**  No, in the precise sense that the repair is
+equivalent to the open lemma.  Using SN of every corner (`cube_stronglyNormalizing`), HSubstPi ⇒
+EP (`cube_expansionPostponement_of_hsubstPi`) and the normalisation of reduction-only derivations
+(`HasTypeR.normalizeNW_of_hsubst`):
+
+```lean
+theorem PureTypeSystem.hsubstPi_of_pollProductCanon {P : Specification Srt}
+    (h : PollProductCanon P) : HSubstPi P
+theorem PureTypeSystem.pollProductCanon_of_hsubstPi (f : CubeFeatures)
+    (hpi : HSubstPi (cubeSpec f)) : PollProductCanon (cubeSpec f)
+theorem PureTypeSystem.pollProductCanon_iff_hsubstPi (f : CubeFeatures) :
+    PollProductCanon (cubeSpec f) ↔ HSubstPi (cubeSpec f)
+theorem PureTypeSystem.cube_expansionPostponement_of_pollProductCanon (f : CubeFeatures)
+    (h : PollProductCanon (cubeSpec f)) :
+    ProductNormalizationR (cubeSpec f) ∧ ExpansionPostponement (cubeSpec f)
+```
+
+The forward direction substitutes in the full system (`HasType.subst_at`, no subject reduction
+needed) and canonicalises the substituted product in the reduct context given by `CtxSubstRed`
+(`CtxSubstRed.forall₂_append`).  The backward direction goes through EP (the type of a sort-typed
+judgement reduces only to the sort), then `normalizeNW_of_hsubst`, and identifies the reduced
+context with the canonical one (`forall₂_reduces_unique`, `ValidContextNW.normal_entries`).
+
+Together with round 5 (`hsubstPi_iff_hsubstSort`), four formulations are now proved equivalent in
+every corner: HSubstPi, HSubstSort, the missing step of Poll's Lemma 10, and (through
+`cube_expansionPostponement_of_hsubstPi`) they all imply EP.  Every repair of Lemma 10 must
+therefore prove HSubstPi itself; none of the measures examined (round 5) or the SN results
+available does it.
+
+**First missing lemma (unchanged)**: `theorem hsubstPi_lambdaP2 : HSubstPi (cubeSpec lambdaP2)`,
+equivalently `PollProductCanon (cubeSpec lambdaP2)`.  This is TLCA open problem 23 for these
+systems; the delivery of this round is the precise negative result above.

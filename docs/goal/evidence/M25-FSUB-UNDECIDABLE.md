@@ -55,3 +55,40 @@ algorithm terminates (the standard measure: the size of the goal's types with va
 by the size of their bounds).  Not formalized this round.
 
 Status: the design is fixed, so the row moves from `TODO_NEEDS_DESIGN` to `TODO_READY`.
+
+## Round 6 — F<:^D, its embedding in full F<:, and the reduction of D1 to a simulation (`Start/FsubRowing.lean`)
+
+`lake build --wfail`; axioms `propext` (`M25-FSUB-UNDECIDABLE-axioms.txt`).
+
+* The linear rules of the algorithm for full F<: (on `FsubGhelli.Sub`):
+  `FsubRowing.sub_neg_iff : Sub ⟨Γ, neg S, neg T⟩ ↔ Sub ⟨Γ, T, S⟩` (negation swaps the sides, the
+  body goal `X <: X` is an axiom), `FsubRowing.sub_allTop_iff` (a `Top`-bounded left quantifier
+  needs no bound check), `FsubRowing.sub_var_iff` (promotion is forced).
+* `FsubRowing.SubD` — **F<:^D**: `Top`, reflexivity, promotion, the `Top`-bounded quantifier rule
+  and the negation rule, each with at most one premise.
+* **D2**: `FsubRowing.SubD.toSub {g : Goal} (h : SubD g) : Sub g` — F<:^D subtyping embeds into
+  full F<: subtyping (the algorithmic relation of `Start/FsubGhelli.lean`).
+* `FsubRowing.DStep`, `FsubRowing.DStep.deterministic`, `FsubRowing.SubD.linear` and
+  `FsubRowing.subD_iff_run : SubD g ↔ DRun g` — a goal is derivable in F<:^D iff the deterministic
+  run from it reaches an axiom: the form in which a machine is simulated.
+* `FsubRowing.rowingFirstLemma_of_simulation` — `RowingFirstLemma` follows from an encoding
+  `enc : CM → ℕ → ℕ → Goal` with `CM.Halts M a b ↔ DRun (enc M a b)` and conservativity
+  `Sub (enc M a b) → SubD (enc M a b)`.
+
+**D1/D3, first missing lemma**: the simulation itself,
+`∃ enc : CM → ℕ → ℕ → Goal, (∀ M a b, CM.Halts M a b ↔ DRun (enc M a b)) ∧ ∀ M a b,
+Sub (enc M a b) → SubD (enc M a b)` — Pierce's rowing-machine encoding (configurations as
+contexts of row variables, each instruction a context entry that the promotion steps dispatch to).
+Rowing machines were not defined: the encoding goes directly from two-counter machines to F<:^D
+runs, and the definition of the intermediate machine model is part of that lemma.
+
+**D2, cslib connection**: not attempted.  cslib's `Fsub` subtyping is declarative and locally
+nameless with cofinite quantification; connecting it to `FsubGhelli.Sub` needs a de Bruijn
+translation and the soundness and completeness of the algorithm with respect to the declarative
+rules (transitivity elimination).  This is stated as the gap in the row.
+
+**D4**: gap row M25-COUNTER-MACHINE-UNDECIDABLE (undecidability of `CM.Halts`, by a two-counter
+simulation of a universal machine, reducing from `ComputablePred.halting_problem` or
+`not_computablePred_codeConverges`).  F3 (kernel F<: termination) not done.
+
+Status: TODO_READY, now depending on M25-COUNTER-MACHINE-UNDECIDABLE.

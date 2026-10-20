@@ -125,3 +125,37 @@ LambdaMu.SN t`.  **First missing lemma**: the μ-expansion lemma with stacks,
 (SN of a μ-abstraction applied to a stack from SN of the iterated structural substitution of the
 stack), whose proof is an induction on the SN of the components using `Step.sstr` for the steps
 inside `t`; then the β-expansion lemma, the fundamental lemma for `Red` and `sn_of_typ`.
+
+## Round 6 — strong normalization of typed λμ (closed)
+
+Modules: `Start/LambdaMuExpand.lean`, `Start/LambdaMuFund.lean` (`lake build --wfail`; axioms
+`propext, Classical.choice, Quot.sound`, see `M23-LAMBDA-MU-SN-axioms.txt`).
+
+* `LambdaMu.SN.ren`, `LambdaMu.sn_mu` — SN under renaming and under μ-abstraction
+  (`step_ren_inv`: a step of a renamed term comes from a step of the term).
+* **μ-expansion with stacks** — `LambdaMu.sn_apps_mu : ∀ (π : List Tm) {Δ A R β t}, Typ Δ (mu β t) A →
+  TStk Δ A π R → (∀ v ∈ π, SN v) → SN (mu β (sbs π β t)) → SN (apps (mu β t) π)`.  Compared with
+  the round-5 statement it carries a typing of the μ-abstraction and of the stack (`TStk`), which
+  supplies the `TmFree` side condition of `Step.sstr` for the name `β`, and the iterated structural
+  substitution `sbs π β t` is kept under its μ-binder.
+* **β-expansion with stacks** — `LambdaMu.sn_apps_beta (hu : SN u) : Typ (.tm C :: Δ) X B →
+  (∀ v ∈ π, SN v) → SN (apps (subst (single u) X) π) → SN (apps (app (lam X) u) π)`.
+* The fundamental lemma: `Tm.msub σ ρ` (simultaneous substitution of terms for term variables and
+  stacks for names, `sstr_msub`, `sbs_msub`), Kripke candidates `RedK A Δ` (over renamings `RenOK`)
+  with stack candidates `RStk`, and `Good Γ Δ σ ρ` (related substitutions; it carries the `TmFree`
+  condition for the names of well-typed terms):
+  `LambdaMu.fundamental (h : Typ Γ t A) : Good Γ Δ σ ρ → RedK A Δ (Tm.msub σ ρ t)`.
+* **The terminal theorem**:
+
+```lean
+theorem LambdaMu.sn_of_typ {Γ : List Entry} {t : Tm} {A : Ty} (h : Typ Γ t A) : SN t
+```
+
+* Corollary (normalization of classical natural deduction through `call/cc`):
+  `LambdaMu.sn_callcc_proof (hf : Typ Γ f (.arr (.arr A B) A)) : SN (app Tm.callcc f)` and
+  `LambdaMu.callcc_proof_normalizes (hf : Typ Γ f (.arr (.arr A B) A)) : ∃ n,
+  Relation.ReflTransGen Step (app Tm.callcc f) n ∧ ∀ n', ¬ Step n n'` — every proof of a Peirce
+  instance built with `callcc` reduces to a normal form.
+
+Status: `DONE_STRONG` (exit criterion: typed λμ proved strongly normalizing directly).  The parent
+row M23-LAMBDA-MU, whose only open point was this gap, is `DONE_STRONG`.
