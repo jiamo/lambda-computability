@@ -206,3 +206,23 @@ Status: M23-GROUPOID-PI and M23-GROUPOID-MODEL are `DONE_STRONG` (the CwA, the i
 Π-types).  Not done this round (new row M23-GROUPOID-PI-NATURAL, not a gap of either row): the
 substitution law of abstraction (`Cwa.NaturalPiStruct`, first missing lemma `grpdLam_sub`) and
 `grpdSigmaStruct`.
+
+## Round 7 — natural Π (`Start/GrpdPiNatural.lean`, row M23-GROUPOID-PI-NATURAL)
+
+```lean
+theorem GrpdModel.sectOfTm_tmSub    -- substitution of terms is restriction of sections
+theorem GrpdModel.curry_restrict    -- currying commutes with restriction along σ : Δ ⥤ Γ
+theorem GrpdModel.grpdLam_sub (b : grpdCwa.Tm (grpdCwa.ext Γ A) B) :
+    Cwa.tmCast (PiF_sub σ A B) (grpdCwa.tmSub σ (grpdLam A B b)) =
+      grpdLam (σ ⋙ A) (extend σ A ⋙ B) (grpdCwa.tmSub (extendG σ A) b)
+def GrpdModel.grpdNaturalPiStruct : Cwa.NaturalPiStruct grpdCwa
+```
+
+Axioms: `M23-GROUPOID-PI-NATURAL-axioms.txt` (`propext, Classical.choice, Quot.sound`).
+
+**Σ: not done.**  The interface exists (`Cwa.SigmaStruct` in `Start/Cwa.lean`: `Sig`, `Sig_sub`,
+the pairing isomorphism `ext (ext Γ A) B ≅ ext Γ (Sig A B)` and `pair_disp`), so no new interface
+was defined.  First missing construction: the functor `SigF A B : Γ ⥤ Grpd` sending `γ` to the
+Grothendieck construction of `fibI A γ ⋙ B`, with its `map_comp` (functoriality of the
+Grothendieck construction in the base), then the pairing isomorphism of groupoids over `Γ`.
+Gap row M23-GROUPOID-SIGMA; M23-GROUPOID-PI-NATURAL is DONE_WEAK.

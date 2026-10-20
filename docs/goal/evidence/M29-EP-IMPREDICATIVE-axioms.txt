@@ -20,3 +20,14 @@
 # round 6: #print axioms (lake env lean on a scratch file importing the round-6 modules, with #print axioms appended)
 'PureTypeSystem.pollProductCanon_iff_hsubstPi' depends on axioms: [propext, Classical.choice, Quot.sound]
 'PureTypeSystem.cube_expansionPostponement_of_pollProductCanon' depends on axioms: [propext, Classical.choice, Quot.sound]
+
+# round 7: #print axioms (lake env lean on a scratch file importing Start.PTSExpansionRouteII, with #print axioms appended)
+'PureTypeSystem.RouteII.Good.isCand' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.RouteII.Good_subst' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.RouteII.Good_inst' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.RouteII.Good.tyApp' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.RouteII.Good.app' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.RouteII.NormNW.abstraction' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.RouteII.NormNW.product' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.RouteII.hsubstSort_iff_sortFundamental' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.RouteII.cube_expansionPostponement_of_sortFundamental' depends on axioms: [propext, Classical.choice, Quot.sound]

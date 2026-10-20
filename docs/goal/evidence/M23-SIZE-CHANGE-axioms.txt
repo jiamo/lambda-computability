@@ -1,0 +1,8 @@
+# round 7: #print axioms (lake env lean on a scratch file importing Start.SizeChange, with #print axioms appended)
+'SizeChange.ramsey_pairs' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SizeChange.sct_of_criterion' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SizeChange.criterion_of_sct' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SizeChange.sct_iff_criterion' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SizeChange.mem_closureFS_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SizeChange.Criterion.decidable' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SizeChange.SCT.decidable' depends on axioms: [propext, Classical.choice, Quot.sound]

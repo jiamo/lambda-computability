@@ -1025,3 +1025,88 @@ available does it.
 **First missing lemma (unchanged)**: `theorem hsubstPi_lambdaP2 : HSubstPi (cubeSpec lambdaP2)`,
 equivalently `PollProductCanon (cubeSpec lambdaP2)`.  This is TLCA open problem 23 for these
 systems; the delivery of this round is the precise negative result above.
+
+## λP2 and coc, round 7 — route (ii): the Tait/Girard predicate on derivations (`Start/PTSExpansionRouteII.lean`)
+
+Route (ii) attempted in Lean for the first time.  Status of M29-EP-IMPREDICATIVE: **TODO_READY**
+(not closed); of M29-EP-CUBE-REST: DONE_WEAK, unchanged, with this round's results recorded.
+
+**The predicate.**  `RouteII.NormNW P Γ M T` (the judgement normalizes to a canonical `HasTypeNW`
+judgement, context, subject and type reducing to it) is the base predicate.  `RouteII.Sk`
+(type variables in de Bruijn form, arrows, the quantifier `(□,∗)`) are the skeletons, with
+renaming and substitution.  `RouteII.IsCand P C` (typed candidates: `HasTypeR` judgements that
+normalize, closed under reduction of the type) and `RouteII.Good P s ξ` (by recursion on `s`,
+relative to candidates `ξ` for the type variables): at an arrow, Kripke closure under application
+to good arguments in every context extension; at `(□,∗)`, closure under application to every type
+argument for **every** typed candidate interpreting the bound variable.
+
+Proved (axioms in `M29-EP-IMPREDICATIVE-axioms.txt`, at most `propext, Classical.choice,
+Quot.sound`):
+
+```lean
+theorem PureTypeSystem.RouteII.Good.isCand (P : Specification Srt) :
+    ∀ (s : Sk) (ξ : ℕ → Cand), (∀ i, IsCand P (ξ i)) → IsCand P (Good P s ξ)
+theorem PureTypeSystem.RouteII.Good_subst (P : Specification Srt) :
+    ∀ (s : Sk) (σ : ℕ → Sk) (ξ : ℕ → Cand),
+      Good P (s.subst σ) ξ = Good P s (fun i => Good P (σ i) ξ)
+theorem PureTypeSystem.RouteII.Good_inst (P : Specification Srt) (τ t : Sk) (ξ : ℕ → Cand) :
+    Good P (τ.subst (single t)) ξ = Good P τ (consC (Good P t ξ) ξ)
+theorem PureTypeSystem.RouteII.Good.tyApp ... (h : Good P (.all τ) ξ Γ M T)
+    (hT : Reduces T (.pi K B)) (hU : HasTypeR P Γ U K) :
+    Good P (τ.subst (single t)) ξ Γ (.app M U) (B.instantiate U)
+theorem PureTypeSystem.RouteII.NormNW.abstraction
+    (hb : NormNW P (C :: Γ) b E) (hp : NormNW P Γ (.pi C E) (.sort s)) :
+    NormNW P Γ (.lam C b) (.pi C E)
+theorem PureTypeSystem.RouteII.NormNW.product ... : NormNW P Γ (.pi A B) (.sort s₃)
+theorem PureTypeSystem.RouteII.hsubstSort_iff_sortFundamental (P : Specification Srt) :
+    HSubstSort P ↔ SortFundamental P
+theorem PureTypeSystem.RouteII.cube_expansionPostponement_of_sortFundamental (f : CubeFeatures)
+    (h : SortFundamental (cubeSpec f)) :
+    ProductNormalizationR (cubeSpec f) ∧ ExpansionPostponement (cubeSpec f)
+```
+
+**The lemma named in round 2 is proved.**  "The interpretation commutes with type substitution
+at (□,∗)" is `Good_subst` / `Good_inst`: `⟦τ[t/X]⟧ξ = ⟦τ⟧(ξ, X ↦ ⟦t⟧ξ)`, by induction on the
+skeleton after the renaming lemma `Good_rename`.  It goes through because the clauses of `Good`
+mention the type of the judgement only through reductions `T ↠ Π A B`, never through its syntax,
+so the interpretation depends on the skeleton and the candidate assignment alone.
+`Good.tyApp` is then the type-application case of the fundamental lemma.  Route (ii) does **not**
+fail at `(□,∗)`.
+
+**The product premise.**  As requested, it is handled by the predicate on the product's own
+derivation: `NormNW.abstraction` builds the canonical abstraction from the normalizability of
+the body and of the product (contexts and codomains are identified by uniqueness of normal
+forms), with no measure on the product.  In the fundamental lemma this is a structural call: the
+product premise is a sub-derivation of the `HasTypeR` abstraction derivation.
+
+**Where the fundamental lemma stands.**  `SortFundamental P` is the fundamental lemma restricted
+to sort-typed judgements and a single substitution; `hsubstSort_iff_sortFundamental` shows it is
+**equivalent** to `HSubstSort P` (hence, in every corner, to `HSubstPi`, `PollProductCanon`, and it
+gives EP).  So route (ii) gives no shortcut around the open lemma: its fundamental lemma at
+sort-typed judgements *is* the open lemma (a fifth equivalent formulation).  What route (ii)
+offers is a different induction to prove it: structural on the `HasTypeR` derivation, over all
+good substitutions, instead of the outer well-founded inductions of routes (iii)/(a)–(c).
+
+The λ2 fragment check was not completed: for λ2 (`systemF`, `f.dep = false`) EP is proved by
+stratification (`cube_expansionPostponement`), but `HSubstNW (cubeSpec systemF)` is not in the
+repository, so the equivalence above gives no free check there; the check would be the
+fundamental lemma for `systemF` itself.
+
+**First missing lemma of route (ii)** (in order):
+
+1. the **erasure of type-level terms to skeletons**, `sk : Expr Srt → Sk`, relative to the
+   classification of context entries (object / type variable / family variable), with
+   `sk (B[u/x]) = sk B` for an object `u` and `sk (B[U/X]) = (sk B).subst (single (sk U))` for a
+   type `U`, and `sk` invariant under β on types.  In λP2 this needs the syntactic classification of
+   terms by degree (objects, types/families, kinds); no such classification for λP2 was found in
+   the repository.
+2. **CR3 for the base predicate**: a canonical neutral judgement applied to normalizable
+   arguments is normalizable (uses SN of every corner, `cube_stronglyNormalizing`, to normalize
+   the instantiated codomain).
+3. the substitution lemma for `HasTypeR` (`HasTypeR.subst`), for the soundness field of `Good`.
+4. the fundamental lemma: `HasTypeR P Γ M T → ∀ good substitution ρ, Good P (sk T) ξ (Mρ) (Tρ)`.
+
+Steps 1–4 were not attempted in Lean this round; on paper no obstruction was identified in them,
+which is not a proof.  The precise negative result of this
+round is the equivalence `hsubstSort_iff_sortFundamental` (route (ii) at its product premise is the
+open lemma), and the positive result is that the step at `(□,∗)` named in round 2 holds.

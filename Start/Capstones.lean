@@ -403,6 +403,12 @@ import Start.FsubRowing
 import Start.TypeClassSuperCoh
 import Start.StlcNbE
 import Start.StlcNbEComplete
+import Start.FsubPierce
+import Start.Minsky
+import Start.GrpdPiNatural
+import Start.LambdaPiLFEquiv
+import Start.PTSExpansionRouteII
+import Start.SizeChange
 
 /-! ## Interfaces of the untyped calculus
 
@@ -4887,3 +4893,88 @@ typed βη-conversion.
 #check @StlcNbE.nf_complete
 #check @StlcNbE.conv_iff_nf_eq
 #check @StlcNbE.decidableConv
+
+/-! ## Pierce's simulation of two-counter machines in F<:^D (M25-FSUB-UNDECIDABLE, steps D1–D3)
+
+`Start/FsubPierce.lean`: the encoding of a two-counter machine and its configurations as F<:^D
+goals (continuation frames, a trampoline, numerals as nested negated quantifiers), the step lemma,
+both directions of halting ↔ deterministic run, conservativity of full F<: over the encoded goals,
+the first lemma of Pierce's proof, and the reduction of two-counter halting to subtyping.
+-/
+
+#check @FsubPierce.sim_step
+#check @FsubPierce.halts_iff_drun
+#check @FsubPierce.enc_conservative
+#check @FsubPierce.simulation
+#check @FsubPierce.rowingFirstLemma
+#check @FsubPierce.cm_halts_iff_sub
+#check @FsubPierce.cm_halts_iff_subD
+
+/-! ## Minsky's reduction of `k` counters to two (M25-COUNTER-MACHINE-UNDECIDABLE, step B1)
+
+`Start/Minsky.lean`: `k`-counter machines, their compilation into two-counter machines by Gödel
+numbering with multiply/divide loops, the step-correctness lemma, and preservation of halting.
+-/
+
+#check @Minsky.sim_step
+#check @Minsky.halts_iff
+#check @Minsky.halts_iff_sub
+
+/-! ## The natural Π-structure of the groupoid model (M23-GROUPOID-PI-NATURAL)
+
+`Start/GrpdPiNatural.lean`: abstraction commutes with substitution, hence the Π-structure of the
+groupoid model is natural.
+-/
+
+#check @GrpdModel.grpdLam_sub
+#check @GrpdModel.grpdNaturalPiStruct
+
+/-! ## Type-directed βη-equivalence for LF (M23-LF-EQUIV, partial)
+
+`Start/LambdaPiLFEquiv.lean`: weak head reduction, the algorithmic equivalence indexed by simple
+skeletons, its soundness for βη-conversion, the Kripke logical relation with escape, reflection,
+monotonicity and weak head expansion, and the declarative typed equality judgement.
+-/
+
+#check @LambdaPi.Eqv
+#check @LambdaPi.Eqv.sound
+#check @LambdaPi.Eqv.rename
+#check @LambdaPi.LR
+#check @LambdaPi.LR.escape
+#check @LambdaPi.LR.reflect
+#check @LambdaPi.LR.rename
+#check @LambdaPi.LR.whExpand_left
+#check @LambdaPi.TEq
+#check @LambdaPi.TEq.betaEtaConv
+
+/-! ## Route (ii) for expansion postponement (M29-EP-IMPREDICATIVE, M29-EP-CUBE-REST)
+
+`Start/PTSExpansionRouteII.lean`: the Tait/Girard predicate on derivations with typed Kripke
+candidates, its substitution lemma at `(□,∗)`, the type- and object-application cases, the
+abstraction and product cases at the base predicate, and the equivalence of the sort-typed
+fundamental lemma with `HSubstSort`.
+-/
+
+#check @PureTypeSystem.RouteII.Good
+#check @PureTypeSystem.RouteII.Good.isCand
+#check @PureTypeSystem.RouteII.Good_subst
+#check @PureTypeSystem.RouteII.Good_inst
+#check @PureTypeSystem.RouteII.Good.tyApp
+#check @PureTypeSystem.RouteII.Good.app
+#check @PureTypeSystem.RouteII.NormNW.abstraction
+#check @PureTypeSystem.RouteII.NormNW.product
+#check @PureTypeSystem.RouteII.hsubstSort_iff_sortFundamental
+#check @PureTypeSystem.RouteII.cube_expansionPostponement_of_sortFundamental
+
+/-! ## Size-change termination (M23-SIZE-CHANGE)
+
+`Start/SizeChange.lean`: size-change graphs and their composition, the call-sequence semantics,
+the infinite Ramsey theorem for pairs, the closure criterion (both directions), and decidability.
+-/
+
+#check @SizeChange.ramsey_pairs
+#check @SizeChange.sct_of_criterion
+#check @SizeChange.criterion_of_sct
+#check @SizeChange.sct_iff_criterion
+#check @SizeChange.mem_closureFS_iff
+#check @SizeChange.SCT.decidable

@@ -8,3 +8,13 @@
 'FsubRowing.subD_iff_run' depends on axioms: [propext]
 'FsubRowing.DStep.deterministic' depends on axioms: [propext]
 'FsubRowing.rowingFirstLemma_of_simulation' depends on axioms: [propext]
+
+# round 7: #print axioms (lake env lean on a scratch file importing Start.FsubPierce, with #print axioms appended)
+'FsubPierce.sim_step' depends on axioms: [propext, Classical.choice, Quot.sound]
+'FsubPierce.sim_halt' depends on axioms: [propext, Quot.sound]
+'FsubPierce.halts_iff_drun' depends on axioms: [propext, Classical.choice, Quot.sound]
+'FsubPierce.enc_conservative' depends on axioms: [propext, Classical.choice, Quot.sound]
+'FsubPierce.simulation' depends on axioms: [propext, Classical.choice, Quot.sound]
+'FsubPierce.rowingFirstLemma' depends on axioms: [propext, Classical.choice, Quot.sound]
+'FsubPierce.cm_halts_iff_sub' depends on axioms: [propext, Classical.choice, Quot.sound]
+'FsubPierce.cm_halts_iff_subD' depends on axioms: [propext, Classical.choice, Quot.sound]

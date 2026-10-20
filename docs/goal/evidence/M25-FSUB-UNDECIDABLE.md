@@ -92,3 +92,65 @@ simulation of a universal machine, reducing from `ComputablePred.halting_problem
 `not_computablePred_codeConverges`).  F3 (kernel F<: termination) not done.
 
 Status: TODO_READY, now depending on M25-COUNTER-MACHINE-UNDECIDABLE.
+
+## Round 7 — Pierce's simulation (`Start/FsubPierce.lean`) and Minsky's reduction (`Start/Minsky.lean`)
+
+**D1/D3 closed: the simulation.**  The rules of F<:^D are read as a continuation-passing machine:
+a goal `Γ ⊢ P <: ∀X₁<:V₁ … ∀Xₘ<:Vₘ. ¬K` calls the process `P` with arguments `V̄` and continuation
+`K`; a process `∀X̄<:Top. ¬F` (`lamN`) binds its arguments in the context and the negation rule
+swaps the sides, so the frame `F` becomes the next goal's right-hand side (`call_steps`); a
+variable on the left is a reference followed by promotion (`res_steps`).  All calls have arity
+`n + 6` for a program of length `n`: two counter slots, two scratch slots, the codes of the `n`
+instructions and of halting.  A trampoline `dispT` re-issues the call of the code it receives.
+Counters are numerals `succT s (… zeroT)`; a zero test stores the two branch codes in the scratch
+slots and calls the counter.  The halting code reaches the axiom `· <: Top`.  No intermediate
+(rowing) machine was needed: the invariant `DInv` relates a machine configuration directly to the
+context and the four components of the dispatch goal.
+
+Proved (axioms in `M25-FSUB-UNDECIDABLE-axioms.txt`, at most `propext, Classical.choice,
+Quot.sound`):
+
+```lean
+theorem FsubPierce.sim_step (h : DInv M Γ p is q c) (hs : CM.Step M c c') :
+    ∃ Γ' p' is' q', Relation.TransGen DStep (dispGoal M.length Γ p is q)
+      (dispGoal M.length Γ' p' is' q') ∧ DInv M Γ' p' is' q' c'
+theorem FsubPierce.halts_iff_drun (M : CM) (a b : ℕ) : CM.Halts M a b ↔ DRun (enc M a b)
+theorem FsubPierce.enc_conservative (M : CM) (a b : ℕ) : Sub (enc M a b) → SubD (enc M a b)
+theorem FsubPierce.simulation : ∃ enc : CM → ℕ → ℕ → Goal,
+    (∀ M a b, CM.Halts M a b ↔ DRun (enc M a b)) ∧ ∀ M a b, Sub (enc M a b) → SubD (enc M a b)
+theorem FsubPierce.rowingFirstLemma : RowingFirstLemma
+theorem FsubPierce.cm_halts_iff_sub (M : CM) (a b : ℕ) : CM.Halts M a b ↔ Sub (enc M a b)
+theorem FsubPierce.cm_halts_iff_subD (M : CM) (a b : ℕ) : CM.Halts M a b ↔ SubD (enc M a b)
+```
+
+The step lemma: an increment is two calls, a zero test four.  Both instruction kinds went
+through; no instruction kind resisted.  Conservativity is proved in general
+(`sub_to_subD_of_noStuck`: full F<: is conservative over F<:^D on every goal whose deterministic
+run never gets stuck) and the encoded goals satisfy the hypothesis (`enc_noStuck`).
+
+**D4, step B1 (row M25-COUNTER-MACHINE-UNDECIDABLE).**  `Start/Minsky.lean`: `k`-counter machines
+`Minsky.KM` (instructions `inc i l`, `test i l₁ l₂`), compiled into `FsubGhelli.CM` with the
+Gödel number `∏_{i<k} pᵢ^{rᵢ}` in the first counter, the second counter as scratch.  The bases
+are the Fermat numbers `pᵢ = 2^(2^i) + 1` (pairwise coprime, Mathlib's
+`Nat.coprime_fermatNumber_fermatNumber`), so `pᵢ ∣ godel k r ↔ 0 < rᵢ`.
+
+```lean
+theorem Minsky.sim_step {M : KM} {k : ℕ} (hk : RegsBelow M k) {c c' : KConf} (hs : KM.Step M c c') :
+    Relation.TransGen (CM.Step (compile M)) (encC M k c) (encC M k c')
+theorem Minsky.halts_iff {M : KM} {k : ℕ} (hk : RegsBelow M k) (r : ℕ → ℕ) :
+    KM.Halts M r ↔ CM.Halts (compile M) (godel k r) 0
+theorem Minsky.halts_iff_sub {M : KM} {k : ℕ} (hk : RegsBelow M k) (r : ℕ → ℕ) :
+    KM.Halts M r ↔ Sub (FsubPierce.enc (compile M) (godel k r) 0)
+```
+
+**B2, first missing piece**: a source of undecidability for `k`-counter machines — a compilation
+of Mathlib's `Nat.Partrec.Code` (or of `Turing.TM2`) into `Minsky.KM` preserving halting, together
+with `Primcodable` instances for `CM` and `KM` and the computability of `compile`, `godel` and of
+that compilation.  Without it `FsubGhelli.cm_halts_undecidable` is not proved; the gap row is
+M25-KCM-UNIVERSAL.
+
+**cslib link**: unchanged (not attempted); gap row M25-FSUB-CSLIB-LINK.
+
+Status: M25-FSUB-UNDECIDABLE is DONE_WEAK (simulation, RowingFirstLemma and `CM.Halts ≤ Sub`
+proved; undecidability of `Sub` waits for the undecidability of `CM.Halts`, and the cslib link
+is open).  M25-COUNTER-MACHINE-UNDECIDABLE is DONE_WEAK (B1 proved; B2 open).

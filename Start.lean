@@ -770,4 +770,10 @@ import Start.FsubRowing
 import Start.TypeClassSuperCoh
 import Start.StlcNbE
 import Start.StlcNbEComplete
+import Start.FsubPierce
+import Start.Minsky
+import Start.GrpdPiNatural
+import Start.LambdaPiLFEquiv
+import Start.PTSExpansionRouteII
+import Start.SizeChange
 import Start.Capstones
