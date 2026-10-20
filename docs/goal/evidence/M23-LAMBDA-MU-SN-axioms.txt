@@ -1,0 +1,4 @@
+# #print axioms for M23-LAMBDA-MU-SN (lake env lean on a file importing Start)
+'LambdaMu.red_cr' depends on axioms: [propext]
+'LambdaMu.red_iff_stk' depends on axioms: [propext]
+'LambdaMu.sn_app_varHead' depends on axioms: [propext]

@@ -1,0 +1,3 @@
+# #print axioms for M23-UIP-INDEPENDENT (lake env lean on a file importing Start)
+'GrpdModel.grpdIdStruct_not_UIP' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GrpdModel.uip_independent' depends on axioms: [propext, Classical.choice, Quot.sound]

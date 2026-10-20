@@ -1,0 +1,9 @@
+# #print axioms for M25-CBNEED-MACHINE (lake env lean on a file importing Start)
+'Lazy.LTrans.deterministic' depends on axioms: [propext]
+'Lazy.LRun.value_persist' depends on axioms: [propext, Quot.sound]
+'Lazy.LRun.value_not_thunk' depends on axioms: [propext, Quot.sound]
+'Lazy.LRun.forced_nodup' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Lazy.sim_run' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Lazy.halts_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Lazy.result_agree' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Lazy.no_blackhole' depends on axioms: [propext, Classical.choice, Quot.sound]

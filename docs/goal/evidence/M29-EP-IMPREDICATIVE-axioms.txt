@@ -1,0 +1,6 @@
+# #print axioms for M29-EP-IMPREDICATIVE (lake env lean on a file importing Start)
+'PureTypeSystem.HasTypeR.normalizeNW_of_hsubst' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.productNormalizationR_of_hsubst' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.expansionPostponement_of_hsubst' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.lambdaP2_expansionPostponement_of_hsubst' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.hsubstNW_lambdaPOmegaBar' depends on axioms: [propext, Classical.choice, Quot.sound]

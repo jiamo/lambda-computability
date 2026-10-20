@@ -1,0 +1,6 @@
+# #print axioms for M25-CBNEED-COST (lake env lean on a file importing Start)
+'Lazy.beta_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Lazy.beta_le_of_whnIn' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Lazy.krivine_tfam' depends on axioms: [propext, Quot.sound]
+'Lazy.lazy_tfam' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Lazy.cbneed_exponential_gap' depends on axioms: [propext, Classical.choice, Quot.sound]

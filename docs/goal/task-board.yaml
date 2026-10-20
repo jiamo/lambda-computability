@@ -5568,16 +5568,36 @@ tasks:
       - "python3 scripts/check_sorry.py"
       - "lake build"
 
-  - id: M23-GROUPOID-MODEL
+  - id: M23-GROUPOID-PI
     priority: P1
     status: TODO_READY
     track: theory/types
+    title: "Pi-types in the groupoid model"
+    latest_evidence: "docs/goal/evidence/M23-GROUPOID-MODEL.md"
+    open_boundary: "First missing construction: def GrpdModel.grpdPiStruct : Cwa.PiStruct grpdCwa, natural if possible (NaturalPiStruct). Π A B at γ is the groupoid of sections of B over the fibre A γ (functors into the Grothendieck construction of B restricted to A γ, over the inclusion), with the action of γ ⟶ γ' by conjugation; the strict functoriality of this action and the strict λ/app/β/η equations are what remains. Tools: transportAlong, functor_ext, secOf, reindex (Start/GrpdGrothendieck.lean, Start/GrpdIdTypes.lean)."
+    milestone: M23
+    depends_on: []
+    rank: 2045
+    exit_criteria:
+      - "GrpdModel.grpdPiStruct : Cwa.PiStruct grpdCwa (the Hofmann-Streicher Π)."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M23-GROUPOID-MODEL
+    priority: P1
+    status: DONE_WEAK
+    track: theory/types
     title: "The Hofmann-Streicher groupoid model"
-    latest_evidence: "docs/goal/proposed-M21-M24.md"
-    open_boundary: ""
+    terminal_statement: "GrpdModel.grpdCwa : Cwa.{u + 1, u, u + 1} Grpd.{u, u} (Ty Γ := Γ ⥤ Grpd, tySub σ A := σ ⋙ A, ext = Grothendieck construction, GrpdModel.isPullbackG); GrpdModel.grpdIdStruct : IdStruct grpdCwa.{u} (J_comp, Id_sub, refl_sub, J_sub strict)"
+    latest_evidence: "docs/goal/evidence/M23-GROUPOID-MODEL.md"
+    open_boundary: "The CwA (with the groupoid structure of the Grothendieck construction and the pullback squares) and the identity-type structure are proved. Π-types are not: gap row M23-GROUPOID-PI, first missing construction def GrpdModel.grpdPiStruct : Cwa.PiStruct grpdCwa (Π A B at γ = the groupoid of sections of B over the fibre of A at γ)."
     milestone: M23
     depends_on:
       - M23-ID-TYPES
+      - M23-GROUPOID-PI
     rank: 2050
     exit_criteria:
       - "Groupoids (Mathlib's CategoryTheory.Groupoid) form a CwA whose types over a groupoid are functors into groupoids."
@@ -5586,18 +5606,19 @@ tasks:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
       - "python3 scripts/check_sorry.py"
-      - "lake build"
+      - "lake build --wfail"
 
   - id: M23-UIP-INDEPENDENT
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: theory/types
     title: "UIP fails in the groupoid model, hence is not derivable"
-    latest_evidence: "docs/goal/proposed-M21-M24.md"
+    terminal_statement: "GrpdModel.grpdIdStruct_not_UIP : ¬ grpdIdStruct.{u}.UIP; GrpdModel.uip_independent : CwaType.idStruct.{u}.UIP ∧ ¬ grpdIdStruct.{u}.UIP ∧ (∃ C _ T (I : IdStruct T), I.UIP) ∧ (∃ C _ T (I : IdStruct T), ¬ I.UIP)"
+    latest_evidence: "docs/goal/evidence/M23-GROUPOID-MODEL.md"
     open_boundary: ""
     milestone: M23
     depends_on:
-      - M23-GROUPOID-MODEL
+      - M23-ID-TYPES
     rank: 2060
     exit_criteria:
       - "A type of the groupoid model with a non-trivial loop (a universe of finite sets and bijections, or the groupoid with one object and the automorphism group of Bool) on which UIP fails."
@@ -5606,7 +5627,7 @@ tasks:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
       - "python3 scripts/check_sorry.py"
-      - "lake build"
+      - "lake build --wfail"
 
   - id: M23-LAMBDA-MU
     priority: P2
@@ -5634,8 +5655,8 @@ tasks:
     status: TODO_READY
     track: theory/lambda
     title: "Strict CPS simulation for lambda-mu, and strong normalization of typed lambda-mu"
-    latest_evidence: "docs/goal/evidence/M23-LAMBDA-MU.md"
-    open_boundary: "First missing lemma: a translation (e.g. a colon/administrative-redex-free variant of LambdaMu.cps) with typing preservation and theorem LambdaMu.cps_step_strict {Γ : List Entry} {t t' : Tm} {A : Ty} (h : Typ Γ t A) (hs : Step t t') : Relation.TransGen Lambda.step (cps t) (cps t') (one λμ step becomes at least one β-step), or a direct proof of theorem LambdaMu.sn_of_typ {Γ : List Entry} {t : Tm} {A : Ty} (h : Typ Γ t A) : Acc (fun a b => Step b a) t (reducibility candidates for λμ)."
+    latest_evidence: "docs/goal/evidence/M23-LAMBDA-MU-SN.md"
+    open_boundary: "Partial (Start/LambdaMuSN.lean): SN (Acc of reverse Step) and its closure properties, VarHead spines and sn_app_varHead, the candidates Red with red_cr (CR1, CR2, reducibility of SN variable-headed spines) and the stack form red_iff_stk. Open: theorem LambdaMu.sn_of_typ {Γ : List Entry} {t : Tm} {A : Ty} (h : Typ Γ t A) : LambdaMu.SN t. First missing lemma: stability of reduction under name-respecting substitution, Step t t' → Step (subst σ t) (subst σ t') when σ sends every name of t to a variable, with its structural analogue Step t t' → TransGen Step (sstr a v t) (sstr a v t'); they need the commutation lemmas subst∘subst, sstr∘subst, sstr∘sstr, sstr∘ren, and are the base of the β- and μ-expansion lemmas (docs/goal/evidence/M23-LAMBDA-MU-SN.md)."
     milestone: M23
     depends_on: []
     rank: 2071
@@ -6019,10 +6040,11 @@ tasks:
 
   - id: M25-CBNEED-MACHINE
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: theory/semantics
     title: "Call-by-need: thunks, update, and the sharing that makes laziness lazy"
-    latest_evidence: "docs/goal/evidence/M12-KRIVINE-SPACE-LIVE.md"
+    terminal_statement: "Lazy.LTrans.deterministic; Lazy.LRun.value_persist, Lazy.LRun.value_not_thunk (a cell overwritten by a value is never a thunk again); Lazy.LRun.forced_nodup (each address forced from a thunk at most once); Lazy.sim_run, Lazy.halts_iff : LHalts t ↔ KHalts t, Lazy.result_agree (same weak head normal form as Start/Krivine.lean), Lazy.no_blackhole"
+    latest_evidence: "docs/goal/evidence/M25-CBNEED.md"
     open_boundary: ""
     milestone: M25
     depends_on: []
@@ -6034,18 +6056,41 @@ tasks:
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
-      - "lake build"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
 
-  - id: M25-CBNEED-COST
+  - id: M25-CBNEED-TIME
     priority: P2
     status: TODO_READY
     track: theory/complexity
-    title: "What laziness costs, and what it saves"
-    latest_evidence: "docs/goal/evidence/M11-KRIVINE-INVARIANCE.md"
-    open_boundary: ""
+    title: "A time cost model for call-by-need"
+    latest_evidence: "docs/goal/evidence/M25-CBNEED.md"
+    open_boundary: "First missing result, in the form of M11-KRIVINE-INVARIANCE: the number of transitions of a lazy run LRun n b fs (LState.init t) s is bounded by a polynomial in b and the size of t (first lemma), the heap and stack stay polynomially bounded, and one transition of Start/LazyMachine.lean is realized by a tape program (Complexity.Space.Realizes, Start/SpaceCompile.lean) in polynomial time."
     milestone: M25
     depends_on:
       - M25-CBNEED-MACHINE
+    rank: 2365
+    exit_criteria:
+      - "The number of lazy machine transitions is polynomially related to the number of β transitions and the size of the term."
+      - "One transition is realized by a tape program, so the call-by-need β count is a reasonable time cost model."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M25-CBNEED-COST
+    priority: P2
+    status: DONE_WEAK
+    track: theory/complexity
+    title: "What laziness costs, and what it saves"
+    terminal_statement: "Lazy.beta_le : LRun n b fs (LState.init t) s → Run m c (State.init t) f → IsFinal f → b ≤ c; Lazy.beta_le_of_whnIn; Lazy.cbneed_exponential_gap (n : ℕ) : lazy run with 2 * n + 1 β transitions on tfam n, and every halting Krivine run on tfam n makes exactly 2 ^ n + n"
+    latest_evidence: "docs/goal/evidence/M25-CBNEED.md"
+    open_boundary: "The second clause is proved (never more β transitions than call-by-name on a term with a weak head normal form; the exponential family tfam n, 2n+1 against 2^n+n). The first clause, a time cost model for call-by-need in the form of M11-KRIVINE-INVARIANCE, is not: gap row M25-CBNEED-TIME."
+    milestone: M25
+    depends_on:
+      - M25-CBNEED-MACHINE
+      - M25-CBNEED-TIME
     rank: 2370
     exit_criteria:
       - "A time cost model for call-by-need, in the form of M11-KRIVINE-INVARIANCE."
@@ -6053,14 +6098,16 @@ tasks:
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
-      - "lake build"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
 
   - id: M25-CBPV
     priority: P2
-    status: TODO_READY
+    status: DONE_STRONG
     track: theory/types
     title: "Call-by-push-value: one calculus containing both evaluation orders"
-    latest_evidence: "docs/goal/evidence/M9-SYSTEM-F.md"
+    terminal_statement: "CBPV.tn_typing, CBPV.tv_typing (both translations preserve typing); CBPV.tn_sim : NStep t t' → ∃ M, CStep (tn t) M ∧ ReflTransGen Admin M (tn t'); CBPV.tv_beta (a CBV β step is four CBPV steps, exactly); CBPV.tv_sim : VStep t t' → ∃ M, TransGen CStep (tv t) M ∧ ReflTransGen CStep (tv t') M"
+    latest_evidence: "docs/goal/evidence/M25-CBPV.md"
     open_boundary: ""
     milestone: M25
     depends_on:
@@ -6073,7 +6120,8 @@ tasks:
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
-      - "lake build"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
 
   - id: M25-FSUB-UNDECIDABLE
     priority: P1
@@ -7659,7 +7707,7 @@ tasks:
     track: research/open-problems
     title: "Expansion postponement for the impredicative corners λP2 and the Calculus of Constructions"
     latest_evidence: "docs/goal/evidence/M29-EP.md"
-    open_boundary: "First missing lemma: theorem lambdaP2_productNormalizationR : ProductNormalizationR (cubeSpec lambdaP2), then theorem coc_productNormalizationR : ProductNormalizationR (cubeSpec coc); EP follows by cube_expansionPostponement_of_productNormalizationR. The erasure and skeleton measures fail (substituting a type for a type variable changes them). Recommended route (M29-EP.md, research section): normalization of HasType derivations by a Kripke-style typed candidate model, first lemma theorem HasType.normalizeNW_lambdaP2 {Γ : List (Expr Srt)} {M T : Expr Srt} (h : HasType (cubeSpec lambdaP2) Γ M T) : ∃ Γ' M' T', List.Forall₂ Reduces Γ Γ' ∧ Reduces M M' ∧ Reduces T T' ∧ HasTypeNW (cubeSpec lambdaP2) Γ' M' T' (HasTypeNW of Start/PTSExpansionLambdaPOmegaBarCanon.lean is already generic in the specification)."
+    open_boundary: "Reduced to one lemma (Start/PTSExpansionLambdaP2.lean): lambdaP2_expansionPostponement_of_hsubst : HSubstNW (cubeSpec lambdaP2) → ProductNormalizationR (cubeSpec lambdaP2) ∧ ExpansionPostponement (cubeSpec lambdaP2), via HasTypeR.normalizeNW_of_hsubst (every corner of the cube); HSubstNW holds for λPω̲ (hsubstNW_lambdaPOmegaBar). First missing lemma: HSubstNW (cubeSpec lambdaP2), i.e. theorem HasTypeNW.hsubst_lambdaP2 {Γ : List (Expr Srt)} {N A M B : Expr Srt} (hN : HasTypeNW (cubeSpec lambdaP2) Γ N A) (hM : HasTypeNW (cubeSpec lambdaP2) (A :: Γ) M B) : ∃ M' B', Reduces (M.instantiate N) M' ∧ Reduces (B.instantiate N) B' ∧ HasTypeNW (cubeSpec lambdaP2) Γ M' B'. Its termination is SN of λP2; by route (ii) it needs a Kripke-style typed candidate interpretation of derivations whose first missing lemma is the commutation of the interpretation with type substitution at rule (□,∗) (M29-EP.md, λP2 round 2). Then coc_productNormalizationR."
     milestone: M29
     depends_on: []
     rank: 2756

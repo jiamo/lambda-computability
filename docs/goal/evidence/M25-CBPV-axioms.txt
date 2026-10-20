@@ -1,0 +1,6 @@
+# #print axioms for M25-CBPV (lake env lean on a file importing Start)
+'CBPV.tn_typing' depends on axioms: [propext]
+'CBPV.tv_typing' depends on axioms: [propext]
+'CBPV.tn_sim' depends on axioms: [propext]
+'CBPV.tv_beta' depends on axioms: [propext, Quot.sound]
+'CBPV.tv_sim' depends on axioms: [propext, Quot.sound]

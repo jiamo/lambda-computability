@@ -1,0 +1,4 @@
+# #print axioms for M23-GROUPOID-MODEL (lake env lean on a file importing Start)
+'GrpdModel.grpdCwa' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GrpdModel.isPullbackG' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GrpdModel.grpdIdStruct' depends on axioms: [propext, Classical.choice, Quot.sound]

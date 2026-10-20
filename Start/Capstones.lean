@@ -373,6 +373,11 @@ import Start.PTSExpansionLambdaPOmegaBarCon
 import Start.PTSExpansionLambdaPOmegaBarEP
 import Start.LambdaMu
 import Start.LambdaMuCPS
+import Start.CwaGroupoidUIP
+import Start.LazyCost
+import Start.CBPV
+import Start.LambdaMuSN
+import Start.PTSExpansionLambdaP2
 
 /-! ## Interfaces of the untyped calculus
 
@@ -4479,3 +4484,85 @@ strong normalization of typed λμ are not proved.
 #check @LambdaMu.cps_step
 #check @LambdaMu.cps_beta
 #check @LambdaMu.cps_rename
+
+/-! ## The groupoid model and the independence of UIP (M23-GROUPOID-MODEL, M23-UIP-INDEPENDENT)
+
+`Start/GrpdGrothendieck.lean`: the Grothendieck construction of a functor into `Grpd` is a
+groupoid, with its projection and the functor induced by a substitution.
+`Start/CwaGroupoid.lean`: Hofmann–Streicher's groupoid model as a category with attributes
+(`Ty Γ := Γ ⥤ Grpd`, comprehension by the Grothendieck construction, pullback squares proved).
+`Start/GrpdIdTypes.lean`, `Start/CwaGroupoidId.lean`: its identity types (`Id A` at `(γ, a, b)` is
+the discrete groupoid on the fibre morphisms `a ⟶ b`; `J` is transport), with all the laws of
+`Cwa.IdStruct` holding strictly.  `Start/CwaGroupoidUIP.lean`: UIP fails in the groupoid model
+(the one-object groupoid whose automorphism group is `ℤ/2`, `Bool` under `xor`), and holds in the set model,
+so neither UIP nor its negation follows from the identity-type rules.  Π-types in the groupoid
+model are not constructed.
+-/
+
+#check @GrpdModel.grpdCwa
+#check @GrpdModel.grpdIdStruct
+#check @GrpdModel.grpdIdStruct_not_UIP
+#check @GrpdModel.uip_independent
+
+/-! ## Call-by-need (M25-CBNEED-MACHINE, M25-CBNEED-COST)
+
+`Start/LazyMachine.lean`: a lazy abstract machine in the style of Sestoft (heap of thunks, black
+holes and values; update markers), deterministic; once a cell holds a value it keeps it, and in
+any run each address is forced from a thunk at most once.
+`Start/LazyKrivine.lean`: the lazy machine is simulated by the Krivine machine; it halts exactly
+when the Krivine machine does, with the same result, never meets a black hole when the Krivine
+machine halts, and makes no more β transitions.
+`Start/LazyCost.lean`: on the family `tfam n` the lazy machine makes `2n + 1` β transitions and the
+Krivine machine `2ⁿ + n`.  A time cost model for call-by-need is not proved.
+-/
+
+#check @Lazy.LTrans.deterministic
+#check @Lazy.LRun.value_persist
+#check @Lazy.LRun.forced_nodup
+#check @Lazy.sim_run
+#check @Lazy.halts_iff
+#check @Lazy.result_agree
+#check @Lazy.no_blackhole
+#check @Lazy.beta_le
+#check @Lazy.beta_le_of_whnIn
+#check @Lazy.cbneed_exponential_gap
+
+/-! ## Call-by-push-value (M25-CBPV)
+
+`Start/CBPV.lean`: value and computation types, thunk and force, the typing judgement and the
+reduction of CBPV; the call-by-name and the call-by-value translations of a simply typed source
+preserve typing; a call-by-name step becomes one CBPV step followed by administrative
+`force (thunk M) ⇝ M` contractions, a call-by-value β step becomes four CBPV steps, and every
+call-by-value step `t → t'` gives `tv t →⁺ M` and `tv t' →* M`.
+-/
+
+#check @CBPV.tn_typing
+#check @CBPV.tv_typing
+#check @CBPV.tn_sim
+#check @CBPV.tv_beta
+#check @CBPV.tv_sim
+
+/-! ## Towards strong normalization of λμ (M23-LAMBDA-MU-SN, partial)
+
+`Start/LambdaMuSN.lean`: SN as `Acc` of reverse `Step`, its closure properties, the reducibility
+candidates with CR1/CR2 and reducibility of SN variable-headed spines, and the stack form of the
+candidates.  `LambdaMu.sn_of_typ` is not proved.
+-/
+
+#check @LambdaMu.red_cr
+#check @LambdaMu.red_iff_stk
+#check @LambdaMu.sn_app_varHead
+
+/-! ## λP2: expansion postponement reduced to hereditary substitution (M29-EP-IMPREDICATIVE)
+
+`Start/PTSExpansionLambdaP2.lean`: in every corner of the cube, hereditary substitution on
+canonical derivations (`HSubstNW`) implies normalization of derivations, product normalization
+and expansion postponement; for λPω̲ the property holds.  `HSubstNW (cubeSpec lambdaP2)` is not
+proved.
+-/
+
+#check @PureTypeSystem.HasTypeR.normalizeNW_of_hsubst
+#check @PureTypeSystem.productNormalizationR_of_hsubst
+#check @PureTypeSystem.expansionPostponement_of_hsubst
+#check @PureTypeSystem.lambdaP2_expansionPostponement_of_hsubst
+#check @PureTypeSystem.hsubstNW_lambdaPOmegaBar

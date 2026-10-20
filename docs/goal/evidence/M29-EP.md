@@ -789,3 +789,58 @@ theorem HasTypeNW.hsubst_lambdaP2 {Γ : List (Expr Srt)} {N A M B : Expr Srt}
 
 whose termination is exactly strong normalization of λP2.  Its proof must therefore go through a
 model, as in (ii); no syntactic measure is known.
+
+## λP2 (round 2): EP reduced to hereditary substitution; where route (ii) stops
+
+Status of M29-EP-IMPREDICATIVE: **TODO_READY** (not closed).  The targets
+`lambdaP2_productNormalizationR` and `lambdaP2_expansionPostponement` are not proved.
+
+**Proved** (`Start/PTSExpansionLambdaP2.lean`, axioms in `M29-EP-IMPREDICATIVE-axioms.txt`,
+`[propext, Classical.choice, Quot.sound]`):
+
+```lean
+def HSubstNW (P : Specification Srt) : Prop :=
+  ∀ {Γ : List (Expr Srt)} {N A M B : Expr Srt}, HasTypeNW P Γ N A → HasTypeNW P (A :: Γ) M B →
+    ∃ M' B', Reduces (M.instantiate N) M' ∧ Reduces (B.instantiate N) B' ∧ HasTypeNW P Γ M' B'
+theorem HasTypeR.normalizeNW_of_hsubst (f : CubeFeatures) (hs : HSubstNW (cubeSpec f))
+    {Γ : List (Expr Srt)} {M T : Expr Srt} (h : HasTypeR (cubeSpec f) Γ M T) :
+    ∃ Γ' M' T', List.Forall₂ Reduces Γ Γ' ∧ Reduces M M' ∧ Reduces T T' ∧
+      HasTypeNW (cubeSpec f) Γ' M' T'
+theorem productNormalizationR_of_hsubst (f : CubeFeatures) (hs : HSubstNW (cubeSpec f)) :
+    ProductNormalizationR (cubeSpec f)
+theorem expansionPostponement_of_hsubst (f : CubeFeatures) (hs : HSubstNW (cubeSpec f)) :
+    ExpansionPostponement (cubeSpec f)
+theorem lambdaP2_expansionPostponement_of_hsubst (hs : HSubstNW (cubeSpec lambdaP2)) :
+    ProductNormalizationR (cubeSpec lambdaP2) ∧ ExpansionPostponement (cubeSpec lambdaP2)
+theorem hsubstNW_lambdaPOmegaBar : HSubstNW (cubeSpec lambdaPOmegaBar)
+```
+
+The λPω̲ normalization argument is corner-independent except in the application case, where a
+created head redex `(λx:C. e) a'` is fired by hereditary substitution; `normalizeNW_of_hsubst`
+is that argument with hereditary substitution as a hypothesis, in every corner of the cube.  So
+for λP2 the **only** remaining lemma is `HSubstNW (cubeSpec lambdaP2)`, i.e. the lemma
+`HasTypeNW.hsubst_lambdaP2` of route (iii) above.  `hsubstNW_lambdaPOmegaBar` checks that the
+hypothesis is the right one: it holds for λPω̲ (from `hsubst_obj` and `hsubst_con`).
+
+**Where route (ii) stops.**  Route (ii) proves `HSubstNW` (equivalently normalization of
+derivations) through a Tait/Girard predicate on derivations.  The fundamental lemma is by
+induction on the `HasType` derivation, with a substitution of good derivations for the context.
+The ax, var, weaken, product, abstraction and conversion cases are the corresponding cases of
+`normalizeNW_of_hsubst` (no new idea needed).  The application case at an object binder of
+first-order type is the reducibility clause.  The case that fails with the untyped saturated sets
+of `Start/CoCSN.lean` is the application `M N : B[N]` with `M : Π(X:∗). B` and `N : ∗` (rule
+(□,∗)).  There the clause must quantify over candidates for `X` that are sets of **good
+derivations** `Γ' ⊢ P : X'`, for every context extension `Γ'` and every type `X'` reducing to
+the instance of `X`.  Instantiating `X := N` must turn such a candidate into the interpretation of
+`N`, i.e. the interpretation must commute with type substitution on typed derivations:
+
+```lean
+theorem Good.subst_type {Γ : List (Expr Srt)} {B N : Expr Srt} ...
+    -- ⟦B[N/X]⟧ρ = ⟦B⟧(ρ, X ↦ ⟦N⟧ρ) on derivations, for B : ∗ in context X : ∗ :: Γ
+```
+
+This is the typed analogue of `CoCModel`'s substitution lemma.  It is the first lemma that has no
+counterpart in the repository.  Its statement needs the typed candidate space itself (sets of
+`HasType` derivations closed under weakening and under expansion by `HasTypeNW`-normal
+derivations), which is not built.  No mathematical gap was found; what remains is the
+construction of that interpretation and its substitution and conversion lemmas.
