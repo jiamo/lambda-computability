@@ -2,3 +2,8 @@
 'GrpdModel.fibI_extend' depends on axioms: [propext, Classical.choice, Quot.sound]
 'GrpdModel.trans_reindex' depends on axioms: [propext, Classical.choice, Quot.sound]
 'GrpdModel.PiF_sub' depends on axioms: [propext, Classical.choice, Quot.sound]
+
+# round 5: #print axioms (lake env lean on a scratch file importing Start.GrpdPiLam, with #print axioms appended)
+'GrpdModel.tmEquivSect' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GrpdModel.curry' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GrpdModel.grpdLam' depends on axioms: [propext, Classical.choice, Quot.sound]

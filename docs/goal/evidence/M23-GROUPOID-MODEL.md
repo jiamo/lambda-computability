@@ -144,3 +144,28 @@ with `app_lam`, `lam_app` and then `lam_sub` (`NaturalPiStruct`).  The first equ
 be proved for `piLam` is functoriality of the section family in `γ`: for `g : γ ⟶ γ'`,
 `(PiF A B).map g (piLam t γ) = piLam t γ'`, a transport identity of the same shape as `PiF_sub`'s
 morphism part.  Σ (`grpdSigmaStruct`) not started.
+
+## Round 5 — terms are sections; currying and abstraction (`Start/GrpdPiLam.lean`)
+
+Proved (`lake build --wfail`):
+
+* `GrpdModel.tmEquivSect X F : grpdCwa.Tm X F ≃ Sect F` — a term of the groupoid model (a functor
+  `X ⥤ ∫ F` strictly over `𝟭 X`) is a section.
+* `GrpdModel.Sect.restrict`, `GrpdModel.curryObj`, `GrpdModel.curryMap`, `piTheta_id_heq`,
+  `piTheta_comp_heq`.
+* **`GrpdModel.curry : Sect B → Sect (PiF A B)`** (with `map_id`, `map_comp`) and
+  **`GrpdModel.grpdLam : grpdCwa.Tm (grpdCwa.ext Γ A) B → grpdCwa.Tm Γ (PiF A B)`**.
+
+Finding on the suggested first equation.  `(PiF A B).map g (lam t γ) = lam t γ'` is **not an
+equation** of the model: at `a : A γ'` the two sides are `B(θ_a)(t(γ, A(g⁻¹) a))` and `t(γ', a)`,
+different objects of `B(γ', a)` in general.  The naturality of the section family `γ ↦ t|γ` is the
+morphism `curryMap t g : (PiF A B).map g (t|γ) ⟶ t|γ'` of `Sect (fibI A γ' ⋙ B)` with components
+`t.map (piTheta A g a)`; `curry` packages it as the morphism part of the section of `PiF A B`.
+
+Open: `def GrpdModel.grpdPiStruct : Cwa.PiStruct grpdCwa`.  **First missing construction**:
+application, the inverse `uncurry : Sect (PiF A B) → Sect B`, with object part
+`(γ, a) ↦ (σ γ).obj a` and morphism part, for `f = fibI ψ ≫ θ_y : (γ, a) ⟶ (γ', a')`,
+`eqToHom ≫ (B.map θ_y).map ((σ γ).map ψ) ≫ (σ.map g).app y`; the first failing equation is its
+`map_comp` (the functoriality of evaluation `ev : ∫ (PiF A B) ×_Γ ∫ A ⥤ ∫ B`).  Then `app_lam`
+and `lam_app` follow by making `curry`/`uncurry` an equivalence; `lam_sub` (NaturalPiStruct) and
+`grpdSigmaStruct` are not started.

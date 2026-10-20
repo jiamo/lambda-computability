@@ -10,3 +10,9 @@
 'PureTypeSystem.hsubstNW_of_hsubstPi' depends on axioms: [propext, Classical.choice, Quot.sound]
 'PureTypeSystem.cube_expansionPostponement_of_hsubstPi' depends on axioms: [propext, Classical.choice, Quot.sound]
 'PureTypeSystem.hsubstPi_nil_of_hsubstNW' does not depend on any axioms
+
+# round 5: #print axioms (lake env lean on a scratch file importing Start.PTSExpansionMeasures, with #print axioms appended)
+'PureTypeSystem.hsubstPi_iff_hsubstSort' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.cube_expansionPostponement_of_hsubstSort' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.HasTypeNW.not_lam_of_sort' depends on axioms: [propext]
+'PureTypeSystem.lambdaP2_upDown_not_acc' does not depend on any axioms

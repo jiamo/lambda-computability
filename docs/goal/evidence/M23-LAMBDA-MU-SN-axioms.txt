@@ -16,3 +16,8 @@
 'LambdaMu.Tm.subst_sstr' depends on axioms: [propext, Classical.choice, Quot.sound]
 'LambdaMu.Step.ren' depends on axioms: [propext, Classical.choice, Quot.sound]
 'LambdaMu.Step.subst' depends on axioms: [propext, Classical.choice, Quot.sound]
+
+# round 5: #print axioms (lake env lean on a scratch file importing Start.LambdaMuSstr, with #print axioms appended)
+'LambdaMu.Tm.sstr_sstr' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LambdaMu.Step.sstr' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LambdaMu.Step.sstr_of_typ' depends on axioms: [propext, Classical.choice, Quot.sound]

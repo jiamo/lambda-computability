@@ -899,3 +899,79 @@ def HSubstPi (P : Specification Srt) : Prop :=
 `cube_expansionPostponement_of_hsubstPi`.  A natural next attempt (not yet tried in Lean) is a
 second outer induction on `Π C E` itself, which is typed and hence SN; its product premises are
 again of the same shape, so the open question is whether this nested recursion is well founded.
+
+## λP2 and coc, round 5 — the three measures for the product premise (`Start/PTSExpansionMeasures.lean`)
+
+Target this round: `theorem hsubstPi_lambdaP2 : HSubstPi (cubeSpec lambdaP2)`.  **Not proved.**
+What is proved, and where each of the three suggested measures fails:
+
+Proved (all `lake build --wfail`, axioms `propext, Classical.choice, Quot.sound`):
+
+* `PureTypeSystem.HSubstSort P` — hereditary substitution at depth into a canonical judgement
+  `Δ ++ A :: Γ ⊢ M : s` whose type is a **sort** (stage 1 of measure (c)).
+* `PureTypeSystem.hsubstPi_iff_hsubstSort (f) : HSubstPi (cubeSpec f) ↔ HSubstSort (cubeSpec f)`
+  (from `hsubstPi_of_hsubstSort` and `hsubstSort_of_hsubstPi`).
+* `PureTypeSystem.cube_expansionPostponement_of_hsubstSort (f) (h : HSubstSort (cubeSpec f)) :
+  ProductNormalizationR (cubeSpec f) ∧ ExpansionPostponement (cubeSpec f)`.
+* `PureTypeSystem.HasTypeNW.not_lam_of_sort` — a canonical judgement whose type is a sort never
+  has an abstraction as subject.
+* `PureTypeSystem.UpDown P Γ x y := Expr.DescStep x y ∨ HasType P Γ y x` and
+  `PureTypeSystem.lambdaP2_upDown_not_acc : ¬ Acc (TransGen (UpDown (cubeSpec lambdaP2)
+  cycleCtx)) (.var 0)`.
+
+### Measure (a): nested outer induction on the SN of `Π C E`
+
+Route (iii) already runs an outer induction on `M[N]` (up to renaming, `Expr.acc_descStep_of_sn`)
+and an inner induction on the canonical derivation of `M`.  Adding a third, outer-most induction on
+`SN (Π C E)` (the type of the abstraction) handles the product premise *once*: the recursive call
+for `Θ ⊢ Π C E : s` is at a strictly smaller point of the new measure only if the subject
+`(Π C E)[N]` is a reduct or a subterm of the term whose SN is being inducted on.  It fails at the
+**created redex inside the product premise**: hereditary substitution into `Π C E : s` fires the
+redexes that `N` creates inside `E`, and each firing produces a *new* canonical derivation (the
+output of the recursive call), whose own product premises are types of abstractions that occur
+in `E[N]`'s reducts — not in `Π C E`, not in `M[N]`, and not below the root derivation.  So the
+nested measure sees neither a sub-derivation nor a reduct of the inducted term at the second
+recursive call: the point where it fails is the call `HSubstPi` on the product premise of an
+abstraction **created** by the first firing.
+
+### Measure (b): `Acc` of (DescStep ∪ "is the type of")
+
+* With "is the type of" read in the full system (types up to conversion) the order is **not**
+  well founded: `lambdaP2_upDown_not_acc` exhibits the 2-cycle `t ⟶ (λu:P. P) t ⟶ t` in
+  `P : ∗, t : P` (the first arrow "is the type of" by conversion, the second "immediate subterm").
+* Restricted to canonical (normal) types the cycle disappears (a normal type of `t` is `P`), but
+  then well-foundedness is the open question itself: an infinite alternating chain
+  (go up to the normal type, go down into a subterm, go up to its type, …) would have to be
+  excluded by an order on contexts (each "up" step at a variable moves into the context entry,
+  which is shorter) and by the SN of the subterm order at non-variable heads.  This is plausible
+  but not proved; it is the first missing lemma of route (b):
+  `Acc (TransGen (UpDownNF (cubeSpec lambdaP2) Γ)) M` for canonical `Γ ⊢ M : T`.
+
+### Measure (c): level-stratified induction
+
+Stage 1 is **not a weakening**: `hsubstPi_iff_hsubstSort` proves that hereditary substitution into
+sort-typed premises is *equivalent* to `HSubstPi` in every corner.  So the stratification moves the
+whole difficulty into stage 1.  The obstruction there: in λP2 a sort-typed judgement
+`Θ ⊢ F u₁ ⋯ uₙ : ∗` with `F` a variable of a type-family kind takes **object arguments** `uᵢ`; after
+substitution `uᵢ[N]` contains object redexes created by `N` (an object abstraction substituted at
+the head of an object application inside a type argument).  These are object redexes, so they are
+fired by the object-level procedure of stage 2 — but stage 2 uses stage 1 for its product premise,
+and the object abstraction being fired has a product type `Π C E` whose premise is again a stage-1
+call on `E[N]`.  The created object redexes inside types are therefore **not** at smaller points of
+any order already available (neither the term-SN order of route (iii) nor the size of the kind
+skeleton used for λPω̲): the first missing lemma is unchanged.
+
+### First missing lemma
+
+`theorem hsubstPi_lambdaP2 : HSubstPi (cubeSpec lambdaP2)` — equivalently
+`HSubstSort (cubeSpec lambdaP2)`.  With it, `lambdaP2_productNormalizationR` and
+`lambdaP2_expansionPostponement` follow by `cube_expansionPostponement_of_hsubstPi lambdaP2`; for coc
+the same with `hsubstPi_cube f`.
+
+A different route that avoids the product premise altogether, recorded for the next round:
+expansion postponement follows from *canonicalisation of normal subjects*; the only rule of the
+canonical system that fails for a normal subject is the abstraction rule's product premise, so it
+would suffice to drop that premise from the canonical system and recover it a posteriori from
+type correctness (`HasType` gives `Γ ⊢ Π C E : s` in the full system).  Whether the canonical
+system without that premise still yields `ProductNormalizationR` is not checked: this is a
+suggestion, not attempted in Lean.

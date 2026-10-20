@@ -57,3 +57,29 @@ application, its substitution calculus (the analogue of `Start/SystemFSubst.lean
 rule for data constructors (`K (t ▷ γ)` case analysis).  Hence the row is DONE_WEAK.
 
 Axioms: `M25-SYSTEM-FC-axioms.txt`, at most `[propext, Classical.choice, Quot.sound]`.
+
+## Round 5 — data types, type application and application coercions (row M25-SYSTEM-FC-TYCON)
+
+Modules: `Start/SystemFCTyConTypes.lean` (types with constructors `con T` and type application,
+their substitution calculus, `tapps T σ`, coercions with `capp`, `appL`/`appR` decompositions and
+axiom schemes, `CoTyping` and its substitution lemma, `liftCo`, `conCo`, `nthCo`, `nthCos`) and
+`Start/SystemFCTyCon.lean` (data signatures, constructors and `case`, typing, reduction with the
+push rule `casePush`, preservation, consistency, progress, safety).
+
+Terminal theorems (`lake build --wfail`; axioms in `M25-SYSTEM-FC-TYCON-axioms.txt`):
+
+* `FCTyCon.Typing.preservation (hD : SigOK D) (hAx : AxOK Ax) (h : Typing D Ax Γ t A) :
+  ∀ t', Step D t t' → Typing D Ax Γ t' A`;
+* `FCTyCon.Consistent Ax` — a derivable coercion never relates types with different heads
+  (`→`, `∀`, or a type constructor); `FCTyCon.Consistent.tapps_ne` (distinct constructor heads are
+  never related), `FCTyCon.consistent_nil`;
+* `FCTyCon.Typing.progress (hcon : Consistent Ax) (h : Typing D Ax [] t A) :
+  Value t ∨ ∃ t', Step D t t'`;
+* `FCTyCon.Typing.safety`.
+
+Scope.  Constructors take one field (several fields are a tuple-typed field; a nullary
+constructor is a field of a closed type); axioms are schemes `(n, τ₁, τ₂)` over `n` parameters,
+which covers type-family instances `F σ ~ τ` and newtypes `N α ~ φ`.  With this the exit
+criterion of M25-SYSTEM-FC ("System F with type-equality coercions ... preservation, then progress
+under an explicitly stated consistency hypothesis") holds for FC with data types; both rows are
+`DONE_STRONG`.

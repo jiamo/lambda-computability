@@ -98,3 +98,30 @@ renaming cases need the commutation `sstr ∘ sstr` of two structural substituti
 names, which is not proved; a renaming step at the name `a` itself becomes one structural step
 followed by one renaming step (hence `TransGen`, not `Step`).  After it: the β- and μ-expansion
 lemmas, the fundamental lemma, and `sn_of_typ`.
+
+## Round 5 — stability under structural substitution (`Start/LambdaMuSstr.lean`)
+
+Proved (`lake build --wfail`; axioms `propext, Classical.choice, Quot.sound` or fewer):
+
+* `LambdaMu.Tm.TmFree a t` — the index `a` is never used as a *term* variable of `t`;
+  `LambdaMu.Typ.tmFree` — in a well-typed term, every name of the context is `TmFree`.
+* `LambdaMu.Tm.sstr_sstr` — **the commutation `sstr ∘ sstr`**:
+  `b ≠ c → NameFree b w → sstr c w (sstr b x t) = sstr b (sstr c w x) (sstr c w t)`.
+* `LambdaMu.Tm.sstr_subst`, `LambdaMu.Tm.sstr_subst2` — `sstr` after a substitution that sends one
+  name, resp. merges two names, onto the structural name.
+* **`LambdaMu.Step.sstr`** `(hs : Step t t') (a : ℕ) (v : Tm) (ha : Tm.TmFree a t) :
+  Relation.TransGen Step (Tm.sstr a v t) (Tm.sstr a v t')` — one step becomes one step, except a
+  renaming redex `[a]μγ.c`, which becomes two steps (a structural step, then the renaming step).
+  Compared with the round-4 statement, the side condition `TmFree a t` is needed (if `a` is also a
+  term variable of `t`, a β-step can substitute a term for it and `sstr` no longer commutes); it
+  holds for every name of a well-typed term, giving `LambdaMu.Step.sstr_of_typ`.
+
+Route: the original de Bruijn representation (names and term variables share one index space);
+the two-sort fallback was not needed for this lemma.
+
+Open: `theorem LambdaMu.sn_of_typ {Γ : List Entry} {t : Tm} {A : Ty} (h : Typ Γ t A) :
+LambdaMu.SN t`.  **First missing lemma**: the μ-expansion lemma with stacks,
+`sn_apps_mu : (∀ u ∈ π, SN u) → SN (muStk β t π) → SN (apps (mu β t) π)`
+(SN of a μ-abstraction applied to a stack from SN of the iterated structural substitution of the
+stack), whose proof is an induction on the SN of the components using `Step.sstr` for the steps
+inside `t`; then the β-expansion lemma, the fundamental lemma for `Red` and `sn_of_typ`.

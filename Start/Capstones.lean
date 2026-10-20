@@ -387,6 +387,14 @@ import Start.LambdaMuStep
 import Start.GrpdPiSub
 import Start.TypeClassCoherence
 import Start.SystemFCoerce
+import Start.PTSExpansionMeasures
+import Start.LambdaMuSstr
+import Start.GrpdPiLam
+import Start.SystemFCTyConTypes
+import Start.SystemFCTyCon
+import Start.TypeClassUnannotated
+import Start.TypeClassSuper
+import Start.FsubGhelli
 
 /-! ## Interfaces of the untyped calculus
 
@@ -4709,3 +4717,82 @@ for closed terms under the consistency hypothesis.
 #check @FCoerce.Typing.preservation
 #check @FCoerce.Typing.progress
 #check @FCoerce.Typing.safety
+
+/-! ## Measures for the product premise of route (iii) (M29-EP-IMPREDICATIVE, partial)
+
+`Start/PTSExpansionMeasures.lean`: hereditary substitution into sort-typed premises (`HSubstSort`,
+stage 1 of the level-stratified measure) is equivalent to `HSubstPi` in every corner of the cube
+(`hsubstPi_iff_hsubstSort`); the order "reduct, subterm or type of" has a 2-cycle in λP2 when
+types are taken up to conversion (`lambdaP2_upDown_not_acc`).  `HSubstPi (cubeSpec lambdaP2)` is
+not proved.
+-/
+
+#check @PureTypeSystem.hsubstPi_iff_hsubstSort
+#check @PureTypeSystem.cube_expansionPostponement_of_hsubstSort
+#check @PureTypeSystem.HasTypeNW.not_lam_of_sort
+#check @PureTypeSystem.lambdaP2_upDown_not_acc
+
+/-! ## Structural substitution in λμ (M23-LAMBDA-MU-SN, partial)
+
+`Start/LambdaMuSstr.lean`: two structural substitutions at different names commute
+(`Tm.sstr_sstr`), and one-step reduction is stable under structural substitution at a name that is
+not a term variable (`Step.sstr`, `Step.sstr_of_typ`).  `LambdaMu.sn_of_typ` is not proved.
+-/
+
+#check @LambdaMu.Tm.sstr_sstr
+#check @LambdaMu.Tm.sstr_subst
+#check @LambdaMu.Step.sstr
+#check @LambdaMu.Step.sstr_of_typ
+
+/-! ## Π in the groupoid model: abstraction (M23-GROUPOID-PI, partial)
+
+`Start/GrpdPiLam.lean`: terms of the groupoid model are sections (`tmEquivSect`), currying of
+sections (`curry`) and the abstraction `grpdLam`.  Application and `grpdPiStruct` are not built.
+-/
+
+#check @GrpdModel.tmEquivSect
+#check @GrpdModel.curryMap
+#check @GrpdModel.curry
+#check @GrpdModel.grpdLam
+
+/-! ## System FC with data types (M25-SYSTEM-FC-TYCON)
+
+`Start/SystemFCTyConTypes.lean`, `Start/SystemFCTyCon.lean`: type constructors and type-level
+application, application coercions and their decompositions, data constructors and `case` with
+the push rule, axiom schemes; subject reduction, and progress for closed terms when no coercion
+relates types with distinct heads.
+-/
+
+#check @FCTyCon.CoTyping.substTy
+#check @FCTyCon.Typing.preservation
+#check @FCTyCon.Consistent.tapps_ne
+#check @FCTyCon.consistent_nil
+#check @FCTyCon.Typing.progress
+#check @FCTyCon.Typing.safety
+
+/-! ## Coherence for unannotated judgements and superclasses (M25-TYPECLASS-COHERENCE)
+
+`Start/TypeClassUnannotated.lean`: erasure of annotations and the correspondence with source
+typing, the unambiguity condition `Bidi`, coherence for unambiguous unannotated judgements, and an
+ambiguous judgement with two non-convertible elaborations.  `Start/TypeClassSuper.lean`: stability
+of dictionary elaboration under instantiation and the superclass case.
+-/
+
+#check @TypeClass.AElab.styping
+#check @TypeClass.STyping.annotate
+#check @TypeClass.Bidi.annot_unique
+#check @TypeClass.coherence_unannotated
+#check @TypeClass.coherence_unannotated_conv
+#check @TypeClass.ambiguous_not_coherent
+#check @TypeClass.DEnt.subst
+#check @TypeClass.super_coherent
+
+/-! ## Ghelli's divergence for full F<: (M25-FSUB-UNDECIDABLE, partial)
+
+`Start/FsubGhelli.lean`: the goal-reduction step of the subtyping algorithm for full F<:, and an
+infinite chain of reductions from Ghelli's goal; two-counter machines for the planned reduction.
+-/
+
+#check @FsubGhelli.cycle_step
+#check @FsubGhelli.ghelli_chain
+#check @FsubGhelli.ghelli_not_acc

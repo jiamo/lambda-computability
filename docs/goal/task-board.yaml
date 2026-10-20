@@ -5574,7 +5574,7 @@ tasks:
     track: theory/types
     title: "Pi-types in the groupoid model"
     latest_evidence: "docs/goal/evidence/M23-GROUPOID-MODEL.md"
-    open_boundary: "Partial: Start/GrpdSect.lean (the groupoid Sect F of sections, transport GrpdModel.trans with trans_id, trans_comp, trans_congr), Start/GrpdPi.lean (fibI, piTheta, the Π-groupoid PiF A B : Γ ⥤ Grpd with strict functoriality) and, round 4, Start/GrpdPiSub.lean: fibI_extend : fibI (σ ⋙ A) δ ⋙ extend σ A = fibI A (σ.obj δ), trans_reindex, trans_hcongr, and the Beck–Chevalley law GrpdModel.PiF_sub : σ ⋙ PiF A B = PiF (σ ⋙ A) (extend σ A ⋙ B) (the Pi_sub field). Open: def GrpdModel.grpdPiStruct : Cwa.PiStruct grpdCwa. First missing construction: lam/app, the currying bijection between terms of B over ext Γ A and terms of PiF A B over Γ; the first equation to prove is the naturality of the section family of lam t in γ, (PiF A B).map g (lam t γ) = lam t γ' for g : γ ⟶ γ' (a transport identity of the shape of PiF_sub's morphism part); then app_lam, lam_app, lam_sub (NaturalPiStruct). Σ (grpdSigmaStruct) not started."
+    open_boundary: "Partial: Start/GrpdSect.lean, Start/GrpdPi.lean (PiF A B with strict functoriality), Start/GrpdPiSub.lean (PiF_sub, round 4) and, round 5, Start/GrpdPiLam.lean: GrpdModel.tmEquivSect X F : grpdCwa.Tm X F ≃ Sect F (terms are sections), Sect.restrict, curryMap, piTheta_id_heq, piTheta_comp_heq, GrpdModel.curry : Sect B → Sect (PiF A B) (map_id, map_comp) and the abstraction GrpdModel.grpdLam : grpdCwa.Tm (grpdCwa.ext Γ A) B → grpdCwa.Tm Γ (PiF A B). Finding: (PiF A B).map g (lam t γ) = lam t γ' is not an equation (the two sides differ at a by B(θ_a)); the naturality of γ ↦ t|γ is the morphism curryMap t g with components t.map (piTheta A g a). Open: def GrpdModel.grpdPiStruct : Cwa.PiStruct grpdCwa. First missing construction: application, uncurry : Sect (PiF A B) → Sect B, object part (γ, a) ↦ (σ γ).obj a, morphism part for f = fibI ψ ≫ θ_y the composite eqToHom ≫ (B.map θ_y).map ((σ γ).map ψ) ≫ (σ.map g).app y; first failing equation: its map_comp (functoriality of evaluation). Then app_lam/lam_app via the equivalence curry ⊣⊢ uncurry, lam_sub (NaturalPiStruct); grpdSigmaStruct not started."
     milestone: M23
     depends_on: []
     rank: 2045
@@ -5593,7 +5593,7 @@ tasks:
     title: "The Hofmann-Streicher groupoid model"
     terminal_statement: "GrpdModel.grpdCwa : Cwa.{u + 1, u, u + 1} Grpd.{u, u} (Ty Γ := Γ ⥤ Grpd, tySub σ A := σ ⋙ A, ext = Grothendieck construction, GrpdModel.isPullbackG); GrpdModel.grpdIdStruct : IdStruct grpdCwa.{u} (J_comp, Id_sub, refl_sub, J_sub strict)"
     latest_evidence: "docs/goal/evidence/M23-GROUPOID-MODEL.md"
-    open_boundary: "The CwA (with the groupoid structure of the Grothendieck construction and the pullback squares) and the identity-type structure are proved. Π-types are not: gap row M23-GROUPOID-PI, first missing construction def GrpdModel.grpdPiStruct : Cwa.PiStruct grpdCwa (Π A B at γ = the groupoid of sections of B over the fibre of A at γ); the substitution law PiF_sub is proved (round 4), lam/app are missing."
+    open_boundary: "The CwA (with the groupoid structure of the Grothendieck construction and the pullback squares) and the identity-type structure are proved. Π-types are not: gap row M23-GROUPOID-PI, first missing construction def GrpdModel.grpdPiStruct : Cwa.PiStruct grpdCwa; PiF_sub (round 4), terms-as-sections tmEquivSect and the abstraction grpdLam (round 5) are proved; application (uncurry : Sect (PiF A B) → Sect B, its map_comp) is missing."
     milestone: M23
     depends_on:
       - M23-ID-TYPES
@@ -5636,7 +5636,7 @@ tasks:
     title: "Parigot's lambda-mu: classical Curry-Howard, and its CPS translation"
     terminal_statement: "LambdaMu.subject_reduction : Typ Γ t A → Step t t' → Typ Γ t' A; LambdaMu.typ_callcc : Typ Γ Tm.callcc (.arr (.arr (.arr A B) A) A); LambdaMu.typing_cps : Typ Γ t A → Lambda.Typing (Γ.map entS) (cps t) (tyN A); LambdaMu.cps_step : Typ Γ t A → Step t t' → ∃ c, Lambda.reduces (cps t) c ∧ Lambda.reduces (cps t') c"
     latest_evidence: "docs/goal/evidence/M23-LAMBDA-MU.md"
-    open_boundary: "Simulation is proved up to β-conversion (the images of a well-typed term and of its one-step reduct have a common β-reduct; β and renaming steps are forward reductions, cps_beta and cps_rename), not as strict simulation: a structural step (μα.c) u → μα.c[[α](w u)/[α]w] is only joinable, so strong normalization of typed λμ does not follow from Lambda.sn_of_typing. Gap row M23-LAMBDA-MU-SN (round 4: Step.ren and Step.subst proved, first missing lemma Step.sstr; sn_of_typ still open, so this row stays DONE_WEAK)."
+    open_boundary: "Simulation is proved up to β-conversion (the images of a well-typed term and of its one-step reduct have a common β-reduct; β and renaming steps are forward reductions, cps_beta and cps_rename), not as strict simulation: a structural step (μα.c) u → μα.c[[α](w u)/[α]w] is only joinable, so strong normalization of typed λμ does not follow from Lambda.sn_of_typing. Gap row M23-LAMBDA-MU-SN (round 5: LambdaMu.Step.sstr proved, with the side condition TmFree a t; sn_of_typ still open, first missing lemma the μ-expansion lemma with stacks; so this row stays DONE_WEAK)."
     milestone: M23
     depends_on:
       - M23-LAMBDA-MU-SN
@@ -5656,7 +5656,7 @@ tasks:
     track: theory/lambda
     title: "Strict CPS simulation for lambda-mu, and strong normalization of typed lambda-mu"
     latest_evidence: "docs/goal/evidence/M23-LAMBDA-MU-SN.md"
-    open_boundary: "Partial: Start/LambdaMuSN.lean (SN, closure properties, VarHead spines, sn_app_varHead, candidates Red with red_cr and red_iff_stk); round 3, Start/LambdaMuSubstLemmas.lean (the substitution calculus: ren_ren, subst_ren, ren_subst, subst_subst, subst_single, sstr_ren, ...); round 4, Start/LambdaMuStep.lean: NameFree and sstr_nameFree, Tm.subst_sstr (subst τ (sstr a v t) = sstr a (subst τ v) (subst τ t) for a name-respecting τ fixing a), Step.ren (injective renaming) and Step.subst (Step t t' → NamesVar σ t → Step (subst σ t) (subst σ t')). Open: theorem LambdaMu.sn_of_typ {Γ : List Entry} {t : Tm} {A : Ty} (h : Typ Γ t A) : LambdaMu.SN t. First missing lemma: theorem LambdaMu.Step.sstr {t t' : Tm} (hs : Step t t') (a : ℕ) (v : Tm) : Relation.TransGen Step (Tm.sstr a v t) (Tm.sstr a v t'), which needs the commutation sstr ∘ sstr of two structural substitutions at different names (not proved); then the β- and μ-expansion lemmas, the fundamental lemma and sn_of_typ (docs/goal/evidence/M23-LAMBDA-MU-SN.md, round 4)."
+    open_boundary: "Partial: Start/LambdaMuSN.lean (SN, closure properties, candidates Red with red_cr and red_iff_stk); Start/LambdaMuSubstLemmas.lean (substitution calculus); Start/LambdaMuStep.lean (Tm.subst_sstr, Step.ren, Step.subst); round 5, Start/LambdaMuSstr.lean: Tm.TmFree, the commutation Tm.sstr_sstr (b ≠ c → NameFree b w → sstr c w (sstr b x t) = sstr b (sstr c w x) (sstr c w t)), Tm.sstr_subst, Tm.sstr_subst2, and theorem LambdaMu.Step.sstr {t t' : Tm} (hs : Step t t') (a : ℕ) (v : Tm) (ha : Tm.TmFree a t) : Relation.TransGen Step (Tm.sstr a v t) (Tm.sstr a v t') (side condition needed: if a is also a term variable, sstr does not commute with β), Typ.tmFree and Step.sstr_of_typ (the condition holds for every name of a well-typed term). Open: theorem LambdaMu.sn_of_typ {Γ : List Entry} {t : Tm} {A : Ty} (h : Typ Γ t A) : LambdaMu.SN t. First missing lemma: μ-expansion with stacks, sn_apps_mu : (∀ u ∈ π, SN u) → SN (muStk β t π) → SN (apps (mu β t) π) (SN of μβ.t applied to a stack π from SN of the iterated structural substitution of π into t), by induction on the SN of the components using Step.sstr; then β-expansion, the fundamental lemma for Red, and sn_of_typ (docs/goal/evidence/M23-LAMBDA-MU-SN.md, round 5)."
     milestone: M23
     depends_on: []
     rank: 2071
@@ -6164,15 +6164,35 @@ tasks:
       - "python3 scripts/check_sorry.py"
       - "lake build --wfail"
 
-  - id: M25-TYPECLASS-COHERENCE
+  - id: M25-TYPECLASS-COHERENCE-SUPER
     priority: P2
     status: TODO_READY
     track: theory/types
-    title: "Coherence of dictionary-passing elaboration"
+    title: "Coherence of dictionary elaboration with superclasses"
     latest_evidence: "docs/goal/evidence/M25-TYPECLASS-COHERENCE.md"
-    open_boundary: "Partial (round 4, Start/TypeClassCoherence.lean): the β-law TypeClass.recProj_recMk : Lambda.reduces (recProj ds.length j (recMk ds)) ds[j]; entailment elaboration as a relation DEnt with DEnt.typing; in the fragment without superclasses and overlapping instances (TypeClass.Fragment), DEnt.unique (two dictionaries for one constraint are equal) and DEnt.conv (β-convertible); elaboration of annotated source terms as a relation AElab with AElab.typing, and AElab.coherent / AElab.conv (two elaborations of one annotated term are equal, hence β-convertible). Open: the statement for unannotated source judgements STyping. First missing lemma: an erasure ASexp → Sexp with STyping E P Γ (erase a) τ ↔ ∃ t, AElab E P Γ a τ t, together with an unambiguity condition under which two annotations of one source judgement agree (without it two derivations can use a method at different types; informal counterexample in the note); then superclasses, needing recProj … 0 of an instance dictionary to reduce to the DEnt dictionary of the superclass constraint."
+    open_boundary: "Gap row of M25-TYPECLASS-COHERENCE (DONE_WEAK). Proved: coherence_unannotated (unambiguous judgements, fragment without superclasses), ambiguous_not_coherent, DEnt.subst, super_coherent (Start/TypeClassSuper.lean: the superclass projection of an instance dictionary with a SuperField reduces to a DEnt dictionary of the superclass). Open: coherence for unambiguous judgements in a fragment with superclasses. First missing lemma: theorem DEnt.conv_super (hF : SuperFragment E P) (h : DEnt E P n C d) (h' : DEnt E P n C d') : Lambda.Conv d d', for a fragment allowing superclasses whose instances satisfy SuperField, by induction on the two derivations (super_coherent for sup-of-inst against inst)."
     milestone: M25
     depends_on: []
+    rank: 2383
+    exit_criteria:
+      - "In a fragment without overlapping instances but with superclasses (instances well formed for their superclass), any two elaborations of one unambiguous source typing judgement are β-convertible."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M25-TYPECLASS-COHERENCE
+    priority: P2
+    status: DONE_WEAK
+    track: theory/types
+    title: "Coherence of dictionary-passing elaboration"
+    terminal_statement: "TypeClass.coherence_unannotated (hF : Fragment E P) (hB : Bidi E false Γ e τ) (hS : STyping E P Γ e τ) : (∃ t, ElabS E P Γ e τ t) ∧ ∀ t t', ElabS E P Γ e τ t → ElabS E P Γ e τ t' → t = t'; TypeClass.coherence_unannotated_conv; TypeClass.ambiguous_not_coherent : Fragment ambEnv [] ∧ STyping ambEnv [] [] (.method 0 0) ambSig ∧ ∃ t t', ElabS … t ∧ ElabS … t' ∧ ¬ Lambda.Conv t t'; TypeClass.super_coherent; TypeClass.AElab.coherent; TypeClass.DEnt.unique"
+    latest_evidence: "docs/goal/evidence/M25-TYPECLASS-COHERENCE.md"
+    open_boundary: "Proved: annotated coherence (round 4); round 5 (Start/TypeClassUnannotated.lean, Start/TypeClassSuper.lean): erasure erase : ASexp → Sexp with AElab.styping and STyping.annotate (the elaborations of an unannotated judgement are ElabS = elaborations of its annotations), the unambiguity condition Bidi (bidirectional; methods checked against inst0 σ m with m mentioning the class variable), Bidi.annot_unique, coherence_unannotated (in Fragment, an unambiguous derivable judgement has an elaboration and any two are equal, hence β-convertible), ambiguous_not_coherent (without the condition, two non-β-convertible elaborations of one judgement, in an environment of the fragment: the exit criterion read literally is false), DEnt.subst and super_coherent (the superclass projection of an instance dictionary whose superclass field is a DEnt dictionary reduces to a DEnt dictionary for the superclass). Gap row M25-TYPECLASS-COHERENCE-SUPER: coherence for unambiguous judgements in a fragment with superclasses; first missing lemma DEnt.conv_super (uniqueness up to β of dictionaries when superclass projections are allowed)."
+    milestone: M25
+    depends_on:
+      - M25-TYPECLASS-COHERENCE-SUPER
     rank: 2384
     exit_criteria:
       - "Without overlapping instances, any two elaborations of one source typing judgement are equal up to β (or βη) conversion."
@@ -6184,11 +6204,12 @@ tasks:
 
   - id: M25-SYSTEM-FC-TYCON
     priority: P2
-    status: TODO_READY
+    status: DONE_STRONG
     track: theory/types
     title: "System FC with data type constructors and type application"
+    terminal_statement: "FCTyCon.Typing.preservation (hD : SigOK D) (hAx : AxOK Ax) (h : Typing D Ax Γ t A) : ∀ t' : Tm, Step D t t' → Typing D Ax Γ t' A; FCTyCon.Typing.progress (hcon : Consistent Ax) (h : Typing D Ax [] t A) : Value t ∨ ∃ t', Step D t t'; FCTyCon.Typing.safety (hD : SigOK D) (hAx : AxOK Ax) (hcon : Consistent Ax) (h : Typing D Ax [] t A) (hs : Relation.ReflTransGen (Step D) t t') : Typing D Ax [] t' A ∧ (Value t' ∨ ∃ t'', Step D t' t''); FCTyCon.Consistent.tapps_ne; FCTyCon.consistent_nil"
     latest_evidence: "docs/goal/evidence/M25-SYSTEM-FC.md"
-    open_boundary: "First missing construction: a type syntax with type constructors and type-level application T τ₁ ⋯ τₙ, its substitution calculus (the analogue of Start/SystemFSubst.lean), application coercions γ₁ γ₂ with their decompositions, axioms over constructor heads (type families, newtypes), and the push rule for data constructors; consistency becomes: no coercion between distinct constructor heads."
+    open_boundary: ""
     milestone: M25
     depends_on: []
     rank: 2385
@@ -6202,12 +6223,12 @@ tasks:
 
   - id: M25-SYSTEM-FC
     priority: P2
-    status: DONE_WEAK
+    status: DONE_STRONG
     track: theory/types
     title: "The core of GHC: System F with type-equality coercions"
-    terminal_statement: "FCoerce.Typing.preservation (hAx : AxClosed Ax) (h : Typing Ax Γ t A) : ∀ t', Step t t' → Typing Ax Γ t' A; FCoerce.Typing.progress (hcon : Consistent Ax) (h : Typing Ax [] t A) : Value t ∨ ∃ t', Step t t'; FCoerce.Typing.safety (hAx : AxClosed Ax) (hcon : Consistent Ax) (h : Typing Ax [] t A) (hs : ReflTransGen Step t t') : Typing Ax [] t' A ∧ (Value t' ∨ ∃ t'', Step t' t'')"
+    terminal_statement: "FCoerce.Typing.preservation, FCoerce.Typing.progress, FCoerce.Typing.safety (System F with coercions, Start/SystemFCoerce.lean); with data types, type application and application coercions (Start/SystemFCTyCon.lean): FCTyCon.Typing.preservation (hD : SigOK D) (hAx : AxOK Ax) (h : Typing D Ax Γ t A) : ∀ t' : Tm, Step D t t' → Typing D Ax Γ t' A; FCTyCon.Typing.progress (hcon : Consistent Ax) (h : Typing D Ax [] t A) : Value t ∨ ∃ t', Step D t t'; FCTyCon.Typing.safety"
     latest_evidence: "docs/goal/evidence/M25-SYSTEM-FC.md"
-    open_boundary: "Preservation and progress (under the explicit consistency hypothesis FCoerce.Consistent: no coercion relates an arrow type and a ∀-type) are proved for System F with coercions refl, sym, trans, arrow application, ∀-congruence, instantiation, axioms and left/right decomposition, and the cast t ▷ γ (Start/SystemFCoerce.lean). The type language has only →, ∀ and variables: data type constructors and type-level application (so general application coercions γ₁ γ₂ and axioms over constructor heads) are missing; gap row M25-SYSTEM-FC-TYCON."
+    open_boundary: ""
     milestone: M25
     depends_on:
       - M25-SYSTEM-FC-TYCON
@@ -6223,11 +6244,11 @@ tasks:
 
   - id: M25-FSUB-UNDECIDABLE
     priority: P1
-    status: TODO_NEEDS_DESIGN
+    status: TODO_READY
     track: theory/types
     title: "Subtyping in full System F-sub is undecidable (Pierce)"
-    latest_evidence: "docs/goal/evidence/M4-TM2-IMP-PARTREC.md"
-    open_boundary: "The design question is which undecidable problem to reduce from and how to encode its configurations as subtyping judgements. cslib supplies the calculus and its soundness, so none of that has to be rebuilt."
+    latest_evidence: "docs/goal/evidence/M25-FSUB-UNDECIDABLE.md"
+    open_boundary: "Design fixed (round 5, docs/goal/evidence/M25-FSUB-UNDECIDABLE.md): Pierce 1994, two-counter machines → rowing machines → F<:^D → F<:. Proved (Start/FsubGhelli.lean): the goal-reduction step AlgStep of the algorithm for full F<:, Ghelli's goal, cycle_step (the recurring goal H k reduces to H (k+1)), ghelli_chain and FsubGhelli.ghelli_not_acc : ¬ Acc (fun g' g => AlgStep g g') ghelliGoal (the algorithm diverges). Defined: two-counter machines CM, CM.Step, CM.Halts, the algorithmic closure Sub, and the first lemma as a Prop, RowingFirstLemma := ∃ enc : CM → ℕ → ℕ → Goal, ∀ M a b, CM.Halts M a b ↔ Sub (enc M a b). No counter machines exist elsewhere in Start/: the undecidability of CM.Halts (from Mathlib's ComputablePred.halting_problem via a two-counter simulation) is a separate step. Open: RowingFirstLemma, the link from Sub to cslib's Fsub subtyping, undecidability; kernel F<: and termination of its algorithm not formalized."
     milestone: M25
     depends_on: []
     rank: 2390
@@ -7785,7 +7806,7 @@ tasks:
     title: "Expansion postponement for λP2, λPω̲ and the Calculus of Constructions"
     terminal_statement: "PureTypeSystem.lambdaPOmegaBar_expansionPostponement : ExpansionPostponement (cubeSpec lambdaPOmegaBar); PureTypeSystem.lambdaPOmegaBar_productNormalizationR : ProductNormalizationR (cubeSpec lambdaPOmegaBar); PureTypeSystem.HasTypeNW.hsubst_con; PureTypeSystem.HasTypeR.normalizeNW"
     latest_evidence: "docs/goal/evidence/M29-EP.md"
-    open_boundary: "λPω̲ is closed: HasTypeNW.hsubst_con (constructor-level hereditary substitution, strong induction on the size of skelK of the variable's kind, created redexes at object binders fired by hsubst_obj; Start/PTSExpansionLambdaPOmegaBarCon.lean), HasTypeR.normalizeNW, lambdaPOmegaBar_productNormalizationR and lambdaPOmegaBar_expansionPostponement (Start/PTSExpansionLambdaPOmegaBarEP.lean). Open: the impredicative corners λP2 and coc (rule (□,∗)), row M29-EP-IMPREDICATIVE; round 4 reduced both, for every corner, to HSubstPi (cubeSpec f) (cube_expansionPostponement_of_hsubstPi, Start/PTSExpansionHSubstSN.lean); first missing lemma theorem hsubstPi_lambdaP2 : HSubstPi (cubeSpec lambdaP2)."
+    open_boundary: "λPω̲ is closed: HasTypeNW.hsubst_con, HasTypeR.normalizeNW, lambdaPOmegaBar_productNormalizationR and lambdaPOmegaBar_expansionPostponement. Open: the impredicative corners λP2 and coc (rule (□,∗)), row M29-EP-IMPREDICATIVE; round 4 reduced both to HSubstPi (cubeSpec f); round 5 proved HSubstPi (cubeSpec f) ↔ HSubstSort (cubeSpec f) (Start/PTSExpansionMeasures.lean), so stage 1 of the level-stratified measure is the whole target; first missing lemma theorem hsubstPi_lambdaP2 : HSubstPi (cubeSpec lambdaP2)."
     milestone: M29
     depends_on:
       - M29-EP-CUBE
@@ -7805,7 +7826,7 @@ tasks:
     track: research/open-problems
     title: "Expansion postponement for the impredicative corners λP2 and the Calculus of Constructions"
     latest_evidence: "docs/goal/evidence/M29-EP.md"
-    open_boundary: "Reduced to one lemma (Start/PTSExpansionLambdaP2.lean): lambdaP2_expansionPostponement_of_hsubst : HSubstNW (cubeSpec lambdaP2) → ProductNormalizationR (cubeSpec lambdaP2) ∧ ExpansionPostponement (cubeSpec lambdaP2), via HasTypeR.normalizeNW_of_hsubst (every corner of the cube); HSubstNW holds for λPω̲ (hsubstNW_lambdaPOmegaBar). Round 4, route (iii) (Start/PTSExpansionHSubstSN.lean): termination bought from SN (cube_stronglyNormalizing): Expr.acc_descStep_of_sn (reverse β plus immediate subterms is well founded below an SN term), hsubst_route3_aux (outer induction on M[N] up to renaming, inner induction on the canonical derivation of M; created head redexes fired by the outer hypothesis since they are reducts of M[N]), and for every corner f: hsubstNW_of_hsubstPi (f) (hpi : HSubstPi (cubeSpec f)) : HSubstNW (cubeSpec f), cube_expansionPostponement_of_hsubstPi (f) (hpi) : ProductNormalizationR (cubeSpec f) ∧ ExpansionPostponement (cubeSpec f). Route (iii) breaks at exactly one recursive call: the product premise Θ ⊢ Π C E : s of the abstraction rule, whose subject (Π C E)[N] contains E[N] (E = type of the body), which is neither a reduct nor a subterm of M[N]. First missing lemma: theorem hsubstPi_lambdaP2 : HSubstPi (cubeSpec lambdaP2) (HSubstPi = hereditary substitution into canonical product judgements at depth Δ into a canonically valid target context; docs/goal/evidence/M29-EP.md, round 4). With hsubstPi_cube (f) : HSubstPi (cubeSpec f), hsubstNW_cube and cube_expansionPostponement_all follow at once."
+    open_boundary: "Reduced (rounds 2 and 4) to HSubstPi (cubeSpec f): cube_expansionPostponement_of_hsubstPi (f) (hpi : HSubstPi (cubeSpec f)) : ProductNormalizationR (cubeSpec f) ∧ ExpansionPostponement (cubeSpec f) (Start/PTSExpansionHSubstSN.lean, route (iii) bought from SN), which breaks only at the product premise Θ ⊢ Π C E : s of the abstraction rule. Round 5 (Start/PTSExpansionMeasures.lean), the three measures: (c) hsubstPi_iff_hsubstSort (f) : HSubstPi (cubeSpec f) ↔ HSubstSort (cubeSpec f), so stage 1 (sort-typed premises) is equivalent to the target, and cube_expansionPostponement_of_hsubstSort; the obstruction is an object abstraction created inside an object argument of a type family, whose product premise is again a stage-1 call; (b) lambdaP2_upDown_not_acc: Acc of (DescStep ∪ is-the-type-of) fails with conversion types (2-cycle t → (λu:P. P) t → t); with normal types well-foundedness is open; (a) nesting on SN (Π C E) fails at the product premise of an abstraction created by a firing (a new derivation, neither a sub-derivation nor a reduct). HasTypeNW.not_lam_of_sort. First missing lemma: theorem hsubstPi_lambdaP2 : HSubstPi (cubeSpec lambdaP2) (equivalently HSubstSort (cubeSpec lambdaP2)); then lambdaP2_productNormalizationR, lambdaP2_expansionPostponement, hsubstPi_cube f, hsubstNW_cube f, cube_expansionPostponement_all f (docs/goal/evidence/M29-EP.md, round 5)."
     milestone: M29
     depends_on: []
     rank: 2756

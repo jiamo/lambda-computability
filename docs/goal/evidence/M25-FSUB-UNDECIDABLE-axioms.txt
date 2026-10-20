@@ -1,0 +1,4 @@
+# round 5: #print axioms (lake env lean on a scratch file importing Start.FsubGhelli, with #print axioms appended)
+'FsubGhelli.cycle_step' depends on axioms: [propext, Quot.sound]
+'FsubGhelli.ghelli_chain' depends on axioms: [propext, Quot.sound]
+'FsubGhelli.ghelli_not_acc' depends on axioms: [propext, Quot.sound]

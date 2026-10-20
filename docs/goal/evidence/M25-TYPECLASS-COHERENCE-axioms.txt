@@ -6,3 +6,13 @@
 'TypeClass.AElab.typing' depends on axioms: [propext, Classical.choice, Quot.sound]
 'TypeClass.AElab.coherent' depends on axioms: [propext, Quot.sound]
 'TypeClass.AElab.conv' depends on axioms: [propext, Quot.sound]
+
+# round 5: #print axioms (lake env lean on a scratch file importing Start.TypeClassUnannotated, Start.TypeClassSuper, with #print axioms appended)
+'TypeClass.AElab.styping' depends on axioms: [propext]
+'TypeClass.STyping.annotate' depends on axioms: [propext, Classical.choice]
+'TypeClass.Bidi.annot_unique' depends on axioms: [propext]
+'TypeClass.coherence_unannotated' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TypeClass.coherence_unannotated_conv' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TypeClass.ambiguous_not_coherent' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TypeClass.DEnt.subst' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TypeClass.super_coherent' depends on axioms: [propext, Classical.choice, Quot.sound]
