@@ -1195,3 +1195,110 @@ under object substitution, proved by induction on the erasure of the type (`er`)
 object-level predicate; the object arguments occurring in λP2 types then need the object-level
 predicate at strictly smaller erased types.  Whether this mutual induction is well founded is the
 remaining question; it was not settled this round.
+
+## Round 9 — route (ii) for λP2: the round-8 failing step is closed; the two-level relation
+
+Module: `Start/PTSRouteIITwoLevel.lean`.  Status: M29-EP-IMPREDICATIVE stays **TODO_READY**;
+M29-EP-CUBE-REST stays **DONE_WEAK**.  New DONE_STRONG row M29-EP-TWO-LEVEL-CR for the pieces
+below.  Axioms in `M29-EP-TWO-LEVEL-CR-axioms.txt` (at most `propext, Classical.choice,
+Quot.sound`).
+
+### A0. Is the round-8 failing step the unrestricted open lemma? — Neither: it is not open
+
+Round 8 recorded that CR3 at a neutral application, the equation
+
+  `NormNW (cubeSpec lambdaP2) Γ (.app (.var x) N) (B.instantiate N)`,
+
+needs a canonical derivation of the normal form of `B[N]` (`HSubstSort` at `B`).  That reading of
+the canonical judgement is **wrong**.  The application rule of `HasTypeNW`
+(`Start/PTSExpansionLambdaPOmegaBarCanon.lean`) is
+
+  `HasTypeNW Γ F (Π A B) → HasTypeNW Γ a A → Reduces (B[a]) B' → Normal B' → Normal (F a) →
+   HasTypeNW Γ (F a) B'`
+
+and asks for the normal form `B'` and `Normal B'` only, not for a derivation of `B' : s`.  The
+normal form exists by strong normalization of the cube (`HasTypeNW.app_type_exists`).  The
+equation is now proved, in every corner of the cube, with no hereditary substitution and no
+restriction on `N` beyond normalizability:
+
+```lean
+theorem PureTypeSystem.RouteII.NeNW.app (f : CubeFeatures) {Γ : List (Expr Srt)} {F N A B : Expr Srt}
+    (hF : NeNW (cubeSpec f) Γ F (.pi A B)) (hN : NormNW (cubeSpec f) Γ N A) :
+    NeNW (cubeSpec f) Γ (.app F N) (B.instantiate N)
+theorem PureTypeSystem.RouteII.cr3_var_app (f : CubeFeatures) {Γ : List (Expr Srt)} {x : ℕ} {N A B : Expr Srt}
+    (hx : NormNW (cubeSpec f) Γ (.var x) (.pi A B)) (hN : NormNW (cubeSpec f) Γ N A) :
+    NormNW (cubeSpec f) Γ (.app (.var x) N) (B.instantiate N)
+```
+
+(the contexts of the two premises and the domains are identified by uniqueness of normal forms;
+`NeNW.weaken` and `NeNW.app_wk` give the Kripke form in context extensions).
+
+### A0'. Where the circularity of the one-level relation really is
+
+Checked on paper against the round-7/8 predicate `RouteII.Good` (not formalized as a negative
+result).  Two places, and the user's reading is right about the second:
+
+1. **`HasTypeR` in the candidates.**  `IsCand` asks for reduction-only judgements.  In the
+   abstraction case of the fundamental lemma, the Kripke clause supplies an argument `N` typed at
+   a *reduct* `A'` of the substituted domain, while the induction hypothesis for the body needs
+   `N` at the domain itself; for `HasTypeR` that is closure under expansion of the type, which is
+   expansion postponement.  Repair: drop `HasTypeR` from the candidates.  The base predicate is
+   closed under *conversion* of the type (`NormNW.convType`), so the candidates `IsCandN` are
+   closed under conversion and under expansion of the subject.
+2. **The type-application clause carries no information about the constructor.**  At `∀X:K. B`
+   the round-7 clause quantifies over every `U` with `HasTypeR Γ U K` and every candidate.  In the
+   `(□,∗)` abstraction case the body may form `X N : ∗` (or `Π y : X N. C`); after substitution
+   this is `U N'` for an arbitrary `U`, and the induction hypothesis needs `NormNW (U N') ∗`.  If
+   `U = λz. T`, that is the hereditary substitution of `N'` into `T`: `HSubstSort` at sort `∗`.
+   So the one-level relation needs the open lemma, but **only for reducible arguments `N'` in a
+   type that is itself reducible**.  The two-level relation supplies exactly this from type
+   reducibility (`TRed.app`), not from `HSubstSort`.
+
+### A1. Type reducibility (proved)
+
+`RouteII.TRed Cs Γ U K`, by recursion on the *semantic kind* `Cs : List Cand`, the candidates of
+the domains of the λP2 kind `Π x₁:A₁ … Π xₙ:Aₙ. ∗` (kinds of λP2 have only object binders, rule
+`(□,□)` is absent): at `[]` the judgement normalizes; at `C :: Cs` it normalizes and, in every
+context extension `Γ₀`, for every reduct `K↑ ↠ Π A K'` and every `N ∈ C` at `A`,
+`TRed Cs (U↑ N) (K'[N])`.  It is environment free, because the domains are given as candidates.
+Proved: `TRed.escape` (CR1), `TRed.reflect` (CR3 for neutral constructors, from `NeNW.app_wk`),
+`TRed.var`, `TRed.app` (the family-application case), `TRed.reduceKind`, `TRed.expand`.
+
+### A2. Term reducibility relative to type reducibility (proved)
+
+Skeletons `SkP` (`base`, `arr`, `all κ τ`) whose quantifier records the kind skeleton
+`κ : KSkP` (the list of domain skeletons) of the bound constructor variable; `KSem κ ξ` is the
+semantic kind.  `RouteII.GoodP s ξ` is the round-7 predicate with two changes: no `HasTypeR`
+field, and at `all κ τ` the clause quantifies over constructors `U` with
+`TRed (KSem κ ξ) (Γ₀ ++ Γ) U K` (and every candidate `C` for the bound variable).  Proved:
+
+```lean
+theorem PureTypeSystem.RouteII.GoodP.isCandN : ∀ (s : SkP) (ξ : ℕ → Cand), (∀ i, IsCandN (ξ i)) → IsCandN (GoodP s ξ)
+theorem PureTypeSystem.RouteII.GoodP_subst : ∀ (s : SkP) (σ : ℕ → SkP) (ξ : ℕ → Cand),
+    GoodP (s.subst σ) ξ = GoodP s (fun i => GoodP (σ i) ξ)
+```
+
+`GoodP.isCandN` is CR1 (escape), CR3 (neutral judgements are reducible, at arrows and at `all`
+through `NeNW.app_wk`), closure under conversion of the type and under expansion of the subject.
+`GoodP.var` (variables whose judgement normalizes are reducible: the identity substitution),
+`GoodP.app` (object application), `GoodP.tyApp` / `GoodP.tyApp_subst` (type application with
+the candidate `⟦t⟧ξ`, via `GoodP_inst`), `GoodP.lam_arr` (abstraction by β-expansion).
+
+### A3. The fundamental lemma — not built; first missing lemma
+
+No case of the two-level relation was found to fail: the relation-level steps of the variable,
+application, type-application, abstraction and family-application cases are proved above.  What
+is missing is the syntactic side for the new skeletons:
+
+**First missing lemma**: the erasure of λP2 types into `SkP`, `ErasureP2.erP Δ ρ T : SkP`, equal
+to the round-8 `er` except that `Π α:K. B` (rule `(□,∗)`) goes to `.all (erK Δ ρ K) (erP … B)`
+with `erK (Π x:A. K') = .pi (erP A) (erK K')`, `erK ∗ = .star`, together with the analogues of
+`er_instantiate_obj`, `er_instantiate` (now with `KSkP.subst`) and `er_conv`.  After it: the
+fundamental lemma for `HasType (cubeSpec lambdaP2)` (conversion, not `HasTypeR`), for valid
+target contexts (normalizable) and reducible substitutions (objects in `GoodP (erP A) ξ`,
+constructor variables `X : K` in `TRed (KSem (erK K) ξ)`), with `TRed` as the conclusion for
+constructors and `NormNW` for kinds; then `hsubstSort` for λP2 by the identity substitution
+(`GoodP.var`, `TRed.var`), `hsubstPi_lambdaP2` through `hsubstPi_iff_hsubstSort`, and
+`lambdaP2_expansionPostponement`.  None of these is proved this round.
+
+coc: not started (stop rule: only if A closes for λP2).

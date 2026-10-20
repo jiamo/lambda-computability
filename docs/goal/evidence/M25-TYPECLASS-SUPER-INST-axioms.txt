@@ -3,3 +3,12 @@
 'TypeClass.DEntN.subst_closed' depends on axioms: [propext]
 'TypeClass.NormalSuperFields.superField' depends on axioms: [propext]
 'TypeClass.DEntN.supInst_contract' depends on axioms: [propext, Classical.choice, Quot.sound]
+# round 9: #print axioms (lake env lean on a scratch file importing the round-9 modules, with #print axioms appended)
+'Lambda.substEnv_reduces' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TypeClass.DEnt.normalize_super' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TypeClass.SuperFragment.toSuperInst' depends on axioms: [propext]
+'TypeClass.SuperFragment.normalSuperFields' depends on axioms: [propext]
+'TypeClass.DEntN.unique' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TypeClass.DEnt.conv_superInst' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TypeClass.AElab.conv_superInst' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TypeClass.coherence_unannotated_superInst' depends on axioms: [propext, Classical.choice, Quot.sound]

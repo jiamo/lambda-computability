@@ -1,0 +1,6 @@
+# round 9: #print axioms (lake env lean on a scratch file importing the round-9 modules, with #print axioms appended)
+'LambdaPi.skel_subst_typeLevel' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LambdaPi.RelSub.up' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LambdaPi.RelSub.ids' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LambdaPi.LR.fundamental' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LambdaPi.AlgEq.refl_of_typing' depends on axioms: [propext, Classical.choice, Quot.sound]

@@ -416,6 +416,12 @@ import Start.LambdaPiLFEquivPER
 import Start.GrpdSigma
 import Start.TypeClassSuperNorm
 import Start.SizeChangeCallGraph
+import Start.PTSRouteIITwoLevel
+import Start.MinskyPair
+import Start.MinskyUniversal
+import Start.LambdaPiLFFundamental
+import Start.GrpdSigmaFun
+import Start.TypeClassSuperNormalize
 
 /-! ## Interfaces of the untyped calculus
 
@@ -5069,3 +5075,81 @@ call sequences, and the per-function closure criterion.
 #check @SizeChange.CallGraph.SCT
 #check @SizeChange.CallGraph.Criterion
 #check @SizeChange.CallGraph.sct_of_criterion
+
+/-! ## Route (ii) for λP2: CR3 at neutral applications and the two-level relation
+(M29-EP-IMPREDICATIVE, round 9)
+
+`Start/PTSRouteIITwoLevel.lean`: CR3 at neutral applications in every corner of the cube (the
+round-8 equation, closed without hereditary substitution), type reducibility at λP2 kinds relative
+to semantic kinds, term reducibility over skeletons recording kind skeletons, CR1–CR3 for both,
+and the substitution lemma for the interpretation.
+-/
+
+#check @PureTypeSystem.RouteII.NeNW.app
+#check @PureTypeSystem.RouteII.cr3_var_app
+#check @PureTypeSystem.RouteII.cr3_var_app_lambdaP2
+#check @PureTypeSystem.RouteII.NormNW.convType
+#check @PureTypeSystem.RouteII.NeNW.weaken
+#check @PureTypeSystem.RouteII.TRed
+#check @PureTypeSystem.RouteII.TRed.escape
+#check @PureTypeSystem.RouteII.TRed.reflect
+#check @PureTypeSystem.RouteII.TRed.app
+#check @PureTypeSystem.RouteII.GoodP
+#check @PureTypeSystem.RouteII.GoodP.isCandN
+#check @PureTypeSystem.RouteII.GoodP.var
+#check @PureTypeSystem.RouteII.GoodP.tyApp
+#check @PureTypeSystem.RouteII.GoodP.lam_arr
+#check @PureTypeSystem.RouteII.GoodP_subst
+#check @PureTypeSystem.RouteII.GoodP.tyApp_subst
+
+/-! ## The pairing macro (M25-KCM-UNIVERSAL, round 9)
+
+`Start/MinskyPair.lean`: comparison by simultaneous decrement and the pairing macro
+`r k += Nat.pair (r i) (r j)` for `k`-counter machines.  `Start/MinskyUniversal.lean`: a fixed
+universal code and the undecidability of its halting set.
+-/
+
+#check @Minsky.Macro.cmp_run
+#check @Minsky.Macro.pairCode
+#check @Minsky.Macro.pair_run
+#check @Minsky.Universal.exists_universal_code
+#check @Minsky.Universal.universal_dom_undecidable
+
+/-! ## The fundamental lemma of the LF logical relation (M23-LF-EQUIV-COMPLETE, round 9)
+
+`Start/LambdaPiLFFundamental.lean`: the skeleton of substituted type-level terms, related
+substitutions, the fundamental lemma for the typing judgement, and reflexivity of the algorithm
+on well-typed terms.
+-/
+
+#check @LambdaPi.skel_subst_typeLevel
+#check @LambdaPi.RelSub
+#check @LambdaPi.LR.fundamental
+#check @LambdaPi.AlgEq.refl_of_typing
+
+/-! ## The functor laws of Σ in the groupoid model (M23-GROUPOID-SIGMA, round 9)
+
+`Start/GrpdSigmaFun.lean`: the fibre transformation along identities and composites, the functor
+laws of `sigMapG`, and `SigF A B : Γ ⥤ Grpd`.
+-/
+
+#check @GrpdModel.sigTheta_id
+#check @GrpdModel.sigTheta_comp
+#check @GrpdModel.sigMapG_id
+#check @GrpdModel.sigMapG_comp
+#check @GrpdModel.SigF
+
+/-! ## Normalization and coherence with instances of subclasses (M25-TYPECLASS-SUPER-INST,
+round 9)
+
+`Start/TypeClassSuperNormalize.lean`: congruence of reduction for parallel substitution,
+normalization of dictionary derivations under `NormalSuperFields`, uniqueness of normal
+dictionaries, and coherence up to β with instances of subclasses.
+-/
+
+#check @Lambda.substEnv_reduces
+#check @TypeClass.DEnt.normalize_super
+#check @TypeClass.SuperInstFragment
+#check @TypeClass.DEntN.unique
+#check @TypeClass.DEnt.conv_superInst
+#check @TypeClass.coherence_unannotated_superInst

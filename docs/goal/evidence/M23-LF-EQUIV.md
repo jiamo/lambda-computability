@@ -96,3 +96,33 @@ Open, in order: `LR.fundamental` generalised to related substitutions — the fi
 lemma, not started this round: `TEq Γ M N A → ∀ σ σ' related at Γ in Δ,
 LR (skel (skelCtx Γ) A) Δ (M[σ]) (N[σ'])` — then completeness `TEq Γ M N A → AlgEq`, typed
 soundness, termination on well-typed terms, decidability.
+
+## Round 9 — the fundamental lemma for the typing judgement (`Start/LambdaPiLFFundamental.lean`)
+
+New DONE_STRONG row M23-LF-FUNDAMENTAL-TYPING; M23-LF-EQUIV-COMPLETE stays TODO_READY and
+M23-LF-EQUIV stays DONE_WEAK.  Axioms in `M23-LF-FUNDAMENTAL-TYPING-axioms.txt`.
+
+Proved:
+
+* `skel_subst_typeLevel` — for a type-level `A` in a well-formed `Γ`, `skel Δ (A[σ]) = skel Γs A`
+  as soon as `σ` has the right skeleton at the **kind positions** of `Γ` (object positions are
+  irrelevant, as in `skel_irrel`);
+* `RelSub Γ Δ σ τ` — related substitutions: `LR (skel A) Δ (σ n) (τ n)` at every declaration
+  `n : A`, and the declared skeleton at kind positions; `RelSub.rename`, `RelSub.cons` (extension
+  at an object position), `RelSub.up`, `RelSub.ids`;
+* **`LR.fundamental`**: `Typing Γ t A → Wf Γ → RelSub Γ Δ σ τ → LR (skel (skelCtx Γ) A) Δ t[σ] t[τ]`,
+  all six rules (the product case uses `skel_subst_typeLevel` for the side condition of
+  `Eqv.basePi`, the application and conversion cases the skeleton arguments of `Typing.styping`);
+* `AlgEq.refl_of_typing` — the algorithm is reflexive on well-typed terms.
+
+**First missing lemma** (completeness for `TEq`): the fundamental lemma for `TEq` needs, at
+`TEq.pi`, the side condition `skel Δ (A[σ]) = skel Δ (A'[τ])` for declaratively equal domains,
+i.e. `skel_teq : TEq Γ A A' (sort s) → skel (skelCtx Γ) A = skel (skelCtx Γ) A'` together with
+`TypeLevel` of both sides.  The skeleton facts are proved for *typed* terms (`skel_conv`,
+`skel_irrel` need `TypeLevel`), and `TEq` is not valid for the β-only typing judgement:
+`TEq.app` relates `f a` and `f' a'` at `B[a]`, while `f' a'` is typed at `B[a']`, which is only
+βη-convertible to `B[a]` when `a` and `a'` differ by η (observation on paper, not formalized).
+So the missing lemma is the skeleton invariance under `TEq` at type level, proved by induction on
+`TEq` with typing premises for the β-case only, or a validity lemma for `TEq` against a
+βη-conversion typing judgement.  Then completeness, typed soundness, termination, decidability
+(none proved).

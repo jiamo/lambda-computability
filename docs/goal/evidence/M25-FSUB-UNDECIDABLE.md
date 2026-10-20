@@ -172,3 +172,41 @@ frames stored in one register through `Nat.pair`, its simulation lemma, and the 
 obligations (`Primcodable KM`, computability of the compilation, of `Minsky.compile` and of
 `Minsky.godel`).  `FsubGhelli.cm_halts_undecidable` and the undecidability of `Sub` are not
 derived this round.
+
+## Round 9 — the pairing macro and a fixed universal code
+
+New DONE_STRONG row M25-KCM-PAIR; M25-KCM-UNIVERSAL stays TODO_READY.  Axioms in
+`M25-KCM-PAIR-axioms.txt`.
+
+**`Start/MinskyPair.lean`** (proved):
+
+* `Macro.cmp_run` — comparison by simultaneous decrement: the loop `test y lge c₁; test x llt c`
+  exits at `lge` with `y` emptied when `r y ≤ r x`, at `llt` with `x` emptied when `r x < r y`,
+  touching only `x` and `y`;
+* `Macro.pairCode o e i j k x y t` — a 51-instruction program; `Macro.Contains M o L` (the program
+  `M` contains `L` at offset `o`) and `Contains.fetch`;
+* `Macro.pair_run` — **the pairing macro**: from `o` with `r x = r y = r t = 0` the machine runs
+  to `e` with `r' k = r k + Nat.pair (r i) (r j)`, `i`, `j` preserved, `x y t` zero, and no other
+  register changed.
+
+**`Start/MinskyUniversal.lean`** (proved) — the round-9 suggestion of a single fixed universal
+code:
+
+* `Universal.exists_universal_code : ∃ u : Code, ∀ c x, u.eval (Nat.pair (encode c) x) = c.eval x`
+  (from `Nat.Partrec.Code.exists_code` and `Nat.Partrec.Code.eval_part`);
+* `Universal.universal_dom_undecidable` — for such `u`, `¬ ComputablePred (fun m => (u.eval m).Dom)`
+  (the halting problem reduces by the computable map `c ↦ Nat.pair (encode c) 0`).
+
+**On the statement of `cm_halts_undecidable`.**  The fixed-machine form
+`¬ ComputablePred (fun ab : ℕ × ℕ => CM.Halts M_u ab.1 ab.2)` needs no `Primcodable CM`: with
+`M_u` the Minsky compilation of a compiled `u` and the primitive recursive input map
+`m ↦ (godel k (initial registers of m), 0)`, it follows from `universal_dom_undecidable` once the
+compiled machine simulates `u`.  It is the stronger statement and the recommended target; the
+row's target is restated accordingly in its board entry (open_boundary).
+
+**Stop point.**  The first macro not built is **unpairing** (`Nat.unpair`, an integer square-root
+loop: `s := 0; while (s+1)² ≤ n do s += 1`, then the comparison `n - s² < s`); after it, the
+compiler cases `zero, succ, left, right, pair, comp, prec, rfind'` with a frame discipline.  No
+compiler case is built this round, so the first constructor whose simulation lemma is missing is
+`left` (it needs unpairing); `zero` and `succ` need only the frame convention, which is not yet
+fixed in Lean.

@@ -783,4 +783,10 @@ import Start.LambdaPiLFEquivPER
 import Start.GrpdSigma
 import Start.TypeClassSuperNorm
 import Start.SizeChangeCallGraph
+import Start.PTSRouteIITwoLevel
+import Start.MinskyPair
+import Start.MinskyUniversal
+import Start.LambdaPiLFFundamental
+import Start.GrpdSigmaFun
+import Start.TypeClassSuperNormalize
 import Start.Capstones

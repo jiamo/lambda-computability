@@ -1,0 +1,6 @@
+# round 9: #print axioms (lake env lean on a scratch file importing the round-9 modules, with #print axioms appended)
+'GrpdModel.sigTheta_id' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GrpdModel.sigTheta_comp' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GrpdModel.sigMapG_id' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GrpdModel.sigMapG_comp' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GrpdModel.SigF' depends on axioms: [propext, Classical.choice, Quot.sound]

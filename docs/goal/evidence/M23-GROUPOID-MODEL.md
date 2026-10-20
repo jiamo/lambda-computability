@@ -246,3 +246,19 @@ Grothendieck constructions whose components are `(sigTheta A (𝟙 γ)).app a = 
 `sigTheta A (g ≫ h) = sigTheta A g ≫ whiskerLeft (A.map g) (sigTheta A h)` up to the
 `eqToHom` of `A.map_comp`; then the pairing isomorphism (`pair_disp`) and
 `GrpdModel.grpdSigmaStruct`.
+
+## Round 9 — the functor laws of Σ (`Start/GrpdSigmaFun.lean`)
+
+New DONE_STRONG row M23-GROUPOID-SIGMA-FUNCTOR; M23-GROUPOID-SIGMA stays TODO_READY.  Axioms in
+`M23-GROUPOID-SIGMA-FUNCTOR-axioms.txt`.
+
+Proved: `sigTheta_id` (the fibre transformation along `𝟙 γ` is an `eqToHom`), `sigTheta_comp`
+(along `g ≫ g'` it is the composite, up to the `eqToHom` of `A.map_comp`), transport lemmas for
+`B` along such morphisms (`map_eqToHom_obj_heq`, `map_eqToHom_map_heq`, `map_comp_eq_obj_heq`,
+`map_comp_eq_map_heq`), **`sigMapG_id`** and **`sigMapG_comp`**, by `functor_ext`, and the functor
+**`SigF A B : Γ ⥤ Grpd`**.
+
+**First missing lemma**: the pairing isomorphism `pair A B : GObj B ≅ GObj (SigF A B)` over `Γ`
+(object part `((γ, a), b) ↦ (γ, (a, b))`, its inverse, and the two round trips), from which
+`pair_disp` is immediate; then the Beck–Chevalley law `Sig_sub` (an equality of functors
+`σ ⋙ SigF A B = SigF (σ ⋙ A) (extend … ⋙ B)`), and `GrpdModel.grpdSigmaStruct`.  Not proved.

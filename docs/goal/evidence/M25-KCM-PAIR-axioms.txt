@@ -1,0 +1,5 @@
+# round 9: #print axioms (lake env lean on a scratch file importing the round-9 modules, with #print axioms appended)
+'Minsky.Macro.cmp_run' depends on axioms: [propext, Quot.sound]
+'Minsky.Macro.pair_run' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Minsky.Universal.exists_universal_code' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Minsky.Universal.universal_dom_undecidable' depends on axioms: [propext, Classical.choice, Quot.sound]

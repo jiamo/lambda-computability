@@ -183,3 +183,37 @@ alone were not used: without closed superclass fields, substituting instance dic
 hypotheses under a superclass projection creates new redexes, and the order must combine
 Paterson's measure on instance contexts with the size of instance dictionaries.  Coherence for
 environments with instances of subclasses is therefore not extended this round.
+
+## Round 9 — normalization and coherence with instances of subclasses (`Start/TypeClassSuperNormalize.lean`)
+
+M25-TYPECLASS-SUPER-INST moves to **DONE_WEAK** with the gap row M25-TYPECLASS-SUPER-FIELD;
+M25-TYPECLASS-COHERENCE-SUPER and M25-TYPECLASS-COHERENCE stay DONE_WEAK.  Axioms in
+`M25-TYPECLASS-SUPER-INST-axioms.txt`.
+
+Proved:
+
+* `Lambda.substEnv_reduces` (and `Lambda.substEnv_reduces_below`, for the free variables of `t`)
+  — the congruence of β-reduction for parallel substitution, the round-8 first missing lemma;
+* `DEntN.true_inv`, `reduces_recProj`;
+* **`DEnt.normalize_super`** — under `EnvGood E` and `NormalSuperFields E`, every `DEnt`
+  derivation reduces (its dictionary term) to a `DEntN` derivation;
+* `SuperInstFragment E P` — the round-6 `SuperFragment` without `inst_no_super` (instances of
+  classes with a superclass allowed); `SuperFragment.toSuperInst`,
+  `SuperFragment.normalSuperFields` (in the round-6 fragment `NormalSuperFields` holds vacuously);
+* `DEntN.source`, **`DEntN.unique`** — normal dictionaries are unique in the fragment;
+* **`DEnt.conv_superInst`**, `AElab.conv_superInst`, **`coherence_unannotated_superInst`** — any two
+  dictionaries for one constraint, and any two elaborations of one unambiguous judgement, are
+  β-convertible, in `SuperInstFragment` under `NormalSuperFields`.
+
+**Exit criteria.**  M25-TYPECLASS-SUPER-INST asks for coherence under `SuperField` (superclass
+fields that are arbitrary derivations).  The proof uses `NormalSuperFields` (closed normal
+superclass fields), which is stronger, so the row is DONE_WEAK.  Gap (row
+M25-TYPECLASS-SUPER-FIELD): `DEnt.normalize_super` under `SuperField` alone, where the
+superclass field of an instance may use the instance context, so that contracting a superclass
+projection of an instance dictionary substitutes the context dictionaries into the field and can
+create new projections of instance dictionaries; the termination order must combine Paterson's
+measure on instance contexts with the size of the dictionaries.  No example environment with an
+instance of a subclass satisfying `SuperInstFragment` and `NormalSuperFields` is built in Lean
+this round.  M25-TYPECLASS-COHERENCE-SUPER's exit criterion (fragment without overlap, with
+superclasses, instances well formed for their superclass) is the same `SuperField` condition, so
+it also stays DONE_WEAK; M25-TYPECLASS-COHERENCE depends on it.
