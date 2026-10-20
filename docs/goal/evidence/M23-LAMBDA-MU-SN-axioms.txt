@@ -11,3 +11,8 @@
 'LambdaMu.Tm.subst_var' depends on axioms: [propext, Quot.sound]
 'LambdaMu.Tm.subst_single' depends on axioms: [propext, Quot.sound]
 'LambdaMu.Tm.sstr_ren' depends on axioms: [propext, Classical.choice, Quot.sound]
+
+# Round 4 (lake env lean on Start/LambdaMuStep.lean with #print axioms appended)
+'LambdaMu.Tm.subst_sstr' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LambdaMu.Step.ren' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LambdaMu.Step.subst' depends on axioms: [propext, Classical.choice, Quot.sound]

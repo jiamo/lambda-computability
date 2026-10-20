@@ -1,0 +1,5 @@
+# #print axioms for M25-CBNEED-TIME (lake env lean on Start/LazyTime.lean with #print axioms appended)
+'Lazy.LTrans.potential' depends on axioms: [propext, Quot.sound]
+'Lazy.LRun.time_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Lazy.LRun.time_bound_length' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Lazy.LRun.time_bound_halt' depends on axioms: [propext, Classical.choice, Quot.sound]

@@ -113,3 +113,34 @@ It does not hold by `rfl`. The functor `fibI (σ ⋙ A) δ ⋙ extend σ A` has 
 know whether it fails. After it come `lam`/`app`: a bijection between sections of `B` over `∫ A`
 and sections of `PiF A B` over `Γ`, given by an evaluation functor, together with `app_lam` and
 `lam_app`. Σ (`grpdSigmaStruct`) was not started.
+
+## Round 4 — the Beck–Chevalley law for Π (`Start/GrpdPiSub.lean`)
+
+Proved (axioms at most `[propext, Classical.choice, Quot.sound]`):
+
+```lean
+theorem GrpdModel.fibI_extend (δ : Δ) : fibI (σ ⋙ A) δ ⋙ extend σ A = fibI A (σ.obj δ)
+theorem GrpdModel.trans_reindex ...   -- transport commutes with reindexing the family
+theorem GrpdModel.trans_hcongr ...    -- transport along heterogeneously equal data
+theorem GrpdModel.PiF_sub : σ ⋙ PiF A B = PiF (σ ⋙ A) (extend σ A ⋙ B)
+```
+
+`fibI_extend` is `Functor.ext`: objects agree by `rfl`, morphisms up to `eqToHom` through
+`Functor.map_id σ`.  `PiF_sub` is `Functor.hext`: on objects, rewriting with `fibI_extend`
+inside `Sect (· ⋙ B)`; on morphisms, a `HEq` of transports, by `trans_reindex` and then
+`trans_hcongr` (`map_groupoidInv` identifies `σ.map (inv g)` with `inv (σ.map g)`).  So the `Pi_sub` field of
+`Cwa.PiStruct grpdCwa` is available.
+
+Still open: `def GrpdModel.grpdPiStruct : Cwa.PiStruct grpdCwa`.  **First missing construction:**
+`lam`/`app`, i.e. the currying bijection between terms of `B` over the extended context and terms
+of `PiF A B`,
+
+```lean
+def GrpdModel.piLam (t : Tm (ext Γ A) B) : Tm Γ (PiF A B)   -- a section of Sect (fibI A γ ⋙ B) at each γ
+def GrpdModel.piApp (f : Tm Γ (PiF A B)) : Tm (ext Γ A) B   -- evaluation at (γ, a)
+```
+
+with `app_lam`, `lam_app` and then `lam_sub` (`NaturalPiStruct`).  The first equation that has to
+be proved for `piLam` is functoriality of the section family in `γ`: for `g : γ ⟶ γ'`,
+`(PiF A B).map g (piLam t γ) = piLam t γ'`, a transport identity of the same shape as `PiF_sub`'s
+morphism part.  Σ (`grpdSigmaStruct`) not started.

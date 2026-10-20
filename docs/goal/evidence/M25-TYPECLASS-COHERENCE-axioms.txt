@@ -1,0 +1,8 @@
+# #print axioms for M25-TYPECLASS-COHERENCE, partial results (lake env lean on Start/TypeClassCoherence.lean with #print axioms appended)
+'TypeClass.recProj_recMk' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TypeClass.DEnt.typing' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TypeClass.DEnt.unique' depends on axioms: [propext, Quot.sound]
+'TypeClass.DEnt.conv' depends on axioms: [propext, Quot.sound]
+'TypeClass.AElab.typing' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TypeClass.AElab.coherent' depends on axioms: [propext, Quot.sound]
+'TypeClass.AElab.conv' depends on axioms: [propext, Quot.sound]

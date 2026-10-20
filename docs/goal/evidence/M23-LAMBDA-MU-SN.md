@@ -71,3 +71,30 @@ name-respecting `σ` (one that sends names to variables and is injective on name
 come `Step.ren`, `Step.subst` (`Step t t' → Step (subst σ t) (subst σ t')` for name-respecting
 `σ`) and the structural analogue `Step t t' → TransGen Step (sstr a v t) (sstr a v t')`. Then
 the β- and μ-expansion lemmas, the fundamental lemma, and `sn_of_typ`.
+
+## Round 4 — stability of reduction (`Start/LambdaMuStep.lean`)
+
+Proved (axioms at most `[propext, Classical.choice, Quot.sound]`):
+
+* `Tm.NameFree a t` (the index `a` is not a free name of `t`) and `sstr_nameFree`
+  (structural substitution at such an `a` is the identity), with `nameFree_ren`,
+  `nameFree_ren_of_ne`, `nameFree_ren_succ`;
+* `Tm.subst_sstr` — **the commutation `subst ∘ sstr`**: for `τ` with `NamesVar τ t`, `τ a = var a`,
+  no other index sent to the name `a`, and no `τ i` mentioning the name `a`,
+  `subst τ (sstr a v t) = sstr a (subst τ v) (subst τ t)`;
+* `Step.ren : Step t t' → Function.Injective r → Step (ren r t) (ren r t')`;
+* `Step.subst : Step t t' → NamesVar σ t → Step (subst σ t) (subst σ t')`.
+
+Still open: `LambdaMu.sn_of_typ`.  **First missing lemma:** the structural analogue
+
+```lean
+theorem Step.sstr {t t' : Tm} (hs : Step t t') (a : ℕ) (v : Tm) :
+    Relation.TransGen Step (Tm.sstr a v t) (Tm.sstr a v t')
+```
+
+Its β case needs `sstr a v (subst (single u) b) = subst (single (sstr a v u)) (sstr (a+1) (ren
+succ v) b)` (expected from `subst_sstr` and `ren_single`, not yet derived), and its structural and
+renaming cases need the commutation `sstr ∘ sstr` of two structural substitutions at different
+names, which is not proved; a renaming step at the name `a` itself becomes one structural step
+followed by one renaming step (hence `TransGen`, not `Step`).  After it: the β- and μ-expansion
+lemmas, the fundamental lemma, and `sn_of_typ`.

@@ -108,15 +108,47 @@ theorem cbneed_exponential_gap (n : ℕ) :
       ∀ N b f, Run N b (State.init (tfam n)) f → IsFinal f → b = 2 ^ n + n
 ```
 
-## B5. Open: the time cost model (gap row M25-CBNEED-TIME)
+## B5. The time bound (row M25-CBNEED-TIME, round 4)
 
-First missing result: the analogue of M11-KRIVINE-INVARIANCE for the lazy machine — the number of
-lazy transitions is polynomial in the number of β transitions and the size of the term, and one
-transition is realized by a tape program (`Complexity.Space.Realizes`, `Start/SpaceCompile.lean`)
-in time polynomial in the size of the state.  The first lemma is the transition count bound
-`n ≤ p(b, |t|)` for `LRun n b fs (LState.init t) s`, then the heap-size bound.
+`Start/LazyTime.lean`.  The counting argument by transition kind is packaged as one potential.
+For a state `s` put
+
+```
+Φ⁺(s) = 3·#(argument frames of s.stack) + [s.code is an abstraction]
+Φ⁻(s) = 2·#(thunk cells of s.heap) + #(update frames of s.stack)
+```
+
+Every transition `s ⟶ s'` of `LTrans` (the five kinds `app`, `beta`, `force`, `fetch`, `update`)
+satisfies `1 + Φ⁻(s') + Φ⁺(s) ≤ 5·[it is β] + Φ⁺(s') + Φ⁻(s)` (`Lazy.LTrans.potential`).  This is the
+counting argument by kind: an `app` transition pushes one argument frame and allocates one thunk
+(+3 to `Φ⁺`, +2 to `Φ⁻`); a β transition pops one argument frame and is paid five; a forcing
+transition turns a thunk into a hole and pushes an update marker (−2 +1 to `Φ⁻`); an update pops a
+marker (−1 to `Φ⁻`); a value lookup (`fetch`) sets the abstraction flag of `Φ⁺`, and that flag is
+then spent by the β, the update or the halt that follows.  The invariant `ValOK` (value cells hold
+abstractions) is what makes the `fetch` case work; it is preserved by every transition
+(`ValOK.step`).  Summing along a run
+(`LRun.potential`) and starting from `LState.init t` (empty heap and stack):
+
+```lean
+theorem Lazy.LRun.time_bound {n b : ℕ} {fs : List ℕ} {t : Lambda} {s : LState}
+    (h : LRun n b fs (LState.init t) s) :
+    n ≤ 5 * b + 3 * s.stack.countP Frame.isArg + 1
+theorem Lazy.LRun.time_bound_length {n b : ℕ} {fs : List ℕ} {t : Lambda} {s : LState}
+    (h : LRun n b fs (LState.init t) s) : n ≤ 5 * b + 3 * s.stack.length + 1
+theorem Lazy.LRun.time_bound_halt {n b : ℕ} {fs : List ℕ} {t : Lambda} {s : LState}
+    (h : LRun n b fs (LState.init t) s) (hs : s.stack = []) : n ≤ 5 * b + 1
+```
+
+The bound is linear in `b`, with no dependence on the size of `t`; for a run that halts with an
+empty stack it is `5b + 1`.  The naive potentials of round 3 were circular because they charged a
+lookup to the β step that *follows* it; here the abstraction flag in `Φ⁺` stores the credit.
+
+The first criterion of M25-CBNEED-TIME is therefore met; the row is DONE_WEAK.  The second, a tape
+program realizing one lazy transition (`Complexity.Space.Realizes`, `Start/SpaceCompile.lean`) in
+time polynomial in the encoded state, is the new gap row **M25-CBNEED-STEP-PROG**, worded like
+M25-CBV-STEP-PROG.
 
 ## Axioms
 
-`M25-CBNEED-MACHINE-axioms.txt`, `M25-CBNEED-COST-axioms.txt`: at most
+`M25-CBNEED-MACHINE-axioms.txt`, `M25-CBNEED-COST-axioms.txt`, `M25-CBNEED-TIME-axioms.txt`: at most
 `[propext, Classical.choice, Quot.sound]`.

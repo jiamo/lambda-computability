@@ -1,0 +1,4 @@
+# #print axioms for M23-GROUPOID-PI, partial results (lake env lean on Start/GrpdPiSub.lean with #print axioms appended)
+'GrpdModel.fibI_extend' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GrpdModel.trans_reindex' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GrpdModel.PiF_sub' depends on axioms: [propext, Classical.choice, Quot.sound]

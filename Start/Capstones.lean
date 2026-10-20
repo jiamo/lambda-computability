@@ -381,6 +381,12 @@ import Start.PTSExpansionLambdaP2
 import Start.LambdaMuSubstLemmas
 import Start.GrpdPi
 import Start.TypeClassExample
+import Start.PTSExpansionHSubstSN
+import Start.LazyTime
+import Start.LambdaMuStep
+import Start.GrpdPiSub
+import Start.TypeClassCoherence
+import Start.SystemFCoerce
 
 /-! ## Interfaces of the untyped calculus
 
@@ -4628,3 +4634,78 @@ environment with a superclass (`Ord` over `Eq`) and an instance with a context
 #check @TypeClass.exampleEnv_good
 #check @TypeClass.ent_eq_arrow
 #check @TypeClass.example_elab
+
+/-! ## Hereditary substitution from strong normalization (M29-EP-IMPREDICATIVE, partial)
+
+`Start/PTSExpansionHSubstSN.lean`: route (iii) — the descent order (reverse β-steps together with
+immediate subterms) is well founded below every strongly normalizing expression
+(`Expr.acc_descStep_of_sn`), and hereditary substitution on canonical derivations is proved by
+induction on it, in every corner of the cube, from the product-premise property `HSubstPi`
+(`hsubstNW_of_hsubstPi`, `cube_expansionPostponement_of_hsubstPi`).  `HSubstPi (cubeSpec lambdaP2)`
+is not proved.
+-/
+
+#check @PureTypeSystem.Expr.acc_descStep_of_sn
+#check @PureTypeSystem.hsubstNW_of_hsubstPi
+#check @PureTypeSystem.cube_expansionPostponement_of_hsubstPi
+#check @PureTypeSystem.hsubstPi_nil_of_hsubstNW
+
+/-! ## A time bound for call-by-need (M25-CBNEED-TIME)
+
+`Start/LazyTime.lean`: a potential argument by transition kind; a run of the lazy machine from
+`LState.init t` with `b` β-steps takes at most `5b + 3·(arguments left on the stack) + 1`
+transitions, and at most `5b + 1` when it halts with an empty stack.
+-/
+
+#check @Lazy.LTrans.potential
+#check @Lazy.LRun.time_bound
+#check @Lazy.LRun.time_bound_length
+#check @Lazy.LRun.time_bound_halt
+
+/-! ## Reduction and substitution in λμ (M23-LAMBDA-MU-SN, partial)
+
+`Start/LambdaMuStep.lean`: commutation of substitution with structural substitution
+(`Tm.subst_sstr`), and stability of one-step reduction under injective renaming (`Step.ren`) and
+under name-respecting substitution (`Step.subst`).  `LambdaMu.sn_of_typ` is not proved.
+-/
+
+#check @LambdaMu.Tm.subst_sstr
+#check @LambdaMu.Step.ren
+#check @LambdaMu.Step.subst
+
+/-! ## Π in the groupoid model: the Beck–Chevalley law (M23-GROUPOID-PI, partial)
+
+`Start/GrpdPiSub.lean`: the fibre inclusion commutes with context extension (`fibI_extend`), and
+the dependent product is stable under substitution (`PiF_sub`).
+-/
+
+#check @GrpdModel.fibI_extend
+#check @GrpdModel.trans_reindex
+#check @GrpdModel.PiF_sub
+
+/-! ## Coherence of the dictionary elaboration (M25-TYPECLASS-COHERENCE, partial)
+
+`Start/TypeClassCoherence.lean`: the β-law of records (`recProj_recMk`), entailment elaboration as
+a relation (`DEnt`), uniqueness of dictionaries in the fragment without superclasses and
+overlapping instances (`DEnt.unique`, `DEnt.conv`), and coherence of the elaboration of annotated
+source terms (`AElab.coherent`, `AElab.conv`).
+-/
+
+#check @TypeClass.recProj_recMk
+#check @TypeClass.DEnt.typing
+#check @TypeClass.DEnt.unique
+#check @TypeClass.DEnt.conv
+#check @TypeClass.AElab.typing
+#check @TypeClass.AElab.coherent
+#check @TypeClass.AElab.conv
+
+/-! ## System F with type-equality coercions (M25-SYSTEM-FC)
+
+`Start/SystemFCoerce.lean`: coercions (refl, sym, trans, arrow application, `∀`-congruence,
+instantiation, axioms, decomposition), the cast, subject reduction for closed axioms, and progress
+for closed terms under the consistency hypothesis.
+-/
+
+#check @FCoerce.Typing.preservation
+#check @FCoerce.Typing.progress
+#check @FCoerce.Typing.safety

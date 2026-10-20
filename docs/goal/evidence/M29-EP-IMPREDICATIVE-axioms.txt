@@ -4,3 +4,9 @@
 'PureTypeSystem.expansionPostponement_of_hsubst' depends on axioms: [propext, Classical.choice, Quot.sound]
 'PureTypeSystem.lambdaP2_expansionPostponement_of_hsubst' depends on axioms: [propext, Classical.choice, Quot.sound]
 'PureTypeSystem.hsubstNW_lambdaPOmegaBar' depends on axioms: [propext, Classical.choice, Quot.sound]
+
+# Round 4, route (iii) (lake env lean on Start/PTSExpansionHSubstSN.lean with #print axioms appended)
+'PureTypeSystem.Expr.acc_descStep_of_sn' does not depend on any axioms
+'PureTypeSystem.hsubstNW_of_hsubstPi' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.cube_expansionPostponement_of_hsubstPi' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.hsubstPi_nil_of_hsubstNW' does not depend on any axioms

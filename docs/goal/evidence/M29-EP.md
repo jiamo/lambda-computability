@@ -844,3 +844,58 @@ counterpart in the repository.  Its statement needs the typed candidate space it
 `HasType` derivations closed under weakening and under expansion by `HasTypeNW`-normal
 derivations), which is not built.  No mathematical gap was found; what remains is the
 construction of that interpretation and its substitution and conversion lemmas.
+
+## λP2 and coc, round 4 — route (iii): hereditary substitution bought from SN
+
+`Start/PTSExpansionHSubstSN.lean`.  Strong normalization of every corner is already proved
+(`Start/CoCSN.lean`: `CoC.sn_of_hasType`, `cube_stronglyNormalizing f`), so the termination of
+hereditary substitution is taken from it instead of a new candidate model.
+
+Proved (no sorry, axioms at most `[propext, Classical.choice, Quot.sound]`):
+
+* `Expr.DescStep x y := Beta y x ∨ ImmSub x y` — one step down: a one-step reduct or an immediate
+  subterm; `Expr.acc_descStep_of_sn : StronglyNormalizing t → Acc DescStep t` and its transitive
+  form `Expr.acc_desc_of_sn` (subterms of SN terms are SN, and a reduct of a subterm is a subterm
+  of a reduct, `sub_beta`).  This is the order of route (iii).
+* `Expr.Below x root` — `x` is, up to a renaming, `DescStep*`-below `root`; closed under steps
+  down, under un-renaming and under reducts (`Below.down`, `Below.unrename`,
+  `Below.trans_reduct`).
+* `hsubst_route3_aux` — route (iii) itself: outer well-founded induction on `root = M[N]` (up to
+  renaming), inner induction on the canonical derivation of `M` (at any depth `Δ`, into a
+  canonically valid target context).  The variable and weakening cases read their declarations
+  off the target context; the **application** case fires the created head redex
+  `(λx:C'. e) a'` (variable at the head replaced by an abstraction coming from `N`) by the outer
+  hypothesis, because `e[a']` is a reduct of `M[N]`; types are handled through `Reduces.to_normal`
+  on `B[N]` (types are typed, hence SN).
+* `hsubstNW_of_hsubstPi (f : CubeFeatures) (hpi : HSubstPi (cubeSpec f)) : HSubstNW (cubeSpec f)`
+  and `cube_expansionPostponement_of_hsubstPi (f) (hpi) : ProductNormalizationR (cubeSpec f) ∧
+  ExpansionPostponement (cubeSpec f)` — **for every corner**, including coc.
+* `hsubstPi_nil_of_hsubstNW` — sanity check: `HSubstNW` gives the depth-0 instance of `HSubstPi`,
+  so the hypothesis is no stronger than the target at depth 0.
+
+**Where route (iii) breaks.**  Exactly one recursive call of the inner induction is not at a
+smaller point of the order: the product premise `Θ ⊢ Π C E : s` of the abstraction rule
+`Θ ⊢ λC. b : Π C E`.  Its subject `(Π C E)[N]` contains `E[N]`, where `E` is the *type* of the body
+`b`, and `E[N]` is neither a reduct nor a subterm of `M[N] = λC[N]. b[N]` (nor of a renaming of
+it).  So `Below ((Π C E)[N]) root` is not available, and head redexes created inside `E[N]` would
+need the outer hypothesis at points that are not below `root`.  (Taking the pair `(M, B)` as
+the root was not tried in Lean; on paper it moves the problem to the product premises of the
+abstractions inside `E`, one level up.)  That call is isolated as the hypothesis
+
+```lean
+def HSubstPi (P : Specification Srt) : Prop :=
+  ∀ {Γ : List (Expr Srt)} {N A : Expr Srt} {Δ Δ' : List (Expr Srt)} {C E : Expr Srt} {s : Srt},
+    HasTypeNW P Γ N A → CtxSubstRed N Δ Δ' → ValidContextNW P (Δ' ++ Γ) →
+    HasTypeNW P (Δ ++ A :: Γ) (.pi C E) (.sort s) →
+    ∃ C' E', Reduces (C.subst (Expr.substAt N Δ.length)) C' ∧
+      Reduces (E.subst (Expr.substAt N (Δ.length + 1))) E' ∧
+      HasTypeNW P (Δ' ++ Γ) (.pi C' E') (.sort s)
+```
+
+**First missing lemma:** `theorem hsubstPi_lambdaP2 : HSubstPi (cubeSpec lambdaP2)` (and then
+`hsubstPi_cube (f) : HSubstPi (cubeSpec f)`).  With it, `hsubstNW_lambdaP2`,
+`lambdaP2_productNormalizationR`, `lambdaP2_expansionPostponement`, `hsubstNW_cube` and
+`cube_expansionPostponement_all` follow at once from `hsubstNW_of_hsubstPi` and
+`cube_expansionPostponement_of_hsubstPi`.  A natural next attempt (not yet tried in Lean) is a
+second outer induction on `Π C E` itself, which is typed and hence SN; its product premises are
+again of the same shape, so the open question is whether this nested recursion is well founded.

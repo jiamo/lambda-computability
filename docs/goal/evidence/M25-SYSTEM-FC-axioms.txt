@@ -1,0 +1,5 @@
+# #print axioms for M25-SYSTEM-FC (lake env lean on Start/SystemFCoerce.lean with #print axioms appended)
+'FCoerce.CoTyping.substTy' depends on axioms: [propext, Quot.sound]
+'FCoerce.Typing.preservation' depends on axioms: [propext, Classical.choice, Quot.sound]
+'FCoerce.Typing.progress' depends on axioms: [propext]
+'FCoerce.Typing.safety' depends on axioms: [propext, Classical.choice, Quot.sound]
