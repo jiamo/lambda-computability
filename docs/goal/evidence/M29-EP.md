@@ -1371,3 +1371,132 @@ skeletons must therefore be Fω type constructors modulo β.  **First missing le
 kinds), commuting with substitution and invariant under conversion modulo Fω β-conversion —
 together with `GoodPω_beta`, the invariance of the term relation at an Fω skeleton under Fω β.
 Then the coc analogues of `TRed`, `GoodP` and `RouteII.fundamental`.  Row M29-EP-COC.
+
+## Round 11 — expansion postponement for coc, and for the whole λ-cube
+
+Modules: `Start/PTSErasureCoCOmega.lean` (A1), `Start/PTSRouteIICoC.lean` (A2),
+`Start/PTSRouteIICoCFundamental.lean` (A3), `Start/PTSExpansionCoC.lean` (A4–A5).  Status:
+**M29-EP-COC, M29-EP-IMPREDICATIVE and M29-EP-CUBE-REST are DONE_STRONG**.  Axioms in
+`M29-EP-COC-axioms.txt` (at most `propext, Classical.choice, Quot.sound`; no `sorry`, no
+`native_decide`).
+
+### A1. The Fω interpretation, over an arbitrary base
+
+Following the suggestion (Geuvers' short SN proof for coc), kinds and constructors are interpreted
+directly in a semantics, not in Fω syntax modulo β.  The repository already had this
+interpretation for saturated sets (`CoC.interp`, `Start/CoCModel.lean`, with `CoC.interp_conv` in
+`Start/CoCSN.lean`); round 11 abstracts its base:
+
+* `ErasureCoC.KSkω` (`star`, `arr`), `erKω : CoC.Sk → KSkω` (object products dropped,
+  constructor products kept), `Vω B : KSkω → Type`, and `V_erKω : V B k = Vω B (erKω k)`;
+* `ErasureCoC.KAlg B` — a default element `dflt`, the product over a constructor variable
+  `piK : (a : Sk) → B → (V B a → B) → B` and the object product `piO : B → B → B`;
+* `interpK 𝔄 Δ T k ξ : V B k` — the interpretation at an expected skeleton, total (default
+  element on a shape mismatch); constructor λ ↦ `fun v => ⟦b⟧(ξ, v)`, constructor application ↦
+  `⟦F⟧ξ (⟦U⟧ξ)`, object λ and object application transparent, products by `piK`/`piO`;
+* proved for every algebra: `interpK_rename`, **`interpK_subst`** and
+  **`interpK_instantiate`** (`⟦b[U/x]⟧ξ = ⟦b⟧(ξ, ⟦U⟧ξ)`; an object `U` is irrelevant by
+  `interpK_agree`), `interpK_beta`, `interpK_reduces` and **`interpK_conv`** (the plan's
+  `erω_conv`): the interpretation of well-typed kinds and types is invariant under conversion, in
+  every corner of the cube.  The classification is stable under reduction and substitution by
+  `CoC.cl_beta` and `CoC.cl_subst` (round M23-COC-SN).
+* `interpK_omegaRedex` — the equation refuted for the λ2 erasure by `er_beta_fails_coc` holds
+  for every algebra.
+
+### A2. The coc candidates
+
+`RouteIICoC.IsCandC` (normalizable, closed under conversion of the type, CR3 for neutral
+judgements, expansion, weakening — round 10's `IsCandN` for `cubeSpec coc`); `CandC k v`
+(`IsCandC` at `∗`, preservation at `arr`: the plan's `TRed` at `arr κ₁ κ₂`, on the semantic side);
+`candAlg : KAlg Cand` with `piOC` (Kripke closure under application, `GoodP` at an arrow) and
+`piKC a X F` (Kripke closure under application to every constructor `U` in the candidate `X` of
+the bound kind, for every `v` with `CandC a v`).  Proved: `isCandC_piO`, `isCandC_piK` (CR1–CR3,
+expansion, weakening) and **`interpC_cand`** (the interpretation of a well-classified kind or
+constructor under a good valuation is a candidate).
+
+The syntactic part of the plan's `TRed` (constructor `U` at kind `K`) is carried by the candidate
+`⟦K⟧ξ` itself: a kind is interpreted at `∗` like a type, `Π x:A. K` by an object product and
+`Π α:K₁. K₂` by `piKC`, so no separate kind-indexed relation is needed.
+
+### A3. The fundamental lemma
+
+`RouteIICoC.SemC Γ ξ Δ T X Y` — normalization if `T = □`, otherwise `⟦T⟧ξ Δ X Y`;
+`RouteIICoC.SubstOK` (good valuation, normalizable target context, admissible declared types,
+variables in the semantics); `tail`, `weaken`, `cons`, `lift`, `body_inst`.
+
+**`RouteIICoC.fundamental`**: `HasType (cubeSpec coc) Γ M T → SubstOK Γ Δ σ ξ → Sem Γ ξ Δ M T σ`,
+one case per rule: axiom, variable, weakening, product (all four rules, through
+`NormNW.product`), abstraction (one case for a kind domain — rules `(□,∗)` and `(□,□)` — and one
+for a type domain — rules `(∗,∗)` and `(∗,□)`), application (the same split, with
+`interpK_instantiate` and `interpK_agree`), conversion (`interpK_conv`).  No case failed.
+
+### A4–A5. The terminal statements
+
+* `RouteIICoC.SubstOK.ids`, `RouteIICoC.substOK_substAt`, `RouteIICoC.sortFundamental_coc`;
+* `hsubstSort_coc`, **`hsubstPi_coc : HSubstPi (cubeSpec coc)`** (through `hsubstPi_iff_hsubstSort`);
+* **`coc_expansionPostponement : ExpansionPostponement (cubeSpec coc)`** (through
+  `cube_expansionPostponement_of_hsubstPi`), and `coc_productNormalizationR`;
+* **`cube_expansionPostponement_all (f : CubeFeatures) : ExpansionPostponement (cubeSpec f)`** —
+  the non-dependent corners by `cube_expansionPostponement`, λP, λPω̲, λP2 and coc by their
+  theorems.
+
+Exactly the board's targets, with no hypothesis.  This proof of the coc corner does not use Poll's
+Lemma 10 / Theorem 11.
+
+### M29-EP-STATEMENT, exit criterion 2, for the cube
+
+Criterion 2 asks for `expansionPostponement_of_sn` and `expansionPostponement_of_wn` for every
+`Specification`.  For the eight corners of the cube the conclusion now holds
+(`cube_expansionPostponement_all`), without Poll's argument.  What remains of criterion 2 is the
+general statement: normalizing specifications outside the cube (with other sorts, axioms or
+rules).  First missing lemma, unchanged:
+```lean
+theorem expansionPostponement_of_wn {S : Type u} (P : Specification S)
+    (hw : SystemWeaklyNormalizing P) : ExpansionPostponement P
+```
+Route (ii) of this round uses the cube's classification (`CoC.cl`: kinds, constructors, objects)
+and a model of the kind level; a general normalizing specification has no such classification.
+
+## Round 11, Stage C experiment (B1)
+
+A scratch checker (Python, kept outside the repository) implements `HasTypeR` of
+`Start/PTSExpansion.lean` literally — the seven rules `ax`, `var`, `weaken`, `product`,
+`abstraction`, `application`, `reduction` (one β step of the type), with `rename`, `subst`,
+`instantiate` and `Beta` as in `Start/PTSBasic.lean` — and `SortedSubjectReductionR` as defined in
+`Start/PTSExpansion.lean`: for each found `Γ ⊢r M : s` with `s` a sort and each one-step reduct
+`M'` of `M`, it searches for `Γ ⊢r M' : s`.
+
+Search 1 enumerates all judgements with a derivation of at most `N` rule nodes, keeping terms and
+types of size ≤ `SZ` and contexts of length ≤ `CL`; search 2 is the same enumeration, with bounds
+`N₂`, `SZ₂`, restricted to the contexts (and their suffixes) of the reducts.
+
+Specifications:
+* `Wdep` (as in `Start/PTSExpansionBeyondPoll.lean`): sorts `o, t, t', k, u`; axioms
+  `o:t, o:t', t:k, k:u`; rules `(o,o,o), (t,t,t), (k,t,t), (k,k,k), (u,k,k)` and the dependent
+  rule `(o,t,t)`.
+* `Wdep2` := `Wdep` plus the dependent rule `(o,t',t')` (also not weakly normalizing, since it
+  contains `Wdep`, and not functional: `o:t` and `o:t'`).
+
+| spec | N | SZ | CL | judgements | typed by a sort | (judgement, reduct) pairs | N₂ | SZ₂ | judgements (search 2) | failures |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Wdep | 14 | 9 | 3 | 2182 | 1562 | 25 | 18 | 11 | 505 | 0 |
+| Wdep | 16 | 11 | 3 | 4592 | 3180 | 97 | 22 | 13 | 7708 | 0 |
+| Wdep2 | 16 | 11 | 3 | 4600 | 3188 | 97 | 22 | 13 | 7719 | 0 |
+| Wdep | 20 | 11 | 3 | 18667 | 12477 | 790 | 26 | 13 | 36466 | 0 |
+| Wdep | 22 | 13 | 4 | 41812 | 25899 | 1847 | 28 | 15 | 83763 | 0 |
+
+Smallest judgements with a redex (derivation sizes 10–12): `[] ⊢r (λx:t. x) o : t`,
+`[] ⊢r (λx:k. o) t : t`, `[] ⊢r (λx:t. o) o : t`, `[o] ⊢r (λx:t. x) o : t`; each reduct
+(`o : t`) is found.  **No failure** of `SortedSubjectReductionR` was found within these bounds;
+the chains of Stage C (through `(o,t,t)`) need terms far larger than these bounds (Hurkens' term
+has hundreds of nodes), so the experiment neither supports a counterexample nor tests the critical
+chain.
+
+B2 (counterexample) was therefore not started: no candidate survived.  B3 (positive direction):
+no invariant was extracted from the data; the route (ii) proof of this round needs normalizing
+candidates and so does not apply to `Wdep`, which is not weakly normalizing.  First missing lemma:
+```lean
+theorem Wdep_expansionPostponement : ExpansionPostponement Wdep
+```
+(equivalently `SortedSubjectReductionR Wdep`); in general, unchanged,
+`theorem sortedSubjectReductionR_all {S : Type u} (P : Specification S) : SortedSubjectReductionR P`.

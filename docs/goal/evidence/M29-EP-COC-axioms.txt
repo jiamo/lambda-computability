@@ -1,0 +1,13 @@
+# round 11: #print axioms (lake env lean on a scratch file importing the round-11 modules, with #print axioms appended)
+'PureTypeSystem.coc_expansionPostponement' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.hsubstPi_coc' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.hsubstSort_coc' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.coc_productNormalizationR' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.cube_expansionPostponement_all' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.RouteIICoC.fundamental' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.RouteIICoC.SubstOK.ids' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.RouteIICoC.interpC_cand' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.ErasureCoC.interpK_subst' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.ErasureCoC.interpK_instantiate' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.ErasureCoC.interpK_conv' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.ErasureCoC.interpK_omegaRedex' depends on axioms: [propext, Quot.sound]

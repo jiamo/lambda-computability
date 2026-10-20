@@ -432,6 +432,11 @@ import Start.MinskyUndecidable
 import Start.LambdaPiLFSkelTEq
 import Start.GrpdSigmaPair
 import Start.TypeClassSuperExample
+import Start.PTSErasureCoCOmega
+import Start.PTSRouteIICoC
+import Start.PTSRouteIICoCFundamental
+import Start.PTSExpansionCoC
+import Start.FsubComputable
 
 /-! ## Interfaces of the untyped calculus
 
@@ -5231,3 +5236,39 @@ macro.  `Start/MinskyCompile.lean`: the compiler of `Nat.Partrec.Code` and its s
 #check @TypeClass.exampleEnv_normalSuperFields
 #check @TypeClass.exampleEnv_superInstFragment
 #check @TypeClass.example_superInst_coherence
+
+/-! ## Expansion postponement for coc and for the whole λ-cube (M29-EP-COC, round 11)
+
+`Start/PTSErasureCoCOmega.lean` (the Fω interpretation over an arbitrary base and its invariance
+under conversion), `Start/PTSRouteIICoC.lean` (coc candidates), `Start/PTSRouteIICoCFundamental.lean`
+(the fundamental lemma), `Start/PTSExpansionCoC.lean` (the terminal statements).
+-/
+
+#check @PureTypeSystem.ErasureCoC.interpK_subst
+#check @PureTypeSystem.ErasureCoC.interpK_instantiate
+#check @PureTypeSystem.ErasureCoC.interpK_conv
+#check @PureTypeSystem.ErasureCoC.interpK_omegaRedex
+#check @PureTypeSystem.RouteIICoC.isCandC_piO
+#check @PureTypeSystem.RouteIICoC.isCandC_piK
+#check @PureTypeSystem.RouteIICoC.interpC_cand
+#check @PureTypeSystem.RouteIICoC.fundamental
+#check @PureTypeSystem.RouteIICoC.SubstOK.ids
+#check @PureTypeSystem.RouteIICoC.sortFundamental_coc
+#check @PureTypeSystem.hsubstSort_coc
+#check @PureTypeSystem.hsubstPi_coc
+#check @PureTypeSystem.coc_productNormalizationR
+#check @PureTypeSystem.coc_expansionPostponement
+#check @PureTypeSystem.cube_expansionPostponement_all
+
+/-! ## Subtyping in full F<: is not computable (M25-FSUB-SUB-NONCOMPUTABLE, round 11)
+
+`Start/FsubComputable.lean`.
+-/
+
+#check @FsubCode.primrec_var
+#check @FsubCode.primrec₂_all
+#check @FsubCode.primrec_goal_mk
+#check @FsubCode.primrec_enc
+#check @FsubCode.enc_M_u_computable
+#check @FsubCode.sub_not_computable_of_enc_computable
+#check @FsubCode.sub_not_computable

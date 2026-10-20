@@ -1,0 +1,5 @@
+# round 11: #print axioms (lake env lean on a scratch file importing Start.FsubComputable, with #print axioms appended)
+'FsubCode.sub_not_computable' depends on axioms: [propext, Classical.choice, Quot.sound]
+'FsubCode.enc_M_u_computable' depends on axioms: [propext, Classical.choice, Quot.sound]
+'FsubCode.primrec_enc' depends on axioms: [propext, Classical.choice, Quot.sound]
+'FsubCode.sub_not_computable_of_enc_computable' depends on axioms: [propext, Classical.choice, Quot.sound]

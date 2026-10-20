@@ -256,3 +256,26 @@ from `universal_dom_undecidable` composed with the primitive recursive `m ↦ (3
 Sub (FsubPierce.enc M_u (3 ^ m) 0)`.  Not proved: `¬ ComputablePred` for `Sub`, which needs a
 `Primcodable` encoding of `FsubGhelli` goals and the computability of
 `m ↦ FsubPierce.enc M_u (3 ^ m) 0` (row M25-FSUB-SUB-NONCOMPUTABLE).
+
+## Round 11 — subtyping in full F<: is not computable (M25-FSUB-SUB-NONCOMPUTABLE, DONE_STRONG)
+
+Module `Start/FsubComputable.lean`; axioms in `M25-FSUB-SUB-NONCOMPUTABLE-axioms.txt`
+(`propext, Classical.choice, Quot.sound`; no `sorry`, no `native_decide`).
+
+* Codes, as for `Nat.Partrec.Code`: `FsubCode.encodeTy` (`top ↦ 0`, `var i ↦ 2i+1`,
+  `all S T ↦ 2·Nat.pair (code S) (code T) + 2`) and `decodeTy` (well-founded on `ℕ`), a bijection
+  `tyEquiv : Ty ≃ ℕ`; hence `Denumerable Ty` and `Primcodable Ty := Primcodable.ofDenumerable Ty`,
+  with no decoder obligation.  `Goal ≃ List Ty × Ty × Ty` gives `Primcodable Goal`.
+* Constructors: `primrec_top`, `primrec_var`, `primrec₂_all`, `primrec_goal_mk`, `primrec_neg`.
+* The encoding: `chain n s v` is an iterate of a constant `cons` (`chain_iterate`), and a frame
+  whose arguments are variables is a fold over the indices (`frameD_range'`), so
+  **`primrec_enc (M : CM) : Primrec (fun a => FsubPierce.enc M a 0)`** for every machine, and
+  **`enc_M_u_computable : Computable (fun m => FsubPierce.enc M_u (3 ^ m) 0)`** (`3 ^ m` as an
+  iterate).  No recursion on type codes is needed.
+* **`FsubCode.sub_not_computable : ¬ ComputablePred (fun g : FsubGhelli.Goal => FsubGhelli.Sub g)`**,
+  from `universal_dom_iff_sub` and `universal_dom_undecidable` (through
+  `sub_not_computable_of_enc_computable`).
+
+M25-FSUB-UNDECIDABLE stays DONE_WEAK: its exit criteria also ask for the link with cslib's Fsub
+(gap row M25-FSUB-CSLIB-LINK) and for the decidable kernel fragment; the computability gap is
+closed.
