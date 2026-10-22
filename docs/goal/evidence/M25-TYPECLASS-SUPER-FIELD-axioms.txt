@@ -1,0 +1,8 @@
+# series V, round 4, run 2: #print axioms (lake env lean on a scratch file importing Start.PTSExpansionCCOSkelFun, Start.TypeClassSuperFieldMeasure and Start.TLCA4QUnfold, with #print axioms appended, after lake build --wfail)
+'TypeClass.DEnt.superMeasure_lt' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TypeClass.superEnv_superMeasure' does not depend on any axioms
+'TypeClass.loopEnv_good' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TypeClass.loopEnv_superInstFragment' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TypeClass.loopEnv_superField' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TypeClass.loopEnv_DEntN' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TypeClass.normalize_super_superField_fails' depends on axioms: [propext, Classical.choice, Quot.sound]

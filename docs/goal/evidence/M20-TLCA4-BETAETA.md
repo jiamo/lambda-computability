@@ -362,3 +362,89 @@ So Q needs an index that is not a normal form (for instance a grammar indexed by
 invariant for Q was not found.  The η-aware head comparison was not attempted.  Row
 M20-TLCA4-BETAETA stays open; first missing lemma unchanged (`TLCA4.no_fixedPoint_betaEta`,
 equivalently `¬ PolyFiveOne`).
+
+## Series V, round 4, run 2
+
+Lean: `Start/TLCA4QUnfold.lean`, standard axioms only.
+
+```
+theorem TLCA4.Q_unfold (x : ℕ) :
+    Relation.ReflTransGen WStep (app tQ (var x)) (qK x) ∧
+      Relation.ReflTransGen WStep (app M (app tT (app B (var x)))) (qK x)
+theorem TLCA4.Q_weq_MT (x : ℕ) : WEq (app tQ (var x)) (app M (app tT (app B (var x))))
+theorem TLCA4.Q_betaEta_MT (x : ℕ) :
+    Lambda.betaEtaConv (toLam (app tQ (var x))) (toLam (app M (app tT (app B (var x)))))
+```
+
+with `tQ = M ∘ (M ∘ (BM ∘ (B ∘ B)))` (`tQ_eq_poly`) and the common reduct
+`qK x = M (M (B M (B (B x))))`.  Everything else below is experiment only (Python, under
+`timeout`, in `wip/`), not checked by Lean.
+
+**A1, the candidates (wip/a1_spine.py, wip/a1_spine.log, `timeout 1500`).**  Polynomials
+`p = m₁ ∘ ⋯ ∘ m_L` over the monomials `Bⁿ B`, `Bⁿ M` (`n ≤ 3`); the `Bⁿ I` monomials removed first
+(units up to βη); `m₁ = M` fixed, since every other first monomial makes `p x` an abstraction
+(`polyApp_reduces_lam`).  x-spine depth of `p x` (levels `hnf = x Q`, no λ, one argument) with cap
+10 and 300 head steps per level; every cap hit rechecked with 3000 steps per level (all again at the
+cap); no run was fuel-limited.
+
+| L | polynomials | depth histogram | cap hits |
+|---|---|---|---|
+| 1 | 1 | {1: 1} | 0 |
+| 2 | 8 | {0: 8} | 0 |
+| 3 | 64 | {0: 62, 1: 1, 10: 1} | 1 |
+| 4 | 512 | {0: 512} | 0 |
+| 5 | 4096 | {0: 4080, 1: 11, 2: 3, 4: 1, 10: 1} | 1 |
+| 6 | 32768 | {0: 32768} | 0 |
+| 7 | 262144 | {0: 261872, 1: 208, 2: 44, 4: 8, 10: 12} | 12 |
+
+Length 8 (2097152 polynomials) was started and not finished within the run.  The 14 cap hits:
+
+* L = 3: `T = M ∘ BM ∘ B`;
+* L = 5: `Q = M ∘ M ∘ BM ∘ B ∘ B`;
+* L = 7: `M∘M∘B∘M∘BM∘B∘B`, `M∘M∘M∘BM∘B∘B∘B` (= `Q₂`), `M∘M∘BM∘B∘BM∘B¹B∘B`,
+  `M∘M∘BM∘B∘B²M∘B¹B∘B`, `M∘M∘BM∘B¹B∘BM∘B∘B`, `M∘M∘BM∘B²M∘B∘B¹B∘B`, `M∘M∘BM∘B²M∘B²B∘B∘B`,
+  `M∘M∘BM∘B³M∘B∘B¹B∘B`, `M∘M∘BM∘B³M∘B²B∘B∘B`, `M∘M∘B²M∘B¹B∘BM∘B∘B`, `M∘BM∘B∘M∘BM∘B∘B`
+  (= `T∘T∘B`), `M∘BM∘M∘BM∘B∘B∘B`.
+
+Pattern.  (1) Every cap hit has odd length `2m+1` with `m+1` monomials of the form `BⁿM` and `m`
+of the form `BⁿB`; no polynomial of even length has depth `> 0`.  (2) The depths found are
+`0, 1, 2, 4` or the cap: no depth in `5..9`.  (3) The family `Q_k = M ∘ Mᵏ ∘ BM ∘ Bᵏ⁺¹`
+(`Q₀ = T`, `Q₁ = Q`) satisfies `Q_k = M ∘ Q_{k-1} ∘ B` (associativity of `∘`); its members for
+`k ≤ 4` reach the cap 12 (wip/a1_family.py, recheck with 10× fuel).  In particular
+`Q = M ∘ (T ∘ B)`, and in Lean `Q x =βη M (T (B x))` (`Q_betaEta_MT`).
+But the family is not the whole list: at `L = 7` it contributes one of 12 cap hits, and `T∘T∘B` is another composite of `T`.  No
+βη-equalities among the 14 were established (all have infinite Böhm trees, so no normal-form test
+applies).
+
+Conjecture (bounded).  Over `{BⁿB, BⁿM : n ≤ 3}`, `L ≤ 7`: a polynomial whose x-spine reaches depth
+5 reaches every depth (it has the Böhm tree of a fixed-point combinator), and the polynomials with
+this property are exactly the 14 above.
+
+**A2, Q (wip/a2_q.py, wip/a2_q_stages.py, logs in the session).**  (i) The residual components do
+not normalize: `R = M ∘ BM ∘ B ∘ B = T ∘ B` and the `P'` of the first residual of `Q x` is `R x`;
+its Böhm tree is `λe. x (x (x ⋯))`: 40 levels computed (300 and 3000 head steps per level).  Proof
+sketch of divergence: `W = BM (B (B x)) →β λc e. x (c (λd e'. x (c d e')) e)` is normal, and
+`R x = W W` has the head reduct `λe. x (W W' e)` with `W' = λd e'. x (W d e')`, and `W` re-applied
+to a growing argument at every level; so the Böhm tree is infinite and `R x` has no β-normal form.
+Hence the normal-form index of the T proof (`TComp.reduces_tAnf`) cannot apply to Q.
+(ii) Stage structure.  Along 700 leftmost-outermost steps, `Q x` reaches `k = 67` and `T x`
+reaches `k = 187`; the gaps between the increments of `k` take two values only (Q: 9 and 16; T: 3
+and 10), and the long gaps end exactly at `k = 1 + tri j` (`2, 4, 7, 11, …, 67`) for both, with
+`j` short gaps in stage `j`.  So the stage index of `T` (`k + i = tri j`) is the candidate for `Q`,
+with the M stage replaced by the long gap.
+(iii) Stop.  The first step that does not close: the grammar of the components of `Q x` (the
+analogue of `TGram` and of `TGram.step`) is not found, because the components are not indexed by
+normal forms; the candidate index "number of `B x` layers" was not tested on the reducts.  No row
+M20-TLCA4-Q-NOT-FIXPOINT was opened (no Lean statement proved).
+
+(iv) Structure for the next attempt (Lean, `Q_unfold`): `qK x = M (M A₀[B x])`, where
+`A₀[y] = B M (B y)` is the first component of the `T` proof (`T y →w M A₀[y]`, `T_unfold`).  So
+`Q x` is `M` applied to the `T`-configuration `M A₀` for the argument `y = B x`; the `T`
+invariant of the reducts of `M A₀[y]` is stated with `y`-prefixes, and `y = B x` is not a variable,
+which is where the transfer from `T` to `Q` has to be done.
+
+**A3.**  The family `Q_k` exists (`Q_k = M ∘ Q_{k-1} ∘ B`), but the first member whose invariant is
+unclear is `Q₁ = Q` itself (A2 (iii)).
+
+Row M20-TLCA4-BETAETA stays open; first missing lemma unchanged (`TLCA4.no_fixedPoint_betaEta`,
+equivalently `¬ PolyFiveOne`), next claim `TLCA4.Q_not_fixedPoint`.

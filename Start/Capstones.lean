@@ -465,6 +465,9 @@ import Start.TLCA4TGrammar
 import Start.TLCA4TNotFixpoint
 import Start.PTSExpansionCCOSkel
 import Start.TypeClassSuperFieldExample
+import Start.PTSExpansionCCOSkelFun
+import Start.TypeClassSuperFieldMeasure
+import Start.TLCA4QUnfold
 
 /-! ## Interfaces of the untyped calculus
 
@@ -5585,3 +5588,31 @@ and its closure, and `T_not_fixedPoint`.
 #check @PureTypeSystem.CCO.clO_beta_fails
 #check @TypeClass.superEnv_superField
 #check @TypeClass.superEnv_sup_inst_step
+
+/-! ## Series V, round 4, run 2: `Q` unfolds through `T`; kind-level skeleton functions for `CC^ω`;
+the `SuperField` measure and the failure of normalization
+
+`Start/PTSExpansionCCOSkelFun.lean` (M29-EP-CCOMEGA): a stratified simply typed calculus of
+skeleton terms for kind-level functions, its set-theoretic model, the substitution lemma and the
+β-invariance of evaluation.
+`Start/TLCA4QUnfold.lean` (M20-TLCA4-BETAETA): `Q = M ∘ M ∘ BM ∘ B ∘ B` satisfies
+`Q x =βη M (T (B x))`.
+`Start/TypeClassSuperFieldMeasure.lean` (M25-TYPECLASS-SUPER-FIELD): under `SuperField`, the
+contraction of `sup (inst I ds)` strictly decreases the size of the elaborated term; and
+`DEnt.normalize_super` is false with `NormalSuperFields` replaced by `SuperField`.
+-/
+
+#check @TLCA4.Q_unfold
+#check @TLCA4.Q_weq_MT
+#check @TLCA4.Q_betaEta_MT
+#check @PureTypeSystem.CCO.SkF.SkT.eval_subst
+#check @PureTypeSystem.CCO.SkF.SkT.eval_step
+#check @PureTypeSystem.CCO.SkF.SkT.eval_steps
+#check @PureTypeSystem.CCO.SkF.SkT.eval_idKind_beta
+#check @TypeClass.DEnt.superMeasure_lt
+#check @TypeClass.superEnv_superMeasure
+#check @TypeClass.loopEnv_good
+#check @TypeClass.loopEnv_superField
+#check @TypeClass.loopEnv_DEntN
+#check @TypeClass.loopEnv_superInstFragment
+#check @TypeClass.normalize_super_superField_fails

@@ -2039,3 +2039,43 @@ Part B (row M29-EP-CCOMEGA), `Start/PTSExpansionCCOSkel.lean`, standard axioms o
   skeletons then become a stratified Fω-like calculus, one layer per `Type n`, and `V` has to
   interpret skeleton-level λ-terms up to β.  The interpretation and the generalized fundamental
   lemma are not started.
+
+## Series V, round 4, run 2
+
+Part B (row M29-EP-CCOMEGA), `Start/PTSExpansionCCOSkelFun.lean`, standard axioms only.
+
+* B1, design.  Kind-level functions get classes in a stratified simply typed calculus of skeletons:
+  skeleton types `SkTy ::= base ℓ | arr a b` (`base ℓ`: skeletons of kinds of level `ℓ`; `arr`:
+  kind-level functions; `SkTy.lev (arr a b) = max (lev a + 1) (lev b)`), intrinsically typed
+  skeleton terms `SkT Γ a` with variables, an opaque constant `cst ℓ` (the skeleton `∗` at level
+  `ℓ`), `λ` and application; renaming, parallel substitution, `sub0` and the β-step `SkT.Step`
+  (closed under all formers) with its closure `SkT.Steps`.
+* B1, route.  Instead of normalizing skeleton terms by recursion on the level and classifying into
+  normal skeletons, the classes are values in a set-theoretic model: `SkT.Sem D (base ℓ) = D ℓ`,
+  `Sem D (arr a b) = Sem D a → Sem D b`, and `SkT.eval c t ρ` is defined by structural recursion on
+  `t`, so it is total without any normalization theorem (the stratification is only needed later,
+  for the predicative candidate spaces `V`).  This is shorter because the β-invariance of the
+  classes then reduces to the substitution lemma of the model:
+
+  ```
+  theorem SkT.eval_subst {Γ Δ : List SkTy} {a : SkTy} (t : SkT Γ a) :
+      ∀ (σ : Sub Γ Δ) (ρ : Env D Δ), eval c (subst σ t) ρ = eval c t (fun v => eval c (σ v) ρ)
+  theorem SkT.eval_step {Γ : List SkTy} {a : SkTy} {t t' : SkT Γ a} (h : Step t t') :
+      ∀ ρ : Env D Γ, eval c t ρ = eval c t' ρ
+  theorem SkT.eval_steps … (h : Steps t t') (ρ : Env D Γ) : eval c t ρ = eval c t' ρ
+  ```
+
+  and `SkT.eval_idKind_beta` is the example of `CCO.clO_beta_fails` (the skeleton of
+  `(λK : Type 0. K) Prop` and that of `Prop` have the same value).
+* `CCO.clV_ssubst_level` (`Start/PTSExpansionCCOSkel.lean`) is untouched and still builds.
+* Stop (first lemma of B1 that does not close; not stated in Lean).  The level-generic classifier
+  of `CC^ω` expressions into `SkT` is not defined: it must assign to an expression `M` in a
+  classifier context a skeleton type `a` and a term of `SkT Γ a` (a dependent, partial function
+  of an untyped `Expr CSrt`), and the next statement is its compatibility with term substitution,
+  `clF (M [N/0]) = (clF M) [clF N / 0]` for a kind-level argument `N` (`CCO.clF_subst`), from which
+  `CCO.clO_beta` follows with `SkT.eval_step`.  Goal state (informal): for `M = (λK : Type ℓ. B) A`
+  with `B` a kind, `eval (clF M) ρ = eval (clF (B [A/K])) ρ`, where the left side is
+  `eval (clF B) (cons (eval (clF A) ρ) ρ)` by `eval_step`, and the missing step is
+  `clF (B [A/K]) = subst (sub0 (clF A)) (clF B)`.
+* B2 (V over values, level irrelevance, the interpretation, its β-invariance, the generalized
+  fundamental lemma): not started.

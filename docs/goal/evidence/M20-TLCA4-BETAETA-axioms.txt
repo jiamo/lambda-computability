@@ -11,3 +11,7 @@
 # series V, round 3, run 2: #print axioms (lake env lean on a scratch file importing Start.PTSRouteIITopFundamental, Start.TLCA4PolyHead and Start.GrpdSigmaSub, with #print axioms appended)
 'TLCA4.mono_app_reduces_lam' depends on axioms: [propext, Classical.choice, Quot.sound]
 'TLCA4.polyApp_reduces_lam' depends on axioms: [propext, Classical.choice, Quot.sound]
+# series V, round 4, run 2: #print axioms (lake env lean on a scratch file importing Start.PTSExpansionCCOSkelFun, Start.TypeClassSuperFieldMeasure and Start.TLCA4QUnfold, with #print axioms appended, after lake build --wfail)
+'TLCA4.Q_unfold' does not depend on any axioms
+'TLCA4.Q_weq_MT' does not depend on any axioms
+'TLCA4.Q_betaEta_MT' depends on axioms: [propext, Classical.choice, Quot.sound]

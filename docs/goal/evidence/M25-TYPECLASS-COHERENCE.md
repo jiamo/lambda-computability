@@ -261,3 +261,61 @@ decrease at this step, and one contraction can create a new redex of the same ki
 measure of (Paterson size, field depth) pairs is not formalized.  First missing lemma: its decrease
 at `sup (inst I ds)` under `SuperField` (to be stated as `DEnt.superMeasure_lt`), then
 `DEnt.normalize_super` under `SuperField`.
+
+## Series V, round 4, run 2
+
+Part C (row M25-TYPECLASS-SUPER-FIELD), `Start/TypeClassSuperFieldMeasure.lean`, standard axioms
+only.
+
+```
+theorem TypeClass.DEnt.superMeasure_lt {E : Env} (hE : EnvGood E) {P : List Cstr} {n : ℕ} {I : Inst}
+    (hSF : SuperField E I) {D : ClassDecl} {d : ℕ}
+    (hc : E.classes[I.cls]? = some D) (hs : D.super = some d) {s : ℕ → Mty} {ds : List Lambda}
+    (hds : ds.length = I.ctxt.length)
+    (hall : ∀ (k : ℕ) (hk : k < ds.length) (hk' : k < I.ctxt.length),
+      DEnt E P n ((I.ctxt[k]).subst s) (ds[k])) :
+    ∃ sd, DEnt E P n ⟨d, msubst s I.head⟩ (Lambda.substEnv (fun k => ds.getD k (Lambda.var 0)) sd) ∧
+      Lambda.reduces (recProj (dictFields (dictTy E) D (msubst s I.head)).length 0
+        (Lambda.substEnv (fun k => ds.getD k (Lambda.var 0)) I.dict))
+        (Lambda.substEnv (fun k => ds.getD k (Lambda.var 0)) sd) ∧
+      dsize (Lambda.substEnv (fun k => ds.getD k (Lambda.var 0)) sd) <
+        dsize (recProj (dictFields (dictTy E) D (msubst s I.head)).length 0
+          (Lambda.substEnv (fun k => ds.getD k (Lambda.var 0)) I.dict))
+```
+
+The measure.  The multiset of (Paterson size, field depth) pairs was replaced by the size `dsize`
+of the elaborated term: the Paterson size is constant at the step (`superEnv_sup_inst_step`), and
+under `SuperField` the dictionary is a finite record `recMk (sd :: ms)`, so its field is strictly
+smaller than the projection of the record, also after substituting the context dictionaries
+(`dsize_lt_recMk`, `dsize_lift`, `Lambda.substEnv_recMk`).  The test case:
+`superEnv_superMeasure : dsize ord2Field < dsize (recProj 2 0 ord2BaseDict) ∧
+dsize ordBaseDict < dsize ord2BaseDict` (by `decide`).
+
+Normalization under `SuperField` is false:
+
+```
+theorem TypeClass.normalize_super_superField_fails :
+    ¬ ∀ (E : Env) (P : List Cstr), EnvGood E → SuperInstFragment E P →
+      (∀ I ∈ E.insts, SuperField E I) →
+      ∀ (n : ℕ) (C : Cstr) (d : Lambda), DEnt E P n C d →
+        ∃ b d', DEntN E P n b C d' ∧ Lambda.reduces d d'
+```
+
+The witness `loopEnv` (`loopEnv_good`, `loopEnv_superInstFragment` with no hypotheses,
+`loopEnv_superField`): classes `Eq`, `Ord <: Eq`;
+`instance Eq Base => Eq Base` whose dictionary `eqBaseDict` ignores its context;
+`instance Ord Base` with dictionary `recMk [eqBaseDict, cmp]`, whose `Eq` field is derived by
+`inst EqLoop [sup (inst OrdLoop [])]` (the context argument does not occur in the term, so its
+derivation may be a redex for the instance being defined).  `Eq Base` is derived by
+`sup (inst OrdLoop [])`, but it has no normal derivation at all (`loopEnv_DEntN`: without
+hypotheses every normal derivation in `loopEnv` is an instance node and none is at `Eq Base`).
+Why induction fails in general: the contractum `substEnv ds' sd` is smaller than its redex
+(`superMeasure_lt`), but the derivations of context arguments unused in the dictionary term are
+not controlled by any term size.
+
+Consequence for the row: `coherence_unannotated_superInst` with `SuperField` cannot be obtained
+through `DEnt.normalize_super` and `DEntN.unique`; coherence itself is not refuted (in `loopEnv`
+every dictionary for `Eq Base` reduces to `eqBaseDict`, and `loopEnv` has no overlap).  First
+missing lemma for a different route: a uniqueness of dictionaries up to β-conversion that does not
+go through normal derivations, e.g. `DEnt.conv_superField` (any two `DEnt` dictionaries for one
+constraint are β-convertible in a `SuperInstFragment` whose instances satisfy `SuperField`).

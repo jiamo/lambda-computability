@@ -1,0 +1,5 @@
+# series V, round 4, run 2: #print axioms (lake env lean on a scratch file importing Start.PTSExpansionCCOSkelFun, Start.TypeClassSuperFieldMeasure and Start.TLCA4QUnfold, with #print axioms appended, after lake build --wfail)
+'PureTypeSystem.CCO.SkF.SkT.eval_subst' depends on axioms: [Quot.sound]
+'PureTypeSystem.CCO.SkF.SkT.eval_step' depends on axioms: [Quot.sound]
+'PureTypeSystem.CCO.SkF.SkT.eval_steps' depends on axioms: [Quot.sound]
+'PureTypeSystem.CCO.SkF.SkT.eval_idKind_beta' depends on axioms: [Quot.sound]
