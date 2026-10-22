@@ -442,6 +442,8 @@ import Start.PTSExpansionSNGeneric
 import Start.PTSExpansionCoCMorphism
 import Start.PTSRouteIIMorphismCand
 import Start.PTSExpansionWdepChain
+import Start.PTSRouteIIMorphismFundamental
+import Start.TLCA4BetaEta
 
 /-! ## Interfaces of the untyped calculus
 
@@ -5333,3 +5335,41 @@ product of `Wdep`.
 -/
 
 #check @PureTypeSystem.BeyondPoll.Wdep_typeA_domain
+
+/-! ## Expansion postponement through a morphism into coc (M29-EP-COC-MORPHISM-FUNDAMENTAL,
+series V round 1, run 2)
+
+`Start/PTSRouteIIMorphismFundamental.lean`: the route (ii) fundamental lemma for every
+specification with a morphism into coc, hence expansion postponement for the whole class, and the
+instances `cocBox2` and `cocDouble`.
+-/
+
+#check @PureTypeSystem.MorphFund.fundamental
+#check @PureTypeSystem.sortFundamental_of_cocMorphism
+#check @PureTypeSystem.expansionPostponement_of_cocMorphism
+#check @PureTypeSystem.cocBox2_expansionPostponement
+#check @PureTypeSystem.cocDouble_cocMorphism
+#check @PureTypeSystem.cocDouble_axioms_not_functional
+#check @PureTypeSystem.cocDouble_rules_not_functional
+#check @PureTypeSystem.cocDouble_axioms_not_injective
+#check @PureTypeSystem.cocDouble_not_stratified
+#check @PureTypeSystem.cocDouble_expansionPostponement
+
+/-! ## TLCA problem 4 under βη (M20-TLCA4-BETAETA, series V round 1, run 2)
+
+`Start/TLCA4BetaEta.lean`: the translation of `B`, `M`, `I`-terms into the untyped λ-calculus,
+soundness of weak equivalence for βη-conversion, and the incompatibility at `B I I = I` and at
+the η-instance `B x I = x`.
+-/
+
+#check @TLCA4.toLam
+#check @TLCA4.toLam_wstep
+#check @TLCA4.toLam_weq
+#check @TLCA4.BII_betaReduces_I
+#check @TLCA4.not_weq_BII_I
+#check @TLCA4.BII_incompatible
+#check @TLCA4.not_agree_BII_I
+#check @TLCA4.BxI_betaEtaReduces_x
+#check @TLCA4.not_agree_BxI_x
+#check @TLCA4.not_weq_BxI_x
+#check @TLCA4.ProblemFiveOne

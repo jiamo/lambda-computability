@@ -1,0 +1,10 @@
+# series V, round 1, run 2: #print axioms (lake env lean on a scratch file importing Start.TLCA4BetaEta, with #print axioms appended)
+'TLCA4.toLam_wstep' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.toLam_weq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.BII_betaReduces_I' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.not_weq_BII_I' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.BII_incompatible' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.not_agree_BII_I' depends on axioms: [propext, Quot.sound]
+'TLCA4.BxI_betaEtaReduces_x' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.not_agree_BxI_x' depends on axioms: [propext, Quot.sound]
+'TLCA4.not_weq_BxI_x' depends on axioms: [propext, Classical.choice, Quot.sound]

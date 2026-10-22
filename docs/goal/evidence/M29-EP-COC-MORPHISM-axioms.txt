@@ -12,3 +12,8 @@
 'PureTypeSystem.cocBox2_not_stratified' depends on axioms: [propext, Quot.sound]
 'PureTypeSystem.cocBox2_in_class' depends on axioms: [propext, Quot.sound]
 'PureTypeSystem.cocBox2_expansionPostponement_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+# series V, round 1, run 2: the closing theorems (Start/PTSRouteIIMorphismFundamental.lean), same method
+'PureTypeSystem.sortFundamental_of_cocMorphism' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.expansionPostponement_of_cocMorphism' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.cocBox2_expansionPostponement' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.cocDouble_expansionPostponement' depends on axioms: [propext, Classical.choice, Quot.sound]

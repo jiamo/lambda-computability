@@ -1,0 +1,10 @@
+# series V, round 1, run 2: #print axioms (lake env lean on a scratch file importing Start.PTSRouteIIMorphismFundamental, with #print axioms appended)
+'PureTypeSystem.MorphFund.fundamental' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.sortFundamental_of_cocMorphism' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.expansionPostponement_of_cocMorphism' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.cocBox2_expansionPostponement' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.cocDouble_axioms_not_functional' does not depend on any axioms
+'PureTypeSystem.cocDouble_rules_not_functional' does not depend on any axioms
+'PureTypeSystem.cocDouble_axioms_not_injective' does not depend on any axioms
+'PureTypeSystem.cocDouble_not_stratified' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.cocDouble_expansionPostponement' depends on axioms: [propext, Classical.choice, Quot.sound]

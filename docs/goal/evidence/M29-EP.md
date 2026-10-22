@@ -1640,3 +1640,110 @@ ProductNormalizationR cocBox2`.  Expansion postponement of `cocBox2` itself is n
 exactly `SNGeneric.SortFundamental P` (route (iii) and the product-normalization step are now
 generic); (2) for `P` with a morphism into coc, `sortFundamental_of_cocMorphism` above; (3) the
 weakly-but-not-strongly normalizing case, `expansionPostponement_of_wn`, unchanged.
+
+## Series V, round 1, run 2
+
+### Part A: the route (ii) fundamental lemma through a morphism into coc (proved)
+
+Module `Start/PTSRouteIIMorphismFundamental.lean` (over `Start/PTSRouteIIMorphismCand.lean`).
+Axioms in `M29-EP-COC-MORPHISM-FUNDAMENTAL-axioms.txt` (standard axioms only).
+
+**A1.**  The round-11 third layer, generalized along `m : CoCMorphism P` (namespace
+`PureTypeSystem.MorphFund`):
+* `SemC P Γc ξ Δ T X Y := if T = □ then SNGeneric.NormNW P Δ X Y else interpK (candAlg P)
+  (ctxCl Γc) T ∗ ξ Δ X Y` — `Γc`, `T` are coc terms, `X`, `Y`, `Δ` are `P`-terms;
+* `Sem m Γ ξ Δ M T σ := SemC P (Γ.map (mapSort m.φ)) ξ Δ (T.mapSort m.φ) (M.subst σ) (T.subst σ)`
+  — the type of a `P`-judgement is tested and interpreted through its image;
+* `SubstOK m Γ Δ σ ξ` (good valuation for the image context, normalizable target context,
+  admissible image types, variables in the semantics), `SubstOK.tail/weaken/cons/lift`,
+  `body_inst`;
+* **`MorphFund.fundamental (m : CoCMorphism P) (h : HasType P Γ M T) : SubstOK m Γ Δ σ ξ →
+  Sem m Γ ξ Δ M T σ`** — by induction on the `P`-derivation; every classification fact
+  (`CoC.wc_of_hasType`, `relC_of_sorted`, `type_sorted`, `ne_box_of_hasType`, `classify`,
+  `not_conv_box`, `interpK_conv`, `regularity`) is applied to the image derivation
+  `m.hasType h`; the equations are `Expr.mapSort_rename`, `Expr.mapSort_instantiate`,
+  `Converts.mapSort`, `List.map_cons`; the axiom case uses
+  `MorphFund.HasTypeNW.ax_of_valid : ValidContextNW P Δ → P.axioms s t → HasTypeNW P Δ (.sort s)
+  (.sort t)`; strong normalization enters only through `interpC_cand` (CR3 at neutral
+  applications), with `m.stronglyNormalizing`;
+* `SubstOK.ids`, `substOK_substAt`, and
+```lean
+theorem sortFundamental_of_cocMorphism {S : Type} {P : Specification S} (m : CoCMorphism P) :
+    SNGeneric.SortFundamental P
+```
+No case failed: the run-1 analysis (no case of the fundamental lemma uses functionality of `P`)
+is confirmed by Lean.
+
+**A2.**
+```lean
+theorem expansionPostponement_of_cocMorphism {S : Type} {P : Specification S}
+    (m : CoCMorphism P) : ExpansionPostponement P
+theorem cocBox2_expansionPostponement : ExpansionPostponement cocBox2
+```
+with no other hypothesis (through `CoCMorphism.expansionPostponement_of_sortFundamental`).
+
+**A3.**  A second instance outside the cube: `cocDouble` over `Srt4 = {∗, ∗', □, □'}`, axioms
+`s : t` for `s ∈ {∗, ∗'}`, `t ∈ {□, □'}`, rules `(s₁, s₂, s₃)` whenever `s₃` and `s₂` collapse to
+the same coc sort; `cocDouble_cocMorphism` (the collapse `∗' ↦ ∗`, `□' ↦ □`),
+`cocDouble_axioms_not_functional` (`∗ : □`, `∗ : □'`), `cocDouble_rules_not_functional`
+(`(∗, ∗, ∗)`, `(∗, ∗, ∗')`), `cocDouble_axioms_not_injective` (`∗ : □`, `∗' : □`),
+`cocDouble_not_stratified`, and `cocDouble_expansionPostponement : ExpansionPostponement cocDouble`.
+
+Which published hypotheses the instances meet (as far as we know the papers; see the literature
+check above):
+* *Poll (normalising types).*  Every specification with a morphism into coc is strongly
+  normalizing (`CoCMorphism.stronglyNormalizing`), so every type of a derivable judgement has a
+  normal form: the cube corners, `cocBox2` and `cocDouble` all meet Poll's hypothesis.  Our proof
+  does not use Poll's argument (whose Lemma 10 has the gap recorded above).
+* *Barthe (injective PTSs, which are in particular functional).*  The cube corners are functional;
+  whether they meet Barthe's exact injectivity conditions we have not checked.  `cocBox2` is not functional (`cocBox2_not_functional`), hence outside.
+  `cocDouble` has non-functional axioms, non-functional rules and non-injective axioms, hence
+  outside on every reading of "injective" that includes functionality.
+
+**Boards.**  M29-EP-COC-MORPHISM-FUNDAMENTAL: DONE_STRONG.  M29-EP-COC-MORPHISM: all four exit
+criteria met, DONE_STRONG.  M29-EP-STATEMENT, criterion 2: what remains is (1) the strongly
+normalizing case without a morphism into coc, `SNGeneric.SortFundamental P`, and (2) the
+weakly-but-not-strongly normalizing case, `expansionPostponement_of_wn`.
+
+### Part C: `Wdep`, seeded counterexample search (C1, C3)
+
+Everything in this subsection is an unverified computation (Python, `wip/c1_wdep.py`, kept outside
+the repository); nothing in it is Lean-checked and no claim about `Wdep` is made.
+
+**Checker.**  Run 1's checker was gone; a new one was written.  Terms in de Bruijn form as in
+`Start/PTSBasic.lean`; `Wdep` = sorts `o, t, t', k, u`, axioms `o:t, o:t', t:k, k:u`, rules
+`(o,o,o), (t,t,t), (k,t,t), (k,k,k), (u,k,k), (o,t,t)`.  `infer` computes syntactic types of
+`HasType` (conversion tested by a bounded common-reduct search); `inferR` computes the minimal
+types of `HasTypeR` (the reduction rule is the closure under reducts; the abstraction rule keeps a
+reduct `B'` of the body type only when `Π A B'` is `HasTypeR`-typed by a sort; the application
+rule needs the argument type to reduce to the domain exactly).  A judgement `Γ ⊢ M : A` is a
+*bounded candidate* when no bounded reduct of `A` is a bounded reduct of an `inferR` type of `M` —
+the counterexample form of M29-EP's exit criterion, up to the bounds.  Reduct sets: breadth-first
+to depth 3 on terms of size ≤ 400, plus 40 leftmost-outermost steps (the only reducts computed
+for `typeA`, whose size is 2907).  `typeA` is read from Lean (`#eval` of an S-expression printer
+on `BeyondPoll.typeA`); the checker gives `typeA : o` in both systems, as `typeA_typed`.
+
+**Seeds.**  `typeA` and its first two leftmost-outermost reducts `A₁, A₂`; for each `A` among
+them: `Π x:A. o`, `Π x:A. x`, `λx:A. x`, `λx:A. o`, `λy:(Π x:A. o). y`, `(λx:o. x) A`,
+`(λx:o. Π y:x. o) A`, `λx:x. x`; small material (`o`, `Π o o`, `λx:o. x`, `(λx:t. x) o`, …);
+each wrapped as `M`, `λz:o. M`, `λz:z. M`, `(λz:o. M) z`; contexts `[]`, `[o]`, `[t]`,
+`[Π o t]`, `[Π o o, o]`, `[A]`, `[Π A t]`, `[A, Π A o]`.
+
+**Result.**  Without `typeA` (sanity run): 140 seed judgements, 70 typed, 0 bounded candidates.
+With `typeA` (time limit 600 s): 85 seeds tried, all in the empty context (the limit was reached
+before the other contexts), 48 typed judgements, **0 bounded candidates**.  Typing each
+`typeA`-seed costs about 60 s in the checker (the abstraction rule of `inferR` explores reducts of
+body types), which is what bounded the run.
+
+**Closest misses.**  None to report: every typed seed had an `inferR` type sharing a bounded
+reduct with its `HasType` type, and the checker records no finer distance.  The seeds that would
+exercise the `(o,t,t)` chain of part B (an abstraction whose body type reaches a product only
+through `typeA`'s infinite reduction) need the non-empty contexts that the run did not reach.
+
+**C2** was not started (no candidate).  First missing lemma, unchanged:
+```lean
+theorem BeyondPoll.Wdep_expansionPostponement : ExpansionPostponement BeyondPoll.Wdep
+```
+and, for a negative answer, a judgement `HasType Wdep Γ M A` with
+`¬ ∃ B, Relation.ReflTransGen Beta A B ∧ HasTypeR Wdep Γ M B`, together with an invariant of all
+`HasTypeR Wdep` derivations in `Γ` that `M` violates.
