@@ -1,0 +1,6 @@
+# series V, round 2, run 2: #print axioms (lake env lean on a scratch copy of Start/TLCA4PolyClosure.lean with #print axioms appended)
+'TLCA4.ext1_of_weq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.ext2_of_weq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.comp_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.B_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.polyGen_betaEta_poly' depends on axioms: [propext, Classical.choice, Quot.sound]

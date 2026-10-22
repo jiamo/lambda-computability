@@ -448,6 +448,8 @@ import Start.PTSExpansionTop
 import Start.PTSExpansionTopSN
 import Start.PTSExpansionTopKindFree
 import Start.TLCA4Polynomial
+import Start.TLCA4PolyClosure
+import Start.PTSExpansionTopSkel
 
 /-! ## Interfaces of the untyped calculus
 
@@ -5431,3 +5433,25 @@ conditional on Statman's first step (`StatmanStepOne`, stated, not proved).
 #check @TLCA4.StatmanStepOne
 #check @TLCA4.problemFiveOne_of_poly
 #check @TLCA4.problemFiveOne_iff_poly
+
+/-! ## Series V, round 2, run 2: skeleton variables for `cocTop`; the `B`-fragment of Statman's step
+
+`Start/PTSExpansionTopSkel.lean` (M29-EP-TOP-SORT-FUNDAMENTAL): skeletons with variables for the
+kind variables of `cocTop`; classification commutes with assigning skeletons on well-classified
+expressions (`clV_ssubst`), and fails without well-classification (`clV_ssubst_fails`).
+`Start/TLCA4PolyClosure.lean` (M20-TLCA4-STATMAN-STEP-ONE): extensionality for closed
+`B`,`M`,`I`-terms, closure of polynomials under composition and under `B`, and Statman's first step
+on the fragment `Y ::= B | M | I | B Y | B Y Z | I Y` (`polyGen_betaEta_poly`).
+-/
+
+#check @PureTypeSystem.TopSkel.appV_ssubst
+#check @PureTypeSystem.TopSkel.appV_ssubst_fails
+#check @PureTypeSystem.TopSkel.clV_ssubst
+#check @PureTypeSystem.TopSkel.clV_ssubst_fails
+#check @PureTypeSystem.TopSkel.ctxClV
+#check @TLCA4.ext1_of_weq
+#check @TLCA4.ext2_of_weq
+#check @TLCA4.comp_poly
+#check @TLCA4.B_poly
+#check @TLCA4.PolyGen
+#check @TLCA4.polyGen_betaEta_poly

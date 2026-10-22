@@ -1836,3 +1836,89 @@ not exported (no S-expression printer for it this run).
 * bounds: reducts breadth-first to depth 3 on terms of size ≤ 400 plus 40 leftmost-outermost steps; time limit 120 s;
 * run: 336 seed judgements tried, 311 typed;
 * result: 0 bounded candidates (not Lean-checked; no claim either way).
+
+## Series V, round 2, run 2
+
+### Part A: kind variables in the skeleton model (rows M29-EP-TOP-SORT-FUNDAMENTAL, M29-EP-TOP-MORPHISM, M29-EP-CCOMEGA)
+
+**A1 design (`Start/PTSExpansionTopSkel.lean`, builds, standard axioms only).**
+* Skeletons get variables: `SkV ::= ∗ | arrO k | arr a k | svar i`, classes `ClsV`, and skeleton
+  substitution `SkV.ssubst θ`, `ClsV.ssubst θ`.  Candidate spaces are taken relative to a closed
+  skeleton valuation `θ : Nat → CoC.Sk` (`VV θ`, with `VV θ (svar i) = CoC.V (θ i)`).
+* Observation that fixes the shape: in `cocTop` no rule has `s₁ = Δ` (`cocTop.rule` requires
+  `s₁ ≠ top`), and `□ : Δ`, so **no binder binds a kind variable**: kind variables `K : □` occur only
+  in the context.  So a skeleton variable can be the de Bruijn *level* of its declaration
+  (`ctxClV`: `K : □` gets class `kind (svar ℓ)`), stable under weakening and untouched by binders;
+  no skeleton binders are needed.  (This is exactly what fails for `CC^ω`, see A3.)
+* Classifier `clV` (as `CoC.cl`, with `□` and `Δ` unclassified) and the commutation lemmas:
+  `bindV_ssubst`, `domV_ssubst`, `lamV_ssubst`, `piV_ssubst` hold unconditionally;
+  `appV_ssubst` needs the head not to be a constructor of variable skeleton, and
+  `appV_ssubst_fails` shows the side condition is necessary.
+* `clV_ssubst θ M Δ (h : WCV Δ M) : clV (ClsV.ssubst θ ∘ Δ) M = (clV Δ M).ssubst θ` — the new case of
+  `cl_subst` (substituting a kind `N` for `K` agrees with assigning `N`'s skeleton to `K`'s skeleton
+  variable), on well-classified expressions (`WCV`: no application whose head has class
+  `constr (svar i)`); `clV_ssubst_fails` is the counterexample without `WCV` (`x ∗` with `x : K`,
+  `K := ∗ → ∗`).
+
+**Stop rule (first failing case of the generalized `cl_subst`).**  The application case `F U` with
+`clV Δ F = constr (svar i)`: goal `appV ((constr (svar i)).ssubst θ) = (appV (constr (svar i))).ssubst θ`,
+i.e. `constr k = obj` when `θ i = arr a k` — false.  The missing equation is supplied by typing: the
+head of an application has a product type, and a kind variable is convertible only to itself, so
+`clV F = constr (svar i)` cannot occur at an application head of a well-typed expression.  First
+missing lemma:
+
+```lean
+theorem TopSkel.classifyV {Γ : List (Expr Srt3)} {M T : Expr Srt3} (h : HasType cocTop Γ M T) :
+    WCV (ctxClV Γ) M ∧ ∀ k, clV (ctxClV Γ) M = .constr k → clV (ctxClV Γ) T = .kind k
+```
+
+(the `cocTop` analogue of `CoC.classify` with `kind_conv`; then `interpK`/`SemC` over `VV θ`, and
+the MorphFund cases).  `cl_beta`, `interpK_conv` and regularity were not reached.
+
+**A2** (`sortFundamental_of_topMorphism`, `expansionPostponement_of_topMorphism`,
+`cocTop_expansionPostponement`) is not proved; no new instance was added.
+
+**A3 (plan for `CC^ω`, not started in Lean).**  In `CC^ω` the rules `(Type i, Type j, Type (max i j))`
+allow binders over kinds (`Π K : Type 0. …`), so kind variables are bound inside terms and the
+level trick of A1 does not apply.  Iterating A1 over the levels needs skeletons with *binders*
+(skeleton-level polymorphism: `SkV` with `Π`-skeletons over skeleton variables, one layer per level
+`Type n`) and candidate spaces indexed by skeleton environments, i.e. a Λ-set/realizability-style
+model.  First lemma toward `ccOmega_stronglyNormalizing` (statement only):
+`theorem CCO.clV_ssubst_level (n : ℕ) : ∀ θ M Δ, WCVₙ Δ M → clVₙ (ssubst θ ∘ Δ) M = (clVₙ Δ M).ssubst θ`
+for the classifier of level-`n` kinds with skeleton binders (definitions to be designed).
+
+### Part C: λ* (row M29-EP)
+
+**C1 (Python, `wip/c1_subst.py`, not Lean-checked).**  Instances of `lambdaStar_substR_expand`:
+contexts `[]`, `[∗]`; declared types `C''` among five β-redexes with `C` their contractum;
+bodies `e` (all terms of size ≤ 7) with an R-type `E` under `C'' :: Γ`; arguments `a` (size ≤ 7)
+with R-type exactly `C`; check that `e[a/x]` has an R-type joinable (bounded reducts, DEPTH 3,
+CAP 400) with `E[a/x]`.
+* bounds: size ≤ 7, ≤ 2 types per body, ≤ 6 arguments per (context, redex);
+* run: 9954 typed bodies, 44742 instances;
+* result: 0 failures.  (A first run with a wrong contractum for one redex produced 224 spurious
+  failures; corrected by computing `C` as the leftmost-outermost contractum.)
+
+**C2 (analysis; no Lean proof).**  Induction on the `⊢r`-derivation of `e`, generalizing `C''` to a
+context reducing to the one used for `a`: the variable case uses `C'' →* C`; the application case
+closes by confluence (the type of the argument and the domain of the head's product have a common
+reduct, and `HasTypeR.reduction` needs no typing premise); the **abstraction case does not close**:
+from the IH `body[a] : B'` with `B[a] →* B'` one needs `Π A[a] B' : s`, while only `Π A[a] B[a] : s`
+is available.  That is sorted subject reduction for `⊢r` on a product codomain — the λ* instance
+of the expansion-postponement target itself.  First missing lemma:
+
+```lean
+theorem lambdaStar_pi_codomain_reduce {Γ : List (Expr Unit)} {A B B' : Expr Unit} {s : Unit}
+    (h : HasTypeR lambdaStar Γ (.pi A B) (.sort s)) (hB : Relation.ReflTransGen Beta B B') :
+    HasTypeR lambdaStar Γ (.pi A B') (.sort s)
+```
+
+No counterexample to `lambdaStar_substR_expand` was found.
+
+**C3 (Hurkens).**  `wip/hurkens_sexp.lean` prints `Hurkens.hurkens` (sorts collapsed to `∗`,
+i.e. read in λ*) as an S-expression (`wip/hurkens.sexp`, size 2905).  The checker types it
+`Π A:∗. A` in both systems.  Seeded C1 (`wip/c3_hurkens.py`): `C'' = (λy:∗. y) (Π A:∗. A)`,
+`a = Hurkens`, bodies of size ≤ 5: 54 typed bodies, 54 instances, 1 reported failure, which is a
+bound artifact: for `e = λz:(x ∗). x`, the target `Π (H ∗). (Π A:∗. A)` is a one-step reduct of
+`E[H/x]` and an R-type of `e[H/x]` (both checked by `wip/c3_check_fail.py`), but the bounded reduct search follows the
+non-terminating reduction of `H` first.  No counterexample candidate.

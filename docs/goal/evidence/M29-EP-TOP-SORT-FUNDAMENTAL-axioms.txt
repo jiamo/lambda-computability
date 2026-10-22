@@ -1,0 +1,5 @@
+# series V, round 2, run 2: #print axioms (lake env lean on a scratch copy of Start/PTSExpansionTopSkel.lean with #print axioms appended)
+'PureTypeSystem.TopSkel.appV_ssubst' depends on axioms: [propext]
+'PureTypeSystem.TopSkel.appV_ssubst_fails' depends on axioms: [propext]
+'PureTypeSystem.TopSkel.clV_ssubst' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.TopSkel.clV_ssubst_fails' depends on axioms: [propext]

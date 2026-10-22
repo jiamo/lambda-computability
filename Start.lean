@@ -815,4 +815,6 @@ import Start.PTSExpansionTop
 import Start.PTSExpansionTopSN
 import Start.PTSExpansionTopKindFree
 import Start.TLCA4Polynomial
+import Start.TLCA4PolyClosure
+import Start.PTSExpansionTopSkel
 import Start.Capstones

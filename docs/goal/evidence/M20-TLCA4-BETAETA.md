@@ -136,3 +136,62 @@ theorem statmanStepOne : TLCA4.StatmanStepOne
   βη-invariance was neither tested nor proved, so it is not offered as a candidate.
 
 **B3.** Not attempted (no candidate invariant from B2).
+
+## Series V, round 2, run 2
+
+### B1: Statman's first step, the `B`-fragment (`Start/TLCA4PolyClosure.lean`, proved)
+
+**The argument, reconstructed.**  Under βη, two closed terms are equal as soon as they agree on
+fresh arguments (η).  So it suffices to compare actions:
+* `B u v` acts as `λz. u (v z)`, i.e. it is the composite `u ∘ v`; if `u`, `v` are polynomials,
+  `(u ∘ v) x = u (v x)` is the action of the concatenated monomial list;
+* `B u` acts on two arguments as `λz w. u (z w)`; if `u = m₁ ∘ … ∘ m_k`, then
+  `(B m₁) ∘ … ∘ (B m_k)` applied to `z w` gives `m₁ (… (m_k (z w)))` too, since
+  `B mᵢ X w = mᵢ (X w)`; so `B` distributes over composition and raises `Bⁿ X` to `Bⁿ⁺¹ X`;
+* `I u` is `u`; `B`, `M`, `I` are monomials (`n = 0`).
+Hence every term of the grammar `Y ::= B | M | I | B Y | B Y Z | I Y` is βη-equal to a polynomial,
+by induction on `Y`, with no use of the fixed-point hypothesis.  What remains are the terms whose
+head has more arguments than its arity allows to stay a polynomial: `M Y` (acting as `Y Y`),
+`B Y Z W` (`Y (Z W)`), `I Y Z` (`Y Z`).  For them the fixed-point hypothesis must be used: e.g. `M M`
+has no head normal form, and is not a polynomial action.
+
+**Proved (standard axioms only, `M20-TLCA4-STATMAN-STEP-ONE-axioms.txt`).**
+* `lift_toLam_of_isBMI` (translations of closed terms are closed), `betaEtaConv_lam`;
+* `ext1_of_weq`, `ext2_of_weq`: if `t x =w s x` (resp. `t x y =w s x y`) for fresh variables and
+  `t`, `s` are closed `B`,`M`,`I`-terms, then `toLam t =βη toLam s`;
+* `comp_poly`: `comp (polyTm m ps) (polyTm m' qs) =βη polyTm m (ps ++ m' :: qs)`;
+* `B_poly`: `B (polyTm m ps) =βη polyTm m.raise (ps.map Mono.raise)`;
+* `PolyGen`, `polyGen_betaEta_poly`: Statman's first step on the fragment above.
+
+**Stop rule (first case of the induction that does not close).**  `Y = M Y'`: the IH gives
+`Y' =βη p` for a polynomial `p`, and `M Y'` acts as `p p`, which is not a polynomial action in
+general.  First missing lemma (as a Lean statement):
+`theorem statmanStepOne_M (Y : Tm) (hY : IsBMI Y) (hfix : Lambda.betaEtaConv (toLam (app (app M Y) (var 0))) (toLam (app (var 0) (app (app M Y) (var 0))))) : ∃ (m : Mono) (ps : List Mono), Lambda.betaEtaConv (toLam (app M Y)) (toLam (polyTm m ps))`
+— it needs a head-normal-form theory of `toLam (Y x)`, which the library does not have.
+
+### B2: the x-spine of `p x` (Python, `wip/b2_depth.py`, not Lean-checked)
+
+The x-spine depth of `p x` is the largest `d` with `hnf(p x) = x Q₁`, `hnf(Q₁) = x Q₂`, …,
+`d` levels (each level one argument, no λ), computed by fuel-bounded head reduction.
+* Run 1: monomials `Bⁿ B`, `Bⁿ M`, `n ≤ 2`, length ≤ 6, depth cap 4, 400 head steps per level:
+  55986 polynomials; depth histogram 0: 55967, 1: 13, 2: 3, ≥4: 3.
+* Run 2: `n ≤ 3`, length ≤ 6, depth cap 5: 299592 polynomials; histogram 0: 299573, 1: 13,
+  2: 3, 4: 1, ≥5: 2.
+* Conjectured structural properties, no violation in either run: (i) depth ≥ 1 implies that the
+  first monomial is `M` (`n = 0`); (ii) depth ≥ 2 implies that the last monomial is `B` (`n = 0`).
+  Property (i) has a direct explanation: if `m₁ = Bⁿ⁺¹ X` or `m₁ = B`, then `p x` head-reduces to a
+  λ-abstraction; if `m₁ = M`, `p x = (q x) (q x)`.  It is not formalized.
+* Depth ≥ 4 occurs only for `T = M ∘ (B M) ∘ B`, `M ∘ M ∘ (B M) ∘ B ∘ B` and
+  `p₄ = M ∘ (B M) ∘ (B M) ∘ (B B) ∘ B` (all `T`-like).  With cap 5, `T` and the second reach the
+  cap, but `p₄` has depth exactly 4; rechecked with 3000 head steps per level and cap 8
+  (`wip/b2_depth4.py`): the fifth head normal form is `x Q R`, with two arguments, so not fuel.
+* No invariant separating `p x` from `x (p x)` was found; the spine depth is not βη-invariant in
+  any proved sense.  Stop rule: the first conjectured property that fails is this run's
+  conjecture "x-spine depth ≥ 3 implies an infinite x-spine", refuted (in the bounded,
+  not Lean-checked sense above) by the concrete polynomial `p₄ = M ∘ (B M) ∘ (B M) ∘ (B B) ∘ B`
+  (monomials `(0,M) (1,M) (1,M) (1,B) (0,B)`).
+
+### B3
+
+Not reached: B1 did not close, so M20-TLCA4-POLYNOMIAL stays DONE_WEAK and
+M20-TLCA4-STATMAN-STEP-ONE stays open (IN_PROGRESS).
