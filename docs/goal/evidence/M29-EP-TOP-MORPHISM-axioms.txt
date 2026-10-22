@@ -1,0 +1,10 @@
+# series V, round 2, run 1: #print axioms (lake env lean on a scratch file importing Start.PTSExpansionTopKindFree and Start.TLCA4Polynomial, with #print axioms appended)
+'PureTypeSystem.lambdaHOL_not_cocMorphism' does not depend on any axioms
+'PureTypeSystem.TopSN.cocTop_stronglyNormalizing' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.TopMorphism.stronglyNormalizing' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.TopMorphism.expansionPostponement_of_sortFundamental' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'PureTypeSystem.lambdaHOL_expansionPostponement' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.TopSN.cocTop_expansionPostponement_kindFree' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.ccOmega_not_topMorphism' depends on axioms: [propext]

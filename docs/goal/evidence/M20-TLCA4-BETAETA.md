@@ -93,3 +93,46 @@ is not proved.  First missing lemma (the negative direction):
 theorem TLCA4.no_fixedPoint_betaEta (Y : Tm) (x : ℕ) (hY : occ x Y = 0) :
     ¬ Lambda.betaEtaConv (toLam (.app Y (.var x))) (toLam (.app (.var x) (.app Y (.var x))))
 ```
+
+## Series V, round 2, run 1
+
+Module `Start/TLCA4Polynomial.lean` (row M20-TLCA4-POLYNOMIAL; axioms
+`M20-TLCA4-POLYNOMIAL-axioms.txt`).
+
+**B1 (Statman's valid step).**
+* Monomials `Mono` (`Bⁿ B`, `Bⁿ M`, `Bⁿ I`, via `bpow`), composition `comp t u := B t u`, and
+  polynomials `polyTm m [m₂, …, m_k] = m ∘ (m₂ ∘ (… ∘ m_k))`; `polyTm_isBMI`.
+* `polyTm_action`: `(m₁ ∘ … ∘ m_k) x` is weakly equal to `m₁ (… (m_k x))`, hence βη-equal
+  (`polyTm_action_betaEta`); `bpow_action`: `Bⁿ f g z₁ … zₙ = f (g z₁ … zₙ)` (and the βη form).
+* `statmanT_eq`: `T = B M (B (B M) B)` is the polynomial `M ∘ ((B M) ∘ B)`.
+* The reduction: `problemFiveOne_of_poly : PolyFiveOne → ProblemFiveOne` (unconditional) and
+  `problemFiveOne_iff_poly (hS : StatmanStepOne) : ProblemFiveOne ↔ PolyFiveOne`.
+* The version of the normal-form theorem the reduction needs is exactly `StatmanStepOne`: every
+  closed BMI-term `Y` with `Y x =βη x (Y x)` is βη-equivalent to a polynomial.  It is stated as a
+  `Prop` and **not proved**; it is the first missing lemma of B1:
+```lean
+theorem statmanStepOne : TLCA4.StatmanStepOne
+```
+  The first case of its induction that does not close was not reached: the argument (as reported
+  in Imamura's introduction) goes through the Böhm-tree/head-normal-form shape of a fixed-point
+  combinator, for which this library has no βη-normal-form theory of BMI-terms yet (the first
+  piece needed is a head-normal-form lemma for `toLam (Y x)` with `Y` a BMI-term).
+
+**B2 (polynomial algebra; extensional laws, proved in the weak calculus, hence βη).**
+* `bpowI_action`: `Bⁿ I` is the identity on `n + 1` arguments; `comp_I_left`, `comp_I_right`
+  (unit), `comp_assoc` (associativity, on one argument).
+* `bpowM_action`: `Bⁿ M g z₁ … zₙ = (g z₁ … zₙ) (g z₁ … zₙ)` (duplication at depth `n`);
+  `bpowB_action`: `Bⁿ B h z₁ … zₙ a b w⃗ = h z₁ … zₙ (a b) w⃗` (composition at depth `n`).
+* Commutation law `comm_bpowB`: for `k ≥ n + 1`, `(Bⁿ B) ∘ (Bᵏ X)` and `(Bᵏ⁺¹ X) ∘ (Bⁿ B)` act
+  identically on `k + 1` arguments.  A normal form modulo these laws (move every `Bⁿ B` to the
+  right past deeper monomials, delete `Bⁿ I`) is suggested by them but not proved complete.
+* Search `wip/b2_poly.py`: head normal forms of `p x` for I-free polynomials.
+  - bounds: monomials `Bⁿ B`, `Bⁿ M` with `n ≤ 3`, length ≤ 5, 300 head steps per term;
+  - run: 37448 polynomials; 19 have head normal form `x Q`; 6 also have `Q` with head normal form `x Q'`;
+  - result: at length ≤ 4 only `T = M ∘ (B M) ∘ B` passes two head levels; at length 5 the six
+    are `T`-like (listed in `wip/b2_poly.log`).  Not Lean-checked.
+* No invariant separating `p x` from `x (p x)` was found.  The naive weight (number of
+  `M`-monomials) is preserved by the proved laws (`Bⁿ I`-deletion, `comm_bpowB`), but its
+  βη-invariance was neither tested nor proved, so it is not offered as a candidate.
+
+**B3.** Not attempted (no candidate invariant from B2).

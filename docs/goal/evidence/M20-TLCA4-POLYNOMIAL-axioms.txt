@@ -1,0 +1,6 @@
+# series V, round 2, run 1: #print axioms (lake env lean on a scratch file importing Start.PTSExpansionTopKindFree and Start.TLCA4Polynomial, with #print axioms appended)
+'TLCA4.polyTm_action' does not depend on any axioms
+'TLCA4.bpow_action' depends on axioms: [propext]
+'TLCA4.comm_bpowB' depends on axioms: [propext, Quot.sound]
+'TLCA4.problemFiveOne_of_poly' does not depend on any axioms
+'TLCA4.problemFiveOne_iff_poly' does not depend on any axioms

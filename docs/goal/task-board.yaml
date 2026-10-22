@@ -4736,7 +4736,7 @@ tasks:
     track: research/open-problems
     title: "TLCA open problem 4 under beta-eta: Imamura's Problem 5.1 (is there a B, M, I-combination Y with Y x =βη x (Y x)?)"
     latest_evidence: "docs/goal/evidence/M20-TLCA4-BETAETA.md"
-    open_boundary: "Open problem (Imamura, Problem 5.1). Series V round 1 run 2 (Start/TLCA4BetaEta.lean): B1 proved: TLCA4.toLam (B, M, I to closed λ-terms, variables to free de Bruijn variables), toLam_wstep (every weak step is a β-reduction), toLam_weq : WEq u v → Lambda.betaEtaConv (toLam u) (toLam v); the incompatibility BII_betaReduces_I and not_weq_BII_I (BII_incompatible). B2 (Python, not Lean-checked): all closed BMI-terms up to 7 leaves (323175) and polynomials m1 ∘ … ∘ mk over B^n B, B^n M, B^n I with n ≤ 3, k ≤ 5 (271452): no common βη-reduct of Y x and x (Y x) within depth 8 and size 80; closest misses B (M (B M)) B and T = B M (B (B M) B), whose Böhm trees agree with those of x (Y x) to the search depth. B3: the first identity that fails is the soundness identity (Theorem 2.11) itself: not_agree_BII_I with BII_betaReduces_I (β), and not_agree_BxI_x with BxI_betaEtaReduces_x (η); the head-trace/βη-normal-form variant collapses to Böhm trees, which do not separate Y x from x (Y x). First missing lemma: theorem TLCA4.no_fixedPoint_betaEta (Y : Tm) (x : ℕ) (hY : occ x Y = 0) : ¬ Lambda.betaEtaConv (toLam (.app Y (.var x))) (toLam (.app (.var x) (.app Y (.var x)))).)"
+    open_boundary: "Open problem (Imamura, Problem 5.1). Series V round 1 run 2 (Start/TLCA4BetaEta.lean): B1 proved: TLCA4.toLam (B, M, I to closed λ-terms, variables to free de Bruijn variables), toLam_wstep (every weak step is a β-reduction), toLam_weq : WEq u v → Lambda.betaEtaConv (toLam u) (toLam v); the incompatibility BII_betaReduces_I and not_weq_BII_I (BII_incompatible). B2 (Python, not Lean-checked): all closed BMI-terms up to 7 leaves (323175) and polynomials m1 ∘ … ∘ mk over B^n B, B^n M, B^n I with n ≤ 3, k ≤ 5 (271452): no common βη-reduct of Y x and x (Y x) within depth 8 and size 80; closest misses B (M (B M)) B and T = B M (B (B M) B), whose Böhm trees agree with those of x (Y x) to the search depth. B3: the first identity that fails is the soundness identity (Theorem 2.11) itself: not_agree_BII_I with BII_betaReduces_I (β), and not_agree_BxI_x with BxI_betaEtaReduces_x (η); the head-trace/βη-normal-form variant collapses to Böhm trees, which do not separate Y x from x (Y x). First missing lemma: theorem TLCA4.no_fixedPoint_betaEta (Y : Tm) (x : ℕ) (hY : occ x Y = 0) : ¬ Lambda.betaEtaConv (toLam (.app Y (.var x))) (toLam (.app (.var x) (.app Y (.var x)))). Series V round 2 run 1: Statman's first step formalized as far as the reduction (row M20-TLCA4-POLYNOMIAL, Start/TLCA4Polynomial.lean): polynomials and their λ-action (polyTm_action, bpow_action), the polynomial algebra laws (bpowI_action, bpowM_action, bpowB_action, comm_bpowB, comp_assoc), problemFiveOne_of_poly and problemFiveOne_iff_poly (StatmanStepOne -> (ProblemFiveOne <-> PolyFiveOne)). StatmanStepOne is not proved. No invariant separating p x from x (p x) found (wip/b2_poly.py: 37448 I-free polynomials, n ≤ 3, length ≤ 5; 6 pass two head levels, all T-like). First missing lemma unchanged: TLCA4.no_fixedPoint_betaEta."
     milestone: M20
     depends_on:
       - M20-TLCA4-BM-FIXPOINT
@@ -4744,6 +4744,44 @@ tasks:
     exit_criteria:
       - "Either a closed BMI-term Y with Lambda.betaEtaConv (toLam (Y x)) (toLam (x (Y x))), or ∀ Y, occ x Y = 0 → ¬ Lambda.betaEtaConv (toLam (.app Y (.var x))) (toLam (.app (.var x) (.app Y (.var x))))."
       - "Only the standard axioms."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M20-TLCA4-STATMAN-STEP-ONE
+    priority: P1
+    status: TODO_READY
+    track: research/open-problems
+    title: "Statman's first step: a B, M, I fixed-point combinator is βη-equivalent to a polynomial"
+    latest_evidence: "docs/goal/evidence/M20-TLCA4-BETAETA.md"
+    open_boundary: "Gap row of M20-TLCA4-POLYNOMIAL (DONE_WEAK, series V round 2 run 1). Target: theorem statmanStepOne : TLCA4.StatmanStepOne (Start/TLCA4Polynomial.lean). First missing piece: a head-normal-form lemma for toLam (Y x) with Y a closed BMI-term (no βη-normal-form theory of BMI-terms in the library yet)."
+    milestone: M20
+    depends_on: []
+    rank: 1492
+    exit_criteria:
+      - "theorem statmanStepOne : TLCA4.StatmanStepOne, standard axioms only."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M20-TLCA4-POLYNOMIAL
+    priority: P1
+    status: DONE_WEAK
+    track: research/open-problems
+    title: "TLCA 4 under βη: polynomials in B, M, I and the reduction of Problem 5.1 to polynomials"
+    terminal_statement: "TLCA4.Mono, TLCA4.polyTm, TLCA4.polyTm_isBMI, TLCA4.polyTm_action, TLCA4.bpow_action, TLCA4.bpowI_action, TLCA4.bpowM_action, TLCA4.bpowB_action, TLCA4.comm_bpowB, TLCA4.comp_assoc, TLCA4.statmanT_eq, TLCA4.PolyFiveOne, TLCA4.StatmanStepOne, TLCA4.problemFiveOne_of_poly : PolyFiveOne → ProblemFiveOne, TLCA4.problemFiveOne_iff_poly (hS : StatmanStepOne) : ProblemFiveOne ↔ PolyFiveOne (Start/TLCA4Polynomial.lean). Standard axioms only (docs/goal/evidence/M20-TLCA4-POLYNOMIAL-axioms.txt)."
+    latest_evidence: "docs/goal/evidence/M20-TLCA4-BETAETA.md"
+    open_boundary: "The reduction of Problem 5.1 to polynomials is proved conditionally on StatmanStepOne (the normal-form theorem in the form the reduction needs), which is stated and not proved. Gap: statmanStepOne (row M20-TLCA4-STATMAN-STEP-ONE)."
+    milestone: M20
+    depends_on:
+      - M20-TLCA4-STATMAN-STEP-ONE
+    rank: 1493
+    exit_criteria:
+      - "The normal-form theorem (every closed BMI fixed-point combinator is βη-equivalent to a polynomial) and the reduction of Problem 5.1 to polynomials, standard axioms only."
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
@@ -5679,7 +5717,7 @@ tasks:
     track: theory/types
     title: "Sigma-types in the groupoid model"
     latest_evidence: "docs/goal/evidence/M23-GROUPOID-MODEL.md"
-    open_boundary: "Gap row of M23-GROUPOID-PI-NATURAL (DONE_WEAK, round 7). Target: GrpdModel.grpdSigmaStruct : Cwa.SigmaStruct grpdCwa. Round 8 (Start/GrpdSigma.lean): sigMap, sigTheta, sigObj, sigMapG. Round 9 (row M23-GROUPOID-SIGMA-FUNCTOR, Start/GrpdSigmaFun.lean): the functor laws and SigF A B : Γ ⥤ Grpd. Round 10 (Start/GrpdSigmaPair.lean): ghom_factor (a morphism (g, φ) of ∫ A is sigTheta A g at the source followed by the fibre inclusion of φ); the object parts pairObj, unpairObj of the pairing ∫ B ≅ ∫ (SigF A B) with both round trips (rfl) and pairObj_base; the morphism map pairHom with pairHom_base and the identity law pairHom_id. First missing lemma: pairHom_comp (the composition law of the pairing functor, an HEq computation through sigMap_key and ghom_factor); then the unpairing functor and the morphism round trips (the isomorphism pair A B : GObj B ≅ GObj (SigF A B)), pair_disp, Sig_sub, grpdSigmaStruct. Round 11: not attempted (part D shrunk under the round's time rule). First missing lemma unchanged: GrpdModel.pairHom_comp. Series V round 1 run 2 (D1, unfinished Lean kept in wip/GrpdPairComp.lean, not imported): in pairHom_comp the base component closes (rw [comp_base, comp_base, eqToHom_base]; rfl). First missing lemma: the fibre component, HEq (pairHom A B (f ≫ g)).fib.fib (pairHom A B f ≫ pairHom A B g).fib.fib; after unfolding it is (B.map g.base).map f.fib against (B.map ((sigTheta A g.base.base).app _ ≫ (fibI A z.base.base).map g.base.fib)).map f.fib up to eqToHoms (ghom_factor), and the rewrite of the eqToHom fibre (eqToHom h).fib under B.map times out."
+    open_boundary: "Gap row of M23-GROUPOID-PI-NATURAL (DONE_WEAK, round 7). Target: GrpdModel.grpdSigmaStruct : Cwa.SigmaStruct grpdCwa. Round 8 (Start/GrpdSigma.lean): sigMap, sigTheta, sigObj, sigMapG. Round 9 (row M23-GROUPOID-SIGMA-FUNCTOR, Start/GrpdSigmaFun.lean): the functor laws and SigF A B : Γ ⥤ Grpd. Round 10 (Start/GrpdSigmaPair.lean): ghom_factor (a morphism (g, φ) of ∫ A is sigTheta A g at the source followed by the fibre inclusion of φ); the object parts pairObj, unpairObj of the pairing ∫ B ≅ ∫ (SigF A B) with both round trips (rfl) and pairObj_base; the morphism map pairHom with pairHom_base and the identity law pairHom_id. First missing lemma: pairHom_comp (the composition law of the pairing functor, an HEq computation through sigMap_key and ghom_factor); then the unpairing functor and the morphism round trips (the isomorphism pair A B : GObj B ≅ GObj (SigF A B)), pair_disp, Sig_sub, grpdSigmaStruct. Round 11: not attempted (part D shrunk under the round's time rule). First missing lemma unchanged: GrpdModel.pairHom_comp. Series V round 1 run 2 (D1, unfinished Lean kept in wip/GrpdPairComp.lean, not imported): in pairHom_comp the base component closes (rw [comp_base, comp_base, eqToHom_base]; rfl). First missing lemma: the fibre component, HEq (pairHom A B (f ≫ g)).fib.fib (pairHom A B f ≫ pairHom A B g).fib.fib; after unfolding it is (B.map g.base).map f.fib against (B.map ((sigTheta A g.base.base).app _ ≫ (fibI A z.base.base).map g.base.fib)).map f.fib up to eqToHoms (ghom_factor), and the rewrite of the eqToHom fibre (eqToHom h).fib under B.map times out. Series V round 2 run 1: not attempted (time given to parts A-C under the round's rule); first missing lemma unchanged."
     milestone: M23
     depends_on: []
     rank: 2051
@@ -5799,7 +5837,7 @@ tasks:
     track: theory/types
     title: "Completeness and termination of type-directed βη-equivalence for LF"
     latest_evidence: "docs/goal/evidence/M23-LF-EQUIV.md"
-    open_boundary: "Gap row of M23-LF-EQUIV (DONE_WEAK, round 7). Targets: typed soundness of AlgEq for TEq; completeness by the fundamental lemma of LR; termination on well-typed terms; decidability of TEq. Round 8: PER property (row M23-LF-EQUIV-PER). Round 9 (row M23-LF-FUNDAMENTAL-TYPING): RelSub, skel_subst_typeLevel, LR.fundamental for typing derivations, AlgEq.refl_of_typing. Round 10 (Start/LambdaPiLFSkelTEq.lean): skel is invariant under raw η (LambdaPi.skel_eta) but not under raw β (LambdaPi.skel_beta_raw_counterexample: (λx:∗. x) (Πy:∗. ∗) ⟶ Πy:∗. ∗ changes base to base → base), so not under raw βη-conversion (skel_not_betaEta_invariant): skel_teq cannot come from TEq.betaEtaConv and needs the typing of every type-level redex of a TEq derivation. First missing lemma: validity of TEq at type level, TEq.typeLevel : TEq Γ M N T → Wf Γ → (T a kind or □) → TypeLevel Γ M ∧ TypeLevel Γ N; it fails for the β-conversion typing Typing at TEq.app (f' a' is typed at B[a'], βη- but not β-convertible to B[a]), so it needs a βη-conversion typing judgement with weakening, substitution, context conversion, type validity and Church–Rosser for βη. Then skel_teq by induction on TEq (skel_step for β, skel_eta for η), LR.fundamental for TEq, typed soundness, termination, decidability (none proved). Round 11: not attempted (part E shrunk under the round's time rule). First missing lemma unchanged: TEq.typeLevel. Series V round 1 run 2: not attempted (time given to parts A–C under the round's rule). First missing lemma unchanged: TEq.typeLevel."
+    open_boundary: "Gap row of M23-LF-EQUIV (DONE_WEAK, round 7). Targets: typed soundness of AlgEq for TEq; completeness by the fundamental lemma of LR; termination on well-typed terms; decidability of TEq. Round 8: PER property (row M23-LF-EQUIV-PER). Round 9 (row M23-LF-FUNDAMENTAL-TYPING): RelSub, skel_subst_typeLevel, LR.fundamental for typing derivations, AlgEq.refl_of_typing. Round 10 (Start/LambdaPiLFSkelTEq.lean): skel is invariant under raw η (LambdaPi.skel_eta) but not under raw β (LambdaPi.skel_beta_raw_counterexample: (λx:∗. x) (Πy:∗. ∗) ⟶ Πy:∗. ∗ changes base to base → base), so not under raw βη-conversion (skel_not_betaEta_invariant): skel_teq cannot come from TEq.betaEtaConv and needs the typing of every type-level redex of a TEq derivation. First missing lemma: validity of TEq at type level, TEq.typeLevel : TEq Γ M N T → Wf Γ → (T a kind or □) → TypeLevel Γ M ∧ TypeLevel Γ N; it fails for the β-conversion typing Typing at TEq.app (f' a' is typed at B[a'], βη- but not β-convertible to B[a]), so it needs a βη-conversion typing judgement with weakening, substitution, context conversion, type validity and Church–Rosser for βη. Then skel_teq by induction on TEq (skel_step for β, skel_eta for η), LR.fundamental for TEq, typed soundness, termination, decidability (none proved). Round 11: not attempted (part E shrunk under the round's time rule). First missing lemma unchanged: TEq.typeLevel. Series V round 1 run 2: not attempted (time given to parts A–C under the round's rule). First missing lemma unchanged: TEq.typeLevel. Series V round 2 run 1: not attempted (time given to parts A-C under the round's rule); first missing lemma unchanged."
     milestone: M23
     depends_on: []
     rank: 2073
@@ -6434,7 +6472,7 @@ tasks:
     track: theory/types
     title: "Coherence with instances of subclasses under SuperField alone"
     latest_evidence: "docs/goal/evidence/M25-TYPECLASS-COHERENCE.md"
-    open_boundary: "Gap row of M25-TYPECLASS-SUPER-INST (DONE_WEAK). Target: coherence_unannotated_superInst with NormalSuperFields E replaced by SuperField E. First missing lemma: DEnt.normalize_super under SuperField. Round 10 analysis of the termination order (not formalized): the first case where the order does not decrease is the superclass projection of an instance, sup (inst I ds). Contracting it calls normalization on the field derivation sd of I (a derivation of ⟨d, I.head⟩ from I.ctxt) with its hypotheses replaced by the context derivations ds: the constraint ⟨d, I.head[s]⟩ has the same type as the redex, so Paterson's measure on instance contexts does not decrease; the derivation size does not decrease either (sd may be larger than the instance node and may use a hypothesis several times, duplicating ds); the size of the dictionary term decreases at this step (sd is a strict subterm of I.dict) but fails at the inst case, whose recursive calls on context dictionaries not used by I.dict are not subterms. A working order needs a measure on derivations stable under substitution of hypotheses, e.g. a multiset of (Paterson size, field depth) pairs. Round 11: not attempted (part F shrunk under the round's time rule). First missing lemma unchanged: DEnt.normalize_super under SuperField; first non-decreasing case (paper, round 10): sup (inst I ds). Series V round 1 run 2: not attempted (time given to parts A–C). First missing step unchanged: the Lean example of the failure at sup (inst I ds), then DEnt.normalize_super under SuperField."
+    open_boundary: "Gap row of M25-TYPECLASS-SUPER-INST (DONE_WEAK). Target: coherence_unannotated_superInst with NormalSuperFields E replaced by SuperField E. First missing lemma: DEnt.normalize_super under SuperField. Round 10 analysis of the termination order (not formalized): the first case where the order does not decrease is the superclass projection of an instance, sup (inst I ds). Contracting it calls normalization on the field derivation sd of I (a derivation of ⟨d, I.head⟩ from I.ctxt) with its hypotheses replaced by the context derivations ds: the constraint ⟨d, I.head[s]⟩ has the same type as the redex, so Paterson's measure on instance contexts does not decrease; the derivation size does not decrease either (sd may be larger than the instance node and may use a hypothesis several times, duplicating ds); the size of the dictionary term decreases at this step (sd is a strict subterm of I.dict) but fails at the inst case, whose recursive calls on context dictionaries not used by I.dict are not subterms. A working order needs a measure on derivations stable under substitution of hypotheses, e.g. a multiset of (Paterson size, field depth) pairs. Round 11: not attempted (part F shrunk under the round's time rule). First missing lemma unchanged: DEnt.normalize_super under SuperField; first non-decreasing case (paper, round 10): sup (inst I ds). Series V round 1 run 2: not attempted (time given to parts A–C). First missing step unchanged: the Lean example of the failure at sup (inst I ds), then DEnt.normalize_super under SuperField. Series V round 2 run 1: not attempted (time given to parts A-C under the round's rule); first missing lemma unchanged."
     milestone: M25
     depends_on: []
     rank: 2381
@@ -8001,7 +8039,7 @@ tasks:
     title: "Expansion postponement: the reduction-only judgement, and Poll's theorem for normalizing PTSs"
     terminal_statement: "PureTypeSystem.HasTypeR, ExpansionPostponement, HasTypeR.toHasType, expansionPostponement_iff_sortedSubjectReductionR (Start/PTSExpansion.lean); ProductNormalizationR and expansionPostponement_iff_productNormalizationR (hw : SystemWeaklyNormalizing P) : ExpansionPostponement P <-> ProductNormalizationR P (Start/PTSExpansionPoll.lean). Poll's theorem is not proved."
     latest_evidence: "docs/goal/evidence/M29-EP.md"
-    open_boundary: "Exit criterion 1 is met. Exit criterion 2 is not. Proved: for weakly normalizing P, ExpansionPostponement P <-> ProductNormalizationR P (Stage A: route (a) reduces to ProductNormalizationR, route (b) lacks a measure for dependent rules). Verdict: the gap in Poll's Lemma 10 (abstraction case: Pi A[s] nf(B[s']) : s is needed, only Pi A[s] B[s'] : s is available) is genuine as far as his argument goes, and was not repaired. Round 11: the eight cube corners (cube_expansionPostponement_all, without Poll's argument). Series V round 1: routes (iii) and the product-normalization step are generic (SNGeneric.expansionPostponement_of_sortFundamental). Series V round 1 run 2: every specification with a morphism into coc (expansionPostponement_of_cocMorphism, M29-EP-COC-MORPHISM, DONE_STRONG; instances outside the cube cocBox2, cocDouble). What remains of criterion 2: (1) the strongly normalizing case without a morphism into coc, exactly SNGeneric.SortFundamental P: theorem sortFundamental_of_sn {S : Type} {P : Specification S} (hsn : SystemStronglyNormalizing P) : SNGeneric.SortFundamental P; (2) the weakly-but-not-strongly normalizing case: theorem expansionPostponement_of_wn {S : Type u} (P : Specification S) (hw : SystemWeaklyNormalizing P) : ExpansionPostponement P (equivalently productNormalizationR_of_wn)."
+    open_boundary: "Exit criterion 1 is met. Exit criterion 2 is not. Proved: for weakly normalizing P, ExpansionPostponement P <-> ProductNormalizationR P (Stage A: route (a) reduces to ProductNormalizationR, route (b) lacks a measure for dependent rules). Verdict: the gap in Poll's Lemma 10 (abstraction case: Pi A[s] nf(B[s']) : s is needed, only Pi A[s] B[s'] : s is available) is genuine as far as his argument goes, and was not repaired. Round 11: the eight cube corners (cube_expansionPostponement_all, without Poll's argument). Series V round 1: routes (iii) and the product-normalization step are generic (SNGeneric.expansionPostponement_of_sortFundamental). Series V round 1 run 2: every specification with a morphism into coc (expansionPostponement_of_cocMorphism, M29-EP-COC-MORPHISM, DONE_STRONG; instances outside the cube cocBox2, cocDouble). What remains of criterion 2: (1) the strongly normalizing case without a morphism into coc, exactly SNGeneric.SortFundamental P: theorem sortFundamental_of_sn {S : Type} {P : Specification S} (hsn : SystemStronglyNormalizing P) : SNGeneric.SortFundamental P; (2) the weakly-but-not-strongly normalizing case: theorem expansionPostponement_of_wn {S : Type u} (P : Specification S) (hw : SystemWeaklyNormalizing P) : ExpansionPostponement P (equivalently productNormalizationR_of_wn). Series V round 2 run 1: beyond coc, a top sort (row M29-EP-TOP-MORPHISM, DONE_WEAK): SN of cocTop and of every top-morphism specification (TopSN.cocTop_stronglyNormalizing, TopMorphism.stronglyNormalizing, by kind substitution and reduction to coc); TopMorphism.expansionPostponement_of_sortFundamental; lambdaHOL_expansionPostponement (stratified); cocTop EP in kind-free contexts (TopSN.cocTop_expansionPostponement_kindFree). Remaining for the top-morphism class: theorem sortFundamental_of_topMorphism {S : Type} {P : Specification S} (m : TopMorphism P) : SNGeneric.SortFundamental P (row M29-EP-TOP-SORT-FUNDAMENTAL). Next class: CC^omega (row M29-EP-CCOMEGA)."
     milestone: M29
     depends_on:
       - M23-PTS
@@ -8063,7 +8101,7 @@ tasks:
     track: research/open-problems
     title: "Expansion postponement for every PTS (TLCA problem 23)"
     latest_evidence: "docs/goal/evidence/M29-EP.md"
-    open_boundary: "Open problem since Pollack (1992); TLCA open problem 23. Equivalent form proved: expansionPostponement_iff_sortedSubjectReductionR. Closed for stratified specifications (M29-EP-CLASS), unbounded levels (M29-EP-LOCAL), the eight cube corners (round 11), and every specification with a morphism into coc (series V round 1 run 2, expansionPostponement_of_cocMorphism, M29-EP-COC-MORPHISM). So an open case has dependent rules and no morphism into coc (e.g. Wdep := W + (o,t,t): Wdep_not_stratified, Wdep_not_wn, Wdep_typeA_domain). Round 11: a literal HasTypeR checker on Wdep up to 22 rule nodes found no failure. Series V round 1: no well-founded order for Wdep (the (o,t,t) domain and object-argument calls of core_aux). Series V round 1 run 2 (C1, Python, not Lean-checked): a seeded search with typeA (size 2907, typed o by the checker in both systems), its reducts, (o,t,t) products over it and abstractions/applications around them: 85 seeds in the empty context, 48 typed judgements, 0 judgements without a reduction-only derivation at a bounded reduct of the type; no counterexample candidate, C2 not started. First missing lemma: theorem Wdep_expansionPostponement : ExpansionPostponement BeyondPoll.Wdep (equivalently SortedSubjectReductionR Wdep); in general sortedSubjectReductionR_all {S : Type u} (P : Specification S) : SortedSubjectReductionR P."
+    open_boundary: "Open problem since Pollack (1992); TLCA open problem 23. Equivalent form proved: expansionPostponement_iff_sortedSubjectReductionR. Closed for stratified specifications (M29-EP-CLASS), unbounded levels (M29-EP-LOCAL), the eight cube corners (round 11), and every specification with a morphism into coc (series V round 1 run 2, expansionPostponement_of_cocMorphism, M29-EP-COC-MORPHISM). So an open case has dependent rules and no morphism into coc (e.g. Wdep := W + (o,t,t): Wdep_not_stratified, Wdep_not_wn, Wdep_typeA_domain). Round 11: a literal HasTypeR checker on Wdep up to 22 rule nodes found no failure. Series V round 1: no well-founded order for Wdep (the (o,t,t) domain and object-argument calls of core_aux). Series V round 1 run 2 (C1, Python, not Lean-checked): a seeded search with typeA (size 2907, typed o by the checker in both systems), its reducts, (o,t,t) products over it and abstractions/applications around them: 85 seeds in the empty context, 48 typed judgements, 0 judgements without a reduction-only derivation at a bounded reduct of the type; no counterexample candidate, C2 not started. First missing lemma: theorem Wdep_expansionPostponement : ExpansionPostponement BeyondPoll.Wdep (equivalently SortedSubjectReductionR Wdep); in general sortedSubjectReductionR_all {S : Type u} (P : Specification S) : SortedSubjectReductionR P. Series V round 2 run 1 (lambdaStar): C1 not proved; first missing lemma lambdaStar_substR_expand (substitution along a reduction of the declared type: Relation.ReflTransGen Beta C'' C -> HasTypeR lambdaStar (C'' :: Γ) e E -> HasTypeR lambdaStar Γ a C -> ∃ E', Relation.ReflTransGen Beta (E.instantiate a) E' ∧ HasTypeR lambdaStar Γ (e.instantiate a) E'). C2: seeded search wip/c2_lstar.py (336 seeds, 311 typed, 0 bounded candidates; Hurkens material not exported; not Lean-checked). See docs/goal/evidence/M29-EP.md, Series V, round 2, run 1."
     milestone: M29
     depends_on:
       - M29-EP-STATEMENT
@@ -8319,6 +8357,65 @@ tasks:
     rank: 2753
     exit_criteria:
       - "The round-8 failing equation NormNW (cubeSpec lambdaP2) Γ (.app (.var x) N) (B.instantiate N) proved from the normalizability of x : Π A B and of N; type reducibility for λP2 constructors with escape, reflection of neutrals and the family-application case; term reducibility relative to it with CR1-CR3, closure under conversion of the type, and the variable, application, type-application and abstraction steps."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M29-EP-TOP-SORT-FUNDAMENTAL
+    priority: P1
+    status: TODO_READY
+    track: research/open-problems
+    title: "Route (ii) fundamental lemma for every specification with a morphism into coc with a top sort"
+    latest_evidence: "docs/goal/evidence/M29-EP.md"
+    open_boundary: "Gap row of M29-EP-TOP-MORPHISM (DONE_WEAK, series V round 2 run 1). Target: theorem sortFundamental_of_topMorphism {S : Type} {P : Specification S} (m : TopMorphism P) : SNGeneric.SortFundamental P; with TopMorphism.expansionPostponement_of_sortFundamental it gives expansionPostponement_of_topMorphism. First failing case of MorphFund transported to cocTop: the variable/weakening case for x : K with K a kind variable (K : □), since MorphFund.SemC interprets types through the syntactic coc skeleton model (ErasureCoC.interpK over CoC.Sk), which has no skeleton for a kind variable. Kind-free contexts are done (TopSN.cocTop_expansionPostponement_kindFree)."
+    milestone: M29
+    depends_on: []
+    rank: 2770
+    exit_criteria:
+      - "sortFundamental_of_topMorphism (m : TopMorphism P) : SNGeneric.SortFundamental P, with no other hypothesis."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M29-EP-TOP-MORPHISM
+    priority: P1
+    status: DONE_WEAK
+    track: research/open-problems
+    title: "Expansion postponement for every specification with a morphism into coc with a top sort (cocTop, λHOL)"
+    terminal_statement: "PureTypeSystem.TopMorphism, cocTop, lambdaHOL, lambdaHOL_not_cocMorphism : CoCMorphism lambdaHOL → False, CoCMorphism.toTop (Start/PTSExpansionTop.lean); TopSN.cocTop_stronglyNormalizing : SystemStronglyNormalizing cocTop, TopMorphism.stronglyNormalizing (m : TopMorphism P) : SystemStronglyNormalizing P, TopMorphism.expansionPostponement_of_sortFundamental (m : TopMorphism P) (h : SNGeneric.SortFundamental P) : ExpansionPostponement P, lambdaHOL_expansionPostponement : ExpansionPostponement lambdaHOL (Start/PTSExpansionTopSN.lean); TopSN.cocTop_expansionPostponement_kindFree (Start/PTSExpansionTopKindFree.lean). Standard axioms only (docs/goal/evidence/M29-EP-TOP-MORPHISM-axioms.txt)."
+    latest_evidence: "docs/goal/evidence/M29-EP.md"
+    open_boundary: "Exit criterion 1 (TopMorphism defined) and criterion 3 (lambdaHOL is an instance, lambdaHOL_topMorphism, and not in the coc-morphism class, lambdaHOL_not_cocMorphism; lambdaHOL_expansionPostponement proved) are met. Criterion 2 is not: expansionPostponement_of_topMorphism (m : TopMorphism P) : ExpansionPostponement P is proved only from SNGeneric.SortFundamental P (SN is proved). Gap: sortFundamental_of_topMorphism (row M29-EP-TOP-SORT-FUNDAMENTAL). cocTop_expansionPostponement is open outside kind-free contexts."
+    milestone: M29
+    depends_on:
+      - M29-EP-TOP-SORT-FUNDAMENTAL
+    rank: 2771
+    exit_criteria:
+      - "TopMorphism P defined (sorts to ∗, □, Δ, axioms to axioms, rules to rules of cocTop)."
+      - "theorem expansionPostponement_of_topMorphism {S : Type} {P : Specification S} (m : TopMorphism P) : ExpansionPostponement P, with no other hypothesis."
+      - "lambdaHOL is an instance (lambdaHOL_expansionPostponement) and is not in the coc-morphism class (lambdaHOL_not_cocMorphism)."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M29-EP-CCOMEGA
+    priority: P1
+    status: TODO_READY
+    track: research/open-problems
+    title: "Expansion postponement for every specification with a morphism into CC^omega"
+    latest_evidence: "docs/goal/evidence/M29-EP.md"
+    open_boundary: "Series V round 2 run 1: ccOmega, CCOmegaMorphism, coc_ccOmegaMorphism, lambdaHOL_ccOmegaMorphism, cocTop_ccOmegaMorphism, TopMorphism.toCCOmega, ccOmega_not_topMorphism defined/proved (Start/PTSExpansionTop.lean). SN not started. First missing lemma: theorem ccOmega_stronglyNormalizing : SystemStronglyNormalizing ccOmega, whose first missing piece is a skeleton interpretation of Type n-kinds with variables (generalizing CoC.Sk/CoC.cl of Start/CoCSN.lean to a predicative hierarchy); the kind-substitution route of cocTop does not generalize."
+    milestone: M29
+    depends_on:
+      - M29-EP-TOP-MORPHISM
+    rank: 2772
+    exit_criteria:
+      - "expansionPostponement for every specification with a morphism into CC^omega: theorem expansionPostponement_of_ccOmegaMorphism {S : Type} {P : Specification S} (m : CCOmegaMorphism P) : ExpansionPostponement P."
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"

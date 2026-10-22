@@ -444,6 +444,10 @@ import Start.PTSRouteIIMorphismCand
 import Start.PTSExpansionWdepChain
 import Start.PTSRouteIIMorphismFundamental
 import Start.TLCA4BetaEta
+import Start.PTSExpansionTop
+import Start.PTSExpansionTopSN
+import Start.PTSExpansionTopKindFree
+import Start.TLCA4Polynomial
 
 /-! ## Interfaces of the untyped calculus
 
@@ -5373,3 +5377,57 @@ the η-instance `B x I = x`.
 #check @TLCA4.not_agree_BxI_x
 #check @TLCA4.not_weq_BxI_x
 #check @TLCA4.ProblemFiveOne
+
+/-! ## Expansion postponement beyond coc: a top sort (M29-EP-TOP-MORPHISM, series V round 2, run 1)
+
+`Start/PTSExpansionTop.lean`: `cocTop` (sorts `∗, □, Δ`), Barendregt's `λHOL`, the morphisms into
+`cocTop` (`TopMorphism`) and into `CC^ω`; `λHOL` has no morphism into coc.
+`Start/PTSExpansionTopSN.lean`: strong normalization of `cocTop` by kind substitution and
+reduction to coc, hence of every top-morphism specification; expansion postponement for `λHOL`
+(stratified) and, for every top-morphism specification, from the sort-typed fundamental lemma.
+`Start/PTSExpansionTopKindFree.lean`: expansion postponement for `cocTop` in kind-free contexts.
+-/
+
+#check @PureTypeSystem.cocTop
+#check @PureTypeSystem.lambdaHOL
+#check @PureTypeSystem.TopMorphism
+#check @PureTypeSystem.lambdaHOL_not_cocMorphism
+#check @PureTypeSystem.lambdaHOL_in_top_class
+#check @PureTypeSystem.CoCMorphism.toTop
+#check @PureTypeSystem.TopMorphism.sort_untypable
+#check @PureTypeSystem.TopMorphism.top_typed_sort
+#check @PureTypeSystem.ccOmega
+#check @PureTypeSystem.coc_ccOmegaMorphism
+#check @PureTypeSystem.lambdaHOL_ccOmegaMorphism
+#check @PureTypeSystem.TopMorphism.toCCOmega
+#check @PureTypeSystem.ccOmega_not_topMorphism
+#check @PureTypeSystem.TopSN.kf_coc
+#check @PureTypeSystem.TopSN.kindSubst
+#check @PureTypeSystem.TopSN.cocTop_stronglyNormalizing
+#check @PureTypeSystem.TopMorphism.stronglyNormalizing
+#check @PureTypeSystem.lambdaHOL_stronglyNormalizing
+#check @PureTypeSystem.TopMorphism.expansionPostponement_of_sortFundamental
+#check @PureTypeSystem.lambdaHOL_expansionPostponement
+#check @PureTypeSystem.cocTop_not_stratified
+#check @PureTypeSystem.TopSN.cocTop_expansionPostponement_kindFree
+
+/-! ## TLCA problem 4 under βη: polynomials (M20-TLCA4-POLYNOMIAL, series V round 2, run 1)
+
+`Start/TLCA4Polynomial.lean`: monomials `Bⁿ X` and polynomials `m₁ ∘ … ∘ m_k`, their λ-action,
+extensional laws of the polynomial algebra, and the reduction of Problem 5.1 to polynomials
+conditional on Statman's first step (`StatmanStepOne`, stated, not proved).
+-/
+
+#check @TLCA4.polyTm
+#check @TLCA4.polyTm_isBMI
+#check @TLCA4.polyTm_action
+#check @TLCA4.bpow_action
+#check @TLCA4.bpowI_action
+#check @TLCA4.bpowM_action
+#check @TLCA4.bpowB_action
+#check @TLCA4.comm_bpowB
+#check @TLCA4.comp_assoc
+#check @TLCA4.statmanT_eq
+#check @TLCA4.StatmanStepOne
+#check @TLCA4.problemFiveOne_of_poly
+#check @TLCA4.problemFiveOne_iff_poly

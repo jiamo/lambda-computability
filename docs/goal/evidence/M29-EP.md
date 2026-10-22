@@ -1747,3 +1747,92 @@ theorem BeyondPoll.Wdep_expansionPostponement : ExpansionPostponement BeyondPoll
 and, for a negative answer, a judgement `HasType Wdep Γ M A` with
 `¬ ∃ B, Relation.ReflTransGen Beta A B ∧ HasTypeR Wdep Γ M B`, together with an invariant of all
 `HasTypeR Wdep` derivations in `Γ` that `M` violates.
+
+## Series V, round 2, run 1
+
+### Part A: beyond coc — a top sort (rows M29-EP-TOP-MORPHISM, M29-EP-CCOMEGA)
+
+Modules: `Start/PTSExpansionTop.lean`, `Start/PTSExpansionTopSN.lean`,
+`Start/PTSExpansionTopKindFree.lean` (axioms: `M29-EP-TOP-MORPHISM-axioms.txt`).
+
+**Proved.**
+* `cocTop` (sorts `∗, □, Δ`; axioms `∗ : □`, `□ : Δ`; the four coc rules, none mentioning `Δ`) and
+  `lambdaHOL` (same axioms; rules `(∗,∗)`, `(□,∗)`, `(□,□)`).
+* `lambdaHOL_not_cocMorphism : CoCMorphism lambdaHOL → False` (`∗ : □` forces `φ □ = □`, `□ : Δ`
+  forces `φ □ = ∗`); `lambdaHOL_topMorphism`; `CoCMorphism.toTop` (the coc-morphism class is
+  contained in the top-morphism class); `lambdaHOL_in_top_class`.
+* `TopMorphism.sort_untypable` (a sort sent to `Δ` is never a typable subject) and
+  `TopMorphism.top_typed_sort` (only sorts are typed by a sort sent to `Δ`).
+* **`TopSN.cocTop_stronglyNormalizing : SystemStronglyNormalizing cocTop`**, by route (ii) of the
+  task: `TopSN.kindSubst` sends every valid context to a valid *kind-free* context (no declaration
+  `K : □`) by a typed substitution (`K ↦ ∗`); `TopSN.kf_coc` sends kind-free judgements whose type
+  is not `Δ` to coc judgements along the collapse `Δ ↦ □`.  The only delicate case of `kf_coc` is
+  conversion to the target `□` (its premise `□ : Δ` has no coc image); there the coc image of the
+  source type converts to `□`, and since `□` is untypable in coc the source type must be `□`
+  itself.  SN is pulled back by `StronglyNormalizing.of_subst` and `StronglyNormalizing.of_mapSort`.
+* **`TopMorphism.stronglyNormalizing`** for every top-morphism specification;
+  `lambdaHOL_stronglyNormalizing`.
+* **`TopMorphism.expansionPostponement_of_sortFundamental (m : TopMorphism P)
+  (h : SNGeneric.SortFundamental P) : ExpansionPostponement P`** — SN is no longer a hypothesis.
+* **`lambdaHOL_expansionPostponement`**: `λHOL` is stratified (`∗ ↦ 0`, `□ ↦ 1`, `Δ ↦ 2`), so
+  Stage B applies.  `cocTop_not_stratified`.
+* **`TopSN.cocTop_expansionPostponement_kindFree`**: expansion postponement for every `cocTop`
+  judgement in a kind-free context whose type is not `Δ` (from `coc_expansionPostponement`, along
+  `Δ ↦ □` and back; `TopSN.noTop`: legal expressions do not mention `Δ`).
+
+**Not proved.** `expansionPostponement_of_topMorphism` and `cocTop_expansionPostponement`.
+First missing lemma:
+```lean
+theorem sortFundamental_of_topMorphism {S : Type} {P : Specification S} (m : TopMorphism P) :
+    SNGeneric.SortFundamental P
+```
+(for `cocTop` itself: `SNGeneric.SortFundamental cocTop`).  The first case that fails when
+`MorphFund` is transported to `cocTop`: the variable/weakening cases for a declaration `x : K` with
+`K` a kind variable (`K : □`).  `MorphFund.SemC` interprets a type through the coc skeleton model
+of `Start/CoCSN.lean` (`ErasureCoC.interpK` over `CoC.Sk`, `CoC.cl`, `CoC.ctxCl`), which computes
+the skeleton of a kind syntactically from the kind expression; a kind variable has no syntactic
+skeleton, so `interpK` of a type of kind `K` is undefined.  The kind substitution used for SN does
+not help here: it changes the subject, and `HasTypeR` derivations do not commute with it.  In
+kind-free contexts the gap is closed (`cocTop_expansionPostponement_kindFree`).
+
+**A2 (`CC^ω`).** Defined: `ccOmega` (sorts `Prop`, `Type n`), `CCOmegaMorphism`,
+`coc_ccOmegaMorphism`, `lambdaHOL_ccOmegaMorphism`, `cocTop_ccOmegaMorphism`,
+`TopMorphism.toCCOmega`, and `ccOmega_not_topMorphism` (`Prop : Type 0 : Type 1 : Type 2` needs
+four levels).  SN of `CC^ω` was not started (A1 did not close).  Which parts of `Start/CoCSN.lean`
+generalize: the candidate algebra (`SNGeneric.CandP`, `IsCandC`, saturation) and the product/
+abstraction cases do not depend on the number of sorts; the skeleton model does not, because it
+has exactly two skeleton levels (objects typed by `∗`, constructors typed by kinds) and computes
+skeletons of kinds syntactically.  A predicative hierarchy needs a skeleton (a set-theoretic
+interpretation of kinds) at every level `Type n`, with kind variables at every level interpreted
+by arbitrary skeleton sets — the same obstruction as the kind variables of `cocTop`, iterated.
+First missing lemma toward `SystemStronglyNormalizing ccOmega`: the skeleton interpretation of
+`Type n`-kinds with variables, i.e. a generalization of `CoC.Sk`/`CoC.cl` to contexts declaring
+variables of type `Type n` (no Lean statement yet beyond
+`theorem ccOmega_stronglyNormalizing : SystemStronglyNormalizing ccOmega`).
+The kind-substitution route of A1 does not generalize: for `CC^ω` there is no top level whose
+variables can be substituted away.
+
+### Part C: λ* (row M29-EP)
+
+**C1 (positive direction).** Not proved.  The obstacle is unchanged: in the β-redex
+`(λx:C''. e) a` with `Γ ⊢r λx:C''. e : Π C'' E''`, `Π C'' E'' →* Π C E` and `Γ ⊢r a : C`, the
+substitution lemma needs `a : C''`, and the reduction-only system has no way to expand `C` back to
+`C''`.  Functionality of `λ*` (one axiom, one rule) does not give such an expansion: the
+`HasTypeR` rules only ever reduce types.  First missing lemma (a substitution lemma along a
+reduction of the declared type), as a Lean statement:
+```lean
+theorem lambdaStar_substR_expand {Γ : List (Expr Unit)} {C'' C e E a : Expr Unit}
+    (hC : Relation.ReflTransGen Beta C'' C) (he : HasTypeR lambdaStar (C'' :: Γ) e E)
+    (ha : HasTypeR lambdaStar Γ a C) :
+    ∃ E', Relation.ReflTransGen Beta (E.instantiate a) E' ∧
+      HasTypeR lambdaStar Γ (e.instantiate a) E'
+```
+It implies `SortedSubjectReductionR lambdaStar` at the root β-step; it is not proved.
+
+**C2 (negative direction).** Seeded search `wip/c2_lstar.py` (the round 1 run 2 checker with
+`AX = {∗ : ∗}`, `RULES = {(∗,∗,∗)}`), seeded with small material and with β-redex domains
+`(λy:∗. y) ∗` in contexts and abstractions.  The Hurkens material of `Start/PTSHurkens.lean` was
+not exported (no S-expression printer for it this run).
+* bounds: reducts breadth-first to depth 3 on terms of size ≤ 400 plus 40 leftmost-outermost steps; time limit 120 s;
+* run: 336 seed judgements tried, 311 typed;
+* result: 0 bounded candidates (not Lean-checked; no claim either way).
