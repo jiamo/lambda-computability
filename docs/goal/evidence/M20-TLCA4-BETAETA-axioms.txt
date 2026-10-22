@@ -8,3 +8,6 @@
 'TLCA4.BxI_betaEtaReduces_x' depends on axioms: [propext, Classical.choice, Quot.sound]
 'TLCA4.not_agree_BxI_x' depends on axioms: [propext, Quot.sound]
 'TLCA4.not_weq_BxI_x' depends on axioms: [propext, Classical.choice, Quot.sound]
+# series V, round 3, run 2: #print axioms (lake env lean on a scratch file importing Start.PTSRouteIITopFundamental, Start.TLCA4PolyHead and Start.GrpdSigmaSub, with #print axioms appended)
+'TLCA4.mono_app_reduces_lam' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.polyApp_reduces_lam' depends on axioms: [propext, Classical.choice, Quot.sound]

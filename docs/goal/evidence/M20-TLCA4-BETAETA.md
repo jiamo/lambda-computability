@@ -263,3 +263,45 @@ files of M20-TLCA4-STATMAN-STEP-ONE, M20-TLCA4-POLYNOMIAL, M20-TLCA4-T-NOT-FIXPO
   `T` was formalized or tested.  Stop rule: no invariant property was tested in this run, so none is
   reported as failing; first missing lemma `T_not_fixedPoint`.
 * Searches: none in this run.
+
+## Series V, round 3, run 2
+
+### B1: structure of a polynomial fixed-point combinator (`Start/TLCA4PolyHead.lean`)
+
+Proved: `TLCA4.mono_app_reduces_lam` and `TLCA4.polyApp_reduces_lam (m : Mono) (hm : m.base = .B ∨
+0 < m.n) (ps : List Mono) : ∃ t, Lambda.reduces (toLam (app (polyTm m ps) (var 0))) (.lam t)` — if
+the first monomial is `B` or `Bⁿ⁺¹ X`, `p x` reduces (in at most five head steps) to an abstraction.
+
+First structural claim that does not close: the η-aware comparison.  From the fixed-point equation
+and `fixHeadBridge`, `p x` has a head normal form with head `x`; when it is an abstraction `λz. H`,
+βη-equality with `x (p x)` forces `H` to η-contract against its last argument `z`, and comparing
+`H` with `x (p x) z` needs the head of `r x z` (`r` the rest of the polynomial).  This was not
+formalized; "the first monomial is `M`" remains open, and no constraint on the second or last
+monomial was proved.
+
+### B2: `T_not_fixedPoint` — experiment (`wip/b2_treducts.py`, not Lean-checked)
+
+Reducts of `toLam (T x)`: the leftmost-outermost path (≤ 120, resp. ≤ 400 steps) and a breadth-first
+neighbourhood of every path point (depth ≤ 3, resp. ≤ 2; size ≤ 160, resp. ≤ 260): 4000, resp. 6042
+reducts, `k` up to 6, resp. 21.  Every reduct is written `xᵏ R`.
+* No residual `R` occurs with two different `k` (in particular never with `k` and `k + 1`).
+* First candidate `φ(i, j) = i(i+1)/2 + (j − i)` (indices of the β-normal forms `a_i`, `a_j` of the
+  two components of `R = P Q`, `a_n = λz. xⁿ⁺¹ (z (λw. x (z w)))`) fails: `R = (B x Y)(B x Y)`
+  with `Y = B (B M) B x`, `k = 0`, `φ = 1` (both components normalize to `a₁`).
+* Second candidate `φ(i, j) = j(j+1)/2 − i` holds on every explored reduct where it is defined
+  (3737 of 4000, 5798 of 6042); it is undefined on the reducts before the `M a₀` stage.  Along head
+  reduction the pairs `(i, j)` run through `0 ≤ i < j` in the order `(0,1), (1,2), (0,2), (2,3), …`
+  and `k = φ(i, j)` takes each value once: `k` is a Cantor pairing of the residual's indices.  If
+  every reduct satisfies `k = φ(R)`, the common reduct of `T x` and `x (T x)` would need
+  `φ(R) = φ(R) + 1`.
+First missing lemma for the formalization: the shape predicate for all βη-reducts of `toLam (T x)`
+(including partial reducts of the components and the pre-`M a₀` reducts) and its closure under one
+β- or η-step at any position.
+
+### B3: `Q = M ∘ M ∘ (B M) ∘ B ∘ B` — experiment (`wip/b3_QvsT.py`, not Lean-checked)
+
+Head reduction of `toLam (Q x)` (≤ 3000 steps, size ≤ 4000) reaches `k = 0, 1, …, 24` with step
+gaps `24, 16, 9, 16, 9, 9, 16, 9, 9, 9, …`, the same triangular pattern as `T` (gaps
+`14, 10, 3, 10, 3, 3, 10, 3, 3, 3, …`), but the residual components of `Q x` are not the `a_n`.
+βη-equality of `Q` and `T` was not decided; no theorem reducing `PolyFiveOne` to `T` and `Q` was
+proved.  Conjecture (evidence above only): `Q x` and `T x` have the same x-spine growth.

@@ -11,3 +11,16 @@
 # series V, round 3, run 1: #print axioms (lake env lean on a scratch file importing Start.TLCA4StatmanProof, Start.TLCA4TUnfold, Start.PTSExpansionTopClassifyV and Start.GrpdPairComp, with #print axioms appended)
 'GrpdModel.pairHom_comp' depends on axioms: [propext, Classical.choice, Quot.sound]
 'GrpdModel.pairFunctor' depends on axioms: [propext, Classical.choice, Quot.sound]
+# series V, round 3, run 2: #print axioms (lake env lean on a scratch file importing Start.PTSRouteIITopFundamental, Start.TLCA4PolyHead and Start.GrpdSigmaSub, with #print axioms appended)
+'GrpdModel.unpairBase_id' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GrpdModel.unpairHom_id' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GrpdModel.unpairHom_comp' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GrpdModel.unpairFunctor' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GrpdModel.pairFunctor_comp_unpairFunctor' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GrpdModel.unpairFunctor_comp_pairFunctor' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GrpdModel.sigIso' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GrpdModel.grpdSigPair' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GrpdModel.grpdSigPair_disp' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GrpdModel.fibI_comp_extend' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GrpdModel.grpdSig_sub' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GrpdModel.grpdSigmaStruct' depends on axioms: [propext, Classical.choice, Quot.sound]

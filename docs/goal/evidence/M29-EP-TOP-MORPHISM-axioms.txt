@@ -8,3 +8,10 @@
 'PureTypeSystem.lambdaHOL_expansionPostponement' depends on axioms: [propext, Classical.choice, Quot.sound]
 'PureTypeSystem.TopSN.cocTop_expansionPostponement_kindFree' depends on axioms: [propext, Classical.choice, Quot.sound]
 'PureTypeSystem.ccOmega_not_topMorphism' depends on axioms: [propext]
+# series V, round 3, run 2: #print axioms (lake env lean on a scratch file importing Start.PTSRouteIITopFundamental, Start.TLCA4PolyHead and Start.GrpdSigmaSub, with #print axioms appended)
+'PureTypeSystem.expansionPostponement_of_topMorphism' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.cocTop_expansionPostponement' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.cocTopTwo_not_functional' does not depend on any axioms
+'PureTypeSystem.cocTopTwo_not_cocMorphism' does not depend on any axioms
+'PureTypeSystem.cocTopTwo_not_stratified' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.cocTopTwo_expansionPostponement' depends on axioms: [propext, Classical.choice, Quot.sound]

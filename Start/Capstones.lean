@@ -454,6 +454,12 @@ import Start.TLCA4StatmanProof
 import Start.PTSExpansionTopClassifyV
 import Start.TLCA4TUnfold
 import Start.GrpdPairComp
+import Start.PTSExpansionTopInterpV
+import Start.PTSExpansionTopInterpVBeta
+import Start.PTSRouteIITopFundamental
+import Start.TLCA4PolyHead
+import Start.GrpdUnpair
+import Start.GrpdSigmaSub
 
 /-! ## Interfaces of the untyped calculus
 
@@ -5498,3 +5504,45 @@ functor `∫ B ⥤ ∫ (SigF A B)`.
 #check @TLCA4.TNotFixedPoint
 #check @GrpdModel.pairHom_comp
 #check @GrpdModel.pairFunctor
+
+/-! ## Series V, round 3, run 2: the fundamental lemma for `cocTop`; Σ-types in the groupoid model
+
+`Start/PTSExpansionTopInterpV.lean`, `Start/PTSExpansionTopInterpVBeta.lean`,
+`Start/PTSRouteIITopFundamental.lean` (M29-EP-TOP-SORT-FUNDAMENTAL, M29-EP-TOP-MORPHISM): the
+interpretation `interpV` of `cocTop` kinds and constructors relative to a closed skeleton valuation
+(substitution lemma, the kind-variable case, well-classification of the coc image, invariance under
+conversion), the route (ii) fundamental lemma through a morphism into `cocTop`, the sort-typed
+fundamental lemma and expansion postponement for every specification with a morphism into `cocTop`,
+for `cocTop` itself, and for `cocTopTwo` (not functional, outside the coc-morphism and stratified
+classes).
+`Start/TLCA4PolyHead.lean` (M20-TLCA4-BETAETA): `p x` head-reduces to an abstraction when the first
+monomial of `p` is `B` or `Bⁿ⁺¹ X`.
+`Start/GrpdUnpair.lean`, `Start/GrpdSigmaSub.lean` (M23-GROUPOID-SIGMA): the unpairing functor, the
+isomorphism `∫ B ≌ ∫ (SigF A B)`, the pairing isomorphism over the base, stability of Σ under
+substitution, and `grpdSigmaStruct : Cwa.SigmaStruct grpdCwa`.
+-/
+
+#check @PureTypeSystem.TopSkel.interpV_subst
+#check @PureTypeSystem.TopSkel.interpV_kindVar_cond
+#check @PureTypeSystem.TopSkel.interpV_subst_kind
+#check @PureTypeSystem.TopSkel.wc_toC
+#check @PureTypeSystem.TopSkel.interpV_beta
+#check @PureTypeSystem.TopSkel.interpV_conv
+#check @PureTypeSystem.TopFund.fundamental
+#check @PureTypeSystem.sortFundamental_of_topMorphism
+#check @PureTypeSystem.expansionPostponement_of_topMorphism
+#check @PureTypeSystem.cocTop_expansionPostponement
+#check @PureTypeSystem.cocTopTwo_not_functional
+#check @PureTypeSystem.cocTopTwo_not_cocMorphism
+#check @PureTypeSystem.cocTopTwo_not_stratified
+#check @PureTypeSystem.cocTopTwo_expansionPostponement
+#check @TLCA4.polyApp_reduces_lam
+#check @GrpdModel.unpairHom_comp
+#check @GrpdModel.unpairFunctor
+#check @GrpdModel.pairFunctor_comp_unpairFunctor
+#check @GrpdModel.unpairFunctor_comp_pairFunctor
+#check @GrpdModel.sigIso
+#check @GrpdModel.grpdSigPair_disp
+#check @GrpdModel.fibI_comp_extend
+#check @GrpdModel.grpdSig_sub
+#check @GrpdModel.grpdSigmaStruct

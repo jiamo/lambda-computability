@@ -1955,3 +1955,51 @@ phrased in terms of `interpV`.  `sortFundamental_of_topMorphism`,
 instance.
 
 ### B3: not reached (B2 did not close).
+
+## Series V, round 3, run 2
+
+### A1: the interpretation relative to a skeleton valuation (`Start/PTSExpansionTopInterpV.lean`, `Start/PTSExpansionTopInterpVBeta.lean`)
+
+* `evalSk θ`, `evalCls θ` evaluate skeleton variables; `evalCls` commutes with `bindV`, `domV`,
+  `lamV`, `piV`, and with `appV` away from constructors of variable skeleton.
+* `interpV 𝔄 θ Δ M := ErasureCoC.interpK 𝔄 (evalCls θ ∘ Δ) (M.mapSort srtC)` (`srtC`: `∗ ↦ ∗`,
+  `□, Δ ↦ □`).  The dependency of `VV θ` on `θ` is resolved by evaluating the class first: a kind
+  variable of class `kind (svar ℓ)` ranges over `V B (θ ℓ)`.
+* `cl_toC`: on well-classified expressions the coc classifier of the image is the evaluated `clV`.
+* `interpV_rename`, `interpV_subst` (any substitution respecting the evaluated classes; source and
+  target valuations `θ'`, `θ` may differ), `interpV_instantiate`.
+* The kind-variable case: `interpV_kindVar_cond` — for a well-classified `N` of class `kind a`, the
+  side condition of `interpV_subst` at a variable of class `kind (svar ℓ)` is exactly
+  `θ' ℓ = evalSk θ a` (`θ'` extends `θ` by the skeleton of `N`); `interpV_subst_kind`.
+* `wc_toC`: the coc image of a `cocTop`-typable expression is well classified (`CoC.WC`) in the
+  evaluated context classifier (from `classifyFull`, `kindV_cl`, `wcv_of_hasType`).
+* `interpV_beta`, `interpV_reduces`, `interpV_conv` (the proof of `ErasureCoC.interpK_beta`, with
+  `cl_toC_beta` from `clV_beta` and `evalCtx_cons` at declarations `A ≠ □`).
+
+### A2: the fundamental lemma (`Start/PTSRouteIITopFundamental.lean`)
+
+`TopFund.SemC θ Γ ξ Δ T X Y` tests whether the image `T.mapSort srtC` is `□` (i.e. `T ∈ {□, Δ}`)
+and otherwise membership in the candidate `interpK (candAlg P) (evalCls θ ∘ ctxClV Γ) …`.  The
+generalized fundamental lemma `TopFund.fundamental (m : TopMorphism P) (θ) : HasType P Γ M T →
+SubstOK m θ Γ Δ σ ξ → Sem m θ Γ ξ Δ M T σ` closes in every case; the stop rule is not triggered.
+New points against `MorphFund`: admissibility `tyOK_of_sorted` holds for every sort (a type of sort
+`Δ` is `□`, by `not_top_typed`); the rule sorts are never `Δ` (`rule_map`), which gives the
+declarations `A ≠ □` needed for `evalCtx_cons`; the conversion case splits on whether the target
+type's image is `□`, and otherwise uses `interpV_conv` (both sides sorted by sorts other than `Δ`,
+via `eq_box_of_conv`, `not_conv_top`).  Kind variables need no substitution agreement: no `cocTop`
+binder binds a kind variable, and the semantics of `K : □` is normalization; `θ` is a free
+parameter (`fun _ => ∗` in the final theorem).
+
+* `theorem sortFundamental_of_topMorphism {S : Type} {P : Specification S} (m : TopMorphism P) :
+  SNGeneric.SortFundamental P`
+* `theorem expansionPostponement_of_topMorphism {S : Type} {P : Specification S} (m : TopMorphism
+  P) : ExpansionPostponement P`
+* `theorem cocTop_expansionPostponement : ExpansionPostponement cocTop`
+* New instance `cocTopTwo` (sorts `∗, □, Δ, Δ'`; axioms `∗ : □`, `□ : Δ`, `□ : Δ'`; rules
+  `(s₁, s₂, s₂)` with `s₁, s₂ ∈ {∗, □}`): `cocTopTwo_not_functional`, `cocTopTwo_not_cocMorphism`,
+  `cocTopTwo_not_stratified`, `cocTopTwo_expansionPostponement`.
+
+### A3: not started
+
+A2 closed about 20 minutes into the run, with less than 20 minutes of A's share left, so by the
+rule A3 was not started.  First lemma unchanged: `CCO.clV_ssubst_level`.

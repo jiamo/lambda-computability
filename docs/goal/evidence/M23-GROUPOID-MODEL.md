@@ -297,3 +297,20 @@ isomorphism `GObj B ≅ GObj (SigF A B)`), `pair_disp`, `Sig_sub`, `grpdSigmaStr
 Unfinished Lean in `wip/GrpdUnpair.lean` (not imported): `unpairBase`, `unpairHom_obj_eq`,
 `unpairHom` typecheck; `unpairHom_id` closes given `unpairBase_id`.  First missing lemma:
 `GrpdModel.unpairBase_id`, remaining goal `(eqToHom ⋯).base ≍ eqToHom ⋯`; then `unpairHom_comp`.
+
+## Series V, round 3, run 2 (row M23-GROUPOID-SIGMA, part C)
+
+`Start/GrpdUnpair.lean` (from `wip/GrpdUnpair.lean`): `unpairBase_id` (the remaining goal
+`(eqToHom ⋯).base ≍ eqToHom ⋯` closes by the existing `eqToHom_base`), `unpairHom_id`,
+`unpairBase_comp`, `unpairHom_comp` (strip `eqToHom`s; `map_map` under `change` instead of a
+`Functor.comp_map` rewrite, whose motive is not type correct; `heq_comp` along `ghom_factor`),
+`unpairFunctor`, `unpairHom_pairHom`, `pairHom_unpairHom`, the round trips
+`pairFunctor_comp_unpairFunctor`, `unpairFunctor_comp_pairFunctor`, `sigIso : GObj B ≌ GObj (SigF A
+B)`, the pairing isomorphism `grpdSigPair` in `Grpd`, `grpdSigPair_disp` (by `rfl`), and
+`fibI_comp_extend : fibI (σ ⋙ A) δ ⋙ extend σ A = fibI A (σ δ)`.
+
+`Start/GrpdSigmaSub.lean`: `sigMap_comp_right` (by `rfl`), `sigMap_congr` (equal fibre functors,
+pointwise `HEq` components), `grpdSig_sub : σ ⋙ SigF A B = SigF (σ ⋙ A) (extendG σ A ⋙ B)`
+(`Functor.hext`; objects by `fibI_comp_extend`), and
+**`GrpdModel.grpdSigmaStruct : Cwa.SigmaStruct grpdCwa`**.  Row M23-GROUPOID-SIGMA is DONE_STRONG.
+M23-LF-EQUIV-COMPLETE was left for a later run.
