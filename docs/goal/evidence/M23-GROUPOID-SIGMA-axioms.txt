@@ -8,3 +8,6 @@
 'GrpdModel.pairObj_unpairObj' depends on axioms: [propext, Classical.choice, Quot.sound]
 'GrpdModel.pairHom' depends on axioms: [propext, Classical.choice, Quot.sound]
 'GrpdModel.pairHom_id' depends on axioms: [propext, Classical.choice, Quot.sound]
+# series V, round 3, run 1: #print axioms (lake env lean on a scratch file importing Start.TLCA4StatmanProof, Start.TLCA4TUnfold, Start.PTSExpansionTopClassifyV and Start.GrpdPairComp, with #print axioms appended)
+'GrpdModel.pairHom_comp' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GrpdModel.pairFunctor' depends on axioms: [propext, Classical.choice, Quot.sound]

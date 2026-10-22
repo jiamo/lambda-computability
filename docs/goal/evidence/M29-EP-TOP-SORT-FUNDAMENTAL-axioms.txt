@@ -3,3 +3,7 @@
 'PureTypeSystem.TopSkel.appV_ssubst_fails' depends on axioms: [propext]
 'PureTypeSystem.TopSkel.clV_ssubst' depends on axioms: [propext, Quot.sound]
 'PureTypeSystem.TopSkel.clV_ssubst_fails' depends on axioms: [propext]
+# series V, round 3, run 1: #print axioms (lake env lean on a scratch file importing Start.TLCA4StatmanProof, Start.TLCA4TUnfold, Start.PTSExpansionTopClassifyV and Start.GrpdPairComp, with #print axioms appended)
+'PureTypeSystem.TopSkel.classifyV' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.TopSkel.clV_beta' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.TopSkel.clV_reduces' depends on axioms: [propext, Quot.sound]

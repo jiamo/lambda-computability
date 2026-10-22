@@ -195,3 +195,71 @@ The x-spine depth of `p x` is the largest `d` with `hnf(p x) = x Q₁`, `hnf(Q�
 
 Not reached: B1 did not close, so M20-TLCA4-POLYNOMIAL stays DONE_WEAK and
 M20-TLCA4-STATMAN-STEP-ONE stays open (IN_PROGRESS).
+
+## Series V, round 3, run 1
+
+Source read first: R. Statman, "To Type a Mockingbird" (2011), Lemma 0.1 and Corollary 0.1 (the
+valid first step).  All results below are Lean-checked, standard axioms only (see the axioms
+files of M20-TLCA4-STATMAN-STEP-ONE, M20-TLCA4-POLYNOMIAL, M20-TLCA4-T-NOT-FIXPOINT).
+
+### A1: Corollary 0.1 (`Start/TLCA4StatmanStep.lean`)
+
+* `WNF t := li t = none` (no weak redex; the library's leftmost-innermost strategy is stuck) and
+  `WN t := ∃ N, ReflTransGen WStep t N ∧ WNF N`.
+* `isBMI_wnf_polyGen`: a weakly normal closed `B`,`M`,`I`-term is `B`, `M`, `I`, `B U` or `B U V`
+  with `U`, `V` weakly normal, hence in `PolyGen`; `wnf_betaEta_poly` (Corollary 0.1) and
+  `wn_betaEta_poly` (for weakly normalizable terms) via `polyGen_betaEta_poly`.
+
+### A3: the fixed-point bridge (`Start/TLCA4FixBridge.lean`)
+
+* `hd` (free head variable of a λ-term), `HnfHead x t` (some head normal form of `t` has free head
+  `x`).
+* `hnf_betaEtaStep`: a βη-step keeps a head normal form a head normal form with the same free head
+  (the root η-step `λz. P z → P` included: `hd_lift`, `Neutral.of_lift`).
+* `hasHnf_of_betaEtaConv` (through `D∞`: `ddenot_convBE`, `exists_ddenot_ne_botDinf_of_hasHnf`,
+  `hasHnf_of_ddenot_ne_botDinf`), then Church–Rosser: `hnfHead_of_betaEtaConv`, and
+  `fixHeadBridge : FixHeadBridge`.  η-postponement was not needed.
+
+### A2: Lemma 0.1 (`Start/TLCA4StatmanLemma.lean`, `Start/TLCA4StatmanInduction.lean`,
+`Start/TLCA4StatmanProof.lean`)
+
+* Form proved (`statmanLemmaGen : StatmanLemmaGen`): for a closed BMI-term `X` and variables
+  `x, y₁, …, y_m`, if `toLam (X x y₁ … y_m)` reduces to a head normal form whose free head is among
+  `x, y⃗`, then the head is `x` and `WN X`.  λs in the head normal form are allowed.
+* Induction (`good_all`) on `n` with `HNIn n (toLam (X x y⃗))`, in the equivalent form "every head
+  normal form with a free head has head `x`" (`Good n X`), over the spine `X = c z₁ … z_j`:
+  - weak head redex (`I U …`, `M U …`, `B U V W …`): 1 or 3 head steps (`good_of_wstep`,
+    `hnIn_hsteps`), IH on the contractum, `wn_of_wstep`;
+  - `B`, `M`, `I`: `statmanGen_B/M/I` (head normal forms computed, `hd_unique`);
+  - `B U` (`k = 1`: two head steps to `λz. U (x z)`, then under the λ; `k ≥ 2`: three head steps
+    to `U (x y) …`) and `B U V` (three head steps to `U (V x) y⃗`): Statman's simulation by `U y …`
+    with `y` fresh, realized as de Bruijn index 0 of a lifted term,
+    `subst Q 0 (… lift 1 0 t … var 0 …)`, so no free-variable bookkeeping;
+    `hnIn_split_subst` is `hasHeadEval_of_subst` refined to keep the step count and to split the
+    run at the head normal form of the simulating term; `hnf_subst_ne`, `hnf_subst_head` transport
+    head normal forms and heads through the substitution;
+  - when `V x` reaches the head under the abstractions (`good_vpart`), `V x P₁ … P_m` is simulated
+    by `V x' y₁ … y_m`, one argument at a time from the right (`good_peel`).
+* `statmanLemmaOne` (one argument), and `statmanStepOne : StatmanStepOne`
+  (`statmanStepOne_of_lemmaOne`: Lemma 0.1 + bridge + Corollary 0.1).
+
+### A4
+
+* `theorem statmanStepOne : TLCA4.StatmanStepOne` and
+  `theorem problemFiveOne_iff_polyFiveOne : TLCA4.ProblemFiveOne ↔ TLCA4.PolyFiveOne`
+  (`Start/TLCA4StatmanProof.lean`).  M20-TLCA4-STATMAN-STEP-ONE: exit criterion met (DONE_STRONG).
+  M20-TLCA4-POLYNOMIAL: the reduction is unconditional, exit criteria met (DONE_STRONG).
+
+### A5: the polynomial side (`Start/TLCA4TUnfold.lean`)
+
+* Proved: `tT = B M (B (B M) B)` (`tT_eq_poly`), with `A₀ = B M (B x)`, `Aₙ₊₁ = B x Aₙ`:
+  `T_unfold : T x →w M A₀`, `MtA_step : M Aₙ →w xⁿ (M Aₙ₊₁)` (`iterX`), `tA_app`.  (Imamura's
+  indexing of `A` is shifted by one.)
+* Stated only: `TNotFixedPoint` (`¬ toLam (T x) =βη toLam (x (T x))`), new row
+  M20-TLCA4-T-NOT-FIXPOINT at the head of the M20-TLCA4 queue.
+* Not done: the structural fact "a polynomial βη fixed-point combinator has first monomial `M`" is
+  not formalized (the head normal form of `B R`-headed `p x` is an abstraction, but η can remove
+  abstractions, so the shape argument needs an η-aware head comparison); no candidate invariant for
+  `T` was formalized or tested.  Stop rule: no invariant property was tested in this run, so none is
+  reported as failing; first missing lemma `T_not_fixedPoint`.
+* Searches: none in this run.

@@ -242,7 +242,8 @@ def PolyFiveOne : Prop :=
     (toLam (app (var 0) (app (polyTm m ps) (var 0))))
 
 /-- Statman's (valid) first step, in the form the reduction needs: every closed `B`,`M`,`I`-term
-`Y` with `Y x =βη x (Y x)` is βη-equivalent to a polynomial.  Stated only; **not** proved here. -/
+`Y` with `Y x =βη x (Y x)` is βη-equivalent to a polynomial.  Proved as `statmanStepOne` in
+`Start/TLCA4StatmanProof.lean`. -/
 def StatmanStepOne : Prop :=
   ∀ Y : Tm, IsBMI Y → Lambda.betaEtaConv (toLam (app Y (var 0)))
       (toLam (app (var 0) (app Y (var 0)))) →

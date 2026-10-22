@@ -4,3 +4,9 @@
 'TLCA4.comp_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
 'TLCA4.B_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
 'TLCA4.polyGen_betaEta_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+# series V, round 3, run 1: #print axioms (lake env lean on a scratch file importing Start.TLCA4StatmanProof, Start.TLCA4TUnfold, Start.PTSExpansionTopClassifyV and Start.GrpdPairComp, with #print axioms appended)
+'TLCA4.statmanStepOne' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.statmanLemmaGen' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.statmanLemmaOne' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.fixHeadBridge' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.wnf_betaEta_poly' depends on axioms: [propext, Classical.choice, Quot.sound]

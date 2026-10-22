@@ -281,3 +281,19 @@ Proved:
 computation combining `sigMap_key`, `ghom_factor` and `B.map_comp`).  Then the unpairing functor,
 the morphism round trips (the isomorphism `GObj B ≅ GObj (SigF A B)`), `pair_disp`, `Sig_sub` and
 `grpdSigmaStruct`.
+
+## Series V, round 3, run 1 (row M23-GROUPOID-SIGMA, part C2)
+
+`Start/GrpdPairComp.lean` (from `wip/GrpdPairComp.lean`): `GrpdModel.pairHom_comp`
+(`pairHom A B (f ≫ g) = pairHom A B f ≫ pairHom A B g`) and the pairing functor
+`GrpdModel.pairFunctor : GObj B ⥤ GObj (SigF A B)`.  The fibre component closes after stripping
+the outer `eqToHom`s with `eqToHom_comp_heq` (before rewriting the `eqToHom` fibre, which then
+rewrites without timing out: `rw [eqToHom_fib_eq', eqToHom_map, eqToHom_trans_assoc]`), and
+`heq_comp` along `B.map g.base = B.map (sigTheta … ≫ fibI … .map g.base.fib)` (`ghom_factor`,
+`Functor.congr_obj`, `Functor.hcongr_hom`).  First missing lemma: the unpairing functor
+(`unpairHom` with its identity and composition laws), then the morphism round trips (the
+isomorphism `GObj B ≅ GObj (SigF A B)`), `pair_disp`, `Sig_sub`, `grpdSigmaStruct`.
+
+Unfinished Lean in `wip/GrpdUnpair.lean` (not imported): `unpairBase`, `unpairHom_obj_eq`,
+`unpairHom` typecheck; `unpairHom_id` closes given `unpairBase_id`.  First missing lemma:
+`GrpdModel.unpairBase_id`, remaining goal `(eqToHom ⋯).base ≍ eqToHom ⋯`; then `unpairHom_comp`.

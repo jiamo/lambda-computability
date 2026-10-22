@@ -153,3 +153,11 @@ TypeLevel Γ N`.  It is false for the β-conversion typing `Typing` (at `TEq.app
 weakening, substitution, context conversion, type validity and Church–Rosser for βη.  With it,
 `skel_teq` follows by induction on `TEq` (`skel_step` at β, `skel_eta` at η), then
 `LR.fundamental` for `TEq`, typed soundness, termination and decidability (none proved).
+
+## Series V, round 3, run 1
+
+C1 (M23-LF-EQUIV-COMPLETE): assessed, not attempted in Lean.  `TEq.typeLevel` needs a typing
+judgement closed under βη-conversion (with weakening, substitution, context conversion, type
+validity and βη Church–Rosser for λΠ), which the library does not have; C's share went to C2
+(M23-GROUPOID-SIGMA, `GrpdModel.pairHom_comp` proved).  First missing lemma unchanged:
+`TEq.typeLevel`.

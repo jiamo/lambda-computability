@@ -450,6 +450,10 @@ import Start.PTSExpansionTopKindFree
 import Start.TLCA4Polynomial
 import Start.TLCA4PolyClosure
 import Start.PTSExpansionTopSkel
+import Start.TLCA4StatmanProof
+import Start.PTSExpansionTopClassifyV
+import Start.TLCA4TUnfold
+import Start.GrpdPairComp
 
 /-! ## Interfaces of the untyped calculus
 
@@ -5417,7 +5421,7 @@ reduction to coc, hence of every top-morphism specification; expansion postponem
 
 `Start/TLCA4Polynomial.lean`: monomials `Bⁿ X` and polynomials `m₁ ∘ … ∘ m_k`, their λ-action,
 extensional laws of the polynomial algebra, and the reduction of Problem 5.1 to polynomials
-conditional on Statman's first step (`StatmanStepOne`, stated, not proved).
+conditional on Statman's first step (`StatmanStepOne`; proved in series V round 3 run 1, below).
 -/
 
 #check @TLCA4.polyTm
@@ -5455,3 +5459,42 @@ on the fragment `Y ::= B | M | I | B Y | B Y Z | I Y` (`polyGen_betaEta_poly`).
 #check @TLCA4.B_poly
 #check @TLCA4.PolyGen
 #check @TLCA4.polyGen_betaEta_poly
+
+/-! ## Series V, round 3, run 1: Statman's first step; `classifyV` for `cocTop`
+
+`Start/TLCA4StatmanStep.lean`, `Start/TLCA4FixBridge.lean`, `Start/TLCA4StatmanLemma.lean`,
+`Start/TLCA4StatmanInduction.lean`, `Start/TLCA4StatmanProof.lean` (M20-TLCA4-STATMAN-STEP-ONE,
+M20-TLCA4-POLYNOMIAL): Statman's Corollary 0.1 (a weakly normal closed `B`,`M`,`I`-term is
+βη-equal to a polynomial), the fixed-point bridge (a βη fixed-point combinator has a head normal
+form with head `x`), Statman's Lemma 0.1 by induction on the number of head steps, Statman's first
+step, and the unconditional reduction of Problem 5.1 to polynomials.
+`Start/PTSExpansionTopClassify.lean`, `Start/PTSExpansionTopClassifyV.lean`
+(M29-EP-TOP-SORT-FUNDAMENTAL): the classifier with skeleton variables under renaming and
+substitution, `eq_box_of_conv`, and the classification `classifyV` of `cocTop` judgements.
+`Start/TLCA4TUnfold.lean` (M20-TLCA4-T-NOT-FIXPOINT): the weak unfolding of Imamura's `T`.
+`Start/GrpdPairComp.lean` (M23-GROUPOID-SIGMA): the composition law of the pairing and the pairing
+functor `∫ B ⥤ ∫ (SigF A B)`.
+-/
+
+#check @TLCA4.wnf_betaEta_poly
+#check @TLCA4.fixHeadBridge
+#check @TLCA4.hnfHead_of_betaEtaConv
+#check @TLCA4.hnIn_split_subst
+#check @TLCA4.statmanLemmaGen
+#check @TLCA4.statmanLemmaOne
+#check @TLCA4.statmanStepOne
+#check @TLCA4.problemFiveOne_iff_polyFiveOne
+#check @PureTypeSystem.TopSkel.clV_instantiate
+#check @PureTypeSystem.TopSkel.WCV_instantiate
+#check @PureTypeSystem.TopSkel.eq_box_of_conv
+#check @PureTypeSystem.TopSkel.kindV_cl
+#check @PureTypeSystem.TopSkel.notKindV
+#check @PureTypeSystem.TopSkel.kindV_conv
+#check @PureTypeSystem.TopSkel.classifyFull
+#check @PureTypeSystem.TopSkel.classifyV
+#check @PureTypeSystem.TopSkel.clV_beta
+#check @TLCA4.T_unfold
+#check @TLCA4.MtA_step
+#check @TLCA4.TNotFixedPoint
+#check @GrpdModel.pairHom_comp
+#check @GrpdModel.pairFunctor

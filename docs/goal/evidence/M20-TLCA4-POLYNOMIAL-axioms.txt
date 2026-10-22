@@ -4,3 +4,6 @@
 'TLCA4.comm_bpowB' depends on axioms: [propext, Quot.sound]
 'TLCA4.problemFiveOne_of_poly' does not depend on any axioms
 'TLCA4.problemFiveOne_iff_poly' does not depend on any axioms
+# series V, round 3, run 1: #print axioms (lake env lean on a scratch file importing Start.TLCA4StatmanProof, Start.TLCA4TUnfold, Start.PTSExpansionTopClassifyV and Start.GrpdPairComp, with #print axioms appended)
+'TLCA4.statmanStepOne' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.problemFiveOne_iff_polyFiveOne' depends on axioms: [propext, Classical.choice, Quot.sound]

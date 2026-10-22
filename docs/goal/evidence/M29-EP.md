@@ -1922,3 +1922,36 @@ i.e. read in λ*) as an S-expression (`wip/hurkens.sexp`, size 2905).  The check
 bound artifact: for `e = λz:(x ∗). x`, the target `Π (H ∗). (Π A:∗. A)` is a one-step reduct of
 `E[H/x]` and an R-type of `e[H/x]` (both checked by `wip/c3_check_fail.py`), but the bounded reduct search follows the
 non-terminating reduction of `H` first.  No counterexample candidate.
+
+## Series V, round 3, run 1
+
+### B1: `classifyV` (`Start/PTSExpansionTopClassify.lean`, `Start/PTSExpansionTopClassifyV.lean`)
+
+* Structural: `clV_rename`, `WCV_rename`, `clV_subst`, `clV_instantiate`, `WCV_subst`,
+  `WCV_instantiate`, `ctxClV_comp_succ`, `ctxClV_cons_of_ne` (at a declaration `A ≠ □` the context
+  classifier is the `ncons`-extension), `ctxClV_cons_box`.
+* `cocTop` facts: `top_untypable`, `not_conv_top`, `not_beta_box`, `eq_box_of_conv` (a typable
+  expression convertible to `□` is `□`; by head induction on the reduction to `□`: a typable redex
+  never contracts to `□`, since `λx:A. □` and `(λx:A. x) □` would need a type convertible to `Δ`).
+* `cocTop_functional`, `sort_unique_conv` (via `HasType.type_unique_of_functional`).
+* `kindV_cl` (kinds are kinds; a kind variable has class `kind (svar ℓ)`), `notKindV` (an expression
+  with a type of sort `∗` or `□` is not a kind; a variable of class `kind` has declared type `□`),
+  `kindV_beta`, `kindV_reduces`, `kindV_conv` (a kind variable is convertible only to itself),
+  `classifyFull` (`clV M = bindV (clV T)` for `T ∉ {□, Δ}`), `wcv_of_hasType`, and
+  `theorem TopSkel.classifyV {Γ : List (Expr Srt3)} {M T : Expr Srt3} (h : HasType cocTop Γ M T) :
+  WCV (ctxClV Γ) M ∧ ∀ k, clV (ctxClV Γ) M = .constr k → clV (ctxClV Γ) T = .kind k`.
+* `clV_beta`, `clV_reduces` (the analogue of `CoC.cl_beta`).
+
+### B2: not reached in Lean
+
+The interpretation of kinds and constructors over `VV θ` (the analogue of `CoC.interp` with
+`interp (svar i) := θ i`-valued candidates), its invariance under β (`interp_beta`), `SemC` relative
+to `θ`, and the cases of `MorphFund` were not started.  First missing lemma:
+`TopSkel.interpV_beta` (the analogue of `CoC.interp_beta` for the interpretation relative to a
+closed skeleton valuation `θ`).  The stop rule ("first case of the generalized fundamental lemma
+that fails") is not reached: the generalized fundamental lemma is not yet stated, since it is
+phrased in terms of `interpV`.  `sortFundamental_of_topMorphism`,
+`expansionPostponement_of_topMorphism`, `cocTop_expansionPostponement` are not proved; no new
+instance.
+
+### B3: not reached (B2 did not close).
