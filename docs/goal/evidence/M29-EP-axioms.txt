@@ -89,3 +89,5 @@
 'Complexity.parity_log_size_lower_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'Complexity.parity_size_lower_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'Complexity.parity_not_AC0' depends on axioms: [propext, Classical.choice, Quot.sound]
+# series V, round 1: #print axioms (lake env lean on a scratch file importing the new modules, with #print axioms appended)
+'PureTypeSystem.BeyondPoll.Wdep_typeA_domain' depends on axioms: [propext, Quot.sound]

@@ -4708,6 +4708,28 @@ tasks:
 
   # --- M20: open problems ---------------------------------------------------------------
 
+  - id: M20-TLCA4-BM-FIXPOINT
+    priority: P1
+    status: DONE_STRONG
+    track: theory/lambda
+    title: "TLCA open problem 4 for weak equivalence: no applicative combination of B and omega is a fixed-point combinator"
+    terminal_statement: "TLCA4.Tm.not_weq_iterate (Y : Tm) (x : ℕ) (hY : occ x Y = 0) (r : ℕ) (hr : 1 ≤ r) : ¬ WEq (.app Y (.var x)) (iterX x r (.app Y (.var x))); TLCA4.Tm.no_fixedPoint (Y : Tm) (x : ℕ) (hY : occ x Y = 0) : ¬ WEq (.app Y (.var x)) (.app (.var x) (.app Y (.var x))); TLCA4.Tm.no_BMI_fixedPointCombinator (Y : Tm) (hY : IsBMI Y) : ¬ IsFixedPointCombinator Y; TLCA4.Tm.no_BM_fixedPointCombinator (Y : Tm) (hY : IsBM Y) : ¬ IsFixedPointCombinator Y (Start/TLCA4BMFixpoint.lean). Follows the trace argument of Imamura (arXiv:2609.21765 v3); the doubted Lemma 3.3 is TLCA4.Tm.inv_step / q_strictMono."
+    latest_evidence: "docs/goal/evidence/M20-TLCA4-BM-FIXPOINT.md"
+    open_boundary: ""
+    milestone: M20
+    depends_on: []
+    rank: 1490
+    exit_criteria:
+      - "The terms over B, M, I and variables, weak reduction and weak equivalence =w are defined in Lean."
+      - "not_weq_iterate: for Y without x and r >= 1, Y x is not weakly equivalent to x^r (Y x)."
+      - "No BM- or BMI-term is a fixed-point combinator under =w."
+      - "Only the standard axioms."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
   - id: M20-RANGE-PROPERTY
     priority: P2
     status: TODO_NEEDS_DESIGN
@@ -7959,7 +7981,7 @@ tasks:
     title: "Expansion postponement: the reduction-only judgement, and Poll's theorem for normalizing PTSs"
     terminal_statement: "PureTypeSystem.HasTypeR, ExpansionPostponement, HasTypeR.toHasType, expansionPostponement_iff_sortedSubjectReductionR (Start/PTSExpansion.lean); ProductNormalizationR and expansionPostponement_iff_productNormalizationR (hw : SystemWeaklyNormalizing P) : ExpansionPostponement P <-> ProductNormalizationR P (Start/PTSExpansionPoll.lean). Poll's theorem is not proved."
     latest_evidence: "docs/goal/evidence/M29-EP.md"
-    open_boundary: "Exit criterion 1 is met. Exit criterion 2 is not. Stage A outcome (this delivery): no route closed. Route (a) (relaxed nf-abstraction) makes the substitution lemma and |- in |-nf immediate, but the abstraction case of the bridge |-nf in |-r is exactly ProductNormalizationR; route (b) (Stage B induction with B' = nf(B)) fails for lack of a measure once rules are dependent; no route (c). Proved: for weakly normalizing P, ExpansionPostponement P <-> ProductNormalizationR P. First missing lemma: theorem productNormalizationR_of_wn {S : Type u} {P : Specification S} (hw : SystemWeaklyNormalizing P) : ProductNormalizationR P. Verdict: the gap in Poll's Lemma 10 (abstraction case: the premise Pi A[s] nf(B[s']) : s is needed, only Pi A[s] B[s'] : s is available, and closing it is Theorem 11) is genuine as far as his argument goes, and was not repaired. Round 11: for the eight corners of the cube the conclusion of criterion 2 holds (PureTypeSystem.cube_expansionPostponement_all : ∀ f : CubeFeatures, ExpansionPostponement (cubeSpec f), without Poll's argument; coc by route (ii), Start/PTSExpansionCoC.lean). Criterion 2 itself (every normalizing Specification) remains open; first missing lemma unchanged: theorem expansionPostponement_of_wn {S : Type u} (P : Specification S) (hw : SystemWeaklyNormalizing P) : ExpansionPostponement P."
+    open_boundary: "Exit criterion 1 is met. Exit criterion 2 is not. Stage A outcome (this delivery): no route closed. Route (a) (relaxed nf-abstraction) makes the substitution lemma and |- in |-nf immediate, but the abstraction case of the bridge |-nf in |-r is exactly ProductNormalizationR; route (b) (Stage B induction with B' = nf(B)) fails for lack of a measure once rules are dependent; no route (c). Proved: for weakly normalizing P, ExpansionPostponement P <-> ProductNormalizationR P. First missing lemma: theorem productNormalizationR_of_wn {S : Type u} {P : Specification S} (hw : SystemWeaklyNormalizing P) : ProductNormalizationR P. Verdict: the gap in Poll's Lemma 10 (abstraction case: the premise Pi A[s] nf(B[s']) : s is needed, only Pi A[s] B[s'] : s is available, and closing it is Theorem 11) is genuine as far as his argument goes, and was not repaired. Round 11: for the eight corners of the cube the conclusion of criterion 2 holds (PureTypeSystem.cube_expansionPostponement_all : ∀ f : CubeFeatures, ExpansionPostponement (cubeSpec f), without Poll's argument; coc by route (ii), Start/PTSExpansionCoC.lean). Criterion 2 itself (every normalizing Specification) remains open; first missing lemma unchanged: theorem expansionPostponement_of_wn {S : Type u} (P : Specification S) (hw : SystemWeaklyNormalizing P) : ExpansionPostponement P. Series V round 1: route (iii) and the product-normalization step are now generic (SNGeneric.expansionPostponement_of_sortFundamental), so for strongly normalizing P criterion 2 reduces exactly to SNGeneric.SortFundamental P; for P with a morphism into coc, to sortFundamental_of_cocMorphism (M29-EP-COC-MORPHISM-FUNDAMENTAL); the weakly-but-not-strongly normalizing case (expansionPostponement_of_wn) is unchanged."
     milestone: M29
     depends_on:
       - M23-PTS
@@ -8021,7 +8043,7 @@ tasks:
     track: research/open-problems
     title: "Expansion postponement for every PTS (TLCA problem 23)"
     latest_evidence: "docs/goal/evidence/M29-EP.md"
-    open_boundary: "Open problem since Pollack (1992); TLCA open problem 23. Equivalent form proved: expansionPostponement_iff_sortedSubjectReductionR. Closed for stratified specifications (expansionPostponement_of_stratification, M29-EP-CLASS), so an open case has dependent rules, unbounded levels or no stratification. Stage C (this delivery) stopped under the stop rule: no measure and no counterexample route found for Wdep := W + (o,t,t) (Wdep_not_stratified, Wdep_not_wn) or for lambda-star. First missing lemma: theorem Wdep_expansionPostponement : ExpansionPostponement BeyondPoll.Wdep; in general: theorem sortedSubjectReductionR_all {S : Type u} (P : Specification S) : SortedSubjectReductionR P. Later delivery: unbounded levels closed (M29-EP-LOCAL, expansionPostponement_of_levels); dependent cube corners reduced to ProductNormalizationR (M29-EP-CUBE, stopped under the stop rule); the Wdep lead was not reached. Round 11 (M29-EP.md, 'Round 11, Stage C experiment'): a literal HasTypeR checker enumerated Wdep judgements up to 22 rule nodes (term size 13, contexts of length 4; 41812 judgements, 1847 judgement/reduct pairs) and searched each reduct up to 28 nodes (size 15), and Wdep plus (o,t',t') up to 16 nodes: no failure of SortedSubjectReductionR. No counterexample candidate; no invariant extracted. First missing lemma: theorem Wdep_expansionPostponement : ExpansionPostponement Wdep (equivalently SortedSubjectReductionR Wdep); in general sortedSubjectReductionR_all."
+    open_boundary: "Open problem since Pollack (1992); TLCA open problem 23. Equivalent form proved: expansionPostponement_iff_sortedSubjectReductionR. Closed for stratified specifications (expansionPostponement_of_stratification, M29-EP-CLASS), so an open case has dependent rules, unbounded levels or no stratification. Stage C (this delivery) stopped under the stop rule: no measure and no counterexample route found for Wdep := W + (o,t,t) (Wdep_not_stratified, Wdep_not_wn) or for lambda-star. First missing lemma: theorem Wdep_expansionPostponement : ExpansionPostponement BeyondPoll.Wdep; in general: theorem sortedSubjectReductionR_all {S : Type u} (P : Specification S) : SortedSubjectReductionR P. Later delivery: unbounded levels closed (M29-EP-LOCAL, expansionPostponement_of_levels); dependent cube corners reduced to ProductNormalizationR (M29-EP-CUBE, stopped under the stop rule); the Wdep lead was not reached. Round 11 (M29-EP.md, 'Round 11, Stage C experiment'): a literal HasTypeR checker enumerated Wdep judgements up to 22 rule nodes (term size 13, contexts of length 4; 41812 judgements, 1847 judgement/reduct pairs) and searched each reduct up to 28 nodes (size 15), and Wdep plus (o,t',t') up to 16 nodes: no failure of SortedSubjectReductionR. No counterexample candidate; no invariant extracted. First missing lemma: theorem Wdep_expansionPostponement : ExpansionPostponement Wdep (equivalently SortedSubjectReductionR Wdep); in general sortedSubjectReductionR_all. Series V round 1 (B1): the two calls of core_aux that break for Wdep are the (o,t,t) product domain and the object argument; neither the object-erasure measure nor an inner induction on the object layer gives an order (o-types are U- proofs whose abstraction types again contain (o,t,t) domains; BeyondPoll.Wdep_typeA_domain: a non-normalizing o-type is a legal (o,t,t) domain). First missing lemma unchanged: Wdep_expansionPostponement."
     milestone: M29
     depends_on:
       - M29-EP-STATEMENT
@@ -8195,6 +8217,49 @@ tasks:
     rank: 2752
     exit_criteria:
       - "ExpansionPostponement (cubeSpec coc), as defined in the repository, with no extra hypothesis."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M29-EP-COC-MORPHISM-FUNDAMENTAL
+    priority: P1
+    status: TODO_READY
+    track: research/open-problems
+    title: "Route (ii) fundamental lemma for every specification with a morphism into coc"
+    latest_evidence: "docs/goal/evidence/M29-EP.md"
+    open_boundary: "First missing lemma: theorem sortFundamental_of_cocMorphism {S : Type} {P : Specification S} (m : CoCMorphism P) : SNGeneric.SortFundamental P. The first round-11 definition that does not generalize verbatim is RouteIICoC.SemC (it tests T = .sort .box and interprets T with coc's classification); for P it must test T.mapSort m.φ = .sort .box and interpret the image, with candidates over P-judgements. See M29-EP.md, Series V, round 1, Part C."
+    milestone: M29
+    depends_on:
+      - M29-EP-COC
+    rank: 2760
+    exit_criteria:
+      - "sortFundamental_of_cocMorphism (m : CoCMorphism P) : SNGeneric.SortFundamental P, with no other hypothesis."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M29-EP-COC-MORPHISM
+    priority: P1
+    status: DONE_WEAK
+    track: research/open-problems
+    title: "Expansion postponement for every PTS with a morphism into coc"
+    terminal_statement: "PureTypeSystem.CoCMorphism (structure); CoCMorphism.hasType; CoCMorphism.stronglyNormalizing : SystemStronglyNormalizing P; CoCMorphism.expansionPostponement_iff_productNormalizationR; CoCMorphism.expansionPostponement_of_sortFundamental (m : CoCMorphism P) (h : SNGeneric.SortFundamental P) : ExpansionPostponement P; SNGeneric.expansionPostponement_of_sortFundamental (hsn : SystemStronglyNormalizing P) (h : SortFundamental P) : ExpansionPostponement P; CoCMorphism.cube; cube_in_cocMorphism_class; cocBox2_cocMorphism; cocBox2_not_functional; cocBox2_not_stratified; cocBox2_in_class; cocBox2_expansionPostponement_iff (Start/PTSExpansionCoCMorphism.lean, Start/PTSExpansionSNGeneric.lean)."
+    latest_evidence: "docs/goal/evidence/M29-EP.md"
+    open_boundary: "Criteria 1, 3, 4 are met (CoCMorphism defined; the eight corners are instances; cocBox2 is a non-functional, non-stratified specification outside the cube in the class). Criterion 2 is not: expansionPostponement_of_cocMorphism is proved only from SNGeneric.SortFundamental P (route (iii) and the product-normalization step are generic). Gap opened as M29-EP-COC-MORPHISM-FUNDAMENTAL: theorem sortFundamental_of_cocMorphism (m : CoCMorphism P) : SNGeneric.SortFundamental P."
+    milestone: M29
+    depends_on:
+      - M29-EP-COC
+      - M29-EP-COC-MORPHISM-FUNDAMENTAL
+    rank: 2761
+    exit_criteria:
+      - "CoCMorphism is defined."
+      - "expansionPostponement_of_cocMorphism (φ : CoCMorphism P) : ExpansionPostponement P holds with no other hypothesis."
+      - "The cube corners are instances."
+      - "A non-functional specification outside the cube is in the class."
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"

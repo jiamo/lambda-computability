@@ -437,6 +437,11 @@ import Start.PTSRouteIICoC
 import Start.PTSRouteIICoCFundamental
 import Start.PTSExpansionCoC
 import Start.FsubComputable
+import Start.TLCA4BMFixpoint
+import Start.PTSExpansionSNGeneric
+import Start.PTSExpansionCoCMorphism
+import Start.PTSRouteIIMorphismCand
+import Start.PTSExpansionWdepChain
 
 /-! ## Interfaces of the untyped calculus
 
@@ -5272,3 +5277,59 @@ under conversion), `Start/PTSRouteIICoC.lean` (coc candidates), `Start/PTSRouteI
 #check @FsubCode.enc_M_u_computable
 #check @FsubCode.sub_not_computable_of_enc_computable
 #check @FsubCode.sub_not_computable
+
+/-! ## TLCA problem 4: no fixed-point combinator from `B` and `M` (M20-TLCA4-BM-FIXPOINT, series V round 1)
+
+`Start/TLCA4BMFixpoint.lean`: the trace invariant `Agree` contains weak equivalence; the
+duplicated-argument sizes along the leftmost-innermost sequence of `P x` strictly increase.
+-/
+
+#check @TLCA4.Tm.agree_of_weq
+#check @TLCA4.Tm.exists_ann_of_not_term
+#check @TLCA4.Tm.inv_step
+#check @TLCA4.Tm.q_strictMono
+#check @TLCA4.Tm.not_tailEq_shift
+#check @TLCA4.Tm.not_weq_iterate
+#check @TLCA4.Tm.no_fixedPoint
+#check @TLCA4.Tm.no_BMI_fixedPointCombinator
+#check @TLCA4.Tm.no_BM_fixedPointCombinator
+
+/-! ## Specifications with a morphism into coc (M29-EP-COC-MORPHISM, series V round 1)
+
+`Start/PTSExpansionSNGeneric.lean` (routes (iii) and the product-normalization step for every
+strongly normalizing specification), `Start/PTSExpansionCoCMorphism.lean` (`CoCMorphism`,
+transport, strong normalization, instances).
+-/
+
+#check @PureTypeSystem.SNGeneric.hsubst_route3_aux
+#check @PureTypeSystem.SNGeneric.hsubstNW_of_hsubstPi
+#check @PureTypeSystem.SNGeneric.productNormalizationR_of_hsubst
+#check @PureTypeSystem.SNGeneric.expansionPostponement_of_sortFundamental
+#check @PureTypeSystem.SNGeneric.coc_expansionPostponement'
+#check @PureTypeSystem.SNGeneric.NeNW.app
+#check @PureTypeSystem.SNGeneric.NormNW.weaken
+#check @PureTypeSystem.SNGeneric.NormNW.abstraction
+#check @PureTypeSystem.SNGeneric.NormNW.product
+#check @PureTypeSystem.SNGeneric.isCandC_piO
+#check @PureTypeSystem.SNGeneric.isCandC_piK
+#check @PureTypeSystem.SNGeneric.interpC_cand
+#check @PureTypeSystem.CoCMorphism
+#check @PureTypeSystem.CoCMorphism.hasType
+#check @PureTypeSystem.CoCMorphism.stronglyNormalizing
+#check @PureTypeSystem.CoCMorphism.expansionPostponement_iff_productNormalizationR
+#check @PureTypeSystem.CoCMorphism.expansionPostponement_of_sortFundamental
+#check @PureTypeSystem.CoCMorphism.cube
+#check @PureTypeSystem.cube_in_cocMorphism_class
+#check @PureTypeSystem.cocBox2_cocMorphism
+#check @PureTypeSystem.cocBox2_not_functional
+#check @PureTypeSystem.cocBox2_not_stratified
+#check @PureTypeSystem.cocBox2_in_class
+#check @PureTypeSystem.cocBox2_expansionPostponement_iff
+
+/-! ## TLCA problem 23, the case `Wdep` (M29-EP, series V round 1)
+
+`Start/PTSExpansionWdepChain.lean`: a non-normalizing `o`-type is the domain of a dependent
+product of `Wdep`.
+-/
+
+#check @PureTypeSystem.BeyondPoll.Wdep_typeA_domain

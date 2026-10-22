@@ -1500,3 +1500,143 @@ theorem Wdep_expansionPostponement : ExpansionPostponement Wdep
 ```
 (equivalently `SortedSubjectReductionR Wdep`); in general, unchanged,
 `theorem sortedSubjectReductionR_all {S : Type u} (P : Specification S) : SortedSubjectReductionR P`.
+
+## Series V, round 1
+
+### Part B (B1): the chain of calls for `Wdep`, in Lean terms
+
+Lean-checked in this round: `BeyondPoll.Wdep_typeA_domain` (`Start/PTSExpansionWdepChain.lean`):
+`⊢ Π x : typeA. o : t` in `Wdep` (through `(o, t, t)`), and `typeA` has no normal form.
+Everything else in this subsection is analysis on paper; nothing of it is claimed as proved.
+
+**Where `core_aux` uses the stratification.**  Take the levels of `W_stratified`
+(`o ↦ 0`, `t, t' ↦ 1`, `k ↦ 2`, `u ↦ 3`).  `Wdep` satisfies `axiom_level` and every `rule_level`
+except `level s₂ ≤ level s₁` for `(o, t, t)`.  In `Stratification.core_aux` (measure
+`(bound + 2 − k, M)`, `k` the `TypeLevel`) the inequality `level s₂ ≤ level s₁` is used in exactly
+two calls:
+* `pi` case, `ihA` on the domain: the product `Π A B : s₃` is at `k = level s₃ + 1`, its domain at
+  `level s₁ + 1`; the structural call needs `level s₁ ≥ level s₃ = level s₂`.  For `(o, t, t)`:
+  from `k = 2` down to `k = 1`.
+* `app` case, `iha` on the argument: `f a` with `f : Π D E : r₃` is at `k = level r₂`, the argument
+  at `level r₁`.  For `(o, t, t)`: from `k = 1` down to `k = 0`.
+The `lam` case is unaffected (its domain call needs only `level s₁ + 1 ≥ level s₂`, true for
+`(o, t, t)`), and the only non-structural call (`ihn` on `Π A B'`, `B'` the reduct returned for the
+body) goes up one level, as in Stage B.  So the chain of an open induction is: a level-1 `λ`
+(a U⁻ proof) → `ihn` on its product type `Π A B'` at level 2, where `B'` is a reduct of the type
+of the body (not a subterm) → a `(o, t, t)` domain inside `B'` at level 1, or an object argument at
+level 0 → a `λ` inside that subject → `ihn` on its type → …
+
+**Candidate 1: Stage B's measure on an object-erasure.**  Let `|·|` drop `(o, t, t)` domains and
+object arguments (the λP → λ→ erasure).  Every call of `core_aux` except the two above maps to a
+call on the erasure that the Stage B measure accepts; the two exceptional calls go to subjects
+that `|·|` deletes.  So the erasure reduces the problem to the termination of the calls *on the
+deleted subjects* — `o`-types (level 1) and objects (level 0) — which is candidate 2.
+
+**Candidate 2: a separate inner induction for the object layer.**  It does not exist in the
+form proposed, because the deleted subjects do not form a lower layer:
+* an `o`-type is a level-1 term, i.e. an arbitrary U⁻ proof of `o`; its `λ`-subterms are level-1
+  abstractions whose product types are level-2 terms, which may again contain `(o, t, t)`
+  domains (the rule is available everywhere in the U⁻ part);
+* so the "object layer" contains, through the types of its abstractions, the whole level 1–2 part
+  of the system, and an inner induction on it is the original problem;
+* an inner measure bought from normalization (as for coc, measure (a) of round 5) is excluded:
+  `Wdep_typeA_domain` shows that a non-normalizing `o`-type is a legal `(o, t, t)` domain.
+
+**Decision.**  No well-founded order is found.  The structural fact that an order would need is
+the termination of the relation "`N` is a `(o, t, t)` domain or object argument occurring in a
+reduct of the type of a level-1 abstraction occurring in `M`" on `Wdep`-typable terms; neither
+candidate gives it, and its natural measures (size, level, SN of the type) all fail (the second
+by the chain above, the third by `Wdep_typeA_domain`).
+
+**B2/B3.**  B2 was not started (no order).  B3 was not started: the calls are not deterministic
+(`B'` is any reduct the induction returns), so a non-terminating chain of calls is not by itself
+a judgement without a reduction-only derivation; no invariant of `HasTypeR Wdep` derivations was
+found.  First missing lemma, unchanged:
+```lean
+theorem Wdep_expansionPostponement : ExpansionPostponement BeyondPoll.Wdep
+```
+No class version (B2's `expansionPostponement_of_<class>`) is stated: without an order there is
+no candidate hypothesis on the bottom layer that the proof would use.
+
+### Part C: specifications with a morphism into coc (row M29-EP-COC-MORPHISM)
+
+Modules: `Start/PTSExpansionSNGeneric.lean`, `Start/PTSExpansionCoCMorphism.lean`.  Axioms in
+`M29-EP-COC-MORPHISM-axioms.txt`.
+
+**C1 (proved).**
+```lean
+structure CoCMorphism {S : Type} (P : Specification S) where
+  φ : S → Srt
+  axiom_map : ∀ s t, P.axioms s t → (cubeSpec coc).axioms (φ s) (φ t)
+  rule_map : ∀ a b c, P.rule a b c → (cubeSpec coc).rule (φ a) (φ b) (φ c)
+```
+with `CoCMorphism.rule_eq` (`φ s₃ = φ s₂`), `CoCMorphism.hasType` (transport, by
+`HasType.mapSort`), `CoCMorphism.validContext`, and **`CoCMorphism.stronglyNormalizing :
+SystemStronglyNormalizing P`** (from `coc_stronglyNormalizing` and
+`StronglyNormalizing.of_mapSort`).  Hence `CoCMorphism.expansionPostponement_iff_productNormalizationR`.
+
+**C2 (half proved).**  The round-11 chain is
+`SortFundamental → HSubstSort → HSubstPi → HSubstNW → ProductNormalizationR → ExpansionPostponement`.
+`Start/PTSExpansionSNGeneric.lean` restates its definitions over an arbitrary sort type
+(`SNGeneric.NormNW`, `SortFundamental`, `HSubstSort`, `HSubstPi`, `HSubstNW`; definitionally the
+round-11 ones at `Srt`, `sortFundamental_iff`) and reproves every link after the first for an
+arbitrary specification with strong normalization as the only hypothesis
+(`hsubst_route3_aux`, `hsubstNW_of_hsubstPi`, `normalizeNW_of_hsubst`,
+`productNormalizationR_of_hsubst`, **`expansionPostponement_of_sortFundamental`**); the cube
+versions used `cube_stronglyNormalizing` and nothing else specific to the cube.  Sanity check:
+`SNGeneric.coc_expansionPostponement'` re-derives coc from `RouteIICoC.sortFundamental_coc`.
+Therefore
+```lean
+theorem CoCMorphism.expansionPostponement_of_sortFundamental (m : CoCMorphism P)
+    (h : SNGeneric.SortFundamental P) : ExpansionPostponement P
+```
+and the target `expansionPostponement_of_cocMorphism` is reduced to route (ii) for `P`.
+
+Route (ii) itself, first two layers, also generalized and proved (any sort type, SN hypothesis
+only where CR3 needs it):
+* base predicate (`Start/PTSExpansionSNGeneric.lean`): `SNGeneric.NormNW.reduceType`,
+  `NormNW.abstraction`, `NormNW.product`, `NormNW.expand`, `NormNW.convType`, `NormNW.weaken`,
+  `NeNW`, `NeNW.of_var`, `NeNW.app` (with `hsn` in place of `cube_stronglyNormalizing`),
+  `NeNW.weaken`, `NeNW.app_wk`;
+* candidates (`Start/PTSRouteIIMorphismCand.lean`): `SNGeneric.IsCandC P`, `piOC P`, `piKC P`,
+  `CandC P`, `candAlg P : KAlg (CandP S)` (the round-11 algebra over sets of `P`-judgements),
+  `isCandC_piO`, `isCandC_piK`, and `interpC_cand` (the interpretation of a well-classified coc
+  term under a good valuation of `P`-candidates is a `P`-candidate).
+What is not written is the third layer: `SemC`/`SubstOK`/`fundamental` of
+`PTSRouteIICoCFundamental.lean` and `SubstOK.ids`/`substOK_substAt` of `PTSExpansionCoC.lean`.
+
+**Stop rule (C2).**  First missing lemma:
+```lean
+theorem sortFundamental_of_cocMorphism {S : Type} {P : Specification S} (m : CoCMorphism P) :
+    SNGeneric.SortFundamental P
+```
+The first definition of round 11 that does not generalize verbatim is `RouteIICoC.SemC`:
+```lean
+def SemC (Γ) (ξ) (Δ) (T X Y : Expr Srt) : Prop :=
+  if T = .sort .box then NormNW PC Δ X Y else interpK candAlg (ctxCl Γ) T .star ξ Δ X Y
+```
+It tests the P-type syntactically against coc's `□` and interprets it with coc's classification.
+For `P` it must become `if T.mapSort m.φ = .sort .box then SNGeneric.NormNW P Δ X Y else
+interpK candAlgP (ctxCl (Γ.map (Expr.mapSort m.φ))) (T.mapSort m.φ) .star ξ Δ X Y`, with
+`candAlgP` the round-11 algebra over candidates of `P`-judgements.  The equations the cases then
+need are the round-11 ones transported along `mapSort` (`Expr.mapSort_subst`,
+`Expr.mapSort_instantiate`, `Beta.mapSort`, `Converts.mapSort`, `CoCMorphism.hasType` for
+`interpK_conv`), plus, in the axiom case, `HasTypeNW P Δ (.sort s) (.sort t)` for `P.axioms s t`
+in place of `HasTypeNW.star_box_of_valid'`.  In this analysis no case of the fundamental lemma
+fails for a non-functional `P` (the candidates are sets of `P`-judgements, so two kinds `□, □'`
+above `∗` are simply two judgements); but the generalized fundamental lemma (about 470 lines of
+`PTSRouteIICoCFundamental.lean` plus the two closing lemmas of `PTSExpansionCoC.lean`, over the
+generic base predicate and candidates above) was not written in this round, so this paragraph is
+analysis, not a Lean result.
+
+**C3 (proved).**  `CoCMorphism.cube f` (the eight corners, `φ = id`;
+`cube_in_cocMorphism_class`); `cocBox2` (sorts `∗, □, □'`, axioms `∗ : □`, `∗ : □'`, rules
+`(s₁, s₂, s₂)` for all sorts) with `cocBox2_cocMorphism` (`□' ↦ □`), `cocBox2_not_functional`,
+`cocBox2_not_stratified`, `cocBox2_in_class` (morphism, not functional, not stratified, strongly
+normalizing) and `cocBox2_expansionPostponement_iff : ExpansionPostponement cocBox2 ↔
+ProductNormalizationR cocBox2`.  Expansion postponement of `cocBox2` itself is not concluded.
+
+**M29-EP-STATEMENT, criterion 2, after C.**  What remains: (1) for strongly normalizing `P`,
+exactly `SNGeneric.SortFundamental P` (route (iii) and the product-normalization step are now
+generic); (2) for `P` with a morphism into coc, `sortFundamental_of_cocMorphism` above; (3) the
+weakly-but-not-strongly normalizing case, `expansionPostponement_of_wn`, unchanged.

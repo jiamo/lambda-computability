@@ -1,0 +1,14 @@
+# series V, round 1: #print axioms (lake env lean on a scratch file importing the new modules, with #print axioms appended)
+'PureTypeSystem.SNGeneric.hsubst_route3_aux' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.SNGeneric.productNormalizationR_of_hsubst' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.SNGeneric.expansionPostponement_of_sortFundamental' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.SNGeneric.coc_expansionPostponement'' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.CoCMorphism.hasType' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.CoCMorphism.stronglyNormalizing' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.CoCMorphism.expansionPostponement_iff_productNormalizationR' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.CoCMorphism.expansionPostponement_of_sortFundamental' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.cube_in_cocMorphism_class' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.cocBox2_not_functional' does not depend on any axioms
+'PureTypeSystem.cocBox2_not_stratified' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.cocBox2_in_class' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.cocBox2_expansionPostponement_iff' depends on axioms: [propext, Classical.choice, Quot.sound]

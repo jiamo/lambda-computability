@@ -1,0 +1,8 @@
+# series V, round 1: #print axioms (lake env lean on a scratch file importing the new modules, with #print axioms appended)
+'TLCA4.Tm.agree_of_weq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.Tm.q_strictMono' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.Tm.not_tailEq_shift' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.Tm.not_weq_iterate' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.Tm.no_fixedPoint' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.Tm.no_BMI_fixedPointCombinator' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.Tm.no_BM_fixedPointCombinator' depends on axioms: [propext, Classical.choice, Quot.sound]
