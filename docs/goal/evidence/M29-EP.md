@@ -2003,3 +2003,39 @@ parameter (`fun _ => ∗` in the final theorem).
 
 A2 closed about 20 minutes into the run, with less than 20 minutes of A's share left, so by the
 rule A3 was not started.  First lemma unchanged: `CCO.clV_ssubst_level`.
+
+## Series V, round 4, run 1
+
+Part B (row M29-EP-CCOMEGA), `Start/PTSExpansionCCOSkel.lean`, standard axioms only.
+
+* B1.  Skeletons with level-indexed binders: `CCO.Sk ::= ∗ | arrO k | arr a k | svar n | all ℓ k`
+  (de Bruijn skeleton variables, counted over the binders of kind variables only), with renaming,
+  parallel substitution, instantiation and the σ-calculus laws (`Sk.rename_rename`,
+  `Sk.ssubst_rename`, `Sk.rename_ssubst`, `Sk.ssubst_ssubst`, `Sk.ssubst_svar`,
+  **`Sk.ssubst_inst`**).  Candidate spaces `CCO.V Λ L ρ k`, defined by well-founded recursion on
+  `(L, k)`: `V (all ℓ k)` is a product over the closed skeletons of level `≤ ℓ`; a skeleton variable
+  is interpreted by its closed value read at level `L - 1`.  Predicativity is what makes this
+  recursion well founded.  No level-irrelevance lemma for `V` yet.
+* B2.  The classifier `CCO.clO` with classes `univ ℓ` (the sort `Type ℓ`), `kind ℓ k`,
+  `constr k`, `obj`; `Prop` is `kind 0 ∗`; a binder over `Type ℓ` declares a kind variable
+  `kind ℓ (svar 0)` and shifts the skeleton variables of the context (`ext`); `lamO`, `piO`, `appO`
+  (application of `constr (all ℓ k)` to a kind of skeleton `s` gives `constr (k.inst s)`), `WC`,
+  `ctxClO`.
+
+  ```
+  theorem CCO.clV_ssubst_level (M : Expr CSrt) :
+      ∀ (σ : ℕ → Sk) (Δ : ℕ → Cls), WC Δ M → clO (Cls.ssubst σ ∘ Δ) M = (clO Δ M).ssubst σ
+  ```
+
+  proved (under a binder over `Type ℓ` the substitution becomes `up σ`, `ext_ssubst`); the
+  application case uses `Sk.ssubst_inst`.  `clV_ssubst_level_fails`: without `WC` it fails, as for
+  `cocTop`.  The level discipline of `σ` is not needed for the equation, only for `V`.
+* B3 stop.  The classifier is first-order in kinds.  `CC^ω` has kind-level functions (the rule
+  `(Type 1, Type 1, Type 1)` types `λK : Type 0. K : Type 0 → Type 0`), which this classifier sends
+  to `obj`.  `CCO.clO_beta_fails`: `(λK : Type 0. K) Prop` has class `obj`, its β-reduct `Prop` has
+  class `kind 0 ∗`.  So the interpretation cannot be β-invariant on top of this classifier.
+  First missing lemma: `CCO.clO_beta`, β-invariance of a level-generic classifier.  It needs classes
+  for kind-level functions, that is, skeletons computed by a level-`(n + 1)` classifier.  The
+  skeletons then become a stratified Fω-like calculus, one layer per `Type n`, and `V` has to
+  interpret skeleton-level λ-terms up to β.  The interpretation and the generalized fundamental
+  lemma are not started.

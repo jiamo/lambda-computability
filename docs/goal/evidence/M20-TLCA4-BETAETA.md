@@ -305,3 +305,60 @@ gaps `24, 16, 9, 16, 9, 9, 16, 9, 9, 9, …`, the same triangular pattern as `T`
 `14, 10, 3, 10, 3, 3, 10, 3, 3, 3, …`), but the residual components of `Q x` are not the `a_n`.
 βη-equality of `Q` and `T` was not decided; no theorem reducing `PolyFiveOne` to `T` and `Q` was
 proved.  Conjecture (evidence above only): `Q x` and `T x` have the same x-spine growth.
+
+## Series V, round 4, run 1
+
+**Part A: `T` is not a βη fixed-point combinator (row M20-TLCA4-T-NOT-FIXPOINT, DONE_STRONG).**
+
+```
+theorem TLCA4.T_not_fixedPoint : TLCA4.TNotFixedPoint
+theorem TLCA4.T_not_fixedPoint' :
+    ¬ Lambda.betaEtaConv (toLam (app tT (var 0))) (toLam (app (var 0) (app tT (var 0))))
+```
+
+(`Start/TLCA4TNotFixpoint.lean`; standard axioms only.)  The proof follows the plan of the round,
+with two changes.
+
+* A1 (`Start/TLCA4TComponents.lean`).  `tAnf x n = aₙ = λz. xⁿ⁺¹ (z (λw. x (z w)))`, βη-normal
+  (`tAnf_nf`) and injective in `n` (`tAnf_injective`).  `TComp x n` is the least family with
+  `toLam A₀` at `0`, `B x P` at `n + 1` for `P` at `n`, closed under βη-reduction; every member
+  reduces to `aₙ` (`TComp.reduces_tAnf`), so the index is unique (`TComp.index_unique`), and no
+  member is `x`-headed (`TComp.not_xHeaded`).
+* A2 (`Start/TLCA4TGrammar.lean`).  The circularity is avoided as suggested, by an explicit
+  grammar `TGram x i` stated about components only, with the bound variable `q` of an abstraction
+  in place of the argument: the abstractions have the bodies `xᵐ (R q)` (`R` of index `i'`,
+  `m + i' = i`), `xᵐ (q R)` (`R` a reduct of `B x q`, `m = i + 1`), `xᵐ (M R)` and `xᵐ (R₁ R₂)`
+  (`R`, `R₁`, `R₂` reducts of `B x q`, `m = i`); the non-abstractions are `B M R`,
+  `(λab. M (a b)) R`, `(λab. (a b) (a b)) R` (`R` a reduct of `B x`) at index `0`, and `B x P`,
+  `(λab. x (a b)) P` at index `i + 1`.  `TGram.step`: the grammar is closed under one β- or η-step
+  at any position.  `TComp.tGram` and the abstraction lemma `TComp.abstraction` follow.
+* A3 (`Start/TLCA4TNotFixpoint.lean`).  First change: the pre-stage reducts are not needed.  The
+  argument starts from `N₀ = M A₀` (`T x →β N₀`, `T_unfold`), which has shape `(k, j) = (0, 0)`.
+  `TShape x N`: `N = xᵏ (P Q)` with `P`, `Q` in the grammar at `i`, `j` and `k + i = tri j`, or
+  `N = xᵏ (M Q)` with `Q` at `j` and `k + j = tri j` (`tri j = j (j + 1) / 2`, `two_mul_tri`).
+  `TShape.step`, `TShape.reduces`: closed under βη-reduction (the four bodies give the pairs
+  `(i', j)`, `(j, j + 1)`, the M stage at `j + 1`, and `(j + 1, j + 1)`).
+* A4.  Second change: the index uniqueness is proved for the grammar directly
+  (`TGram.reduces_tAnf`, `TGram.index_unique`), as `TGram ⊆ TComp` is not needed.  If
+  `T x =βη x (T x)`, Church–Rosser twice gives `C'` with `N₀ →βη C'` and `N₀ →βη x C'`; both have
+  shape; the `x`-prefix decomposition is unique (grammar members are not variables, and `M` is not a
+  grammar member, `TGram.ne_lamM`), so `k + 1 + i = k + i` or `k + 1 + j = k + j`
+  (`TShape.not_xPrefix`).
+
+Experiment (wip/a_grammar.py, wip/a_grammar.log; Python, under `timeout 600`; before the Lean
+proof, not used by it): `F n` = all βη-reducts of `toLam Aₙ` for `n ≤ 4` (21, 78, 270, 924, 3156
+members, one normal form each, sizes ≤ 70, index unique on all of them); every abstraction
+member's body with a fresh `q` falls in one of the four classes with offset `0` (for `i = 4`:
+1782, 15, 15, 45 members), no other shape; the non-abstractions are the generator forms
+(6 at index `0`, 2586 of the form `B x P` / `(λab. x (a b)) P`).
+
+A5, first claim that does not close (experiment only, wip/a5_q.py, wip/a5_q.log, under
+`timeout 300`): the method of A1 indexes a component by its βη-normal form, but the residual
+components of `Q = M∘M∘(BM)∘B∘B` have none in the explored range.  Along 260 leftmost steps of
+`toLam (Q x)` the x-prefix takes the values `k = 0, …, 22`; at each change of `k` the residual is
+an application `P' Q'`, and `P'` (and, from `k = 1`, `Q'`) has no β-normal form within 400
+leftmost steps (within 3000 steps for `k = 0, 1`).  Whether they normalize at all was not decided.
+So Q needs an index that is not a normal form (for instance a grammar indexed by stages), and the
+invariant for Q was not found.  The η-aware head comparison was not attempted.  Row
+M20-TLCA4-BETAETA stays open; first missing lemma unchanged (`TLCA4.no_fixedPoint_betaEta`,
+equivalently `¬ PolyFiveOne`).

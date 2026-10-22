@@ -314,3 +314,11 @@ pointwise `HEq` components), `grpdSig_sub : σ ⋙ SigF A B = SigF (σ ⋙ A) (e
 (`Functor.hext`; objects by `fibI_comp_extend`), and
 **`GrpdModel.grpdSigmaStruct : Cwa.SigmaStruct grpdCwa`**.  Row M23-GROUPOID-SIGMA is DONE_STRONG.
 M23-LF-EQUIV-COMPLETE was left for a later run.
+
+## Series V, round 4, run 1
+
+Part C1: row M23-GROUPOID-PI-NATURAL checked against its exit criteria.  (1)
+`GrpdModel.grpdNaturalPiStruct : Cwa.NaturalPiStruct grpdCwa` (`Start/GrpdPiNatural.lean`,
+round 7); (2) a Σ-type structure on `grpdCwa`: `GrpdModel.grpdSigmaStruct : Cwa.SigmaStruct grpdCwa`
+(`Start/GrpdSigmaSub.lean`, Series V round 3 run 2, row M23-GROUPOID-SIGMA DONE_STRONG).  Both
+are in the build with standard axioms only, so the row is DONE_STRONG with an empty open boundary.

@@ -246,3 +246,18 @@ The size of the dictionary term does decrease at this step (`sd` is a strict sub
 but that measure fails at the `inst` case, whose recursive calls on context dictionaries not used
 by `I.dict` are not subterms.  A working order needs a measure on derivations that is stable under
 substitution of hypotheses (for instance a multiset of pairs of Paterson size and field depth).
+
+## Series V, round 4, run 1
+
+Part C2 (row M25-TYPECLASS-SUPER-FIELD), `Start/TypeClassSuperFieldExample.lean`, standard axioms
+only.  The Lean example of the failure at `sup (inst I ds)`: `TypeClass.superEnv` has the classes
+`Eq`, `Ord` and `Ord₂` (both subclasses of `Eq`) and an instance `Ord₂ Base` whose `Eq` field
+`ord2Field` is the projection of the `Ord Base` dictionary.  `superEnv_superField :
+SuperField superEnv instOrd2Base` holds; the field is the derivation `sup (inst OrdBase [])`, which
+is not normal.  `superEnv_sup_inst_step`: the redex `sup (inst Ord₂Base [])` and its contractum
+`sup (inst OrdBase [])` derive the same constraint `Eq Base`, and the contractum is again a
+superclass projection of an instance dictionary.  So the Paterson size of the constraint does not
+decrease at this step, and one contraction can create a new redex of the same kind.  The multiset
+measure of (Paterson size, field depth) pairs is not formalized.  First missing lemma: its decrease
+at `sup (inst I ds)` under `SuperField` (to be stated as `DEnt.superMeasure_lt`), then
+`DEnt.normalize_super` under `SuperField`.

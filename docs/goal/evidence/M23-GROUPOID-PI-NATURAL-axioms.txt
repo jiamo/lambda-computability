@@ -1,3 +1,7 @@
 # round 7: #print axioms (lake env lean on a scratch file importing Start.GrpdPiNatural, with #print axioms appended)
 'GrpdModel.grpdLam_sub' depends on axioms: [propext, Classical.choice, Quot.sound]
 'GrpdModel.grpdNaturalPiStruct' depends on axioms: [propext, Classical.choice, Quot.sound]
+# series V, round 4, run 1: #print axioms (lake env lean on a scratch file importing Start.TLCA4TNotFixpoint, Start.GrpdPiNatural and Start.GrpdSigmaSub, with #print axioms appended)
+'GrpdModel.grpdLam_sub' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GrpdModel.grpdNaturalPiStruct' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GrpdModel.grpdSigmaStruct' depends on axioms: [propext, Classical.choice, Quot.sound]

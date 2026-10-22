@@ -460,6 +460,11 @@ import Start.PTSRouteIITopFundamental
 import Start.TLCA4PolyHead
 import Start.GrpdUnpair
 import Start.GrpdSigmaSub
+import Start.TLCA4TComponents
+import Start.TLCA4TGrammar
+import Start.TLCA4TNotFixpoint
+import Start.PTSExpansionCCOSkel
+import Start.TypeClassSuperFieldExample
 
 /-! ## Interfaces of the untyped calculus
 
@@ -5546,3 +5551,37 @@ substitution, and `grpdSigmaStruct : Cwa.SigmaStruct grpdCwa`.
 #check @GrpdModel.fibI_comp_extend
 #check @GrpdModel.grpdSig_sub
 #check @GrpdModel.grpdSigmaStruct
+
+/-! ## Series V, round 4, run 1: `T` is not a βη fixed-point combinator; skeletons for `CC^ω`
+
+`Start/TLCA4TComponents.lean`, `Start/TLCA4TGrammar.lean`, `Start/TLCA4TNotFixpoint.lean`
+(M20-TLCA4-T-NOT-FIXPOINT): the components `aₙ` of the reducts of `T x`, an explicit grammar for
+them closed under βη-steps, the abstraction lemma, the shape invariant `k + i = j (j + 1) / 2`
+and its closure, and `T_not_fixedPoint`.
+`Start/PTSExpansionCCOSkel.lean` (M29-EP-CCOMEGA): skeletons with level-indexed binders, the
+`CC^ω` classifier, `clV_ssubst_level`, predicative candidate spaces, and the first failing case
+(kind-level functions).
+`Start/TypeClassSuperFieldExample.lean` (M25-TYPECLASS-SUPER-FIELD): an environment satisfying
+`SuperField` whose superclass field is a superclass projection of an instance dictionary.
+-/
+
+#check @TLCA4.tAnf_nf
+#check @TLCA4.tAnf_injective
+#check @TLCA4.TComp.reduces_tAnf
+#check @TLCA4.TComp.index_unique
+#check @TLCA4.TComp.not_xHeaded
+#check @TLCA4.TGram.step
+#check @TLCA4.TComp.tGram
+#check @TLCA4.TComp.abstraction
+#check @TLCA4.TShape.step
+#check @TLCA4.TGram.reduces_tAnf
+#check @TLCA4.TShape.not_xPrefix
+#check @TLCA4.T_not_fixedPoint
+#check @TLCA4.T_not_fixedPoint'
+#check @PureTypeSystem.CCO.Sk.ssubst_inst
+#check @PureTypeSystem.CCO.clV_ssubst_level
+#check @PureTypeSystem.CCO.clV_ssubst_level_fails
+#check @PureTypeSystem.CCO.V
+#check @PureTypeSystem.CCO.clO_beta_fails
+#check @TypeClass.superEnv_superField
+#check @TypeClass.superEnv_sup_inst_step

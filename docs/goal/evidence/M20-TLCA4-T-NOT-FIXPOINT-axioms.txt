@@ -1,3 +1,6 @@
 # series V, round 3, run 1: #print axioms (lake env lean on a scratch file importing Start.TLCA4StatmanProof, Start.TLCA4TUnfold, Start.PTSExpansionTopClassifyV and Start.GrpdPairComp, with #print axioms appended)
 'TLCA4.T_unfold' does not depend on any axioms
 'TLCA4.MtA_step' does not depend on any axioms
+# series V, round 4, run 1: #print axioms (lake env lean on a scratch file importing Start.TLCA4TNotFixpoint, Start.GrpdPiNatural and Start.GrpdSigmaSub, with #print axioms appended)
+'TLCA4.T_not_fixedPoint' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.T_not_fixedPoint'' depends on axioms: [propext, Classical.choice, Quot.sound]
