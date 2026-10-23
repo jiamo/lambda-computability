@@ -6,3 +6,15 @@
 'TypeClass.loopEnv_superField' depends on axioms: [propext, Classical.choice, Quot.sound]
 'TypeClass.loopEnv_DEntN' depends on axioms: [propext, Classical.choice, Quot.sound]
 'TypeClass.normalize_super_superField_fails' depends on axioms: [propext, Classical.choice, Quot.sound]
+
+# series V, big round, run 3: head forms under SuperField (Start/TypeClassSuperFieldHead.lean)
+'TypeClass.DEnt.headForm' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TypeClass.DEntHyp.unique' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TypeClass.DEntHyp.not_instHead' depends on axioms: [propext]
+
+# series V, big round, run 4: coherence under SuperField (Start/TypeClassSuperFieldCoh.lean)
+'TypeClass.conv_substEnv_of_size' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TypeClass.DEnt.conv_superField' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TypeClass.AElab.conv_superField' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TypeClass.coherence_unannotated_superField' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TypeClass.loopEnv_conv_eqBase' depends on axioms: [propext, Classical.choice, Quot.sound]

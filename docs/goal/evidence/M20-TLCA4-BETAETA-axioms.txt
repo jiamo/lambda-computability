@@ -15,3 +15,171 @@
 'TLCA4.Q_unfold' does not depend on any axioms
 'TLCA4.Q_weq_MT' does not depend on any axioms
 'TLCA4.Q_betaEta_MT' depends on axioms: [propext, Classical.choice, Quot.sound]
+
+# series V, big round, run 3: length-7 candidates (Start/TLCA4Candidates.lean)
+'TLCA4.factor_T' depends on axioms: [propext]
+'TLCA4.hit2_weq_Q' does not depend on any axioms
+'TLCA4.hit11_weq_TT' depends on axioms: [propext]
+'TLCA4.hit5_weq' depends on axioms: [propext]
+
+# series V, big round, run 4: monomials B^n I are βη-units; normal forms exclude fixed points (Start/TLCA4PolyIdentity.lean)
+'TLCA4.bpowI_betaEta' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.polyTm_headI_betaEta' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.polyTm_lastI_betaEta' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.polyL_filter_noI' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.var_not_betaEtaConv_selfApp' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.polyFiveOne_noI' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.not_fixedPoint_of_normal' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.poly_not_fixedPoint_of_normal' depends on axioms: [propext, Classical.choice, Quot.sound]
+
+# series V, big round, run 5: βη head-arity invariant, argument comparison, first monomial (Start/TLCA4HeadArity.lean, Start/TLCA4HeadArgs.lean, Start/TLCA4FirstMono.lean; lake env lean on a scratch file importing Start.TLCA4FirstMono with #print axioms appended, after lake build --wfail)
+'TLCA4.HSp.betaEtaConv' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.fixedPoint_hsp' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.not_fixedPoint_of_hsp' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.RForm.betaEtaReduces' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.lamK_spn_betaEtaConv' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.fixedPoint_args' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.fixedPoint_firstArg_hsp' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.bM_not_fixedPoint' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.bpow_app_reduces' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.mono_not_fixedPoint' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.polyFiveOne_two' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.GY.betaEtaReduces' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.headB_not_fixedPoint' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.polyFiveOne_head_baseM' depends on axioms: [propext, Classical.choice, Quot.sound]
+
+# series V, big round, run 5 (continued): first monomial exactly M (Start/TLCA4HeadM.lean; scratch file importing Start.TLCA4HeadM, after lake build --wfail)
+'TLCA4.occL_subst' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.LamI.betaEtaReduces' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.occL_zero_betaEtaReduces' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.headBM_not_fixedPoint' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.polyFiveOne_head_M' depends on axioms: [propext, Classical.choice, Quot.sound]
+
+# series V, big round, run 5 (continued): the second monomial (Start/TLCA4SecondMono.lean; scratch file importing Start.TLCA4SecondMono, after lake build --wfail)
+'TLCA4.secondBB_not_fixedPoint' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.secondBM_not_fixedPoint' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.polyFiveOne_second' depends on axioms: [propext, Classical.choice, Quot.sound]
+
+# series V, big round, run 6: the third monomial (Start/TLCA4ThirdMono.lean; scratch file importing Start.TLCA4ThirdMono, after lake build --wfail)
+'TLCA4.arity_contra' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.polyMB_not_fixedPoint' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.polyMM_not_fixedPoint' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.polyMBM_not_fixedPoint' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.polyMBM'_not_fixedPoint' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.thirdB_B_not_fixedPoint' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.thirdB_BB_not_fixedPoint' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.thirdB_BM_not_fixedPoint' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.thirdM_BB_not_fixedPoint' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.thirdM_BM_not_fixedPoint' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.polyFiveOne_third' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.fourthBM_B1_not_fixedPoint' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.fourthBM_BB_not_fixedPoint' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.fourthBM_BM_not_fixedPoint' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.fixedPoint_BM_fourth' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.polyFiveOne_fourth' depends on axioms: [propext, Classical.choice, Quot.sound]
+
+# series V, big round, run 6: the prefix bound (Start/TLCA4PrefixBound.lean; scratch file importing Start.TLCA4PrefixBound, after lake build --wfail)
+'TLCA4.prefix_BB_contra' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.prefix_BM_contra' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.prefix_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.secondM_unfold_cons' depends on axioms: [propext, Quot.sound]
+'TLCA4.fixedPoint_M_fourth' depends on axioms: [propext, Classical.choice, Quot.sound]
+
+# series V, big round, run 7: the argument-count automaton (Start/TLCA4Automaton.lean; scratch file importing Start.TLCA4Automaton, after lake build --wfail)
+'TLCA4.actM_args' depends on axioms: [propext]
+'TLCA4.actB_args' depends on axioms: [propext, Quot.sound]
+'TLCA4.unf_step' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.unf_end' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.unf_adm' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.polyFiveOne_adm' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.adm_T' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.adm_Q' depends on axioms: [propext, Classical.choice, Quot.sound]
+
+# series V, big round, run 7: one step past the escape (Start/TLCA4Escape.lean; scratch file importing Start.TLCA4Escape, after lake build --wfail)
+'TLCA4.wrap_BB_contra' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.wrap_BM_contra' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.wrap_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.unf_escape_next' depends on axioms: [propext, Classical.choice, Quot.sound]
+
+# series V, big round, run 8: hit5 stages and components, hit classes (Start/TLCA4Hit5Stages.lean, Start/TLCA4Hit5Components.lean, Start/TLCA4HitClasses.lean; scratch file importing Start.TLCA4HitClasses, after lake build)
+'TLCA4.h5_stage_step' does not depend on any axioms
+'TLCA4.hit5_stage' depends on axioms: [propext, Quot.sound]
+'TLCA4.hit5_stage_weq' depends on axioms: [propext, Quot.sound]
+'TLCA4.hit5_stage_betaEta' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.h5nf_nf' depends on axioms: [propext]
+'TLCA4.h5nf_injective' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.Bx_h5nf_reduces' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.h5s_reduces' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.h5A_reduces' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.h5A_index_unique' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.f6_red' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.f7_red' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.polyOf_conv_of_tails' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.hit6_conv_hit7' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.hit8_conv_hit9' depends on axioms: [propext, Classical.choice, Quot.sound]
+
+# series V, big round, run 8: generic stage lemma (Start/TLCA4StageGen.lean; scratch file importing Start.TLCA4StageGen, after lake build --wfail)
+'TLCA4.stage_step_gen' does not depend on any axioms
+'TLCA4.stage_gen' depends on axioms: [propext, Quot.sound]
+'TLCA4.hit5_stageS' does not depend on any axioms
+'TLCA4.hit5_stageG' does not depend on any axioms
+'TLCA4.hit6_stage' depends on axioms: [propext, Quot.sound]
+'TLCA4.hit8_stage' depends on axioms: [propext, Quot.sound]
+'TLCA4.Q_stage_gen' depends on axioms: [propext, Quot.sound]
+
+# series V, big round, run 9: generic shape argument with arbitrary tails (Start/TLCA4TailShape.lean; scratch file importing Start.TLCA4TailShape, after lake build --wfail)
+'TLCA4.TC.beta_lift' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.TC.step' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.TC.reduces' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.AShape.step' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.AShape.reduces' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.TC.unique' depends on axioms: [propext, Quot.sound]
+'TLCA4.AShape.not_xPrefix' depends on axioms: [propext, Quot.sound]
+'TLCA4.not_fixedPoint_of_ashape' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.ZC.toTC' does not depend on any axioms
+'TLCA4.QBase.tailCores' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.Q_not_fixedPoint_of_ashape' depends on axioms: [propext, Classical.choice, Quot.sound]
+
+# series V, big round, run 9: two-argument chains (Start/TLCA4TailW.lean; scratch file importing Start.TLCA4TailW, after lake build --wfail)
+'TLCA4.step_lamB_any' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.lift_ne_app_var0' depends on axioms: [propext]
+'TLCA4.lift2_beta' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.TW.step' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.TW.reduces' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.TW.fire' depends on axioms: [propext, Classical.choice, Quot.sound]
+
+# series V, big round, run 9: base restriction (Start/TLCA4TailRestrict.lean; scratch file importing Start.TLCA4TailRestrict, after lake build --wfail)
+'TLCA4.nodes_xPow_le' depends on axioms: [propext, Quot.sound]
+'TLCA4.TC.mono' does not depend on any axioms
+'TLCA4.TC.restrict' depends on axioms: [propext, Quot.sound]
+'TLCA4.TW.mono' does not depend on any axioms
+'TLCA4.TW.restrict' depends on axioms: [propext, Quot.sound]
+'TLCA4.TC.exists_level' does not depend on any axioms
+'TLCA4.TW.exists_level' does not depend on any axioms
+'TLCA4.TC.step2' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.TW.step2' depends on axioms: [propext, Classical.choice, Quot.sound]
+
+# series V, big round, run 9: extension by two-argument heads (Start/TLCA4TailExt.lean; scratch file importing Start.TLCA4TailExt, after lake build --wfail)
+'TLCA4.ExtL.not_lam' does not depend on any axioms
+'TLCA4.ExtL.step' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.Ext.step' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.Ext.not_lam' does not depend on any axioms
+'TLCA4.lift2_ne_var' depends on axioms: [propext, Quot.sound]
+'TLCA4.TW.unique' depends on axioms: [propext, Quot.sound]
+
+# series V, big round, run 10: w- and s-layers of hit5 (Start/TLCA4Hit5W.lean, Start/TLCA4Hit5S.lean; scratch file importing Start.TLCA4Hit5S, after lake build --wfail)
+'TLCA4.TC.lift' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.TC.step_liftB' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.YC.toTC' depends on axioms: [propext]
+'TLCA4.WqR.step' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.WR.step' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.WR.reduces' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.WR.of_h5w' does not depend on any axioms
+'TLCA4.WR.of_reduces' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.TC.subst_liftB' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.WqF.step' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.SqR.step' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.SR.step' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.SR.reduces' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.SR.of_h5s' does not depend on any axioms
+'TLCA4.SR.of_reduces' depends on axioms: [propext, Classical.choice, Quot.sound]

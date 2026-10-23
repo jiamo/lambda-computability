@@ -448,3 +448,490 @@ unclear is `Q₁ = Q` itself (A2 (iii)).
 
 Row M20-TLCA4-BETAETA stays open; first missing lemma unchanged (`TLCA4.no_fixedPoint_betaEta`,
 equivalently `¬ PolyFiveOne`), next claim `TLCA4.Q_not_fixedPoint`.
+
+## Series V, big round, run 1
+
+**A1, `Q_not_fixedPoint` (row M20-TLCA4-Q-NOT-FIXPOINT, opened on the board in this run).**
+Lean, `Start/TLCA4QStages.lean`, axioms in `docs/goal/evidence/M20-TLCA4-Q-NOT-FIXPOINT-axioms.txt`:
+
+* `tAy y n` — the components `A₀[y] = B M (B y)`, `Aₙ₊₁[y] = B y Aₙ[y]` for an arbitrary term
+  `y` (`tAy_var`: for `y = x` they are the `tA x n` of the `T` proof);
+* `tAy_app` — `Aₙ[y] Z →w yⁿ (M (B y Z))`; `MtAy_step` — `M Aₙ[y] →w yⁿ (M Aₙ₊₁[y])`;
+* `iterT_Bx_app` — `(B x)ⁿ W R →w xⁿ (W R)`;
+* `MtAy_tail_step` — `M Aₙ[B x] R →w xⁿ (M Aₙ₊₁[B x] R)`;
+* `tT_Bx_reduces_qTail` — the tail `R = M A₀[B x]` is a weak reduct of `T (B x)`;
+* **`Q_stage`** — `Q x →w x^{tri n} (M Aₙ₊₁[B x] R)` for all `n`; `Q_stage_betaEta` (β-form).
+
+and `Start/TLCA4QComponents.lean`: `tAnfQ x n = ãₙ = λz c. xⁿ⁺¹ (z (λw d. x (z w d)) c)`,
+**`tAnfQ_nf`** (βη-normal), **`tAnfQ_injective`**, `Bx_tAnfQ_reduces` (`B (B x) ãₙ →β ãₙ₊₁`),
+`tAy0_reducesQ` and **`tAy_Bx_reduces_tAnfQ`** (`Aₙ[B x] →β ãₙ`): the components of `Q x` normalize,
+so their index is well defined (the analogue of `tAnf`, `TComp.reduces_tAnf` for `T`); only the
+tail has an infinite Böhm tree.
+
+Reading: `Q x →w M (M A₀[B x]) → R R` with `R = M A₀[B x]`; the left copy runs the `T`-stages for
+the argument `y = B x`, and each `y` that reaches the head of the application to `R` fires one `x`
+(`B x U R → x (U R)`), while `R` itself is never touched by head reduction.  So the x-prefix at
+the `M`-stages is exactly `tri n`, the triangular pattern of `T` (the experimental "long gaps end at
+`k = 1 + j(j+1)/2`" of round 4 run 2 is the `+1` of `M A_{n+1}` firing).  The invariant to prove is
+the `T` invariant with pending `y`'s counted as `x`'s: `k + m + i = tri j`.
+
+Stop (for this run): the first missing lemma is the βη-closure of a shape for the reducts of
+`Q x`, `TLCA4.QShape.step` (statement on the board row).  Its difficulty: under βη the `y = B x`
+occurrences inside the components reduce (`B x U → λc. x (U c)`), so the grammar `TGram` must be
+generalized from a variable `y` to the reducts of `B x` and their partial applications, with the
+bound `c` standing for the tail; the tail itself is an arbitrary reduct of `T (B x)` and, as far as
+the analysis goes (not Lean-checked), only ever occurs as the last argument.
+
+Experiment (`wip/br1_qwalk.py`, not Lean-checked): 250 random βη-reduction walks from `toLam (Q x)`
+(400 steps each, 60% leftmost-outermost β-steps, otherwise a uniformly random β/η redex, size ≤ 3000)
+visit 98464 distinct residuals `R` (writing each term `x^k R`), with 1936 repeated visits and no
+residual met with two different `k` (x-prefix up to 382): consistent with an invariant `k = φ(R)`.
+
+## Series V, big round, run 2
+
+Item A1 (row M20-TLCA4-Q-NOT-FIXPOINT), step (1) of the design.  Lean, `Start/TLCA4XChain.lean`,
+axioms in `docs/goal/evidence/M20-TLCA4-Q-NOT-FIXPOINT-axioms.txt`:
+
+* `XC base x i P` — the `x`-level constructors of `TGram` (`B x P`, `bxPre x P`,
+  `λc. xᵐ (P c)` with `m + i' = i`) over an arbitrary indexed base family `base`;
+* `XCBase base x` — the base is closed under one βη-step into chains, and a base abstraction
+  `λc. b` of height `i` gives the chain `λc. xᵐ b` of height `m + i`;
+* `XC.lam_xPow`, **`XC.step`**, **`XC.reduces`** — chains are closed under βη-steps and
+  βη-reduction whenever `XCBase` holds (the `bx`, `bx1`, `rq` cases of `TGram.step`, generalized);
+* `XCBase.of_closed` (a step-closed base without abstractions), `XC.mono`, and the sanity check
+  `TGram.xcBase` (the `T` grammar is an instance).
+
+Not closed.  First missing lemma (unchanged): `TLCA4.QShape.step`; the remaining steps of the
+design are (2) the `y`-level grammar of the components `Aₙ[B x]` and their reducts (the `TGram`
+of `T y` with `y` replaced by reducts of `B x`, each `y`-application becoming an `x`-chain over it),
+(3) `QShape` as an `XC` chain over that base with the tail as last argument, and `QShape.step`
+from `XC.step`, (4) `QShape.not_xPrefix` and Church–Rosser as in `T_not_fixedPoint`.
+
+## Series V, big round, run 3
+
+Item A1 closed: **`TLCA4.Q_not_fixedPoint`** — `Q = M∘M∘(BM)∘B∘B` is not a βη fixed-point
+combinator (row M20-TLCA4-Q-NOT-FIXPOINT, DONE_STRONG; standard axioms only, see
+`M20-TLCA4-Q-NOT-FIXPOINT-axioms.txt`).
+
+New modules (all registered in `Start.lean` and `Start/Capstones.lean`):
+
+- `Start/TLCA4YComponents.lean`: the five reducts of `B (B x)` (`ByR`) and the eight reducts of
+  `B (B x) q` (`ByqR`), closed under βη (`ByR.step`, `ByqR.step`).
+- `Start/TLCA4YGrammar.lean`: the component grammar of `Q x`, a mutual inductive `YG` / `YC` /
+  `YBase`. It is `TGram` with each prefix `xᵐ (·)` replaced by an `x`-chain of height `m` (the
+  `XC` constructors), with `BxR`/`BxqR` replaced by `ByR`/`ByqR`, and with the cores `q R`,
+  `M R`, `R₁ R₂` and `R q`. The component index equals the chain height minus 1. The grammar is
+  closed under βη by a mutual structural induction (`YG.step`, `YC.step`, `YBase.step`). It
+  contains `Aᵢ[B x]` at index `i` (`YG.of_tAy`).
+- `Start/TLCA4YIndex.lean`: every member reduces to `ãᵢ` (`YG.reduces_tAnfQ`, through the chain
+  normal forms `chainNf`), so the index is unique (`YG.index_unique`).
+- `Start/TLCA4QNotFixpoint.lean`: the shape is `xᵏ (H ρ)`. Here `ρ` is a reduct of the tail
+  `M A₀[B x]`, and `H` is an `x`-chain over a core `P Q` / `M Q`. The conservation law is
+  `k + d + i = tri j`, where `d` is the depth of the core below the top of `H`.
+
+  When a core fires, `P Q → C[Q/q]` inserts `i + 1 − b` new `x`'s above the new core. As a
+  result, chains with exact natural-number heights cannot carry the law. The chains therefore
+  have integer heights (`ZC`), and the base stores `K = k + h`: `QBase x K n Z` means `Z` is a
+  core of indices `(i, j)` with `K + i = tri j + n`.
+
+  Results: `YC.subst` (substitution into a chain shifts its heights and preserves the law),
+  `QBase.zcBase`, `QShape.step`, and `ZC.unique` (`K − h` is determined by the chain, from
+  `QCore.unique` and syntactic separation of the cores from the chain constructors).
+  `QShape.not_xPrefix` follows, and Church–Rosser starting from `M A₁[B x] R` gives
+  `Q_not_fixedPoint`.
+
+Item A2 (`Start/TLCA4Candidates.lean`) was blocked by its stop rule after about 10 minutes.
+
+- The twelve length-7 hits of the run-1 spine search are encoded as monomial lists `hit1` …
+  `hit12`.
+- `factor_T`: `(C ∘ T ∘ F) x =w C (T (F x))`.
+- Six hits factor through `T`:
+  - `hit1 = M∘M∘B∘T∘B`
+  - `hit2 = M∘Q∘B`, i.e. `hit2 x =w M (Q (B x))` (`hit2_weq_Q`; this is `Q₂`)
+  - `hit3 = M∘T∘BM∘BB∘B`
+  - `hit4 = M∘T∘B²M∘BB∘B`
+  - `hit11 = T∘T∘B`, i.e. `hit11 x =w T (T (B x))` (`hit11_weq_TT`)
+  - `hit12 = M∘BM∘T∘B∘B`
+- Stop: `hit5 = M∘M∘BM∘BB∘BM∘B∘B`, which unfolds to `M (M (BM (BB (BM (B (B x))))))`. It has no
+  factor `T`, and neither do `hit6`–`hit10` (`M∘M∘BM∘B²M∘…`, `M∘M∘BM∘B³M∘…`, `M∘M∘B²M∘…`). No
+  class for them was found.
+- Not done: the length-8 and length-9 searches (the length-7 search took 243 s, so length 8 is
+  estimated at about 30 min).
+
+## Series V, big round, run 4 (item A3: toward ¬ PolyFiveOne)
+
+New file `Start/TLCA4PolyIdentity.lean`. Everything below is proved in Lean and uses only the
+standard axioms; the axioms file is `M20-TLCA4-BETAETA-axioms.txt`.
+
+* **`Bⁿ I` is a βη-unit.**
+  * `comp_I_left_betaEta`, `comp_I_right_betaEta`: `I ∘ u` βη-reduces to `u`, and `t ∘ I` to `t`.
+    Each takes two β-steps and one η-step, and holds for the terms themselves, not only for their
+    action on an argument.
+  * `BI_betaEta`: `B I` βη-reduces to `I`.
+  * `bpowI_betaEta`: `Bⁿ I` is βη-convertible to `I`.
+  * `polyTm_headI_betaEta`, `polyTm_lastI_betaEta`: a monomial `Bⁿ I` can be dropped from the
+    front or the back of a polynomial, up to βη.
+  * `polyL_filter_noI`: dropping every monomial of base `I` preserves βη-convertibility. Here
+    `polyL` reads the empty list as `I`.
+* **`x` and `x x` are not βη-convertible** (`var_not_betaEtaConv_selfApp`).
+* **`polyFiveOne_noI`.** If `PolyFiveOne` holds, it has a witness with no monomial of base `I`.
+  If every monomial had base `I`, the fixed-point equation would collapse to `x =βη x x`.
+* **`not_fixedPoint_of_normal`** and `poly_not_fixedPoint_of_normal`, with the predicate
+  `BENormal`. If `Y x` βη-reduces to a βη-normal term `N`, then `Y` is not a βη fixed-point
+  combinator. The argument: `N =βη x N`, and both sides are normal, so Church–Rosser gives
+  `N = x N`, which is impossible by size. So in a fixed-point polynomial `p`, the term `p x` has no
+  βη-normal form.
+
+**Still missing (A3).** First missing lemma, the η-aware head comparison:
+`theorem TLCA4.polyFiveOne_head_M : PolyFiveOne → ∃ ps, (∀ q ∈ ps, q.base ≠ .I) ∧ <the
+fixed-point equation for polyTm ⟨0, .M⟩ ps>`, i.e. the first monomial of a fixed-point polynomial
+without `I` is `M`.
+
+`polyApp_reduces_lam` already gives `p x ↠ λt` when the first monomial is `B` or `Bⁿ⁺¹X`. To
+exclude `λt =βη x (p x)`, the proof needs the βη head-normal-form arity invariant. It goes as
+follows: if two terms are βη-convertible and both have head normal forms `λy₁…y_k. h M₁…M_l` and
+`λz₁…z_{k'}. h' N₁…N_{l'}`, then `h` and `h'` agree after the binder shift, and
+`l - k = l' - k'`. This invariant is not in the project. Applied here, `λt` with `t` headed by `x`
+would need `l - k = 1`, and that has to be compared with the head normal forms that the
+`B`-monomial actually produces.
+
+## Series V, big round, run 5 (item A3: toward ¬ PolyFiveOne)
+
+New files `Start/TLCA4HeadArity.lean`, `Start/TLCA4HeadArgs.lean`, `Start/TLCA4FirstMono.lean`,
+`Start/TLCA4HeadM.lean` and `Start/TLCA4SecondMono.lean`.
+Everything below is proved in Lean and uses only the standard axioms; the axioms file is
+`M20-TLCA4-BETAETA-axioms.txt`.
+
+* **The βη head-arity invariant** (`Start/TLCA4HeadArity.lean`). `NSp t h n`: `t` is `var h`
+  applied to `n` arguments; `HSp t h d`: `t = λ^k. y a₁ … a_n` with free head `y` (denoting `h`
+  outside the binders) and `d = n - k`.
+  * `HSp.step`, `HSp.etaStep`, `HSp.betaEtaReduces`: βη-reduction preserves `h` and `d` (β-steps
+    can only happen inside arguments; an η-step removes the innermost binder together with the last
+    argument, `NSp.of_lift`).
+  * `HSp.unique`, **`HSp.betaEtaConv`**: βη-convertible terms with such head normal forms have the
+    same head and the same arity difference (Church–Rosser for βη).
+  * **`fixedPoint_hsp`**, `not_fixedPoint_of_hsp`: a head normal form of `Y x`, for a βη
+    fixed-point combinator `Y`, has head `x` and arity difference `1`.
+* **Arguments** (`Start/TLCA4HeadArgs.lean`). `spn y [a_l, …, a_1] = y a_1 … a_l`, `lamK k t = λ^k. t`.
+  * `RForm`, `RForm.betaEtaReduces`: every βη-reduct of `λ^k. y a⃗` is `λ^{k-j}. (y-j) c⃗` where the
+    last `j` arguments reduce to the bound variables `0, …, j-1` and every other argument reduces to
+    the `j`-fold lifting of the corresponding `c`.
+  * **`lamK_spn_betaEtaConv`**: `λ^k. y a⃗ =βη λ^k. y' b⃗` implies `y = y'` and `a⃗`, `b⃗` pointwise
+    βη-convertible (same length).
+  * `spn_betaEtaConv_eta`, `app_betaEtaConv_etaArgs`: η-expansion `x a =βη λz₁ … z_k. x a↑ z₁ … z_k`.
+  * **`fixedPoint_args`**: if `Y x =βη x (Y x)` and `Y x =βη λ^k. y a⃗`, then `y = k` and `a⃗` is
+    pointwise βη-convertible to `(Y x)↑ᵏ, z₁, …, z_k`.
+  * **`fixedPoint_firstArg_hsp`**: the first argument, if it has a free-headed head normal form, has
+    head `x` and arity difference `1` (it is again `(Y x)↑ᵏ`).
+  * `bM_not_fixedPoint`: `B M x ↠ λz. x z (x z)`, whose first argument is `z`; not a fixed point.
+* **Monomials and the first monomial** (`Start/TLCA4FirstMono.lean`).
+  * `bpow_app_reduces`: `Bⁿ X u ↠ λz₁ … z_n. X (u z₁ … z_n)` for closed `X`.
+  * **`mono_not_fixedPoint`**: no monomial `Bⁿ X`, `X ∈ {B, M, I}`, is a βη fixed-point combinator
+    (`Bⁿ B x` has arity difference `-1`; `Bⁿ M x ↠ λz⃗. x z⃗ (x z⃗)` has the variable `z₁` (or `x`
+    itself when `n = 0`) as first argument; `Bⁿ I x =βη x`).
+  * **`polyFiveOne_two`**: `PolyFiveOne` has a witness with at least two monomials, none of base `I`.
+
+  * `GY a b t`: every occurrence of the variable `b` in `t` is inside the subterm `a b`.
+    `GY.lift`, `GY.subst`, `GY.of_lift`, `GY.step`, `GY.etaStep`, `GY.betaEtaReduces`: preserved by
+    βη-reduction (a β-step substitutes whole `a b` pairs; an η-step cannot separate `b` from `a`).
+  * **`headB_not_fixedPoint`**: no polynomial `Bⁿ B ∘ R` (`R` a nonempty polynomial) is a βη
+    fixed-point combinator. Apply the fixed-point equation to fresh `z₁ … zₙ g y`: by
+    `bpowB_action` the left side is `R x z⃗ (g y)`, in which `y` occurs only inside `g y`; every
+    βη-reduct of the right side `x (P x) z⃗ g y` is `x c⃗ y` (`RForm` with `k = 0`), which violates
+    `GY`. Church–Rosser gives the contradiction.
+  * **`polyFiveOne_head_baseM`**: `PolyFiveOne` has a witness `Bⁿ M ∘ m₂ ∘ … ∘ m_k` with `k ≥ 2`
+    and no monomial of base `I`. So the first monomial of a βη fixed-point polynomial has base `M`
+    (the plan's "first monomial is `M`", up to the exponent `n`).
+
+* **The exponent of the first monomial** (`Start/TLCA4HeadM.lean`).
+  * `occL y t`: the number of free occurrences of `y`; `occL_lift_lt`, `occL_lift_ge`,
+    `occL_lift_eq`, **`occL_subst`**: `occL y (subst s x M) = occL y' M + occL x M * occL y s`.
+  * `LamI t`: every abstraction binds a variable that occurs; `lamI_toLam`: the translation of any
+    `B`,`M`,`I`-term with variables is a λI-term.
+  * **`LamI.betaEtaReduces`**: βη-reduction preserves `LamI` and never decreases `occL y`;
+    `occL_zero_betaEtaReduces`: a variable that does not occur never appears.
+  * **`headBM_not_fixedPoint`**: no polynomial `Bⁿ⁺¹ M ∘ R` is a βη fixed-point combinator. Applied
+    to fresh `z₁ … z_{n+1}` (`bpowM_action`) the fixed-point equation gives
+    `U U =βη x (P x) z⃗` with `U = R x z⃗`. In every reduct of the left side `z_{n+1}` occurs at
+    least twice; every reduct of the right side is `x c⃗ z_{n+1}` with `z_{n+1}` not in `c⃗`.
+  * **`polyFiveOne_head_M`**: `PolyFiveOne` has a witness `M ∘ m₂ ∘ … ∘ m_k`, `k ≥ 2`, with no
+    monomial of base `I`. This is the plan's first missing lemma of run 4.
+
+* **The second monomial** (`Start/TLCA4SecondMono.lean`). For `P = M ∘ m₂ ∘ …`, apply the
+  fixed-point equation to fresh variables after `P x =w (R x) (R x)`, `R = m₂ ∘ …`
+  (`gy_contra`, `occ_contra`: the two contradictions above for an arbitrary left side; `poly_tail`).
+  * **`secondBB_not_fixedPoint`**: `m₂ = Bᵃ⁺¹ B` is impossible (`R x (R x) z⃗ g y =w u (R x) z⃗ (g y)`,
+    `GY`).
+  * **`secondBM_not_fixedPoint`**: `m₂ = Bᵃ⁺² M` is impossible (`R x (R x) z₁ … z_{a+1} =w W W`,
+    `W = u (R x) z⃗`, occurrence counting).
+  * **`polyFiveOne_second`**: `PolyFiveOne` has a witness `M ∘ m₂ ∘ …` without base-`I` monomials
+    and `m₂ ∈ {B, M, B M}` (consistent with T = M∘BM∘B, Q = M∘M∘BM∘B∘B and the length-7 hits).
+
+**Still missing (A3).** The remaining second monomials `B`, `M`, `B M` and the later monomials.
+For `m₂ = B` the pairing is `R' x ((R x) y)`, with `R x` not a variable; for `m₂ ∈ {M, B M}` the
+duplicated term contains no fresh variable. A generalisation of `GY` to "`y` occurs only as the
+last argument of a fixed term up to βη" or an induction along the polynomial is the next step.
+First missing lemma (a statement): `theorem TLCA4.polyFiveOne_third : PolyFiveOne → ∃ m₂ m₃ ps, <m₂ ∈ {B, M, BM}> ∧ <constraint on m₃> ∧ <fixed-point equation for polyTm ⟨0, .M⟩ (m₂ :: m₃ :: ps)>`,
+or a proof that `m₂ = B` is impossible. The final target remains
+`theorem TLCA4.no_fixedPoint_betaEta : ¬ TLCA4.ProblemFiveOne`.
+
+## Series V, big round, run 6 (item A3: toward ¬ PolyFiveOne)
+
+**The third monomial** (`Start/TLCA4ThirdMono.lean`; all theorems use only propext,
+Classical.choice and Quot.sound).
+
+* **`arity_contra`**: if `P x z⃗ =w x a₁ … a_l` with `l ≠ |z⃗| + 1`, then `P` is not a βη
+  fixed-point combinator (the head-arity invariant `HSp.betaEtaConv` against `x (P x) z⃗`);
+  `hsp_toLam_apps_var`.
+* **Two monomials**: `polyMB_not_fixedPoint` (`M∘B x z =w x (B x z)`), `polyMM_not_fixedPoint`
+  (`(x x)(x x)`), `polyMBM_not_fixedPoint` (`x (BMx) (x (BMx))`) — all by `arity_contra`; so a
+  fixed-point polynomial has at least three monomials.
+* **`m₂ = B`** (`secondB_unfold`: `P x z₁ r⃗ =w m₃ u (B U z₁) r⃗`, `U = (m₃ ∘ …) x`):
+  `thirdB_B_not_fixedPoint` (`u (U (z₁ z₂))`, pairing), `thirdB_BB_not_fixedPoint` (`m₃ = Bᵃ⁺¹ B`,
+  pairing), `thirdB_BM_not_fixedPoint` (`m₃ = Bᵃ⁺¹ M`, occurrence counting). So `m₃ = M`.
+* **`m₂ ∈ {M, B M}`** (`secondM_unfold`: `P x z⃗ =w m₃ u g h z⃗` with `g, h` free of the fresh
+  variables: `(g, h) = (U, U U)` resp. `(B M U, U (B M U))`): `thirdM_BB_not_fixedPoint`
+  (`m₃ = Bᵃ⁺² B`, pairing), `thirdM_BM_not_fixedPoint` (`m₃ = Bᵃ⁺³ M`, occurrence counting).
+* **`polyFiveOne_third`**: `PolyFiveOne` has a witness `M ∘ m₂ ∘ m₃ ∘ …` without base-`I`
+  monomials with `(m₂, m₃) = (B, M)`, or `m₂ ∈ {M, B M}` and `m₃ ∈ {B, B B, M, B M, B² M}`.
+  Consistent with T = M∘BM∘B, Q = M∘M∘BM∘B∘B and the length-7 hits.
+* **The branch `M ∘ B ∘ M`** (`thirdBM_unfold`: `P x z₁ r⃗ =w m₄ w u' (B U z₁) r⃗`):
+  `polyMBM'_not_fixedPoint` (`M∘B∘M x z₁ =w x x (B (M x) z₁)`; the first argument `x` would have to
+  be βη-equal to `P x =βη x (P x)`, against `HSp`), `fourthBM_B1_not_fixedPoint`,
+  `fourthBM_BB_not_fixedPoint` (pairing), `fourthBM_BM_not_fixedPoint` (occurrence counting),
+  hence `fixedPoint_BM_fourth`: `m₄ ∈ {B, M, B M}`, and **`polyFiveOne_fourth`**.
+
+**A uniform prefix bound** (`Start/TLCA4PrefixBound.lean`).
+
+* `prefix_BB_contra`, `prefix_BM_contra`, **`prefix_bound`**: if `P x z⃗ =w m w a⃗ z⃗` for every
+  list `z⃗`, where `w` and `a⃗` contain no fresh variable, and `P` is a βη fixed-point combinator,
+  then `m = Bⁿ B` with `n < |a⃗|`, or `m = Bⁿ M` with `n ≤ |a⃗|` (or `m` has base `I`). This is the
+  common core of all pairing/occurrence exclusions above.
+* `secondM_unfold_cons`, **`fixedPoint_M_fourth`**: for `M ∘ m₂ ∘ m₃ ∘ m₄ ∘ …` with
+  `m₂ ∈ {M, B M}` the unfolding is `m₃ u g h z⃗` (`u = (m₄ ∘ …) x`), and for
+  `m₃ = B, M, B M, B² M` it continues to `u a⃗ z⃗` with `a⃗ = [g h]`, `[u, g, h]`, `[g, u g, h]`,
+  `[g, h, u g h]`. So `m₄ ∈ {B, M, B M}` after `m₃ = B`, and `m₄ ∈ {B, B B, B² B, M, …, B³ M}` after
+  `m₃ ∈ {M, B M, B² M}`.
+
+**What remains (A3).** The case tree does not close by these local arguments: T = M∘BM∘B and
+Q = M∘M∘BM∘B∘B pass every local test and needed the global stage/grammar arguments
+(`T_not_fixedPoint`, `Q_not_fixedPoint`). Open sub-branches after run 6:
+* `M ∘ B ∘ M ∘ m₄ ∘ …`, `m₄ ∈ {B, M, B M}`;
+* `M ∘ m₂ ∘ B B ∘ …`, `m₂ ∈ {M, B M}` (the unfolding `u g (h z₁) z⃗` puts a fresh variable inside
+  an argument, so `prefix_bound` does not apply directly);
+* `M ∘ m₂ ∘ m₃ ∘ m₄ ∘ …` with `m₂ ∈ {M, B M}`, `m₃ ∈ {B, M, B M, B² M}` and `m₄` as in
+  `fixedPoint_M_fourth`; also the three-monomial ends `M ∘ m₂ ∘ m₃` of these branches, which need
+  a first-argument comparison (as in `polyMBM'_not_fixedPoint`).
+Named conjecture (unchanged in substance): `TLCA4.no_fixedPoint_betaEta : ¬ TLCA4.ProblemFiveOne`;
+evidence: the exclusions above, T and Q, and the spine search of round 4 (length ≤ 7, n ≤ 3,
+x-spine cap 10; not Lean-checked).
+First missing lemma (a statement): `theorem TLCA4.fixedPoint_BM_fifth (m₄ : Mono) (ps : List Mono) (hm : m₄ = ⟨0, .B⟩ ∨ m₄ = ⟨0, .M⟩ ∨ m₄ = ⟨1, .M⟩) : FP (polyTm ⟨0, .M⟩ (⟨0, .B⟩ :: ⟨0, .M⟩ :: m₄ :: ps)) → <constraint on the fifth monomial>`, or a first-argument version of
+`prefix_bound` (arguments containing fresh variables only as `g z` with `g` fixed).
+
+## Series V, big round, run 7 (item A3: toward ¬ PolyFiveOne)
+
+**The argument-count automaton** (`Start/TLCA4Automaton.lean`; standard axioms only, see the
+axioms file). `prefix_bound` (run 6) is turned into an invariant carried along the whole
+polynomial.
+
+* `Unf P m ps a⃗`: for every `z⃗`, `P x z⃗ =w (m ∘ ps) x a⃗ z⃗`, with every argument in `a⃗` free of
+  the fresh variables (`GY`). Write `L = |a⃗|`.
+* `actM_args`, `actB_args`: the weak actions `Bⁿ M w a⃗ z⃗ =w w a₁…aₙ (w a₁…aₙ) aₙ₊₁ … z⃗` and
+  `Bⁿ B w a⃗ z⃗ =w w a₁…aₙ (aₙ₊₁ aₙ₊₂) aₙ₊₃ … z⃗`.
+* **`unf_step`**: in a state of a βη fixed-point polynomial, the head monomial is `Bⁿ M` with
+  `n ≤ L` (new state with `L + 1` arguments), or `Bⁿ B` with `n + 2 ≤ L` (new state with `L − 1`
+  arguments), or `Bⁿ B` with `n + 1 = L` (the *escape*: a fresh variable enters an argument), or
+  has base `I`.
+* **`unf_end`**: if the polynomial ends (`ps = []`, so the head is `x` itself) in a state with
+  `L ≥ 1`, then the last monomial is `B` or `B B` and `L = 2` (`arity_contra` on each of the other
+  cases; for the escape a single fresh argument is supplied).
+* `Adm L m ps`: the admissibility predicate of this automaton; **`unf_adm`**: every reachable state
+  is admissible; **`polyFiveOne_adm`**: if `PolyFiveOne` holds, it has a witness
+  `M ∘ m₂ ∘ … ∘ m_k`, without base-`I` monomials, with `Adm 1 m₂ [m₃, …, m_k]` (the initial state
+  after `M` is `u u z⃗`, `u = (m₂ ∘ …) x`, so `L = 1`).
+* `adm_T`, `adm_Q`: T and Q are admissible. Python (`wip/a3_adm.py`, not Lean-checked): all 14
+  spine hits of length ≤ 7 are admissible; admissible tails over `n ≤ 3`: 0, 12, 80, 736, 5952,
+  49248, 398720 for tail lengths 1–7 (most of them through the escape).
+
+This subsumes the pairing/occurrence parts of `polyFiveOne_second`/`third`/`fourth` and
+`fixedPoint_M_fourth` in one statement; without escape, the admissible paths are Dyck-like
+(`M`-steps up, `B`-steps down, end at `L = 2` with `B` or `B B`), which matches T, Q and all hits.
+
+**What remains (A3).** (1) The escape states `u a₁ … a_{L−1} (a_L z₁) z⃗`: a fresh variable occurs
+inside an argument, so neither `GY` nor `prefix_bound` applies as stated; a version of `Unf` with
+arguments of the form `g z` (`g` fixed) is needed. (2) The end at `L = 2`: `x (a₁ a₂) z⃗` resp.
+`x a₁ (a₂ z₁) z⃗`, where the head-arity invariant is satisfied and a first-argument comparison
+(`a₁ a₂ =βη P x`) is needed — this is where T and Q needed the global stage/grammar arguments.
+Named conjecture (unchanged): `TLCA4.no_fixedPoint_betaEta : ¬ TLCA4.ProblemFiveOne`.
+First missing lemma (a statement):
+`theorem TLCA4.unf_escape (P : Tm) (m : Mono) (ps : List Mono) (args : List Tm) (h : Unf P m ps args) (hm : m = ⟨args.length - 1, .B⟩) (hY : <P is a βη fixed point>) : <admissibility of ps from an escape state>`.
+
+**One step past the escape** (`Start/TLCA4Escape.lean`; standard axioms only).
+* `wrap_BB_contra`, `wrap_BM_contra`, **`wrap_bound`**: if `P x z₁ z⃗ =w m w a⃗ (f z₁) z⃗` for every
+  `z⃗` (`w`, `f`, `a⃗` free of the fresh variables), then `m = Bⁿ B` or `m = Bⁿ M` with `n ≤ |a⃗|`
+  (or base `I`): pairing of two later fresh variables, resp. two occurrences of a fresh variable
+  (for `n = |a⃗|` the duplicated variable is `z₁` inside `f z₁`).
+* **`unf_escape_next`**: after an escape at argument count `L` (head `B^(L−1) B`), the next
+  monomial is `Bⁿ B` or `Bⁿ M` with `n ≤ L − 1`.
+Updated first missing lemma: an automaton for the escape states, i.e. a state predicate with one
+argument `f z₁` carried along (after `Bⁿ B` with `n = L − 1` it becomes `(f z₁) z₂`, after
+`Bⁿ M` it is duplicated), with its step lemma `TLCA4.unfW_step`, and the end case at `L = 2`.
+
+## Series V, big round, run 8 (item A3, plan 4.4: the candidates themselves)
+
+Plan 4.4: the monomial case tree is not extended further (T and Q pass all local tests); A3 works
+on the length-7 hits without a factor `T` directly. All new theorems: standard axioms only
+(`docs/goal/evidence/M20-TLCA4-BETAETA-axioms.txt`).
+
+**hit5 = M∘M∘BM∘BB∘BM∘B∘B: stages** (`Start/TLCA4Hit5Stages.lean`). With `u = B (B x)`,
+`v = BM u`, `w = BB v`, `s = BM w`, `hit5 x = M (M s)` syntactically (`hit5_act`), and
+* `h5w_app`: `w A Z W →w x (A (u A) (Z W))`; `h5s_app`: `s A W →w x (A (u A) (w A W))`;
+* `h5A_app`: `uⁿ s Z W →w xⁿ (s Z W)`;
+* **`h5_stage_step`**: `s (uⁿ s) W →w x^{n+1} (s (uⁿ⁺¹ s) (w (uⁿ s) W))`;
+* **`hit5_stage`**, `hit5_stage_weq`, `hit5_stage_betaEta`: `hit5 x →w x^{tri n} (s (uⁿ s) Wₙ)`
+  for every `n` (`W₀ = M s`, `Wₙ₊₁ = w (uⁿ s) Wₙ`).
+So hit5 has exactly the stage pattern of T and Q (x-prefix at the triangular numbers), with a
+tail `Wₙ` that is only passed along linearly.
+
+**hit5: components and their index** (`Start/TLCA4Hit5Components.lean`). The components `uⁿ s`
+have the βη-normal forms `bₙ = λac. xⁿ⁺¹ (a U (λd. x (a U (c d))))`, `U = λzw. x (a z w)`:
+* `h5nf_nf`, `h5nf_injective`, `Bx_h5nf_reduces` (`B (B x) bₙ →β bₙ₊₁`);
+* `bm_red`, `h5v_reduces`, `h5w_reduces`, **`h5s_reduces`** (`s →βη b₀`);
+* **`h5A_reduces`** (`uⁿ s →βη bₙ`) and **`h5A_index_unique`** (`uⁿ s =βη uᵐ s → n = m`).
+
+**Python (`wip/a3_hits.py`, not Lean-checked).** Random βη-walks from `p x` (hit5–hit10): the map
+residual ↦ x-prefix has no conflict (hit6–hit10: 30 walks each, 3000–6300 visits; hit5: 60 walks
+× 400 steps, 23765 residuals, 0 conflicts). On the leftmost-outermost
+reduction of hit5 x, every reduct of the form `x^k (P Q W…)` with `P`, `Q` reducing to `b_i`, `b_j`
+satisfies `k + i = tri j` (the invariant of the T proof), checked on the first 120 steps.
+
+**Four classes, not six** (`Start/TLCA4HitClasses.lean`). `wip/a3_hitg.py` (not Lean-checked)
+printed the normal forms of the tails; in Lean:
+* `f6_red`, `f7_red`: `B ∘ BB ∘ B` and `B²B ∘ B ∘ B`, applied to `x`, both βη-reduce to
+  `λpqbc. x (p q (b c))`;
+* `polyOf_conv_of_tails`: `C ∘ F` and `C ∘ F'` are βη-equal at `x` when the tails reduce to a
+  common term;
+* **`hit6_conv_hit7`**: `hit6 x =βη hit7 x`; **`hit8_conv_hit9`**: `hit8 x =βη hit9 x`.
+So the six hits without a factor `T` form at most four βη-classes: hit5, hit6 ≡ hit7,
+hit8 ≡ hit9, hit10 (hit5 and hit10 share the tail `BB ∘ BM ∘ B ∘ B` and differ in the third
+monomial, `BM` vs `B²M`).
+
+**A generic stage lemma** (`Start/TLCA4StageGen.lean`; plan 4.4 step 3, first part). For
+combinatory terms `s`, `g` with `StageS`: `s A W →w x (A (g A) W')` and `StageG`:
+`g A Z W →w x (A Z W')` (some `W'`), `iterT_g_app`, `stage_step_gen` and **`stage_gen`** give
+`M (M s) →w x^{tri n} (s (gⁿ s) W)` for every `n`. Instances (all Lean-checked):
+* Q (`g = u = B (B x)`, `s = v = BM u`): `Q_stageS`, **`Q_stage_gen`**;
+* hit5 (`g = u`, `s = BM (BB v)`): `hit5_stageS`, `hit5_stageG`;
+* hit6 (`F = B (BB (B x))`, `g = B²M F`, `s = BM g`; `g A Z W →w x (A Z (F A Z W))`): **`hit6_stage`**;
+* hit8 (`g = B³M F`, `s = BM g`; `g A Z W →w x (A Z (W (F A Z W)))`): **`hit8_stage`**.
+So Q and the classes hit5, hit6 ≡ hit7, hit8 ≡ hit9 all have the triangular stage pattern with a
+component family `gⁿ s`; hit10 (third monomial `B²M`) is not of this form. Working conjecture (evidence:
+Q proved, `Q_not_fixedPoint`; the hit5 invariant tested in Python only; not a theorem): every `M (M s)` with `StageS`/`StageG` and
+normalizing components `gⁿ s` of pairwise distinct normal forms is not a βη fixed point.
+
+**What remains (A3).** `hit5_not_fixedPoint` needs the analogue of `QShape`: a grammar of the
+βη-reducts of `hit5 x` (x-chains over cores `P Q W` with components `P`, `Q` of indices `i`, `j`,
+`k + i = tri j`, plus the partial unfoldings of `s A W` through `M (w A) W`, `w A (w A) W`, …),
+closed under one βη-step. First missing lemma:
+`theorem TLCA4.H5Shape.step {x : ℕ} {N N' : Lambda} (h : H5Shape x N) (hs : betaEtaStep N N') : H5Shape x N'`
+(with `H5Shape` the shape predicate, to be defined as `QShape` was). Structural remark: the
+components of `Q x` are `Aₙ[B x] = uⁿ v` (`tAy`: `A₀[B x] = B M (B (B x)) = v`), and those of
+`hit5 x` are `uⁿ s` with `s = B M (B B v)`, so the `ByR`/`YG` machinery should adapt with a new
+base. Then the same for the classes hit6, hit8, hit10.
+
+## Series V, big round, run 9
+
+**The generic shape argument with arbitrary tails** (`Start/TLCA4TailShape.lean`; item A3,
+plan 4.4 step 3). The stages of hit5 update the tail (`Wₙ₊₁ = w (uⁿ s) Wₙ`), so the `QShape`
+argument (tail = a reduct of a fixed term, chains pass their bound variable unchanged) does not
+apply as it stands. The module abstracts the pattern of `T_not_fixedPoint`/`Q_not_fixedPoint`:
+* `TC base x` — integer-height `x`-chains `B x C`, `(λab. x (a b)) C` and `λc. xᵐ (C T)` with an
+  **arbitrary** tail transformer `T` (in which `c` may occur), over a base family;
+* `TailCores base x` — hypotheses on a `K`-indexed core family: a βη-step of a core gives a chain
+  at the same height; no core is an abstraction, a variable or a chain head; a core determines
+  `K − n`;
+* **`TC.step`** (via `TC.beta_lift`: an abstraction chain applied to any tail stays a chain),
+  `TC.reduces`; `AShape` (`xᵏ (H ρ)`, any `ρ`, `H ∈ TC (base (k + h)) h`), **`AShape.step`**,
+  `AShape.reduces`; **`TC.unique`**, **`AShape.not_xPrefix`**;
+* **`not_fixedPoint_of_ashape`** — if `L →βη N₀` with `AShape base x N₀`, then `¬ L =βη x L`.
+* Non-vacuity: `ZC.toTC`, **`QBase.tailCores`** (the cores of Q satisfy `TailCores`), and
+  **`Q_not_fixedPoint_of_ashape`** re-derives `Q_not_fixedPoint` from the generic theorem.
+
+**Two-argument chains** (`Start/TLCA4TailW.lean`): the tail update of hit5 goes through
+`w Z →w B (v Z)` with `v Z` a chain, and `B C Y ρ →w C (Y ρ)`. Generically over a base family
+(with the hypotheses of `TC.step`), `TW` collects the reducts of `B C` for a chain `C`: `B C`,
+`λbc. xᵐ (C' T)` (`C'` = `C` lifted under `b, c`; `T` arbitrary) and `λb. C`. **`TW.step`**,
+`TW.reduces`: closed under βη (inner β-steps of `C (b c)` included, via `lift2_beta`; η of
+`λc. C' c` gives `λb. C`); **`TW.fire`**: a member `λb. c` applied to any `Y` gives a chain
+`c[Y/b]` of the same height. These are the forms `wB`, `wP`, `wK` of the design below.
+
+**Restricting the base** (`Start/TLCA4TailRestrict.lean`). A hit5 core `W Y` has a head `W ∈ TW`
+over the *same* core family; Lean's kernel rejects this as a nested inductive (the parameters of
+`TW` would contain the local variables `x`, `K`; checked). Plan: define the core family without
+nesting (one inductive with tags, or the chains' data unfolded) and prove its βη-closure by strong
+induction on `Lambda.nodes` of the core, applying `TC.step`/`TW.step` to the base restricted to
+smaller terms. Generic facts for this: `TC.mono`, `TW.mono` (monotone in the base),
+**`TC.restrict`** (base members used in a chain have at most its size) and **`TW.restrict`**
+(strictly smaller for `TW`), `nodes_xPow_le`; `TC.exists_level`, `TW.exists_level` (a chain over a
+union of bases uses one of them, for a family defined by levels `E (k+1) = E k ∪ {M W, W Y : W ∈
+TW (E k)}`); **`TC.step2`**, **`TW.step2`** (closure with two bases `base ⊆ base'`: a step may
+enlarge base members, so the restricted base only needs its steps to be chains over the full one).
+
+**The extension by two-argument heads** (`Start/TLCA4TailExt.lean`). For any core family `core`,
+`ExtL core x 0 = core`, `ExtL core x (k+1) = ExtL core x k ∪ {M W, W Y : W ∈ TW (ExtL core x k)}`,
+`Ext core x K n P = ∃ k, ExtL core x k K n P`. **`Ext.step`**: if every βη-step of a core is a
+chain over `Ext core x K`, then every βη-step of a member of `Ext core x K` is (strong induction
+on `Lambda.nodes` with `TW.step2`, `TW.restrict`, `TW.exists_level`; root steps by `TW.fire` and
+`M W → W W`); `Ext.not_lam`; **`TW.unique`** (for a family with `TailCores`, a two-argument chain
+determines `K − n`; caveat for hit5: the forms `W Y` overlap syntactically with inner cores `P Q`,
+so the uniqueness field of the extension needs a disjointness argument specific to the family). So for hit5 the forms `M Wz`, `Wz Y` come for free: what is left is
+the inner core family (cores `P Q`, `M Q` and the forms of `v Z`) and its firing into chains over
+the extension.
+All standard axioms only (`M20-TLCA4-BETAETA-axioms.txt`).
+
+**What remains for hit5** (design, not Lean-checked). A core family `H5Base x K n` with
+`TailCores`: cores `P Q` (components of indices `i`, `j`, `K + i = tri j + n`) plus the partial
+unfoldings of `s Z ρ →w M (w Z) ρ →w w Z (w Z) ρ →w v Z (w Z ρ) →w x (Z (u Z) (w Z ρ))`, i.e.
+`M Wq`, `Wq Y` (`Wq` a reduct of `w Z`, `Y` arbitrary; offset one `x` before the core `Z (u Z)`)
+and the forms of `v Z` (`B M R Z`, `(λab. M (a b)) R Z`, …, index `(j+1, j+1)`). The component
+grammar (the analogue of `YG`/`YC`/`YBase`) needs `x`-chains under the parameter `q` *and* under
+the extra binder `b` of `B (v q) = λbc. v q (b c)` (inner β-steps of `v q` there), so it should be
+indexed by the de Bruijn positions of both `x` and `q`, with a lifting lemma for components.
+First missing lemma (with `Ext` from `Start/TLCA4TailExt.lean`):
+`theorem TLCA4.H5Core.step {x : ℕ} {K n : ℤ} {P P' : Lambda} (h : H5Core x K n P) (hs : betaEtaStep P P') : TC (Ext (H5Core x) x K) x n P'`
+for the inner core family `H5Core` (then `Ext.step` gives the `step` field of
+`TailCores (Ext (H5Core x) x) x`; uniqueness and the non-chain-head fields remain); then `hit5_not_fixedPoint` follows from
+`not_fixedPoint_of_ashape` and `hit5_stage_betaEta`.
+
+## Series V, big round, run 10
+
+Item A3 (plan 4.4, step 2 for hit5): βη-closed grammars for the next two layers of hit5
+(`u = B (B x)`, `v = B M u`, `w = B B v`, `s = B M w`). All standard axioms only
+(`M20-TLCA4-BETAETA-axioms.txt`).
+
+**The `w`-layer** (`Start/TLCA4Hit5W.lean`). `YB x` is `YBase x` with integer heights; `LiftB base`
+lifts a base family under one more binder. **`TC.lift`**: chains with arbitrary tails are stable
+under `lift 1 0` (the tail becomes `lift 1 1 T`); `TC.step_liftB`: lifted chains are closed under
+βη when the base is; `YC.toTC`: the chains of `Q` are chains with arbitrary tails. The grammar:
+`WqR x` (bodies under `q`): `B Vq` with `Vq ∈ TC (YB x) (x+1) 1`, and `λb. C` with
+`C ∈ TC (LiftB (YB x)) (x+2) 1` — the arbitrary tail absorbs `b c` and its descendants, so the
+inner β-steps of `v q` under the extra binder need no new grammar; `WR x`: `B B V`,
+`(λbc. B (b c)) V`, `(λbcyz. b c (y z)) V` (`V ∈ YG x 0`) and `λq. W` (`W ∈ WqR x`).
+**`WqR.step`**, **`WR.step`**, `WR.reduces`, **`WR.of_h5w`**, `WR.of_reduces`.
+
+**The `s`-layer** (`Start/TLCA4Hit5S.lean`). **`TC.subst_liftB`**: substituting any `Y` for the
+extra binder of a lifted chain gives a chain over the base (the firing `(λb. C) Y`). `WqF x`: the
+reducts of `W q` (`W ∈ WR x`): `W q` itself and `WqR x` (via `subst (var k) k (lift 1 (k+1) W) = W`).
+`SqR x`: `M Wq`, `Wq Y` (`Y` arbitrary) and chains of height `1` over `YB x`. `SR x`: `B M W`,
+`(λab. M (a b)) W`, `(λab. a b (a b)) W` (`W ∈ WR x`), `λq. S` (`S ∈ SqR x`) and the two
+η-contracta (`V ∈ YG x 0` from `λq. V q`, and `f` with `f q ∈ WqF x`). **`WqF.step`**,
+**`SqR.step`**, **`SR.step`**, `SR.reduces`, **`SR.of_h5s`**, `SR.of_reduces`.
+
+**What remains for hit5.** The components are `uⁿ s`: the analogue of `YG`/`YC`/`YBase` with `SR x`
+as an extra base at index `0`, whose q-level chains need arbitrary tails (the β-contractum of
+`(λq. S) q` is an `SqR` body, which contains `TC` chains with arbitrary tails, while `YC` only has
+the tail `q`). A direct definition nests `TC` inside the mutual family, which the kernel rejected
+in run 9; the level-wise construction of `Start/TLCA4TailExt.lean` is the template. First missing
+lemma unchanged: `TLCA4.H5Core.step` (the inner core family over the component grammar); then the
+`TailCores` fields and `hit5_not_fixedPoint` via `not_fixedPoint_of_ashape` and
+`hit5_stage_betaEta`.

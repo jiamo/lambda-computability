@@ -466,8 +466,40 @@ import Start.TLCA4TNotFixpoint
 import Start.PTSExpansionCCOSkel
 import Start.TypeClassSuperFieldExample
 import Start.PTSExpansionCCOSkelFun
+import Start.PTSExpansionCCOClF
+import Start.PTSExpansionCCOClFLimit
 import Start.TypeClassSuperFieldMeasure
 import Start.TLCA4QUnfold
+import Start.TLCA4QStages
+import Start.TLCA4QComponents
+import Start.TLCA4XChain
+import Start.TLCA4YComponents
+import Start.TLCA4YGrammar
+import Start.TLCA4YIndex
+import Start.TLCA4QNotFixpoint
+import Start.TLCA4Candidates
+import Start.TypeClassSuperFieldHead
+import Start.TypeClassSuperFieldCoh
+import Start.TLCA4PolyIdentity
+import Start.TLCA4HeadArity
+import Start.TLCA4HeadArgs
+import Start.TLCA4FirstMono
+import Start.TLCA4HeadM
+import Start.TLCA4SecondMono
+import Start.TLCA4ThirdMono
+import Start.TLCA4PrefixBound
+import Start.TLCA4Automaton
+import Start.TLCA4Escape
+import Start.TLCA4Hit5Stages
+import Start.TLCA4Hit5Components
+import Start.TLCA4HitClasses
+import Start.TLCA4StageGen
+import Start.TLCA4TailShape
+import Start.TLCA4TailW
+import Start.TLCA4TailRestrict
+import Start.TLCA4TailExt
+import Start.TLCA4Hit5W
+import Start.TLCA4Hit5S
 
 /-! ## Interfaces of the untyped calculus
 
@@ -5616,3 +5648,409 @@ contraction of `sup (inst I ds)` strictly decreases the size of the elaborated t
 #check @TypeClass.loopEnv_DEntN
 #check @TypeClass.loopEnv_superInstFragment
 #check @TypeClass.normalize_super_superField_fails
+
+/-! ## Series V, big round, run 1: the stages of `Q x`
+
+`Start/TLCA4QStages.lean` (M20-TLCA4-Q-NOT-FIXPOINT): the components `Aₙ[y]` for an arbitrary
+argument `y`, and the weak head reduction `Q x →w x^{tri n} (M Aₙ₊₁[B x] R)` with the tail
+`R = M A₀[B x]` carried unchanged (`tri n = n (n + 1) / 2`).  `Start/TLCA4QComponents.lean`: the
+normal forms `ãₙ` of the components `Aₙ[B x]` (normality, injectivity, `Aₙ[B x] →β ãₙ`).
+`Q_not_fixedPoint` is not proved.
+-/
+
+#check @TLCA4.tAy_app
+#check @TLCA4.MtAy_step
+#check @TLCA4.iterT_Bx_app
+#check @TLCA4.MtAy_tail_step
+#check @TLCA4.tT_Bx_reduces_qTail
+#check @TLCA4.Q_stage
+#check @TLCA4.Q_stage_betaEta
+#check @TLCA4.tAnfQ_nf
+#check @TLCA4.tAnfQ_injective
+#check @TLCA4.Bx_tAnfQ_reduces
+#check @TLCA4.tAy_Bx_reduces_tAnfQ
+
+/-! ## Series V, big round, run 2: `x`-chains over an arbitrary base
+
+`Start/TLCA4XChain.lean` (M20-TLCA4-Q-NOT-FIXPOINT): the `x`-level constructors of `TGram`
+(`B x P`, `bxPre x P`, `λc. xᵐ (P c)`) over an arbitrary indexed base family, closed under βη
+whenever the base is (`XC.step`, `XC.reduces`); `TGram` itself is an instance (`TGram.xcBase`).
+`Q_not_fixedPoint` is not proved.
+-/
+
+#check @TLCA4.XC.step
+#check @TLCA4.XC.reduces
+#check @TLCA4.XC.lam_xPow
+#check @TLCA4.XCBase.of_closed
+#check @TLCA4.TGram.xcBase
+
+/-! ## Series V, big round, run 2: environment-based classifiers for `CC^ω`
+
+`Start/PTSExpansionCCOClF.lean` (M29-EP-CCOMEGA): the classifier `clF D ρ M` of expressions
+relative to an environment of classes, for any class type and combinators (`ClfData`); the binder
+combinators receive the class of the body as a function of the class of the bound variable.  The
+substitution lemma `clF_subst`, its instance `clF_instantiate` (the semantic form of
+`CCO.clF_subst`) and root β-invariance from the β-law of the combinators (`clF_beta_of`).  The
+concrete class type for `CC^ω` is not given.
+-/
+
+#check @PureTypeSystem.CCO.clF_rename
+#check @PureTypeSystem.CCO.clF_subst
+#check @PureTypeSystem.CCO.clF_instantiate
+#check @PureTypeSystem.CCO.clF_beta_of
+#check @PureTypeSystem.CCO.clF_beta
+
+/-! ## Series V, big round, run 3: the reducts of `B y` and `B y q` for `y = B x`
+
+`Start/TLCA4YComponents.lean` (M20-TLCA4-Q-NOT-FIXPOINT): the `y`-level analogues of `BxR` and
+`BxqR` for the components of `Q x` (`y = B x`): the five reducts of `B (B x)` (`ByR`) and the eight
+reducts of `B (B x) q` (`ByqR`), closed under βη (`ByR.step`, `ByqR.step`).  `Q_not_fixedPoint` is
+not proved.
+-/
+
+#check @TLCA4.ByR.step
+#check @TLCA4.ByqR.step
+#check @TLCA4.ByR.reduces
+#check @TLCA4.ByqR.reduces
+#check @TLCA4.ByR.lift
+#check @TLCA4.ByqR.ne_var
+#check @TLCA4.ByR.of_reduces
+
+/-! ## Series V, big round, run 3: a grammar for the components of `Q x`
+
+`Start/TLCA4YGrammar.lean` (M20-TLCA4-Q-NOT-FIXPOINT): the mutual grammar `YG` / `YC` / `YBase`
+(`TGram` with `x`-prefixes replaced by `x`-chains and `BxR`, `BxqR` by `ByR`, `ByqR`), closed under
+βη (`YG.step`, `YC.step`, `YBase.step`, `YG.reduces`), containing the components `Aᵢ[B x]` of
+`Q x` at index `i` (`YG.of_tAy`) and all their reducts (`YG.of_reduces`).
+`Q_not_fixedPoint` is not proved.
+-/
+
+#check @TLCA4.YG.step
+#check @TLCA4.YC.step
+#check @TLCA4.YBase.step
+#check @TLCA4.YG.reduces
+#check @TLCA4.YG.of_tAy
+#check @TLCA4.YG.of_reduces
+
+/-! ## Series V, big round, run 3: the index of a component of `Q x` is unique
+
+`Start/TLCA4YIndex.lean` (M20-TLCA4-Q-NOT-FIXPOINT): every member of `YG x i` βη-reduces to the
+normal form `ãᵢ` of `Aᵢ[B x]` (`YG.reduces_tAnfQ`, with `YC.reduces_chainNf`,
+`YBase.reduces_chainNf`), so the index is unique (`YG.index_unique`).  `Q_not_fixedPoint` is not
+proved.
+-/
+
+#check @TLCA4.ByR.to_byl3
+#check @TLCA4.ByqR.to_bym3
+#check @TLCA4.YG.reduces_tAnfQ
+#check @TLCA4.YC.reduces_chainNf
+#check @TLCA4.YBase.reduces_chainNf
+#check @TLCA4.YG.index_unique
+
+/-! ## Series V, big round, run 3: `Q` is not a βη fixed-point combinator
+
+`Start/TLCA4QNotFixpoint.lean` (M20-TLCA4-Q-NOT-FIXPOINT): the reducts of `Q x` keep the shape
+`xᵏ (H ρ)` with `H` an integer-height `x`-chain over a core `P Q` / `M Q` of components and the
+conservation law `k + d + i = tri j` stored in the base (`QShape`, `QShape.step`); the conserved
+quantity is determined by the chain (`ZC.unique`), so a term and its `x`-prefix cannot both have
+the shape, and by Church–Rosser `Q = M ∘ M ∘ (B M) ∘ B ∘ B` is not a βη fixed-point combinator
+(`Q_not_fixedPoint`).
+-/
+
+#check @TLCA4.ByqR.subst
+#check @TLCA4.ZC.step
+#check @TLCA4.YC.subst
+#check @TLCA4.QBase.zcBase
+#check @TLCA4.QShape.step
+#check @TLCA4.ZC.unique
+#check @TLCA4.QShape.not_xPrefix
+#check @TLCA4.Q_not_fixedPoint
+
+/-! ## Series V, big round, run 3: the β-law of a classifier needs a domain restriction
+
+`Start/PTSExpansionCCOClFLimit.lean` (M29-EP-CCOMEGA): if the combinators of an environment-based
+classifier satisfied the β-law for every class and every function `C → C`, the class type would
+have at most one element (`ClfData.subsingleton_of_beta`, a diagonal argument), so the β-law of a
+`CC^ω` classifier can only hold on well-classified arguments.  The concrete classifier is not
+given (item B1 blocked; see the evidence note).
+-/
+
+#check @PureTypeSystem.CCO.ClfData.subsingleton_of_beta
+#check @PureTypeSystem.CCO.ClfData.not_beta_of_ne
+
+/-! ## Series V, big round, run 3: the length-7 candidates
+
+`Start/TLCA4Candidates.lean` (M20-TLCA4-BETAETA): the twelve length-7 hits of the spine search as
+polynomials; six factor through `T` (`factor_T`: `(C ∘ T ∘ F) x =w C (T (F x))`): `hit1 = M∘M∘B∘T∘B`,
+`hit2 = M∘Q∘B`, `hit3 = M∘T∘BM∘BB∘B`, `hit4 = M∘T∘B²M∘BB∘B`, `hit11 = T∘T∘B`, `hit12 = M∘BM∘T∘B∘B`;
+the other six (`hit5`–`hit10`) have no factor `T`.
+-/
+
+#check @TLCA4.factor_T
+#check @TLCA4.hit1_weq
+#check @TLCA4.hit2_weq_Q
+#check @TLCA4.hit3_weq
+#check @TLCA4.hit4_weq
+#check @TLCA4.hit11_weq_TT
+#check @TLCA4.hit12_weq
+#check @TLCA4.hit5_weq
+
+/-! ## Series V, big round, run 3: head forms under `SuperField`
+
+`Start/TypeClassSuperFieldHead.lean` (M25-TYPECLASS-SUPER-FIELD): if every instance satisfies
+`SuperField`, every elaborated dictionary reduces, without increasing its size, to a head form (a
+projection chain over a hypothesis, or an instance applied to context dictionaries).
+-/
+
+#check @TypeClass.DEnt.headForm
+#check @TypeClass.DEntH.toDEnt
+#check @TypeClass.DEntHyp.unique
+#check @TypeClass.DEntHyp.not_instHead
+
+/-! ## Series V, big round, run 4: coherence under `SuperField`
+
+`Start/TypeClassSuperFieldCoh.lean` (M25-TYPECLASS-SUPER-FIELD): in a `SuperInstFragment` whose
+instances all satisfy `SuperField`, any two dictionaries for one constraint are β-convertible,
+and coherence of the unannotated elaboration holds, without normal derivations.
+-/
+
+#check @TypeClass.conv_substEnv_of_size
+#check @TypeClass.DEnt.conv_superField
+#check @TypeClass.AElab.conv_superField
+#check @TypeClass.coherence_unannotated_superField
+#check @TypeClass.loopEnv_conv_eqBase
+
+/-! ## Series V, big round, run 4: monomials `Bⁿ I` are βη-units
+
+`Start/TLCA4PolyIdentity.lean` (M20-TLCA4-BETAETA, item A3): under βη, `Bⁿ I` is `I` and a unit
+for `∘`; a βη fixed-point polynomial can be chosen without monomials of base `I`.
+-/
+
+#check @TLCA4.bpowI_betaEta
+#check @TLCA4.polyTm_headI_betaEta
+#check @TLCA4.polyTm_lastI_betaEta
+#check @TLCA4.polyL_filter_noI
+#check @TLCA4.var_not_betaEtaConv_selfApp
+#check @TLCA4.polyFiveOne_noI
+#check @TLCA4.BENormal
+#check @TLCA4.not_fixedPoint_of_normal
+#check @TLCA4.poly_not_fixedPoint_of_normal
+
+/-! ## Series V, big round, run 5: the βη head-arity invariant and the arguments of a fixed point
+
+`Start/TLCA4HeadArity.lean`, `Start/TLCA4HeadArgs.lean`, `Start/TLCA4FirstMono.lean`,
+`Start/TLCA4HeadM.lean` and `Start/TLCA4SecondMono.lean` (M20-TLCA4-BETAETA, item A3): βη-convertible free-headed head normal forms have the same head and
+the same arity difference, and (with the same number of binders) pointwise βη-convertible
+arguments.  Hence `Y x =βη x (Y x)` forces every head normal form of `Y x` to be
+`λz₁ … z_k. x (Y x)↑ z₁ … z_k` up to βη in the arguments.  Consequences: no monomial is a βη
+fixed-point combinator, and the first monomial of a βη fixed-point polynomial is `M` (base `M` by
+a variable-pairing invariant, exponent `0` by occurrence counting in the λI-calculus), and the
+second monomial is `B`, `M` or `B M`.
+-/
+
+#check @TLCA4.HSp.betaEtaConv
+#check @TLCA4.fixedPoint_hsp
+#check @TLCA4.not_fixedPoint_of_hsp
+#check @TLCA4.RForm.betaEtaReduces
+#check @TLCA4.lamK_spn_betaEtaConv
+#check @TLCA4.fixedPoint_args
+#check @TLCA4.fixedPoint_firstArg_hsp
+#check @TLCA4.bM_not_fixedPoint
+#check @TLCA4.mono_not_fixedPoint
+#check @TLCA4.polyFiveOne_two
+#check @TLCA4.GY.betaEtaReduces
+#check @TLCA4.headB_not_fixedPoint
+#check @TLCA4.polyFiveOne_head_baseM
+#check @TLCA4.occL_subst
+#check @TLCA4.LamI.betaEtaReduces
+#check @TLCA4.headBM_not_fixedPoint
+#check @TLCA4.polyFiveOne_head_M
+#check @TLCA4.secondBB_not_fixedPoint
+#check @TLCA4.secondBM_not_fixedPoint
+#check @TLCA4.polyFiveOne_second
+
+/-! ## Series V, big round, run 6: the third monomial of a βη fixed-point polynomial
+
+`Start/TLCA4ThirdMono.lean` (M20-TLCA4-BETAETA, item A3): the variable-pairing invariant,
+occurrence counting in the λI-calculus and an arity comparison through the head-arity invariant
+exclude every third monomial except: `(m₂, m₃) = (B, M)`, or `m₂ ∈ {M, B M}` and
+`m₃ ∈ {B, B B, M, B M, B² M}`; no two-monomial polynomial and not `M ∘ B ∘ M` is a fixed point;
+in the branch `M ∘ B ∘ M ∘ m₄ ∘ …`, `m₄ ∈ {B, M, B M}`.
+-/
+
+#check @TLCA4.arity_contra
+#check @TLCA4.polyMB_not_fixedPoint
+#check @TLCA4.polyMM_not_fixedPoint
+#check @TLCA4.polyMBM_not_fixedPoint
+#check @TLCA4.polyMBM'_not_fixedPoint
+#check @TLCA4.thirdB_B_not_fixedPoint
+#check @TLCA4.thirdB_BB_not_fixedPoint
+#check @TLCA4.thirdB_BM_not_fixedPoint
+#check @TLCA4.thirdM_BB_not_fixedPoint
+#check @TLCA4.thirdM_BM_not_fixedPoint
+#check @TLCA4.polyFiveOne_third
+#check @TLCA4.fourthBM_B1_not_fixedPoint
+#check @TLCA4.fourthBM_BB_not_fixedPoint
+#check @TLCA4.fourthBM_BM_not_fixedPoint
+#check @TLCA4.fixedPoint_BM_fourth
+#check @TLCA4.polyFiveOne_fourth
+
+/-! ## Series V, big round, run 6: a uniform prefix bound
+
+`Start/TLCA4PrefixBound.lean` (M20-TLCA4-BETAETA, item A3): if `P x z⃗ =w m w a⃗ z⃗` with `w`, `a⃗`
+free of the fresh variables and `P` is a βη fixed-point combinator, then `m = Bⁿ B` with
+`n < |a⃗|` or `m = Bⁿ M` with `n ≤ |a⃗|`; applied to the fourth monomial of the branches
+`M ∘ {M, B M} ∘ {B, M, B M, B² M} ∘ m₄ ∘ …`.
+-/
+
+#check @TLCA4.prefix_BB_contra
+#check @TLCA4.prefix_BM_contra
+#check @TLCA4.prefix_bound
+#check @TLCA4.secondM_unfold_cons
+#check @TLCA4.fixedPoint_M_fourth
+
+/-! ## Series V, big round, run 7: the argument-count automaton
+
+`Start/TLCA4Automaton.lean` (M20-TLCA4-BETAETA, item A3): `prefix_bound` carried along the whole
+polynomial as an invariant on the number `L` of fresh-variable-free arguments (`Unf`): `Bⁿ M`
+needs `n ≤ L` (then `L + 1`), `Bⁿ B` needs `n + 2 ≤ L` (then `L - 1`) or is the escape `n + 1 = L`;
+the last monomial is `B` or `B B` with `L = 2` (`unf_end`). Hence `polyFiveOne_adm`: a fixed-point
+polynomial `M ∘ m₂ ∘ … ∘ m_k` has an admissible tail (`Adm 1 m₂ [m₃, …, m_k]`).
+-/
+
+#check @TLCA4.Unf
+#check @TLCA4.Adm
+#check @TLCA4.actM_args
+#check @TLCA4.actB_args
+#check @TLCA4.unf_step
+#check @TLCA4.unf_end
+#check @TLCA4.unf_adm
+#check @TLCA4.polyFiveOne_adm
+#check @TLCA4.adm_T
+#check @TLCA4.adm_Q
+
+/-! `Start/TLCA4Escape.lean`: one step past the escape. If `P x z₁ z⃗ =w m w a⃗ (f z₁) z⃗`, the
+pairing/occurrence contradictions on the later fresh arguments give `m = Bⁿ B` or `Bⁿ M` with
+`n ≤ |a⃗|` (`wrap_bound`); so after an escape at argument count `L` the next monomial has
+`n ≤ L - 1` (`unf_escape_next`). -/
+
+#check @TLCA4.wrap_BB_contra
+#check @TLCA4.wrap_BM_contra
+#check @TLCA4.wrap_bound
+#check @TLCA4.unf_escape_next
+
+/-! `Start/TLCA4Hit5Stages.lean` and `Start/TLCA4Hit5Components.lean` (series V, big round, run 8):
+the first length-7 hit without a factor `T`, `hit5 = M∘M∘BM∘BB∘BM∘B∘B`. With `u = B (B x)`,
+`w = BB (BM u)`, `s = BM w`: `hit5 x →w x^{tri n} (s (uⁿ s) Wₙ)` (`hit5_stage`), the stage pattern
+of `T` and `Q`; the components `uⁿ s` βη-reduce to the normal forms
+`bₙ = λac. xⁿ⁺¹ (a U (λd. x (a U (c d))))` (`h5A_reduces`), so their index is unique
+(`h5A_index_unique`). -/
+
+#check @TLCA4.h5_stage_step
+#check @TLCA4.hit5_stage
+#check @TLCA4.hit5_stage_weq
+#check @TLCA4.hit5_stage_betaEta
+#check @TLCA4.h5nf_nf
+#check @TLCA4.h5nf_injective
+#check @TLCA4.Bx_h5nf_reduces
+#check @TLCA4.h5s_reduces
+#check @TLCA4.h5A_reduces
+#check @TLCA4.h5A_index_unique
+
+/-! `Start/TLCA4HitClasses.lean` (series V, big round, run 8): the tails `B ∘ BB ∘ B` and
+`B²B ∘ B ∘ B` both βη-reduce, at `x`, to `λpqbc. x (p q (b c))`, so `hit6 x =βη hit7 x` and
+`hit8 x =βη hit9 x`: the six hits without a factor `T` form at most four βη-classes. -/
+
+#check @TLCA4.f6_red
+#check @TLCA4.f7_red
+#check @TLCA4.polyOf_conv_of_tails
+#check @TLCA4.hit6_conv_hit7
+#check @TLCA4.hit8_conv_hit9
+
+/-! `Start/TLCA4StageGen.lean` (series V, big round, run 8): a generic stage lemma for
+`M (M s)` with `s A W →w x (A (g A) W')` and `g A Z W →w x (A Z W')`: `M (M s) →w x^{tri n}
+(s (gⁿ s) W)` (`stage_gen`); instances Q, hit5, hit6, hit8 (`Q_stage_gen`, `hit6_stage`,
+`hit8_stage`). -/
+
+#check @TLCA4.stage_step_gen
+#check @TLCA4.stage_gen
+#check @TLCA4.hit5_stageS
+#check @TLCA4.hit5_stageG
+#check @TLCA4.hit6_stage
+#check @TLCA4.hit8_stage
+#check @TLCA4.Q_stage_gen
+
+/-! `Start/TLCA4TailShape.lean` (series V, big round, run 9): the generic shape argument with
+arbitrary tails (chains `TC` with tail transformers, hypotheses `TailCores` on a core family);
+`not_fixedPoint_of_ashape`; instance for `Q` (`QBase.tailCores`, `Q_not_fixedPoint_of_ashape`). -/
+
+#check @TLCA4.TC.step
+#check @TLCA4.AShape.step
+#check @TLCA4.TC.unique
+#check @TLCA4.AShape.not_xPrefix
+#check @TLCA4.not_fixedPoint_of_ashape
+#check @TLCA4.QBase.tailCores
+#check @TLCA4.Q_not_fixedPoint_of_ashape
+
+/-! `Start/TLCA4TailW.lean` (series V, big round, run 9): the reducts of `B C` for a chain `C`
+(two-argument chains `TW`: `B C`, `λbc. xᵐ (C' T)`, `λb. C`), closed under βη (`TW.step`); firing
+one on any argument gives a chain of the same height (`TW.fire`). -/
+
+#check @TLCA4.TW.step
+#check @TLCA4.TW.reduces
+#check @TLCA4.TW.fire
+
+/-! `Start/TLCA4TailRestrict.lean` (series V, big round, run 9): chains are monotone in the base
+(`TC.mono`, `TW.mono`), and every base member used in a chain is no larger than it
+(`TC.restrict`; strictly smaller for two-argument chains, `TW.restrict`), for closure proofs by
+strong induction on the size of a core; a chain over a union of bases uses one of them
+(`TC.exists_level`, `TW.exists_level`); `TC.step2`, `TW.step2`: the closure lemmas with two bases. -/
+
+#check @TLCA4.nodes_xPow_le
+#check @TLCA4.TC.mono
+#check @TLCA4.TC.restrict
+#check @TLCA4.TW.mono
+#check @TLCA4.TW.restrict
+#check @TLCA4.TC.exists_level
+#check @TLCA4.TW.exists_level
+#check @TLCA4.TC.step2
+#check @TLCA4.TW.step2
+
+/-! `Start/TLCA4TailExt.lean` (series V, big round, run 9): the extension `Ext core x` of a core
+family by the heads `M W` and `W Y` with `W ∈ TW` over the family itself, defined by levels
+(`ExtL`); it is closed under βη whenever the cores are (`Ext.step`); a two-argument chain
+determines the conserved quantity (`TW.unique`). -/
+
+#check @TLCA4.ExtL.not_lam
+#check @TLCA4.ExtL.step
+#check @TLCA4.Ext.step
+#check @TLCA4.Ext.not_lam
+#check @TLCA4.TW.unique
+
+/-! `Start/TLCA4Hit5W.lean` (series V, big round, run 10): the `w`-layer of `hit5`.  Chains with
+arbitrary tails are stable under lifting (`TC.lift`, `TC.step_liftB`); the reducts of
+`w = B B v` form the βη-closed grammar `WR` (`B B V`, `(λbc. B (b c)) V`, `(λbcyz. b c (y z)) V`,
+`λq. W` with `W ∈ WqR`: `B Vq` or `λb. C` with `Vq`, `C` chains of height `1` over the cores of
+`Q`); `w` itself is in it (`WR.of_h5w`). -/
+
+#check @TLCA4.TC.lift
+#check @TLCA4.TC.step_liftB
+#check @TLCA4.YC.toTC
+#check @TLCA4.WqR.step
+#check @TLCA4.WR.step
+#check @TLCA4.WR.reduces
+#check @TLCA4.WR.of_h5w
+#check @TLCA4.WR.of_reduces
+
+/-! `Start/TLCA4Hit5S.lean` (series V, big round, run 10): the `s`-layer of `hit5`.  Firing a
+lifted chain gives a chain over the base (`TC.subst_liftB`); the reducts of `W q` (`WqF`), the
+bodies `M Wq`, `Wq Y` and height-`1` chains under `q` (`SqR`), and the reducts of `s = B M w`
+(`SR`, with the η-contracta) are closed under βη; `s` is in the grammar (`SR.of_h5s`). -/
+
+#check @TLCA4.TC.subst_liftB
+#check @TLCA4.WqF.step
+#check @TLCA4.SqR.step
+#check @TLCA4.SR.step
+#check @TLCA4.SR.reduces
+#check @TLCA4.SR.of_h5s
+#check @TLCA4.SR.of_reduces

@@ -4749,13 +4749,32 @@ tasks:
       - "python3 scripts/check_sorry.py"
       - "lake build --wfail"
 
+  - id: M20-TLCA4-Q-NOT-FIXPOINT
+    priority: P1
+    status: DONE_STRONG
+    track: research/open-problems
+    title: "The candidate Q = M∘M∘(BM)∘B∘B is not a βη fixed-point combinator"
+    terminal_statement: "theorem TLCA4.Q_not_fixedPoint : ¬ Lambda.betaEtaConv (toLam (app tQ (var 0))) (toLam (app (var 0) (app tQ (var 0)))) (Start/TLCA4QNotFixpoint.lean), tQ = M∘M∘(BM)∘B∘B. Proof (Series V big round, runs 1-3): stages Q x →w x^(tri n) (M Aₙ₊₁[B x] R) (Q_stage, Start/TLCA4QStages.lean); normal forms ãₙ of the components Aₙ[B x] (tAnfQ_nf, tAnfQ_injective, tAy_Bx_reduces_tAnfQ, Start/TLCA4QComponents.lean); reducts of B(Bx), B(Bx)q (ByR.step, ByqR.step, Start/TLCA4YComponents.lean); the mutual component grammar YG/YC/YBase closed under βη (YG.step, YG.of_tAy, Start/TLCA4YGrammar.lean); YG.reduces_tAnfQ, YG.index_unique (Start/TLCA4YIndex.lean); integer-height x-chains ZC over cores P Q / M Q with the conserved quantity K = k + h in the base (QBase: K + i = tri j + n), YC.subst, QBase.zcBase, QShape.step, ZC.unique, QShape.not_xPrefix and Church–Rosser from M A₁[B x] R (Start/TLCA4QNotFixpoint.lean). Standard axioms only (docs/goal/evidence/M20-TLCA4-Q-NOT-FIXPOINT-axioms.txt)."
+    latest_evidence: "docs/goal/evidence/M20-TLCA4-BETAETA.md"
+    open_boundary: ""
+    milestone: M20
+    depends_on: []
+    rank: 1492
+    exit_criteria:
+      - "theorem TLCA4.Q_not_fixedPoint : ¬ Lambda.betaEtaConv (toLam (app tQ (var 0))) (toLam (app (var 0) (app tQ (var 0)))), standard axioms only."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
   - id: M20-TLCA4-BETAETA
     priority: P1
     status: TODO_READY
     track: research/open-problems
     title: "TLCA open problem 4 under beta-eta: Imamura's Problem 5.1 (is there a B, M, I-combination Y with Y x =βη x (Y x)?)"
     latest_evidence: "docs/goal/evidence/M20-TLCA4-BETAETA.md"
-    open_boundary: "Open problem (Imamura, Problem 5.1). Earlier rounds (evidence note): toLam, polynomials, statmanStepOne, so Problem 5.1 is equivalent to ¬ PolyFiveOne (problemFiveOne_iff_polyFiveOne); polyApp_reduces_lam; Series V round 4 run 1: T = BM(B(BM)B) is not a βη fixed-point combinator (TLCA4.T_not_fixedPoint, row M20-TLCA4-T-NOT-FIXPOINT, DONE_STRONG). Series V round 4 run 2: Lean, Start/TLCA4QUnfold.lean: Q_unfold, Q_betaEta_MT (Q x =βη M (T (B x)) for Q = M∘M∘BM∘B∘B); experiments (not Lean-checked): A1 search over the polynomials in BⁿB, BⁿM (n ≤ 3) with first monomial M, length ≤ 7 (299593 polynomials), x-spine cap 10, fuel 300 per level, cap hits rechecked with 10× fuel: exactly 14 reach the cap (T at length 3, Q = M∘M∘BM∘B∘B at length 5, 12 at length 7, among them Q₂ and T∘T∘B), all of odd length 2m+1 with m+1 M-monomials; depths observed 0, 1, 2, 4 or the cap; the family Q_k = M∘Mᵏ∘BM∘Bᵏ⁺¹ = M∘Q_{k-1}∘B (Q₀ = T) reaches cap 12 for k ≤ 4. A2: the residual components of Q x have infinite Böhm trees (R x = T (B x) has spine λe. x(x(x…)), 40 levels), so they have no normal form and the normal-form index of the T proof cannot apply; leftmost reduction of Q x and T x shows the same stage pattern (long gaps end exactly at k = 1 + j(j+1)/2, k ≤ 67 for Q, k ≤ 187 for T). Stop: the component grammar of Q x (analogue of TGram, TGram.step) is not found. First missing lemma: theorem TLCA4.no_fixedPoint_betaEta (Y : Tm) (x : ℕ) (hY : occ x Y = 0) : ¬ Lambda.betaEtaConv (toLam (.app Y (.var x))) (toLam (.app (.var x) (.app Y (.var x)))), equivalently ¬ PolyFiveOne; next claim TLCA4.Q_not_fixedPoint."
+    open_boundary: "Open problem (Imamura, Problem 5.1). Earlier rounds (evidence note): statmanStepOne, so Problem 5.1 is equivalent to ¬ PolyFiveOne; T and Q are not βη fixed-point combinators (rows M20-TLCA4-T-NOT-FIXPOINT, M20-TLCA4-Q-NOT-FIXPOINT); spine search (not Lean-checked): 14 polynomials reach the cap at length ≤ 7; six length-7 hits factor through T (factor_T). Runs 4–7 (A3): local constraints on a fixed-point polynomial (polyFiveOne_head_M … unf_escape_next); T, Q and all hits pass them, so the case tree is not extended (plan 4.4). Run 8: hit5 = M∘M∘BM∘BB∘BM∘B∘B has the triangular stage pattern (hit5_stage) and components with unique index (h5A_index_unique); hit6 ≡ hit7, hit8 ≡ hit9 (hit6_conv_hit7, hit8_conv_hit9); generic stage lemma stage_gen (Q, hit5, hit6, hit8). Run 9: generic shape argument with arbitrary tails (TailShape: TC, TailCores, not_fixedPoint_of_ashape; checked on Q), two-argument chains TW, TC.step2, level-wise extension Ext (Ext.step). Run 10: βη-closed grammars for the w- and s-layers of hit5 (Start/TLCA4Hit5W.lean: TC.lift, WR.step, WR.of_h5w; Start/TLCA4Hit5S.lean: TC.subst_liftB, SqR.step, SR.step, SR.of_h5s). Next: the component grammar of hit5 (uⁿ s, the analogue of YG with SR at index 0 and q-level chains with arbitrary tails; first missing lemma TLCA4.H5Core.step), then hit5_not_fixedPoint; final target TLCA4.no_fixedPoint_betaEta : ¬ TLCA4.ProblemFiveOne."
     milestone: M20
     depends_on:
       - M20-TLCA4-BM-FIXPOINT
@@ -6449,12 +6468,12 @@ tasks:
 
   - id: M25-TYPECLASS-COHERENCE-SUPER
     priority: P2
-    status: DONE_WEAK
+    status: DONE_STRONG
     track: theory/types
     title: "Coherence of dictionary elaboration with superclasses"
-    terminal_statement: "TypeClass.DEnt.conv_super (hF : SuperFragment E P) (h : DEnt E P n C d) (h' : DEnt E P n C d') : Lambda.Conv d d'; TypeClass.coherence_unannotated_super (hF : SuperFragment E P) (hB : Bidi E false Γ e τ) (hS : STyping E P Γ e τ) : (∃ t, ElabS E P Γ e τ t) ∧ ∀ t t', ElabS E P Γ e τ t → ElabS E P Γ e τ t' → t = t'; TypeClass.coherence_unannotated_super_conv; TypeClass.superClosure_not_coherent"
+    terminal_statement: "TypeClass.DEnt.conv_super (hF : SuperFragment E P) (h : DEnt E P n C d) (h' : DEnt E P n C d') : Lambda.Conv d d'; TypeClass.coherence_unannotated_super (hF : SuperFragment E P) (hB : Bidi E false Γ e τ) (hS : STyping E P Γ e τ) : (∃ t, ElabS E P Γ e τ t) ∧ ∀ t t', ElabS E P Γ e τ t → ElabS E P Γ e τ t' → t = t'; TypeClass.coherence_unannotated_super_conv; TypeClass.superClosure_not_coherent; with instances of subclasses well formed for their superclass: TypeClass.coherence_unannotated_superField (hE : EnvGood E) (hSF : ∀ I ∈ E.insts, SuperField E I) (hF : SuperInstFragment E P) (Start/TypeClassSuperFieldCoh.lean, Series V big round run 4); the hypothesis-closure condition of the fragment is necessary (superClosure_not_coherent). Gap rows M25-TYPECLASS-SUPER-INST and M25-TYPECLASS-SUPER-FIELD closed."
     latest_evidence: "docs/goal/evidence/M25-TYPECLASS-COHERENCE.md"
-    open_boundary: "Proved round 6 (Start/TypeClassSuperCoh.lean): superClosure_not_coherent (in an EnvGood environment with Eq, Ord <: Eq, Num <: Eq and the hypotheses Ord α, Num α, the constraint Eq α has two DEnt dictionaries that are distinct normal forms, so DEnt.conv_super as named in round 5 is false without a condition on the hypotheses); SuperFragment E P (EnvOK, no overlap, instances only for classes without a superclass, the superclass closures of distinct hypotheses at one type are disjoint and avoid instance heads), superFragment_supEnv (non-vacuous: superclasses allowed), DEnt.unique_super and DEnt.conv_super (uniqueness, hence β-convertibility, of dictionaries), AElab.coherent_super, coherence_unannotated_super, coherence_unannotated_super_conv (coherence for unambiguous judgements in the fragment with superclasses). Open (gap row M25-TYPECLASS-SUPER-INST): instances of classes that have a superclass, where a dictionary may be the superclass projection of an instance dictionary (super_coherent); first missing lemma a normalisation of DEnt derivations removing sup-of-inst. Round 9: M25-TYPECLASS-SUPER-INST is DONE_WEAK (coherence_unannotated_superInst under NormalSuperFields, instances of subclasses allowed); gap row M25-TYPECLASS-SUPER-FIELD: replace NormalSuperFields by SuperField."
+    open_boundary: ""
     milestone: M25
     depends_on:
       - M25-TYPECLASS-SUPER-INST
@@ -6469,12 +6488,12 @@ tasks:
 
   - id: M25-TYPECLASS-SUPER-INST
     priority: P2
-    status: DONE_WEAK
+    status: DONE_STRONG
     track: theory/types
     title: "Coherence with superclasses when instances of subclasses exist"
-    terminal_statement: "TypeClass.coherence_unannotated_superInst {E : Env} {P : List Cstr} (hE : EnvGood E) (hN : NormalSuperFields E) (hF : SuperInstFragment E P) {Γ : List Mty} {e : Sexp} {τ : Mty} (hB : Bidi E false Γ e τ) (hS : STyping E P Γ e τ) : (∃ t, ElabS E P Γ e τ t) ∧ ∀ t t', ElabS E P Γ e τ t → ElabS E P Γ e τ t' → Lambda.Conv t t'; TypeClass.DEnt.normalize_super {E : Env} (hE : EnvGood E) (hN : NormalSuperFields E) {P : List Cstr} {n : ℕ} {C : Cstr} {d : Lambda} (h : DEnt E P n C d) : ∃ b d', DEntN E P n b C d' ∧ Lambda.reduces d d'; TypeClass.DEnt.conv_superInst; TypeClass.DEntN.unique; TypeClass.SuperFragment.toSuperInst; TypeClass.SuperFragment.normalSuperFields; Lambda.substEnv_reduces; TypeClass.example_superInst_coherence; TypeClass.exampleEnv_normalSuperFields; TypeClass.exampleEnv_superInstFragment"
+    terminal_statement: "TypeClass.coherence_unannotated_superInst {E : Env} {P : List Cstr} (hE : EnvGood E) (hN : NormalSuperFields E) (hF : SuperInstFragment E P) {Γ : List Mty} {e : Sexp} {τ : Mty} (hB : Bidi E false Γ e τ) (hS : STyping E P Γ e τ) : (∃ t, ElabS E P Γ e τ t) ∧ ∀ t t', ElabS E P Γ e τ t → ElabS E P Γ e τ t' → Lambda.Conv t t'; TypeClass.DEnt.normalize_super {E : Env} (hE : EnvGood E) (hN : NormalSuperFields E) {P : List Cstr} {n : ℕ} {C : Cstr} {d : Lambda} (h : DEnt E P n C d) : ∃ b d', DEntN E P n b C d' ∧ Lambda.reduces d d'; TypeClass.DEnt.conv_superInst; TypeClass.DEntN.unique; TypeClass.SuperFragment.toSuperInst; TypeClass.SuperFragment.normalSuperFields; Lambda.substEnv_reduces; TypeClass.example_superInst_coherence; TypeClass.exampleEnv_normalSuperFields; TypeClass.exampleEnv_superInstFragment; under SuperField (the exit criterion): TypeClass.coherence_unannotated_superField (Start/TypeClassSuperFieldCoh.lean, gap row M25-TYPECLASS-SUPER-FIELD closed in Series V big round run 4)."
     latest_evidence: "docs/goal/evidence/M25-TYPECLASS-COHERENCE.md"
-    open_boundary: "Gap row of M25-TYPECLASS-COHERENCE-SUPER (DONE_WEAK, round 6). Round 8 (Start/TypeClassSuperNorm.lean): DEntN, NormalSuperFields E, DEntN.supInst_contract. Round 9 (Start/TypeClassSuperNormalize.lean): the congruence Lambda.substEnv_reduces (Lambda.reduces (substEnv u t) (substEnv u' t) when every u k reduces to u' k); DEnt.normalize_super under NormalSuperFields; the fragment SuperInstFragment E P (no overlap, superclass closures of distinct hypotheses disjoint and avoiding instance heads; instances of subclasses allowed), with SuperFragment.toSuperInst and SuperFragment.normalSuperFields (it extends the round-6 fragment); DEntN.unique, DEnt.conv_superInst, AElab.conv_superInst and coherence_unannotated_superInst (coherence for unambiguous judgements in environments with instances of subclasses). Round 10 (Start/TypeClassSuperExample.lean): non-vacuity, the example environment (Eq, Ord <: Eq, instances Eq Base, Eq (a → b), Ord Base whose Eq field is the Eq Base dictionary) satisfies EnvGood, NormalSuperFields and SuperInstFragment, and coherence_unannotated_superInst applies to the method eq at Base (example_superInst_coherence). DONE_WEAK: the exit criterion asks for instances well formed for their superclass (SuperField); the theorem assumes the stronger NormalSuperFields (superclass fields stored as closed normal dictionary derivations). Gap row M25-TYPECLASS-SUPER-FIELD."
+    open_boundary: ""
     milestone: M25
     depends_on:
       - M25-TYPECLASS-SUPER-FIELD
@@ -6489,11 +6508,12 @@ tasks:
 
   - id: M25-TYPECLASS-SUPER-FIELD
     priority: P2
-    status: IN_PROGRESS
+    status: DONE_STRONG
     track: theory/types
     title: "Coherence with instances of subclasses under SuperField alone"
+    terminal_statement: "theorem TypeClass.coherence_unannotated_superField {E : Env} {P : List Cstr} (hE : EnvGood E) (hSF : ∀ I ∈ E.insts, SuperField E I) (hF : SuperInstFragment E P) {Γ : List Mty} {e : Sexp} {τ : Mty} (hB : Bidi E false Γ e τ) (hS : STyping E P Γ e τ) : (∃ t, ElabS E P Γ e τ t) ∧ ∀ t t', ElabS E P Γ e τ t → ElabS E P Γ e τ t' → Lambda.Conv t t' (Start/TypeClassSuperFieldCoh.lean); TypeClass.DEnt.conv_superField (any two DEnt dictionaries for one constraint are β-convertible under EnvGood, SuperField and SuperInstFragment); TypeClass.AElab.conv_superField; TypeClass.conv_substEnv_of_size; non-vacuity TypeClass.loopEnv_conv_eqBase (loopEnv, where normal derivations do not exist). History: superEnv_sup_inst_step, DEnt.superMeasure_lt, normalize_super_superField_fails (Series V round 4), DEnt.headForm, DEntHyp.unique, DEntHyp.not_instHead (big round run 3), conv_superField (big round run 4). Standard axioms only (docs/goal/evidence/M25-TYPECLASS-SUPER-FIELD-axioms.txt)."
     latest_evidence: "docs/goal/evidence/M25-TYPECLASS-COHERENCE.md"
-    open_boundary: "Gap row of M25-TYPECLASS-SUPER-INST (DONE_WEAK). Target: coherence_unannotated_superInst with NormalSuperFields E replaced by SuperField. Series V round 4 run 1 (Start/TypeClassSuperFieldExample.lean): superEnv, superEnv_superField, superEnv_sup_inst_step (the Paterson size does not decrease at sup (inst I ds)). Round 4 run 2 (Start/TypeClassSuperFieldMeasure.lean): DEnt.superMeasure_lt (under SuperField the contractum of sup (inst I ds) is derivable, a reduct, and strictly smaller in term size dsize; test superEnv_superMeasure), and normalize_super_superField_fails: DEnt.normalize_super is false under SuperField, even in SuperInstFragment (loopEnv: EnvGood, loopEnv_superInstFragment, every instance SuperField, Eq Base derivable by sup (inst OrdLoop []) but with no normal derivation, loopEnv_DEntN), because a context argument unused in a dictionary term may be derived by a redex for the instance being defined. So the normal-form route is closed; coherence is not refuted. First missing lemma: a β-uniqueness of dictionaries not through normal derivations, DEnt.conv_superField (any two DEnt dictionaries for one constraint are β-convertible in a SuperInstFragment whose instances satisfy SuperField), then coherence_unannotated_superInst under SuperField."
+    open_boundary: ""
     milestone: M25
     depends_on: []
     rank: 2381
@@ -6507,18 +6527,18 @@ tasks:
 
   - id: M25-TYPECLASS-COHERENCE
     priority: P2
-    status: DONE_WEAK
+    status: DONE_STRONG
     track: theory/types
     title: "Coherence of dictionary-passing elaboration"
-    terminal_statement: "TypeClass.coherence_unannotated (hF : Fragment E P) (hB : Bidi E false Γ e τ) (hS : STyping E P Γ e τ) : (∃ t, ElabS E P Γ e τ t) ∧ ∀ t t', ElabS E P Γ e τ t → ElabS E P Γ e τ t' → t = t'; TypeClass.coherence_unannotated_conv; TypeClass.ambiguous_not_coherent : Fragment ambEnv [] ∧ STyping ambEnv [] [] (.method 0 0) ambSig ∧ ∃ t t', ElabS … t ∧ ElabS … t' ∧ ¬ Lambda.Conv t t'; TypeClass.super_coherent; TypeClass.AElab.coherent; TypeClass.DEnt.unique"
+    terminal_statement: "TypeClass.coherence_unannotated (hF : Fragment E P) (hB : Bidi E false Γ e τ) (hS : STyping E P Γ e τ) : (∃ t, ElabS E P Γ e τ t) ∧ ∀ t t', ElabS E P Γ e τ t → ElabS E P Γ e τ t' → t = t'; TypeClass.coherence_unannotated_conv; TypeClass.ambiguous_not_coherent : Fragment ambEnv [] ∧ STyping ambEnv [] [] (.method 0 0) ambSig ∧ ∃ t t', ElabS … t ∧ ElabS … t' ∧ ¬ Lambda.Conv t t'; TypeClass.super_coherent; TypeClass.AElab.coherent; TypeClass.DEnt.unique; TypeClass.coherence_unannotated_superField"
     latest_evidence: "docs/goal/evidence/M25-TYPECLASS-COHERENCE.md"
-    open_boundary: "Proved: annotated coherence (round 4); round 5: erase, Bidi, coherence_unannotated (Fragment, no superclasses), ambiguous_not_coherent, DEnt.subst, super_coherent. Round 6 (Start/TypeClassSuperCoh.lean): superClosure_not_coherent (a condition on the superclass closures of the hypotheses is needed), SuperFragment, DEnt.conv_super, coherence_unannotated_super and coherence_unannotated_super_conv (coherence for unambiguous judgements in a fragment with superclasses whose instances are for classes without a superclass). Gap row M25-TYPECLASS-COHERENCE-SUPER (DONE_WEAK), with its own gap row M25-TYPECLASS-SUPER-INST: instances of classes with a superclass; first missing lemma DEnt.normalize_super. Round 9: coherence_unannotated_superInst (instances of subclasses, under NormalSuperFields; M25-TYPECLASS-SUPER-INST DONE_WEAK, gap row M25-TYPECLASS-SUPER-FIELD)."
+    open_boundary: ""
     milestone: M25
     depends_on:
       - M25-TYPECLASS-COHERENCE-SUPER
     rank: 2384
     exit_criteria:
-      - "Without overlapping instances, any two elaborations of one source typing judgement are equal up to β (or βη) conversion."
+      - "Decide the claim: without overlapping instances, any two elaborations of one source typing judgement are equal up to β (or βη) conversion. It is false in general (TypeClass.ambiguous_not_coherent). For unambiguous judgements it holds in the fragments of TypeClass.coherence_unannotated and TypeClass.coherence_unannotated_superField."
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
@@ -8431,7 +8451,7 @@ tasks:
     track: research/open-problems
     title: "Expansion postponement for every specification with a morphism into CC^omega"
     latest_evidence: "docs/goal/evidence/M29-EP.md"
-    open_boundary: "Series V rounds 2-3: ccOmega, CCOmegaMorphism and morphisms from coc, λHOL, cocTop; skeletons need binders. Round 4 run 1 (Start/PTSExpansionCCOSkel.lean): skeletons with level-indexed binders, predicative candidate spaces CCO.V, the first-order classifier CCO.clO and CCO.clV_ssubst_level (proved); stop CCO.clO_beta_fails (kind-level redexes). Round 4 run 2 (Start/PTSExpansionCCOSkelFun.lean): kind-level functions classified by a stratified simply typed calculus of skeleton terms (CCO.SkF.SkTy with base ℓ and arrows, SkT with variables, constants, λ, application; rename, subst, Step, Steps); route: classes as values in a set-theoretic model (SkT.Sem, SkT.eval by structural recursion, total without a normalization proof), with the substitution lemma SkT.eval_subst and β-invariance SkT.eval_step, SkT.eval_steps; SkT.eval_idKind_beta settles the example of clO_beta_fails. Stop: the level-generic classifier of CC^ω expressions into SkT is not defined; first missing lemma CCO.clF_subst (classifier commutes with substitution of a kind-level argument), from which CCO.clO_beta follows by SkT.eval_step; then V over values, the interpretation, its β-invariance and the generalized fundamental lemma (not started)."
+    open_boundary: "Series V rounds 2-3: ccOmega, CCOmegaMorphism, morphisms from coc, λHOL, cocTop. Round 4 run 1 (Start/PTSExpansionCCOSkel.lean): skeletons with level binders, CCO.V, clO, clV_ssubst_level; stop clO_beta_fails. Round 4 run 2 (Start/PTSExpansionCCOSkelFun.lean): stratified simply typed skeleton terms SkT with a model (eval_subst, eval_steps). Big round run 2 (Start/PTSExpansionCCOClF.lean): environment-based classifiers clF for any ClfData; clF_subst, clF_instantiate, clF_beta_of. Big round run 3 (Start/PTSExpansionCCOClFLimit.lean): ClfData.subsingleton_of_beta (the unrestricted β-law collapses the class type, so it must be restricted to well-classified arguments). Item B1 blocked: a faithful class type needs, at each level, dependent products over codes of the same level (e.g. ΠK:(ΠY:Type 0. Y → Type 0). ΠY:Type 0. Πy:Y. K Y y → K Y y), i.e. an inductive-recursive Tarski hierarchy, which Lean lacks (see notes). First missing lemma: a concrete D : ClfData C with theorem CCO.ccoClf_beta (h : ClfWC ρ (.app (.lam A b) U)) : clF D ρ (.app (.lam A b) U) = clF D ρ (b.instantiate U); then the classifyV analogue, the interpretation and the generalized fundamental lemma (not started)."
     milestone: M29
     depends_on:
       - M29-EP-TOP-MORPHISM

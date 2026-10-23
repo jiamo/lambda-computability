@@ -319,3 +319,91 @@ every dictionary for `Eq Base` reduces to `eqBaseDict`, and `loopEnv` has no ove
 missing lemma for a different route: a uniqueness of dictionaries up to β-conversion that does not
 go through normal derivations, e.g. `DEnt.conv_superField` (any two `DEnt` dictionaries for one
 constraint are β-convertible in a `SuperInstFragment` whose instances satisfy `SuperField`).
+
+## Series V, big round, run 3 (M25-TYPECLASS-SUPER-FIELD)
+
+`Start/TypeClassSuperFieldHead.lean`: `DEntHyp` (superclass projection chains over a
+hypothesis), `DEntH` (head forms: a chain, or `inst I ds` with context derivations),
+`DEntHyp.toDEnt`, `DEntH.toDEnt`, and **`DEnt.headForm`**: if every instance satisfies
+`SuperField`, every `DEnt` dictionary reduces to a head form for the same constraint, of no larger
+`dsize`. Proof by strong induction on `dsize` with an inner induction on the derivation; at
+`sup (inst I ds)` the contractum from `DEnt.superMeasure_lt` is strictly smaller.
+
+Also `DEntHyp.unique` (two chains for one constraint are equal, via `DEntN.unique`) and
+`DEntHyp.not_instHead` (no chain is for an instance head, via `closure_rigid`), so the head-form
+comparison is reduced to the instance/instance case.
+
+Still open: `DEnt.conv_superField`. Remaining case: two head forms for one constraint. Chains are
+compared via `closure_unique`; a chain against an instance is impossible by `closure_rigid`; two
+instances coincide by `no_overlap`, and then only the context arguments that occur free in
+`I.dict` need to be compared (`Lambda.substEnv`). Obstacle: `dsize` does not strictly decrease
+from `inst I ds` to an argument when `I.dict` is a variable, so the induction needs a second,
+lexicographic measure, for example a derivation height on a `Type`-valued copy of `DEnt`.
+
+## Series V, big round, run 4 (M25-TYPECLASS-SUPER-FIELD)
+
+`Start/TypeClassSuperFieldCoh.lean` closes the row.
+
+* `conv_substEnv_of_size`: congruence of `Lambda.substEnv` for convertibility guarded by size.
+  If `Lambda.Conv (u k) (v k)` holds for every `k` with
+  `dsize (u k) + dsize (v k) ≤ dsize (substEnv u t) + dsize (substEnv v t)`, then
+  `Lambda.Conv (substEnv u t) (substEnv v t)`. Every argument that occurs free in `t` satisfies
+  the size bound. Arguments that do not occur are never needed, so the derivations of unused
+  context arguments (the obstruction in `loopEnv`) play no role.
+* **`DEnt.conv_superField`**: let `EnvGood E` hold, let every instance satisfy `SuperField`, and
+  let `SuperInstFragment E P` hold. Then any two `DEnt` dictionaries for one constraint are
+  β-convertible.
+* `AElab.conv_superField` follows, and so does **`coherence_unannotated_superField`**: this is
+  `coherence_unannotated_superInst` with `NormalSuperFields` replaced by `SuperField`.
+* `loopEnv_conv_eqBase` shows the theorem is not vacuous. It applies in `loopEnv`, where `Eq Base`
+  has no normal derivation (`normalize_super_superField_fails`).
+
+**Proof of `DEnt.conv_superField`.** The outer induction is strong induction on
+`N ≥ dsize d + dsize d'`. Inside it, the inner induction is structural on the first derivation;
+it supplies the second measure that run 3 asked for, without a `Type`-valued copy of `DEnt`. The
+second dictionary is first brought to head form with `DEnt.headForm`. Then, by the shape of the
+first derivation:
+
+* **hyp:** `DEntHyp.unique` handles the case where the second head form is a chain;
+  `DEntHyp.not_instHead` rules out an instance head form.
+* **sup dd:** bring `dd` to head form.
+  * If it is a chain, the case reduces to a chain against a head form, as above.
+  * If it is `inst I ds`, `DEnt.superMeasure_lt` contracts the projection to a strictly smaller
+    derivable term, and the outer induction applies.
+* **inst I ds:** the second head form is `inst I ds'` with the same instance (`no_overlap`), and
+  the contexts agree under the substitution. `conv_substEnv_of_size` reduces the goal to the
+  arguments within the size bound. For each such `k` the inner induction hypothesis for the
+  subderivation of `ds[k]` applies against the derivation of `ds'[k]`, within the same `N`.
+
+Exit criterion met. The theorem holds in a fragment with no overlap, with superclasses and
+instances well formed for their superclass (`SuperField`), under the closure conditions on the
+hypotheses (`SuperInstFragment`). Under these assumptions, any two elaborations of one
+unambiguous source judgement are β-convertible. Row M25-TYPECLASS-SUPER-FIELD is DONE_STRONG.
+Its parent M25-TYPECLASS-SUPER-INST was DONE_WEAK only because of this gap; its exit criterion
+(`SuperField` with the hypothesis closure condition) is now met by
+`coherence_unannotated_superField`, so it is DONE_STRONG too.
+
+## Series V, big round, delivery
+
+The original exit criterion of row M25-TYPECLASS-COHERENCE was:
+
+> "Without overlapping instances, any two elaborations of one source typing judgement are equal
+> up to β (or βη) conversion."
+
+It was restated because, read literally, it is false: `TypeClass.ambiguous_not_coherent` gives a
+fragment with no overlapping instances and a source typing judgement with two elaborations that
+are not convertible. The row could therefore never reach DONE_STRONG under the original wording,
+and after big round run 4 its only gap row, M25-TYPECLASS-COHERENCE-SUPER, was DONE_STRONG, so the
+row no longer depended on any open row (AGENTS.md requires a DONE_WEAK row to depend on one).
+
+The restated criterion is: "Decide the claim: without overlapping instances, any two elaborations
+of one source typing judgement are equal up to β (or βη) conversion. It is false in general
+(TypeClass.ambiguous_not_coherent). For unambiguous judgements it holds in the fragments of
+TypeClass.coherence_unannotated and TypeClass.coherence_unannotated_superField."
+
+It is met by `TypeClass.ambiguous_not_coherent` (Start/TypeClassUnannotated.lean),
+`TypeClass.coherence_unannotated` (Start/TypeClassUnannotated.lean) and
+`TypeClass.coherence_unannotated_superField` (Start/TypeClassSuperFieldCoh.lean). `#print axioms`
+for each of the three shows only `propext`, `Classical.choice` and `Quot.sound`. The row is
+DONE_STRONG with an empty open boundary, and `TypeClass.coherence_unannotated_superField` is added
+to its terminal statement.

@@ -3,3 +3,13 @@
 'PureTypeSystem.CCO.SkF.SkT.eval_step' depends on axioms: [Quot.sound]
 'PureTypeSystem.CCO.SkF.SkT.eval_steps' depends on axioms: [Quot.sound]
 'PureTypeSystem.CCO.SkF.SkT.eval_idKind_beta' depends on axioms: [Quot.sound]
+# series V, big round, run 2: #print axioms (lake env lean on a scratch file importing Start.PTSExpansionCCOClF, with #print axioms appended, after lake build --wfail)
+'PureTypeSystem.CCO.clF_rename' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.CCO.clF_subst' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.CCO.clF_instantiate' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.CCO.clF_beta_of' depends on axioms: [propext, Quot.sound]
+'PureTypeSystem.CCO.clF_beta' depends on axioms: [propext, Quot.sound]
+
+# series V, big round, run 3: limits of ClfData (Start/PTSExpansionCCOClFLimit.lean)
+'PureTypeSystem.CCO.ClfData.subsingleton_of_beta' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PureTypeSystem.CCO.ClfData.not_beta_of_ne' depends on axioms: [propext, Classical.choice, Quot.sound]

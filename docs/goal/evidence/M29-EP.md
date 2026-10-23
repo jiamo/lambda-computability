@@ -2079,3 +2079,73 @@ Part B (row M29-EP-CCOMEGA), `Start/PTSExpansionCCOSkelFun.lean`, standard axiom
   `clF (B [A/K]) = subst (sub0 (clF A)) (clF B)`.
 * B2 (V over values, level irrelevance, the interpretation, its β-invariance, the generalized
   fundamental lemma): not started.
+
+## Series V, big round, run 2
+
+Item B1 (row M29-EP-CCOMEGA).  Lean, `Start/PTSExpansionCCOClF.lean`, axioms in
+`docs/goal/evidence/M29-EP-CCOMEGA-axioms.txt`:
+
+* `ClfData C` — a class type `C` with the classes of `Prop` and `Type ℓ` and three combinators
+  `appF`, `lamF`, `piF`; the binder combinators take the class of the body **as a function of the
+  class of the bound variable** (`C → C`);
+* `clF D ρ M` — the classifier of `Expr CSrt` relative to an environment `ρ : ℕ → C`, by
+  structural recursion (`lam A b ↦ lamF (clF ρ A) (fun v => clF (envCons v ρ) b)`);
+* `clF_rename`, **`clF_subst`** (`clF ρ (M.subst σ) = clF (fun n => clF ρ (σ n)) M`) and
+  **`clF_instantiate`** (`clF ρ (b[A/0]) = clF (envCons (clF ρ A) ρ) b`): the level-generic
+  `CCO.clF_subst`, in semantic form, for every choice of combinators;
+* `clF_beta_of`, `clF_beta` — root β-invariance from the β-law `appF (lamF cA f) cU = f cU` of the
+  combinators at the classes involved.
+
+Design consequence.  With environment semantics the substitution lemma is free; all the content
+moves into the class type.  A class type in which kind-level functions are semantic functions on
+classes is not a Lean inductive (`C → C` occurs negatively), so it has to be stratified by level:
+kinds of level `ℓ` take values in a predicative domain `SkL ℓ` whose binder `∀κ : ℓ'. k` (with
+`ℓ' < ℓ`) is a function `SkL ℓ' → SkL ℓ` (positive once `SkL ℓ'` is fixed; the family is defined
+by recursion on `ℓ`), and kind-level functions of skeleton type `a` take values in
+`Sem a` over that domain.  This replaces the syntactic skeleton variables of `CCO.clO` (and the
+shifting of `ext`) by values, as `CCO.V` already does with closed skeletons.
+
+Stop (first missing lemma; B1 continues, ≈25 of 150 min used): the concrete class type and its
+β-law on well-classified arguments,
+
+```
+def CCO.SkL : ℕ → Type        -- predicative semantic skeletons
+def CCO.ccoClf : ClfData CCOCls
+theorem CCO.ccoClf_beta {ρ : ℕ → CCOCls} {A b U : Expr CSrt} (h : ClfWC ρ (.app (.lam A b) U)) :
+    clF ccoClf ρ (.app (.lam A b) U) = clF ccoClf ρ (b.instantiate U)
+```
+
+then the `classifyV` analogue (a typed expression is well classified, and the class of its type
+determines its own).
+
+## Series V, big round, run 3
+
+Item B1 (the level-generic classifier for CC^ω) is **blocked**. It used about 35 of its 150
+minutes.
+
+- Lean, `Start/PTSExpansionCCOClFLimit.lean`: `ClfData.subsingleton_of_beta`. If the combinators
+  satisfy the β-law `appF (lamF cA f) cU = f cU` for every class and every `f : C → C`, then `C`
+  has at most one element (diagonal argument). Corollary: `ClfData.not_beta_of_ne`. The β-law of
+  a CC^ω classifier can therefore only be asked on well-classified arguments, which is what
+  `clF_beta_of` already allows.
+- Obstruction to the concrete class type (design analysis, not Lean-checked). In CC^ω a kind can
+  depend on the value of a constructor variable of the same level whose own type is a
+  *dependent* product. An example is `ΠK : (ΠY : Type 0. Y → Type 0). ΠY : Type 0. Πy : Y. K Y y → K Y y`:
+  the domain `ΠY : Type 0. Y → Type 0` and the product both live at `Type 1`, and the value
+  space of `K` is the dependent `Π (y : U₀), El₀ y → U₀`. Domains like `Type 0 → Type 0`,
+  whose value space is a simple type over lower universes, do not cause this. A faithful class
+  domain must therefore contain, at level `ℓ`, dependent products
+  `pi (a : U ℓ) (b : El ℓ a → U ℓ)` over the decodings of codes of the same level. That is a
+  Tarski universe closed under dependent Π, i.e. an inductive-recursive definition.
+  - The draft `CCO.SkL` (wip) quantifies only over strictly lower universes (`all ℓ' f`,
+    `ℓ' < ℓ`), so it does not cover this case.
+  - Any encoding without induction-recursion puts level `ℓ + 1` in a higher Lean universe than
+    level `ℓ`, so it cannot be indexed uniformly by `ℓ : ℕ`.
+- First missing lemma: a concrete `D : ClfData C` for CC^ω with
+  `theorem CCO.ccoClf_beta (h : ClfWC ρ (.app (.lam A b) U)) : clF D ρ (.app (.lam A b) U) = clF D ρ (b.instantiate U)`.
+  This needs a class type `C : Type` with dependent value spaces at each level, which Lean has
+  no inductive-recursive definition for. A non-faithful (erasing) class type would need its own
+  proof that the erasure commutes with β on kinds that depend on constructor values.
+- Possible routes, both unverified: (a) a Lean-universe-polymorphic model, proving the
+  fundamental lemma separately for each finite bound on the levels occurring in a derivation,
+  with the bound as a parameter; (b) the normalization-based routes of item B4.
