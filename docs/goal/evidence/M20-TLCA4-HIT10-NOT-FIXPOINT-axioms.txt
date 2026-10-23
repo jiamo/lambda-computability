@@ -1,0 +1,5 @@
+# Big round 2, run 7: regenerated after the export of run 6 (lake env lean on a scratch file importing the big round 2 modules, with #print axioms)
+'TLCA4.not_fixedPoint_of_nf' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.h10s_red' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.s10nf_NG' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.hit10_not_fixedPoint' depends on axioms: [propext, Classical.choice, Quot.sound]

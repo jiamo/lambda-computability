@@ -1,0 +1,13 @@
+# Big round 2, run 7: regenerated after the export of run 6 (lake env lean on a scratch file importing the big round 2 modules, with #print axioms)
+'TLCA4.stage_index_unique' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.hit6_comp_index_unique' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.hit8_comp_index_unique' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.NG.step' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.NG.index_unique' depends on axioms: [propext, Quot.sound]
+'TLCA4.NCore.tailCores' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.not_fixedPoint_of_nf' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.sComp_of_qG' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.hit6_not_fixedPoint' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.hit7_not_fixedPoint' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.hit8_not_fixedPoint' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.hit9_not_fixedPoint' depends on axioms: [propext, Classical.choice, Quot.sound]

@@ -1,0 +1,14 @@
+# Big round 2, run 2: Start/MartinLofJoin.lean (lake env lean on a scratch file importing it, with #print axioms appended)
+'Lambda.map_halfSeq_cantorMeasure' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Lambda.openOf_half' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Lambda.MLTest.half_level' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Lambda.MLRandom.of_halfSeq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Lambda.MLRandom.join_left' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Lambda.MLRandom.join_right' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Lambda.MLRandomRel.mlRandom' depends on axioms: [propext, Classical.choice, Quot.sound]
+
+# Big round 2, run 7: regenerated after the export of run 6 (lake env lean on a scratch file importing the big round 2 modules, with #print axioms)
+'Lambda.map_halfSeq_cantorMeasure' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Lambda.MLRandom.join_left' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Lambda.MLRandom.join_right' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Lambda.MLRandomRel.mlRandom' depends on axioms: [propext, Classical.choice, Quot.sound]

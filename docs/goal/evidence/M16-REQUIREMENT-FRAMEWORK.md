@@ -44,3 +44,35 @@ is Friedberg–Muchnik, `M16-FRIEDBERG-MUCHNIK`, still open.
 `lake build` (whole tree, no errors and no new warnings), `python3 scripts/check_sorry.py`,
 `python3 scripts/check_closure.py`, `python3 scripts/goal_state.py validate`,
 `python3 scripts/check_manifest.py`.
+
+## Big round 2, run 1
+
+Closed as DONE_STRONG: the exit criteria are met as written.
+
+* "The use function of an oracle computation is defined and its monotonicity and the use principle
+  proved." — `Lambda.Oracle.use` and `Lambda.Oracle.useStage` (Start/OracleUse.lean); monotonicity
+  `Lambda.Oracle.use_mono_of_agree` (an oracle respecting the use does not raise it), with
+  minimality `useStage_le_of_isSome`, `use_le_succ_of_isSome`; the use principle
+  `Lambda.Oracle.evalOracle_eq_of_agree_below_use` and `use_eq_of_agree_below_use`.
+* "A requirement is a predicate on the stage-indexed approximation, with a notion of being met and
+  of being injured." — `Lambda.Priority.Requirement` with `MetAt`, `Met`, `InjuredAt`, and
+  `Requirement.met_of_not_injured` (Start/Priority.lean).
+* "A construction is a stage-indexed sequence of finite approximations, with the enumeration it
+  defines proved c.e." — `Lambda.Priority.Construction` and `Construction.rePred_set`.
+
+The former boundary (no construction instantiates the frame yet) is not an exit criterion of this
+row; it is tracked by `M16-FINITE-INJURY` and `M16-FRIEDBERG-MUCHNIK`.
+
+## Big round 2, run 6 (restoration after the move to a new project)
+
+The big round 2 sections of this note (runs 1 to 3) were lost with the old project and were recreated
+in run 6 from its command logs, which record the text that was appended; the Lean modules they cite
+were restored from the old project's export, rebuilt with `lake build --wfail`, and their axioms
+regenerated (`docs/goal/evidence/*-axioms.txt`, section "Big round 2, run 6").
+
+## Big round 2, run 7 (restoration after the export of run 6)
+
+The platform's export of run 6's project dropped this note; it was put back from the copy of before big round 2 (our tree at ce8fe5e), and the
+big round 2 sections that run 6 had restored were added again in run 7 from the command logs of
+runs 1 to 3 (the appended text is recorded there verbatim). The axioms files of the big round 2 rows
+were regenerated with `#print axioms` in run 7 (section "Big round 2, run 7").

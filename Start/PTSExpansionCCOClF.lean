@@ -32,10 +32,12 @@ of a class type that also classifies constructors polymorphic in kind variables
 
 set_option autoImplicit false
 
+universe u
+
 namespace PureTypeSystem.CCO
 
 /-- The data of an environment-based classifier with class type `C`. -/
-structure ClfData (C : Type) where
+structure ClfData (C : Type u) where
   prop : C
   type : ℕ → C
   appF : C → C → C
@@ -43,11 +45,11 @@ structure ClfData (C : Type) where
   piF : C → (C → C) → C
 
 /-- Extension of an environment by a class for the variable `0`. -/
-def envCons {C : Type} (v : C) (ρ : ℕ → C) : ℕ → C
+def envCons {C : Type u} (v : C) (ρ : ℕ → C) : ℕ → C
   | 0 => v
   | n + 1 => ρ n
 
-variable {C : Type} (D : ClfData C)
+variable {C : Type u} (D : ClfData C)
 
 /-- **The environment-based classifier.** -/
 def clF : (ℕ → C) → Expr CSrt → C

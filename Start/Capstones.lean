@@ -37,6 +37,12 @@ import Start.PolyHierarchy
 import Start.CookReckhow
 import Start.AC0
 import Start.CbvMachine
+import Start.CbvStateWord
+import Start.CbvStepFn
+import Start.CbvAbsMachine
+import Start.LazyStateWord
+import Start.LazyStepFn
+import Start.LazyAbsMachine
 import Start.CbvCost
 import Start.CwaBiInitial
 import Start.CwaLcccOfPi
@@ -430,6 +436,7 @@ import Start.MinskyUnpair
 import Start.MinskyCompile
 import Start.MinskyUndecidable
 import Start.LambdaPiLFSkelTEq
+import Start.LambdaPiLFTEqTypeLevelCounter
 import Start.GrpdSigmaPair
 import Start.TypeClassSuperExample
 import Start.PTSErasureCoCOmega
@@ -467,6 +474,7 @@ import Start.PTSExpansionCCOSkel
 import Start.TypeClassSuperFieldExample
 import Start.PTSExpansionCCOSkelFun
 import Start.PTSExpansionCCOClF
+import Start.PTSExpansionCCOCodes
 import Start.PTSExpansionCCOClFLimit
 import Start.TypeClassSuperFieldMeasure
 import Start.TLCA4QUnfold
@@ -500,6 +508,25 @@ import Start.TLCA4TailRestrict
 import Start.TLCA4TailExt
 import Start.TLCA4Hit5W
 import Start.TLCA4Hit5S
+import Start.TLCA4Hit5TW
+import Start.TLCA4Hit5Grammar
+import Start.TLCA4Hit5Core
+import Start.TLCA4Hit5Index
+import Start.TLCA4Hit5QFree
+import Start.TLCA4Hit5Sep
+import Start.TLCA4Hit5Fields
+import Start.TLCA4Hit5NotFixpoint
+import Start.TLCA4StageIndex
+import Start.TLCA4NfGrammar
+import Start.TLCA4NfCores
+import Start.TLCA4Hit6NotFixpoint
+import Start.TLCA4Hit10NotFixpoint
+import Start.TLCA4StageNf
+import Start.MartinLofJoin
+import Start.ModalGL
+import Start.ModalGLComplete
+import Start.StarHeightK3Metabelian
+import Start.StarHeightTwoS3
 
 /-! ## Interfaces of the untyped calculus
 
@@ -6054,3 +6081,245 @@ bodies `M Wq`, `Wq Y` and height-`1` chains under `q` (`SqR`), and the reducts o
 #check @TLCA4.SR.reduces
 #check @TLCA4.SR.of_h5s
 #check @TLCA4.SR.of_reduces
+
+/-! `Start/TLCA4Hit5TW.lean` (big round 2, run 1, item A1): the `w`- and `s`-layers of `hit5`
+with bodies in `TW` (`WT`, `WqT`, `SqT`, `ST`, closed under βη, `s` in the grammar), and the
+generic substitution of a term for `q` in a chain (`TC.subst_gen`) or a two-argument chain
+(`TW.subst_gen`) under `q`. -/
+
+#check @TLCA4.TC.subst_gen
+#check @TLCA4.TW.subst_gen
+#check @TLCA4.WT.step
+#check @TLCA4.ST.step
+#check @TLCA4.ST.of_h5s
+
+/-! `Start/TLCA4Hit5Grammar.lean` (big round 2, run 1, item A1): the components `uⁿ s` of the
+stages of `hit5` (`HG`, with chains `HC` with arbitrary tails under `q` and cores `HB`) are closed
+under βη (`HG.step`), and `uⁿ s` is in the grammar at index `n` (`HG.of_h5A`). -/
+
+#check @TLCA4.HG.step
+#check @TLCA4.HC.step
+#check @TLCA4.HB.step
+#check @TLCA4.HG.of_h5A
+#check @TLCA4.HG.of_reduces
+
+/-! `Start/TLCA4Hit5Core.lean` (big round 2, run 1, item A1): the cores `H5Core` of `hit5`;
+`H5Core.step` (the first missing lemma of item A1 at the start of big round 2: every βη-step of a
+core is a chain over `Ext (H5Core x) x K`), `H5Ext.step` (closure of the extension), and the
+reduction of `hit5_not_fixedPoint` to the `TailCores` hypotheses of the extension
+(`hit5_not_fixedPoint_of_tailCores`). -/
+
+#check @TLCA4.HC.substH
+#check @TLCA4.H5Core.step
+#check @TLCA4.H5Ext.step
+#check @TLCA4.hit5_reduces_shape
+#check @TLCA4.hit5_not_fixedPoint_of_tailCores
+
+/-! `Start/TLCA4Hit5Index.lean` (big round 2, run 3, item A1): the βη-invariant `x`-depth
+(`XDepth x a k N`: `N =βη xᵏ M` with `M` neutral with head `a`, unique for `a ≠ x`); every component
+`P` of index `i` of `hit5` satisfies `P a b =βη x^{i+1} (a …)` (`HG.xd`, through the `v`-, `w`- and
+`s`-layers and chains with arbitrary tails), hence **the index of a component is unique**
+(`HG.index_unique`), the first step towards the `unique` field of `TailCores (Ext (H5Core x) x) x`. -/
+
+#check @TLCA4.XDepth.unique
+#check @TLCA4.ByR.conv
+#check @TLCA4.TW.xd
+#check @TLCA4.HG.xd
+#check @TLCA4.HG.index_unique
+#check @TLCA4.HG.not_lamM
+
+/-! `Start/TLCA4Hit5QFree.lean` (big round 2, run 3, item A1): `q` occurs free in every chain under
+`q` of the `hit5` grammar (`HC.freeIn0`, `SqT.freeIn0`, `TW.freeIn0`), and never in a lifted term
+(`not_freeIn_lift`). -/
+
+#check @TLCA4.not_freeIn_lift
+#check @TLCA4.TW.freeIn0
+#check @TLCA4.HC.freeIn0
+
+/-! `Start/TLCA4Hit5Sep.lean` (big round 2, run 3, item A1): no `w`-reduct is `B`, `B M`, a reduct of
+`B M` or of `B (B x)` (`WT.not_byR`), so no component of `hit5` is `W Q` with `W` a `w`-reduct
+(`WT.not_HG_app`). -/
+
+#check @TLCA4.WT.not_byR
+#check @TLCA4.WT.not_HG_app
+#check @TLCA4.WqT.not_lift
+#check @TLCA4.TW.not_HG
+
+/-! `Start/TLCA4Hit5Fields.lean` (big round 2, run 3, item A1): the syntactic fields `ne_var`,
+`ne_bx`, `ne_bx1` of `TailCores (Ext (H5Core x) x) x`; only `unique` remains. -/
+
+#check @TLCA4.HG.not_bxPre
+#check @TLCA4.H5Ext.ne_var
+#check @TLCA4.H5Ext.ne_bx
+#check @TLCA4.H5Ext.ne_bx1
+
+/-! `Start/TLCA4Hit5NotFixpoint.lean` (big round 2, run 3, item A1): the `unique` field
+(`H5Ext.unique`), so `TailCores (Ext (H5Core x) x) x` holds, and `hit5` is not a βη fixed-point
+combinator (`hit5_not_fixedPoint`). -/
+
+#check @TLCA4.H5Ext.unique
+#check @TLCA4.H5Ext.tailCores
+#check @TLCA4.hit5_not_fixedPoint
+
+/-! `Start/LambdaPiLFTEqTypeLevelCounter.lean` (big round 2, run 1, item W2): the first missing
+lemma of `M23-LF-EQUIV-COMPLETE`, `TEq.typeLevel`, is false: in a well-formed context the
+declarative βη-equality derives `F (c (λy. g y)) ≡ F (c g) : ∗` while `F (c g)` has no type under
+β-typing. -/
+
+#check @LambdaPi.tc_N_untyped
+#check @LambdaPi.teq_typeLevel_counterexample
+
+/-! `Start/CbvStateWord.lean` (big round 2, run 1, item W3): a prefix-free binary encoding of the
+states of the CEK machine (codes by `Lambda.sizeBits`, nested environments of closures, frames,
+continuations), injective (`CEK.stateBits_injective`); the first exit criterion of
+`M25-CBV-STEP-PROG`. -/
+
+#check @CEK.envBits_append_inj
+#check @CEK.stackBits_append_inj
+#check @CEK.stateBits_injective
+
+/-! `Start/LazyStateWord.lean` (big round 2, run 1, item W3): a prefix-free binary encoding of the
+states of the lazy machine (code, environment of addresses, argument and update frames, heap of
+thunk, hole and value cells), injective (`Lazy.lstateBits_injective`); the first exit criterion
+of `M25-CBNEED-STEP-PROG`. -/
+
+#check @Lazy.listBits_append_inj
+#check @Lazy.cellBits_append_inj
+#check @Lazy.lstateBits_injective
+
+/-! `Start/CbvStepFn.lean` (big round 2, run 1, item W3): the CEK transition relation as a step
+function (`CEK.stepFn`, exact: `CEK.stepFn_eq_some_iff`, `CEK.stepFn_eq_none_iff`), the form an
+abstract machine of `Start/SpaceCompile.lean` needs. -/
+
+#check @CEK.stepFn_eq_some_iff
+#check @CEK.stepFn_eq_none_iff
+
+/-! `Start/LazyStepFn.lean` (big round 2, run 1, item W3): the transitions of the lazy machine as a
+step function (`Lazy.lstepFn`, exact: `Lazy.lstepFn_eq_some_iff`, `Lazy.lstepFn_eq_none_iff`). -/
+
+#check @Lazy.lstepFn_eq_some_iff
+#check @Lazy.lstepFn_eq_none_iff
+
+/-! `Start/CbvAbsMachine.lean` (big round 2, run 1, item W3): the CEK machine as an abstract machine
+of the space model (`CEK.absMachine`), whose reachable states are exactly the CEK run states
+(`CEK.absMachine_reaches_iff`). -/
+
+#check @CEK.absMachine_reaches_iff
+
+/-! `Start/LazyAbsMachine.lean` (big round 2, run 1, item W3): the lazy machine as an abstract
+machine of the space model (`Lazy.labsMachine`), whose reachable states are exactly the lazy run
+states (`Lazy.labsMachine_reaches_iff`). -/
+
+#check @Lazy.labsMachine_reaches_iff
+
+/-! `Start/PTSExpansionCCOCodes.lean` (big round 2, run 2, item B1, M29-EP-CCOMEGA): a concrete
+set-theoretic classifier `ccoD : ClfData ZFSet` for `CC^ω` — kind-level functions are graphs,
+products are sets of dependent functions, `Type ℓ` is classified by the von Neumann stage
+`cU ℓ = V_(ω·(ℓ+1))` (`cU_mem_succ`, `cU_mono`) and `Prop` by `𝒫 {∅}` (`propC_mem_cU`).  With the
+well-classification predicate `ClfWC`, the classifier is invariant under well-classified root
+β-steps (`CCO.ccoClf_beta`), and well-classification is stable under substitution and β
+(`ClfWC_subst`, `ClfWC.beta`). -/
+
+#check @PureTypeSystem.CCO.ccoClf_beta
+#check @PureTypeSystem.CCO.zfApp_zfLam
+#check @PureTypeSystem.CCO.zfLam_mem_zfPi
+#check @PureTypeSystem.CCO.cU_mem_succ
+#check @PureTypeSystem.CCO.propC_mem_cU
+#check @PureTypeSystem.CCO.ClfWC_subst
+#check @PureTypeSystem.CCO.ClfWC.beta
+#check @PureTypeSystem.CCO.depKind_wc
+#check @PureTypeSystem.CCO.zfPi_mem_cU_zero
+#check @PureTypeSystem.CCO.zfPi_not_mem_propC
+
+/-! `Start/MartinLofJoin.lean` (big round 2, run 2, item W9, M24-VAN-LAMBALGEN): taking every second
+bit preserves the fair-coin measure (`Lambda.map_halfSeq_cantorMeasure`), so a test pulls back along
+it (`Lambda.MLTest.half`), and both halves of a Martin-Löf random join are Martin-Löf random
+(`Lambda.MLRandom.join_left`, `Lambda.MLRandom.join_right`); relativized tests `Lambda.MLTestRel`
+(matrix computable in the oracle) and `Lambda.MLRandomRel`. -/
+
+#check @Lambda.map_halfSeq_cantorMeasure
+#check @Lambda.MLRandom.join_left
+#check @Lambda.MLRandom.join_right
+#check @Lambda.MLRandomRel.mlRandom
+
+/-! `Start/ModalGL.lean` (big round 2, run 2, item W13, M24-GL): the provability logic GL as a
+Hilbert system (`ModalGL.Provable`: classical propositional axioms, `K`, Löb's axiom, modus ponens,
+necessitation) with Kripke semantics (`ModalGL.Forces`); **Kripke soundness** for finite,
+transitive, irreflexive frames (`ModalGL.sound`, via `ModalGL.loeb_valid`), hence consistency and
+the unprovability of `□⊥ → ⊥`. -/
+
+#check @ModalGL.sound
+#check @ModalGL.sound_of_wf
+#check @ModalGL.loeb_frame_iff
+#check @ModalGL.Provable.four
+#check @ModalGL.Der.loeb_rule
+#check @ModalGL.lindenbaum
+#check @ModalGL.loeb_valid
+#check @ModalGL.consistent
+#check @ModalGL.not_provable_reflection
+
+/-! `Start/ModalGLComplete.lean` (big round 2, run 3, item W13, M24-GL): **completeness of GL** for
+finite, transitive, irreflexive Kripke frames, through the finite canonical model on the
+subformulas of the formula (`ModalGL.CanWorld`, `ModalGL.truth`, `ModalGL.complete`); with
+soundness, `ModalGL.provable_iff_valid`. -/
+
+#check @ModalGL.truth
+#check @ModalGL.complete
+#check @ModalGL.provable_iff_valid
+
+/-! `Start/TLCA4StageIndex.lean` (big round 2, item A2; run 5, rebuilt in run 6): for any stage pattern the components `gⁿ s` are pairwise βη-distinct (`stage_index_unique`), with instances for `hit5`, `hit6` and `hit8`. -/
+
+#check @TLCA4.stage_index_unique
+#check @TLCA4.hit5_comp_index_unique
+#check @TLCA4.hit6_comp_index_unique
+#check @TLCA4.hit8_comp_index_unique
+
+/-! `Start/TLCA4NfGrammar.lean` (big round 2, item A2; run 5, rebuilt in run 6): the grammar `NG` of normalized stage components, closed under βη (`NG.step`); the explicit stage shape `nfStage` is a component of index `0` (`nfStage_NG`). -/
+
+#check @TLCA4.NG.step
+#check @TLCA4.NG.reduces
+#check @TLCA4.nfStage_NG
+
+/-! `Start/TLCA4NfCores.lean` (big round 2, item A2; run 5, rebuilt in run 6): the index of a normalized component is unique (`NG.index_unique`), the top-level cores `P Q` satisfy `TailCores` (`NCore.tailCores`), hence `not_fixedPoint_of_nf`: if `L →βη S S ρ` with `S` a component of index `0`, then `L` is not βη-convertible to `x L`. -/
+
+#check @TLCA4.NG.index_unique
+#check @TLCA4.NCore.step
+#check @TLCA4.NCore.tailCores
+#check @TLCA4.not_fixedPoint_of_nf
+
+/-! `Start/TLCA4Hit6NotFixpoint.lean` (big round 2, item A2; run 5, rebuilt in run 6): the step terms of `hit6` and `hit8` reduce to components of index `0` (`sComp_of_qG`), so `hit6`, `hit8`, and through `hit6_conv_hit7`, `hit8_conv_hit9` also `hit7`, `hit9`, are not βη fixed-point combinators. -/
+
+#check @TLCA4.sComp_of_qG
+#check @TLCA4.hit6_not_fixedPoint
+#check @TLCA4.hit7_not_fixedPoint
+#check @TLCA4.hit8_not_fixedPoint
+#check @TLCA4.hit9_not_fixedPoint
+
+/-! `Start/TLCA4Hit10NotFixpoint.lean` (big round 2, item A3; run 5, rebuilt in run 6): `hit10 x = M (M s)` with `s →βη s₁₀`, a component of index `0`, so `hit10` is not a βη fixed-point combinator (`hit10_not_fixedPoint`). -/
+
+#check @TLCA4.h10s_red
+#check @TLCA4.s10nf_NG
+#check @TLCA4.hit10_not_fixedPoint
+
+/-! `Start/TLCA4StageNf.lean` (big round 2, item A5; run 5, rebuilt in run 6): the parametric theorem `not_fixedPoint_of_MM_nfStage`: if `L →βη M (M s)` and `s →βη nfStage x T T'`, then `L` is not βη-convertible to `x L`; `hit5` again through it (`hit5_not_fixedPoint_nf`). -/
+
+#check @TLCA4.not_fixedPoint_of_MM_nfStage
+#check @TLCA4.hit5_not_fixedPoint_nf
+
+/-! `Start/StarHeightK3Metabelian.lean` (big round 2, run 4, rebuilt in run 7; item S1, M28-STARHEIGHT-S3-CORE): the
+count `K3 k = {w | b0count 0 w % 3 = k}` is **not recognized by any metabelian finite group**
+(`PST.K3_not_recognized_metabelian`, `PST.K3_not_recognized_of_derivedSeries_two`): the double
+commutator of the actions of `a`, `b`, `a`, `bb` on (state, count mod 3) is the shift by `2`
+(`PST.k3_doubleCommutator`). A statement about recognizers, not about star height. -/
+
+#check @GeneralizedStarHeight.PST.k3Perm_apply
+#check @GeneralizedStarHeight.PST.k3_doubleCommutator
+#check @GeneralizedStarHeight.PST.K3_not_recognized_metabelian
+#check @GeneralizedStarHeight.PST.K3_not_recognized_of_derivedSeries_two
+
+/-! `Start/StarHeightTwoS3.lean` (big round 2, run 4, rebuilt in run 7; M28-STARHEIGHT-TWO-S3): every language
+recognized by `S₃` has generalized star height at most one (`A₃` is abelian of index `2`), hence at
+most two. -/
+
+#check @GeneralizedStarHeight.height_one_of_S3
+#check @GeneralizedStarHeight.height_two_of_S3

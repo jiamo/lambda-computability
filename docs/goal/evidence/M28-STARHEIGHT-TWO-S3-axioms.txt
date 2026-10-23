@@ -1,0 +1,3 @@
+# Big round 2, run 7: Start/StarHeightTwoS3.lean (run 4's module, rebuilt; lake env lean on a scratch file importing it, with #print axioms)
+'GeneralizedStarHeight.height_one_of_S3' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.height_two_of_S3' depends on axioms: [propext, Classical.choice, Quot.sound]

@@ -1,0 +1,14 @@
+'TLCA4.H5Ext.unique' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.H5Ext.tailCores' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.hit5_not_fixedPoint' depends on axioms: [propext, Classical.choice, Quot.sound]
+
+# Big round 2, run 7: regenerated after the export of run 6 (lake env lean on a scratch file importing the big round 2 modules, with #print axioms)
+'TLCA4.H5Core.step' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.H5Ext.step' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.HG.index_unique' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.H5Ext.ne_var' depends on axioms: [propext]
+'TLCA4.H5Ext.ne_bx' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.H5Ext.ne_bx1' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.H5Ext.unique' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.H5Ext.tailCores' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TLCA4.hit5_not_fixedPoint' depends on axioms: [propext, Classical.choice, Quot.sound]

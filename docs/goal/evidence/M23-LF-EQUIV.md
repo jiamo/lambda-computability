@@ -161,3 +161,39 @@ judgement closed under βη-conversion (with weakening, substitution, context co
 validity and βη Church–Rosser for λΠ), which the library does not have; C's share went to C2
 (M23-GROUPOID-SIGMA, `GrpdModel.pairHom_comp` proved).  First missing lemma unchanged:
 `TEq.typeLevel`.
+
+## Big round 2, run 1 (M23-LF-EQUIV-COMPLETE, item W2)
+
+**The first missing lemma `TEq.typeLevel` is false** (`Start/LambdaPiLFTEqTypeLevelCounter.lean`).
+`TEq` has the η-rule but its typing premises and `Typing` convert types by β only.  In the
+well-formed context `A0 : ∗, g : A0 → A0, Q : (A0 → A0) → ∗, c : Π h : A0 → A0. Q h,
+F : Q (λy:A0. g y) → ∗` (`LambdaPi.tc_wf`), `TEq.app (TEq.refl F) (TEq.app (TEq.refl c) (TEq.eta g))`
+derives `F (c (λy. g y)) ≡ F (c g) : ∗` (`LambdaPi.tc_teq`), `∗` is a kind, and `F (c g)` has no type
+(`LambdaPi.tc_N_untyped`: `c g : Q g`, `F` expects `Q (λy. g y)`, two distinct β-normal forms).
+Packaged: `LambdaPi.teq_typeLevel_counterexample : ∃ Γ M N T, Wf Γ ∧ TEq Γ M N T ∧ IsKind Γ T ∧
+¬ TypeLevel Γ N`.
+
+Consequence for the route: validity of `TEq` cannot hold for β-typing; the skeleton argument needs
+a typing judgement with βη-conversion.  New first missing lemma (a Lean statement, the judgement
+to be defined): `LambdaPi.TypingE` — `Typing` with `BetaEtaConv` in the conversion rule — and
+
+    theorem LambdaPi.TEq.validityE {Γ : Ctx} {M N A : Tm} (h : TEq Γ M N A) (hΓ : Wf Γ) :
+      TypingE Γ M A ∧ TypingE Γ N A
+
+after which `TEq.typeLevel` is to be restated with `TypingE`.  The exit criteria of the row
+(completeness by a Kripke logical relation, termination, decidability) are not affected by the
+refutation itself.
+
+## Big round 2, run 6 (restoration after the move to a new project)
+
+The big round 2 sections of this note (runs 1 to 3) were lost with the old project and were recreated
+in run 6 from its command logs, which record the text that was appended; the Lean modules they cite
+were restored from the old project's export, rebuilt with `lake build --wfail`, and their axioms
+regenerated (`docs/goal/evidence/*-axioms.txt`, section "Big round 2, run 6").
+
+## Big round 2, run 7 (restoration after the export of run 6)
+
+The platform's export of run 6's project dropped this note; it was put back from the copy of before big round 2 (our tree at ce8fe5e), and the
+big round 2 sections that run 6 had restored were added again in run 7 from the command logs of
+runs 1 to 3 (the appended text is recorded there verbatim). The axioms files of the big round 2 rows
+were regenerated with `#print axioms` in run 7 (section "Big round 2, run 7").

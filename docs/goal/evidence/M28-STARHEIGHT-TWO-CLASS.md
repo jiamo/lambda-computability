@@ -233,3 +233,33 @@ formal proof of a known bound, not a new bound.
 
 `#print axioms`: `docs/goal/evidence/M29-M28-axioms.txt` (only `propext`, `Classical.choice`,
 `Quot.sound`).
+
+## Big round 2, run 1
+
+Closed as DONE_STRONG: the exit criteria are met as written.
+
+* "For a class C of finite monoids, defined by an algebraic property independent of the split
+  construction and containing a monoid with a nontrivial subgroup, every language recognized by a
+  monoid in C has height at most two." — C = finite commutative monoids (`x * y = y * x`),
+  containing `ZMod 2` (`comm_class_nontrivial_subgroup`);
+  `GeneralizedStarHeight.height_two_of_comm` (Start/StarHeightCommutative.lean).
+* "The evidence file states what the literature already gives for C (in particular Pin, Straubing
+  and Therien 1992, Theorems 7.3 and 7.8) and whether the result is new." — stated above: height
+  one is classical for commutative monoids, so the result is not new.
+
+The further target (a class beyond Pin–Straubing–Thérien, first S3) is the new row
+`M28-STARHEIGHT-TWO-S3`: `GeneralizedStarHeight.height_two_of_S3`.
+
+## Big round 2, run 6 (restoration after the move to a new project)
+
+The big round 2 sections of this note (runs 1 to 3) were lost with the old project and were recreated
+in run 6 from its command logs, which record the text that was appended; the Lean modules they cite
+were restored from the old project's export, rebuilt with `lake build --wfail`, and their axioms
+regenerated (`docs/goal/evidence/*-axioms.txt`, section "Big round 2, run 6").
+
+## Big round 2, run 7 (restoration after the export of run 6)
+
+The platform's export of run 6's project dropped this note; it was put back from the copy of before big round 2 (our tree at ce8fe5e), and the
+big round 2 sections that run 6 had restored were added again in run 7 from the command logs of
+runs 1 to 3 (the appended text is recorded there verbatim). The axioms files of the big round 2 rows
+were regenerated with `#print axioms` in run 7 (section "Big round 2, run 7").

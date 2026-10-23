@@ -1,0 +1,7 @@
+# Big round 2, run 7: Start/StarHeightK3Metabelian.lean (run 4's module, rebuilt; lake env lean on a scratch file importing it, with #print axioms)
+'GeneralizedStarHeight.PST.k3Perm_apply' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.PST.k3_doubleCommutator' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.PST.K3_not_recognized_metabelian' depends on axioms: [propext, Classical.choice, Quot.sound]
+'GeneralizedStarHeight.PST.K3_not_recognized_of_derivedSeries_two' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]

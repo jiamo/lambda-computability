@@ -1,0 +1,13 @@
+# Big round 2, run 7: regenerated after the export of run 6 (lake env lean on a scratch file importing the big round 2 modules, with #print axioms)
+'ModalGL.sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ModalGL.sound_of_wf' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ModalGL.loeb_frame_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ModalGL.Provable.four' depends on axioms: [propext]
+'ModalGL.Der.loeb_rule' depends on axioms: [propext, Quot.sound]
+'ModalGL.lindenbaum' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ModalGL.loeb_valid' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ModalGL.consistent' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ModalGL.not_provable_reflection' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ModalGL.truth' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ModalGL.complete' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ModalGL.provable_iff_valid' depends on axioms: [propext, Classical.choice, Quot.sound]

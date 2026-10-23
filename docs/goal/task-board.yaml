@@ -4340,12 +4340,12 @@ tasks:
 
   - id: M16-REQUIREMENT-FRAMEWORK
     priority: P1
-    status: DONE_WEAK
+    status: DONE_STRONG
     track: theory/recursion
     title: "Requirements, strategies and the use function: the frame a priority construction runs in"
     terminal_statement: "Lambda.Oracle.use and Lambda.Oracle.useStage : the use of an oracle computation, with Lambda.Oracle.useStage_le_of_isSome its minimality, Lambda.Oracle.evalOracle_eq_of_agree_below_use the use principle with that explicit bound and Lambda.Oracle.use_eq_of_agree_below_use the invariance of the use itself; Lambda.Priority.Construction with Lambda.Priority.Construction.rePred_set : a primitive recursive increasing sequence of finite approximations enumerates a c.e. set; Lambda.Priority.Requirement with MetAt, Met, InjuredAt and Lambda.Priority.Requirement.met_of_not_injured : a requirement met once and never injured again is met"
     latest_evidence: "docs/goal/evidence/M16-REQUIREMENT-FRAMEWORK.md"
-    open_boundary: "The frame is generic and has not yet been instantiated by an actual construction; the first one to run in it is Friedberg-Muchnik, M16-FRIEDBERG-MUCHNIK, still open."
+    open_boundary: ""
     milestone: M16
     depends_on: []
     rank: 1100
@@ -4608,12 +4608,12 @@ tasks:
 
   - id: M18-PCA-LATTICE
     priority: P2
-    status: DONE_WEAK
+    status: DONE_STRONG
     track: theory/computability
     title: "The order of PCAs under applicative morphisms"
     terminal_statement: "Realizability.PCALe and Realizability.PCAEquiv : the preorder of partial combinatory algebras under the existence of an applicative morphism and the equivalence it induces (Realizability.pcaLe_refl, Realizability.pcaLe_trans); Realizability.pcaEquiv_of_any : that preorder is degenerate, the trivial morphism making every two algebras equivalent; Realizability.AppMorphism.Decides, Realizability.PCALeD with pcaLeD_refl and pcaLeD_trans : the informative refinement by the morphisms that decide their representatives; Realizability.KleeneTwo.kleene_strict : K1 < K2 in that order, by kOneToTwo_decides and not_decides"
     latest_evidence: "docs/goal/evidence/M18-PCA-LATTICE.md"
-    open_boundary: "The order, its degeneracy, the refinement by decidable morphisms and the separation K1 < K2 are proved in Start/PCAOrder.lean. Two things are not: the strictness is proved for the refined order only - in the plain order all algebras are equivalent, which is itself a theorem here - and the third exit criterion, whether two algebras with equivalent realizability toposes are equivalent, is recorded as open rather than proved, since the library constructs the assemblies and their exact completion but not the realizability topos of an algebra."
+    open_boundary: ""
     milestone: M18
     depends_on: []
     rank: 1330
@@ -4647,6 +4647,24 @@ tasks:
       - "python3 scripts/check_closure.py"
       - "lake build"
 
+  - id: M19-KT-NP
+    priority: P1
+    status: TODO_READY
+    track: theory/kolmogorov
+    title: "The language of pairs (x, k) with K^T(x) <= k is in NP"
+    latest_evidence: "docs/goal/evidence/M19-KT-DEFINITIONS.md"
+    open_boundary: "Open (named gap of M19-KT-DEFINITIONS, opened in big round 2, run 1). The certificate half is Lambda.ktime_le_iff (a closed program of size at most k reducing to the numeral within T steps). Missing: Lambda.ktimeLang and the verifier, i.e. that running a guessed term for T steps and comparing with the numeral is polynomial time in the model of Start/ComplexityClasses.lean, through the Krivine machine in the Cobham model (Start/KrivineCobStep.lean) and an encoding of terms as words. First missing lemma: theorem Lambda.ktimeLang_inNP {{T : ℕ → ℕ}} (hT : Complexity.PolyBound T) : Complexity.InNP (Lambda.ktimeLang T)."
+    milestone: M19
+    depends_on: []
+    rank: 1409
+    exit_criteria:
+      - "Lambda.ktimeLang T (the words coding a pair (s, k), s in binary and k in unary, with Lambda.ktime (T n) s <= k for n the word length) is defined, and Lambda.ktimeLang_inNP is proved for every polynomially bounded T."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
   - id: M19-KT-DEFINITIONS
     priority: P1
     status: DONE_WEAK
@@ -4654,9 +4672,9 @@ tasks:
     title: "Time-bounded Kolmogorov complexity K^t and its basic theory"
     terminal_statement: "Lambda.ktime : the least size of a closed term reducing to the numeral within T beta steps, an instance of Complexity.DescSystem; Lambda.ktime_antitone (it decreases in T), Lambda.kolm_le_ktime and Lambda.ktime_le_church (it lies between K and the size of the numeral), Lambda.exists_bound_ktime_eq_kolm and Lambda.ktime_eq_kolm_of_le (it agrees with K from some bound on), Lambda.ktime_le_ktimeWith and Lambda.ktimeWith_I_le_ktime (invariance under a change of interpreter, up to an additive constant and one extra step), Lambda.ktime_le_iff (the bounded certificate), Lambda.kt_le_ktime_add_log (comparison with Levin's Kt)"
     latest_evidence: "docs/goal/evidence/M19-KT-DEFINITIONS.md"
-    open_boundary: "The measure, its basic theory and its invariance are proved in Start/KolmogorovTime.lean. The third exit criterion is not: that the language {(x, k) : K^T(x) <= k} is in NP. Lambda.ktime_le_iff gives its combinatorial half - the certificate is a program of size at most k - and what is missing is that checking such a certificate (running a guessed term for T steps) is polynomial time in the model of Start/ComplexityClasses.lean; the machinery for that is the Krivine machine in the Cobham model (Start/KrivineCobStep.lean) together with an encoding of terms as words."
+    open_boundary: "The measure, its basic theory and its invariance are proved in Start/KolmogorovTime.lean. The third exit criterion is not: the gap is the row M19-KT-NP, theorem Lambda.ktimeLang_inNP {T : ℕ → ℕ} (hT : Complexity.PolyBound T) : Complexity.InNP (Lambda.ktimeLang T). Lambda.ktime_le_iff gives its certificate half; the verifier (running a guessed term for T steps in polynomial time) is missing."
     milestone: M19
-    depends_on: []
+    depends_on: ["M19-KT-NP"]
     rank: 1410
     exit_criteria:
       - "K^t is defined as an instance of Start/DescriptionSystem.lean, with invariance up to a change of machine and a polynomial change of the bound."
@@ -4774,7 +4792,7 @@ tasks:
     track: research/open-problems
     title: "TLCA open problem 4 under beta-eta: Imamura's Problem 5.1 (is there a B, M, I-combination Y with Y x =βη x (Y x)?)"
     latest_evidence: "docs/goal/evidence/M20-TLCA4-BETAETA.md"
-    open_boundary: "Open problem (Imamura, Problem 5.1). Earlier rounds (evidence note): statmanStepOne, so Problem 5.1 is equivalent to ¬ PolyFiveOne; T and Q are not βη fixed-point combinators (rows M20-TLCA4-T-NOT-FIXPOINT, M20-TLCA4-Q-NOT-FIXPOINT); spine search (not Lean-checked): 14 polynomials reach the cap at length ≤ 7; six length-7 hits factor through T (factor_T). Runs 4–7 (A3): local constraints on a fixed-point polynomial (polyFiveOne_head_M … unf_escape_next); T, Q and all hits pass them, so the case tree is not extended (plan 4.4). Run 8: hit5 = M∘M∘BM∘BB∘BM∘B∘B has the triangular stage pattern (hit5_stage) and components with unique index (h5A_index_unique); hit6 ≡ hit7, hit8 ≡ hit9 (hit6_conv_hit7, hit8_conv_hit9); generic stage lemma stage_gen (Q, hit5, hit6, hit8). Run 9: generic shape argument with arbitrary tails (TailShape: TC, TailCores, not_fixedPoint_of_ashape; checked on Q), two-argument chains TW, TC.step2, level-wise extension Ext (Ext.step). Run 10: βη-closed grammars for the w- and s-layers of hit5 (Start/TLCA4Hit5W.lean: TC.lift, WR.step, WR.of_h5w; Start/TLCA4Hit5S.lean: TC.subst_liftB, SqR.step, SR.step, SR.of_h5s). Next: the component grammar of hit5 (uⁿ s, the analogue of YG with SR at index 0 and q-level chains with arbitrary tails; first missing lemma TLCA4.H5Core.step), then hit5_not_fixedPoint; final target TLCA4.no_fixedPoint_betaEta : ¬ TLCA4.ProblemFiveOne."
+    open_boundary: "Open problem (Imamura, Problem 5.1). Earlier rounds (evidence note): statmanStepOne (Problem 5.1 iff ¬ PolyFiveOne); T and Q are not βη fixed-point combinators; local constraints polyFiveOne_head_M … polyFiveOne_adm; hit6 ≡ hit7, hit8 ≡ hit9; stage_gen; shape argument with arbitrary tails. Big round 2, runs 1 and 3 (A1): hit5_not_fixedPoint (row M20-TLCA4-HIT5-NOT-FIXPOINT). Big round 2, run 5, rebuilt in run 6 after the move to a new project (A2, A3, A5): grammar NG of normalized stage components with TailCores (NCore.tailCores, not_fixedPoint_of_nf); hit6_not_fixedPoint … hit10_not_fixedPoint (rows M20-TLCA4-HIT6-HIT9-NOT-FIXPOINT, M20-TLCA4-HIT10-NOT-FIXPOINT), so no length-7 spine hit is a βη fixed-point combinator; parametric theorem not_fixedPoint_of_MM_nfStage (row M20-TLCA4-NFSTAGE): every L →βη M (M s) with s →βη λa w. x (a (λz w'. x (a z T')) T) is not a fixed point. Open: the conjecture that every Adm polynomial with unbounded x-spine has a step term of this shape; first missing lemma theorem TLCA4.polyFiveOne_nfStage {C : List Mono} (h : PolyFiveOne C) (x : ℕ) : ∃ s T T', Lambda.betaEtaReduces (toLam (actList C (Tm.var x))) (.app lamM (.app lamM s)) ∧ Lambda.betaEtaReduces s (nfStage x T T'); final target TLCA4.no_fixedPoint_betaEta : ¬ TLCA4.ProblemFiveOne."
     milestone: M20
     depends_on:
       - M20-TLCA4-BM-FIXPOINT
@@ -4801,6 +4819,86 @@ tasks:
     rank: 1492
     exit_criteria:
       - "theorem statmanStepOne : TLCA4.StatmanStepOne, standard axioms only."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M20-TLCA4-HIT5-NOT-FIXPOINT
+    priority: P1
+    status: DONE_STRONG
+    track: research/open-problems
+    title: "TLCA 4: the polynomial hit5 is not a βη fixed-point combinator"
+    terminal_statement: "theorem hit5_not_fixedPoint (x : ℕ) : ¬ Lambda.betaEtaConv (toLam (actList hit5 (Tm.var x))) (.app (.var x) (toLam (actList hit5 (Tm.var x)))) (Start/TLCA4Hit5NotFixpoint.lean), from hit5_not_fixedPoint_of_tailCores and H5Ext.tailCores (fields H5Ext.step, Ext.not_lam, H5Ext.ne_var, ne_bx, ne_bx1, H5Ext.unique; Start/TLCA4Hit5Core.lean, Start/TLCA4Hit5Index.lean, Start/TLCA4Hit5QFree.lean, Start/TLCA4Hit5Sep.lean, Start/TLCA4Hit5Fields.lean). Standard axioms only (docs/goal/evidence/M20-TLCA4-HIT5-NOT-FIXPOINT-axioms.txt)."
+    latest_evidence: "docs/goal/evidence/M20-TLCA4-BETAETA.md"
+    open_boundary: ""
+    milestone: M20
+    depends_on:
+      - M20-TLCA4-STATMAN-STEP-ONE
+    rank: 1494
+    exit_criteria:
+      - "theorem hit5_not_fixedPoint, standard axioms only."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M20-TLCA4-HIT6-HIT9-NOT-FIXPOINT
+    priority: P1
+    status: DONE_STRONG
+    track: research/open-problems
+    title: "TLCA 4: the polynomials hit6, hit7, hit8 and hit9 are not βη fixed-point combinators"
+    terminal_statement: "theorem hit6_not_fixedPoint, hit7_not_fixedPoint, hit8_not_fixedPoint, hit9_not_fixedPoint (x : ℕ) : ¬ Lambda.betaEtaConv (toLam (actList hitN (Tm.var x))) (.app (.var x) (toLam (actList hitN (Tm.var x)))) (Start/TLCA4Hit6NotFixpoint.lean), from not_fixedPoint_of_nf (Start/TLCA4NfCores.lean: NCore.tailCores, NG.index_unique) and the reductions h6g_qG, h8g_qG, sComp_of_qG (the step term B M g reduces to a component of index 0 of the grammar NG, Start/TLCA4NfGrammar.lean); hit7 and hit9 through hit6_conv_hit7, hit8_conv_hit9. Standard axioms only (docs/goal/evidence/M20-TLCA4-HIT6-HIT9-NOT-FIXPOINT-axioms.txt)."
+    latest_evidence: "docs/goal/evidence/M20-TLCA4-BETAETA.md"
+    open_boundary: ""
+    milestone: M20
+    depends_on:
+      - M20-TLCA4-STATMAN-STEP-ONE
+    rank: 1495
+    exit_criteria:
+      - "theorems hit6_not_fixedPoint and hit8_not_fixedPoint (hence hit7, hit9), standard axioms only."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M20-TLCA4-HIT10-NOT-FIXPOINT
+    priority: P1
+    status: DONE_STRONG
+    track: research/open-problems
+    title: "TLCA 4: the polynomial hit10 is not a βη fixed-point combinator"
+    terminal_statement: "theorem hit10_not_fixedPoint (x : ℕ) : ¬ Lambda.betaEtaConv (toLam (actList hit10 (Tm.var x))) (.app (.var x) (toLam (actList hit10 (Tm.var x)))) (Start/TLCA4Hit10NotFixpoint.lean): hit10 x = M (M s) with s = B²M w, s →βη s10nf = λa w. x (a U_a (w (λc. x (a U_a (w c))))) (h10s_red), a component of index 0 (s10nf_NG), then not_fixedPoint_of_nf. Standard axioms only (docs/goal/evidence/M20-TLCA4-HIT10-NOT-FIXPOINT-axioms.txt)."
+    latest_evidence: "docs/goal/evidence/M20-TLCA4-BETAETA.md"
+    open_boundary: ""
+    milestone: M20
+    depends_on:
+      - M20-TLCA4-STATMAN-STEP-ONE
+    rank: 1496
+    exit_criteria:
+      - "theorem hit10_not_fixedPoint, standard axioms only."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M20-TLCA4-NFSTAGE
+    priority: P1
+    status: DONE_STRONG
+    track: research/open-problems
+    title: "TLCA 4: a parametric theorem: polynomials whose step term reduces to the stage shape are not βη fixed-point combinators"
+    terminal_statement: "theorem not_fixedPoint_of_MM_nfStage {x : ℕ} {L s T T' : Lambda} (hL : Lambda.betaEtaReduces L (.app lamM (.app lamM s))) (hs : Lambda.betaEtaReduces s (nfStage x T T')) : ¬ Lambda.betaEtaConv L (.app (.var x) L) (Start/TLCA4StageNf.lean), nfStage x T T' = λa w. x (a (λz w'. x (a z T')) T); covers Q, hit5 (hit5_not_fixedPoint_nf), hit6–hit10. Standard axioms only (docs/goal/evidence/M20-TLCA4-NFSTAGE-axioms.txt)."
+    latest_evidence: "docs/goal/evidence/M20-TLCA4-BETAETA.md"
+    open_boundary: ""
+    milestone: M20
+    depends_on:
+      - M20-TLCA4-STATMAN-STEP-ONE
+    rank: 1497
+    exit_criteria:
+      - "theorem not_fixedPoint_of_MM_nfStage, standard axioms only, with hit5 recovered as an instance."
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
@@ -5871,13 +5969,32 @@ tasks:
       - "python3 scripts/check_sorry.py"
       - "lake build --wfail"
 
+  - id: M23-LF-TEQ-TYPELEVEL-FALSE
+    priority: P2
+    status: DONE_STRONG
+    track: theory/types
+    title: "TEq.typeLevel is false: the declarative βη-equality of λΠ relates a typable type to an untypable one"
+    terminal_statement: "LambdaPi.teq_typeLevel_counterexample : ∃ (Γ : Ctx) (M N T : Tm), Wf Γ ∧ TEq Γ M N T ∧ IsKind Γ T ∧ ¬ TypeLevel Γ N (Start/LambdaPiLFTEqTypeLevelCounter.lean), with LambdaPi.tc_wf, LambdaPi.tc_teq and LambdaPi.tc_N_untyped: in A0 : ∗, g : A0 → A0, Q : (A0 → A0) → ∗, c : Π h. Q h, F : Q (λy. g y) → ∗, TEq derives F (c (λy. g y)) ≡ F (c g) : ∗ and F (c g) has no type."
+    latest_evidence: "docs/goal/evidence/M23-LF-EQUIV.md"
+    open_boundary: ""
+    milestone: M23
+    depends_on: []
+    rank: 2072
+    exit_criteria:
+      - "TEq.typeLevel (TEq Γ M N T → Wf Γ → T a kind → TypeLevel Γ M ∧ TypeLevel Γ N) is proved or refuted in Lean."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
   - id: M23-LF-EQUIV-COMPLETE
     priority: P2
     status: TODO_READY
     track: theory/types
     title: "Completeness and termination of type-directed βη-equivalence for LF"
     latest_evidence: "docs/goal/evidence/M23-LF-EQUIV.md"
-    open_boundary: "Gap row of M23-LF-EQUIV (DONE_WEAK, round 7). Targets: typed soundness of AlgEq for TEq; completeness by the fundamental lemma of LR; termination on well-typed terms; decidability of TEq. Round 8: PER property. Round 9: LR.fundamental for typing derivations, AlgEq.refl_of_typing. Round 10 (Start/LambdaPiLFSkelTEq.lean): skel is η- but not β-invariant (skel_beta_raw_counterexample), so skel_teq needs the typing of every type-level redex of a TEq derivation. First missing lemma: TEq.typeLevel : TEq Γ M N T → Wf Γ → (T a kind or □) → TypeLevel Γ M ∧ TypeLevel Γ N; it fails for the β-conversion typing at TEq.app, so it needs a βη-conversion typing judgement (weakening, substitution, context conversion, type validity, Church–Rosser for βη). Rounds 11 to Series V round 3 run 1: not attempted (time given to earlier parts); first missing lemma unchanged: TEq.typeLevel."
+    open_boundary: "Gap row of M23-LF-EQUIV (DONE_WEAK, round 7). Targets: typed soundness of AlgEq for TEq; completeness by the fundamental lemma of LR; termination on well-typed terms; decidability of TEq. Rounds 8-10: PER property, LR.fundamental, AlgEq.refl_of_typing; skel is η- but not β-invariant (skel_beta_raw_counterexample). Big round 2, run 1: the former first missing lemma TEq.typeLevel is FALSE (Start/LambdaPiLFTEqTypeLevelCounter.lean, teq_typeLevel_counterexample: in a well-formed context TEq derives F (c (λy. g y)) ≡ F (c g) : ∗ while F (c g) has no type, since Typing converts by β only). First missing lemma: a λΠ typing judgement TypingE with βη-conversion and theorem LambdaPi.TEq.validityE {Γ : Ctx} {M N A : Tm} (h : TEq Γ M N A) (hΓ : Wf Γ) : TypingE Γ M A ∧ TypingE Γ N A (weakening, substitution, context conversion and type validity for TypingE, Church–Rosser modulo annotations from Start/LambdaPiEtaConfluent.lean), then skel_teq through TypingE."
     milestone: M23
     depends_on: []
     rank: 2073
@@ -6076,14 +6193,15 @@ tasks:
 
   - id: M24-GL
     priority: P2
-    status: TODO_READY
+    status: IN_PROGRESS
     track: theory/logic
     title: "The provability logic GL: Kripke soundness and completeness"
-    latest_evidence: "docs/goal/proposed-M21-M24.md"
-    open_boundary: ""
+    latest_evidence: "docs/goal/evidence/M24-GL.md"
+    open_boundary: "Big round 2 run 2 (Start/ModalGL.lean): GL as a Hilbert system, Kripke semantics, soundness (ModalGL.sound, sound_of_wf), loeb_frame_iff, deduction theorem, modal lemma, Lindenbaum. Run 3 (Start/ModalGLComplete.lean): finite canonical model (ModalGL.CanWorld, truth lemma ModalGL.truth) and ModalGL.complete (the former first missing lemma), hence ModalGL.provable_iff_valid: the first exit criterion is met. Remaining: the second criterion, arithmetical soundness, which needs the PA provability predicate of M24-GODEL2-ARITH (TODO_READY). First missing lemma: theorem ModalGL.arith_sound {φ : ModalGL.Fml} (h : ModalGL.Provable φ) (σ : ℕ → PA sentence) : PA ⊢ ModalGL.realize σ φ (□ read as the PA provability predicate; needs the derivability conditions and formalized Löb)."
     milestone: M24
     depends_on:
       - M24-ABSTRACT-LOB
+      - M24-GODEL2-ARITH
     rank: 2230
     exit_criteria:
       - "GL as a modal Hilbert system; soundness and completeness for finite transitive irreflexive Kripke frames."
@@ -6116,11 +6234,11 @@ tasks:
 
   - id: M24-VAN-LAMBALGEN
     priority: P2
-    status: TODO_READY
+    status: IN_PROGRESS
     track: theory/randomness
     title: "Van Lambalgen's theorem"
-    latest_evidence: "docs/goal/proposed-M21-M24.md"
-    open_boundary: "Left TODO_READY in a later delivery under the queue rule (too large for the time left); relativized tests are not defined yet. First missing lemma (the unrelativized half): theorem Lambda.MLRandom.join_left (A B : ℕ → Bool) : Lambda.MLRandom (fun n => if n % 2 = 0 then A (n / 2) else B (n / 2)) → Lambda.MLRandom A."
+    latest_evidence: "docs/goal/evidence/M24-VAN-LAMBALGEN.md"
+    open_boundary: "Big round 2 run 2 (Start/MartinLofJoin.lean): the former first missing lemma Lambda.MLRandom.join_left is proved, with Lambda.MLRandom.join_right, Lambda.map_halfSeq_cantorMeasure and the pull-back test MLTest.half; relativized tests Lambda.MLTestRel X (matrix ComputableIn the oracle) and Lambda.MLRandomRel are defined. First missing lemma: theorem Lambda.MLRandom.join_right_rel (A B : ℕ → Bool) : Lambda.MLRandom (fun n => if n % 2 = 0 then A (n / 2) else B (n / 2)) → Lambda.MLRandomRel A B; then the converse direction (see notes)."
     milestone: M24
     depends_on: []
     rank: 2250
@@ -6304,8 +6422,8 @@ tasks:
     status: TODO_READY
     track: theory/complexity
     title: "A tape program for one transition of the CEK machine"
-    latest_evidence: "docs/goal/evidence/M25-CBV-COST.md"
-    open_boundary: ""
+    latest_evidence: "docs/goal/evidence/M25-CBV-STEP-PROG.md"
+    open_boundary: "Big round 2, run 1: the first exit criterion is done (Start/CbvStateWord.lean: CEK.stateBits, a prefix-free encoding of CEK states with nested environments of closures and frames, CEK.stateBits_injective). Open: the second exit criterion. First missing lemma: theorem CEK.realizes_trans : ∃ (M : Complexity.Space.Machine) (code : List Bool → CEK.State → Complexity.Space.Config) (B : List Bool → ℕ), Complexity.Space.Realizes M (CEK.absMachine dec acc) code B ∧ ∀ x s, (code x s).tape = CEK.stateBits s, for the abstract machine CEK.absMachine dec acc with step CEK.stepFn (Start/CbvStepFn.lean: stepFn_eq_some_iff, stepFn_eq_none_iff; Start/CbvAbsMachine.lean: the machine, absMachine_reaches_iff), then the per-transition time bound polynomial in the length of stateBits."
     milestone: M25
     depends_on:
       - M25-CBV-MACHINE
@@ -6366,8 +6484,8 @@ tasks:
     status: TODO_READY
     track: theory/complexity
     title: "A tape program for one transition of the lazy machine"
-    latest_evidence: "docs/goal/evidence/M25-CBNEED.md"
-    open_boundary: ""
+    latest_evidence: "docs/goal/evidence/M25-CBNEED-STEP-PROG.md"
+    open_boundary: "Big round 2, run 1: the first exit criterion is done (Start/LazyStateWord.lean: Lazy.lstateBits, a prefix-free encoding of code, environment of addresses, argument/update frames and the heap of thunk, hole and value cells; Lazy.lstateBits_injective). Open: the second exit criterion. First missing lemma: theorem Lazy.realizes_trans : ∃ (M : Complexity.Space.Machine) (code : List Bool → Lazy.LState → Complexity.Space.Config) (B : List Bool → ℕ), Complexity.Space.Realizes M (Lazy.labsMachine dec acc) code B ∧ ∀ x s, (code x s).tape = Lazy.lstateBits s, for the abstract machine Lazy.labsMachine dec acc with step Lazy.lstepFn (Start/LazyStepFn.lean: lstepFn_eq_some_iff, lstepFn_eq_none_iff; Start/LazyAbsMachine.lean: the machine, labsMachine_reaches_iff), then the per-transition time bound."
     milestone: M25
     depends_on:
       - M25-CBNEED-MACHINE
@@ -7152,12 +7270,12 @@ tasks:
 
   - id: M28-STARHEIGHT-TWO-CLASS
     priority: P1
-    status: DONE_WEAK
+    status: DONE_STRONG
     track: research/open-problems
     title: "Generalized star height at most two for the languages recognized by a class of finite monoids with nontrivial subgroups"
     terminal_statement: "GeneralizedStarHeight.height_two_of_comm (hM : ∀ x y : M, x * y = y * x) (T : FreeMonoid Alphabet →* M) (F : Set M) : HasHeightAtMost {w | T (FreeMonoid.ofList w) ∈ F} 2, through singleSplit_of_comm and height_two_of_singleSplit; also height_one_of_comm and comm_class_nontrivial_subgroup (Start/StarHeightCommutative.lean). Not new: height one is classical for commutative monoids."
     latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-TWO-CLASS.md"
-    open_boundary: "Proved for finite commutative monoids (C contains Z/2), which is inside known height-one results. Open: a class not covered by Pin-Straubing-Therien, e.g. one containing S3; first target: every language recognized by S3 has height at most two."
+    open_boundary: ""
     milestone: M28
     depends_on:
       - M28-STARHEIGHT-SINGLE-SPLIT
@@ -7166,6 +7284,25 @@ tasks:
     exit_criteria:
       - "For a class C of finite monoids, defined by an algebraic property independent of the split construction and containing a monoid with a nontrivial subgroup, every language recognized by a monoid in C has height at most two."
       - "The evidence file states what the literature already gives for C (in particular Pin, Straubing and Therien 1992, Theorems 7.3 and 7.8) and whether the result is new."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+  - id: M28-STARHEIGHT-TWO-S3
+    priority: P2
+    status: DONE_STRONG
+    track: research/open-problems
+    title: "Every language recognized by S3 has generalized star height at most two"
+    terminal_statement: "theorem GeneralizedStarHeight.height_two_of_S3 [Finite Alphabet] (T : FreeMonoid Alphabet →* Equiv.Perm (Fin 3)) (F : Set (Equiv.Perm (Fin 3))) : HasHeightAtMost {w | T (FreeMonoid.ofList w) ∈ F} 2, from height_one_of_S3 (same hypotheses, height 1), an instance of height_one_of_abelian_prime_index with N = alternatingGroup (Fin 3) (Start/StarHeightTwoS3.lean, big round 2, run 4; rebuilt in run 7). Axioms: docs/goal/evidence/M28-STARHEIGHT-TWO-S3-axioms.txt."
+    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-TWO-S3.md"
+    open_boundary: ""
+    milestone: M28
+    depends_on: ["M28-STARHEIGHT-TWO-CLASS"]
+    rank: 2611
+    exit_criteria:
+      - "GeneralizedStarHeight.height_two_of_S3: every language recognized by the symmetric group S3 has generalized star height at most two."
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
@@ -7636,8 +7773,8 @@ tasks:
     track: research/open-problems
     title: "The S3-core, and its smallest open instance: one S3 coset count modulo 3"
     terminal_statement: "HCoreHeightOne (Equiv.Perm (Fin 3)), and first its smallest open instance: ∀ k < 3, HasHeightAtMost {w : List GeneralizedStarHeight.PST.AB | PST.b0count 0 w % 3 = k} 1, the number of b read in state 0 of the automaton a = (0 1), b = (0 2) (Start/StarHeightPSTLanguage.lean), counted modulo 3; by PST.b0count_eq_hcount it is the S3 coset count hcount rho3 1 b + hcount rho3 (Equiv.swap 1 2) b."
-    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-PST-HEIGHT-ONE.md"
-    open_boundary: "Open. The modulus-2 instance PST.K is proved (PST.K_height_one, M28-STARHEIGHT-PST-CANDIDATE). Smallest open instance: K3 k = {w | b0count 0 w % 3 = k}. Computational (not Lean): within the transition group G of K3 (order 162, 142 subgroups) only 5 coset automata are good (star-free first returns or abelian quotient) and their stabilizers meet in a subgroup of order 9 that does not fix the count; no single automaton, pair, or triple (two on ≤ 4 points) of the 149 star-free-return permutation automata on ≤ 5 points, together with stateOf 0, |w|_a mod 2 and |w|_b mod 6, determines K3. The full S3-core would give every S4 language (height_one_S4_of_core). Re-run of the auxiliary search with the exact criterion (docs/goal/evidence/M28-STARHEIGHT-S4-AUX-SEARCH.md): all 599,081 single auxiliary automata that are complete DFAs on 2..4 states or permutation automata on 5..6 points, of which 143,209 have star-free first returns; none, together with the good coset automata of the order-162 transition group, determines the count. Pairs were not searched in this run. Lift search for K3 (docs/goal/evidence/M28-STARHEIGHT-LIFT-R3R4.md, not Lean-verified): no hit with S3 letter pairs; signed lifts not searched (ambient of order 2^9 * 162 too large for full subgroup enumeration). For S4 only the modulus-2 part is needed (height_one_S4_of_core_mod_two, M28-STARHEIGHT-CORE-MOD-TWO): HCoreModTwo (Equiv.Perm (Fin 3)) gives every S4 language. K3 (modulo 3) is therefore not on the path to S4; the modulus-2 instance PST.K is proved, the full HCoreModTwo (Equiv.Perm (Fin 3)) is open."
+    latest_evidence: "docs/goal/evidence/M28-STARHEIGHT-S3-CORE.md"
+    open_boundary: "Open. The modulus-2 instance PST.K is proved (PST.K_height_one, M28-STARHEIGHT-PST-CANDIDATE). Smallest open instance: K3 k = {w | b0count 0 w % 3 = k}. Computational (not Lean): within the transition group G of K3 (order 162, 142 subgroups) only 5 coset automata are good (star-free first returns or abelian quotient) and their stabilizers meet in a subgroup of order 9 that does not fix the count; no single automaton, pair, or triple (two on ≤ 4 points) of the 149 star-free-return permutation automata on ≤ 5 points, together with stateOf 0, |w|_a mod 2 and |w|_b mod 6, determines K3. The full S3-core would give every S4 language (height_one_S4_of_core). Auxiliary search (M28-STARHEIGHT-S4-AUX-SEARCH.md): no single complete DFA on 2..4 states or permutation automaton on 5..6 points (599,081) completes the good coset automata; pairs not searched. Lift search (M28-STARHEIGHT-LIFT-R3R4.md, not Lean-verified): no hit with S3 letter pairs; signed lifts not searched. For S4 only the modulus-2 part is needed (height_one_S4_of_core_mod_two, M28-STARHEIGHT-CORE-MOD-TWO): HCoreModTwo (Equiv.Perm (Fin 3)) gives every S4 language. K3 (modulo 3) is therefore not on the path to S4; the modulus-2 instance PST.K is proved, the full HCoreModTwo (Equiv.Perm (Fin 3)) is open. Big round 2, run 4 (Lean): K3 k is not recognized by any finite group with trivial double commutators (PST.K3_not_recognized_metabelian, Start/StarHeightK3Metabelian.lean; rebuilt in run 7), so GroupHeightOne closure (of_dvd_pi) from metabelian instances cannot reach it; a proof needs a non-metabelian observer, as s4state is for PST.K."
     milestone: M28
     depends_on:
       - M28-STARHEIGHT-HCORE-REDUCTION
@@ -8451,7 +8588,7 @@ tasks:
     track: research/open-problems
     title: "Expansion postponement for every specification with a morphism into CC^omega"
     latest_evidence: "docs/goal/evidence/M29-EP.md"
-    open_boundary: "Series V rounds 2-3: ccOmega, CCOmegaMorphism, morphisms from coc, λHOL, cocTop. Round 4 run 1 (Start/PTSExpansionCCOSkel.lean): skeletons with level binders, CCO.V, clO, clV_ssubst_level; stop clO_beta_fails. Round 4 run 2 (Start/PTSExpansionCCOSkelFun.lean): stratified simply typed skeleton terms SkT with a model (eval_subst, eval_steps). Big round run 2 (Start/PTSExpansionCCOClF.lean): environment-based classifiers clF for any ClfData; clF_subst, clF_instantiate, clF_beta_of. Big round run 3 (Start/PTSExpansionCCOClFLimit.lean): ClfData.subsingleton_of_beta (the unrestricted β-law collapses the class type, so it must be restricted to well-classified arguments). Item B1 blocked: a faithful class type needs, at each level, dependent products over codes of the same level (e.g. ΠK:(ΠY:Type 0. Y → Type 0). ΠY:Type 0. Πy:Y. K Y y → K Y y), i.e. an inductive-recursive Tarski hierarchy, which Lean lacks (see notes). First missing lemma: a concrete D : ClfData C with theorem CCO.ccoClf_beta (h : ClfWC ρ (.app (.lam A b) U)) : clF D ρ (.app (.lam A b) U) = clF D ρ (b.instantiate U); then the classifyV analogue, the interpretation and the generalized fundamental lemma (not started)."
+    open_boundary: "Series V rounds 2-3: ccOmega, CCOmegaMorphism, morphisms from coc, λHOL, cocTop. Round 4 (Start/PTSExpansionCCOSkel.lean, Start/PTSExpansionCCOSkelFun.lean): skeletons with level binders, value semantics of simply typed skeletons. Big round runs 2-3 (Start/PTSExpansionCCOClF.lean, Start/PTSExpansionCCOClFLimit.lean): environment-based classifiers clF for any ClfData, clF_subst, clF_beta_of; ClfData.subsingleton_of_beta (the β-law must be restricted to well-classified arguments). Big round 2 run 2 (Start/PTSExpansionCCOCodes.lean): the induction-recursion obstruction is avoided with class type ZFSet: ccoD (graphs, dependent function sets, Type ℓ classified by cU ℓ = V_(ω·(ℓ+1)), Prop by 𝒫{∅}), ClfWC, CCO.ccoClf_beta (former first missing lemma), ClfWC_subst, ClfWC.beta, depKind_wc, zfPi_mem_cU_zero (level-0 universe closure). First missing lemma (typed classification, proofs erased): theorem CCO.clF_typed {Γ : List (Expr CSrt)} {M A : Expr CSrt} (h : HasType ccOmega Γ M A) (ρ : ℕ → ZFSet) (hρ : CCO.EnvOK Γ ρ) : ClfWC ρ (CCO.erase Γ M) ∧ clF ccoD ρ (CCO.erase Γ M) ∈ clF ccoD ρ (CCO.erase Γ A), with CCO.erase and CCO.EnvOK to be defined; then the universe bound clF ρ K ∈ cU ℓ for K : Type ℓ (through ranks of syntactic families), the candidate interpretation and the generalized fundamental lemma (see notes)."
     milestone: M29
     depends_on:
       - M29-EP-TOP-MORPHISM
@@ -8505,6 +8642,24 @@ tasks:
       - "python3 scripts/check_sorry.py"
       - "lake build"
 
+  - id: M19-INDEX-CODE-OPTIMAL
+    priority: P1
+    status: TODO_READY
+    track: research/information
+    title: "An index code of size log4 N + o(log N)"
+    latest_evidence: "docs/goal/evidence/M19-DESCRIPTION-COST-AUDIT.md"
+    open_boundary: "Open (named gap of M19-DESCRIPTION-COST-AUDIT, opened in big round 2, run 1). Known: Lambda.kolm_le_three_log (constant 3 per bit, M19-INDEX-CODE-RATE) and Lambda.kolm_index_rate_lower (no constant below 1/2, from card_kolm_le). The justified target for the counting term of M19-SYMMETRY-HARD-HALF is therefore known only up to the factor 6 between these bounds; closing it needs an index code of size log4 N + o(log N), i.e. theorem Lambda.kolm_index_rate_upper {p q : ℕ} (h : q < 2 * p) : ∃ c : ℕ, ∀ N i : ℕ, i < N → q * Lambda.kolm i ≤ p * Nat.log 2 N + c."
+    milestone: M19
+    depends_on: ["M19-INDEX-CODE-RATE"]
+    rank: 1389
+    exit_criteria:
+      - "Lambda.kolm_index_rate_upper is proved: for every rate q/p below 2, q * kolm i <= p * log2 N + c for all i < N."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
   - id: M19-DESCRIPTION-COST-AUDIT
     priority: P1
     status: DONE_WEAK
@@ -8512,11 +8667,12 @@ tasks:
     title: "Prove counting and coding bounds for the actual Kolmogorov description measures"
     terminal_statement: "Lambda.sizeBits_append_inj (prefix-free bit code of terms); Lambda.size_le_length_sizeBits and Lambda.length_sizeBits_le (size t <= |bits t| <= 2 size t); Lambda.card_size_le (at most 4^m terms of size <= m); Lambda.card_kolm_le and Lambda.card_kolmCond_le (at most 4^m numbers of complexity <= m); Lambda.exists_le_four_pow_kolm_gt and exists_le_four_pow_kolmCond_gt; Lambda.kolm_le_kolmBits and kolmBits_le_two_mul_kolm"
     latest_evidence: "docs/goal/evidence/M19-DESCRIPTION-COST-AUDIT.md"
-    open_boundary: "The counting bounds and the comparison with bit length are proved in Start/KolmogorovCount.lean, and the matching lower bounds in Start/KolmogorovCountLower.lean (M19-TERM-COUNT-LOWER): between 3^m and 4^m terms of size <= m, at least 2^m <= (count)^110, i.e. base 2^(1/110), numbers of complexity <= m. What remains for the second exit criterion is the coding rate of indices: the binary realizers cost 55 log2 N + O(1) to write an index below N, so the constant on the counting term of the symmetry law is only justified up to that factor; deciding whether the constant 1 is attainable needs an index code of size log4 N + o(log N), which is not formalised."
+    open_boundary: "The counting bounds and the comparison with bit length are proved (Start/KolmogorovCount.lean, Start/KolmogorovCountLower.lean), and the index code has constant 3 per bit against a lower bound of 1/2 (M19-INDEX-CODE-RATE, Start/KolmogorovIndexCode.lean). The second exit criterion is open up to that factor 6; the gap is the row M19-INDEX-CODE-OPTIMAL, theorem Lambda.kolm_index_rate_upper {p q : ℕ} (h : q < 2 * p) : ∃ c : ℕ, ∀ N i : ℕ, i < N → q * Lambda.kolm i ≤ p * Nat.log 2 N + c."
     milestone: M19
     depends_on:
       - M19-TERM-COUNT-LOWER
       - M19-INDEX-CODE-RATE
+      - M19-INDEX-CODE-OPTIMAL
     rank: 1390
     exit_criteria:
       - "Prove finite counting/encoding bounds for closed lambda terms under Lambda.size and explicit comparisons with the binary-description complexity machinery."

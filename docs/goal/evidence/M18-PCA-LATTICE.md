@@ -57,3 +57,34 @@ are comparable is likewise not settled in the literature.
 `lake build` (whole tree, no errors and no new warnings), `scripts/check_sorry.py`,
 `scripts/check_closure.py`, `scripts/goal_state.py validate`. `#print axioms` on the results above
 reports only `propext`, `Classical.choice`, `Quot.sound`.
+
+## Big round 2, run 1
+
+Closed as DONE_STRONG: the exit criteria are met as written.
+
+* "Applicative morphisms are preordered by existence, and the induced equivalence is defined." —
+  `Realizability.PCALe`, `Realizability.PCAEquiv`, `pcaLe_refl`, `pcaLe_trans`
+  (Start/PCAOrder.lean).
+* "K1 < K2 is proved strict, extending Start/KleeneNoRetraction.lean." —
+  `Realizability.KleeneTwo.kleene_strict : PCALeD ℕ (ℕ → ℕ) ∧ ¬ PCALeD (ℕ → ℕ) ℕ`, in the order of
+  decidable applicative morphisms.  In the plain existence preorder no strict comparison is
+  possible at all: `Realizability.pcaEquiv_of_any` proves every two algebras equivalent (the
+  trivial morphism), so the decidable refinement is the order in which this criterion can hold,
+  and it is proved there.
+* "The statement that two PCAs with equivalent realizability toposes are equivalent is either
+  proved or recorded as open." — recorded as open (the library has assemblies and their exact
+  completion, not the realizability topos of an algebra); see the earlier sections.
+
+## Big round 2, run 6 (restoration after the move to a new project)
+
+The big round 2 sections of this note (runs 1 to 3) were lost with the old project and were recreated
+in run 6 from its command logs, which record the text that was appended; the Lean modules they cite
+were restored from the old project's export, rebuilt with `lake build --wfail`, and their axioms
+regenerated (`docs/goal/evidence/*-axioms.txt`, section "Big round 2, run 6").
+
+## Big round 2, run 7 (restoration after the export of run 6)
+
+The platform's export of run 6's project dropped this note; it was put back from the copy of before big round 2 (our tree at ce8fe5e), and the
+big round 2 sections that run 6 had restored were added again in run 7 from the command logs of
+runs 1 to 3 (the appended text is recorded there verbatim). The axioms files of the big round 2 rows
+were regenerated with `#print axioms` in run 7 (section "Big round 2, run 7").

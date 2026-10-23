@@ -58,3 +58,29 @@ and the bridge between Krivine transitions and beta steps of `Start/KrivineDecod
 `lake build` (whole tree, no errors and no linter warnings), `scripts/check_sorry.py`,
 `scripts/check_closure.py`, `scripts/goal_state.py validate`. `#print axioms` on every theorem
 above reports only `propext`, `Classical.choice`, `Quot.sound`.
+
+## Big round 2, run 1
+
+Kept DONE_WEAK.  The first two exit criteria are met (Start/KolmogorovTime.lean); the third,
+"The set of pairs (x, k) with K^t(x) <= k is in NP", is not.  Its gap is the new row `M19-KT-NP`,
+on which this row now depends:
+
+    theorem Lambda.ktimeLang_inNP {T : ℕ → ℕ} (hT : Complexity.PolyBound T) :
+      Complexity.InNP (Lambda.ktimeLang T)
+
+with `Lambda.ktimeLang T` the words coding a pair `(s, k)` (s in binary, k in unary) with
+`Lambda.ktime (T n) s ≤ k`, `n` the word length.  `Lambda.ktime_le_iff` is the certificate half.
+
+## Big round 2, run 6 (restoration after the move to a new project)
+
+The big round 2 sections of this note (runs 1 to 3) were lost with the old project and were recreated
+in run 6 from its command logs, which record the text that was appended; the Lean modules they cite
+were restored from the old project's export, rebuilt with `lake build --wfail`, and their axioms
+regenerated (`docs/goal/evidence/*-axioms.txt`, section "Big round 2, run 6").
+
+## Big round 2, run 7 (restoration after the export of run 6)
+
+The platform's export of run 6's project dropped this note; it was put back from the copy of before big round 2 (our tree at ce8fe5e), and the
+big round 2 sections that run 6 had restored were added again in run 7 from the command logs of
+runs 1 to 3 (the appended text is recorded there verbatim). The axioms files of the big round 2 rows
+were regenerated with `#print axioms` in run 7 (section "Big round 2, run 7").

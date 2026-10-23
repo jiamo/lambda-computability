@@ -2149,3 +2149,65 @@ minutes.
 - Possible routes, both unverified: (a) a Lean-universe-polymorphic model, proving the
   fundamental lemma separately for each finite bound on the levels occurring in a derivation,
   with the bound as a parameter; (b) the normalization-based routes of item B4.
+
+## Big round 2, run 2
+
+Item B1 (lane B, slot D): **advanced**; the former first missing lemma `CCO.ccoClf_beta` is proved
+for a concrete classifier. About 45 minutes used (of 200).
+
+- Lean, `Start/PTSExpansionCCOCodes.lean`. The obstruction recorded in big round run 3 (a class
+  type `C : Type` with dependent value spaces needs induction-recursion) is avoided by taking the
+  class type to be `ZFSet` (one Lean universe, `Type 1`; `ClfData` is now universe-polymorphic).
+  Dependent products over codes of the same level are then ordinary sets, built by replacement,
+  and no inductive-recursive universe is needed:
+  - `zfLam A f` (graph of `f` on `A`), `zfApp` (value of a graph), `zfPi A f` (dependent
+    functions); `zfApp_zfLam` (the β-law on the domain), `mem_zfPi`, `zfLam_mem_zfPi`;
+  - the hierarchy: `cU ℓ = V_(ω·(ℓ+1))` classifies `Type ℓ`, `cU_mem_succ : cU ℓ ∈ cU (ℓ+1)`,
+    `cU_mono`; `propC = 𝒫 {∅}` classifies `Prop` (one fixed set, proof irrelevance),
+    `propC_mem_cU : propC ∈ cU 0`;
+  - `ccoD : ClfData ZFSet` and the well-classification predicate `ClfWC ρ M` (in every
+    application the class of the argument is in the domain of the class of the function; binders
+    are well classified at every class of their domain);
+  - **`CCO.ccoClf_beta (h : ClfWC ρ (.app (.lam A b) U)) : clF ccoD ρ (.app (.lam A b) U) = clF ccoD ρ (b.instantiate U)`**;
+  - `ClfWC_rename`, `ClfWC_subst`, `ClfWC_instantiate`, `ClfWC.beta` (a well-classified root
+    redex has a well-classified contractum), `ClfWC.arg_mem`;
+  - `zfApp_mem_zfPi` (application of a dependent function lands in the family);
+    `depKind_wc`: the kind `ΠK : (ΠY : Type 0. Y → Type 0). ΠY : Type 0. Πy : Y. K Y y → K Y y`,
+    whose value space blocked an inductive-recursive class type, is well classified in every
+    environment;
+  - `zfPi_mem_cU_zero`: `cU 0 = V_ω` is closed under dependent products over its members
+    (hereditarily finite sets; `finite_of_mem_cU_zero`), i.e. the universe bound at level 0;
+  - `zfPi_not_mem_propC`: with `piF = zfPi` the class of a product into `Prop` is not in the
+    class of `Prop` (`zfPi {∅} (fun _ => {∅}) ∉ propC`), so the impredicative rule needs its own
+    case of `piF`; this is a Lean-checked instance of the design note below.
+- Axioms: `propext`, `Classical.choice`, `Quot.sound` (see `M29-EP-CCOMEGA-axioms.txt`).
+- What is not done, in order (design, not Lean-checked):
+  1. The typed classification lemma: a typed expression is well classified and a constructor's
+     class lies in the class of its type. Proof subterms must be erased first (classified by
+     `∅`): with `propC = 𝒫 {∅}`, the class of a proposition may be `∅`, so a proof variable has
+     no class in the class of its type, and `ClfWC` fails for proof applications. Applying the
+     classifier to the constructor skeleton (proofs erased, as `clO` does) avoids this; `zfApp ∅ x = ∅`
+     already holds.
+  2. The universe bound `clF ρ K ∈ cU ℓ` for kinds `K : Type ℓ` (closure at level 0 is
+     `zfPi_mem_cU_zero`). For `ℓ ≥ 1`, `V_(ω·(ℓ+1))` is not closed under
+     dependent products indexed by arbitrary members (a family with ranks cofinal in `ω·(ℓ+1)`
+     escapes), so the bound must go through the rank of the syntactic family:
+     `rank (clF ρ M) ≤ max (ranks of ρ on the free variables) (ω·(top level of M + 1)) + c·size M`.
+- First missing lemma (item B1, step 1):
+  `theorem CCO.clF_typed {Γ : List (Expr CSrt)} {M A : Expr CSrt} (h : HasType ccOmega Γ M A) (ρ : ℕ → ZFSet) (hρ : CCO.EnvOK Γ ρ) : ClfWC ρ (CCO.erase Γ M) ∧ clF ccoD ρ (CCO.erase Γ M) ∈ clF ccoD ρ (CCO.erase Γ A)`
+  (constructor case), with `CCO.erase` the proof-erasing skeleton and `CCO.EnvOK` the
+  environment condition; both still to be defined.
+- Design note for step 1 (not Lean-checked). Proof terms are the difficulty, as in the
+  proof-irrelevant models of Miquel and Werner: (a) with `propC = 𝒫 {∅}` a proposition can be
+  classified by `∅`, so an environment for a proof variable may not exist; (b) giving every
+  proposition the class `{∅}` (`propC = {{∅}}`) needs a special case of `piF` for products into
+  `Prop` (`{∅}` when all values are `{∅}`) and of `lamF` (collapse to `∅` when all values are `∅`,
+  which keeps `zfApp_zfLam` on the domain since `zfApp ∅ x = ∅`), but then `ClfWC` can no longer
+  read the domain of a collapsed abstraction off its class, and `ccoClf_beta` needs the domain
+  condition from the typing derivation, not from the classes. Both routes lead to a typed
+  invariant (classes of arguments lie in the classes of their types), which is `CCO.clF_typed`.
+
+## Big round 2, run 7 (restoration after the export of run 6)
+
+The platform's export of run 6's project dropped this note; it was put back from its copy at the end of run 3; it already contains the big round 2 sections of runs 1 to 3. The axioms files of the big round 2 rows
+were regenerated with `#print axioms` in run 7 (section "Big round 2, run 7").

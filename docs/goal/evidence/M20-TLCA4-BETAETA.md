@@ -935,3 +935,295 @@ in run 9; the level-wise construction of `Start/TLCA4TailExt.lean` is the templa
 lemma unchanged: `TLCA4.H5Core.step` (the inner core family over the component grammar); then the
 `TailCores` fields and `hit5_not_fixedPoint` via `not_fixedPoint_of_ashape` and
 `hit5_stage_betaEta`.
+
+## Big round 2, run 1
+
+Item A1 (hit5 is not a βη fixed-point combinator).  The former first missing lemma,
+`TLCA4.H5Core.step`, is proved.
+
+* `Start/TLCA4Hit5TW.lean` — the `w`- and `s`-layers again, with the bodies of the `w`-reducts
+  taken in `TW (YB x) (x + 1) 1` (the family `Ext` uses), so that substitution lands in `TW`:
+  `WT.step`, `WqT.step`, `SqT.step`, `ST.step`, `ST.of_h5s`; generic substitution of a term for
+  `q` in a chain or a two-argument chain under `q`: `TC.subst_gen`, `TW.subst_gen`.
+* `Start/TLCA4Hit5Grammar.lean` — the components `uⁿ s`: `HG x i` (YG components, `s`-reducts at
+  index 0, `R P` with `R` a reduct of `B (B x)`, abstractions over chains), `HC x n` (chains of
+  integer height under `q`, **arbitrary tails**), `HB x n` (cores `q R`, `M R`, `R₁ R₂`, `P q`,
+  `M Wq`, `Wq Y`).  `HG.step`/`HC.step`/`HB.step` (mutual), `HC.eta_inv`, `HG.fire_q`,
+  `HG.of_h5A` (`uⁿ s` has index `n`).
+* `Start/TLCA4Hit5Core.lean` — `H5Core x K n`: `P Q` (indices `i, j`, `K + i = tri j + n`),
+  `M Q` (`K + j = tri j + n`), `M (W Q)` and `(W Q) Y` with `W ∈ WT x`
+  (`K + j = tri (j + 1) + n - 1`).  `ByqR.substH`, `HC.toTC`, `HB.substH`, `HC.substH`;
+  **`H5Core.step`**: every βη-step of a core is a chain over `Ext (H5Core x) x K`;
+  **`H5Ext.step`** (by `Ext.step`); `hit5_reduces_shape` (stage 0, core `s s`, `K = 0`);
+  **`hit5_not_fixedPoint_of_tailCores`**: `TailCores (Ext (H5Core x) x) x` implies that
+  `hit5 x` is not βη-convertible to `x (hit5 x)`.
+
+First missing lemma: `theorem TLCA4.H5Ext.tailCores (x : ℕ) : TailCores (Ext (H5Core x) x) x`.
+Its fields `step` (`H5Ext.step`) and `not_lam` (`Ext.not_lam H5Core.not_lam`) are proved; `ne_var`,
+`ne_bx`, `ne_bx1` are syntactic; `unique` is the substantial one.  Route for `unique`:
+
+1. *Index uniqueness of `HG`.*  The chains have arbitrary tails, so components need not normalize
+   and the normal-form argument of `YG.index_unique` does not apply.  Replacement (a βη-invariant
+   of head normal forms): `XDepth x a k N :⇔ N =βη xᵏ M` with `M` neutral with head `a`; for
+   `a ≠ x` it is unique (proved in a scratch file this run: `conv_app_var_inj`,
+   `xPow_conv_unique`, `XDepth.unique`, from `HSp.betaEtaConv`).  To prove: a component `P` of
+   index `i` has `XDepth x a (i + 1) (P a b)` for `a ≠ x` and any `b` — by mutual induction over
+   `HG`/`HC`/`HB`, uniformly in the tail (each chain layer contributes its height in `x`'s; the
+   cores `q R`, `M R`, `R₁ R₂`, `P' q`, `M Wq`, `Wq Y` end in an `a`-headed term after
+   `0, 1, 1, i' + 1, 1, 1` further `x`'s).
+2. *`q`-freeness.*  Every member of `HC`, `TC (YB x) (x + 1)`, `TW (YB x) (x + 1)`, `WqT x`, `SqT x`
+   has the variable `0` free; a lifted term does not.  This separates `TW.wP`/`TW.wK` heads and
+   `B C` heads (with `C` a top-level chain) from components.
+3. *Separation*: `lamM` is not a component; a component is not of the form `W Q` with `W ∈ WT x`;
+   `TW` members over any base are not components.
+4. A version of `TC.unique`/`TW.unique` that needs only the syntactic fields (no `step`), used by
+   strong induction on `Lambda.nodes` for the extension levels.
+
+## Big round 2, run 3
+
+Item A1, step 1 of the route above is done: `Start/TLCA4Hit5Index.lean`.
+
+* `XDepth x a k N` (`N =βη xᵏ M`, `M` neutral with head `a`) with `XDepth.unique` for `a ≠ x`
+  (moved from the scratch file); `XDz` is its integer-height form.
+* Head-reduction laws of the combinators (`law_B`, `law_M`, `law_bxPre`, `law_bmPre1`,
+  `law_bmPre2`, `law_bbPre`, `law_bbPre2`, `law_byl1`–`law_byl3`); `ByR.conv`:
+  `R P z w =βη x (P z w)` for every reduct `R` of `B (B x)`; `ByqR.conv` likewise for the reducts
+  of `B (B x) q` after `q := a`.
+* Depth lemmas, uniformly in the arbitrary tails: `YG.xd`/`YC.xd`/`YBase.xd` (the `v`-components),
+  `TC.xd`, `TW.xd` (generic in the base), `WT.xd`, `WqT.xd`, `SqT.xd`, `ST.xd`, and the mutual
+  **`HG.xd`**/`HC.xd`/`HB.xd`: a component `P` of index `i` has `P a b =βη x^{i+1} (a …)` for
+  every variable `a` and term `b`.
+* **`HG.index_unique`**: `HG x i P → HG x j P → i = j`.
+
+First missing lemma unchanged: `theorem TLCA4.H5Ext.tailCores (x : ℕ) : TailCores (Ext (H5Core x) x) x`.
+Remaining steps for its `unique` field: (2) `q`-freeness (every member of `HC`, `TC (YB x) (x+1)`,
+`TW (YB x) (x+1)`, `WqT`, `SqT` has variable `0` free; lifted terms do not); (3) separation —
+`lamM` is not a component (now immediate from `HG.xd`: `M a b` has depth `0`), a component is
+not `W Q` with `W ∈ WT x` (syntactic: `WT` heads are none of `lamB`, `B M`, `bmPre1`, `bmPre2`,
+`ByR`), `TW` members over any base are not components (by (2)); (4) a version of
+`TC.unique`/`TW.unique` needing only the syntactic fields, by strong induction on `Lambda.nodes`
+for the levels of `Ext`.
+
+Also in run 3: `HG.not_lamM` (`M` is not a component: `M a b =βη a a b` has depth `0`, the first
+separation fact of step 3), and step 2: `Start/TLCA4Hit5QFree.lean` — `FreeIn k t`,
+`not_freeIn_lift` (a lifted term never has its cut-off variable free), and `q`-freeness of every
+chain under `q`: `TC.freeIn0`/`TW.freeIn0` (generic in the base), `ByqR.freeIn0`,
+`YBase.freeIn0`, `WqT.freeIn0`, `HB.freeIn0`, `SqT.freeIn0`, **`HC.freeIn0`**.  Remaining for
+`unique`: step 3 (a component is not `W Q` with `W ∈ WT x`; `TW` members over any base are not
+components, using step 2) and step 4 (`TC.unique`/`TW.unique` from the syntactic fields only, by
+strong induction on `Lambda.nodes` over the levels of `Ext`).
+
+Step 3, first half: `Start/TLCA4Hit5Sep.lean` — no `w`-reduct is `B`, `B M`, `bmPre1`, `bmPre2`
+or a reduct of `B (B x)` (`WT.ne_lamB`, `WT.ne_bm`, `WT.ne_bmPre1`, `WT.ne_bmPre2`,
+**`WT.not_byR`**; the `λ`-shaped cases use `q`-freeness and `not_freeIn_lift`), hence
+**`WT.not_HG_app`**: no component of `hit5` is `W Q` with `W ∈ WT x` (this separates the cores
+`(W Q) Y` from `P Q'` and `M (W Q)` from `M Q'`).  Still open in step 3: `TW` members over the
+levels of `Ext` are not components (cores `M W'` and `W' Y` of the extension against `M Q`, `P Q`).
+
+Step 3, second half (same module): `WqT.not_lift` — the constructor `ST.seta` is vacuous (a
+`WqT` member has `q` free, a lifted term does not); **`TW.not_HG`** — a two-argument chain over any
+base of non-variables (e.g. a level of `Ext`) is not a component of `hit5` (`wB` heads are `B`,
+which is no component head; `wP`/`wK` heads would force a chain under `q` to equal a lifted term,
+contradicting `HC.freeIn0`).  With these, the cores `P Q`, `M Q`, `M (W Q)`, `(W Q) Y`, `M W'`, `W' Y` overlap only within
+the same form, up to one more easy fact: a `TW` member is not `W Q` with `W ∈ WT x` (its `wB`
+head would make `W = B`, excluded by `WT.ne_lamB`; the other forms are abstractions).  Remaining: step 4, the assembly of
+`H5Ext.tailCores` (fields `ne_var`, `ne_bx`, `ne_bx1`, and `unique` by strong induction on
+`Lambda.nodes` over the levels of `Ext`, using `HG.index_unique`, `WT`-uniqueness of `W` in
+`W Q`, and a syntactic-fields-only version of `TW.unique`).
+
+`Start/TLCA4Hit5Fields.lean`: the syntactic fields of `TailCores (Ext (H5Core x) x) x` —
+**`H5Ext.ne_var`**, **`H5Ext.ne_bx`** (via `HG.not_lamB_app`), **`H5Ext.ne_bx1`** (via
+`HG.not_bxPre`: `λab. x (a b)` is not a component) — and `TW.not_WT_app` (the easy fact above).
+Five of the six fields are now proved (`step`, `not_lam`, `ne_var`, `ne_bx`, `ne_bx1`); the
+first missing lemma is the last field:
+`theorem TLCA4.H5Ext.unique {x : ℕ} {K i K' i' : ℤ} {P : Lambda} (h : Ext (H5Core x) x K i P) (h' : Ext (H5Core x) x K' i' P) : K - i = K' - i'`.
+Plan: strong induction on `Lambda.nodes P`; same-form cases by `HG.index_unique` (and injectivity
+of the `W Q` decomposition), the extension forms by a version of `TW.unique` whose base
+uniqueness is only required for strictly smaller terms (`TW.restrict`); cross-form cases by
+`HG.not_lamM`, `WT.not_HG_app`, `TW.not_HG`, `TW.not_WT_app`.
+
+## Big round 2, run 3 (A1 closed): `hit5_not_fixedPoint`
+
+`Start/TLCA4Hit5NotFixpoint.lean` proves the last `TailCores` field, `H5Ext.unique`: the syntactic
+fields alone (`TailSyn`) make `K − h` a function of a tail chain (`TC.uniqueS`, `TW.uniqueS`);
+a core of `Ext (H5Core x) x` is either a core of `H5Core x` (index determined by
+`HG.index_unique`) or an extension (`H5Ext.cases`), and the two forms are separated
+(`H5Core.not_extM`, `H5Core.not_extWY`); induction on size (`H5Ext.unique_aux`) closes it.
+Hence `H5Ext.tailCores` and **`hit5_not_fixedPoint`** (new row M20-TLCA4-HIT5-NOT-FIXPOINT,
+DONE_STRONG). Standard axioms only. Next: A2, `hit6_not_fixedPoint`, `hit8_not_fixedPoint`.
+
+## Big round 2, run 5 (A2, A3 closed; A5 theorem): normalized stage components
+
+The grammars for `Q` and `hit5` follow the combinators through every intermediate form.  Run 5
+starts instead from a partly normalized reduct: every candidate seen so far has `p x = M (M s)`
+with `s` βη-reducing to
+
+    nfStage x T T' = λa w. x (a G_a T),   G_a = λz w'. x (a z T')   (T, T' arbitrary).
+
+`Start/TLCA4NfGrammar.lean`: the grammar `NG x i` (components of index `i`: `λq. C`, `C` a chain
+of height `i + 1` under `q`), `NC` (chains with arbitrary tails), `NB` (cores `q G_q`, height 0,
+and `R q` with `R` a component of index `i'`, height `i' + 1`); **`NG.step`** — closed under βη.
+`Start/TLCA4NfCores.lean`: **`NG.index_unique`** (index determined by the term), `NB.substQ`
+(substituting a component of index `j` for `q`: `q G_q ↦ Q G_Q`, a core `P Q` of indices
+`(j, j + 1)`; `R q ↦ R Q`), **`NCore.tailCores`** (top-level cores `P Q`, `K + i = tri j + n`,
+satisfy `TailCores`; no `Ext` needed), **`not_fixedPoint_of_nf`**: if `L →βη S S ρ` with `S` a
+component of index 0, then `¬ L =βη x L`.
+
+`Start/TLCA4Hit6NotFixpoint.lean`: `F a z →βη λbc. x (a z (b c))` (`f6_red`), so
+`g a →βη G_a` for `hit6` (`h6g_qG`: `B M (F a) → λz. Ψ Ψ → λz c. x (a z (Ψ c))`) and for `hit8`
+(`h8g_qG`: `G_a = λz w. x (a z (w Ψ))`); `sComp_of_qG`: then `B M g` reduces to a component of
+index 0.  **`hit6_not_fixedPoint`**, **`hit8_not_fixedPoint`**, and through `hit6_conv_hit7`,
+`hit8_conv_hit9`, **`hit7_not_fixedPoint`**, **`hit9_not_fixedPoint`** (row
+M20-TLCA4-HIT6-HIT9-NOT-FIXPOINT).  `Start/TLCA4StageIndex.lean`: for any stage pattern, the
+components `gⁿ s` are pairwise βη-distinct (`stage_index_unique`; instances for hit5, hit6, hit8,
+Q), and `hit6_stage_betaEta`, `hit8_stage_betaEta`.
+
+`Start/TLCA4Hit10NotFixpoint.lean` (A3): `hit10 x = M (M s)`, `s = B²M w` with `w` the `w`-term of
+`hit5`; `s →βη λa w. x (a U_a (w (λc. x (a U_a (w c)))))` (`h10s_red`), `U_a = G_a` with tail
+`w`; **`hit10_not_fixedPoint`** (row M20-TLCA4-HIT10-NOT-FIXPOINT).  So none of the six length-7
+spine hits without a `T` factor is a βη fixed-point combinator.
+
+`Start/TLCA4StageNf.lean` (A5): **`not_fixedPoint_of_MM_nfStage`** — if `L →βη M (M s)` and
+`s →βη nfStage x T T'`, then `¬ L =βη x L` (row M20-TLCA4-NFSTAGE); `hit5_not_fixedPoint_nf`
+recovers `hit5` from it.  Named conjecture (A5, evidence: Q, hit5–hit10): every polynomial
+satisfying `PolyFiveOne` has a step term of this shape; first missing lemma
+`theorem TLCA4.polyFiveOne_nfStage {C : List Mono} (h : PolyFiveOne C) (x : ℕ) : ∃ s T T', Lambda.betaEtaReduces (toLam (actList C (Tm.var x))) (.app lamM (.app lamM s)) ∧ Lambda.betaEtaReduces s (nfStage x T T')`.
+Together with `statmanStepOne` and `not_fixedPoint_of_MM_nfStage` it would give
+`¬ ProblemFiveOne`.
+
+## Big round 2, run 6 (A2, A3, A5 rebuilt after the move to a new project)
+
+The six modules of run 5 above were lost with the old project; run 6 rebuilt them from the design
+note above and the fragments of run 5's command log, and they build again with
+`lake build --wfail` (standard axioms only; `*-axioms.txt`, section "Big round 2, run 6"):
+
+* `Start/TLCA4NfGrammar.lean`: `qG x T = λz w'. x (q z T)` under `q`; `NG`, `NC`, `NB`; `qG_step`
+  (a step of `G_q` happens in its tail); **`NG.step`**, `NG.reduces`, `NG.fire_q`, `NC.eta_inv`.
+  The definition `nfStage` and **`nfStage_NG`** now live here (run 5 had them in
+  `Start/TLCA4StageNf.lean`), so that `sComp_of_qG` can name the component it produces.
+* `Start/TLCA4NfCores.lean`: **`NG.index_unique`** (with `NC.height_unique`, `NB.height_unique`),
+  `NC.toTC`, `qG_subst`, `NB.substQ`, **`NCore.step`**, **`NCore.tailCores`**,
+  **`not_fixedPoint_of_nf`** — as in run 5.
+* `Start/TLCA4Hit6NotFixpoint.lean`: `sComp_of_qG` (if `g a →βη G_a` then `B M g →βη
+  nfStage x T₁ T`, explicitly), `bmF_qG`, `h6g_qG`, `h8g_qG`, **`hit6_not_fixedPoint`** …
+  **`hit9_not_fixedPoint`**.
+* `Start/TLCA4Hit10NotFixpoint.lean`: as in run 5 (**`hit10_not_fixedPoint`**).
+* `Start/TLCA4StageNf.lean`: **`not_fixedPoint_of_MM_nfStage`**, `hit5_not_fixedPoint_nf`.
+* `Start/TLCA4StageIndex.lean`: `toLam_iterX`, `iterT_stage_app` (`gⁿ s Z W →w x^{n+1} (Z (g Z) W')`),
+  **`stage_index_unique`** through the βη-invariant `x`-depth (`XDepth.unique`), instances
+  `hit5_comp_index_unique`, `hit6_comp_index_unique`, `hit8_comp_index_unique`.  Run 5's
+  `hit6_stage_betaEta`, `hit8_stage_betaEta` (the stages restated under βη) were not rebuilt.
+
+A5 is unchanged: first missing lemma `theorem TLCA4.polyFiveOne_nfStage {C : List Mono}
+(h : PolyFiveOne C) (x : ℕ) : ∃ s T T', Lambda.betaEtaReduces (toLam (actList C (Tm.var x)))
+(.app lamM (.app lamM s)) ∧ Lambda.betaEtaReduces s (nfStage x T T')`.  The A4 searches of run 5
+(lengths 8 and 9) were never recorded and are lost; they are the first step of A5 (plan 0.8).
+
+## Big round 2, run 7 (A4 rerun; A5 step 2, the nfStage test) — Python only, not Lean-checked
+
+Scripts (rewritten in run 7, big round 1's are lost): `wip/a1_spine.py` (x-spine depth by head
+reduction of `p x`, cap 10, 300 head steps per level), `wip/a3_adm.py` (`TLCA4.Adm` of
+`Start/TLCA4Automaton.lean`), `wip/b2/a4_search.py` (after run 5's `a4_len8.py`; Adm filter; cap hits
+rechecked with 10x fuel), `wip/b2/a5_nfstage.py`, `wip/b2/a5_hits.py`.
+
+**Check against big round 1.** Lengths 1–7 reproduce the table of Series V, round 4, run 2 exactly
+(histograms {1:1}, {0:8}, {0:62,1:1,10:1}, {0:512}, {0:4080,1:11,2:3,4:1,10:1}; length 7 restricted to
+Adm: 49,248 polynomials, {0:48976, 1:208, 2:44, 4:8, 10:12}, the same 12 hits), and the Adm tail counts
+0, 12, 80, 736, 5952 (then 49,248, 398,720, 3,233,920 for tails of length 6, 7, 8). Every polynomial with
+depth > 0 at length ≤ 7 is admissible.
+
+**A4, length 8** (monomials `BⁿB`, `BⁿM`, `n ≤ 3`, `m₁ = M`): 2,097,152 polynomials, 398,720 pass Adm,
+all of x-spine depth 0; no hit, no fuel-limited run. (Even lengths again have no depth > 0.)
+
+**A4, length 9, partial**: 16,777,216 polynomials, 3,233,920 pass Adm; the run was stopped by its
+`timeout 2400` after 2,560,000 of them (≈79%, in `itertools.product` order of the tail, so the last
+part of the enumeration — tails beginning with the late monomials — is not covered). 88 cap hits,
+all again at the cap with 10x fuel; all have second monomial `M`. Classes: 40 contain the factor
+`T = M∘BM∘B` contiguously, 48 do not.
+
+**A5 step 2, the nfStage test.** For each hit: search a weak reduct `M (M s)` of `p x` (combinatory
+weak reduction, ≤ 200 steps: reduce the argument of the top `M` by weak head steps, fire the top `M`
+when it is stuck), then test `s →βη nfStage x T T' = λc e. x (c (λz w. x (c z T')) T)` by head normal
+forms (2000 head steps each; η only for variables). Results:
+
+* length ≤ 7, 14 hits: 9 pass (Q, hit3, hit4, hit5–hit10); 5 exceptions:
+  - second monomial `BM`, no weak reduct `M (M s)` found: `T = M∘BM∘B`, `M∘BM∘B∘M∘BM∘B∘B` (= `T∘T∘B`, hit11),
+    `M∘BM∘M∘BM∘B∘B∘B` (hit12);
+  - `x`-prefixed stage (`s →β λc e. x R` with `R` headed by `x`, not by `c`): `M∘M∘B∘M∘BM∘B∘B` (hit1),
+    `M∘M∘M∘BM∘B∘B∘B` (hit2 = Q₂).
+* length 8: no hits, nothing to test.
+* length 9 (partial): 88 hits, 26 pass, 62 exceptions: 59 `x`-prefixed stages (third monomial `M`: 42,
+  `B`: 12, `BM`: 5) and 3 where the inner component's first argument is not `z` (third monomial `BM`).
+
+So the conjecture fails as stated: the class without exceptions in the data is not simply
+"second monomial `M`". Exceptional classes: (i) second monomial `BM` (all with a factor `T`; `T`,
+`T∘T∘B`, hit12); (ii) the `x`-prefixed stages `λc e. xᵏ (c Q T)`, `k ≥ 2`, which contain `Q₂` and all
+polynomials `M∘M∘M∘…` tested. Next step (A5 step 4): generalize `nfStage` to an `x`-prefix
+`nfStageK x k T T' = λc e. xᵏ⁺¹ (c (qG x T') T)` (test it in Python first), and prove the restricted
+`polyFiveOne_nfStage` for the class that passes. Every exception, with the test's reason:
+
+```
+
+('M∘M∘B∘M∘B∘M∘BM∘B∘B', 'T-factor/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘B∘M∘M∘BM∘B∘B∘B', 'T-factor/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘B∘M∘BM∘BB∘BM∘B∘B', 'no-T/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘B∘M∘BM∘B²M∘B∘BB∘B', 'no-T/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘B∘M∘BM∘B²M∘B²B∘B∘B', 'no-T/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘B∘M∘B²M∘BB∘BM∘B∘B', 'no-T/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘B∘BM∘B∘M∘BM∘B∘B', 'T-factor/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘B∘BM∘M∘BM∘B∘B∘B', 'T-factor/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘B∘M∘BM∘B∘BM∘BB∘B', 'T-factor/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘B∘M∘BM∘B∘B²M∘BB∘B', 'T-factor/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘B∘M∘BM∘B³M∘B∘BB∘B', 'no-T/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘B∘M∘BM∘B³M∘B²B∘B∘B', 'no-T/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘M∘B∘B∘M∘BM∘B∘B', 'T-factor/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘M∘B∘M∘BM∘B∘B∘B', 'T-factor/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘M∘BB∘B∘M∘BM∘B∘B', 'T-factor/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘M∘BB∘M∘BM∘B∘B∘B', 'T-factor/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘M∘BB∘BM∘BM∘B∘B∘B', 'no-T/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘M∘BB∘B²M∘BM∘B∘B∘B', 'no-T/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘M∘M∘BM∘B∘B∘B∘B', 'T-factor/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘M∘BM∘B∘B²M∘B∘BB∘B', 'T-factor/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘M∘BM∘B∘BM∘B∘BB∘B', 'T-factor/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘M∘BM∘B∘BM∘BB∘B∘B', 'T-factor/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘M∘BM∘B∘BM∘B²B∘B∘B', 'T-factor/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘M∘BM∘B∘BB∘B∘BM∘B', 'T-factor/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘M∘BM∘B∘B∘BM∘BB∘B', 'T-factor/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘M∘BM∘B∘B∘B²M∘BB∘B', 'T-factor/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘M∘BM∘BB∘BM∘B∘B∘B', 'no-T/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘M∘BM∘B∘BB∘BM∘B∘B', 'T-factor/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘M∘BM∘B∘BB∘B²M∘B∘B', 'T-factor/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘M∘BM∘B²B∘BM∘B∘B∘B', 'no-T/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘M∘BM∘B²B∘B²M∘B∘B∘B', 'no-T/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘M∘BM∘B∘B²M∘BB∘B∘B', 'T-factor/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘M∘BM∘B∘B²M∘B²B∘B∘B', 'T-factor/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘M∘BM∘B²M∘B∘B∘BB∘B', 'no-T/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘M∘BM∘B²M∘B∘BB∘B∘B', 'no-T/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘M∘BM∘B²M∘B∘B²B∘B∘B', 'no-T/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘M∘BM∘B²M∘B²B∘B∘B∘B', 'no-T/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘M∘BM∘B²M∘B³B∘B∘B∘B', 'no-T/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘M∘BM∘B²B∘B∘B∘BM∘B', 'no-T/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘M∘BM∘B²B∘B∘BM∘B∘B', 'no-T/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘M∘BM∘B²B∘B∘B²M∘B∘B', 'no-T/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘M∘BM∘B³M∘B³B∘B∘B∘B', 'no-T/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘M∘BM∘B²B∘B³M∘B∘B∘B', 'no-T/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘M∘B²M∘BB∘BM∘B∘B∘B', 'no-T/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘M∘B²M∘B²B∘BM∘B∘B∘B', 'no-T/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘M∘B³M∘BB∘BM∘B∘B∘B', 'no-T/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘M∘B³M∘B²B∘BM∘B∘B∘B', 'no-T/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘M∘BM∘B³M∘B∘B∘BB∘B', 'no-T/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘M∘BM∘B³M∘B∘BB∘B∘B', 'no-T/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘M∘BM∘B³M∘B∘B²B∘B∘B', 'no-T/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘M∘BM∘B³M∘B²B∘B∘B∘B', 'no-T/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘M∘BM∘B∘B³M∘B∘BB∘B', 'T-factor/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘M∘BM∘B∘B³M∘BB∘B∘B', 'T-factor/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘M∘BM∘B∘B³M∘B²B∘B∘B', 'T-factor/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘BM∘B∘B∘M∘BM∘B∘B', 'T-factor/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘BM∘B∘M∘BM∘B∘B∘B', 'T-factor/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘BM∘BB∘B∘M∘BM∘B∘B', 'T-factor/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘BM∘BB∘M∘BM∘B∘B∘B', 'T-factor/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘BM∘M∘BM∘B∘B∘B∘B', 'T-factor/MM', "body: 0 λ, head ('x',), 1 args")
+('M∘M∘BM∘BM∘B²M∘BB∘B∘BB∘B', 'no-T/MM', 'Q: first argument of c is not z')
+('M∘M∘BM∘BM∘B²M∘BB∘B²B∘B∘B', 'no-T/MM', 'Q: first argument of c is not z')
+('M∘M∘BM∘BM∘B²M∘B³B∘BB∘B∘B', 'no-T/MM', 'Q: first argument of c is not z')
+```
