@@ -2211,3 +2211,87 @@ for a concrete classifier. About 45 minutes used (of 200).
 
 The platform's export of run 6's project dropped this note; it was put back from its copy at the end of run 3; it already contains the big round 2 sections of runs 1 to 3. The axioms files of the big round 2 rows
 were regenerated with `#print axioms` in run 7 (section "Big round 2, run 7").
+
+## Big round 2, run 9 (lane B, item B1; no Lean toolchain in this sandbox)
+
+Nothing below was type-checked: this run's sandbox had no Lean toolchain (no elan/lake/lean, no
+network), so every Lean text here is a statement or design only.  The only computation is a
+hereditarily finite Python check (`wip/b2/b1_impred_check.py`, not part of the build).
+
+### The definitions asked for (design, not type-checked)
+
+```lean
+namespace PureTypeSystem.CCO
+/-- The erased proof: `ΠP:Prop. P`, well classified, with class `∅` under `ccoD`. -/
+def botC : Expr CSrt := .pi (.sort .prop) (.var 0)
+/-- A proof in `Δ`: a term whose type is a proposition. -/
+def IsProof (Δ : List (Expr CSrt)) (N : Expr CSrt) : Prop :=
+  ∃ P, HasType ccOmega Δ N P ∧ HasType ccOmega Δ P (.sort .prop)
+open Classical in
+/-- Proof erasure (typing-directed): every proof subterm becomes `botC`. -/
+noncomputable def erase : List (Expr CSrt) → Expr CSrt → Expr CSrt
+  | Δ, N => if IsProof Δ N then botC else match N with
+    | .var n => .var n
+    | .sort s => .sort s
+    | .app F U => .app (erase Δ F) (erase Δ U)
+    | .lam A b => .lam (erase Δ A) (erase (A :: Δ) b)
+    | .pi A B => .pi (erase Δ A) (erase (A :: Δ) B)
+/-- An environment of classes fits a context (newest first, each type in its prefix). -/
+def EnvOK (Γ : List (Expr CSrt)) (ρ : ℕ → ZFSet) : Prop :=
+  ∀ n A, Γ[n]? = some A →
+    ρ n ∈ clF ccoD (fun k => ρ (k + n + 1)) (erase (Γ.drop (n + 1)) A)
+end PureTypeSystem.CCO
+```
+
+### Result: the fundamental lemma is false for `ccoD` (two independent counterexamples)
+
+The requested statement
+`CCO.clF_typed (h : HasType ccOmega Γ M A) (ρ) (hρ : EnvOK Γ ρ) : ClfWC ρ (erase Γ M) ∧
+clF ccoD ρ (erase Γ M) ∈ clF ccoD ρ (erase Γ A)` fails, for two separate reasons.
+
+1. **Impredicativity** (expected from `zfPi_not_mem_propC`).  `Γ = []`,
+   `M = ΠP:Prop. P → P` (`.pi (.sort .prop) (.pi (.var 0) (.var 1))`), `A = Prop`.  No subterm
+   of `M` is a proof, so `erase [] M = M`, and
+   `clF ccoD [] M = zfPi propC (fun P => zfPi P (fun _ => P))` is a singleton `{g}` with
+   `g = {(∅, {(∅,∅)}), ({∅}, {(∅,∅)})}`-shaped graph `≠ ∅`, so it is not in `propC = 𝒫{∅}`.
+   Python (hereditarily finite model) confirms: 1 element, not in `propC`.  The repair is a
+   combinator `piImp cA f := if ∀ v ∈ cA, f v ∈ propC then (if ∀ v ∈ cA, ∅ ∈ f v then {∅} else ∅)
+   else zfPi cA f`; on this term it gives `{∅} ∈ propC` (Python).
+2. **Predicative levels: `cU 1 = V_(ω·2)` is not closed under the rule
+   `(Type 1, Type 1, Type 1)`.**  `Γ = [Type 0 → Type 1]` (`.pi (.sort (.type 0)) (.sort (.type 1))`),
+   `M = ΠX:Type 0. K X` (`.pi (.sort (.type 0)) (.app (.var 1) (.var 0))`), `A = Type 1`; the
+   derivation uses `weaken`, `var`, `application` and `product` with the rule `(type 1, type 1,
+   type 1)`.  Take `ρ 0 = zfLam (cU 0) (fun X => V_ (ω + rank X))`: its values have rank
+   `ω + rank X < ω·2`, so `EnvOK Γ ρ`.  Then `clF ccoD ρ M = zfPi (cU 0) (fun X => V_ (ω + rank X))`
+   contains, for every `n`, a function whose value at a set of rank `n` is `V_ (ω + n - 1)`-ranked,
+   so its rank is at least `ω·2` and it is not in `cU 1`.  This counterexample does not involve
+   `Prop`, so it survives the `piImp` repair.
+
+The general reason for 2: a stage `V_α` that contains `cU 0` and is closed under `zfPi` over its
+own members with arbitrary families into it (families come from kind variables in the
+environment) must have `cf α > |A|` for every `A ∈ V_α`, i.e. `α` strongly inaccessible.  Only
+`cU 0 = V_ω` is closed (`zfPi_mem_cU_zero`).  So a ZFSet classifier with ℕ-indexed stages inside
+one Lean universe cannot satisfy the fundamental lemma for all of `ccOmega`; with `cU 0 = V_ω`
+and `Prop = 𝒫{∅}` it can at best cover the level-0 fragment, which is the image of `cocTop`
+(already done by `Start/PTSExpansionTop*.lean`).
+
+### Corrected route and first missing lemmas (statements, not type-checked)
+
+- B1′, the level-0 fragment with the impredicative combinator (sanity target):
+  `theorem CCO.clF_typed0 {Γ M A} (h : HasType ccOmega0 Γ M A) (ρ : ℕ → ZFSet)
+   (hρ : EnvOK0 Γ ρ) : ClfWC ρ (erase0 Γ M) ∧ clF ccoDImp ρ (erase0 Γ M) ∈ clF ccoDImp ρ (erase0 Γ A)`
+  where `ccOmega0` has axioms `Prop : Type 0 : Type 1` and rules `(s, Prop, Prop)`,
+  `(Prop, Type 0, Type 0)`, `(Type 0, Type 0, Type 0)`, and `ccoDImp` is `ccoD` with `piF := piImp`.
+- Beyond `cocTop`, the classes of `Type 1` must be a Grothendieck universe.  Mathlib gives one
+  only across Lean universes (`PSet.embed`: all sets of `ZFSet.{0}` as one set of
+  `ZFSet.{1}`).  The first missing lemma for the fragment `ccOmegaLe1` (levels `Prop : Type 0 :
+  Type 1 : Type 2`, products only into `Prop`, `Type 0`, `Type 1`; it has a morphism into
+  `ccOmega` and none into `cocTop`, since its axiom chain has four sorts) is
+  `theorem CCO.zfPi_mem_cU1 {A : ZFSet.{1}} {f : ZFSet.{1} → ZFSet.{1}} (hA : A ∈ cU1)
+   (hf : ∀ v ∈ A, f v ∈ cU1) : zfPi A f ∈ cU1` with `cU1 : ZFSet.{1} := ZFSet.mk PSet.embed.{0, 1}`.
+- All of `ccOmega` needs ℕ many universes, which one Lean universe does not give; the
+  alternative is a realizability (PER / ω-set) interpretation of the predicative levels, where
+  function spaces are restricted to tracked functions.  This is recorded as a design option only.
+
+Stop rule (plan 2.2, B1): met — the first lemma does not hold as stated; the counterexamples above
+are the reason.  B2 not started.

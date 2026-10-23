@@ -42,3 +42,7 @@ statements that are proved.
 `lake build`, `python3 scripts/check_closure.py`, `python3 scripts/goal_state.py validate`.
 `#print axioms Complexity.Space.savitch_poly_memory` reports only `propext`, `Classical.choice`,
 `Quot.sound`.
+
+## Big round 2, run 9
+
+No Lean toolchain in this run's sandbox: the first missing lemma below is a statement only, not type-checked. See the board row M15-BGS-EQUAL (W7). Plan: in a PSPACE^A run every query word has length at most the space bound s(n), because the query tape is counted; replace each query by a call to the PSPACE decider of A on the query tape, which uses space poly(s(n)), and reuse that space between queries. Lemma: `Complexity.Space.pspace_of_inPSPACE_rel {A : Oracle} {L : Language} (hA : PSPACE (fun w => A w = true)) (hL : InPSPACE_rel A L) : PSPACE L`.

@@ -44,3 +44,7 @@ python3 scripts/check_sorry.py    # OK: no sorry/admit
 python3 scripts/check_closure.py  # OK: all modules in the import closure and registered
 python3 scripts/goal_state.py validate
 ```
+
+## Big round 2, run 9
+
+No Lean toolchain in this run's sandbox: the first missing lemma below is a statement only, not type-checked. See the board row M14-KRIVINE-SPACE-CLASS (W14). The bridge lemma `Krivine.Impl.exists_hstep_prog` (exact statement in the row) gives a single `Complexity.Space.Prog` for one `hstep` pass on `encStateBin w s`. The width `w` is kept in a unary header so that the program does not depend on it. The side condition bounds the tape by the header plus the larger of the two encodings plus O(w) scratch space.

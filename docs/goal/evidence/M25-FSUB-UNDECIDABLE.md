@@ -279,3 +279,7 @@ Module `Start/FsubComputable.lean`; axioms in `M25-FSUB-SUB-NONCOMPUTABLE-axioms
 M25-FSUB-UNDECIDABLE stays DONE_WEAK: its exit criteria also ask for the link with cslib's Fsub
 (gap row M25-FSUB-CSLIB-LINK) and for the decidable kernel fragment; the computability gap is
 closed.
+
+## Big round 2, run 9
+
+No Lean toolchain in this run's sandbox: the first missing lemma below is a statement only, not type-checked. See the board row M25-FSUB-CSLIB-LINK (W11). Before the cslib translation, the algorithmic relation `FsubGhelli.Sub` needs transitivity, proved together with narrowing and weakening for `Ty.lift`: `FsubGhelli.Sub.trans {Γ : List Ty} {S T U : Ty} (h₁ : Sub ⟨Γ, S, T⟩) (h₂ : Sub ⟨Γ, T, U⟩) : Sub ⟨Γ, S, U⟩`. Then a local de Bruijn declarative relation with refl, trans, top, var and all rules, and its equivalence with `Sub`; the cslib side (locally nameless, cofinite quantification) could not be inspected offline.
