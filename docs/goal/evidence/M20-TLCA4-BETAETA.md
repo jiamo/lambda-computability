@@ -1227,3 +1227,299 @@ polynomials `M∘M∘M∘…` tested. Next step (A5 step 4): generalize `nfStage
 ('M∘M∘BM∘BM∘B²M∘BB∘B²B∘B∘B', 'no-T/MM', 'Q: first argument of c is not z')
 ('M∘M∘BM∘BM∘B²M∘B³B∘BB∘B∘B', 'no-T/MM', 'Q: first argument of c is not z')
 ```
+
+## Big round 2, run 8 (A5: length 9 completed; coverage table; nfStageK test) — Python only, not Lean-checked
+
+No Lean module could be built in run 8: its sandbox had no Lean toolchain (and no network). Everything
+below is Python evidence (scripts `wip/b2/cl.py`, `wip/b2/a4_search9.py`, `wip/b2/a5_shapes.py`,
+`wip/b2/a5_test_all.py`, `wip/b2/a5_table.py`, rewritten in run 8 because run 7's command log arrived empty).
+
+**Check.** The rewritten scripts reproduce run 7: Adm tail counts 0, 12, 80, 736, 5952, 49,248, 398,720,
+3,233,920 (lengths 2–9), and the length-7 histogram {0:48976, 1:208, 2:44, 4:8, 10:12} with the same hits.
+
+**A5a, length 9, complete.** Bounds: monomials `BⁿB`, `BⁿM`, `n ≤ 3`; `m₁ = M`; `Adm 1 m₂ [m₃,…,m₉]`;
+x-spine cap 10, 300 weak head steps per level, cap hits and fuel-limited runs rechecked with 3000 steps;
+8 parallel workers under `timeout 2400` (finished in seconds). All 3,233,920 Adm polynomials: histogram
+{0: 3226560, 1: 5990, 2: 988, 4: 140, 8: 8, 10: 234}; 234 cap hits (run 7's partial run had 88 of them),
+no fuel-limited run. 248 hits in all up to length 9 (1, 1, 12, 234 at lengths 3, 5, 7, 9).
+
+**A5c, shape test** (`p x` weakly reduced to `M (M s)` by firing the top `M` when its argument is not
+headed by `M`, ≤ 200 rounds; then `s c e` and `G z w` weakly head reduced, peeling `x`):
+
+* A, nfStage (`s c e →w x (c G T)`, `G z w →w x (c z T')`): 105 (1 at length 5, 8 at 7, 96 at 9).
+* B, `M (M s)` with an infinite `x`-prefix: 84 (2 at 7: hit1, Q₂; 82 at 9). `s c e` has an x-spine of
+  depth ≥ 60 for all 84 (checked to 60). So these are not `λc e. xᵏ⁺¹ (c G T)` for any finite `k`:
+  run 7's "x-prefixed stages" are in fact inner fixed points; e.g. hit1 = `M∘M∘B∘T∘B`,
+  `s = B (T (B x))`, `T (B x) =w λz. x (T (B x) z)`.
+* C, `M (M s)`, stage with `j = j' = 1` but the inner first argument of `c` is not `z`: 6 (length 9;
+  `M∘M∘BM∘BM∘B²M∘…` and `M∘M∘B²M∘BM∘B²M∘…`).
+* D, second monomial `BM`, only one top `M` reached: 53 (T, hit11, hit12 and 50 at length 9). With
+  `u` the argument of the top `M`: 3 have `u c →w x (c …)` (T-like), 50 have an infinite x-prefix in `u c`.
+
+**The generalized shape `nfStageK x k T T' = λc e. xᵏ⁺¹ (c (qG x T') T)`** (run 7's proposal) covers
+**no** hit with `k ≥ 1` up to length 9 (all 105 matches have `k = 0`). The class B/D needs a criterion
+for an inner fixed point (an infinite prefix), not a longer finite prefix. Of the 137 B/D exceptions, 80
+contain a shorter spine hit as a contiguous factor (for example `T`); 57 do not, nor do the 6 of class C.
+
+**A5b, coverage by proved theorems.** Of the 143 exceptions (classes B, C, D) only `T` itself is covered
+(`T_not_fixedPoint`). No exception is an instance of `Q_not_fixedPoint`, `hit5…hit10_not_fixedPoint`
+or the stage_gen instances (those are all class A or T), and no round-1 prefix lemma
+(`secondBB/secondBM/thirdB_*/thirdM_*/fourthBM_*_not_fixedPoint`) applies to any of the 248 hits.
+A `T` factor is not by itself covered by any proved theorem. Full table (one line per hit):
+
+| len | class | polynomial | T factor | contiguous shorter hit | proved theorem covering it |
+|---|---|---|---|---|---|
+| 3 | D single M (2nd mono BM) | M∘BM∘B | T | · | T_not_fixedPoint |
+| 5 | A nfStage | M∘M∘BM∘B∘B | T | M∘BM∘B | Q_not_fixedPoint |
+| 7 | A nfStage | M∘M∘BM∘BB∘BM∘B∘B | · | · | hit5_not_fixedPoint |
+| 7 | A nfStage | M∘M∘BM∘B²M∘B²B∘B∘B | · | · | hit7_not_fixedPoint |
+| 7 | A nfStage | M∘M∘BM∘B²M∘B∘BB∘B | · | · | hit6_not_fixedPoint |
+| 7 | A nfStage | M∘M∘BM∘B³M∘B²B∘B∘B | · | · | hit9_not_fixedPoint |
+| 7 | A nfStage | M∘M∘BM∘B³M∘B∘BB∘B | · | · | hit8_not_fixedPoint |
+| 7 | A nfStage | M∘M∘BM∘B∘BM∘BB∘B | T | M∘BM∘B | — |
+| 7 | A nfStage | M∘M∘BM∘B∘B²M∘BB∘B | T | M∘BM∘B | — |
+| 7 | A nfStage | M∘M∘B²M∘BB∘BM∘B∘B | · | · | hit10_not_fixedPoint |
+| 7 | B MM, infinite x-prefix | M∘M∘B∘M∘BM∘B∘B | T | M∘BM∘B | — |
+| 7 | B MM, infinite x-prefix | M∘M∘M∘BM∘B∘B∘B | T | M∘M∘BM∘B∘B | — |
+| 7 | D single M (2nd mono BM) | M∘BM∘B∘M∘BM∘B∘B | T | M∘BM∘B | — |
+| 7 | D single M (2nd mono BM) | M∘BM∘M∘BM∘B∘B∘B | T | M∘BM∘B | — |
+| 9 | A nfStage | M∘M∘BM∘BB∘BM∘BB∘BM∘B∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘BB∘BM∘B²M∘B²B∘B∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘BB∘BM∘B²M∘B∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘BB∘BM∘B³M∘B²B∘B∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘BB∘BM∘B³M∘B∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘BB∘BM∘B∘BM∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘BB∘BM∘B∘B²M∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘BB∘B²M∘BB∘BM∘B∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘BM∘BB∘BB∘BM∘B∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘BM∘B²B∘BB∘BM∘B∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B²M∘BB∘BB∘BM∘B∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B²M∘B²B∘BB∘BM∘B∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B²M∘B²B∘B²M∘B²B∘B∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B²M∘B²B∘B²M∘B∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B²M∘B²B∘B³M∘B²B∘B∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B²M∘B²B∘B³M∘B∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B²M∘B²B∘B∘BM∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B²M∘B²B∘B∘B²M∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B²M∘B²M∘B²B∘B²B∘B∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B²M∘B²M∘B²B∘B∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B²M∘B²M∘B³B∘B²B∘B∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B²M∘B²M∘B³B∘B∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B²M∘B²M∘B∘BB∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B²M∘B²M∘B∘B²B∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B²M∘B³M∘B²B∘B²B∘B∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B²M∘B³M∘B²B∘B∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B²M∘B³M∘B³B∘B²B∘B∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B²M∘B³M∘B³B∘B∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B²M∘B³M∘B∘BB∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B²M∘B³M∘B∘B²B∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B²M∘B∘BB∘BM∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B²M∘B∘BB∘B²M∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B²M∘B∘BM∘BB∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B²M∘B∘BM∘B²B∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B²M∘B∘B²M∘BB∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B²M∘B∘B²M∘B²B∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B²M∘B∘B³M∘BB∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B²M∘B∘B³M∘B²B∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B³M∘BB∘BB∘BM∘B∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B³M∘B²B∘BB∘BM∘B∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B³M∘B²B∘B²M∘B²B∘B∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B³M∘B²B∘B²M∘B∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B³M∘B²B∘B³M∘B²B∘B∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B³M∘B²B∘B³M∘B∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B³M∘B²B∘B∘BM∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B³M∘B²B∘B∘B²M∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B³M∘B²M∘B²B∘B²B∘B∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B³M∘B²M∘B²B∘B∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B³M∘B²M∘B³B∘B²B∘B∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B³M∘B²M∘B³B∘B∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B³M∘B²M∘B∘BB∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B³M∘B²M∘B∘B²B∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B³M∘B³M∘B²B∘B²B∘B∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B³M∘B³M∘B²B∘B∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B³M∘B³M∘B³B∘B²B∘B∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B³M∘B³M∘B³B∘B∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B³M∘B³M∘B∘BB∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B³M∘B³M∘B∘B²B∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B³M∘B∘BB∘BM∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B³M∘B∘BB∘B²M∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B³M∘B∘BM∘BB∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B³M∘B∘BM∘B²B∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B³M∘B∘B²M∘BB∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B³M∘B∘B²M∘B²B∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B³M∘B∘B³M∘BB∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B³M∘B∘B³M∘B²B∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘BM∘B∘BM∘BB∘BM∘BB∘B | T | M∘BM∘B | — |
+| 9 | A nfStage | M∘M∘BM∘B∘BM∘BB∘B²M∘BB∘B | T | M∘BM∘B | — |
+| 9 | A nfStage | M∘M∘BM∘B∘BM∘BM∘BB∘BB∘B | T | M∘BM∘B | — |
+| 9 | A nfStage | M∘M∘BM∘B∘BM∘BM∘B²B∘BB∘B | T | M∘BM∘B | — |
+| 9 | A nfStage | M∘M∘BM∘B∘BM∘B²M∘BB∘BB∘B | T | M∘BM∘B | — |
+| 9 | A nfStage | M∘M∘BM∘B∘BM∘B²M∘B²B∘BB∘B | T | M∘BM∘B | — |
+| 9 | A nfStage | M∘M∘BM∘B∘BM∘B³M∘BB∘BB∘B | T | M∘BM∘B | — |
+| 9 | A nfStage | M∘M∘BM∘B∘BM∘B³M∘B²B∘BB∘B | T | M∘BM∘B | — |
+| 9 | A nfStage | M∘M∘BM∘B∘B²M∘BB∘BM∘BB∘B | T | M∘BM∘B | — |
+| 9 | A nfStage | M∘M∘BM∘B∘B²M∘BB∘B²M∘BB∘B | T | M∘BM∘B | — |
+| 9 | A nfStage | M∘M∘BM∘B∘B²M∘BM∘BB∘BB∘B | T | M∘BM∘B | — |
+| 9 | A nfStage | M∘M∘BM∘B∘B²M∘BM∘B²B∘BB∘B | T | M∘BM∘B | — |
+| 9 | A nfStage | M∘M∘BM∘B∘B²M∘B²M∘BB∘BB∘B | T | M∘BM∘B | — |
+| 9 | A nfStage | M∘M∘BM∘B∘B²M∘B²M∘B²B∘BB∘B | T | M∘BM∘B | — |
+| 9 | A nfStage | M∘M∘BM∘B∘B²M∘B³M∘BB∘BB∘B | T | M∘BM∘B | — |
+| 9 | A nfStage | M∘M∘BM∘B∘B²M∘B³M∘B²B∘BB∘B | T | M∘BM∘B | — |
+| 9 | A nfStage | M∘M∘B²M∘BB∘BM∘BB∘BM∘B∘B | · | · | — |
+| 9 | A nfStage | M∘M∘B²M∘BB∘BM∘B²M∘B²B∘B∘B | · | · | — |
+| 9 | A nfStage | M∘M∘B²M∘BB∘BM∘B²M∘B∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘B²M∘BB∘BM∘B³M∘B²B∘B∘B | · | · | — |
+| 9 | A nfStage | M∘M∘B²M∘BB∘BM∘B³M∘B∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘B²M∘BB∘BM∘B∘BM∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘B²M∘BB∘BM∘B∘B²M∘BB∘B | · | · | — |
+| 9 | A nfStage | M∘M∘B²M∘BB∘B²M∘BB∘BM∘B∘B | · | · | — |
+| 9 | A nfStage | M∘M∘B²M∘BM∘BB∘BB∘BM∘B∘B | · | · | — |
+| 9 | A nfStage | M∘M∘B²M∘BM∘B²B∘BB∘BM∘B∘B | · | · | — |
+| 9 | A nfStage | M∘M∘B²M∘B²M∘BB∘BB∘BM∘B∘B | · | · | — |
+| 9 | A nfStage | M∘M∘B²M∘B²M∘B²B∘BB∘BM∘B∘B | · | · | — |
+| 9 | A nfStage | M∘M∘B²M∘B³M∘BB∘BB∘BM∘B∘B | · | · | — |
+| 9 | A nfStage | M∘M∘B²M∘B³M∘B²B∘BB∘BM∘B∘B | · | · | — |
+| 9 | B MM, infinite x-prefix | M∘BM∘BM∘BB∘B∘M∘BM∘B∘B | T | M∘BM∘B | — |
+| 9 | B MM, infinite x-prefix | M∘BM∘BM∘BB∘M∘BM∘B∘B∘B | T | M∘BM∘B | — |
+| 9 | B MM, infinite x-prefix | M∘BM∘BM∘BM∘B²M∘BB∘B²B∘BB∘B | · | · | — |
+| 9 | B MM, infinite x-prefix | M∘BM∘BM∘BM∘B²M∘B³B∘BB∘BB∘B | · | · | — |
+| 9 | B MM, infinite x-prefix | M∘BM∘BM∘B∘B∘M∘BM∘B∘B | T | M∘BM∘B | — |
+| 9 | B MM, infinite x-prefix | M∘BM∘BM∘B∘M∘BM∘B∘B∘B | T | M∘BM∘B | — |
+| 9 | B MM, infinite x-prefix | M∘BM∘BM∘M∘BM∘B∘B∘B∘B | T | M∘BM∘B | — |
+| 9 | B MM, infinite x-prefix | M∘BM∘M∘BM∘B³M∘B²B∘B∘B∘B | · | · | — |
+| 9 | B MM, infinite x-prefix | M∘BM∘M∘BM∘B³M∘B³B∘B∘B∘B | · | · | — |
+| 9 | B MM, infinite x-prefix | M∘BM∘M∘BM∘B³M∘B∘BB∘B∘B | · | · | — |
+| 9 | B MM, infinite x-prefix | M∘BM∘M∘BM∘B³M∘B∘B²B∘B∘B | · | · | — |
+| 9 | B MM, infinite x-prefix | M∘BM∘M∘BM∘B³M∘B∘B∘BB∘B | · | · | — |
+| 9 | B MM, infinite x-prefix | M∘BM∘M∘BM∘B∘B²M∘BB∘B∘B | T | M∘BM∘B | — |
+| 9 | B MM, infinite x-prefix | M∘BM∘M∘BM∘B∘B²M∘B²B∘B∘B | T | M∘BM∘B | — |
+| 9 | B MM, infinite x-prefix | M∘BM∘M∘BM∘B∘B²M∘B∘BB∘B | T | M∘BM∘B | — |
+| 9 | B MM, infinite x-prefix | M∘BM∘M∘BM∘B∘B∘BM∘BB∘B | T | M∘BM∘B | — |
+| 9 | B MM, infinite x-prefix | M∘BM∘M∘B²M∘BB∘BM∘B∘B∘B | · | · | — |
+| 9 | B MM, infinite x-prefix | M∘BM∘M∘B²M∘B²B∘BM∘B∘B∘B | · | · | — |
+| 9 | B MM, infinite x-prefix | M∘M∘BM∘BB∘B∘M∘BM∘B∘B | T | M∘BM∘B | — |
+| 9 | B MM, infinite x-prefix | M∘M∘BM∘BB∘M∘BM∘B∘B∘B | T | M∘BM∘B | — |
+| 9 | B MM, infinite x-prefix | M∘M∘BM∘B∘B∘M∘BM∘B∘B | T | M∘BM∘B | — |
+| 9 | B MM, infinite x-prefix | M∘M∘BM∘B∘M∘BM∘B∘B∘B | T | M∘BM∘B | — |
+| 9 | B MM, infinite x-prefix | M∘M∘BM∘M∘BM∘B∘B∘B∘B | T | M∘BM∘M∘BM∘B∘B∘B | — |
+| 9 | B MM, infinite x-prefix | M∘M∘B²M∘BB∘B∘M∘BM∘B∘B | T | M∘BM∘B | — |
+| 9 | B MM, infinite x-prefix | M∘M∘B²M∘BB∘M∘BM∘B∘B∘B | T | M∘BM∘B | — |
+| 9 | B MM, infinite x-prefix | M∘M∘B²M∘B∘B∘M∘BM∘B∘B | T | M∘BM∘B | — |
+| 9 | B MM, infinite x-prefix | M∘M∘B²M∘B∘M∘BM∘B∘B∘B | T | M∘BM∘B | — |
+| 9 | B MM, infinite x-prefix | M∘M∘B²M∘M∘BM∘B∘B∘B∘B | T | M∘BM∘B | — |
+| 9 | B MM, infinite x-prefix | M∘M∘B∘BM∘B∘M∘BM∘B∘B | T | M∘BM∘B | — |
+| 9 | B MM, infinite x-prefix | M∘M∘B∘BM∘M∘BM∘B∘B∘B | T | M∘BM∘B | — |
+| 9 | B MM, infinite x-prefix | M∘M∘B∘M∘BM∘BB∘BM∘B∘B | · | · | — |
+| 9 | B MM, infinite x-prefix | M∘M∘B∘M∘BM∘B²M∘B²B∘B∘B | · | · | — |
+| 9 | B MM, infinite x-prefix | M∘M∘B∘M∘BM∘B²M∘B∘BB∘B | · | · | — |
+| 9 | B MM, infinite x-prefix | M∘M∘B∘M∘BM∘B³M∘B²B∘B∘B | · | · | — |
+| 9 | B MM, infinite x-prefix | M∘M∘B∘M∘BM∘B³M∘B∘BB∘B | · | · | — |
+| 9 | B MM, infinite x-prefix | M∘M∘B∘M∘BM∘B∘BM∘BB∘B | T | M∘BM∘B | — |
+| 9 | B MM, infinite x-prefix | M∘M∘B∘M∘BM∘B∘B²M∘BB∘B | T | M∘BM∘B | — |
+| 9 | B MM, infinite x-prefix | M∘M∘B∘M∘B²M∘BB∘BM∘B∘B | · | · | — |
+| 9 | B MM, infinite x-prefix | M∘M∘B∘M∘B∘M∘BM∘B∘B | T | M∘BM∘B | — |
+| 9 | B MM, infinite x-prefix | M∘M∘B∘M∘M∘BM∘B∘B∘B | T | M∘M∘BM∘B∘B | — |
+| 9 | B MM, infinite x-prefix | M∘M∘M∘BB∘BM∘BM∘B∘B∘B | · | · | — |
+| 9 | B MM, infinite x-prefix | M∘M∘M∘BB∘B²M∘BM∘B∘B∘B | · | · | — |
+| 9 | B MM, infinite x-prefix | M∘M∘M∘BB∘B∘M∘BM∘B∘B | T | M∘BM∘B | — |
+| 9 | B MM, infinite x-prefix | M∘M∘M∘BB∘M∘BM∘B∘B∘B | T | M∘BM∘B | — |
+| 9 | B MM, infinite x-prefix | M∘M∘M∘BM∘BB∘BM∘B∘B∘B | · | M∘M∘BM∘BB∘BM∘B∘B | — |
+| 9 | B MM, infinite x-prefix | M∘M∘M∘BM∘B²B∘BM∘B∘B∘B | · | · | — |
+| 9 | B MM, infinite x-prefix | M∘M∘M∘BM∘B²B∘B²M∘B∘B∘B | · | · | — |
+| 9 | B MM, infinite x-prefix | M∘M∘M∘BM∘B²B∘B³M∘B∘B∘B | · | · | — |
+| 9 | B MM, infinite x-prefix | M∘M∘M∘BM∘B²B∘B∘BM∘B∘B | · | · | — |
+| 9 | B MM, infinite x-prefix | M∘M∘M∘BM∘B²B∘B∘B²M∘B∘B | · | · | — |
+| 9 | B MM, infinite x-prefix | M∘M∘M∘BM∘B²B∘B∘B∘BM∘B | · | · | — |
+| 9 | B MM, infinite x-prefix | M∘M∘M∘BM∘B²M∘B²B∘B∘B∘B | · | M∘M∘BM∘B²M∘B²B∘B∘B | — |
+| 9 | B MM, infinite x-prefix | M∘M∘M∘BM∘B²M∘B³B∘B∘B∘B | · | · | — |
+| 9 | B MM, infinite x-prefix | M∘M∘M∘BM∘B²M∘B∘BB∘B∘B | · | M∘M∘BM∘B²M∘B∘BB∘B | — |
+| 9 | B MM, infinite x-prefix | M∘M∘M∘BM∘B²M∘B∘B²B∘B∘B | · | · | — |
+| 9 | B MM, infinite x-prefix | M∘M∘M∘BM∘B²M∘B∘B∘BB∘B | · | · | — |
+| 9 | B MM, infinite x-prefix | M∘M∘M∘BM∘B³M∘B²B∘B∘B∘B | · | M∘M∘BM∘B³M∘B²B∘B∘B | — |
+| 9 | B MM, infinite x-prefix | M∘M∘M∘BM∘B³M∘B³B∘B∘B∘B | · | · | — |
+| 9 | B MM, infinite x-prefix | M∘M∘M∘BM∘B³M∘B∘BB∘B∘B | · | M∘M∘BM∘B³M∘B∘BB∘B | — |
+| 9 | B MM, infinite x-prefix | M∘M∘M∘BM∘B³M∘B∘B²B∘B∘B | · | · | — |
+| 9 | B MM, infinite x-prefix | M∘M∘M∘BM∘B³M∘B∘B∘BB∘B | · | · | — |
+| 9 | B MM, infinite x-prefix | M∘M∘M∘BM∘B∘BB∘BM∘B∘B | T | M∘BM∘B | — |
+| 9 | B MM, infinite x-prefix | M∘M∘M∘BM∘B∘BB∘B²M∘B∘B | T | M∘BM∘B | — |
+| 9 | B MM, infinite x-prefix | M∘M∘M∘BM∘B∘BB∘B∘BM∘B | T | M∘BM∘B | — |
+| 9 | B MM, infinite x-prefix | M∘M∘M∘BM∘B∘BM∘BB∘B∘B | T | M∘M∘BM∘B∘BM∘BB∘B | — |
+| 9 | B MM, infinite x-prefix | M∘M∘M∘BM∘B∘BM∘B²B∘B∘B | T | M∘BM∘B | — |
+| 9 | B MM, infinite x-prefix | M∘M∘M∘BM∘B∘BM∘B∘BB∘B | T | M∘BM∘B | — |
+| 9 | B MM, infinite x-prefix | M∘M∘M∘BM∘B∘B²M∘BB∘B∘B | T | M∘M∘BM∘B∘B²M∘BB∘B | — |
+| 9 | B MM, infinite x-prefix | M∘M∘M∘BM∘B∘B²M∘B²B∘B∘B | T | M∘BM∘B | — |
+| 9 | B MM, infinite x-prefix | M∘M∘M∘BM∘B∘B²M∘B∘BB∘B | T | M∘BM∘B | — |
+| 9 | B MM, infinite x-prefix | M∘M∘M∘BM∘B∘B³M∘BB∘B∘B | T | M∘BM∘B | — |
+| 9 | B MM, infinite x-prefix | M∘M∘M∘BM∘B∘B³M∘B²B∘B∘B | T | M∘BM∘B | — |
+| 9 | B MM, infinite x-prefix | M∘M∘M∘BM∘B∘B³M∘B∘BB∘B | T | M∘BM∘B | — |
+| 9 | B MM, infinite x-prefix | M∘M∘M∘BM∘B∘B∘BM∘BB∘B | T | M∘M∘BM∘B∘B | — |
+| 9 | B MM, infinite x-prefix | M∘M∘M∘BM∘B∘B∘B²M∘BB∘B | T | M∘M∘BM∘B∘B | — |
+| 9 | B MM, infinite x-prefix | M∘M∘M∘B²M∘BB∘BM∘B∘B∘B | · | M∘M∘B²M∘BB∘BM∘B∘B | — |
+| 9 | B MM, infinite x-prefix | M∘M∘M∘B²M∘B²B∘BM∘B∘B∘B | · | · | — |
+| 9 | B MM, infinite x-prefix | M∘M∘M∘B³M∘BB∘BM∘B∘B∘B | · | · | — |
+| 9 | B MM, infinite x-prefix | M∘M∘M∘B³M∘B²B∘BM∘B∘B∘B | · | · | — |
+| 9 | B MM, infinite x-prefix | M∘M∘M∘B∘B∘M∘BM∘B∘B | T | M∘BM∘B | — |
+| 9 | B MM, infinite x-prefix | M∘M∘M∘B∘M∘BM∘B∘B∘B | T | M∘M∘B∘M∘BM∘B∘B | — |
+| 9 | B MM, infinite x-prefix | M∘M∘M∘M∘BM∘B∘B∘B∘B | T | M∘M∘M∘BM∘B∘B∘B | — |
+| 9 | C MM, inner 1st arg not z | M∘M∘BM∘BM∘B²M∘BB∘B²B∘B∘B | · | · | — |
+| 9 | C MM, inner 1st arg not z | M∘M∘BM∘BM∘B²M∘BB∘B∘BB∘B | · | · | — |
+| 9 | C MM, inner 1st arg not z | M∘M∘BM∘BM∘B²M∘B³B∘BB∘B∘B | · | · | — |
+| 9 | C MM, inner 1st arg not z | M∘M∘B²M∘BM∘B²M∘BB∘B²B∘B∘B | · | · | — |
+| 9 | C MM, inner 1st arg not z | M∘M∘B²M∘BM∘B²M∘BB∘B∘BB∘B | · | · | — |
+| 9 | C MM, inner 1st arg not z | M∘M∘B²M∘BM∘B²M∘B³B∘BB∘B∘B | · | · | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘B²M∘BB∘B∘M∘BM∘B∘B | T | M∘BM∘B | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘B²M∘BB∘M∘BM∘B∘B∘B | T | M∘BM∘B | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘B²M∘BM∘B²M∘BB∘B²B∘BB∘B | · | · | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘B²M∘BM∘B²M∘B³B∘BB∘BB∘B | · | · | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘B²M∘B∘B∘M∘BM∘B∘B | T | M∘BM∘B | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘B²M∘B∘M∘BM∘B∘B∘B | T | M∘BM∘B | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘B²M∘M∘BM∘B∘B∘B∘B | T | M∘BM∘B | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘B∘BM∘B∘M∘BM∘B∘B | T | M∘BM∘B | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘B∘BM∘M∘BM∘B∘B∘B | T | M∘BM∘B | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘B∘M∘BM∘BB∘BM∘B∘B | T | · | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘B∘M∘BM∘B²M∘B²B∘B∘B | T | · | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘B∘M∘BM∘B²M∘B∘BB∘B | T | · | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘B∘M∘BM∘B³M∘B²B∘B∘B | T | · | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘B∘M∘BM∘B³M∘B∘BB∘B | T | · | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘B∘M∘BM∘B∘BM∘BB∘B | T | M∘BM∘B | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘B∘M∘BM∘B∘B²M∘BB∘B | T | M∘BM∘B | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘B∘M∘B²M∘BB∘BM∘B∘B | T | · | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘B∘M∘B∘M∘BM∘B∘B | T | M∘BM∘B | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘B∘M∘M∘BM∘B∘B∘B | T | M∘M∘BM∘B∘B | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘M∘BB∘BM∘BM∘B∘B∘B | · | · | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘M∘BB∘B²M∘BM∘B∘B∘B | · | · | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘M∘BB∘B∘M∘BM∘B∘B | T | M∘BM∘B | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘M∘BB∘M∘BM∘B∘B∘B | T | M∘BM∘B | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘M∘BM∘BB∘BM∘B∘B∘B | · | · | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘M∘BM∘B²B∘BM∘B∘B∘B | · | · | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘M∘BM∘B²B∘B²M∘B∘B∘B | · | · | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘M∘BM∘B²B∘B³M∘B∘B∘B | · | · | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘M∘BM∘B²B∘B∘BM∘B∘B | · | · | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘M∘BM∘B²B∘B∘B²M∘B∘B | · | · | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘M∘BM∘B²B∘B∘B∘BM∘B | · | · | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘M∘BM∘B²M∘B²B∘B∘B∘B | · | · | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘M∘BM∘B²M∘B³B∘B∘B∘B | · | · | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘M∘BM∘B²M∘B∘BB∘B∘B | · | · | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘M∘BM∘B²M∘B∘B²B∘B∘B | · | · | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘M∘BM∘B²M∘B∘B∘BB∘B | · | · | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘M∘BM∘B∘BB∘BM∘B∘B | T | M∘BM∘B | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘M∘BM∘B∘BB∘B²M∘B∘B | T | M∘BM∘B | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘M∘BM∘B∘BB∘B∘BM∘B | T | M∘BM∘B | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘M∘BM∘B∘BM∘BB∘B∘B | T | M∘BM∘B | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘M∘BM∘B∘BM∘B²B∘B∘B | T | M∘BM∘B | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘M∘BM∘B∘BM∘B∘BB∘B | T | M∘BM∘B | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘M∘BM∘B∘B³M∘BB∘B∘B | T | M∘BM∘B | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘M∘BM∘B∘B³M∘B²B∘B∘B | T | M∘BM∘B | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘M∘BM∘B∘B³M∘B∘BB∘B | T | M∘BM∘B | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘M∘BM∘B∘B∘B²M∘BB∘B | T | M∘BM∘B | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘M∘B³M∘BB∘BM∘B∘B∘B | · | · | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘M∘B³M∘B²B∘BM∘B∘B∘B | · | · | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘M∘B∘B∘M∘BM∘B∘B | T | M∘BM∘B | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘M∘B∘M∘BM∘B∘B∘B | T | M∘BM∘B | — |
+| 9 | D single M (2nd mono BM) | M∘BM∘M∘M∘BM∘B∘B∘B∘B | T | M∘M∘BM∘B∘B | — |
+
+**A5d/A5e.** Not done: no Lean could be built in run 8. The criterion is opened as row
+M20-TLCA4-NFSTAGE-K, with first missing lemma `TLCA4.not_fixedPoint_of_MM_nfStageK` (statement in the
+row). Given the data above, the reduction lemma should be stated for class A only:
+`TLCA4.polyFiveOne_nfStage` for PolyFiveOne witnesses whose `p x` reaches `M (M s)` with a finite
+`x`-prefix; classes B, C, D need new criteria (inner fixed point; inner argument ≠ z; single `M`).
