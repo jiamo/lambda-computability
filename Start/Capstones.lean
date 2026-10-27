@@ -535,6 +535,7 @@ import Start.LambdaPiLFComplete
 import Start.LambdaPiLFSound
 import Start.LambdaPiLFDecide
 import Start.MLTTConsequences
+import Start.MLTTAlgComplete
 
 /-! ## Interfaces of the untyped calculus
 
@@ -6400,3 +6401,23 @@ normalization**, **injectivity of Π and of the universe hierarchy**, **canonici
 #check @MLTT.Neutral.not_closed
 #check @MLTT.canonicity
 #check @MLTT.consistency
+
+/-! `Start/MLTTInversion.lean` … `Start/MLTTAlgComplete.lean` (M30-MLTT-INV, M30-MLTT-ALG): the
+syntactic metatheory of MLTT derived from the fundamental theorem (substitution, context
+conversion, inversion of typing, uniqueness of the types of neutral terms, heads of equal weak head
+normal types); the type-directed conversion algorithm of Abel, Öhman and Vezzosi for the
+hierarchy, compared at universes as types; its **soundness**, weakening, stability, conversion,
+**symmetry**, **transitivity**, lifting of neutrals by η-expansion; the algorithmic generic
+equality, and by the fundamental theorem at it, **completeness**: `DEq Γ t u A ↔ TmUp Γ t u A`
+and `TyEq Γ A B ↔ TyUp Γ A B`. -/
+
+#check @MLTT.Neutral.tyUnique
+#check @MLTT.HasTy.ctxConv
+#check @MLTT.Alg.sound
+#check @MLTT.Alg.stab
+#check @MLTT.Alg.symm
+#check @MLTT.Alg.trans
+#check @MLTT.TyR.liftNe
+#check @MLTT.algEq
+#check @MLTT.TyEq.iff_alg
+#check @MLTT.DEq.iff_alg

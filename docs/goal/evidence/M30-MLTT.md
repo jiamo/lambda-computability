@@ -86,22 +86,52 @@ it imports, compiled the same way), in dependency order.  Warnings are checked b
 run on a scratch file importing `Start.MLTTConsequences`.  `python3 scripts/check_closure.py`
 and `python3 scripts/goal_state.py validate` pass.  The full `lake build --wfail` is CI's.
 
-## Next: `M30-MLTT-CONV` (algorithmic conversion, decidability)
+## 2026-10-28 — algorithmic conversion: soundness and completeness (`M30-MLTT-INV`, `M30-MLTT-ALG`)
 
-Plan, following Abel, Öhman and Vezzosi:
+### Syntactic metatheory (`Start/MLTTInversion.lean`)
 
-1. Algorithmic relations: types compared after reduction to whnf, structurally; terms
-   type-directed (η-expand at Π, compare whnfs at ℕ and at `U`, neutrals elsewhere); neutrals
-   by spine comparison, inferring the type.
-2. Soundness: algorithmic ⇒ declarative (`DEq`, `TyEq`).
-3. An algorithmic `GenEq` instance: the relations paired with well-typedness.  The fields that
-   need the declarative consequences above are symmetry and transitivity, which need
-   Π-injectivity, `univ_inj` and **inversion of typing for neutrals, with uniqueness of the
-   type of a neutral up to `TyEq`** (first missing lemma, not yet stated in Lean), and closure
-   under typed reduction (`TReds.whnf_unique`, `TRed.det`).
-4. Completeness: the fundamental theorem at `E = algEq` gives `DEq Γ t u A → algorithmic`.
-5. Decidability: by induction on the two reflexivity derivations of `t` and `u`, as in the
-   Agda formalization, or by fuel as in `Start/LambdaPiLFDecide.lean`.
+Derived from `MLTT.Der.valid` at `declEq`, as in Abel, Öhman and Vezzosi's `Typed.Consequences`:
+
+* syntactic validity (`HasTy.wfTy`, `DEq.tyL`, `DEq.tyR`, `TyEq.wfL`, `TyEq.wfR`);
+* substitution of one term, or of two equal terms, for `var 0` (`WfTy.inst`, `HasTy.inst`,
+  `TyEq.inst`, `DEq.inst`, `WfTy.instEq`);
+* context conversion of the last entry (`HasTy.ctxConv` and companions);
+* inversion of typing for every term former (`HasTy.inv_univ` … `HasTy.inv_emptyrec`);
+* `Neutral.tyUnique`: a neutral term has a unique type up to `TyEq`;
+* the heads of `TyEq`-equal weak head normal types agree (`TyEq.univ_whnf`, `nat_whnf`,
+  `empty_whnf`, `pi_whnf`, `ne_whnf`).
+
+### The algorithm (`Start/MLTTAlg*.lean`)
+
+Six judgements in one inductive family `MLTT.Alg : AJd → Prop`: neutral comparison inferring a
+type (`NeUp`) and with the type reduced (`NeDown`); types (`TyUp`, `TyDown`); terms (`TmUp`,
+`TmDown`).  Terms of a universe are compared **as types**, so the algorithm never computes a
+universe level.  The variable rule takes a typing premise, as in the Agda development, so that
+the relations are stable under context conversion.
+
+* `Alg.sound` — soundness.  The universe case needs, inside the same induction, that two
+  algorithmically equal types in `U i` and `U j` have `i = j` and are equal terms of `U i`
+  (`UnivSound`); this follows from inversion and `Neutral.tyUnique`.
+* `Alg.ren` (weakening), `Alg.stab` (equal contexts, `CtxEq`), `Alg.conv` (equal types).
+* `Alg.symm` — into any equal context, with the inferred type of neutrals changing up to `TyEq`.
+* `Alg.trans` — by induction on the first derivation and inversion of the second.
+* `TyR.liftNe` — algorithmically equal neutrals are algorithmically equal terms at every
+  reducible type, by η-expansion along the reducibility proof (declarative instance).
+* `algEq : GenEq` — every field of the generic equality.
+* **`TyEq.iff_alg : TyEq Γ A B ↔ TyUp Γ A B`** and **`DEq.iff_alg : DEq Γ t u A ↔ TmUp Γ t u A`**:
+  completeness is `MLTT.Der.valid algEq` at the identity substitution.
+
+Axioms: `propext`, `Classical.choice`, `Quot.sound` (`docs/goal/evidence/M30-MLTT-axioms.txt`).
+Six modules, 1738 lines; each type-checked on its own, in dependency order.
+
+## Next: `M30-MLTT-CONV` (decidability)
+
+An executable run of the algorithm with fuel, as for LF (`Start/LambdaPiLFDecide.lean`): untyped
+weak head normalization with fuel; neutral comparison returning the whnf of the inferred type
+(the variable's declared type through the eliminators); short-circuit at products and at
+`natrec`, so that every recursive call is on well-typed inputs.  Correctness of the answers on
+typed inputs by induction on the fuel; termination by induction on algorithmic derivations (which
+exist for typed terms by `DEq.alg`), into equal contexts and at equal types; then `Nat.find`.
 
 ## `M30-UNIFY-PTS-MLTT` (filed in M30, not M26)
 

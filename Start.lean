@@ -921,4 +921,10 @@ import Start.MLTTFundPiIntro
 import Start.MLTTFundNat
 import Start.MLTTFund
 import Start.MLTTConsequences
+import Start.MLTTInversion
+import Start.MLTTAlg
+import Start.MLTTAlgStab
+import Start.MLTTAlgSymm
+import Start.MLTTAlgTrans
+import Start.MLTTAlgComplete
 import Start.Capstones

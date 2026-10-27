@@ -8806,16 +8806,58 @@ tasks:
       - "lake build --wfail"
 
 
-  - id: M30-MLTT-CONV
+  - id: M30-MLTT-INV
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: theory/types
-    title: "MLTT: algorithmic conversion — sound, complete, decidable"
+    title: "MLTT: syntactic metatheory from the fundamental theorem — substitution, context conversion, inversion, unique types of neutrals"
+    terminal_statement: "MLTT.HasTy.wfTy, MLTT.DEq.tyL, MLTT.DEq.tyR, MLTT.TyEq.wfL, MLTT.TyEq.wfR (syntactic validity); MLTT.WfTy.inst, MLTT.HasTy.inst, MLTT.TyEq.inst, MLTT.DEq.inst, MLTT.WfTy.instEq (substitution); MLTT.HasTy.ctxConv and companions; MLTT.HasTy.inv_univ … inv_emptyrec (inversion); MLTT.Neutral.tyUnique {n : Tm} (hn : Neutral n) : ∀ {Γ A B}, HasTy Γ n A → HasTy Γ n B → TyEq Γ A B; MLTT.TyEq.univ_whnf, nat_whnf, empty_whnf, pi_whnf, ne_whnf (Start/MLTTInversion.lean)"
     latest_evidence: "docs/goal/evidence/M30-MLTT.md"
-    open_boundary: "Not started. Plan in docs/goal/evidence/M30-MLTT.md: algorithmic relations (types after whnf, structurally; terms type-directed with η-expansion at Π; neutrals by spine comparison inferring the type), soundness, an algorithmic GenEq instance, completeness from MLTT.Der.valid at that instance, decidability. First missing lemma: inversion of typing for neutral terms with uniqueness of their type up to TyEq (needed for symmetry and transitivity of the algorithmic relation on neutrals)."
+    open_boundary: ""
     milestone: M30
     depends_on:
       - M30-MLTT-NORM
+    rank: 3033
+    exit_criteria:
+      - "Syntactic validity, single substitution, context conversion, inversion of typing for every term former, uniqueness of the type of a neutral term up to TyEq, and the heads of TyEq-equal weak head normal types, all derived from MLTT.Der.valid at declEq."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+
+  - id: M30-MLTT-ALG
+    priority: P1
+    status: DONE_STRONG
+    track: theory/types
+    title: "MLTT: the conversion algorithm of Abel, Öhman and Vezzosi is sound and complete for the declarative equality"
+    terminal_statement: "MLTT.Alg : AJd → Prop (six judgements NeUp, NeDown, TyUp, TyDown, TmUp, TmDown; Start/MLTTAlg.lean); MLTT.Alg.sound; MLTT.Alg.ren; MLTT.Alg.stab, MLTT.Alg.conv (Start/MLTTAlgStab.lean); MLTT.Alg.symm (Start/MLTTAlgSymm.lean); MLTT.Alg.trans (Start/MLTTAlgTrans.lean); MLTT.TyR.liftNe; MLTT.algEq : GenEq; MLTT.TyEq.iff_alg {Γ : Ctx} {A B : Tm} : TyEq Γ A B ↔ TyUp Γ A B; MLTT.DEq.iff_alg {Γ : Ctx} {t u A : Tm} : DEq Γ t u A ↔ TmUp Γ t u A (Start/MLTTAlgComplete.lean)"
+    latest_evidence: "docs/goal/evidence/M30-MLTT.md"
+    open_boundary: ""
+    milestone: M30
+    depends_on:
+      - M30-MLTT-INV
+    rank: 3036
+    exit_criteria:
+      - "Algorithmic conversion (neutral comparison inferring the type, types and terms compared after weak head normalization, η at products, types compared as types at universes) is sound for TyEq and DEq, and complete: by MLTT.Der.valid at the algorithmic generic equality, TyEq and DEq imply it."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+
+  - id: M30-MLTT-CONV
+    priority: P1
+    status: IN_PROGRESS
+    track: theory/types
+    title: "MLTT: algorithmic conversion — sound, complete, decidable"
+    latest_evidence: "docs/goal/evidence/M30-MLTT.md"
+    open_boundary: "Soundness and completeness are done (M30-MLTT-ALG: MLTT.TyEq.iff_alg, MLTT.DEq.iff_alg). Missing: decidability, i.e. an executable run of the algorithm with fuel whose answers are correct on typed inputs and which answers for large fuel on terms with algorithmic derivations (as Start/LambdaPiLFDecide.lean for LF). First missing lemma: correctness of the answers of the fuel-indexed run on well-typed inputs (neutral comparison returning the whnf of the inferred type, type and term comparison short-circuiting at products and at natrec so that every recursive call is on well-typed inputs)."
+    milestone: M30
+    depends_on:
+      - M30-MLTT-ALG
     rank: 3040
     exit_criteria:
       - "Soundness: algorithmic conversion of well-typed terms and types implies DEq and TyEq."
