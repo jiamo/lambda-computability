@@ -899,4 +899,11 @@ import Start.TLCA4NfCores
 import Start.TLCA4Hit6NotFixpoint
 import Start.TLCA4Hit10NotFixpoint
 import Start.TLCA4StageNf
+import Start.LambdaPiLFTEqIncomplete
+import Start.LambdaPiTypingE
+import Start.LambdaPiLFLevel
+import Start.LambdaPiLFAlgE
+import Start.LambdaPiLFComplete
+import Start.LambdaPiLFSound
+import Start.LambdaPiLFDecide
 import Start.Capstones

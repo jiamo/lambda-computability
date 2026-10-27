@@ -527,6 +527,13 @@ import Start.ModalGL
 import Start.ModalGLComplete
 import Start.StarHeightK3Metabelian
 import Start.StarHeightTwoS3
+import Start.LambdaPiLFTEqIncomplete
+import Start.LambdaPiTypingE
+import Start.LambdaPiLFLevel
+import Start.LambdaPiLFAlgE
+import Start.LambdaPiLFComplete
+import Start.LambdaPiLFSound
+import Start.LambdaPiLFDecide
 
 /-! ## Interfaces of the untyped calculus
 
@@ -6323,3 +6330,47 @@ most two. -/
 
 #check @GeneralizedStarHeight.height_one_of_S3
 #check @GeneralizedStarHeight.height_two_of_S3
+
+/-! `Start/LambdaPiLFTEqIncomplete.lean` (M23-LF-TEQ-INCOMPLETE): **completeness fails for `TEq`**.
+Its β-rule accepts a kind as the domain of the abstraction, so `TEq` derives
+`Πz:((λx:∗. x) (Πy:X. X)). X ≡ Πz:(Πy:X. X). X : ∗` in `X : ∗`, which the algorithm rejects (the
+domains have skeletons `base` and `base → base`); and the recorded first missing lemma
+`TEq.validityE` is false (`Start/LambdaPiTypingE.lean`). -/
+
+#check @LambdaPi.teq_not_complete
+#check @LambdaPi.ti_redex_untyped
+#check @LambdaPi.teq_validityE_false
+
+/-! `Start/LambdaPiTypingE.lean`, `Start/LambdaPiLFLevel.lean` (M23-LF-EQUIV-COMPLETE): the
+βη-typing `TypingE` of `λΠ` with weakening, substitution, inversion, validity, context
+conversion and subject reduction for weak head reduction; the syntactic level (object, type,
+kind) of raw terms, preserved by raw β, η and erasure of annotations; typable terms have levels;
+hence the context-free erasure `er` is invariant under βη-conversion of typable types, with no
+subject reduction for η. -/
+
+#check @LambdaPi.TypingE.validity
+#check @LambdaPi.TypingE.whRed
+#check @LambdaPi.TypingE.lvl
+#check @LambdaPi.Lvl.betaEtaConv
+#check @LambdaPi.TypingE.er_object
+#check @LambdaPi.TypingE.er_conv
+
+/-! `Start/LambdaPiLFAlgE.lean`, `Start/LambdaPiLFComplete.lean`, `Start/LambdaPiLFSound.lean`,
+`Start/LambdaPiLFDecide.lean` (M23-LF-EQUIV-COMPLETE, M23-LF-EQUIV): Harper and Pfenning's
+type-directed algorithm indexed by the erasure, the corrected declarative equality `TEqE` and
+its validity; **completeness** by the Kripke logical relation, **soundness**, **termination** on
+typable terms, and **decidability** of the declarative equality of typable terms. -/
+
+#check @LambdaPi.EqvE.symm
+#check @LambdaPi.EqvE.trans
+#check @LambdaPi.LRE.escape
+#check @LambdaPi.TEqE.validity
+#check @LambdaPi.TEqE.fundamental
+#check @LambdaPi.TEqE.complete
+#check @LambdaPi.AlgEqE.sound
+#check @LambdaPi.TEqE.iff_algEq
+#check @LambdaPi.algRun_correct
+#check @LambdaPi.algRun_terminates
+#check @LambdaPi.TEqE.decide_spec
+#check @LambdaPi.decideTEqE_spec
+#check @LambdaPi.TEqE.decidable

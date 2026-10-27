@@ -1,0 +1,4 @@
+# 2026-10-28 (local): #print axioms (lake env lean on a scratch file importing Start.LambdaPiTypingE)
+'LambdaPi.teq_not_complete' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LambdaPi.ti_redex_untyped' depends on axioms: [propext]
+'LambdaPi.teq_validityE_false' depends on axioms: [propext, Classical.choice, Quot.sound]

@@ -197,3 +197,67 @@ The platform's export of run 6's project dropped this note; it was put back from
 big round 2 sections that run 6 had restored were added again in run 7 from the command logs of
 runs 1 to 3 (the appended text is recorded there verbatim). The axioms files of the big round 2 rows
 were regenerated with `#print axioms` in run 7 (section "Big round 2, run 7").
+
+## 2026-10-28 — completion (written and compiled locally, not through Aristotle)
+
+Modules: `Start/LambdaPiLFTEqIncomplete.lean`, `Start/LambdaPiTypingE.lean`,
+`Start/LambdaPiLFLevel.lean`, `Start/LambdaPiLFAlgE.lean`, `Start/LambdaPiLFComplete.lean`,
+`Start/LambdaPiLFSound.lean`, `Start/LambdaPiLFDecide.lean`.  Axioms (at most `propext`,
+`Classical.choice`, `Quot.sound`) in `M23-LF-EQUIV-COMPLETE-axioms.txt` and
+`M23-LF-TEQ-INCOMPLETE-axioms.txt`.  M23-LF-EQUIV-COMPLETE and M23-LF-EQUIV are DONE_STRONG; new
+row M23-LF-TEQ-INCOMPLETE (DONE_STRONG).
+
+### 1. `TEq` is incomplete, and the recorded first missing lemma is false
+
+`TEq.beta` has no condition on the domain of the abstraction, and `λΠ` types an abstraction
+only over a type (`Rule s t := s = ∗`).  So `TEq` relates the untypable type-level redex
+`(λx:∗. x) (Πy:X. X)` to `Πy:X. X` in the context `X : ∗`.  The two have skeletons `base` and
+`base → base`; inside the domain of a product, `TEq` derives
+`Πz:((λx:∗. x) (Πy:X. X)). X ≡ Πz:(Πy:X. X). X : ∗`, and the algorithm rejects it (a product
+is weak head normal, and `Eqv.basePi` asks for equal skeletons of the domains):
+`LambdaPi.teq_not_complete`.  The same derivation refutes the first missing lemma recorded in
+big round 2, `TEq.validityE` (`TEq Γ M N A → Wf Γ → TypingE Γ M A ∧ TypingE Γ N A`):
+`LambdaPi.teq_validityE_false`.  The exit criterion "completeness for `Γ ⊢ M ≡ N : A`" is
+therefore met for the corrected judgement below, not for `TEq` as defined.
+
+### 2. The corrected system
+
+* `TypingE` — the typing of `λΠ` with βη-conversion in the conversion rule (Harper and
+  Pfenning's equality is about such a judgement), with weakening, substitution, inversion,
+  validity, context conversion and subject reduction for weak head reduction (only product
+  injectivity for βη, `betaEtaConv_pi_inv`, is needed);
+* `TEqE` — `TEq` with `TypingE` premises, βη-conversion of the type, and a typable abstraction
+  (`Γ ⊢ Πx:A. B : s`) in the β-rule and in the congruence for abstractions.
+  **`TEqE.validity`**: both sides are typable at the type.
+
+### 3. The index of the algorithm: the erasure, and levels instead of η-subject reduction
+
+The skeleton `skel Δ A` reads type variables from the context and changes under raw β-steps; the
+algorithm `EqvE` is indexed instead by the context-free erasure `er` (products become arrows,
+abstractions and applications are transparent, variables and sorts are the base type), as in
+Harper and Pfenning, where a type family applied to objects erases to the base type.  Equal types
+must have equal erasures.  The usual route (subject reduction for βη, then Church–Rosser) needs
+subject reduction for η, hence strengthening.  Instead, `Lvl L t k` assigns raw terms a **level**
+(0 objects, 1 types and families, 2 kinds; binders bind objects, arguments are objects,
+annotations are ignored).  The level is unique and preserved by raw β, raw η and the erasure of
+annotations, typable terms have levels (`TypingE.lvl`), objects have erasure `base`, and the
+erasure is invariant under raw β-steps of terms with levels.  With Church–Rosser modulo
+annotations (`betaEtaConv_iff_join`), two βη-convertible typable types have the same erasure and
+the same sort (`TypingE.er_conv`).
+
+### 4. The results
+
+* `EqvE` (`Start/LambdaPiLFAlgE.lean`): soundness for βη, weakening, symmetry, transitivity;
+  the Kripke logical relation `LRE` (arguments of erasure `base` at arrows) with escape,
+  reflection, monotonicity, weak head expansion, symmetry and transitivity;
+* **completeness** `TEqE.complete : TEqE Γ M N A → WfE Γ → AlgEqE (erCtx Γ) M N (er A)`, by the
+  fundamental lemmas `TypingE.fundamental` and `TEqE.fundamental` for related substitutions;
+* **soundness** `AlgEqE.sound` (typable at `A`, algorithmically equivalent at `er A` ⇒
+  `TEqE Γ M N A`), with Harper and Pfenning's path lemma; the weak head normal form of a type
+  is read off the algorithm's reflexivity derivation, so no normalization theorem is used;
+  `TEqE.iff_algEq`;
+* **termination**: the algorithm run with fuel (`algRun`) gives correct answers
+  (`algRun_correct`), and answers for all large fuels on two terms that each have a derivation
+  of the algorithm (`algRun_terminates`), which typable terms have;
+* **decidability**: `TEqE.decide_spec`, `decideTEqE` (the least fuel at which the run answers,
+  `Nat.find`), and `TEqE.decidable : Decidable (TEqE Γ M N A)` for typable `M`, `N`.

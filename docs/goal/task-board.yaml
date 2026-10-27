@@ -6007,18 +6007,38 @@ tasks:
       - "python3 scripts/check_sorry.py"
       - "lake build --wfail"
 
+  - id: M23-LF-TEQ-INCOMPLETE
+    priority: P2
+    status: DONE_STRONG
+    track: theory/types
+    title: "Completeness of the algorithm fails for TEq: its β-rule accepts a kind as the domain"
+    terminal_statement: "LambdaPi.teq_not_complete : ∃ (Γ : Ctx) (M N A : Tm), Wf Γ ∧ TEq Γ M N A ∧ ¬ AlgEq (skelCtx Γ) M N (skel (skelCtx Γ) A) (Start/LambdaPiLFTEqIncomplete.lean: in X : ∗, TEq derives Πz:((λx:∗. x) (Πy:X. X)). X ≡ Πz:(Πy:X. X). X : ∗, and the domains have skeletons base and base → base); LambdaPi.teq_validityE_false : ¬ ∀ (Γ : Ctx) (M N A : Tm), TEq Γ M N A → Wf Γ → TypingE Γ M A ∧ TypingE Γ N A (Start/LambdaPiTypingE.lean)"
+    latest_evidence: "docs/goal/evidence/M23-LF-EQUIV.md"
+    open_boundary: ""
+    milestone: M23
+    depends_on: []
+    rank: 2072
+    exit_criteria:
+      - "Completeness TEq Γ M N A → AlgEq (skelCtx Γ) M N (skel (skelCtx Γ) A) is refuted in Lean, and the recorded first missing lemma TEq.validityE is refuted."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
   - id: M23-LF-EQUIV-COMPLETE
     priority: P2
-    status: TODO_READY
+    status: DONE_STRONG
     track: theory/types
     title: "Completeness and termination of type-directed βη-equivalence for LF"
+    terminal_statement: "LambdaPi.TEqE.complete {Γ : Ctx} {M N A : Tm} (h : TEqE Γ M N A) (hΓ : WfE Γ) : AlgEqE (erCtx Γ) M N (er A); LambdaPi.AlgEqE.sound {Γ : Ctx} {M N A : Tm} (h : AlgEqE (erCtx Γ) M N (er A)) (hΓ : WfE Γ) (hM : TypingE Γ M A) (hN : TypingE Γ N A) : TEqE Γ M N A; LambdaPi.algRun_terminates; LambdaPi.TEqE.decide_spec {Γ : Ctx} {M N A : Tm} (hΓ : WfE Γ) (hM : TypingE Γ M A) (hN : TypingE Γ N A) : ∃ n₀, ∀ n, n₀ ≤ n → ∃ b, (algRun n).alg (erCtx Γ) M N (er A) = some b ∧ (b = true ↔ TEqE Γ M N A); LambdaPi.TEqE.decidable (hΓ : WfE Γ) (hM : TypingE Γ M A) (hN : TypingE Γ N A) : Decidable (TEqE Γ M N A) (Start/LambdaPiLFComplete.lean, Start/LambdaPiLFSound.lean, Start/LambdaPiLFDecide.lean)"
     latest_evidence: "docs/goal/evidence/M23-LF-EQUIV.md"
-    open_boundary: "Gap row of M23-LF-EQUIV (DONE_WEAK, round 7). Targets: typed soundness of AlgEq for TEq; completeness by the fundamental lemma of LR; termination on well-typed terms; decidability of TEq. Rounds 8-10: PER property, LR.fundamental, AlgEq.refl_of_typing; skel is η- but not β-invariant (skel_beta_raw_counterexample). Big round 2, run 1: the former first missing lemma TEq.typeLevel is FALSE (Start/LambdaPiLFTEqTypeLevelCounter.lean, teq_typeLevel_counterexample: in a well-formed context TEq derives F (c (λy. g y)) ≡ F (c g) : ∗ while F (c g) has no type, since Typing converts by β only). First missing lemma: a λΠ typing judgement TypingE with βη-conversion and theorem LambdaPi.TEq.validityE {Γ : Ctx} {M N A : Tm} (h : TEq Γ M N A) (hΓ : Wf Γ) : TypingE Γ M A ∧ TypingE Γ N A (weakening, substitution, context conversion and type validity for TypingE, Church–Rosser modulo annotations from Start/LambdaPiEtaConfluent.lean), then skel_teq through TypingE."
+    open_boundary: ""
     milestone: M23
     depends_on: []
     rank: 2073
     exit_criteria:
-      - "Completeness: Γ ⊢ M ≡ N : A implies algorithmic equivalence at the skeleton of A, by a Kripke logical relation."
+      - "Completeness: Γ ⊢ M ≡ N : A implies algorithmic equivalence at the simple type of A, by a Kripke logical relation. Restated 2026-10-28: for the corrected declarative judgement TEqE (βη-typing premises, a typable abstraction in the β-rule), with the context-free erasure er of Harper and Pfenning as the index; for TEq and the skeleton the statement is false (M23-LF-TEQ-INCOMPLETE)."
       - "Termination on well-typed terms, hence decidability of the typed βη-equality of λΠ."
     required_gates:
       - "python3 scripts/goal_state.py validate"
@@ -6066,18 +6086,18 @@ tasks:
 
   - id: M23-LF-EQUIV
     priority: P2
-    status: DONE_WEAK
+    status: DONE_STRONG
     track: theory/types
     title: "Decidable βη-equivalence for LF (λΠ) by the type-directed algorithm (Harper and Pfenning)"
-    terminal_statement: "LambdaPi.Eqv.sound {k : EqvKind} {Δ : List STy} {M N : Tm} {τ : STy} (h : Eqv k Δ M N τ) : BetaEtaConv M N; LambdaPi.LR.escape (h : LR τ Δ M N) : AlgEq Δ M N τ; LambdaPi.LR.reflect (h : PathEq Δ p q τ) : LR τ Δ p q; LambdaPi.TEq.betaEtaConv (h : TEq Γ M N A) : BetaEtaConv M N"
+    terminal_statement: "LambdaPi.Eqv.sound {k : EqvKind} {Δ : List STy} {M N : Tm} {τ : STy} (h : Eqv k Δ M N τ) : BetaEtaConv M N; LambdaPi.LR.escape (h : LR τ Δ M N) : AlgEq Δ M N τ; LambdaPi.LR.reflect (h : PathEq Δ p q τ) : LR τ Δ p q; LambdaPi.TEq.betaEtaConv (h : TEq Γ M N A) : BetaEtaConv M N; LambdaPi.TEqE.iff_algEq {Γ : Ctx} {M N A : Tm} (hΓ : WfE Γ) (hM : TypingE Γ M A) (hN : TypingE Γ N A) : TEqE Γ M N A ↔ AlgEqE (erCtx Γ) M N (er A); LambdaPi.TEqE.decidable (Start/LambdaPiLFSound.lean, Start/LambdaPiLFDecide.lean)"
     latest_evidence: "docs/goal/evidence/M23-LF-EQUIV.md"
-    open_boundary: "Proved round 7 (Start/LambdaPiLFEquiv.lean): weak head reduction; the algorithm LambdaPi.Eqv; Eqv.sound; Eqv.rename; the Kripke logical relation LambdaPi.LR with LR.escape, LR.reflect, LR.var, LR.rename and closure under weak head expansion; TEq and TEq.betaEtaConv. Round 8: Eqv.basePi with the side condition skel Δ A = skel Δ A'; PERs (row M23-LF-EQUIV-PER). Round 9: LR.fundamental for typing derivations (row M23-LF-FUNDAMENTAL-TYPING). Round 10: skel_eta, skel_beta_raw_counterexample, skel_not_betaEta_invariant. Open (gap row M23-LF-EQUIV-COMPLETE): first missing lemma TEq.typeLevel (validity of TEq at type level, needs a βη-conversion typing judgement), then skel_teq, LR.fundamental for TEq (completeness), typed soundness, termination, decidability. Round 11: not attempted (part E shrunk); gap row M23-LF-EQUIV-COMPLETE, first missing lemma TEq.typeLevel."
+    open_boundary: ""
     milestone: M23
     depends_on:
       - M23-LF-EQUIV-COMPLETE
     rank: 2074
     exit_criteria:
-      - "The declarative typed equality Γ ⊢ M ≡ N : A of λΠ with β and typed η, and the type-directed algorithmic equivalence indexed by simple skeletons."
+      - "The declarative typed equality Γ ⊢ M ≡ N : A of λΠ with β and typed η, and the type-directed algorithmic equivalence indexed by simple types. Met 2026-10-28 by TEqE (over the βη-typing TypingE) and EqvE (indexed by the erasure er); TEq and the skeleton index of round 7 are not complete (M23-LF-TEQ-INCOMPLETE)."
       - "Soundness of the algorithm; completeness by a Kripke logical relation on skeleton types; termination on well-typed terms, hence decidability of βη-equality of well-typed λΠ terms."
     required_gates:
       - "python3 scripts/goal_state.py validate"
