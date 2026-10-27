@@ -534,6 +534,7 @@ import Start.LambdaPiLFAlgE
 import Start.LambdaPiLFComplete
 import Start.LambdaPiLFSound
 import Start.LambdaPiLFDecide
+import Start.MLTTConsequences
 
 /-! ## Interfaces of the untyped calculus
 
@@ -6374,3 +6375,28 @@ typable terms, and **decidability** of the declarative equality of typable terms
 #check @LambdaPi.TEqE.decide_spec
 #check @LambdaPi.decideTEqE_spec
 #check @LambdaPi.TEqE.decidable
+
+/-! `Start/MLTTSyntax.lean` … `Start/MLTTConsequences.lean` (M30-MLTT-DECL, M30-MLTT-LR,
+M30-MLTT-FUND, M30-MLTT-NORM): Martin-Löf type theory with Π, a non-cumulative Russell hierarchy
+`U l : U (l+1)`, ℕ with `natrec` and ⊥ with `emptyrec`, with βη judgemental equality.  A
+Kripke logical relation over a generic equality (Abel, Öhman and Vezzosi), with universe levels
+by well-founded recursion; the **fundamental theorem** for every judgement form; hence **weak head
+normalization**, **injectivity of Π and of the universe hierarchy**, **canonicity** for ℕ and
+**consistency**. -/
+
+#check @MLTT.Der.ren
+#check @MLTT.TRed.det
+#check @MLTT.declEq
+#check @MLTT.TyR.lift
+#check @MLTT.TyR.good
+#check @MLTT.TyR.wk
+#check @MLTT.TyR.neutral
+#check @MLTT.SubstR.ids
+#check @MLTT.Der.valid
+#check @MLTT.HasTy.whnf
+#check @MLTT.WfTy.whnf
+#check @MLTT.TyEq.pi_inj
+#check @MLTT.TyEq.univ_inj
+#check @MLTT.Neutral.not_closed
+#check @MLTT.canonicity
+#check @MLTT.consistency

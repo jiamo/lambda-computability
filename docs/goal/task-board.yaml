@@ -1,7 +1,7 @@
 version: 2
 source_protocol: docs/goal/goal-prompt.md
 active_milestone: M14
-milestone_order: ["M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10", "M11", "M12", "M13", "M14", "M15", "M16", "M17", "M18", "M19", "M20", "M21", "M22", "M23", "M24", "M25", "M26", "M27", "M28", "M29"]
+milestone_order: ["M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10", "M11", "M12", "M13", "M14", "M15", "M16", "M17", "M18", "M19", "M20", "M21", "M22", "M23", "M24", "M25", "M26", "M27", "M28", "M29", "M30"]
 tasks:
   - id: M1-BOUNDARY-SORRY-CLOSURE
     priority: P0
@@ -8721,3 +8721,190 @@ tasks:
       - "python3 scripts/check_closure.py"
       - "python3 scripts/check_sorry.py"
       - "lake build"
+
+
+  - id: M30-MLTT-DECL
+    priority: P1
+    status: DONE_STRONG
+    track: theory/types
+    title: "MLTT with Π, a non-cumulative Russell hierarchy U l : U (l+1), ℕ and ⊥: declarative system, weakening, typed weak head reduction"
+    terminal_statement: "MLTT.Der : Jd → Prop (36 rules over the forms wf, tyWf, ty, tyEq, eq; Start/MLTTTyping.lean); MLTT.Der.ren {J : Jd} (h : Der J) : J.Ren (weakening along well-formed renamings, all five forms); MLTT.TRed.det {Γ Γ' : Ctx} {t u v A B : Tm} (hu : TRed Γ t u A) (hv : TRed Γ' t v B) : u = v; MLTT.TReds.whnf_unique (Start/MLTTReduction.lean); MLTT.declEq : GenEq (Start/MLTTGenEq.lean)"
+    latest_evidence: "docs/goal/evidence/M30-MLTT.md"
+    open_boundary: ""
+    milestone: M30
+    depends_on: []
+    rank: 3000
+    exit_criteria:
+      - "Curry-style de Bruijn syntax with univ, pi, lam, app, nat, zero, succ, natrec, empty, emptyrec and the substitution algebra; one inductive judgement with βη and the ℕ computation rules; weakening for every judgement form; deterministic typed weak head reduction; the generic equality interface of Abel, Öhman and Vezzosi (POPL 2018) with its declarative instance."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+
+  - id: M30-MLTT-LR
+    priority: P1
+    status: DONE_STRONG
+    track: theory/types
+    title: "MLTT: Kripke logical relation over a generic equality, universe levels by well-founded recursion"
+    terminal_statement: "MLTT.TyR (E : GenEq) (l : ℕ) : Ctx → Tm → Interp → Prop (Start/MLTTLogRel.lean); MLTT.TyR.lift {E} {l l₂ : ℕ} (hl : l ≤ l₂) (h : TyR E l Γ A I) : TyR E l₂ Γ A I; MLTT.TyR.good {E} : ∀ (l : ℕ) {Γ A I}, TyR E l Γ A I → Good E Γ A I (PER, conversion, symmetry and transitivity of type equality; Start/MLTTLogRelProps.lean); MLTT.TyR.wk; MLTT.TyR.neutral {E l Γ A I} (h : TyR E l Γ A I) : ∀ {n m : Tm}, Neutral n → Neutral m → HasTy Γ n A → HasTy Γ m A → E.ne Γ n m A → I.tmEq n m (Start/MLTTLogRelWk.lean)"
+    latest_evidence: "docs/goal/evidence/M30-MLTT.md"
+    open_boundary: ""
+    milestone: M30
+    depends_on:
+      - M30-MLTT-DECL
+    rank: 3010
+    exit_criteria:
+      - "A reducibility relation for types at every level with its interpretation as an index (graph encoding of induction-recursion), cases universe, ℕ, ⊥, neutral, Π (Kripke); cumulativity, PER and conversion properties, irrelevance of the reducibility proof, weakening, closure under weak head expansion and reduction, reflection of neutrals, escape to the generic equality."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+
+  - id: M30-MLTT-FUND
+    priority: P1
+    status: DONE_STRONG
+    track: theory/types
+    title: "MLTT: the fundamental theorem — every derivable judgement is valid, for every generic equality"
+    terminal_statement: "MLTT.Der.valid (E : GenEq) {J : Jd} (h : Der J) : J.Valid E (Start/MLTTFund.lean; validity of each rule in Start/MLTTFundBasic.lean, Start/MLTTFundPi.lean, Start/MLTTFundPiIntro.lean, Start/MLTTFundNat.lean)"
+    latest_evidence: "docs/goal/evidence/M30-MLTT.md"
+    open_boundary: ""
+    milestone: M30
+    depends_on:
+      - M30-MLTT-LR
+    rank: 3020
+    exit_criteria:
+      - "Validity under related substitutions (SubstR) for contexts, types, terms, type equations and term equations, and one validity lemma per rule, including β, η, natrec and its computation rules; the fundamental theorem by induction on derivations."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+
+  - id: M30-MLTT-NORM
+    priority: P1
+    status: DONE_STRONG
+    track: theory/types
+    title: "MLTT: weak head normalization, injectivity of Π and of the universe hierarchy, canonicity, consistency"
+    terminal_statement: "MLTT.HasTy.whnf {Γ : Ctx} {t A : Tm} (h : HasTy Γ t A) : ∃ t', TReds Γ t t' A ∧ Whnf t'; MLTT.WfTy.whnf {Γ : Ctx} {A : Tm} (h : WfTy Γ A) : ∃ A', TyReds Γ A A' ∧ Whnf A'; MLTT.TyEq.pi_inj (h : TyEq Γ (pi F G) (pi H E')) : TyEq Γ F H ∧ TyEq (F :: Γ) G E'; MLTT.TyEq.univ_inj (h : TyEq Γ (univ i) (univ j)) : i = j; MLTT.canonicity {t : Tm} (h : HasTy [] t nat) : ∃ k, DEq [] t (numeral k) nat; MLTT.consistency {t : Tm} (h : HasTy [] t empty) : False (Start/MLTTConsequences.lean)"
+    latest_evidence: "docs/goal/evidence/M30-MLTT.md"
+    open_boundary: ""
+    milestone: M30
+    depends_on:
+      - M30-MLTT-FUND
+    rank: 3030
+    exit_criteria:
+      - "Weak head normalization of typable terms and well-formed types; injectivity of Π and of univ under type equality; no closed neutral term; canonicity for ℕ; no closed term of ⊥."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+
+  - id: M30-MLTT-CONV
+    priority: P1
+    status: TODO_READY
+    track: theory/types
+    title: "MLTT: algorithmic conversion — sound, complete, decidable"
+    latest_evidence: "docs/goal/evidence/M30-MLTT.md"
+    open_boundary: "Not started. Plan in docs/goal/evidence/M30-MLTT.md: algorithmic relations (types after whnf, structurally; terms type-directed with η-expansion at Π; neutrals by spine comparison inferring the type), soundness, an algorithmic GenEq instance, completeness from MLTT.Der.valid at that instance, decidability. First missing lemma: inversion of typing for neutral terms with uniqueness of their type up to TyEq (needed for symmetry and transitivity of the algorithmic relation on neutrals)."
+    milestone: M30
+    depends_on:
+      - M30-MLTT-NORM
+    rank: 3040
+    exit_criteria:
+      - "Soundness: algorithmic conversion of well-typed terms and types implies DEq and TyEq."
+      - "Completeness: DEq Γ t u A implies algorithmic conversion, via MLTT.Der.valid instantiated at an algorithmic GenEq."
+      - "Decidability: Decidable (TyEq Γ A B) for well-formed A, B and Decidable (DEq Γ t u A) for t, u : A, by a terminating procedure proved correct."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+
+  - id: M30-MLTT-CHECK
+    priority: P2
+    status: TODO_NEEDS_DESIGN
+    track: theory/types
+    title: "MLTT: decidable bidirectional type checking for an annotated surface syntax, elaborating to MLTT.Der"
+    latest_evidence: "docs/goal/evidence/M30-MLTT.md"
+    open_boundary: "Design needed: Curry-style lam makes inference undecidable, so the checker takes a surface syntax with annotated or checked λ and elaborates it to Tm. Needs M30-MLTT-CONV (conversion checks at the mode switch), inversion of typing, and uniqueness of inferred types up to TyEq. Target: the kernel spine of an Agda-style checker for Π, U, ℕ, ⊥."
+    milestone: M30
+    depends_on:
+      - M30-MLTT-CONV
+    rank: 3050
+    exit_criteria:
+      - "A checker for a surface syntax is proved sound (an accepted input elaborates to a term with a Der derivation) and complete (every input whose erasure is typable with the given annotations is accepted), and terminates."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+
+  - id: M30-UNIFY-PTS-MLTT
+    priority: P1
+    status: TODO_NEEDS_DESIGN
+    track: unify/types
+    title: "Unify MLTT with the absorbed PTS development: the Π-U fragment of MLTT is the PTS (ℕ, l : l+1, (i, j, max i j)), so its weak normalization gives strong normalization"
+    latest_evidence: "docs/goal/evidence/M30-MLTT.md"
+    open_boundary: "Needs M30-MLTT-CONV (filed in M30 because the board does not let an M26 row depend on an M30 one). Missing: (1) a Specification ℕ with axioms (l, l+1) and rules (i, j, max i j) (Start/PTSExpansionLocal.lean natHier has rules (m, n, n) for n ≤ m, a different hierarchy); (2) translation PTS → MLTT by erasing λ annotations, sound for typing, which turns the untyped Converts of the PTS conversion rule into DEq using the absorbed confluence and subject reduction (Start/PTSLabelled.lean confluent, subject_reduces); (3) full β-normal forms for MLTT, extracted from the algorithmic reflexivity derivation; (4) lifting weak normalization of the erasure back to the annotated PTS term, annotations included. Then PureTypeSystem.weak_implies_strong (Start/PTSNormalization.lean) gives SystemStronglyNormalizing."
+    milestone: M30
+    depends_on:
+      - M30-MLTT-CONV
+    rank: 3060
+    exit_criteria:
+      - "SystemWeaklyNormalizing and, by PureTypeSystem.weak_implies_strong, SystemStronglyNormalizing for the PTS with sorts ℕ, axioms (l, l+1), rules (i, j, max i j), proved through the MLTT normalization of Start/MLTT*.lean."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+
+  - id: M26-UNIFY-DEPTHTHREE
+    priority: P2
+    status: TODO_NEEDS_DESIGN
+    track: unify/complexity
+    title: "Unify the absorbed DepthThree foundations with the host: polynomial-time multitape machines vs Cobham P, Circuit3 vs Σ₃ host circuits, both directions"
+    latest_evidence: "docs/goal/evidence/M26-OAI-ABSORPTION.md"
+    open_boundary: "The conclusion is already transferred (Complexity.DepthThreeHost.depthThree_lower_bound_host, Start/DepthThreeHost.lean) using one direction of each correspondence: MultiTapeCobham.inP_of_multiTapeHaltsIn and the translation Σ₃ ACCirc → Circuit3 (toCircuit3_eval, toCircuit3_gateCount). Missing: the converse of each: every InP language (Start/ComplexityClasses.lean) is decided by a FiniteMultiTapeMachine in polynomial time, and every Circuit3 on Fin n becomes a Σ₃ ACCirc computing the same function with linearly many gates. With both, every upstream DepthThree intermediate result about P or Circuit3 transfers."
+    milestone: M26
+    depends_on:
+      - M26-OAI-DEPTHTHREE
+    rank: 2480
+    exit_criteria:
+      - "InP L ↔ ∃ (M : FiniteMultiTapeMachine) (C a : ℕ), M decides L within C · (n+1)^a steps."
+      - "Every Circuit3 (Fin n) has a Σ₃ ACCirc computing the same function with O(gateCount) gates, and conversely (existing translation)."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+
+  - id: M26-UNIFY-RIGIDITY-FOUNDATION
+    priority: P2
+    status: TODO_NEEDS_DESIGN
+    track: unify/computability
+    title: "Unify the absorbed DegreeRigidity foundations with the host oracle machines: oracle codes and jumps, not only the degree quotient"
+    latest_evidence: "docs/goal/evidence/M26-OAI-ABSORPTION.md"
+    open_boundary: "Only the conclusion is shared now: Start/RigidityBridge.lean identifies the two degree quotients (setDegreeOrderIso) and proves Lambda.Oracle.setDegreeRigidity. The 975 upstream modules keep their own oracle programs (OracleCode.eval, Start/RigidityOracleCode.lean) and jump (Halts, iterate; Start/RigidityOracleJump.lean). Missing: (1) computable translations between upstream OracleCode and host indices of Lambda.Oracle.Phi (Start/OracleMachine.lean) preserving the computed partial function, from Lambda.Oracle.exists_index_of_recursiveIn and the upstream exists_code; (2) the upstream jump of an oracle and the host Lambda.Oracle.Jump (Start/OracleJump.lean) are Turing-equivalent, uniformly, and so are their finite iterates."
+    milestone: M26
+    depends_on:
+      - M26-OAI-DEGREE-RIGIDITY
+    rank: 2490
+    exit_criteria:
+      - "Code translation both ways, preserving the function computed relative to every oracle."
+      - "The upstream jump and the host jump are Turing-equivalent for every oracle, and so are the n-th iterates for every n."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
