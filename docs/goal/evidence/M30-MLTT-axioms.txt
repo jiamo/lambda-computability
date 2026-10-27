@@ -32,3 +32,14 @@
 'MLTT.DEq.alg' depends on axioms: [propext, Classical.choice, Quot.sound]
 'MLTT.TyEq.iff_alg' depends on axioms: [propext, Classical.choice, Quot.sound]
 'MLTT.DEq.iff_alg' depends on axioms: [propext, Classical.choice, Quot.sound]
+
+# 2026-10-28 (local): #print axioms (lake env lean on a scratch file importing Start.MLTTDecide)
+'MLTT.whnfF_typed' depends on axioms: [propext, Classical.choice, Quot.sound]
+'MLTT.cRun_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
+'MLTT.Alg.terminates' depends on axioms: [propext, Classical.choice, Quot.sound]
+'MLTT.TyEq.decide_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'MLTT.DEq.decide_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'MLTT.decideTyEq_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'MLTT.decideDEq_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'MLTT.TyEq.decidable' depends on axioms: [propext, Classical.choice, Quot.sound]
+'MLTT.DEq.decidable' depends on axioms: [propext, Classical.choice, Quot.sound]

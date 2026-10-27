@@ -536,6 +536,7 @@ import Start.LambdaPiLFSound
 import Start.LambdaPiLFDecide
 import Start.MLTTConsequences
 import Start.MLTTAlgComplete
+import Start.MLTTDecide
 
 /-! ## Interfaces of the untyped calculus
 
@@ -6421,3 +6422,19 @@ and `TyEq Γ A B ↔ TyUp Γ A B`. -/
 #check @MLTT.algEq
 #check @MLTT.TyEq.iff_alg
 #check @MLTT.DEq.iff_alg
+
+/-! `Start/MLTTDecideRun.lean`, `Start/MLTTDecideCorrect.lean`, `Start/MLTTDecide.lean`
+(M30-MLTT-CONV): the conversion algorithm as a program with fuel (untyped weak head normalization,
+neutral comparison returning the reduced inferred type, short-circuits at products and at
+`natrec`); its answers are correct on typed inputs, it answers for large fuel on terms with
+algorithmic derivations; hence **judgemental equality of well-formed types and of typed terms of
+MLTT is decidable**. -/
+
+#check @MLTT.cRun_correct
+#check @MLTT.Alg.terminates
+#check @MLTT.TyEq.decide_spec
+#check @MLTT.DEq.decide_spec
+#check @MLTT.decideTyEq_spec
+#check @MLTT.decideDEq_spec
+#check @MLTT.TyEq.decidable
+#check @MLTT.DEq.decidable

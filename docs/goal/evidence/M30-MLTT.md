@@ -124,14 +124,47 @@ the relations are stable under context conversion.
 Axioms: `propext`, `Classical.choice`, `Quot.sound` (`docs/goal/evidence/M30-MLTT-axioms.txt`).
 Six modules, 1738 lines; each type-checked on its own, in dependency order.
 
-## Next: `M30-MLTT-CONV` (decidability)
+## 2026-10-28 — decidability of conversion (`M30-MLTT-CONV` done)
 
-An executable run of the algorithm with fuel, as for LF (`Start/LambdaPiLFDecide.lean`): untyped
-weak head normalization with fuel; neutral comparison returning the whnf of the inferred type
-(the variable's declared type through the eliminators); short-circuit at products and at
-`natrec`, so that every recursive call is on well-typed inputs.  Correctness of the answers on
-typed inputs by induction on the fuel; termination by induction on algorithmic derivations (which
-exist for typed terms by `DEq.alg`), into equal contexts and at equal types; then `Nat.find`.
+`Start/MLTTDecideRun.lean`, `Start/MLTTDecideCorrect.lean`, `Start/MLTTDecide.lean` (1374 lines).
+
+The program `MLTT.cRun n` (fuel `n`) has three components:
+
+* `neDn` — compare two neutral terms; it answers the weak head normal form of the inferred
+  type (the declared type of the head variable `ctxGet`, through the eliminators), or `none`
+  when they differ;
+* `tyUp` — reduce both types by untyped weak head normalization with fuel (`whnfF`), then compare
+  heads, recursing at products only after the domains compared equal;
+* `tmUp` — reduce the type and both terms, then compare by the head of the type:
+  - at universes, compare as types;
+  - at products, by η-expansion;
+  - at `ℕ`, compare `zero`, `succ` or neutrals;
+  - at `⊥` and at neutral types, compare as neutrals.
+
+Comparisons inside `natrec` run in sequence, each only after the previous one succeeded:
+motive, then base case, then step, then the scrutinee.  So every recursive call is on
+well-typed inputs.
+
+* `whnfF_typed`, `whnfF_tyTyped` — on typed inputs, untyped normalization follows the typed
+  reduction.  The two stuck endpoints of the deterministic untyped reduction coincide
+  (`whSteps_stuck_unique`).
+* `cRun_correct` — every answer is correct on typed inputs, by induction on the fuel.
+  - Boolean answers `b` satisfy `b = true ↔ TyUp …`, respectively `TmUp …`.
+  - A neutral answer is a type at which `NeDown` holds, and `none` means no `NeDown`.
+* `Alg.terminates` — the run answers for all large fuels on a left-hand side with an
+  algorithmic derivation and a right-hand side with one.
+  - It holds in any equal context and at any equal type.
+  - Neutral answers are eventually constant.
+  - By induction on the left derivation and inversion of the right one.
+* **`TyEq.decide_spec`, `DEq.decide_spec`** — combine termination, correctness and
+  `TyEq.iff_alg`/`DEq.iff_alg`.  Typed terms have algorithmic derivations by completeness
+  (`DEq.alg (Der.refl _)`).
+* **`TyEq.decidable`, `DEq.decidable`** — decide with `decideTyEq`, `decideDEq`: the run at
+  the least fuel at which it answers (`Nat.find`).  These are executable `def`s; classical logic
+  occurs only in proofs.
+
+Axioms: `propext`, `Classical.choice`, `Quot.sound` (`docs/goal/evidence/M30-MLTT-axioms.txt`).
+Each module was type-checked on its own; the full build is CI's.
 
 ## `M30-UNIFY-PTS-MLTT` (filed in M30, not M26)
 

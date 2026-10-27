@@ -927,4 +927,7 @@ import Start.MLTTAlgStab
 import Start.MLTTAlgSymm
 import Start.MLTTAlgTrans
 import Start.MLTTAlgComplete
+import Start.MLTTDecideRun
+import Start.MLTTDecideCorrect
+import Start.MLTTDecide
 import Start.Capstones

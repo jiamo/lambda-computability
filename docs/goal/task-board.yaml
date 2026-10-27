@@ -8850,11 +8850,12 @@ tasks:
 
   - id: M30-MLTT-CONV
     priority: P1
-    status: IN_PROGRESS
+    status: DONE_STRONG
     track: theory/types
     title: "MLTT: algorithmic conversion — sound, complete, decidable"
+    terminal_statement: "MLTT.TyEq.iff_alg, MLTT.DEq.iff_alg (soundness and completeness, Start/MLTTAlgComplete.lean); MLTT.cRun_correct : ∀ n, (cRun n).Correct (Start/MLTTDecideCorrect.lean); MLTT.TyEq.decide_spec {Γ : Ctx} {A B : Tm} (hA : WfTy Γ A) (hB : WfTy Γ B) : ∃ n₀, ∀ n, n₀ ≤ n → ∃ b, (cRun n).tyUp Γ A B = some b ∧ (b = true ↔ TyEq Γ A B); MLTT.DEq.decide_spec {Γ : Ctx} {t u A : Tm} (ht : HasTy Γ t A) (hu : HasTy Γ u A) : ∃ n₀, ∀ n, n₀ ≤ n → ∃ b, (cRun n).tmUp Γ t u A = some b ∧ (b = true ↔ DEq Γ t u A); MLTT.TyEq.decidable (hA : WfTy Γ A) (hB : WfTy Γ B) : Decidable (TyEq Γ A B); MLTT.DEq.decidable (ht : HasTy Γ t A) (hu : HasTy Γ u A) : Decidable (DEq Γ t u A) (Start/MLTTDecide.lean)"
     latest_evidence: "docs/goal/evidence/M30-MLTT.md"
-    open_boundary: "Soundness and completeness are done (M30-MLTT-ALG: MLTT.TyEq.iff_alg, MLTT.DEq.iff_alg). Missing: decidability, i.e. an executable run of the algorithm with fuel whose answers are correct on typed inputs and which answers for large fuel on terms with algorithmic derivations (as Start/LambdaPiLFDecide.lean for LF). First missing lemma: correctness of the answers of the fuel-indexed run on well-typed inputs (neutral comparison returning the whnf of the inferred type, type and term comparison short-circuiting at products and at natrec so that every recursive call is on well-typed inputs)."
+    open_boundary: ""
     milestone: M30
     depends_on:
       - M30-MLTT-ALG
