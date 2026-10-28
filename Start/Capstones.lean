@@ -551,6 +551,8 @@ import Start.BridgeSizeChange
 import Start.BridgeSolenoidal
 import Start.BridgeMLTTLambda
 import Start.BridgeLambdaPCA
+import Start.BridgeCwAMLTT
+import Start.RigidityFoundation
 
 /-! ## Interfaces of the untyped calculus
 
@@ -6609,3 +6611,24 @@ assemblies are exactly the computable functions. -/
 #check @Realizability.TermModel.tracked_iff_computable
 #check @Realizability.Kleene.tracked_iff_computable
 #check @Realizability.tracked_termModel_iff_kleene
+
+/-! `Start/BridgeCwAMLTT.lean` (M31-FOUND-CWA-MLTT): `λΠ` embeds into the pure type system of
+MLTT and hence into MLTT; a derivable `λΠ` judgement is an MLTT judgement and is interpreted,
+uniquely, in every category-with-attributes model with injective products. -/
+
+#check @LambdaPi.Tm.toPTS_inst
+#check @LambdaPi.Typing.toPTS
+#check @LambdaPi.Typing.toMLTT
+#check @LambdaPi.Typing.mltt_and_model
+
+/-! `Start/RigidityFoundation.lean` (M26-UNIFY-RIGIDITY-FOUNDATION): relativised s-m-n; the host
+jump and the upstream jump are Turing equivalent for every oracle, and so are their iterates;
+upstream oracle programs and host indices translate both ways, uniformly in the oracle. -/
+
+#check @Lambda.Oracle.exists_index_param
+#check @Lambda.Oracle.dom_turingReducible_jumpChar
+#check @Lambda.Oracle.jumpChar_reduces_jump
+#check @Lambda.Oracle.jump_reduces_jumpChar
+#check @Lambda.Oracle.hostIterate_equiv
+#check @Lambda.Oracle.exists_index_of_code
+#check @Lambda.Oracle.exists_code_of_index

@@ -949,4 +949,6 @@ import Start.BridgeSizeChange
 import Start.BridgeSolenoidal
 import Start.BridgeMLTTLambda
 import Start.BridgeLambdaPCA
+import Start.BridgeCwAMLTT
+import Start.RigidityFoundation
 import Start.Capstones

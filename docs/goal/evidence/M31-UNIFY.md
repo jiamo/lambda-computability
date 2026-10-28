@@ -194,3 +194,35 @@ gates (M31-UNIFY-GATE).
   - The same holds over Kleene's first algebra (`Kleene.tracked_iff_computable`). So the two
     realizability models have the same arithmetic functions
     (`tracked_termModel_iff_kleene`).
+
+## 2026-10-28 — phase 2: λΠ into MLTT; rigidity foundations
+
+- **λΠ → MLTT with categorical semantics** (`Start/BridgeCwAMLTT.lean`).
+  - `LambdaPi.Tm.toPTS` maps `∗` to level `0` and `□` to level `1`. It commutes with
+    renaming, substitution and instantiation, and maps β-steps and conversion to those of the
+    PTS.
+  - `Typing.toPTS` and `Wf.toPTS` send every λΠ derivation in a well-formed context to an
+    `MLTT.mlttPTS` derivation: the rules `(∗,∗)` and `(∗,□)` become `(0,0,0)` and `(0,1,1)`.
+  - Composed with `MLTT.HasType.toTm`, this gives `Typing.toMLTT`: every λΠ derivation is an
+    MLTT derivation.
+  - `Typing.mltt_and_model`: the same derivable judgement is also interpreted, uniquely, in
+    every CwA model with injective products (`CtxI.total`, `interp_exists_unique`). So the
+    categorical semantics of λΠ covers its image in MLTT.
+  - No interpretation of MLTT beyond that image is constructed.
+- **Rigidity foundations** (`Start/RigidityFoundation.lean`, row M26-UNIFY-RIGIDITY-FOUNDATION).
+  - Relativised s-m-n (`exists_index_param`).
+  - Consequently, the domain of any function recursive in `A` is decidable in the host jump of
+    `A` (`dom_turingReducible_jumpChar`).
+  - The two jumps are Turing equivalent for every oracle:
+    - host jump ≤ upstream jump, from `jump_re_in` and the upstream `domain_recursive_jump`;
+    - upstream jump ≤ host jump, from the upstream `halts_sigma` and the relativised s-m-n.
+  - By induction with `jump_mono`, the `n`-th iterates are also equivalent
+    (`hostIterate_equiv`).
+  - Program translation is uniform in the oracle, in both directions:
+    - `exists_index_of_code`: every upstream `OracleCode` has a single host index computing the
+      same partial function relative to every oracle (simulations built per constructor);
+    - `exists_code_of_index`: every host index `e` has an explicit upstream program
+      `phiCode e`. It reads the oracle segment by primitive recursion with queries, searches
+      for a converging stage of `Code.evaln`, and reads off the value.
+  - Not shown: that these maps are computable as maps between codes. `OracleCode` has no
+    `Primcodable` instance.

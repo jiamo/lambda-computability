@@ -8977,11 +8977,12 @@ tasks:
 
   - id: M26-UNIFY-RIGIDITY-FOUNDATION
     priority: P2
-    status: TODO_NEEDS_DESIGN
+    status: DONE_STRONG
     track: unify/computability
     title: "Unify the absorbed DegreeRigidity foundations with the host oracle machines: oracle codes and jumps, not only the degree quotient"
+    terminal_statement: "Lambda.Oracle.exists_index_of_code (c : OracleCode) : ∃ e, ∀ A, Phi A e = OracleCode.eval (oracleFunction A) c; Lambda.Oracle.exists_code_of_index (e) : ∃ c, ∀ A, OracleCode.eval (oracleFunction A) c = Phi A e (explicit phiCode); Lambda.Oracle.jumpChar_reduces_jump, jump_reduces_jumpChar (A) : Reduces (jumpChar A) (OracleJump.jump A) and back; Lambda.Oracle.hostIterate_equiv (A n) : iterates Turing equivalent (Start/RigidityFoundation.lean)"
     latest_evidence: "docs/goal/evidence/M26-OAI-ABSORPTION.md"
-    open_boundary: "Only the conclusion is shared now: Start/RigidityBridge.lean identifies the two degree quotients (setDegreeOrderIso) and proves Lambda.Oracle.setDegreeRigidity. The 975 upstream modules keep their own oracle programs (OracleCode.eval, Start/RigidityOracleCode.lean) and jump (Halts, iterate; Start/RigidityOracleJump.lean). Missing: (1) computable translations between upstream OracleCode and host indices of Lambda.Oracle.Phi (Start/OracleMachine.lean) preserving the computed partial function, from Lambda.Oracle.exists_index_of_recursiveIn and the upstream exists_code; (2) the upstream jump of an oracle and the host Lambda.Oracle.Jump (Start/OracleJump.lean) are Turing-equivalent, uniformly, and so are their finite iterates."
+    open_boundary: ""
     milestone: M26
     depends_on:
       - M26-OAI-DEGREE-RIGIDITY
@@ -9292,11 +9293,12 @@ tasks:
 
   - id: M31-FOUND-CWA-MLTT
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: unify/foundation
     title: "Categorical models (CwA) ↔ MLTT"
+    terminal_statement: "LambdaPi.Typing.toMLTT (hΓ : Wf Γ) (h : Typing Γ t A) : MLTT.WfCtx (toCtx (Γ.map Tm.toPTS)) ∧ MLTT.HasTy (toCtx (Γ.map Tm.toPTS)) (toTm t.toPTS) (toTm A.toPTS), through LambdaPi.Typing.toPTS into MLTT.mlttPTS; LambdaPi.Typing.mltt_and_model : the image is an MLTT judgement and the λΠ judgement is interpreted uniquely in every model with injective products (Start/BridgeCwAMLTT.lean)"
     latest_evidence: "docs/goal/evidence/M31-UNIFY.md"
-    open_boundary: "Not started."
+    open_boundary: ""
     milestone: M31
     depends_on: []
     rank: 3310
