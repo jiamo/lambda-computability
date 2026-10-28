@@ -544,6 +544,7 @@ import Start.BridgeStlc
 import Start.BridgeCBPV
 import Start.BridgeSystemFC
 import Start.BridgeStarHeight
+import Start.BridgeWL
 
 /-! ## Interfaces of the untyped calculus
 
@@ -6536,3 +6537,12 @@ generalized star height at most `3` and is decided in constant space by a host m
 #check @Complexity.Space.DFASim.accepts_iff
 #check @Complexity.Space.dspace_of_isRegular
 #check @GeneralizedStarHeight.regular_starHeight_dspace
+
+/-! `Start/BridgeWL.lean` (M31-BRIDGE-WL): a host multi-tape machine compiles step for step into a
+WL machine, so the WL lower bound holds for host machines, and no host machine decides `k`-WL
+equivalence within a polynomial of degree `a < c k / 2` in its input length. -/
+
+#check @WLBridge.rel_run
+#check @WLBridge.haltsIn_tm
+#check @WLTime.multiTape_lower_bound
+#check @WLTime.multiTape_not_poly

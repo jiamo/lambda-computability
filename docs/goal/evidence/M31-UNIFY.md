@@ -111,3 +111,20 @@ abstract Löb theorem (1), and the skeletons of CC^ω (1).
     languages together with this space bound.
 
 `check_unification.py` reports 7 components (largest 2135).
+
+## 2026-10-28 — Weisfeiler–Leman (7 → 6 components)
+
+- **WL lower bound for host machines** (`Start/BridgeWL.lean`).
+  - `WLBridge.tm` compiles a host `DepthThreeLowerBound.FiniteMultiTapeMachine` into a
+    `WLTime.TM`:
+    - one WL tape per host tape, with the input tape first;
+    - symbols numbered with the blank at `0` and the input bits at `1` and `2`;
+    - one WL state per host state, plus the halting states `1` and `2`.
+  - `WLBridge.rel_run` is the step-for-step simulation.
+  - `WLBridge.haltsIn_tm`: when a host run halts with output `b` within `T` steps, the WL run
+    halts within `T + 1` steps and accepts iff `b`.
+  - **`WLTime.multiTape_lower_bound`**: the WL main theorem for host machines. If a host machine
+    decides `k`-WL equivalence within `T n` steps, then `n ^ (c k) ≤ T n + 1` for large `n`.
+  - **`WLTime.multiTape_not_poly`**: once `2a < c k`, no host machine decides `k`-WL equivalence
+    within time `C (|x| + 1) ^ a`. The host machines are the ones whose polynomial-time deciders
+    are in Cobham's class (`Complexity.MultiTapeCobham.inP_of_multiTapeHaltsIn`).

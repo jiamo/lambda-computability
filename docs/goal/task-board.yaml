@@ -9039,11 +9039,12 @@ tasks:
 
   - id: M31-BRIDGE-WL
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: unify/complexity
     title: "Weisfeiler–Leman (43 modules, absorbed) ↔ host machines or complexity classes"
+    terminal_statement: "WLTime.multiTape_lower_bound : ∃ c > 0, ∃ k₀, ∀ k ≥ k₀, ∀ conv p (M : FiniteMultiTapeMachine) T, WLBridge.MultiTapeDecides M conv k p T → ∃ n₀, ∀ n ≥ n₀, n^(c k) ≤ T n + 1; WLTime.multiTape_not_poly (no host multi-tape decider in time C(|x|+1)^a once 2a < c k); WLBridge.rel_run, WLBridge.haltsIn_tm (step-for-step simulation) (Start/BridgeWL.lean)"
     latest_evidence: "docs/goal/evidence/M31-UNIFY.md"
-    open_boundary: "Not started."
+    open_boundary: ""
     milestone: M31
     depends_on: []
     rank: 3120

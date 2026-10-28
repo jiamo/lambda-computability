@@ -436,7 +436,7 @@
 | 2490 | `M26-UNIFY-RIGIDITY-FOUNDATION` | `P2` | `TODO_NEEDS_DESIGN` | M26-OAI-DEGREE-RIGIDITY | docs/goal/evidence/M26-OAI-ABSORPTION.md | Only the conclusion is shared now: Start/RigidityBridge.lean identifies the two degree quotients (setDegreeOrderIso) and proves Lambda.Oracle.setDegreeRigidity. The 975 upstream modules keep their own oracle programs (OracleCode.eval, Start/RigidityOracleCode.lean) and jump (Halts, iterate; Start/RigidityOracleJump.lean). Missing: (1) computable translations between upstream OracleCode and host indices of Lambda.Oracle.Phi (Start/OracleMachine.lean) preserving the computed partial function, from Lambda.Oracle.exists_index_of_recursiveIn and the upstream exists_code; (2) the upstream jump of an oracle and the host Lambda.Oracle.Jump (Start/OracleJump.lean) are Turing-equivalent, uniformly, and so are their finite iterates. |
 | 3100 | `M31-UNIFY-GATE` | `P1` | `TODO_READY` | - | docs/goal/evidence/M31-UNIFY.md | Not started. |
 | 3110 | `M31-BRIDGE-STARHEIGHT` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M31-UNIFY.md |  |
-| 3120 | `M31-BRIDGE-WL` | `P1` | `TODO_READY` | - | docs/goal/evidence/M31-UNIFY.md | Not started. |
+| 3120 | `M31-BRIDGE-WL` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M31-UNIFY.md |  |
 | 3130 | `M31-BRIDGE-MINSKY` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M31-UNIFY.md |  |
 | 3140 | `M31-BRIDGE-STLC` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M31-UNIFY.md |  |
 | 3150 | `M31-BRIDGE-SOLENOIDAL` | `P1` | `TODO_READY` | - | docs/goal/evidence/M31-UNIFY.md | Not started. |
