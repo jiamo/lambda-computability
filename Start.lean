@@ -940,4 +940,6 @@ import Start.BridgeMinsky
 import Start.BridgeStlc
 import Start.BridgeLambdaEnv
 import Start.BridgeCBPV
+import Start.BridgeSystemFC
+import Start.BridgeStarHeight
 import Start.Capstones

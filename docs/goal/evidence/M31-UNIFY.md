@@ -88,3 +88,26 @@ modules it imports; the full build is CI's.
 `check_unification.py` now reports 9 components (largest 2013). The remaining islands are star
 height (118), WL (43), Solenoidal (5), GL (2), size-change (2), System FC with data (2), the
 abstract Löb theorem (1), and the skeletons of CC^ω (1).
+
+## 2026-10-28 — System FC with data, star height (9 → 7 components)
+
+- **System FC** (`Start/BridgeSystemFC.lean`).
+  - `FCBridge.embTy`, `embCo`, `embTm`, `embAx` embed System FC with coercions
+    (`SystemFCoerce`) into System FC with data types (`SystemFCTyCon`) at the empty data
+    signature. An axiom `A ~ B` becomes the scheme with no parameters.
+  - The embedding commutes with renaming, substitution and instantiation of types, coercions
+    and terms.
+  - It preserves coercion typing (`coTyping_emb`) and typing (`typing_emb`) for closed axioms,
+    and maps each step to a step (`step_emb`).
+- **Star height** (`Start/BridgeStarHeight.lean`).
+  - `Complexity.Space.DFASim.machine` compiles a DFA over `Bool` into a host offline machine
+    (`Start/SpaceMachine.lean`). It scans the input once and halts in a copy of the automaton's
+    state at the end marker.
+  - `reach_iff` describes all of its runs; it is well formed, deterministic and uses one work
+    cell.
+  - `Complexity.Space.dspace_of_isRegular`: every regular language over `Bool` is in
+    `DSPACE (fun _ => 1)`.
+  - `GeneralizedStarHeight.regular_starHeight_dspace` states the star-height theorem for such
+    languages together with this space bound.
+
+`check_unification.py` reports 7 components (largest 2135).

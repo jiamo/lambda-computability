@@ -9018,11 +9018,12 @@ tasks:
 
   - id: M31-BRIDGE-STARHEIGHT
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: unify/automata
     title: "Star height (118 modules) ↔ host: regular languages are decided in constant space by the host offline machines"
+    terminal_statement: "Complexity.Space.dspace_of_isRegular {L : Language Bool} (h : L.IsRegular) : DSPACE (fun _ => 1) (fun x => x ∈ L); GeneralizedStarHeight.regular_starHeight_dspace : L.IsRegular → HasHeightAtMost L 3 ∧ DSPACE (fun _ => 1) (fun x => x ∈ L) (Start/BridgeStarHeight.lean)"
     latest_evidence: "docs/goal/evidence/M31-UNIFY.md"
-    open_boundary: "Not started."
+    open_boundary: ""
     milestone: M31
     depends_on: []
     rank: 3110
@@ -9181,11 +9182,12 @@ tasks:
 
   - id: M31-BRIDGE-SYSTEMFC
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: unify/types
     title: "System FC with data types (2 modules) ↔ System FC with coercions"
+    terminal_statement: "FCBridge.typing_emb (hAx : FCoerce.AxClosed Ax) : FCoerce.Typing Ax Γ t A → FCTyCon.Typing [] (embAx Ax) (Γ.map embTy) (embTm t) (embTy A); FCBridge.coTyping_emb; FCBridge.step_emb : FCoerce.Step t t' → FCTyCon.Step [] (embTm t) (embTm t') (Start/BridgeSystemFC.lean)"
     latest_evidence: "docs/goal/evidence/M31-UNIFY.md"
-    open_boundary: "Not started."
+    open_boundary: ""
     milestone: M31
     depends_on: []
     rank: 3190

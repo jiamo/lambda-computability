@@ -542,6 +542,8 @@ import Start.MLTTPTS
 import Start.BridgeMinsky
 import Start.BridgeStlc
 import Start.BridgeCBPV
+import Start.BridgeSystemFC
+import Start.BridgeStarHeight
 
 /-! ## Interfaces of the untyped calculus
 
@@ -6518,3 +6520,19 @@ call-by-name and call-by-value steps are β-steps of the core. -/
 #check @CBPV.STm.toLambda_beta
 #check @CBPV.NStep.toLambda
 #check @CBPV.VStep.toLambda
+
+/-! `Start/BridgeSystemFC.lean` (M31-BRIDGE-SYSTEMFC): System FC with coercions is System FC with
+data types at the empty data signature, with typing and reduction preserved. -/
+
+#check @FCBridge.embTy_tyInst
+#check @FCBridge.embTm_subst
+#check @FCBridge.coTyping_emb
+#check @FCBridge.typing_emb
+#check @FCBridge.step_emb
+
+/-! `Start/BridgeStarHeight.lean` (M31-BRIDGE-STARHEIGHT): a regular language over `Bool` has
+generalized star height at most `3` and is decided in constant space by a host machine. -/
+
+#check @Complexity.Space.DFASim.accepts_iff
+#check @Complexity.Space.dspace_of_isRegular
+#check @GeneralizedStarHeight.regular_starHeight_dspace
