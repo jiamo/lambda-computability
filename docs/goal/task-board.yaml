@@ -8956,24 +8956,44 @@ tasks:
 
   - id: M26-UNIFY-DEPTHTHREE
     priority: P2
-    status: TODO_NEEDS_DESIGN
+    status: DONE_WEAK
     track: unify/complexity
     title: "Unify the absorbed DepthThree foundations with the host: polynomial-time multitape machines vs Cobham P, Circuit3 vs Σ₃ host circuits, both directions"
-    latest_evidence: "docs/goal/evidence/M26-OAI-ABSORPTION.md"
-    open_boundary: "The conclusion is already transferred (Complexity.DepthThreeHost.depthThree_lower_bound_host, Start/DepthThreeHost.lean) using one direction of each correspondence: MultiTapeCobham.inP_of_multiTapeHaltsIn and the translation Σ₃ ACCirc → Circuit3 (toCircuit3_eval, toCircuit3_gateCount). Missing: the converse of each: every InP language (Start/ComplexityClasses.lean) is decided by a FiniteMultiTapeMachine in polynomial time, and every Circuit3 on Fin n becomes a Σ₃ ACCirc computing the same function with linearly many gates. With both, every upstream DepthThree intermediate result about P or Circuit3 transfers."
+    terminal_statement: "Complexity.DepthThreeHost.fromCircuit3_eval (C : Circuit3 (Fin n)) (x) : (fromCircuit3 C).eval (List.ofFn x) = C.eval x; fromCircuit3_isSigma3 : (fromCircuit3 C).IsSigma3; fromCircuit3_gates : (fromCircuit3 C).gates ≤ C.gateCount ^ 2; toCircuit3_fromCircuit3_eval (round trip) (Start/DepthThreeFoundation.lean). The InP half is open: M26-UNIFY-DEPTHTHREE-COBMT."
+    latest_evidence: "docs/goal/evidence/M31-UNIFY.md"
+    open_boundary: "The circuit half is done (Start/DepthThreeFoundation.lean). Its bound is quadratic, not linear: host circuits are trees (formulas) while a Circuit3 shares bottom clauses among middle gates, so the tree form duplicates them (gates ≤ 1 + m·(b+1) ≤ gateCount²); exponential lower bounds transfer with the exponent halved. The exit criterion was corrected accordingly. Missing: every InP language is decided by a FiniteMultiTapeMachine in polynomial time — task M26-UNIFY-DEPTHTHREE-COBMT (a compiler from Cob terms to multi-tape machines with polynomial time bounds)."
     milestone: M26
     depends_on:
       - M26-OAI-DEPTHTHREE
+      - M26-UNIFY-DEPTHTHREE-COBMT
     rank: 2480
     exit_criteria:
       - "InP L ↔ ∃ (M : FiniteMultiTapeMachine) (C a : ℕ), M decides L within C · (n+1)^a steps."
-      - "Every Circuit3 (Fin n) has a Σ₃ ACCirc computing the same function with O(gateCount) gates, and conversely (existing translation)."
+      - "Every Circuit3 (Fin n) has a Σ₃ ACCirc computing the same function with at most gateCount² gates (corrected from O(gateCount): host circuits are trees, and the shared bottom clauses of a Circuit3 are duplicated), and conversely (existing translation)."
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
       - "python3 scripts/check_sorry.py"
       - "lake build --wfail"
 
+  - id: M26-UNIFY-DEPTHTHREE-COBMT
+    priority: P2
+    status: TODO_READY
+    track: unify/complexity
+    title: "Cobham terms compile to polynomial-time FiniteMultiTapeMachines: InP L → a multi-tape machine decides L within C·(n+1)^a steps"
+    latest_evidence: "docs/goal/evidence/M31-UNIFY.md"
+    open_boundary: "First missing construction: a compiler from Cob terms (Start/ComplexityClasses.lean: proj, empty, app, smash, comp, bRec) to DepthThreeLowerBound.FiniteMultiTapeMachine, with the lemma: for every v : Cob there are C a such that, for all argument words, the machine started with the arguments on its tapes halts within C · (Σ|args| + 1)^a steps with Cob.eval v args on its output tape. By induction on v: direct machines for proj, empty, app and smash; comp by running the argument machines on disjoint tapes and then the outer machine (product of state types, sum of tape types); bRec by a loop over the bits of the first argument, recomputing with truncation to the bound bd. Then InP L gives MultiTapePolynomialTimeDecider (decide ∘ L) through a final non-emptiness test. Reusable: the runSteps and MultiTapeHaltsIn lemmas of Start/DepthThreeMultiTapeMachine.lean; Start/MultiTapeMacro.lean covers the converse direction only."
+    milestone: M26
+    depends_on: []
+    rank: 1000
+    exit_criteria:
+      - "∀ L, InP L → ∃ (M : FiniteMultiTapeMachine) (C a : ℕ), 0 < C ∧ 0 < a ∧ ∀ w, MultiTapeHaltsIn M w (decide (L w)) (C * (w.length + 1) ^ a); with Complexity.MultiTapeCobham.inP_of_multiTapeHaltsIn this gives InP ↔ multi-tape polynomial time."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_unification.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
 
   - id: M26-UNIFY-RIGIDITY-FOUNDATION
     priority: P2

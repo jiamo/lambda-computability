@@ -226,3 +226,25 @@ gates (M31-UNIFY-GATE).
       for a converging stage of `Code.evaln`, and reads off the value.
   - Not shown: that these maps are computable as maps between codes. `OracleCode` has no
     `Primcodable` instance.
+
+## 2026-10-28 — phase 2: DepthThree (circuit half done, machine half open)
+
+- **Circuit3 → Σ₃ host circuits** (`Start/DepthThreeFoundation.lean`).
+  - `fromCircuit3` builds an `OR` over the top gates, each an `AND` over its bottom clauses,
+    each clause an `OR` of literals and constants.
+  - It computes the same function (`fromCircuit3_eval`) and is `Σ₃` (`fromCircuit3_isSigma3`).
+  - Its number of gates is at most `gateCount ^ 2` (`fromCircuit3_gates`; `ACCirc.gates`
+    counts `NOT`/`AND`/`OR` nodes).
+  - The round trip through `toCircuit3` computes the same function.
+  - The row asked for `O(gateCount)` gates. That bound is not available here: host circuits are
+    trees, while a `Circuit3` shares its bottom clauses among middle gates, so the tree form
+    duplicates them. The exit criterion was corrected to `gateCount²`; exponential lower bounds
+    still transfer, with the exponent halved.
+- **InP → polynomial-time multi-tape machines**: not done. The row is DONE_WEAK and depends on
+  the new task M26-UNIFY-DEPTHTHREE-COBMT (rank 1000, the head of the queue by rank).
+  - That task is a compiler from `Cob` terms to `FiniteMultiTapeMachine` with polynomial time
+    bounds, by induction on the term:
+    - direct machines for `proj`, `empty`, `app` and `smash`;
+    - `comp` by sequencing machines on disjoint tapes;
+    - `bRec` by a loop over the bits of the recursion argument, with truncation to the bound.
+  - The host has only the converse direction (`MultiTapeCobham`).

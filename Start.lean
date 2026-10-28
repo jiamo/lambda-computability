@@ -951,4 +951,5 @@ import Start.BridgeMLTTLambda
 import Start.BridgeLambdaPCA
 import Start.BridgeCwAMLTT
 import Start.RigidityFoundation
+import Start.DepthThreeFoundation
 import Start.Capstones

@@ -553,6 +553,7 @@ import Start.BridgeMLTTLambda
 import Start.BridgeLambdaPCA
 import Start.BridgeCwAMLTT
 import Start.RigidityFoundation
+import Start.DepthThreeFoundation
 
 /-! ## Interfaces of the untyped calculus
 
@@ -6632,3 +6633,12 @@ upstream oracle programs and host indices translate both ways, uniformly in the 
 #check @Lambda.Oracle.hostIterate_equiv
 #check @Lambda.Oracle.exists_index_of_code
 #check @Lambda.Oracle.exists_code_of_index
+
+/-! `Start/DepthThreeFoundation.lean` (M26-UNIFY-DEPTHTHREE, circuit half): every upstream
+`Circuit3` is a `Σ₃` host circuit computing the same function, with at most `gateCount ^ 2` gates
+(host circuits are trees). The polynomial-time machine half is M26-UNIFY-DEPTHTHREE-COBMT. -/
+
+#check @Complexity.DepthThreeHost.fromCircuit3_eval
+#check @Complexity.DepthThreeHost.fromCircuit3_isSigma3
+#check @Complexity.DepthThreeHost.fromCircuit3_gates
+#check @Complexity.DepthThreeHost.toCircuit3_fromCircuit3_eval
