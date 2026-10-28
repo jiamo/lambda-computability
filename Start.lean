@@ -932,4 +932,7 @@ import Start.MLTTDecideCorrect
 import Start.MLTTDecide
 import Start.MLTTCheck
 import Start.MLTTCheckDecide
+import Start.MLTTFullRed
+import Start.MLTTNormalize
+import Start.MLTTPTS
 import Start.Capstones

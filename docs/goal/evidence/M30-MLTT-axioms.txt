@@ -55,3 +55,17 @@
 'MLTT.WfTy.decidable' depends on axioms: [propext, Classical.choice, Quot.sound]
 'MLTT.WfCtx.decidable' depends on axioms: [propext, Classical.choice, Quot.sound]
 'MLTT.typeCheck_decidable' depends on axioms: [propext, Classical.choice, Quot.sound]
+
+# 2026-10-28 (local): #print axioms (lake env lean on a scratch file importing Start.MLTTPTS)
+'MLTT.FStep.deq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'MLTT.FStep.unrename' depends on axioms: [propext]
+'MLTT.NfB.unrename' does not depend on any axioms
+'MLTT.wnEq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'MLTT.HasTy.wn' depends on axioms: [propext, Classical.choice, Quot.sound]
+'MLTT.WfTy.wn' depends on axioms: [propext, Classical.choice, Quot.sound]
+'MLTT.converts_tyEq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'MLTT.HasType.toTm' depends on axioms: [propext, Classical.choice, Quot.sound]
+'MLTT.Legal.toTm_wn' depends on axioms: [propext, Classical.choice, Quot.sound]
+'MLTT.Legal.reduces_nf' depends on axioms: [propext, Classical.choice, Quot.sound]
+'MLTT.normal_of_nf' does not depend on any axioms
+'MLTT.mlttPTS_sn_of_annotationWN' depends on axioms: [propext, Classical.choice, Quot.sound]

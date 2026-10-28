@@ -16,7 +16,8 @@ The metatheory of the declarative system that the conversion algorithm needs, de
   `inv_zero`, `inv_succ`, `inv_natrec`, `inv_emptyrec` — **inversion of typing**;
 * `MLTT.Neutral.tyUnique` — **a neutral term has a unique type** up to type equality;
 * `MLTT.TyEq.univ_whnf`, `nat_whnf`, `empty_whnf`, `pi_whnf`, `ne_whnf` — a weak head normal
-  type equal to a universe, `ℕ`, `⊥`, a product or a neutral type has the same head.
+  type equal to a universe, `ℕ`, `⊥`, a product or a neutral type has the same head;
+* `MLTT.WfTy.univ` — every well-formed type is a term of some universe.
 -/
 
 import Start.MLTTConsequences
@@ -423,5 +424,27 @@ theorem TyEq.whnf_ne_cases {Γ : Ctx} {A B : Tm} (h : TyEq Γ A B) (hA : Whnf A)
       subst e
       obtain ⟨H, E', rfl, hFH, hGE⟩ := h.pi_whnf hB
       exact Or.inr (Or.inl ⟨_, _, H, E', rfl, rfl, hFH, hGE⟩)
+
+/-! ### Every type lives in a universe -/
+
+/-- For type formation: the type is a term of a universe. -/
+def Jd.InUniv : Jd → Prop
+  | .tyWf Γ A => ∃ l, HasTy Γ A (Tm.univ l)
+  | _ => True
+
+theorem Der.inUniv {J : Jd} (h : Der J) : J.InUniv := by
+  induction h
+  case univT l hΓ _ => exact ⟨l + 1, Der.univU l hΓ⟩
+  case natT hΓ _ => exact ⟨0, Der.natU hΓ⟩
+  case emptyT hΓ _ => exact ⟨0, Der.emptyU hΓ⟩
+  case piT _ _ ihF ihG =>
+    obtain ⟨i, hF⟩ := ihF
+    obtain ⟨j, hG⟩ := ihG
+    exact ⟨max i j, Der.piU hF hG⟩
+  case el h _ => exact ⟨_, h⟩
+  all_goals trivial
+
+/-- **Every well-formed type is a term of some universe.** -/
+theorem WfTy.univ {Γ : Ctx} {A : Tm} (h : WfTy Γ A) : ∃ l, HasTy Γ A (Tm.univ l) := Der.inUniv h
 
 end MLTT

@@ -538,6 +538,7 @@ import Start.MLTTConsequences
 import Start.MLTTAlgComplete
 import Start.MLTTDecide
 import Start.MLTTCheckDecide
+import Start.MLTTPTS
 
 /-! ## Interfaces of the untyped calculus
 
@@ -6455,3 +6456,29 @@ everything else inferred, conversion by the decision procedure); **sound** for e
 #check @MLTT.WfTy.decidable
 #check @MLTT.WfCtx.decidable
 #check @MLTT.typeCheck_decidable
+
+/-! `Start/MLTTFullRed.lean`, `Start/MLTTNormalize.lean` (M30-MLTT-WN): full reduction of MLTT
+(β and `natrec`, under binders and in types), subject reduction for it, anti-renaming, and the
+normalizing generic equality `wnEq`; by the fundamental theorem at it, **every typable term and
+every well-formed type of MLTT has a normal form**. -/
+
+#check @MLTT.FStep.deq
+#check @MLTT.FStep.unrename
+#check @MLTT.wnEq
+#check @MLTT.HasTy.wn
+#check @MLTT.WfTy.wn
+
+/-! `Start/MLTTPTS.lean` (M30-UNIFY-PTS-MLTT): the Π-and-universe fragment of MLTT as the absorbed
+pure type system `mlttPTS` (sorts ℕ, axioms `l : l+1`, rules `(i, j, max i j)`): the erasure of
+domain annotations is **sound** for typing (through the absorbed confluence), erasures of legal
+terms are weakly normalizing, every legal term reduces to one with a normal erasure, and the
+remaining statement `AnnotationWN` gives **strong normalization of `mlttPTS`** by the absorbed
+`weak_implies_strong`. -/
+
+#check @MLTT.mlttPTS
+#check @MLTT.converts_tyEq
+#check @MLTT.HasType.toTm
+#check @MLTT.Legal.toTm_wn
+#check @MLTT.Legal.reduces_nf
+#check @MLTT.normal_of_nf
+#check @MLTT.mlttPTS_sn_of_annotationWN

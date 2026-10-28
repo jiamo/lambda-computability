@@ -197,6 +197,71 @@ Results:
 
 Axioms: `propext`, `Classical.choice`, `Quot.sound`. Each module was type-checked on its own.
 
+## 2026-10-28 — normalization for full reduction (`M30-MLTT-WN` done)
+
+`Start/MLTTFullRed.lean`, `Start/MLTTNormalize.lean`.
+
+* `FStep` is full reduction: β and both `natrec` rules, under every term former, including
+  binders and types.
+* `NfB` defines normal forms (`Nf`) and neutral normal forms (`NeNf`).
+* `FStep.subst`, `FStep.rename`, `FSteps.substArg`: reduction commutes with substitution and
+  renaming, and substituting reducing terms reduces.
+* `FStep.unrename`, `NfB.unrename`: anti-renaming.
+* **`FStep.deq`**: subject reduction for full reduction.
+  * A step of a typed term is a judgemental equality at its type.
+  * Congruence of abstraction is derived from η (`DEq.lam_cong`).
+* `Whnf.pi_canon`: canonical forms at products.
+* `wnEq` is the generic equality "declaratively equal, and weakly normalizing".
+  * Neutral terms carry neutral normal forms.
+  * Its η field (`WN.of_eta`) does the real work, in two cases.
+    * Abstraction: a normalizing reduction of `(λ c) x` passes through `c[x]`
+      (`fsteps_beta_expand`).
+    * Neutral term: the reducts of `app k x` are applications, and anti-renaming removes the
+      weakening (`fsteps_app_neutral`).
+* **`HasTy.wn`, `WfTy.wn`**: every typable term and every well-formed type of MLTT has a normal
+  form. This is `Der.valid wnEq` at the identity substitution.
+
+## 2026-10-28 — MLTT and the absorbed PTS (`M30-UNIFY-PTS-MLTT`, weak)
+
+`Start/MLTTPTS.lean`.
+
+The Π-and-universe fragment of MLTT is the PTS `mlttPTS`: sorts `ℕ`, axioms `l : l+1`, rules
+`(i, j, max i j)`.
+
+`toTm` erases domain annotations.
+* It commutes with renaming, substitution and instantiation.
+* A β-step of the PTS erases to at most one `FStep`.
+
+Results:
+* **`HasType.toTm`**: soundness. A typing of `mlttPTS` erases to a typing of MLTT in a
+  well-formed context. The conversion rule goes through two pieces:
+  * the absorbed Church–Rosser property (`PureTypeSystem.Reduces.confluent`, `converts_join`);
+  * `FSteps.tyEq`.
+* **`Legal.toTm_wn`**: the erasure of a legal term has a normal form.
+* `FSteps.liftPTS`: reductions of erasures lift to the PTS. `Legal.reduces` follows from the
+  absorbed subject reduction and regularity. Together they give **`Legal.reduces_nf`**: every
+  legal term reduces to a legal term with a normal erasure.
+* `normal_of_nf`: a term with a normal erasure and normal annotations is normal.
+* **`mlttPTS_sn_of_annotationWN : AnnotationWN → SystemStronglyNormalizing mlttPTS`**, via the
+  absorbed `PureTypeSystem.weak_implies_strong`.
+
+Open: `AnnotationWN` (task `M30-UNIFY-PTS-ANNOT`). It says that legal terms whose erasure is
+normal are weakly normalizing; in such terms every redex lies inside a domain annotation.
+
+Why the erasure route stops there:
+1. The erasure does not see annotations.
+2. A structural "annotations first" induction breaks at applications. Contracting `(λx:A.b) a`
+   substitutes `a` into the annotations of `b` and can create redexes there, with no bound on
+   size.
+3. The generic logical relation relates functions only through η, so it never inspects
+   annotations.
+
+Candidate routes are listed in the task row.
+
+Axioms: `propext`, `Classical.choice`, `Quot.sound`. The PTS modules were type-checked against
+the existing `.lake` oleans of the absorbed development, symlinked into the scratch olean
+directory; none were rebuilt.
+
 ## `M30-UNIFY-PTS-MLTT` (filed in M30, not M26)
 
 The Π-and-universe fragment of MLTT is the PTS with sorts `ℕ`, axioms `(l, l+1)` and rules

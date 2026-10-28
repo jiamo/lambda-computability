@@ -8892,16 +8892,58 @@ tasks:
       - "lake build --wfail"
 
 
-  - id: M30-UNIFY-PTS-MLTT
+  - id: M30-MLTT-WN
+    priority: P1
+    status: DONE_STRONG
+    track: theory/types
+    title: "MLTT: weak normalization for full reduction — every typable term and well-formed type has a normal form"
+    terminal_statement: "MLTT.FStep (full β/natrec reduction under every former), MLTT.NfB (normal and neutral normal forms) (Start/MLTTFullRed.lean); MLTT.FStep.deq {t u : Tm} (h : FStep t u) : ∀ {Γ T}, HasTy Γ t T → DEq Γ t u T (subject reduction for full reduction); MLTT.FStep.unrename, MLTT.NfB.unrename (anti-renaming); MLTT.wnEq : GenEq; MLTT.HasTy.wn {Γ : Ctx} {t A : Tm} (h : HasTy Γ t A) : WN t; MLTT.WfTy.wn {Γ : Ctx} {A : Tm} (h : WfTy Γ A) : WN A, WN t := ∃ n, FSteps t n ∧ Nf n (Start/MLTTNormalize.lean)"
+    latest_evidence: "docs/goal/evidence/M30-MLTT.md"
+    open_boundary: ""
+    milestone: M30
+    depends_on:
+      - M30-MLTT-ALG
+    rank: 3055
+    exit_criteria:
+      - "Full reduction (β and the natrec rules, in every position) has subject reduction, and every typable term and well-formed type reduces to a normal form, by the fundamental theorem at a generic equality carrying weak normalization."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+
+  - id: M30-UNIFY-PTS-ANNOT
     priority: P1
     status: TODO_NEEDS_DESIGN
     track: unify/types
-    title: "Unify MLTT with the absorbed PTS development: the Π-U fragment of MLTT is the PTS (ℕ, l : l+1, (i, j, max i j)), so its weak normalization gives strong normalization"
+    title: "mlttPTS: legal terms with a normal erasure are weakly normalizing (the domain annotations)"
     latest_evidence: "docs/goal/evidence/M30-MLTT.md"
-    open_boundary: "Needs M30-MLTT-CONV (filed in M30 because the board does not let an M26 row depend on an M30 one). Missing: (1) a Specification ℕ with axioms (l, l+1) and rules (i, j, max i j) (Start/PTSExpansionLocal.lean natHier has rules (m, n, n) for n ≤ m, a different hierarchy); (2) translation PTS → MLTT by erasing λ annotations, sound for typing, which turns the untyped Converts of the PTS conversion rule into DEq using the absorbed confluence and subject reduction (Start/PTSLabelled.lean confluent, subject_reduces); (3) full β-normal forms for MLTT, extracted from the algorithmic reflexivity derivation; (4) lifting weak normalization of the erasure back to the annotated PTS term, annotations included. Then PureTypeSystem.weak_implies_strong (Start/PTSNormalization.lean) gives SystemStronglyNormalizing."
+    open_boundary: "Prove MLTT.AnnotationWN (Start/MLTTPTS.lean): ∀ Γ M, ValidContext mlttPTS Γ → Legal mlttPTS Γ M → Nf (toTm M) → WeaklyNormalizing M; then MLTT.mlttPTS_sn_of_annotationWN gives SystemStronglyNormalizing mlttPTS. Obstacles found 2026-10-28: (1) the erasure does not see domain annotations, so MLTT.HasTy.wn says nothing about them; (2) a structural induction normalizing annotations first fails at applications, where contracting (λx:A.b) a substitutes a into the annotations of b and creates redexes in them, with no size bound; (3) the generic logical relation never inspects annotations (its Π case relates functions through η only), so instantiating it does not normalize them. Candidate routes: a Church-style variant of MLTT whose λ carries its domain, with a generic equality whose η field also normalizes the domain; or a non-erasing (memory) translation of mlttPTS into MLTT that keeps every annotation as an argument of a context constant."
     milestone: M30
     depends_on:
-      - M30-MLTT-CONV
+      - M30-MLTT-WN
+    rank: 3058
+    exit_criteria:
+      - "MLTT.AnnotationWN is proved, hence SystemWeaklyNormalizing mlttPTS and, by PureTypeSystem.weak_implies_strong, SystemStronglyNormalizing mlttPTS."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+
+  - id: M30-UNIFY-PTS-MLTT
+    priority: P1
+    status: DONE_WEAK
+    track: unify/types
+    title: "Unify MLTT with the absorbed PTS development: the Π-U fragment of MLTT is the PTS (ℕ, l : l+1, (i, j, max i j)), so its weak normalization gives strong normalization"
+    latest_evidence: "docs/goal/evidence/M30-MLTT.md"
+    open_boundary: "Done (Start/MLTTPTS.lean): the erasure toTm of mlttPTS (sorts ℕ, axioms l : l+1, rules (i, j, max i j)) into MLTT is sound for typing (MLTT.HasType.toTm, conversion through the absorbed Reduces.confluent and MLTT.FStep.deq); erasures of legal terms are weakly normalizing (MLTT.Legal.toTm_wn, from MLTT.HasTy.wn); every legal term reduces to a legal term with a normal erasure (MLTT.Legal.reduces_nf); MLTT.mlttPTS_sn_of_annotationWN : AnnotationWN → SystemStronglyNormalizing mlttPTS. Missing: MLTT.AnnotationWN (task M30-UNIFY-PTS-ANNOT): legal terms of mlttPTS whose erasure is normal are weakly normalizing; their redexes lie only inside domain annotations, which the erasure does not see."
+    milestone: M30
+    depends_on:
+      - M30-MLTT-WN
+      - M30-UNIFY-PTS-ANNOT
     rank: 3060
     exit_criteria:
       - "SystemWeaklyNormalizing and, by PureTypeSystem.weak_implies_strong, SystemStronglyNormalizing for the PTS with sorts ℕ, axioms (l, l+1), rules (i, j, max i j), proved through the MLTT normalization of Start/MLTT*.lean."

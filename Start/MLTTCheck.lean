@@ -14,8 +14,7 @@ the expected one by the conversion program of `Start/MLTTDecide.lean`.
 * `MLTT.tc_sound` — **soundness**: an inferred type is a type of the term, and a term checked
   against a well-formed type has that type (for every term, in every well-formed context);
 * `MLTT.Shape.ok` — **completeness** on the fragment: the inferred type of a typable term is
-  equal to each of its types, and a typable term is accepted at each of its types;
-* `MLTT.WfTy.univ` — every well-formed type is a term of some universe.
+  equal to each of its types, and a typable term is accepted at each of its types.
 -/
 
 import Start.MLTTDecide
@@ -26,28 +25,6 @@ set_option autoImplicit false
 namespace MLTT
 
 open Tm
-
-/-! ### Every type lives in a universe -/
-
-/-- For type formation: the type is a term of a universe. -/
-def Jd.InUniv : Jd → Prop
-  | .tyWf Γ A => ∃ l, HasTy Γ A (Tm.univ l)
-  | _ => True
-
-theorem Der.inUniv {J : Jd} (h : Der J) : J.InUniv := by
-  induction h
-  case univT l hΓ _ => exact ⟨l + 1, Der.univU l hΓ⟩
-  case natT hΓ _ => exact ⟨0, Der.natU hΓ⟩
-  case emptyT hΓ _ => exact ⟨0, Der.emptyU hΓ⟩
-  case piT _ _ ihF ihG =>
-    obtain ⟨i, hF⟩ := ihF
-    obtain ⟨j, hG⟩ := ihG
-    exact ⟨max i j, Der.piU hF hG⟩
-  case el h _ => exact ⟨_, h⟩
-  all_goals trivial
-
-/-- **Every well-formed type is a term of some universe.** -/
-theorem WfTy.univ {Γ : Ctx} {A : Tm} (h : WfTy Γ A) : ∃ l, HasTy Γ A (Tm.univ l) := Der.inUniv h
 
 /-! ### The checker -/
 
