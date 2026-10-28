@@ -556,6 +556,9 @@ import Start.RigidityFoundation
 import Start.DepthThreeFoundation
 import Start.CobRegProg
 import Start.CobRegCost
+import Start.CobMultiTape
+import Start.CobMultiTapeSim
+import Start.CobMultiTapeMain
 
 /-! ## Interfaces of the untyped calculus
 
@@ -6650,3 +6653,15 @@ layers): Cobham terms compile to word-register programs, correctly and with poly
 
 #check @Complexity.CobMT.compile_spec
 #check @Complexity.CobMT.compile_cost
+
+/-! `Start/CobMultiTape.lean`, `Start/CobMultiTapeSim.lean`, `Start/CobMultiTapeMain.lean`
+(M26-UNIFY-DEPTHTHREE-COBMT, M27-POLYTIME-MODEL-EQUIV): word-register programs run on
+`FiniteMultiTapeMachine`s within their cost; with the converse
+`MultiTapeCobham.inP_of_multiTapeHaltsIn`, Cobham's `P` is exactly polynomial time on multi-tape
+machines. -/
+
+#check @Complexity.CobMT.sim
+#check @Complexity.CobMT.cobMachine_haltsIn
+#check @Complexity.CobMT.multiTape_of_inP
+#check @Complexity.CobMT.multiTape_decide_of_inP
+#check @Complexity.CobMT.inP_iff_multiTape

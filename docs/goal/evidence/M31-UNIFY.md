@@ -248,3 +248,29 @@ gates (M31-UNIFY-GATE).
     - `comp` by sequencing machines on disjoint tapes;
     - `bRec` by a loop over the bits of the recursion argument, with truncation to the bound.
   - The host has only the converse direction (`MultiTapeCobham`).
+
+## 2026-10-29 — phase 2: DepthThree machine half (M26-UNIFY-DEPTHTHREE-COBMT, M27-POLYTIME-MODEL-EQUIV)
+
+- **Layers 1–2** (`Start/CobRegProg.lean`, `Start/CobRegCost.lean`, commit 6951647).
+  - Cobham terms compile to word-register programs (`compile_spec`).
+  - The cost of the compiled program is at most a monotone polynomial of the longest argument
+    (`compile_cost`).
+- **Layer 3a: the interpreter** (`Start/CobMultiTape.lean`).
+  - A `FiniteMultiTapeMachine` has one tape per register, each with a mark at its left end, and
+    runs low-level instructions (`LInstr`).
+  - Each instruction comes with a run lemma that bounds its number of steps: `run_clearI`,
+    `run_pushI`, `run_truncI`, `run_toEndI`, `run_testI`, `run_initI`, and so on.
+- **Layer 3b: the simulation** (`Start/CobMultiTapeSim.lean`).
+  - `flat` flattens a register program; each loop becomes a branch on the head of its register,
+    a step of that head and a jump back.
+  - `sim`: from the code of `p`, the interpreter reaches the end of that code within `cost p R`
+    steps. The tapes then hold `run p R`, and the tapes `p` does not use are untouched.
+- **Layer 3c: assembly** (`Start/CobMultiTapeMain.lean`).
+  - Compiled programs are well formed for distinct arguments (`compile_good`).
+  - `cobMachine v` initialises, runs `flat (compile v [0] 1 2)` and tests register 1. It halts
+    within `2|x| + 6 + f |x|` steps (`cobMachine_haltsIn`).
+  - `multiTape_of_inP` and `multiTape_decide_of_inP` give the bound `C (n+1)^a`.
+  - With the converse `MultiTapeCobham.inP_of_multiTapeHaltsIn`, `inP_iff_multiTape` holds:
+    Cobham's `P` is exactly polynomial time on `FiniteMultiTapeMachine`s. This needs no new
+    definition of `P`.
+- M26-UNIFY-DEPTHTHREE-COBMT, M26-UNIFY-DEPTHTHREE and M27-POLYTIME-MODEL-EQUIV are DONE_STRONG.

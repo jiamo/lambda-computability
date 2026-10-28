@@ -7244,11 +7244,12 @@ tasks:
 
   - id: M27-POLYTIME-MODEL-EQUIV
     priority: P1
-    status: TODO_NEEDS_DESIGN
+    status: DONE_STRONG
+    terminal_statement: "Complexity.CobMT.inP_iff_multiTape (L : Language) : InP L ↔ ∃ (M : FiniteMultiTapeMachine) (p : ℕ → ℕ), PolyBound p ∧ ∀ x, ∃ b, MultiTapeHaltsIn M x b (p x.length) ∧ (L x ↔ b = true); model: upstream FiniteMultiTapeMachine (Start/DepthThreeModel.lean) with input List Bool written by inputSymbol on the input tape; Cobham → machine with 2|x| + 6 + f |x| steps, f a monotone polynomial (cobMachine_haltsIn, multiTape_of_inP: C·(n+1)^a), machine → Cobham by MultiTapeCobham.inP_of_multiTapeHaltsIn (iteration a·(n+1)^k times of a Cobham step term); InP is not redefined (Start/CobMultiTapeMain.lean)"
     track: research/model-transfer
     title: "Connect explicit polynomial-time tape machines with Cobham-based P"
-    latest_evidence: "docs/goal/evidence/M26-OAI-ABSORPTION.md"
-    open_boundary: "The exact source tape-machine representation and effective compilation interface need to be selected; computability results alone do not prove polynomial-time equivalence."
+    latest_evidence: "docs/goal/evidence/M31-UNIFY.md"
+    open_boundary: ""
     milestone: M27
     depends_on:
       - M27-POLYTIME-TO-COBHAM
@@ -8956,12 +8957,12 @@ tasks:
 
   - id: M26-UNIFY-DEPTHTHREE
     priority: P2
-    status: DONE_WEAK
+    status: DONE_STRONG
     track: unify/complexity
     title: "Unify the absorbed DepthThree foundations with the host: polynomial-time multitape machines vs Cobham P, Circuit3 vs Σ₃ host circuits, both directions"
-    terminal_statement: "Complexity.DepthThreeHost.fromCircuit3_eval (C : Circuit3 (Fin n)) (x) : (fromCircuit3 C).eval (List.ofFn x) = C.eval x; fromCircuit3_isSigma3 : (fromCircuit3 C).IsSigma3; fromCircuit3_gates : (fromCircuit3 C).gates ≤ C.gateCount ^ 2; toCircuit3_fromCircuit3_eval (round trip) (Start/DepthThreeFoundation.lean). The InP half is open: M26-UNIFY-DEPTHTHREE-COBMT."
+    terminal_statement: "Complexity.CobMT.inP_iff_multiTape (L : Language) : InP L ↔ ∃ (M : FiniteMultiTapeMachine) (p : ℕ → ℕ), PolyBound p ∧ ∀ x, ∃ b, MultiTapeHaltsIn M x b (p x.length) ∧ (L x ↔ b = true) (Start/CobMultiTapeMain.lean); Complexity.DepthThreeHost.fromCircuit3_eval (C : Circuit3 (Fin n)) (x) : (fromCircuit3 C).eval (List.ofFn x) = C.eval x; fromCircuit3_isSigma3 : (fromCircuit3 C).IsSigma3; fromCircuit3_gates : (fromCircuit3 C).gates ≤ C.gateCount ^ 2; toCircuit3_fromCircuit3_eval (round trip) (Start/DepthThreeFoundation.lean)"
     latest_evidence: "docs/goal/evidence/M31-UNIFY.md"
-    open_boundary: "The circuit half is done (Start/DepthThreeFoundation.lean). Its bound is quadratic, not linear: host circuits are trees (formulas) while a Circuit3 shares bottom clauses among middle gates, so the tree form duplicates them (gates ≤ 1 + m·(b+1) ≤ gateCount²); exponential lower bounds transfer with the exponent halved. The exit criterion was corrected accordingly. Missing: every InP language is decided by a FiniteMultiTapeMachine in polynomial time — task M26-UNIFY-DEPTHTHREE-COBMT (a compiler from Cob terms to multi-tape machines with polynomial time bounds)."
+    open_boundary: ""
     milestone: M26
     depends_on:
       - M26-OAI-DEPTHTHREE
@@ -8978,11 +8979,12 @@ tasks:
 
   - id: M26-UNIFY-DEPTHTHREE-COBMT
     priority: P2
-    status: TODO_READY
+    status: DONE_STRONG
+    terminal_statement: "Complexity.CobMT.multiTape_decide_of_inP {L : Language} [DecidablePred L] (hL : InP L) : ∃ (M : FiniteMultiTapeMachine) (C a : ℕ), 0 < C ∧ 0 < a ∧ ∀ w, MultiTapeHaltsIn M w (decide (L w)) (C * (w.length + 1) ^ a); the machine is cobMachine v (one tape per register of compile v [0] 1 2, an initial copy of the input into register 0, a final emptiness test of register 1), halting within 2|x| + 6 + f |x| steps for a monotone polynomial f (cobMachine_haltsIn), by the simulation Complexity.CobMT.sim (steps ≤ RProg.cost) and compile_cost; with MultiTapeCobham.inP_of_multiTapeHaltsIn, Complexity.CobMT.inP_iff_multiTape (Start/CobRegProg.lean, Start/CobRegCost.lean, Start/CobMultiTape.lean, Start/CobMultiTapeSim.lean, Start/CobMultiTapeMain.lean)"
     track: unify/complexity
     title: "Cobham terms compile to polynomial-time FiniteMultiTapeMachines: InP L → a multi-tape machine decides L within C·(n+1)^a steps"
     latest_evidence: "docs/goal/evidence/M31-UNIFY.md"
-    open_boundary: "Layers 1-2 done (Start/CobRegProg.lean, Start/CobRegCost.lean): word-register programs RProg (clear, push, trunc, seq, forBits, forBitsRev) with semantics run; the compiler compile v args out fr with Complexity.CobMT.compile_spec (output register = v.eval, registers below fr unchanged, scratch emptied) and Complexity.CobMT.compile_cost (cost ≤ a monotone polynomial of the longest argument, PolyM). Missing (layer 3): RProg compiled to a FiniteMultiTapeMachine (one tape per register, a mark at the left end, loops by head cursors) with steps ≤ cost, an initial copy of the input into register 0 and a final emptiness test, giving InP L → MultiTapeHaltsIn M w (decide (L w)) (C·(|w|+1)^a)."
+    open_boundary: ""
     milestone: M26
     depends_on: []
     rank: 1000

@@ -954,4 +954,7 @@ import Start.RigidityFoundation
 import Start.DepthThreeFoundation
 import Start.CobRegProg
 import Start.CobRegCost
+import Start.CobMultiTape
+import Start.CobMultiTapeSim
+import Start.CobMultiTapeMain
 import Start.Capstones
