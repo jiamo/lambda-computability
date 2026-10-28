@@ -1,7 +1,7 @@
 version: 2
 source_protocol: docs/goal/goal-prompt.md
 active_milestone: M14
-milestone_order: ["M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10", "M11", "M12", "M13", "M14", "M15", "M16", "M17", "M18", "M19", "M20", "M21", "M22", "M23", "M24", "M25", "M26", "M27", "M28", "M29", "M30"]
+milestone_order: ["M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10", "M11", "M12", "M13", "M14", "M15", "M16", "M17", "M18", "M19", "M20", "M21", "M22", "M23", "M24", "M25", "M26", "M27", "M28", "M29", "M30", "M31"]
 tasks:
   - id: M1-BOUNDARY-SORRY-CLOSURE
     priority: P0
@@ -8992,5 +8992,330 @@ tasks:
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+
+  - id: M31-UNIFY-GATE
+    priority: P1
+    status: TODO_READY
+    track: unify/gate
+    title: "The import graph of Start is connected: scripts/check_unification.py --strict passes and runs in pack_gate"
+    latest_evidence: "docs/goal/evidence/M31-UNIFY.md"
+    open_boundary: "Not started."
+    milestone: M31
+    depends_on: []
+    rank: 3100
+    exit_criteria:
+      - "scripts/check_unification.py reports one component (aggregators Capstones and Demo excluded), and pack_gate.sh runs it with --strict."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_unification.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+
+  - id: M31-BRIDGE-STARHEIGHT
+    priority: P1
+    status: TODO_READY
+    track: unify/automata
+    title: "Star height (118 modules) ↔ host: regular languages are decided in constant space by the host offline machines"
+    latest_evidence: "docs/goal/evidence/M31-UNIFY.md"
+    open_boundary: "Not started."
+    milestone: M31
+    depends_on: []
+    rank: 3110
+    exit_criteria:
+      - "Every regular language over Bool (Mathlib Language.IsRegular) is in Complexity.Space.DSPACE of a constant bound, and the star-height main theorem is restated for such host languages."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_unification.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+
+  - id: M31-BRIDGE-WL
+    priority: P1
+    status: TODO_READY
+    track: unify/complexity
+    title: "Weisfeiler–Leman (43 modules, absorbed) ↔ host machines or complexity classes"
+    latest_evidence: "docs/goal/evidence/M31-UNIFY.md"
+    open_boundary: "Not started."
+    milestone: M31
+    depends_on: []
+    rank: 3120
+    exit_criteria:
+      - "A theorem relating the machine model or the main claim of the absorbed WL development to a host machine model or class."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_unification.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+
+  - id: M31-BRIDGE-MINSKY
+    priority: P1
+    status: DONE_STRONG
+    track: unify/computability
+    title: "Minsky machines and F<: (13 modules) ↔ λ-computability"
+    terminal_statement: "Minsky.Universal.cm_halts_not_lambdaDecidable : ¬ LambdaDecidable (fun n => CM.Halts M_u n.unpair.1 n.unpair.2); FsubCode.sub_not_lambdaDecidable : ¬ LambdaDecidable (fun n => ∃ g : Goal, encode g = n ∧ Sub g) (Start/BridgeMinsky.lean)"
+    latest_evidence: "docs/goal/evidence/M31-UNIFY.md"
+    open_boundary: ""
+    milestone: M31
+    depends_on: []
+    rank: 3130
+    exit_criteria:
+      - "The undecidability of the halting problem of the counter machine M_u and of F<: subtyping hold for λ-decidability (through lambdaDecidable_iff_computablePred)."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_unification.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+
+  - id: M31-BRIDGE-STLC
+    priority: P1
+    status: DONE_STRONG
+    track: unify/types
+    title: "STLC, its CCC model and NbE (5 modules) ↔ the untyped λ core"
+    terminal_statement: "Stlc.asmTm (S : Assembly A) (t : Tm Γ B) : ctxObj S Γ ⟶ tyObj S B; Stlc.asmTm_tracked; Stlc.asmTm_conv (h : Conv t u) : asmTm S t = asmTm S u; Stlc.asmTm_nf (Start/BridgeStlc.lean)"
+    latest_evidence: "docs/goal/evidence/M31-UNIFY.md"
+    open_boundary: ""
+    milestone: M31
+    depends_on: []
+    rank: 3140
+    exit_criteria:
+      - "The simply typed λ-calculus is interpreted in the cartesian closed category of assemblies over any PCA (CccModel instantiated at AssemblyCcc), soundly for βη; restated 2026-10-28 from an erasure to the λ core, which fails for the η rules of unit and products under Church encodings."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_unification.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+
+  - id: M31-BRIDGE-SOLENOIDAL
+    priority: P1
+    status: TODO_READY
+    track: unify/computability
+    title: "Solenoidal recorders (5 modules, absorbed) ↔ host computability"
+    latest_evidence: "docs/goal/evidence/M31-UNIFY.md"
+    open_boundary: "Not started."
+    milestone: M31
+    depends_on: []
+    rank: 3150
+    exit_criteria:
+      - "A theorem relating the absorbed solenoidal machines to partial recursive / λ-computable functions or host machines."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_unification.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+
+  - id: M31-BRIDGE-BLUM
+    priority: P1
+    status: DONE_STRONG
+    track: unify/complexity
+    title: "Step complexity, the gap theorem and Levin search (3 modules) ↔ λ-computability"
+    terminal_statement: "Complexity.exists_lambda_not_withinFuel; Complexity.exists_gap_lambda {g : ℕ → ℕ} (hg : LambdaComputable fun n => Part.some (g n)) (hle : ∀ n, n ≤ g n) : ∃ t, LambdaComputable (fun n => Part.some (t n)) ∧ ∀ c x, encode c < x → (StepsLe c x (g (t x)) ↔ StepsLe c x (t x)); Complexity.levin_optimal_codes (universal search over Code.evaln within 8·2^(encode c)·t) (Start/BridgeComputability.lean)"
+    latest_evidence: "docs/goal/evidence/M31-UNIFY.md"
+    open_boundary: ""
+    milestone: M31
+    depends_on: []
+    rank: 3160
+    exit_criteria:
+      - "The Blum measure, gap theorem and Levin search are restated for λ-computable bounds and λ programs (lambdaComputable_iff_computable), and Levin search is instantiated with the step-indexed evaluation of codes."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_unification.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+
+  - id: M31-BRIDGE-LOGIC
+    priority: P1
+    status: TODO_READY
+    track: unify/logic
+    title: "GL and the abstract Löb theorem (3 modules) ↔ each other and the spine"
+    latest_evidence: "docs/goal/evidence/M31-UNIFY.md"
+    open_boundary: "Not started."
+    milestone: M31
+    depends_on: []
+    rank: 3170
+    exit_criteria:
+      - "GL is sound for every provability system satisfying the derivability conditions (classical sentences), and the provability systems are linked to the computability spine."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_unification.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+
+  - id: M31-BRIDGE-SIZECHANGE
+    priority: P1
+    status: TODO_READY
+    track: unify/termination
+    title: "Size-change termination (2 modules) ↔ the spine"
+    latest_evidence: "docs/goal/evidence/M31-UNIFY.md"
+    open_boundary: "Not started."
+    milestone: M31
+    depends_on: []
+    rank: 3180
+    exit_criteria:
+      - "A theorem relating the size-change criterion to computability or to termination in the λ/type-theory spine."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_unification.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+
+  - id: M31-BRIDGE-SYSTEMFC
+    priority: P1
+    status: TODO_READY
+    track: unify/types
+    title: "System FC with data types (2 modules) ↔ System FC with coercions"
+    latest_evidence: "docs/goal/evidence/M31-UNIFY.md"
+    open_boundary: "Not started."
+    milestone: M31
+    depends_on: []
+    rank: 3190
+    exit_criteria:
+      - "System FC with coercions embeds into System FC with data types (empty signature), preserving typing and reduction."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_unification.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+
+  - id: M31-BRIDGE-CBPV
+    priority: P1
+    status: DONE_STRONG
+    track: unify/types
+    title: "Call-by-push-value (1 module) ↔ the untyped λ core"
+    terminal_statement: "CBPV.STm.toLambda_beta (t u : STm) : (t.subst (cons u STm.var)).toLambda = Lambda.subst u.toLambda 0 t.toLambda; CBPV.NStep.toLambda : NStep t t' → Lambda.step t.toLambda t'.toLambda; CBPV.VStep.toLambda (Start/BridgeCBPV.lean, with Start/BridgeLambdaEnv.lean)"
+    latest_evidence: "docs/goal/evidence/M31-UNIFY.md"
+    open_boundary: ""
+    milestone: M31
+    depends_on: []
+    rank: 3200
+    exit_criteria:
+      - "The source calculus of CBPV erases to Lambda, with call-by-name steps simulated by λ-steps."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_unification.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+
+  - id: M31-BRIDGE-INSEPARABLE
+    priority: P1
+    status: DONE_STRONG
+    track: unify/computability
+    title: "Recursive inseparability (1 module) ↔ λ-computability"
+    terminal_statement: "Lambda.Inseparable.no_lambda_separation {p : ℕ → Prop} (hp : LambdaDecidable p) (h₁ : ∀ e, leftDiag e → p e) (h₂ : ∀ e, rightDiag e → ¬ p e) : False; lambdaDecidable_iff_computablePred : LambdaDecidable p ↔ ComputablePred p (Start/BridgeComputability.lean)"
+    latest_evidence: "docs/goal/evidence/M31-UNIFY.md"
+    open_boundary: ""
+    milestone: M31
+    depends_on: []
+    rank: 3210
+    exit_criteria:
+      - "No λ-computable predicate separates the two halves of the diagonal."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_unification.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+
+  - id: M31-BRIDGE-SKELETON
+    priority: P1
+    status: TODO_READY
+    track: unify/types
+    title: "Skeletons of CC^ω (1 module) ↔ the untyped λ core"
+    latest_evidence: "docs/goal/evidence/M31-UNIFY.md"
+    open_boundary: "Not started."
+    milestone: M31
+    depends_on: []
+    rank: 3220
+    exit_criteria:
+      - "Skeleton terms erase to Lambda with β-steps simulated."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_unification.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+
+  - id: M31-FOUND-REALIZABILITY
+    priority: P1
+    status: TODO_READY
+    track: unify/foundation
+    title: "Realizability (40 modules, 4 on the λ core) ↔ the λ core as a partial combinatory algebra"
+    latest_evidence: "docs/goal/evidence/M31-UNIFY.md"
+    open_boundary: "Not started."
+    milestone: M31
+    depends_on: []
+    rank: 3300
+    exit_criteria:
+      - "The λ core gives a PCA (or the existing PCA is related to λ-definability) and the realizability models over it are compared with those over Kleene first algebra."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_unification.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+
+  - id: M31-FOUND-CWA-MLTT
+    priority: P1
+    status: TODO_READY
+    track: unify/foundation
+    title: "Categorical models (CwA) ↔ MLTT"
+    latest_evidence: "docs/goal/evidence/M31-UNIFY.md"
+    open_boundary: "Not started."
+    milestone: M31
+    depends_on: []
+    rank: 3310
+    exit_criteria:
+      - "A theorem relating the CwA/groupoid models to MLTT (an interpretation of a fragment of MLTT, or an embedding of LF into MLTT through which the LF interpretation applies)."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_unification.py"
+      - "python3 scripts/check_sorry.py"
+      - "lake build --wfail"
+
+
+  - id: M31-FOUND-MLTT-LAMBDA
+    priority: P1
+    status: TODO_READY
+    track: unify/foundation
+    title: "MLTT (0/29 on the λ core) ↔ the untyped λ core"
+    latest_evidence: "docs/goal/evidence/M31-UNIFY.md"
+    open_boundary: "Not started."
+    milestone: M31
+    depends_on: []
+    rank: 3320
+    exit_criteria:
+      - "Erasure of the pure fragment of MLTT to Lambda commutes with substitution and simulates reduction; erasures of typable terms reduce to normal forms (from MLTT.HasTy.wn)."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
+      - "python3 scripts/check_closure.py"
+      - "python3 scripts/check_unification.py"
       - "python3 scripts/check_sorry.py"
       - "lake build --wfail"

@@ -539,6 +539,9 @@ import Start.MLTTAlgComplete
 import Start.MLTTDecide
 import Start.MLTTCheckDecide
 import Start.MLTTPTS
+import Start.BridgeMinsky
+import Start.BridgeStlc
+import Start.BridgeCBPV
 
 /-! ## Interfaces of the untyped calculus
 
@@ -6482,3 +6485,36 @@ remaining statement `AnnotationWN` gives **strong normalization of `mlttPTS`** b
 #check @MLTT.Legal.reduces_nf
 #check @MLTT.normal_of_nf
 #check @MLTT.mlttPTS_sn_of_annotationWN
+
+/-! ### M31: bridges between the parts of the library
+
+`Start/BridgeComputability.lean`, `Start/BridgeMinsky.lean` (M31-BRIDGE-INSEPARABLE,
+M31-BRIDGE-BLUM, M31-BRIDGE-MINSKY): λ-decidability is computability; recursive inseparability,
+the Blum measure, the gap theorem, Levin search, counter machines and F<: over the λ-calculus. -/
+
+#check @lambdaDecidable_iff_computablePred
+#check @Lambda.Inseparable.no_lambda_separation
+#check @Complexity.exists_lambda_not_withinFuel
+#check @Complexity.exists_gap_lambda
+#check @Complexity.levin_optimal_codes
+#check @ComputablePred.of_lambdaDecidable_encode
+#check @Minsky.Universal.cm_halts_not_lambdaDecidable
+#check @FsubCode.sub_not_lambdaDecidable
+
+/-! `Start/BridgeStlc.lean` (M31-BRIDGE-STLC): the simply typed λ-calculus interpreted in the
+assemblies over any PCA, soundly for βη-conversion. -/
+
+#check @Stlc.asmTm
+#check @Stlc.asmTm_tracked
+#check @Stlc.asmTm_conv
+#check @Stlc.asmTm_nf
+
+/-! `Start/BridgeLambdaEnv.lean`, `Start/BridgeCBPV.lean` (M31-BRIDGE-CBPV): the core's lifting and
+single substitution as parallel substitutions; the source calculus of CBPV is the λ core, and its
+call-by-name and call-by-value steps are β-steps of the core. -/
+
+#check @Lambda.lift_eq_substEnv
+#check @Lambda.subst_zero_eq_substEnv
+#check @CBPV.STm.toLambda_beta
+#check @CBPV.NStep.toLambda
+#check @CBPV.VStep.toLambda

@@ -935,4 +935,9 @@ import Start.MLTTCheckDecide
 import Start.MLTTFullRed
 import Start.MLTTNormalize
 import Start.MLTTPTS
+import Start.BridgeComputability
+import Start.BridgeMinsky
+import Start.BridgeStlc
+import Start.BridgeLambdaEnv
+import Start.BridgeCBPV
 import Start.Capstones
