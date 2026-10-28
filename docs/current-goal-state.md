@@ -447,9 +447,9 @@
 | 3200 | `M31-BRIDGE-CBPV` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M31-UNIFY.md |  |
 | 3210 | `M31-BRIDGE-INSEPARABLE` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M31-UNIFY.md |  |
 | 3220 | `M31-BRIDGE-SKELETON` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M31-UNIFY.md |  |
-| 3300 | `M31-FOUND-REALIZABILITY` | `P1` | `TODO_READY` | - | docs/goal/evidence/M31-UNIFY.md | Not started. |
+| 3300 | `M31-FOUND-REALIZABILITY` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M31-UNIFY.md |  |
 | 3310 | `M31-FOUND-CWA-MLTT` | `P1` | `TODO_READY` | - | docs/goal/evidence/M31-UNIFY.md | Not started. |
-| 3320 | `M31-FOUND-MLTT-LAMBDA` | `P1` | `TODO_READY` | - | docs/goal/evidence/M31-UNIFY.md | Not started. |
+| 3320 | `M31-FOUND-MLTT-LAMBDA` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M31-UNIFY.md |  |
 
 Next: `M14-KRIVINE-SPACE-CLASS`
 

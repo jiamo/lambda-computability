@@ -9271,11 +9271,12 @@ tasks:
 
   - id: M31-FOUND-REALIZABILITY
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: unify/foundation
     title: "Realizability (40 modules, 4 on the λ core) ↔ the λ core as a partial combinatory algebra"
+    terminal_statement: "Realizability.TermModel.instTCA : TCA LTerm (λ-terms modulo β-conversion, K and S), hence a PCA; Realizability.TermModel.tracked_iff_computable (f : ℕ → ℕ) : Assembly.Tracked (natAsm churchL) (natAsm churchL) f ↔ Computable f; Realizability.Kleene.tracked_iff_computable; Realizability.tracked_termModel_iff_kleene : the λ term model and Kleene's first algebra have the same morphisms of natural-number assemblies (Start/BridgeLambdaPCA.lean)"
     latest_evidence: "docs/goal/evidence/M31-UNIFY.md"
-    open_boundary: "Not started."
+    open_boundary: ""
     milestone: M31
     depends_on: []
     rank: 3300
@@ -9311,11 +9312,12 @@ tasks:
 
   - id: M31-FOUND-MLTT-LAMBDA
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: unify/foundation
     title: "MLTT (0/29 on the λ core) ↔ the untyped λ core"
+    terminal_statement: "MLTT.Tm.erase_subst (t) (σ) : (subst σ t).erase = Lambda.substEnv (fun n => (σ n).erase) t.erase and MLTT.Tm.erase_inst (all terms); MLTT.FStep.erase : FStep t t' → t.Pure → Lambda.reduces t.erase t'.erase ∧ t'.Pure; MLTT.HasTy.erase_hasNormalForm : HasTy Γ t A → t.Pure → Lambda.HasNormalForm t.erase. Pure fragment (Tm.Pure) = no zero, succ, natrec; Π, universes, ℕ and ⊥ as types, and emptyrec, included (Start/BridgeMLTTLambda.lean)"
     latest_evidence: "docs/goal/evidence/M31-UNIFY.md"
-    open_boundary: "Not started."
+    open_boundary: ""
     milestone: M31
     depends_on: []
     rank: 3320
