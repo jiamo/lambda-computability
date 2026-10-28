@@ -537,6 +537,7 @@ import Start.LambdaPiLFDecide
 import Start.MLTTConsequences
 import Start.MLTTAlgComplete
 import Start.MLTTDecide
+import Start.MLTTCheckDecide
 
 /-! ## Interfaces of the untyped calculus
 
@@ -6438,3 +6439,19 @@ MLTT is decidable**. -/
 #check @MLTT.decideDEq_spec
 #check @MLTT.TyEq.decidable
 #check @MLTT.DEq.decidable
+
+/-! `Start/MLTTCheck.lean`, `Start/MLTTCheckDecide.lean` (M30-MLTT-CHECK): a bidirectional type
+checker for MLTT in the style of Agda's internal syntax (abstractions checked against products,
+everything else inferred, conversion by the decision procedure); **sound** for every term,
+**complete** on the bidirectional fragment (no abstraction at the head of an application),
+**terminating**; hence `⊢ Γ`, `Γ ⊢ A` and `Γ ⊢ t : A` are decidable on the fragment. -/
+
+#check @MLTT.WfTy.univ
+#check @MLTT.tc_sound
+#check @MLTT.Shape.ok
+#check @MLTT.tc_terminates
+#check @MLTT.HasTy.check_spec
+#check @MLTT.HasTy.decidable
+#check @MLTT.WfTy.decidable
+#check @MLTT.WfCtx.decidable
+#check @MLTT.typeCheck_decidable

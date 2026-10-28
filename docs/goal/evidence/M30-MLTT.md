@@ -166,6 +166,37 @@ well-typed inputs.
 Axioms: `propext`, `Classical.choice`, `Quot.sound` (`docs/goal/evidence/M30-MLTT-axioms.txt`).
 Each module was type-checked on its own; the full build is CI's.
 
+## 2026-10-28 — a bidirectional type checker (`M30-MLTT-CHECK` done)
+
+`Start/MLTTCheck.lean`, `Start/MLTTCheckDecide.lean` (996 lines).
+
+The checker works in the style of Agda's internal syntax.
+- Abstractions are checked against a type that reduces to a product.
+- Everything else is inferred.
+- A checked term that is not an abstraction is inferred, and its type is compared with the
+  expected one by the conversion program (`cRun`).
+- The recursion is structural on the term. The fuel only bounds weak head normalization and
+  conversion.
+
+Results:
+- `tcInfer`, `tcCheck` — the checker; `none` means the fuel ran out.
+- `tc_sound` — soundness for every term. An inferred type is a type of the term. A term
+  accepted against a well-formed type has that type.
+- `Shape` — the bidirectional fragment: no abstraction at the head of an application.
+  Every term without a β-redex `(λ b) a` is in it.
+- `Shape.ok` — completeness on the fragment.
+  - The inferred type equals each type of the term.
+  - The checker accepts the term at each of its types.
+  - The proof uses inversion and `Neutral.tyUnique`, plus the new lemma `WfTy.univ`: every
+    well-formed type is a term of a universe.
+- `tc_terminates` — in a well-formed context the answers are eventually constant, for
+  inference and for checking against well-formed types.
+- **`HasTy.decidable`**, **`WfTy.decidable`**, **`WfCtx.decidable`**,
+  **`typeCheck_decidable`** — `⊢ Γ ∧ Γ ⊢ A ∧ Γ ⊢ t : A` is decidable for inputs in the fragment.
+- Four `example`s evaluate the checker in the kernel (`by decide`).
+
+Axioms: `propext`, `Classical.choice`, `Quot.sound`. Each module was type-checked on its own.
+
 ## `M30-UNIFY-PTS-MLTT` (filed in M30, not M26)
 
 The Π-and-universe fragment of MLTT is the PTS with sorts `ℕ`, axioms `(l, l+1)` and rules

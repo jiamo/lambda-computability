@@ -43,3 +43,15 @@
 'MLTT.decideDEq_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
 'MLTT.TyEq.decidable' depends on axioms: [propext, Classical.choice, Quot.sound]
 'MLTT.DEq.decidable' depends on axioms: [propext, Classical.choice, Quot.sound]
+
+# 2026-10-28 (local): #print axioms (lake env lean on a scratch file importing Start.MLTTCheckDecide)
+'MLTT.WfTy.univ' depends on axioms: [propext]
+'MLTT.tc_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'MLTT.Shape.ok' depends on axioms: [propext, Classical.choice, Quot.sound]
+'MLTT.tc_terminates' depends on axioms: [propext, Classical.choice, Quot.sound]
+'MLTT.HasTy.check_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'MLTT.decideHasTy_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'MLTT.HasTy.decidable' depends on axioms: [propext, Classical.choice, Quot.sound]
+'MLTT.WfTy.decidable' depends on axioms: [propext, Classical.choice, Quot.sound]
+'MLTT.WfCtx.decidable' depends on axioms: [propext, Classical.choice, Quot.sound]
+'MLTT.typeCheck_decidable' depends on axioms: [propext, Classical.choice, Quot.sound]
