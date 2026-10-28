@@ -170,3 +170,27 @@ abstract Löb theorem (1), and the skeletons of CC^ω (1).
 `check_unification.py --strict` now passes: 1 component over 2194 modules.
 `scripts/pack_gate.sh` runs it on the packed tree, and `docs/RELEASING.md` lists it among the
 gates (M31-UNIFY-GATE).
+
+## 2026-10-28 — phase 2: MLTT erasure and the λ term model
+
+- **MLTT → λ core** (`Start/BridgeMLTTLambda.lean`).
+  - `MLTT.Tm.erase` keeps variables, abstractions and applications. `emptyrec P e` erases to
+    the erasure of `e`; the type formers erase to `λx. x`.
+  - Erasure commutes with renaming, substitution and β-substitution for every term
+    (`erase_rename`, `erase_subst`, `erase_inst`).
+  - On the pure fragment (`Tm.Pure`: no `zero`, `succ` or `natrec`), a full-reduction step is
+    simulated by core reduction (`FStep.erase`), and an MLTT normal form erases to a β-normal
+    term (`NfB.erase_normal`).
+  - With `MLTT.HasTy.wn`, the erasure of a typable pure term has a β-normal form
+    (`HasTy.erase_hasNormalForm`).
+  - `natrec` is outside the pure fragment. Its β-faithful erasure needs a fixed-point
+    combinator, and that erasure has no normal form.
+- **The λ core as a PCA** (`Start/BridgeLambdaPCA.lean`).
+  - The term model `LTerm` (terms modulo β-conversion) with `Lambda.K` and `Lambda.S` is a total
+    combinatory algebra (`instTCA`; `K_reduces`, `S_reduces`), hence a PCA.
+  - Church–Rosser gives common reducts of convertible terms (`conv_common`).
+  - Over the term model, with Church numerals as realizers, the morphisms of the natural-number
+    assemblies are exactly the computable functions (`TermModel.tracked_iff_computable`).
+  - The same holds over Kleene's first algebra (`Kleene.tracked_iff_computable`). So the two
+    realizability models have the same arithmetic functions
+    (`tracked_termModel_iff_kleene`).

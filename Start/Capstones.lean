@@ -549,6 +549,8 @@ import Start.BridgeGL
 import Start.BridgeSkT
 import Start.BridgeSizeChange
 import Start.BridgeSolenoidal
+import Start.BridgeMLTTLambda
+import Start.BridgeLambdaPCA
 
 /-! ## Interfaces of the untyped calculus
 
@@ -6585,3 +6587,25 @@ machine halts. -/
 #check @Solenoidal.Machine.rel_run
 #check @Solenoidal.Machine.halts_iff_host
 #check @Solenoidal.Recorder.terminal_iff_host
+
+/-! ### M31 phase 2: foundations
+
+`Start/BridgeMLTTLambda.lean` (M31-FOUND-MLTT-LAMBDA): MLTT erases to the λ core; the erasure
+commutes with substitution, simulates full reduction on the pure fragment, and the erasure of a
+typable pure term has a β-normal form. -/
+
+#check @MLTT.Tm.erase_subst
+#check @MLTT.Tm.erase_inst
+#check @MLTT.FStep.erase
+#check @MLTT.NfB.erase_normal
+#check @MLTT.HasTy.erase_hasNormalForm
+
+/-! `Start/BridgeLambdaPCA.lean` (M31-FOUND-REALIZABILITY): the term model of the λ core is a total
+combinatory algebra; over it and over Kleene's first algebra the morphisms of the natural-number
+assemblies are exactly the computable functions. -/
+
+#check @Realizability.TermModel.instTCA
+#check @Realizability.TermModel.conv_common
+#check @Realizability.TermModel.tracked_iff_computable
+#check @Realizability.Kleene.tracked_iff_computable
+#check @Realizability.tracked_termModel_iff_kleene

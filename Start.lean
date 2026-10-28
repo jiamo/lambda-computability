@@ -947,4 +947,6 @@ import Start.BridgeGL
 import Start.BridgeSkT
 import Start.BridgeSizeChange
 import Start.BridgeSolenoidal
+import Start.BridgeMLTTLambda
+import Start.BridgeLambdaPCA
 import Start.Capstones
