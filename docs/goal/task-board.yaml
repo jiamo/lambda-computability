@@ -8998,11 +8998,12 @@ tasks:
 
   - id: M31-UNIFY-GATE
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: unify/gate
     title: "The import graph of Start is connected: scripts/check_unification.py --strict passes and runs in pack_gate"
+    terminal_statement: "scripts/check_unification.py --strict: 1 component over the Start modules (aggregators Start.lean, Capstones and Demo excluded); scripts/pack_gate.sh runs it on the packed tree"
     latest_evidence: "docs/goal/evidence/M31-UNIFY.md"
-    open_boundary: "Not started."
+    open_boundary: ""
     milestone: M31
     depends_on: []
     rank: 3100
@@ -9102,11 +9103,12 @@ tasks:
 
   - id: M31-BRIDGE-SOLENOIDAL
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: unify/computability
     title: "Solenoidal recorders (5 modules, absorbed) ↔ host computability"
+    terminal_statement: "Solenoidal.Machine.halts_iff_host (M) (S : BitSymbols M) (w : List Bool) : M.Halts (w.map S.sym) ↔ ∃ T, MultiTapeHaltsIn (toHost M S) w true T; Solenoidal.Recorder.terminal_iff_host (recorder terminal reachability ↔ host halting); Solenoidal.Machine.rel_run (step-for-step simulation) (Start/BridgeSolenoidal.lean)"
     latest_evidence: "docs/goal/evidence/M31-UNIFY.md"
-    open_boundary: "Not started."
+    open_boundary: ""
     milestone: M31
     depends_on: []
     rank: 3150
@@ -9143,11 +9145,12 @@ tasks:
 
   - id: M31-BRIDGE-LOGIC
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: unify/logic
     title: "GL and the abstract Löb theorem (3 modules) ↔ each other and the spine"
+    terminal_statement: "Lambda.Lob.ProvabilitySystem.gl_sound (hc : T.IsClassical) (ι : ℕ → T.Sen) : ModalGL.Provable φ → T.Thm (T.realize ι φ); ModalGL.complete_fin (bounded finite model property); ModalGL.decideGL_iff : decideGL n = true ↔ Provable (Fml.ofNat n), ModalGL.decideGL_primrec : Primrec decideGL; ModalGL.provable_lambdaDecidable : LambdaDecidable fun n => Provable (Fml.ofNat n), with Fml.ofNat_toNat (Start/BridgeGL.lean)"
     latest_evidence: "docs/goal/evidence/M31-UNIFY.md"
-    open_boundary: "Not started."
+    open_boundary: ""
     milestone: M31
     depends_on: []
     rank: 3170
@@ -9163,11 +9166,12 @@ tasks:
 
   - id: M31-BRIDGE-SIZECHANGE
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: unify/termination
     title: "Size-change termination (2 modules) ↔ the spine"
+    terminal_statement: "FsubGhelli.CM.halts_of_sct (M : CM) (hsct : (callGraph M).SCT) (a b : ℕ) : CM.Halts M a b; FsubGhelli.CM.halts_of_criterion; FsubGhelli.CM.descent (soundness of the size-change graphs of the transitions) (Start/BridgeSizeChange.lean)"
     latest_evidence: "docs/goal/evidence/M31-UNIFY.md"
-    open_boundary: "Not started."
+    open_boundary: ""
     milestone: M31
     depends_on: []
     rank: 3180
@@ -9246,11 +9250,12 @@ tasks:
 
   - id: M31-BRIDGE-SKELETON
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
     track: unify/types
     title: "Skeletons of CC^ω (1 module) ↔ the untyped λ core"
+    terminal_statement: "PureTypeSystem.CCO.SkF.SkT.Step.erase : Step t t' → Lambda.step t.erase t'.erase; SkT.erase_beta; SkT.erase_typing : Lambda.Typing (Γ.map SkTy.toTy) t.erase a.toTy; SkT.sn (t : SkT Γ a) : Acc (fun u v => Step v u) t (Start/BridgeSkT.lean)"
     latest_evidence: "docs/goal/evidence/M31-UNIFY.md"
-    open_boundary: "Not started."
+    open_boundary: ""
     milestone: M31
     depends_on: []
     rank: 3220

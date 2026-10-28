@@ -77,7 +77,10 @@ runs, *inside the unpacked copy*:
   string literals excluded (a plain `grep` fails on the documentation, which discusses
   `sorry` in prose);
 * `scripts/goal_state.py validate` and `scripts/check_closure.py` — the task board is
-  well formed and every module is in the import closure.
+  well formed and every module is in the import closure;
+* `scripts/check_unification.py --strict` — the import graph of `Start/` is connected (the
+  aggregators `Start.lean`, `Capstones` and `Demo` excluded): no development is an island
+  linked to the rest only through an aggregator.
 
 ### The gate now has a caller
 

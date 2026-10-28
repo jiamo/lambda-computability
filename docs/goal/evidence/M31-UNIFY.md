@@ -128,3 +128,45 @@ abstract Löb theorem (1), and the skeletons of CC^ω (1).
   - **`WLTime.multiTape_not_poly`**: once `2a < c k`, no host machine decides `k`-WL equivalence
     within time `C (|x| + 1) ^ a`. The host machines are the ones whose polynomial-time deciders
     are in Cobham's class (`Complexity.MultiTapeCobham.inP_of_multiTapeHaltsIn`).
+
+## 2026-10-28 — the last islands (6 → 1 component); the gate
+
+- **GL and the abstract Löb theorem** (`Start/BridgeGL.lean`).
+  - `Lambda.Lob.ProvabilitySystem.gl_sound`: GL is sound for every classical provability system,
+    under every interpretation of its variables. Löb's axiom is `lob_internal`, `K` is `D2`, and
+    necessitation is `D1`. `trueBox_isClassical` shows the hypothesis is satisfiable.
+  - `ModalGL.complete_fin`: completeness with a bound on the model size. A formula with `s`
+    subformula occurrences that is forced on every transitive irreflexive frame on `Fin m`, for
+    every `m ≤ 4 ^ s`, is a theorem. The proof bounds the canonical model by `4 ^ s` worlds
+    (`card_canWorld_le`).
+  - `ModalGL.Fml.ofNat` is a numbering of all formulas: `Fml.ofNat_toNat` shows every formula
+    gets a number.
+  - `ModalGL.decideGL` checks every model up to that size; relations and valuations are given
+    as bit lists, and forcing is computed by strong recursion on the code. It is correct
+    (`decideGL_iff`) and primitive recursive (`decideGL_primrec`, via `Primrec.nat_strong_rec`).
+  - Hence `ModalGL.provable_lambdaDecidable`: theoremhood of GL is λ-decidable.
+- **Skeletons of CC^ω** (`Start/BridgeSkT.lean`).
+  - The erasure into the λ core commutes with renaming and substitution, and every skeleton
+    β-step is a core β-step (`SkT.Step.erase`).
+  - Erasures are simply typed (`SkT.erase_typing`).
+  - So every skeleton term is strongly normalizing (`SkT.sn`, from `Lambda.sn_of_typing`). This
+    is the normalization that the M29 module avoided by evaluating in a model.
+- **Size-change termination** (`Start/BridgeSizeChange.lean`).
+  - A two-counter machine is read as a call graph: one function per label, the two counters as
+    parameters, and one call per transition into the program.
+  - The size-change graphs are sound for the transitions (`FsubGhelli.CM.descent`).
+  - `FsubGhelli.CM.halts_of_sct` and `halts_of_criterion`: size-change termination certifies
+    halting on every input. Halting itself is not λ-decidable
+    (`Minsky.Universal.cm_halts_not_lambdaDecidable`).
+- **Solenoidal recorders** (`Start/BridgeSolenoidal.lean`).
+  - A solenoidal machine, given two non-blank symbols for the bits, compiles step for step into
+    a one-tape host `FiniteMultiTapeMachine`; `swapBlank` exchanges the blank with the host's
+    default symbol.
+  - `Solenoidal.Machine.halts_iff_host`: the machine halts on the encoding of a bit string iff
+    the host machine halts on the string.
+  - `Solenoidal.Recorder.terminal_iff_host`: the recorder reaches a terminal configuration iff
+    the host machine halts.
+
+`check_unification.py --strict` now passes: 1 component over 2194 modules.
+`scripts/pack_gate.sh` runs it on the packed tree, and `docs/RELEASING.md` lists it among the
+gates (M31-UNIFY-GATE).

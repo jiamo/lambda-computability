@@ -39,6 +39,9 @@ python3 scripts/goal_state.py validate
 echo "pack_gate: closure"
 python3 scripts/check_closure.py
 
+echo "pack_gate: unification"
+python3 scripts/check_unification.py --strict
+
 echo "pack_gate: OK — the packed tree passes every offline gate."
 echo "pack_gate: note that building the packed tree is done by the CI job"
 echo "pack_gate: 'build-from-archive' in .github/workflows/lean_action_ci.yml."

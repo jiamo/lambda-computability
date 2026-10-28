@@ -434,19 +434,19 @@
 | 3060 | `M30-UNIFY-PTS-MLTT` | `P1` | `DONE_WEAK` | M30-MLTT-WN, M30-UNIFY-PTS-ANNOT | docs/goal/evidence/M30-MLTT.md | Done (Start/MLTTPTS.lean): the erasure toTm of mlttPTS (sorts ℕ, axioms l : l+1, rules (i, j, max i j)) into MLTT is sound for typing (MLTT.HasType.toTm, conversion through the absorbed Reduces.confluent and MLTT.FStep.deq); erasures of legal terms are weakly normalizing (MLTT.Legal.toTm_wn, from MLTT.HasTy.wn); every legal term reduces to a legal term with a normal erasure (MLTT.Legal.reduces_nf); MLTT.mlttPTS_sn_of_annotationWN : AnnotationWN → SystemStronglyNormalizing mlttPTS. Missing: MLTT.AnnotationWN (task M30-UNIFY-PTS-ANNOT): legal terms of mlttPTS whose erasure is normal are weakly normalizing; their redexes lie only inside domain annotations, which the erasure does not see. |
 | 2480 | `M26-UNIFY-DEPTHTHREE` | `P2` | `TODO_NEEDS_DESIGN` | M26-OAI-DEPTHTHREE | docs/goal/evidence/M26-OAI-ABSORPTION.md | The conclusion is already transferred (Complexity.DepthThreeHost.depthThree_lower_bound_host, Start/DepthThreeHost.lean) using one direction of each correspondence: MultiTapeCobham.inP_of_multiTapeHaltsIn and the translation Σ₃ ACCirc → Circuit3 (toCircuit3_eval, toCircuit3_gateCount). Missing: the converse of each: every InP language (Start/ComplexityClasses.lean) is decided by a FiniteMultiTapeMachine in polynomial time, and every Circuit3 on Fin n becomes a Σ₃ ACCirc computing the same function with linearly many gates. With both, every upstream DepthThree intermediate result about P or Circuit3 transfers. |
 | 2490 | `M26-UNIFY-RIGIDITY-FOUNDATION` | `P2` | `TODO_NEEDS_DESIGN` | M26-OAI-DEGREE-RIGIDITY | docs/goal/evidence/M26-OAI-ABSORPTION.md | Only the conclusion is shared now: Start/RigidityBridge.lean identifies the two degree quotients (setDegreeOrderIso) and proves Lambda.Oracle.setDegreeRigidity. The 975 upstream modules keep their own oracle programs (OracleCode.eval, Start/RigidityOracleCode.lean) and jump (Halts, iterate; Start/RigidityOracleJump.lean). Missing: (1) computable translations between upstream OracleCode and host indices of Lambda.Oracle.Phi (Start/OracleMachine.lean) preserving the computed partial function, from Lambda.Oracle.exists_index_of_recursiveIn and the upstream exists_code; (2) the upstream jump of an oracle and the host Lambda.Oracle.Jump (Start/OracleJump.lean) are Turing-equivalent, uniformly, and so are their finite iterates. |
-| 3100 | `M31-UNIFY-GATE` | `P1` | `TODO_READY` | - | docs/goal/evidence/M31-UNIFY.md | Not started. |
+| 3100 | `M31-UNIFY-GATE` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M31-UNIFY.md |  |
 | 3110 | `M31-BRIDGE-STARHEIGHT` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M31-UNIFY.md |  |
 | 3120 | `M31-BRIDGE-WL` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M31-UNIFY.md |  |
 | 3130 | `M31-BRIDGE-MINSKY` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M31-UNIFY.md |  |
 | 3140 | `M31-BRIDGE-STLC` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M31-UNIFY.md |  |
-| 3150 | `M31-BRIDGE-SOLENOIDAL` | `P1` | `TODO_READY` | - | docs/goal/evidence/M31-UNIFY.md | Not started. |
+| 3150 | `M31-BRIDGE-SOLENOIDAL` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M31-UNIFY.md |  |
 | 3160 | `M31-BRIDGE-BLUM` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M31-UNIFY.md |  |
-| 3170 | `M31-BRIDGE-LOGIC` | `P1` | `TODO_READY` | - | docs/goal/evidence/M31-UNIFY.md | Not started. |
-| 3180 | `M31-BRIDGE-SIZECHANGE` | `P1` | `TODO_READY` | - | docs/goal/evidence/M31-UNIFY.md | Not started. |
+| 3170 | `M31-BRIDGE-LOGIC` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M31-UNIFY.md |  |
+| 3180 | `M31-BRIDGE-SIZECHANGE` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M31-UNIFY.md |  |
 | 3190 | `M31-BRIDGE-SYSTEMFC` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M31-UNIFY.md |  |
 | 3200 | `M31-BRIDGE-CBPV` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M31-UNIFY.md |  |
 | 3210 | `M31-BRIDGE-INSEPARABLE` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M31-UNIFY.md |  |
-| 3220 | `M31-BRIDGE-SKELETON` | `P1` | `TODO_READY` | - | docs/goal/evidence/M31-UNIFY.md | Not started. |
+| 3220 | `M31-BRIDGE-SKELETON` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M31-UNIFY.md |  |
 | 3300 | `M31-FOUND-REALIZABILITY` | `P1` | `TODO_READY` | - | docs/goal/evidence/M31-UNIFY.md | Not started. |
 | 3310 | `M31-FOUND-CWA-MLTT` | `P1` | `TODO_READY` | - | docs/goal/evidence/M31-UNIFY.md | Not started. |
 | 3320 | `M31-FOUND-MLTT-LAMBDA` | `P1` | `TODO_READY` | - | docs/goal/evidence/M31-UNIFY.md | Not started. |

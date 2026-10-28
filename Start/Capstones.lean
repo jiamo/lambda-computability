@@ -545,6 +545,10 @@ import Start.BridgeCBPV
 import Start.BridgeSystemFC
 import Start.BridgeStarHeight
 import Start.BridgeWL
+import Start.BridgeGL
+import Start.BridgeSkT
+import Start.BridgeSizeChange
+import Start.BridgeSolenoidal
 
 /-! ## Interfaces of the untyped calculus
 
@@ -6546,3 +6550,38 @@ equivalence within a polynomial of degree `a < c k / 2` in its input length. -/
 #check @WLBridge.haltsIn_tm
 #check @WLTime.multiTape_lower_bound
 #check @WLTime.multiTape_not_poly
+
+/-! `Start/BridgeGL.lean` (M31-BRIDGE-LOGIC): GL is sound for every classical provability system
+(Löb's axiom from the abstract Löb theorem), complete for models of bounded size, and its
+theoremhood is decided by a primitive recursive procedure, hence λ-decidable. -/
+
+#check @Lambda.Lob.ProvabilitySystem.gl_sound
+#check @ModalGL.Fml.ofNat_toNat
+#check @ModalGL.complete_fin
+#check @ModalGL.decideGL_iff
+#check @ModalGL.decideGL_primrec
+#check @ModalGL.provable_lambdaDecidable
+
+/-! `Start/BridgeSkT.lean` (M31-BRIDGE-SKELETON): skeleton terms of `CC^ω` erase to simply typed
+λ-terms, with β-steps simulated, so every skeleton term is strongly normalizing. -/
+
+#check @PureTypeSystem.CCO.SkF.SkT.erase_beta
+#check @PureTypeSystem.CCO.SkF.SkT.Step.erase
+#check @PureTypeSystem.CCO.SkF.SkT.erase_typing
+#check @PureTypeSystem.CCO.SkF.SkT.sn
+
+/-! `Start/BridgeSizeChange.lean` (M31-BRIDGE-SIZECHANGE): a two-counter machine whose call graph
+is size-change terminating halts on every input. -/
+
+#check @FsubGhelli.CM.callGraph
+#check @FsubGhelli.CM.descent
+#check @FsubGhelli.CM.halts_of_sct
+#check @FsubGhelli.CM.halts_of_criterion
+
+/-! `Start/BridgeSolenoidal.lean` (M31-BRIDGE-SOLENOIDAL): solenoidal machines compile step for
+step into one-tape host machines; the recorder reaches a terminal configuration iff the host
+machine halts. -/
+
+#check @Solenoidal.Machine.rel_run
+#check @Solenoidal.Machine.halts_iff_host
+#check @Solenoidal.Recorder.terminal_iff_host
