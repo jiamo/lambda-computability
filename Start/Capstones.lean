@@ -554,6 +554,8 @@ import Start.BridgeLambdaPCA
 import Start.BridgeCwAMLTT
 import Start.RigidityFoundation
 import Start.DepthThreeFoundation
+import Start.CobRegProg
+import Start.CobRegCost
 
 /-! ## Interfaces of the untyped calculus
 
@@ -6642,3 +6644,9 @@ upstream oracle programs and host indices translate both ways, uniformly in the 
 #check @Complexity.DepthThreeHost.fromCircuit3_isSigma3
 #check @Complexity.DepthThreeHost.fromCircuit3_gates
 #check @Complexity.DepthThreeHost.toCircuit3_fromCircuit3_eval
+
+/-! `Start/CobRegProg.lean`, `Start/CobRegCost.lean` (M26-UNIFY-DEPTHTHREE-COBMT, first two
+layers): Cobham terms compile to word-register programs, correctly and with polynomial cost. -/
+
+#check @Complexity.CobMT.compile_spec
+#check @Complexity.CobMT.compile_cost
