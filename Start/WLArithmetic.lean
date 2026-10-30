@@ -282,7 +282,7 @@ theorem liftStacks_apply (f : K → L) (hf : Function.Injective f)
     (frame : Stacks L A) (s : Stacks K A) (k : K) : liftStacks f frame s (f k)=s k := by
   classical
   have h : ∃ a,f a=f k := ⟨k,rfl⟩
-  rw [liftStacks,dif_pos h]
+  rw [liftStacks,dite_eq_left h]
   exact congrArg s (hf h.choose_spec)
 
 theorem liftStacks_update (f : K → L) (hf : Function.Injective f)

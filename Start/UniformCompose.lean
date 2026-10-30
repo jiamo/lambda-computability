@@ -295,22 +295,22 @@ theorem eval_rwBlkT (s : ℕ) (b : Bool) (c d e : ℕ) :
         · simp [rwBlkT, gblk, emits]
         · simp [rwBlkT, gblk, emits]
         · simp [rwBlkT, gblk, emits]
-        · rw [show rwBlkT 3 false = rwInpT from rfl, gblk, if_pos (by simp [emits]),
+        · rw [show rwBlkT 3 false = rwInpT from rfl, gblk, ite_eq_left (by simp [emits]),
             show readGate 3 y = Gate.inp (fldA y) from rfl, rwInpT]
           simp [Gate.rewire, encGate, tag, fld1, fld2, List.replicate_succ]
         · rw [show rwBlkT 4 false = Cob.constT (encGate (.cst false)) from rfl, gblk,
-            if_pos (by simp [emits]), show readGate 4 y = Gate.cst false from rfl]
+            ite_eq_left (by simp [emits]), show readGate 4 y = Gate.cst false from rfl]
           simp [Gate.rewire]
         · rw [show rwBlkT 5 false = Cob.constT (encGate (.cst true)) from rfl, gblk,
-            if_pos (by simp [emits]), show readGate 5 y = Gate.cst true from rfl]
+            ite_eq_left (by simp [emits]), show readGate 5 y = Gate.cst true from rfl]
           simp [Gate.rewire]
-        · rw [show rwBlkT 6 false = rwNegT from rfl, gblk, if_pos (by simp [emits]),
+        · rw [show rwBlkT 6 false = rwNegT from rfl, gblk, ite_eq_left (by simp [emits]),
             show readGate 6 y = Gate.neg (fldA y) from rfl, rwNegT]
           simp [Gate.rewire, encGate, tag, fld1, fld2, List.replicate_succ]
-        · rw [show rwBlkT 7 false = rwConjT from rfl, gblk, if_pos (by simp [emits]),
+        · rw [show rwBlkT 7 false = rwConjT from rfl, gblk, ite_eq_left (by simp [emits]),
             show readGate 7 y = Gate.conj (fldA y) (fldB y) from rfl, rwConjT]
           simp [Gate.rewire, encGate, tag, fld1, fld2, List.replicate_succ]
-        · rw [show rwBlkT 8 false = rwDisjT from rfl, gblk, if_pos (by simp [emits]),
+        · rw [show rwBlkT 8 false = rwDisjT from rfl, gblk, ite_eq_left (by simp [emits]),
             show readGate 8 y = Gate.disj (fldA y) (fldB y) from rfl, rwDisjT]
           simp [Gate.rewire, encGate, tag, fld1, fld2, List.replicate_succ]
       · obtain ⟨k, rfl⟩ : ∃ k, s = k + 9 := ⟨s - 9, by omega⟩

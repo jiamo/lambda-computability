@@ -48,11 +48,11 @@ theorem keepClause_eval (R : Finset V) (pattern x : Cube V) (C : Clause V)
     (hagree : ∀ v ∉ R, x v = pattern v) :
     residualClauseEval (keepClause R pattern C) x = C.eval x := by
   by_cases hs : ∃ l ∈ C, l.1 ∉ R ∧ pattern l.1 = l.2
-  · simp only [keepClause, if_pos hs, residualClauseEval_none]
+  · simp only [keepClause, ite_eq_left hs, residualClauseEval_none]
     symm
     obtain ⟨l, hl, hout, hp⟩ := hs
     exact (Clause.eval_eq_true C x).mpr ⟨l, hl, (hagree l.1 hout).trans hp⟩
-  · simp only [keepClause, if_neg hs, residualClauseEval_some]
+  · simp only [keepClause, ite_eq_right hs, residualClauseEval_some]
     apply Bool.eq_iff_iff.mpr
     rw [Clause.eval_eq_true, Clause.eval_eq_true]
     constructor

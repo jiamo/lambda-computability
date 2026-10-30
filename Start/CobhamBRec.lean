@@ -156,11 +156,11 @@ theorem exists_bRecSig {g h₀ h₁ bd : Cob} {m nr Mu Mrv Mhv cg c0 c1 cB K : �
         refine ⟨C₇, p₇, b₇, ek.trans (echain.trans e₇), w₇, hh7.congr fun x => ?_, ?_⟩
         · simp only [hargsh x, hargsb x, decide_eq_true_eq]
           by_cases hlt : j < (F0 x).length
-          · rw [if_pos hlt]
+          · rw [ite_eq_left hlt]
             have hdrop : (F0 x).drop j = (F0 x).getD j false :: (F0 x).drop (j + 1) := by
               rw [List.drop_eq_getElem_cons hlt, List.getD_eq_getElem _ _ hlt]
             rw [hdrop, bRecVal_cons]
-          · rw [if_neg hlt]
+          · rw [ite_eq_right hlt]
             have h₁' : (F0 x).drop (j + 1) = [] := List.drop_eq_nil_of_le (by omega)
             have h₂' : (F0 x).drop j = [] := List.drop_eq_nil_of_le (by omega)
             rw [h₁', h₂']

@@ -143,13 +143,13 @@ theorem cutTrial_sound (d : RecoveryData F t u v) (ht0 : 0 < t) (ht1 : t < 1)
     have hr' : r=1 := by symm; simpa using hr
     subst r
     have hq : (rationalEnumeration i : ℝ) ≤ 0 := by
-      rw [query_value,if_pos hneg]
+      rw [query_value,ite_eq_left hneg]
       exact div_nonpos_of_nonpos_of_nonneg (neg_nonpos.mpr (Nat.cast_nonneg _)) (Nat.cast_nonneg _)
     have hc : cut t i = true := (cut_eq_true t i).mpr (hq.trans_lt ht0)
     simp [hc]
   · rename_i hneg
     have hq : (rationalEnumeration i : ℝ) = (numeratorMagnitude i : ℝ)/(denominator i : ℝ) := by
-      rw [query_value,if_neg hneg]
+      rw [query_value,ite_eq_right hneg]
     split at hr
     · rename_i hl
       have hr' : r=1 := by symm; simpa using hr
@@ -179,7 +179,7 @@ theorem cutTrial_complete (d : RecoveryData F t u v) (ht : Irrational t)
   by_cases hneg : negative i = true
   · exact ⟨0,1,by simp [cutTrial,window,hneg]⟩
   · have hq : (rationalEnumeration i : ℝ) = (numeratorMagnitude i : ℝ)/(denominator i : ℝ) := by
-      rw [query_value,if_neg hneg]
+      rw [query_value,ite_eq_right hneg]
     have hne : (rationalEnumeration i : ℝ) ≠ t := fun h => ht ⟨rationalEnumeration i,h⟩
     obtain ⟨⟨N,hN,hs⟩,_⟩ := comparison_search t (d.delta : ℝ)
       (fun n => (d.count n : ℝ)/(n : ℝ)) (by exact_mod_cast d.delta_pos)

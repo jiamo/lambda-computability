@@ -216,7 +216,7 @@ variable {S : Type u}
   classical
   by_cases h : WeaklyNormalizing M
   · exact normalForm_of_normal (normalForm_spec h).2
-  · simp only [normalForm, dif_neg h]
+  · simp only [normalForm, dite_eq_right h]
 
 theorem normalForm_rename {M : Expr S} (h : WeaklyNormalizing M) (ρ : Nat → Nat) :
     (M.rename ρ).normalForm = M.normalForm.rename ρ :=
@@ -407,7 +407,7 @@ noncomputable def signing (hc : IsComponent E C) (v : V) : Bool :=
 theorem signing_path (hc : IsComponent E C) {v : V} (hv : v ∈ C) :
     SignedPath E hc.choose v (hc.signing v) := by
   unfold signing
-  rw [dif_pos hv]
+  rw [dite_eq_left hv]
   exact (hc.connected hc.choose_spec.1 hv).choose_spec
 
 theorem signing_cross (hc : IsComponent E C)

@@ -33,7 +33,7 @@ theorem lift_fnf (x : ℕ) : Lambda.lift 1 0 (fnf x) = fnf (x + 1) := by
 
 theorem lamM_app_red (t : Lambda) : betaEtaReduces (.app lamM t) (.app t t) := by
   have := betaEtaReduces_beta (.app (.var 0) (.var 0)) t
-  simp only [Lambda.subst, if_pos] at this
+  simp only [Lambda.subst, ite_eq_left] at this
   exact this
 
 /-- `M (M S) →βη S S (M S)`. -/
@@ -76,7 +76,7 @@ theorem bmF_qG {x : ℕ} {F : Lambda} (hF : betaEtaReduces F (fnf x)) :
   have hΦ : betaEtaReduces (.app (Lambda.lift 1 0 (.app (Lambda.lift 1 0 F) (.var 0))) (.var 0))
       (psi6 x) := by
     simp only [Lambda.lift]
-    simp only [show ¬ (0 < 0) from by omega, if_false]
+    simp only [show ¬ (0 < 0) from by omega, ite_false]
     refine (betaEtaReduces_app_left _ (betaEtaReduces_app_left _ hF2)).trans ?_
     exact fnf_app2 x
   refine (bm_red _).trans (betaEtaReduces_lam ?_)
@@ -95,7 +95,7 @@ theorem h6g_qG (x : ℕ) : ∃ T, betaEtaReduces (.app (Lambda.lift 1 0 (toLam (
   refine (betaEtaReduces_app_left _ (Lambda.betaEtaReduces.of_reduces (reduces_B2 _ _))).trans ?_
   refine (betaEtaReduces_beta _ _).trans ?_
   simp only [Lambda.subst, Lambda.lift, lift_lamB, lift_lamM, Lambda.subst_lift, subst_lamB,
-    subst_lamM, if_true]
+    subst_lamM, ite_true]
   exact bmF_qG (f6_red x)
 
 /-- **`hit6` is not a βη fixed-point combinator**: `hit6 x` is not βη-convertible to
@@ -135,14 +135,14 @@ theorem h8g_qG (x : ℕ) : ∃ T, betaEtaReduces (.app (Lambda.lift 1 0 (toLam (
   refine (betaEtaReduces_app_left _ (Lambda.betaEtaReduces.of_reduces (reduces_B2 _ _))).trans ?_
   refine (betaEtaReduces_beta _ _).trans ?_
   simp only [Lambda.subst, Lambda.lift, lift_lamB, lift_lamM, Lambda.subst_lift, subst_lamB,
-    subst_lamM, if_true]
+    subst_lamM, ite_true]
   refine (Lambda.betaEtaReduces.of_reduces (reduces_B2 _ _)).trans (betaEtaReduces_lam ?_)
   simp only [Lambda.lift, lift_lamB, lift_lamM]
   refine (bm_red _).trans (betaEtaReduces_lam ?_)
   have hΦ : betaEtaReduces (.app (Lambda.lift 1 0 (.app (.app (Lambda.lift 1 0 (Lambda.lift 1 0
       (toLam (h6F x)))) (.var 1)) (.var 0))) (.var 0)) (psi8 x) := by
     simp only [Lambda.lift]
-    simp only [show ¬ (0 < 0) from by omega, show ¬ (1 < 0) from by omega, if_false]
+    simp only [show ¬ (0 < 0) from by omega, show ¬ (1 < 0) from by omega, ite_false]
     exact (betaEtaReduces_app_left _ (betaEtaReduces_app_left _
       (betaEtaReduces_app_left _ hF3))).trans (fnf_app3 x)
   refine ((betaEtaReduces_app_left _ hΦ).trans (betaEtaReduces_app_right _ hΦ)).trans ?_

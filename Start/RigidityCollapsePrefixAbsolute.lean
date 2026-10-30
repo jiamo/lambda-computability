@@ -47,10 +47,10 @@ theorem prefix_mem_without_choice (M : ZFSet.{u}) (hM : Transitive M)
         obtain ⟨i,hi,rfl⟩ := (mem_natSet (n+1) j).mp hj
         have hin : i ≤ n := by omega
         have hy := ((hv.pair_iff _ _).mp hz).2
-        exact ⟨i,hin,by rw [hy]; simp only [f,if_pos hin]⟩
+        exact ⟨i,hin,by rw [hy]; simp only [f,ite_eq_left hin]⟩
       · rintro ⟨i,hi,rfl⟩
         apply (hv.pair_iff _ _).mpr
-        exact ⟨(natSet_mem_natSet i (n+1)).mpr (by omega),by simp only [f,if_pos hi]⟩
+        exact ⟨(natSet_mem_natSet i (n+1)).mpr (by omega),by simp only [f,ite_eq_left hi]⟩
     rw [eq]
     exact finiteModelGraph_mem M hM hP hU hω f hf n
 

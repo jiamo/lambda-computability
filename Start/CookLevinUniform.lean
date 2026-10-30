@@ -98,7 +98,7 @@ theorem npHard_SAT_of_lengthUniform
       refine ⟨?_, ?_⟩
       · rw [hyget _ h₁, hget _ h₁]
         simp [Nat.mul_mod_right]
-      · rw [hyget _ h₂, hget _ h₂, if_neg (by omega)]
+      · rw [hyget _ h₂, hget _ h₂, ite_eq_right (by omega)]
         congr 1
         omega
     refine ⟨y, ?_, hpin⟩

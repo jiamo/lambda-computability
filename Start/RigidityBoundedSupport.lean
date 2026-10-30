@@ -74,7 +74,7 @@ def truncate {α : Sort*} (n : ℕ) (e : ℕ → α) (i : ℕ) : α := if i < n 
 
 theorem truncate_forces {P : Type u} [Preorder P] (φ : BoundedSetTheory.Formula)
     (e : ℕ → Name P) (p : P) : Forces (truncate (bound φ) e) φ p ↔ Forces e φ p :=
-  forces_congr φ _ e (fun _ hi => if_pos hi) p
+  forces_congr φ _ e (fun _ hi => ite_eq_left hi) p
 
 theorem finite_container (M : ZFSet.{u}) (hM : Transitive M)
     (hP : Pairing M) (hU : BoundedSetTheory.Union M) (hS : Separation M)

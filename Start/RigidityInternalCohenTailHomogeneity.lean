@@ -53,7 +53,7 @@ theorem mask_tailMatchingSet (A B : ZFSet.{0})
   classical
   by_cases hi : label A i ∈ B
   · simp [mask,tailMatchingSet,hi]
-  · rw [if_neg hi,← congrFun (mask_matchingSet A p q) i]
+  · rw [ite_eq_right hi,← congrFun (mask_matchingSet A p q) i]
     simp only [mask,tailMatchingSet,ZFSet.mem_sep,hi,not_false_eq_true,and_true]
 
 theorem tail_matching_compatible (A B : ZFSet.{0})
@@ -64,14 +64,14 @@ theorem tail_matching_compatible (A B : ZFSet.{0})
   intro i a b ha hb
   by_cases hi : label A i ∈ B
   · have hm : mask A (tailMatchingSet A B (graph A p) (graph A q)) i = false := by
-      rw [mask_tailMatchingSet,if_pos hi]
+      rw [mask_tailMatchingSet,ite_eq_left hi]
     have hp : p.val i = some a := by simpa [CohenSymmetry.flip,hm] using ha
     have hpair := hpq ((pair_restrict B (graph A p) (label A i) (bitSet a)).mpr
       ⟨(pair_mem_graph A p i a).mpr hp,hi,(mem_alphabet _).mpr ⟨a,rfl⟩⟩)
     have hq := (pair_mem_graph A q i a).mp ((pair_restrict _ _ _ _).mp hpair).1
     exact Option.some.inj (hq.symm.trans hb)
   · have hm : mask A (tailMatchingSet A B (graph A p) (graph A q)) i =
-        matchingMask p q i := by rw [mask_tailMatchingSet,if_neg hi]
+        matchingMask p q i := by rw [mask_tailMatchingSet,ite_eq_right hi]
     exact matching_compatible p q i a b (by simpa only [CohenSymmetry.flip,hm] using ha) hb
 
 theorem tail_matching_common_extension (A B : ZFSet.{0})

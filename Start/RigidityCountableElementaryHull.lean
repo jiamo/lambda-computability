@@ -51,7 +51,7 @@ theorem witness_spec (p : SentenceForm) (xs : List ZFSet.{u})
     (h : ∃ x : ZFSet.{u}, p.Sat Set.univ (cons x (listEnv xs))) :
     p.Sat Set.univ (cons (witness p xs) (listEnv xs)) := by
   classical
-  simp only [witness,dif_pos h]
+  simp only [witness,dite_eq_left h]
   exact Classical.choose_spec h
 
 noncomputable def stage (a : ℕ → ZFSet.{u}) : ℕ → Set ZFSet.{u}

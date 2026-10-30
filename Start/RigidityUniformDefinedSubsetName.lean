@@ -48,7 +48,7 @@ theorem uniform_definedSubset_name (M : ZFSet.{u})
     | zero => rfl
     | succ i =>
       change a.val G.carrier = tupleEnv (fun _ : Fin φ.bound => a.val G.carrier) i
-      simp only [tupleEnv,dif_pos (show i < φ.bound by omega)]
+      simp only [tupleEnv,dite_eq_left (show i < φ.bound by omega)]
 
 theorem uniform_checked_definition_name (M : ZFSet.{u})
     (hM : Transitive M) (hT : SourceT M)

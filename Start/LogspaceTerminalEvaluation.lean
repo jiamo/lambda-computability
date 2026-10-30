@@ -222,10 +222,10 @@ lemma roves (h:e.s.govern=true){i:ℕ}(hi:i< e.v.Rslots)
       have hQ := Pier.shares hs hW hj.1 true f' hf hz
       have hc':u.D.s=u.D.s:=rfl
       by_cases hc:b=d
-      · rw [if_pos (show tb x i ≤ a+1 from hc.le)]
-        rw [hj.2,if_pos hc] at hQ
+      · rw [ite_eq_left (show tb x i ≤ a+1 from hc.le)]
+        rw [hj.2,ite_eq_left hc] at hQ
         let y:= (f false).locate x i; let r:=u.D
-        have hF:r.curve p d true x=some y:=hj.2.trans (if_pos hc)
+        have hF:r.curve p d true x=some y:=hj.2.trans (ite_eq_left hc)
         have hv := (hj.1.ready.swaps d hj.1.holds x hx true y hF)
         have hR:= Pier.stroll hs hW (Pier.street hj.1 hF) (Pier.seal1 r (q:=S.info) hs hW)
                                        (j:=0) false f' hf hz hv.2
@@ -239,7 +239,7 @@ lemma roves (h:e.s.govern=true){i:ℕ}(hi:i< e.v.Rslots)
              have h1:=lb_le_inc d; have h2:d≤ clim u.w0.p:=ha
              rw [(Ready.crown (e := e)),hc]; omega
         exact etches _ _ (i:=1) hc.symm hR.spots.2 (plight hl hL (by omega))
-      rw [hj.2,if_neg hc] at hQ
+      rw [hj.2,ite_eq_right hc] at hQ
       have hq:(if tb x i  ≤ d then tb x i else 0)=if tb x i ≤ a then tb x i else 0:=by
                    unfold b d at *; split <;> split <;> omega
       rw [hq]
@@ -259,7 +259,7 @@ lemma mounted (x:ℕ) (hx:x∈u.D.P)(i:ℕ)(ht:u.smallQ e.src i) :
    have hk:=(Ready.toneC (e := e)) x i
    apply chooses (hk.2.1.trans (decide_eq_true h2))
    by_cases hz:e.v.govern=true
-   · have hm:g.tag x i=tb x i:=if_pos hz
+   · have hm:g.tag x i=tb x i:=ite_eq_left hz
      rw [hm]
      apply chooses (hk.1.trans hz)
      by_cases hu:i< e.v.Rslots
@@ -269,7 +269,7 @@ lemma mounted (x:ℕ) (hx:x∈u.D.P)(i:ℕ)(ht:u.smallQ e.src i) :
           exact ((he.allocate hz).bound x i hb).2
        have he1:= he.roves hz hu hx t le_rfl
        change s.rite c _ (if tb x i ≤ t then _ else 0) at he1
-       rwa [if_pos he0] at he1
+       rwa [ite_eq_left he0] at he1
      apply doesno (hk.2.2.trans (decide_eq_false hu))
      have hh:tb x i=0:=by by_contra hp; apply hu (hC.suit.lacks hx ((he.allocate hz).bound x i hp).1)
      rw [hh]; exact Fret.Seats.blankD (hp.pit hx s.info) (by omega)
@@ -277,7 +277,7 @@ lemma mounted (x:ℕ) (hx:x∈u.D.P)(i:ℕ)(ht:u.smallQ e.src i) :
    let w:= e.v.terminal false
    have hg:g.tag x i=Flash.win ((f false).tag x i) 1:=by
         unfold g lifted
-        dsimp only; rw [if_neg hz]; unfold Flash.win Producer.awake; split <;> simp_all
+        dsimp only; rw [ite_eq_right hz]; unfold Flash.win Producer.awake; split <;> simp_all
    rw [hg]; apply Flash.picks u.D hp hx (by omega) _ _ _ (Pier.seal1 _ hp (by omega) (q:=s.info))
    have hv := hC.suit
    have hd:u.D.D w.dataN=1:=e.v.ageEnd _ (by decide)
@@ -300,7 +300,7 @@ lemma ancestor {y x:ℕ}(h:e.v.govern=true)(he1 : e.v.finalE x y≠0):
          intro hk
          apply he1
          unfold Fabric.finalE forecast current; dsimp only
-         rw [if_pos (show Net.onQ u.plotM.gap e.v.m (e.v.t.key u.plotM)=true from he.onR)]
+         rw [ite_eq_left (show Net.onQ u.plotM.gap e.v.m (e.v.t.key u.plotM)=true from he.onR)]
          change e.v.grid.pre e.v.grains (e.v.trio false) e.v.t.two x y*_*_=_
          rw [show e.v.grid.pre e.v.grains (e.v.trio false) e.v.t.two x y=0 from ?_];ring
          change e.v.grid.pre e.v.grains (e.v.trio false) false x y=0 at hk
@@ -319,8 +319,8 @@ lemma ancestor {y x:ℕ}(h:e.v.govern=true)(he1 : e.v.finalE x y≠0):
          refine mem_filter.2 ⟨(hu.light.insured _ _ hi).1, Eq.ge ?_⟩
          exact hj ▸ he.report.seat x i hi
     apply he1
-    unfold Fabric.finalE forecast current; dsimp only; rw [if_pos (show Net.onQ u.plotM.gap e.v.m (e.v.t.key u.plotM)=true from he.onR)]
-    have hz :d.incG e.v.grains y=0:=by unfold At.Grid.incG;rw [if_pos (show d.sp=true from h), shutoff_zero (by linarith)]
+    unfold Fabric.finalE forecast current; dsimp only; rw [ite_eq_left (show Net.onQ u.plotM.gap e.v.m (e.v.t.key u.plotM)=true from he.onR)]
+    have hz :d.incG e.v.grains y=0:=by unfold At.Grid.incG;rw [ite_eq_left (show d.sp=true from h), shutoff_zero (by linarith)]
     change _ * d.incG e.v.grains y * _=0
     rw [hz];ring
 end Enabled
@@ -565,7 +565,7 @@ lemma seesR {x j y:ℕ}(hx:x∈u.D.P)(hi:(f false).awake x j)(hq:(f false).locat
         rw [(Ready.crown (e := e))];exact Fabric.parentL e.v (by decide) (by decide) (by decide)
    have hk:u.eye.Flora u.torch.p v.visN j x (some ((f false).tag x j,y)):=by
          have hf:=h.suit.orbit (h.suit.lacks hx hi) hx
-         unfold Producer.coversF at hf; rw [if_pos hi] at hf; exact hf
+         unfold Producer.coversF at hf; rw [ite_eq_left hi] at hf; exact hf
    refine Arena.Flash.maskB hs.motto hx (by have:= h0.readyK;omega) ht h0.may hv hr hk _ ?_
    intro z hp
    have hh:y ≤ u.n:=Nat.le_of_lt_succ (mem_range.1 (Fabric.Good.n1 hs.season.chart hs.season.good
@@ -574,7 +574,7 @@ lemma seesR {x j y:ℕ}(hx:x∈u.D.P)(hi:(f false).awake x j)(hq:(f false).locat
    rw [show u.torch.lit u.D.x hP y z=_ from Helix.Torch.litwax u.r u.v u.x _ p z y hh]
    unfold Helix.Torch.ray
    dsimp only [p,Helix.Torch.trail]
-   simp only [if_neg (by decide: ¬ (4:ℕ)<4), ite_true,p0,dec_round]; rfl
+   simp only [ite_eq_right (by decide: ¬ (4:ℕ)<4), ite_true,p0,dec_round]; rfl
 
 end Court
 end
@@ -607,9 +607,9 @@ lemma awakeY {x j:ℕ}(h:(f false).awake x j):
          if okY e y then (f false).scoreF (e.v.aimE false) x j else 0 :=by
    intro y; let s:=e.v
    have hv:=hp.step0; have ht:= (hv.report.secure false).light.insured _ _ h
-   unfold scoreF; rw [if_pos h]
+   unfold scoreF; rw [ite_eq_left h]
    have hj : y ∈ (s.world.S).filter (fun _=>True):= mem_filter.2 ⟨(mem_filter.1 ht.2).1,trivial⟩
-   have he: e.v.aimE false x y= (s.grains x).val s.S1 s.Rslots (s.trio false) y:=if_pos
+   have he: e.v.aimE false x y= (s.grains x).val s.S1 s.Rslots (s.trio false) y:=ite_eq_left
                        ⟨ht.1,ht.2,Or.inl (rfl : (false:Bool)=false)⟩
    have hh : lampC e y=true ↔ y∈s.S2:=by
        unfold lampC
@@ -621,16 +621,16 @@ lemma awakeY {x j:ℕ}(h:(f false).awake x j):
    · simp only [Bool.false_eq_true,ite_false,ite_true];rfl
    simp only [ite_true]; rw [show (f false).locate x j=y from rfl,he]
    by_cases hY:y∈s.S2
-   · rw [if_pos (hh.2 hY)]; exact if_pos ⟨ht.1,ht.2,Or.inr hY⟩
-   rw [if_neg (mt hh.mp hY)]
-   exact if_neg fun h=>hY (h.2.2.resolve_left (by decide))
+   · rw [ite_eq_left (hh.2 hY)]; exact ite_eq_left ⟨ht.1,ht.2,Or.inr hY⟩
+   rw [ite_eq_right (mt hh.mp hY)]
+   exact ite_eq_right fun h=>hY (h.2.2.resolve_left (by decide))
 
 lemma tinted {x i y:ℕ}(he:(e.lifted (f false) tb).awake x i)(hq:(f false).locate x i=y):
    let q:=e.v
    (e.lifted (f false) tb).scoreF q.finalE x i=
           ((if okY e y then (f false).scoreF (q.aimE false) x i else 0)*
                   q.grid.incG q.grains y)*q.t.tower u.plotM q.roll q.m e.across y :=by
-    intro v; unfold scoreF; rw [if_pos he]
+    intro v; unfold scoreF; rw [ite_eq_left he]
     have ht:v.activeR:=hp.step0.onR
     have hm:(f false).awake x i:=by
        change (if v.govern then _ else _) ≠ 0 at he
@@ -640,7 +640,7 @@ lemma tinted {x i y:ℕ}(he:(e.lifted (f false) tb).awake x i)(hq:(f false).loca
        · assumption
        contradiction
     change v.finalE x ((f false).locate x i)=_
-    unfold Fabric.finalE forecast current; dsimp only; rw [if_pos (show Net.onQ u.plotM.gap v.m (v.t.key u.plotM)=true from ht)]
+    unfold Fabric.finalE forecast current; dsimp only; rw [ite_eq_left (show Net.onQ u.plotM.gap v.m (v.t.key u.plotM)=true from ht)]
     change e.v.grid.pre e.v.grains (e.v.trio false) e.v.t.two x _ * v.grid.incG _ _ * _ = _
     subst y; rw [hp.awakeY hm];rfl
 
@@ -676,7 +676,7 @@ lemma summitR {x i:ℕ}(hx:x∈u.D.P)(he:e.v.govern=true)(hz:tb x i≠0):
     have ht:= hv.capR he ((hv.report.secure false).suit.lacks hx hm.1) (Nat.pos_of_ne_zero hz) hm.2 hx
     obtain ⟨hR,hq⟩:=ht
     have hP:= hR.ready
-    have hg:u.D.curve (e.v.slotWord i) (tb x i) true x= some y:= hq.trans (if_pos rfl)
+    have hg:u.D.curve (e.v.slotWord i) (tb x i) true x= some y:= hq.trans (ite_eq_left rfl)
     have hf: y∈u.D.P := (hP.swaps _ hR.holds x hx true y hg).1
     have hw:u.D.W (e.v.c 13 0)+1 ≤ u.D.W e.src := e.v.parentL (by decide) (by decide) (by decide)
     have hL: (seek 13 1 ⟨_,Kn.fix 0⟩).f s.l.x s.info=hole (e.v.c 13 0) (hole 1 0):=by
@@ -702,7 +702,7 @@ lemma prompter {x i:ℕ}(hx:x∈u.D.P)(he:e.v.govern=true)(hz:tb x i≠0)(k:ℕ)
      have hh:=(hr.allocate he).bound x i hz
      let p:=hr.report.secure false
      obtain ⟨ht,hk⟩:=hr.capR he (p.suit.lacks hx hh.1) (Nat.pos_of_ne_zero hz) hh.2 hx
-     have hg: u.D.curve (e.v.slotWord i) (tb x i) true x=some y:= hk.trans (if_pos rfl)
+     have hg: u.D.curve (e.v.slotWord i) (tb x i) true x=some y:= hk.trans (ite_eq_left rfl)
      have hy: y∈u.D.P := (ht.ready.swaps _ ht.holds x hx true y hg).1
      apply Pier.bowls hr.ready.motto hm ht hp.readyK.2.2 ((Ready.spinC (e := e)) j x i) hg
      have hpv: u.D.W (e.stationE k)+1 ≤ u.D.W e.src:=by
@@ -714,7 +714,7 @@ lemma prompter {x i:ℕ}(hx:x∈u.D.P)(he:e.v.govern=true)(hz:tb x i≠0)(k:ℕ)
      apply Bullet.clef u.D hr.ready.motto hp.readyK.2.2 hy (by rw [(Ready.crown (e := e))];exact hpv) hA (hp.realm hpv)
      simpa only [Nat.zero_mul] using hp.tower0 he k hW y hy
    apply Song.pinFalse _ (ha.trans (decide_eq_false hW))
-   unfold paintE; rw [if_neg hW]
+   unfold paintE; rw [ite_eq_right hW]
    exact Amber.steam _ _ (hp.stake0 hx i) hp.readyK.2.1
 
 end
@@ -757,7 +757,7 @@ lemma towerQ (he:e.s.govern=true) (x):
        | succ n ih=>
                       intro hn; by_cases hs:m=n+1; rw [hs]
                       have ht :m ≤ n:=by omega
-                      unfold H; rw [sumR,paintE,if_neg (show ¬ n < m by omega)]
+                      unfold H; rw [sumR,paintE,ite_eq_right (show ¬ n < m by omega)]
                       change max (H n) 0=_
                       rw [ih ht,max_eq_left (show 0  ≤ H m from by exact pg _)]
     unfold Quest.tower
@@ -767,7 +767,7 @@ lemma towerQ (he:e.s.govern=true) (x):
       have hz:m=0:=by unfold m heightR; rw [show e.s.t.main=false from he0];rfl
       change 1=gamma (H _)
       rw [hh u.w0.p.T (by omega),hz]; exact (gamma_full (x:=0) (by norm_num)).symm
-    have hm:m=v.steps u.plotM:= if_pos he0
+    have hm:m=v.steps u.plotM:= ite_eq_left he0
     have hT:m ≤ u.w0.p.T:=by
         rw [hm]
         have hs:= hG.ready.season.good.2.2.2.2.2.2
@@ -779,8 +779,8 @@ lemma towerQ (he:e.s.govern=true) (x):
          induction d with
          | zero=>exact fun _=>rfl
          | succ d ih=> intro h;exact congrArg₂ max (ih (by omega))
-                                 (show paintE e d x=_ from if_pos (by change d < m; omega))
-    rw [if_pos (show (true && e.v.t.tag.narrow) = true from by rw [show e.v.t.tag.narrow=true from he];rfl)]
+                                 (show paintE e d x=_ from ite_eq_left (by change d < m; omega))
+    rw [ite_eq_left (show (true && e.v.t.tag.narrow) = true from by rw [show e.v.t.tag.narrow=true from he];rfl)]
     rw [show sumR (fun k=>e.paintE k x) u.w0.p.T=_ from hh u.w0.p.T hT,hb m le_rfl,hm]
     rfl
 
@@ -808,7 +808,7 @@ lemma earnsR {i x:ℕ}(hx:x∈u.D.P)(he:e.v.govern=true)(hz:tb x i≠0):
    have hc:= hp.readyK.1
    have he0:=hp0.report.secure false
    let r:=outV e.v y
-   have hv:e.v.grid.incG e.v.grains y=shutoff r:=if_pos he
+   have hv:e.v.grid.incG e.v.grains y=shutoff r:=ite_eq_left he
    let A:=sumR (fun k=> e.paintE k y) u.w0.p.T
    have ha:e.v.t.tower u.plotM e.v.roll e.v.m e.across y=gamma A:=hp.towerQ he y
    have hh0 :=hp.frail hx (h1.bound x i hz).1
@@ -836,7 +836,7 @@ lemma plain {i x:ℕ}(hx:x∈u.D.P)(hi:(f false).awake x i)(he:e.s.govern=false)
    let y:=(f false).locate x i; let s:=e.screen x i;let X:=(f false).scoreF (e.v.aimE false) x i
    s.band (bill e) (Hx e) e.p.coin originC (X*showR e y):=by
    intro y s X
-   have ha:e.v.grid.incG e.v.grains y=1:=if_neg (by rw [show e.v.grid.sp=e.s.govern from rfl,he];decide)
+   have ha:e.v.grid.incG e.v.grains y=1:=ite_eq_right (by rw [show e.v.grid.sp=e.s.govern from rfl,he];decide)
    have hz:e.v.t.tower u.plotM e.v.roll e.v.m e.across y=1:=by
                          unfold Quest.tower; rw [show e.v.t.tag.narrow=false from he]; simp
    unfold showR; rw [ha,hz,mul_one,mul_one]
@@ -869,9 +869,9 @@ lemma choirR(x:ℕ)(hx:x∈u.D.P)(i:ℕ)(hk:u.smallQ e.src i):
     apply Iris.parcel hR hw
     unfold Term.melody; dsimp only
     by_cases hz:r=0
-    · rw [if_pos hz]; unfold Producer.scoreF; rw [if_neg (not_not_intro hz)]
+    · rw [ite_eq_left hz]; unfold Producer.scoreF; rw [ite_eq_right (not_not_intro hz)]
       exact hp.salmon x hx i
-    rw [if_neg hz]
+    rw [ite_eq_right hz]
     let q:= f0.scoreF (e.v.aimE false) x i; let y:=f0.locate x i
     have hh:f0.awake x i:=by
          rw [hr] at hz; split at hz
@@ -881,7 +881,7 @@ lemma choirR(x:ℕ)(hx:x∈u.D.P)(i:ℕ)(hk:u.smallQ e.src i):
     have hN: s.band (bill e) e.Hx e.p.coin Q (q*showR e y):=by
        cases hV:e.v.govern
        · exact Song.pinFalse ebit (hc.trans hV) (hp.plain hx hh hV)
-       · have hW:r=tb x i:=hr.trans (if_pos hV)
+       · have hW:r=tb x i:=hr.trans (ite_eq_left hV)
          apply Song.pinTrue _ (hc.trans hV)
          rw [hW]; exact hp.earnsR hx hV (hW ▸hz)
     let a:=lampC e y
@@ -889,21 +889,21 @@ lemma choirR(x:ℕ)(hx:x∈u.D.P)(i:ℕ)(hk:u.smallQ e.src i):
     rw [show g.scoreF _ x i = _ from hp.tinted hz rfl]
     cases ht:e.v.t.two
     · apply Song.pinFalse need (hY.trans ht)
-      have hb:okY e y=true:=if_neg (by rw [ht];decide)
-      rw [if_pos hb,mul_assoc];exact hN
+      have hb:okY e y=true:=ite_eq_right (by rw [ht];decide)
+      rw [ite_eq_left hb,mul_assoc];exact hN
     apply Song.pinTrue need (hY.trans ht)
-    have hO:okY e y=a:=if_pos ht
+    have hO:okY e y=a:=ite_eq_left ht
     have hk:= hp.seesR hx hh rfl
     apply Seats.avis (higher hk (by have :=hp.readyK;omega) ((Court.sharp (e := e)) r).1)
     · intro hj; have hv:a=false:=by
             change enc a=0 at hj; cases ht:a; rfl; rw [ht] at hj; change 1=0 at hj; contradiction
-      rw [if_neg (by rw [hO,hv];decide),zero_mul,zero_mul];exact hp.salmon x hx i
+      rw [ite_eq_right (by rw [hO,hv];decide),zero_mul,zero_mul];exact hp.salmon x hx i
     intro hj; have hv:a=true:=by
        change enc a≠0 at hj
        cases he:a
        · rw [he] at hj; exact False.elim (hj rfl)
        rfl
-    rw [if_pos (hO.trans hv),mul_assoc];exact hN
+    rw [ite_eq_left (hO.trans hv),mul_assoc];exact hN
 end
 end ExactDerandomization.Gyre.OrbitR.Prism.Court
 
@@ -982,7 +982,7 @@ lemma matter : (tribe e f tb).Light e.v.finalE e.v.S0 e.v.S1:=by
           intro hn
           apply ho
           unfold finalE forecast current; dsimp only
-          rw [if_pos (show Net.onQ u.plotM.gap e.v.m (e.v.t.key u.plotM)=true from hr.onR)]
+          rw [ite_eq_left (show Net.onQ u.plotM.gap e.v.m (e.v.t.key u.plotM)=true from hr.onR)]
           change e.v.grid.pre e.v.grains (e.v.trio false) e.v.t.two x y * e.v.grid.incG e.v.grains y * _=0
           have he: e.v.grid.pre e.v.grains (e.v.trio false) e.v.t.two x y=0:=by
                 change e.v.grid.pre e.v.grains (e.v.trio false) false x y=0 at hn
@@ -991,9 +991,9 @@ lemma matter : (tribe e f tb).Light e.v.finalE e.v.S0 e.v.S1:=by
       obtain ⟨i,hi,hx⟩:=ht.defend x y hu
       refine ⟨i,?_,hx⟩
       show (if e.v.govern then _ else if h.awake x i then 1 else 0)≠0
-      rw [hG,if_pos hi]; exact Nat.ne_of_gt Nat.one_pos
+      rw [hG,ite_eq_left hi]; exact Nat.ne_of_gt Nat.one_pos
     obtain ⟨i,ha,hb,hC⟩:= hr.ancestor hG ho
-    exact ⟨i,(show (if e.v.govern then _ else _)≠0 from (by rw [if_pos hG];exact hC)),hb⟩
+    exact ⟨i,(show (if e.v.govern then _ else _)≠0 from (by rw [ite_eq_left hG];exact hC)),hb⟩
 lemma roy {x i:ℕ}: let g:=tribe e f tb
    g.tag x i ≤ clim u.w0.p +1 ∧ (g.awake x i→(f false).awake x i):=by
     intro g; have hr:= hp.step0
@@ -1021,8 +1021,8 @@ lemma plants(hA:e.Ace): e.v.Efine e.p (tribe e f tb):=by
      change u.eye.Flora u.torch.p e.origin.visN i x (if g.tag x i=0 then _ else _)
      by_cases hf:g.tag x i=0
      · have he0:= he i hB
-       rw [hf] at he0; rw [if_pos hf]; exact hA.deadgate x i hx hB he0
-     rw [if_neg hf]
+       rw [hf] at he0; rw [ite_eq_left hf]; exact hA.deadgate x i hx hB he0
+     rw [ite_eq_right hf]
      let p:=e.v.terminal false; let F:=p.visN; let y:=g.locate x i
      have hg:f0.awake x i:= hp.roy.2 (show g.awake x i from hf)
      have hl:= ht.suit.coil
@@ -1030,7 +1030,7 @@ lemma plants(hA:e.Ace): e.v.Efine e.p (tribe e f tb):=by
                   hx _ _ _ _ (Fabric.Good.n1 hc.chart hc.good (ht.light.insured x i hg).2)
                   (he _ hB) ((ht.suit.trace x hx).caseM i hg (hl.awake (hl.size0 i (ht.suit.lacks hx hg))))
      · unfold Mold.offer; dsimp only
-       rw [Stone.roleR,if_neg (by decide:(15:ℕ)≠ 2),if_neg (by decide:(15:ℕ)≠4),if_pos rfl]
+       rw [Stone.roleR,ite_eq_right (by decide:(15:ℕ)≠ 2),ite_eq_right (by decide:(15:ℕ)≠4),ite_eq_left rfl]
        exact congrArg (fun v=>rope v i) (Stone.pointing ..)
      · exact Stone.zeroR ..
      · rw [show u.D.D e.origin.visN=1 from e.v.ageEnd _ (by decide)]
@@ -1041,7 +1041,7 @@ lemma plants(hA:e.Ace): e.v.Efine e.p (tribe e f tb):=by
      · exact Or.inr rfl
      exact Or.inl (hp0.allocate hV).t1
    · intro he x i hi
-     have hu:g.tag x i=tb x i:=if_pos he
+     have hu:g.tag x i=tb x i:=ite_eq_left he
      exact hu.symm ▸ ((hp0.allocate he).bound x i (fun h=>hi (hu.trans h))).2
    intro h i hi t he hr
    have hv:= hp0.allocate h
@@ -1051,7 +1051,7 @@ lemma plants(hA:e.Ace): e.v.Efine e.p (tribe e f tb):=by
    have hw:= (hc x hx i hi t he hr).2.2
    rw [hw]
    change _=(if g.tag x i=t then _ else _)
-   rw [show g.tag x i=tb x i from if_pos h]; rfl
+   rw [show g.tag x i=tb x i from ite_eq_left h]; rfl
 end Court
 
 end
@@ -1082,7 +1082,7 @@ def flat:Producer:=⟨fun _ _=>0,fun _ _=>0⟩
 omit hb in
 lemma past : e.v.finalE=fun _ _=>0:=by
     unfold finalE forecast current; dsimp only
-    rw [if_neg (show ¬ (Net.onQ u.plotM.gap e.v.m (e.v.t.key u.plotM))=true from hc)]
+    rw [ite_eq_right (show ¬ (Net.onQ u.plotM.gap e.v.m (e.v.t.key u.plotM))=true from hc)]
 lemma mark0(x i:ℕ)(hx:x∈u.D.P): (e.screen x i).rite (rankF u) (ent u.r u.v) 0:=by
     let v:= e.screen x i
     have ht: (avail u.r).f v.l.x v.info=false:= ((Ready.toneC (e := e)) x i).2.1.trans (decide_eq_false hc)
@@ -1096,7 +1096,7 @@ lemma seed0(x i:ℕ)(hx:x∈u.D.P)(_:u.smallQ e.src i):
    have hp: Standard (e.screen x i) (b0 u.r u.v) e.Hx:=⟨Studio.positioned hs hx i 0,
                           spanFilm (Studio.vital (u:=u) _ hd) ..⟩
    apply Iris.parcel (Nat.zero_le _) hm
-   unfold melody; dsimp only; rw [if_pos rfl]
+   unfold melody; dsimp only; rw [ite_eq_left rfl]
    exact steam _ _ hp (le_trans ht.2.2 ht.1)
 omit hb hc in
 lemma deltaP (e:Prism u)(hp:e.v.govern=true): Foil.delta0 (bitR e.v.t):=by
@@ -1117,7 +1117,7 @@ lemma water (hd:u.s.scripted 12=Line.Fabric.capprog u.r u.v u.s.pave):e.v.Efine 
             have hs:=hb.deadgate x i hm hi (he0 i hi)
             exact hs⟩
       exact ⟨fun i hi=>by
-         have hr :flat.scoreF e.v.finalE x i=0:=if_neg (fun h=>h rfl)
+         have hr :flat.scoreF e.v.finalE x i=0:=ite_eq_right (fun h=>h rfl)
          rw [hr]
          exact hb.songT hi (hb.seed0 hc x i hm hi)⟩
     · cases h:e.v.govern; exact Or.inr rfl
@@ -1128,7 +1128,7 @@ lemma water (hd:u.s.scripted 12=Line.Fabric.capprog u.r u.v u.s.pave):e.v.Efine 
     have he0:u.D.dual (e.v.slotWord i) t:= (Line.Fabric.cap_dual hl).2
                                                          ⟨hi,Nat.one_le_iff_ne_zero.2 (by omega),hj⟩
     have hq:= Line.Fabric.desert12 (v:=e.v) i he.good hc hl he.chart hd
-    exact ⟨he0,hq.canonicalS,fun x h=>by rw [hq.lines he0 h];exact (if_neg (Nat.ne_of_lt ht)).symm⟩
+    exact ⟨he0,hq.canonicalS,fun x h=>by rw [hq.lines he0 h];exact (ite_eq_right (Nat.ne_of_lt ht)).symm⟩
 
 end Ace
 end

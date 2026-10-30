@@ -125,16 +125,16 @@ theorem iterate_true_notMem (b : ℕ) :
       | true => exact hs
       | false =>
           by_cases h : p e ∈ L
-          · simp only [prodStep, List.elem_eq_mem, decide_eq_true_eq, if_pos h]
+          · simp only [prodStep, List.elem_eq_mem, decide_eq_true_eq, ite_eq_left h]
             exact fun hc => absurd hc (by simp)
-          · simp only [prodStep, List.elem_eq_mem, decide_eq_true_eq, if_neg h]
+          · simp only [prodStep, List.elem_eq_mem, decide_eq_true_eq, ite_eq_right h]
             exact fun _ => h
 
 theorem prodEsc_notMem (b e : ℕ) : prodEsc p adj L b e ∉ L := by
   by_cases h : (prodRun p adj L b e).2.2 = Bool.true
-  · rw [prodEsc, if_pos h]
+  · rw [prodEsc, ite_eq_left h]
     exact iterate_true_notMem p adj L b (e, 0, Bool.false) (by simp) h
-  · rw [prodEsc, if_neg h]
+  · rw [prodEsc, ite_eq_right h]
     exact freshOf_notMem L
 
 /-- A step of the chase when the produced value is unusable: the value is adjoined to the current
@@ -142,14 +142,14 @@ set and the chase continues. -/
 theorem prodRun_succ_of_mem {e : ℕ} (h : p e ∈ L) (b : ℕ) :
     prodRun p adj L (b + 1) e = prodRun p adj L b (adj e (p e)) := by
   have hstep : prodStep p adj L (e, 0, Bool.false) = (adj e (p e), 0, Bool.false) := by
-    simp only [prodStep, List.elem_eq_mem, decide_eq_true_eq, if_pos h]
+    simp only [prodStep, List.elem_eq_mem, decide_eq_true_eq, ite_eq_left h]
   rw [prodRun, Function.iterate_succ_apply, hstep, prodRun]
 
 /-- A step of the chase when the produced value is usable: the chase stops with that value. -/
 theorem prodRun_succ_of_notMem {e : ℕ} (h : p e ∉ L) (b : ℕ) :
     prodRun p adj L (b + 1) e = (e, p e, Bool.true) := by
   have hstep : prodStep p adj L (e, 0, Bool.false) = (e, p e, Bool.true) := by
-    simp only [prodStep, List.elem_eq_mem, decide_eq_true_eq, if_neg h]
+    simp only [prodStep, List.elem_eq_mem, decide_eq_true_eq, ite_eq_right h]
   rw [prodRun, Function.iterate_succ_apply, hstep]
   exact prodRun_stable p adj L e (p e) b
 

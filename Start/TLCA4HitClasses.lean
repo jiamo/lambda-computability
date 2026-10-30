@@ -70,7 +70,7 @@ theorem f6_red (x : ℕ) :
   have h3 := betaEtaReduces_beta (.lam (.lam (.app (.var (x + 5)) (.app (.var 2)
     (.app (.var 1) (.var 0)))))) (.app (.var 1) (.var 0))
   have a1 : ¬ x + 3 + 1 < 3 := by omega
-  simp only [a1, if_false, show x + 3 + 1 + 1 = x + 5 by omega]
+  simp only [a1, ite_false, show x + 3 + 1 + 1 = x + 5 by omega]
   exact h3
 
 theorem f7_red (x : ℕ) :

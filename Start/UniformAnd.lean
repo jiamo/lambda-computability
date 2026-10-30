@@ -198,8 +198,8 @@ theorem eval_andBlkT (n : ℕ) (y : Word) (c : ℕ) :
       simp only [Cob.eval_comp, List.map_cons, List.map_nil, Cob.eval_iteC, Cob.eval_proj,
         List.getD_cons_succ, List.getD_cons_zero, Cob.eval_catL, Cob.eval_constT, Cob.eval_concat,
         Cob.eval_app, List.flatten_cons, List.flatten_nil, List.append_nil,
-        if_neg (by simp : ¬ List.replicate (k + 1) true = [])]
-      rw [andTmpl, if_neg (by omega), encGate]
+        ite_eq_right (by simp : ¬ List.replicate (k + 1) true = [])]
+      rw [andTmpl, ite_eq_right (by omega), encGate]
       simp only [tag, fld1, fld2]
       rw [← List.replicate_add]
       have h1 : n + (k + 1) - 1 + 1 = n + (k + 1) := by omega

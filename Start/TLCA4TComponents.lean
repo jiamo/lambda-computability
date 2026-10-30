@@ -193,7 +193,7 @@ theorem tA0_reduces (x : ℕ) : Lambda.reduces (toLam (tA x 0)) (tAnf x 0) := by
     simpa [Lambda.lift, lamB] using this
   -- `M W → W W`
   refine Lambda.reduces.step _ _ _ (Lambda.step.beta _ _) ?_
-  simp only [Lambda.subst, if_pos]
+  simp only [Lambda.subst, ite_eq_left]
   refine Lambda.reduces_trans (Lambda.reduces_app hW hW) ?_
   refine Lambda.reduces.step _ _ _ (Lambda.step.beta _ _) ?_
   simp [Lambda.subst, xPow]

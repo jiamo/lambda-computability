@@ -496,7 +496,7 @@ lemma compile {x k p a c} (h : Run x k p a c) {P : CM S} :
          (fun u => h (Sum.inr (Sum.inl u))) hp
     refine CM.Runs.more (code _ _ _ (enter (.bif i t p q))) hab.fits.1 (h _) ?_ he
     simp [code, enter, Jump.apply, cond] at *
-    rw [if_pos e]
+    rw [ite_eq_left e]
   | @no i t a b p q e hab ih =>
     intro f y v h hp
     have he := ih (fun u=> f (Sum.inr (Sum.inr u))) y v
@@ -1123,7 +1123,7 @@ lemma searchDiv (a b n : ℕ) :
     simp only [forNat,ih]
     by_cases h : b=0
     · simp [h]
-    rw [if_neg h]
+    rw [ite_eq_right h]
     have H := Nat.le_div_iff_mul_le (x:=n+1) (y:=a) (show 0<b by omega)
     split <;> omega
 

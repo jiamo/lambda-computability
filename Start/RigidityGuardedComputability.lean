@@ -78,10 +78,10 @@ theorem stageWord_eq (A : Oracle) (s v : ℕ) :
   unfold stageWord
   simp only [Nat.unpair_pair]
   by_cases ha : stageAction A s v = 0
-  · have hn : GuardedStage.stageAction A s (state v) = none := by simpa only [StageRecords.action,if_pos ha] using he.symm
+  · have hn : GuardedStage.stageAction A s (state v) = none := by simpa only [StageRecords.action,ite_eq_left ha] using he.symm
     simp [ha,GuardedStage.stageWord,hn,generic_eq]
   · have hn : GuardedStage.stageAction A s (state v) = some (stageAction A s v-1) := by
-      simpa only [StageRecords.action,if_neg ha] using he.symm
+      simpa only [StageRecords.action,ite_eq_right ha] using he.symm
     simp [ha,GuardedStage.stageWord,hn,candidate_eq,generic_eq]
 
 def grow (p s : ℕ) : ℕ := Nat.pair (encode (left p ++ [false]))

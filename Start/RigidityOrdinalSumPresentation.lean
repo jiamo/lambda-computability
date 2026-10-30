@@ -43,7 +43,7 @@ theorem sumValue_left (a : Ordinal.{u}) (s : ZFSet.{u}) :
     sumValue a (leftNode s) = s := by
   classical
   have h : ∃ t, leftNode s = leftNode t := ⟨s,rfl⟩
-  simp only [sumValue, dif_pos h]
+  simp only [sumValue, dite_eq_left h]
   exact (leftNode_inj.mp h.choose_spec).symm
 
 theorem sumValue_right (a : Ordinal.{u}) (s : ZFSet.{u}) :
@@ -51,7 +51,7 @@ theorem sumValue_right (a : Ordinal.{u}) (s : ZFSet.{u}) :
   classical
   have h : ¬ ∃ t, rightNode s = leftNode t := by simp
   have k : ∃ t, rightNode s = rightNode t := ⟨s,rfl⟩
-  simp only [sumValue, dif_neg h, dif_pos k]
+  simp only [sumValue, dite_eq_right h, dite_eq_left k]
   rw [← rightNode_inj.mp k.choose_spec]
 
 theorem sumValue_mem (a b : Ordinal.{u}) (x : ZFSet.{u})

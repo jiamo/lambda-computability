@@ -57,14 +57,14 @@ theorem pop_push (s : St) (A u S : Word) :
     pop { s with S := encMsg A ++ encMsg u ++ S } = { s with A := A, V := u, S := S } := by
   have hne : encMsg A ++ (encMsg u ++ S) ≠ [] := by simp [encMsg]
   simp only [pop, List.append_assoc]
-  rw [if_neg hne]
+  rw [ite_eq_right hne]
   simp only [recGet_encMsg, recSkip_encMsg]
 
 theorem pop_push' (C J A' V' A u S B T H : Word) :
     pop ⟨C, J, A', V', encMsg A ++ encMsg u ++ S, B, T, H⟩ = ⟨C, J, A, u, S, B, T, H⟩ := by
   have hne : encMsg A ++ (encMsg u ++ S) ≠ [] := by simp [encMsg]
   simp only [pop, List.append_assoc]
-  rw [if_neg hne]
+  rw [ite_eq_right hne]
   simp only [recGet_encMsg, recSkip_encMsg]
 
 theorem iterate_rej_eq {p N d : ℕ} (s : St) (K : ℕ) : (stepW p N d)^[K] (rej s) = rej s :=
@@ -158,9 +158,9 @@ theorem replays_var (i : ℕ) : Replays p N d msgW ptN (.var i) (QBF.enc (.var i
   unfold Good
   simp only [Op.size, Function.iterate_one, hstep, hfa, hVl]
   refine ⟨fun hacc => ⟨a, v, ha, hlt, hv, ?_⟩, fun hrej => ?_⟩
-  · rw [if_pos (of_decide_eq_true hacc)]
+  · rw [ite_eq_left (of_decide_eq_true hacc)]
     congr 1; cases s; simp_all
-  · rw [if_neg (of_decide_eq_false hrej)]; simp
+  · rw [ite_eq_right (of_decide_eq_false hrej)]; simp
 
 /-! ### Negation -/
 
@@ -243,11 +243,11 @@ theorem replays_bin_gen (b : Bool) {t u t0 : Op} {C D : Word}
       cast_mod, cast_mod]
   by_cases hc : combF (x : ZMod p) y = v
   swap
-  · rw [if_neg (by simpa using mt hiff.1 hc)] at hstep
-    rw [if_neg hc]
+  · rw [ite_eq_right (by simpa using mt hiff.1 hc)] at hstep
+    rw [ite_eq_right hc]
     exact good_rej p N d (by omega) hstep
-  rw [if_pos (by simpa using hiff.2 hc)] at hstep
-  rw [if_pos hc]
+  rw [ite_eq_left (by simpa using hiff.2 hc)] at hstep
+  rw [ite_eq_left hc]
   have IH := ht
     { s with
       C := C ++ (D ++ X), V := un (x % p)
@@ -377,11 +377,11 @@ theorem replays_quant_gen (b : Bool) {i : ℕ} (hi : i < N) {t t0 : Op} {C : Wor
       combF ((hornerN 0 p (decF (msgW k)) : ℕ) : ZMod p) ((hornerN 1 p (decF (msgW k)) : ℕ) : ZMod p)
         = v
   swap
-  · rw [if_neg (by rwa [hiff])] at hstep
-    rw [if_neg hc]
+  · rw [ite_eq_right (by rwa [hiff])] at hstep
+    rw [ite_eq_right hc]
     exact good_rej p N d (by omega) hstep
-  rw [if_pos (by rwa [hiff])] at hstep
-  rw [if_pos hc]
+  rw [ite_eq_left (by rwa [hiff])] at hstep
+  rw [ite_eq_left hc]
   have hA' : setField i (ptN k % p) s.A = fieldsWord (a.set i (ptN k % p)) := by
     rw [hA, setField_fieldsWord _ (by omega)]
   have IH := ht
@@ -405,12 +405,12 @@ theorem replays_quant (b : Bool) {i : ℕ} (hi : i < N) {t : Op} {C : Word}
   · refine replays_quant_gen p N d msgW ptN false hi (fun x y => x * y) rfl rfl ?_ ?_ ht
     · intro x y hx hy
       rw [cast_comb false hx.le hy.le]; simp
-    · intro a v hist ρ; rw [quantOp, if_neg Bool.false_ne_true, run_all_def]
+    · intro a v hist ρ; rw [quantOp, ite_eq_right Bool.false_ne_true, run_all_def]
   · refine replays_quant_gen p N d msgW ptN true hi (fun x y => 1 - (1 - x) * (1 - y)) rfl rfl ?_
       ?_ ht
     · intro x y hx hy
       rw [cast_comb true hx.le hy.le]; simp
-    · intro a v hist ρ; rw [quantOp, if_pos rfl, run_ex_def]
+    · intro a v hist ρ; rw [quantOp, ite_eq_left rfl, run_ex_def]
 
 theorem replays_lin {b : Bool} {i j : ℕ} (hj : j < N) {t : Op} {C : Word}
     (ht : Replays p N d msgW ptN t (true :: true :: b :: (QBF.unary i ++ C)) (j + 1)) :
@@ -440,11 +440,11 @@ theorem replays_lin {b : Bool} {i j : ℕ} (hj : j < N) {t : Op} {C : Word}
       toF p a j * ((hornerN 1 p (decF (msgW k)) : ℕ) : ZMod p) +
         (1 - toF p a j) * ((hornerN 0 p (decF (msgW k)) : ℕ) : ZMod p) = v
   swap
-  · rw [if_neg (by rwa [hiff])] at hstep
-    rw [if_neg hc]
+  · rw [ite_eq_right (by rwa [hiff])] at hstep
+    rw [ite_eq_right hc]
     exact good_rej p N d (by simp [Op.size]) hstep
-  rw [if_pos (by rwa [hiff])] at hstep
-  rw [if_pos hc]
+  rw [ite_eq_left (by rwa [hiff])] at hstep
+  rw [ite_eq_left hc]
   have hA' : setField j (ptN k % p) s.A = fieldsWord (a.set j (ptN k % p)) := by
     rw [hA, setField_fieldsWord _ (by omega)]
   have IH := ht

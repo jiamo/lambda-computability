@@ -126,7 +126,7 @@ lemma K_eq_iSup : K = ⨆ t, Kpiece t := by
     have hf : fBit ⟨w.count b % 2, Nat.mod_lt _ (by norm_num)⟩ (stateOf 0 w) (s4state w) = 0 := by
       simp only [fBit]
       omega
-    simp only [Kpiece, hf, if_true]
+    simp only [Kpiece, hf, ite_true]
     exact ⟨⟨rfl, rfl⟩, rfl⟩
   · rintro ⟨⟨r, s, q⟩, ht⟩
     simp only [Kpiece] at ht

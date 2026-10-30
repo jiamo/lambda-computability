@@ -176,7 +176,7 @@ theorem vcount_z4_height (h4 : Z4CoreHeightOne) {α : Type u} [Finite α]
       vcountFrom_map g hg δ' 0 x]
     have hcomp : δ' ∘ g = δ := funext fun a => by simp [δ', g]
     have hne : ¬ (none = g x ∧ (0 : ZMod 4) = 0) := fun h => by simp [g] at h
-    rw [if_neg hne, zero_add, hcomp, vcountFrom_shift δ 0 x q (0 + δ' none) w]
+    rw [ite_eq_right hne, zero_add, hcomp, vcountFrom_shift δ 0 x q (0 + δ' none) w]
     simp [δ']
   rw [heq]
   exact (h0.leftQuot none).invAlph φ

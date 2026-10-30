@@ -8,7 +8,6 @@ file `lean/OAI/Computability/DegreeRigidity/Computability/Cuts.lean`, family 241
 paper "Rigidity of the Turing degrees".
 Adapted to this library's Lean v4.33.0 / Mathlib `v4.33.0` pin: the `OAI` namespace was dropped,
 imports were renamed to `Start.Rigidity*`, and proofs were repaired where the pin required it.
-Proof change: `Measurable.of_eval` (upstream pin) is `measurable_pi_lambda` on this pin.
 See `NOTICE` at the repository root.
 -/
 
@@ -50,7 +49,7 @@ theorem cut_injective : Function.Injective cut := by
     exact (not_lt_of_gt hxq) hqx
 
 theorem cut_measurable : Measurable cut := by
-  apply measurable_pi_lambda
+  apply Measurable.of_eval
   intro n
   have h : MeasurableSet {x : ℝ | (rationalEnumeration n : ℝ) < x} := measurableSet_Ioi
   have hm : Measurable (fun x : ℝ => if (rationalEnumeration n : ℝ) < x then true else false) :=

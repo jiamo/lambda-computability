@@ -68,12 +68,12 @@ theorem next_spec (A : ℕ → Oracle) (Y : Oracle) (e : OracleCode) (p : ℕ) :
   rcases hs with ⟨ht,hn⟩ | ⟨ht,hpoint⟩ | ⟨ht,hdiv⟩
   · have htag : (Nat.unpair out).1 ≠ 2 := by omega
     have he : condition (next Y e p) = condition p := by
-      simp only [next,← show out = step Y e (encode (left p)) from rfl,update,if_neg htag,condition_code]
+      simp only [next,← show out = step Y e (encode (left p)) from rfl,update,ite_eq_right htag,condition_code]
     rw [he]
     exact ⟨extends_refl A _,rfl,Or.inl (noSplit_unique hn)⟩
   · have htag : (Nat.unpair out).1 ≠ 2 := by omega
     have he : condition (next Y e p) = condition p := by
-      simp only [next,← show out = step Y e (encode (left p)) from rfl,update,if_neg htag,condition_code]
+      simp only [next,← show out = step Y e (encode (left p)) from rfl,update,ite_eq_right htag,condition_code]
     rw [he]
     let w := (Nat.unpair out).2
     simp only [PointCert,Nat.unpair_pair,word,encodek,Option.getD_some] at hpoint
@@ -88,7 +88,7 @@ theorem next_spec (A : ℕ → Oracle) (Y : Oracle) (e : OracleCode) (p : ℕ) :
       exact List.take_append_drop _ _
     let r := append (condition p) (q.drop (left p).length)
     have he : condition (next Y e p) = r := by
-      simp only [next,← show out = step Y e (encode (left p)) from rfl,update,if_pos ht,condition_code]
+      simp only [next,← show out = step Y e (encode (left p)) from rfl,update,ite_eq_left ht,condition_code]
       rfl
     have hleft : r.left = q := heq
     rw [he]

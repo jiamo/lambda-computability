@@ -108,7 +108,7 @@ theorem neUpStep_correct {R : CFns} (hR : R.Correct) {Γ : Ctx} {k l Ak Al : Tm}
         obtain ⟨e, hv⟩ := hT.inv_var
         cases e
         obtain ⟨X, hX, -⟩ := hv.inv_var
-        rw [if_pos rfl, ctxGet_of_lookup hX] at hr
+        rw [ite_eq_left rfl, ctxGet_of_lookup hX] at hr
         cases hr
   · next k a l b =>
       obtain ⟨Fk, Gk, hkF, haF, -⟩ := hk.inv_app

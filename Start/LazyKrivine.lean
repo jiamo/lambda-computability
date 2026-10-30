@@ -80,7 +80,7 @@ theorem decA_of {H : List Cell} {a : ℕ} {cell : Cell} (h : H[a]? = some cell)
   rw [decA]
   simp only [h]
   congr 1
-  exact List.map_congr_left fun b hb => dif_pos (hwf b hb)
+  exact List.map_congr_left fun b hb => dite_eq_left (hwf b hb)
 
 /-- Decoding a list of addresses. -/
 def decs (H : List Cell) (l : List ℕ) : List Clos := l.map (decA H)

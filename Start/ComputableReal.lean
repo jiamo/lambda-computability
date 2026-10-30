@@ -106,7 +106,7 @@ theorem glue_isName {β γ : ℕ → ℕ} {x y : ℝ} {N : ℕ} (hβ : IsFastNam
       field_simp
       ring
     have h1 : |(ratOf (glue β γ N i) : ℝ) - y| ≤ |(ratOf (β i) : ℝ) - x| + |x - y| := by
-      rw [glue, if_pos hi]
+      rw [glue, ite_eq_left hi]
       simpa using abs_sub_le ((ratOf (β i) : ℝ)) x y
     calc |(ratOf (glue β γ N i) : ℝ) - y|
         ≤ |(ratOf (β i) : ℝ) - x| + |x - y| := h1
@@ -115,7 +115,7 @@ theorem glue_isName {β γ : ℕ → ℕ} {x y : ℝ} {N : ℕ} (hβ : IsFastNam
           · exact hβ i
           · rw [abs_sub_comm]; exact hxy.trans hstep
       _ = 1 / 2 ^ i := hsum
-  · rw [glue, if_neg hi]
+  · rw [glue, ite_eq_right hi]
     exact hγ i
 
 /-! ### Computable real functions -/

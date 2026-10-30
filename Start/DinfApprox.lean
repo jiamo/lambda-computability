@@ -264,7 +264,7 @@ theorem ddenot_direct_appList_zero (ρ : DEnv) : ∀ (args : List Lambda) (t : L
       intro t ht
       rw [Lambda.appList_cons]
       refine le_trans ?_ (ih (Lambda.app t a) (Neutral.app a ht))
-      rw [Lambda.direct_app, if_pos (neutral_iff_headVar.1 ht), ddenot_app]
+      rw [Lambda.direct_app, ite_eq_left (neutral_iff_headVar.1 ht), ddenot_app]
       exact app_zero_le _ _
 
 /-- The level-`n` value of an application dominates the application of the level-`n` values. -/
@@ -295,7 +295,7 @@ theorem arelD_of_neutral_reduct : ∀ (n : ℕ) (z : D n) (ρ : DEnv) (t : Lambd
         rwa [Lambda.lift_zero] at this
       obtain ⟨u', hu', hx⟩ := hu0.direct
       refine ih _ ρ _ ⟨Lambda.app t₀ u', Lambda.reduces_app ht₀ hu', Neutral.app _ hn₀, ?_⟩
-      rw [Lambda.direct_app, if_pos (neutral_iff_headVar.1 hn₀)]
+      rw [Lambda.direct_app, ite_eq_left (neutral_iff_headVar.1 hn₀)]
       exact toFn_le_ddenot_app hz hx
 
 /-! ## Compatibility with the embedding–projection pairs -/
@@ -459,9 +459,9 @@ theorem areal_var (X : Dinf) (ρ : DEnv) (i : ℕ) (h : ρ i = X) : AReal X ρ (
   intro k ρ' hρ' n
   refine arelD_of_neutral_reduct n _ ρ' _ ⟨Lambda.lift k 0 (Lambda.var i),
     Lambda.reduces.refl _, ?_, ?_⟩
-  · simp only [Lambda.lift, if_neg (Nat.not_lt_zero i)]
+  · simp only [Lambda.lift, ite_eq_right (Nat.not_lt_zero i)]
     exact Neutral.var _
-  · simp only [Lambda.lift, if_neg (Nat.not_lt_zero i), Lambda.direct_var, ddenot_var]
+  · simp only [Lambda.lift, ite_eq_right (Nat.not_lt_zero i), Lambda.direct_var, ddenot_var]
     rw [hρ' i, h]
 
 /-- **Application preserves approximation.** -/

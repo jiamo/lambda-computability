@@ -398,7 +398,7 @@ theorem Nat.sqrt_aux_correct (n k : ℕ) (h : k * k ≤ n) : Nat.sqrt_aux n k = 
         have hk1 : k + 1 ≤ m := by omega
         have hnot : ¬ n < (k + 1) * (k + 1) := by
           exact not_lt.mpr ((Nat.le_sqrt).1 hk1)
-        rw [Nat.sqrt_aux_eq, if_neg hnot]
+        rw [Nat.sqrt_aux_eq, ite_eq_right hnot]
         apply ih (k + 1) hk1
         omega
   simpa [m] using hmain k hk
@@ -461,7 +461,7 @@ theorem Nat.sqrt_aux_v3_correct (n k : ℕ) (h : k * k ≤ n) : Nat.sqrt_aux_v3 
         have hk1 : k + 1 ≤ m := by omega
         have hnot : ¬ n < (k + 1) * (k + 1) := by
           exact not_lt.mpr ((Nat.le_sqrt).1 hk1)
-        rw [Nat.sqrt_aux_v3_eq, if_neg hnot]
+        rw [Nat.sqrt_aux_v3_eq, ite_eq_right hnot]
         apply ih (k + 1) hk1
         omega
   simpa [m] using hmain k hk
@@ -571,12 +571,12 @@ theorem Lambda.REC_v2_fixed_works (n k : ℕ) :
         have hsq : k + 1 ≤ (k + 1) * (k + 1) := by
           simp
         exact lt_of_lt_of_le hk1 hsq
-      rw [Nat.sqrt_aux_v3_eq, if_pos h_case]
+      rw [Nat.sqrt_aux_v3_eq, ite_eq_left h_case]
       exact Lambda.reduces_trans (Lambda.REC_v2_fixed_app_reduces n k)
           (Lambda.sqrt_iter_v2_body_reduces_true _ _ _ h_case)
   | succ d ih =>
       by_cases h_case : n < (k + 1) * (k + 1)
-      · rw [Nat.sqrt_aux_v3_eq, if_pos h_case]
+      · rw [Nat.sqrt_aux_v3_eq, ite_eq_left h_case]
         exact Lambda.reduces_trans (Lambda.REC_v2_fixed_app_reduces n k)
             (Lambda.sqrt_iter_v2_body_reduces_true _ _ _ h_case)
       · have hk1 : k + 1 ≤ n := by
@@ -601,7 +601,7 @@ theorem Lambda.REC_v2_fixed_works (n k : ℕ) :
                   1)))
               (Lambda.church (Nat.sqrt_aux_v3 n (k + 1))) := by
           exact ih n (k + 1) hd'
-        rw [Nat.sqrt_aux_v3_eq, if_neg h_case]
+        rw [Nat.sqrt_aux_v3_eq, ite_eq_right h_case]
         exact Lambda.reduces_trans h_step h_rec
 
 theorem Lambda.sqrt_iter_v2_works (n k : ℕ) :

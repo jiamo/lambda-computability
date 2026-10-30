@@ -358,8 +358,8 @@ theorem sim_forBits {r : ℕ} {p₀ p₁ : RProg} {a : ℕ} {R : Regs} {T : Opti
               exact body p₁ (a + flen p₀ + 4) ih₁ wf₁ hr₁ (fun x hx => Or.inr hx) c1 hadv2 hjmp2
         have hSr' : (bif b then run p₁ S else run p₀ S) r = R r := by
           cases b
-          · rw [cond_false, run_untouched p₀ hr₀, hSr]
-          · rw [cond_true, run_untouched p₁ hr₁, hSr]
+          · rw [Bool.cond_false, run_untouched p₀ hr₀, hSr]
+          · rw [Bool.cond_true, run_untouched p₁ hr₁, hSr]
         obtain ⟨T', h4, f4, r4⟩ := ih (k + 1) _ T₃ hL' (by omega) hSr' h3r h3b h3f
         refine ⟨T', fun x hx => ?_, f4, ?_⟩
         · rw [List.foldl_cons]; exact h4 x hx
@@ -499,8 +499,8 @@ theorem sim_forBitsRev {r : ℕ} {p₀ p₁ : RProg} {a : ℕ} {R : Regs}
           | true => exact body p₁ (a + flen p₀ + 4) ih₁ wf₁ hr₁ (fun x hx => Or.inr hx) c1 hret2 hjmp2
         have hSr' : (bif b then run p₁ S else run p₀ S) r = R r := by
           cases b
-          · rw [cond_false, run_untouched p₀ hr₀, hSr]
-          · rw [cond_true, run_untouched p₁ hr₁, hSr]
+          · rw [Bool.cond_false, run_untouched p₀ hr₀, hSr]
+          · rw [Bool.cond_true, run_untouched p₁ hr₁, hSr]
         obtain ⟨T', h4, f4, r4⟩ := ih k' _ T₃ hL' (by omega) hSr' h3r h3b h3f
         refine ⟨T', fun x hx => ?_, f4, ?_⟩
         · rw [List.foldl_cons]; exact h4 x hx

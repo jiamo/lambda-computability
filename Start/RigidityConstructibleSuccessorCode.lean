@@ -21,7 +21,7 @@ theorem tupleEnv_cons {n : ℕ} (x : ZFSet.{u}) (v : Fin n → ZFSet.{u}) :
   | zero => simp [tupleEnv,cons]
   | succ i =>
     by_cases hi : i < n
-    · simp only [tupleEnv,cons_succ,Nat.succ_lt_succ_iff,hi,dif_pos]
+    · simp only [tupleEnv,cons_succ,Nat.succ_lt_succ_iff,hi,dite_eq_left]
       rfl
     · simp [tupleEnv,cons_succ,hi]
 

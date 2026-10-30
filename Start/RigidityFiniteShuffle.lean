@@ -154,7 +154,7 @@ theorem extendEven_code (n : ℕ) (A G T : Oracle) (hg : OddBound n G)
     simp only [Bool.false_eq_true,↓reduceIte,hc]
     have hl := count_le G n
     have hn : ¬i-count G n<n := by omega
-    rw [if_neg hn]
+    rw [ite_eq_right hn]
     congr 1
     omega
 

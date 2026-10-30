@@ -121,7 +121,7 @@ lemma leftQuot_mul (E F : Language α) (a : α) :
     obtain ⟨x, hx, y, hy, hxy⟩ := Language.mem_mul.mp h'
     rcases x with _ | ⟨b, x⟩
     · right
-      rw [if_pos hx]
+      rw [ite_eq_left hx]
       simp only [List.nil_append] at hxy
       show a :: w ∈ F
       rw [← hxy]; exact hy

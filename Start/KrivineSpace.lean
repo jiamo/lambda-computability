@@ -373,10 +373,10 @@ theorem getElem?_upto_rankIn {P : ℕ → Bool} {n a : ℕ} (ha : a < n) (hPa : 
     (upto P n)[rankIn P a]? = some a := by
   obtain ⟨r, hr⟩ := upto_prefix (P := P) (m := a + 1) (n := n) (by omega)
   have hval : (upto P (a + 1))[rankIn P a]? = some a := by
-    rw [upto_succ, if_pos hPa, rankIn]
+    rw [upto_succ, ite_eq_left hPa, rankIn]
     simp
   have hlen : rankIn P a < (upto P (a + 1)).length := by
-    rw [upto_succ, if_pos hPa]
+    rw [upto_succ, ite_eq_left hPa]
     simp [rankIn]
   rw [← hr, List.getElem?_append_left hlen]
   exact hval
@@ -391,7 +391,7 @@ theorem rankIn_of_getElem? {P : ℕ → Bool} :
       intro k a h
       rw [upto_succ] at h
       by_cases hP : P n
-      · rw [if_pos hP] at h
+      · rw [ite_eq_left hP] at h
         rcases Nat.lt_or_ge k (upto P n).length with hlt | hge
         · exact ih (by rwa [List.getElem?_append_left hlt] at h)
         · rw [List.getElem?_append_right hge] at h
@@ -407,7 +407,7 @@ theorem rankIn_of_getElem? {P : ℕ → Bool} :
               ⟨k - (upto P n).length - 1, by omega⟩
             rw [hj] at h
             simp at h
-      · rw [if_neg hP, List.append_nil] at h
+      · rw [ite_eq_right hP, List.append_nil] at h
         exact ih h
 /-! ### Reachability is stable under allocation -/
 

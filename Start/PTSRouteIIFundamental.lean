@@ -176,15 +176,15 @@ section SemT
 variable {Γ : List (Expr Srt)} {ξ : ℕ → Cand} {Δ : List (Expr Srt)} {T X Y : Expr Srt}
 
 theorem SemT_box : SemT Γ ξ Δ (.sort .box) X Y ↔ NormNW P2 Δ X Y := by
-  unfold SemT; rw [if_pos rfl]
+  unfold SemT; rw [ite_eq_left rfl]
 
 theorem SemT_kind (hT : T ≠ .sort .box) (hk : IsKindCls (cl (ctxCl Γ) T)) :
     SemT Γ ξ Δ T X Y ↔ TRed (KSem (erK (ctxCl Γ) SkP.base T) ξ) Δ X Y := by
-  unfold SemT; rw [if_neg hT, if_pos hk]
+  unfold SemT; rw [ite_eq_right hT, ite_eq_left hk]
 
 theorem SemT_type (hT : T ≠ .sort .box) (hk : ¬ IsKindCls (cl (ctxCl Γ) T)) :
     SemT Γ ξ Δ T X Y ↔ GoodP (erP (ctxCl Γ) SkP.base T) ξ Δ X Y := by
-  unfold SemT; rw [if_neg hT, if_neg hk]
+  unfold SemT; rw [ite_eq_right hT, ite_eq_right hk]
 
 /-- CR1 for the semantics. -/
 theorem SemT.norm (hξ : ∀ i, IsCandN (ξ i)) (h : SemT Γ ξ Δ T X Y) : NormNW P2 Δ X Y := by
@@ -416,7 +416,7 @@ theorem erP_pi_kind' {Δ : ℕ → Cls} {ρ : ℕ → SkP} {A B : Expr Srt} {a :
     erP Δ ρ (.pi A B) = .all (erK Δ ρ A) (erP (ncons (.constr a) Δ) (upSP ρ) B) := by
   have h' := h
   simp only [cl] at h'
-  simp only [erP, if_pos h']
+  simp only [erP, ite_eq_left h']
   split
   · rename_i a' ha'
     rw [hA] at ha' ⊢
@@ -429,7 +429,7 @@ theorem erP_pi_type' {Δ : ℕ → Cls} {ρ : ℕ → SkP} {A B : Expr Srt}
     erP Δ ρ (.pi A B) = .arr (erP Δ ρ A) (erP (ncons .obj Δ) (ncons junkP ρ) B) := by
   have h' := h
   simp only [cl] at h'
-  simp only [erP, if_pos h']
+  simp only [erP, ite_eq_left h']
   rw [CoC.bindC_of_not_kind hA]
 
 /-! ### Substitution algebra -/

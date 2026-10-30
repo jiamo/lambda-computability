@@ -44,9 +44,9 @@ open scoped Classical in
 theorem zeroSet_coord_image {d : ℕ} (f : Fin d → Prop) (i : Fin d) :
     (fun x : Fin d → Bit => x i) '' zeroSet f = if f i then {0} else Set.univ := by
   by_cases hi : f i
-  · rw [if_pos hi]
+  · rw [ite_eq_left hi]
     exact image_singleton_of_forall (zeroSet_nonempty f) _ _ (fun _ hx => hx i hi)
-  · rw [if_neg hi]
+  · rw [ite_eq_right hi]
     apply Set.eq_univ_of_forall
     intro b
     refine ⟨Function.update (fun _ => 0) i b,?_,Function.update_self _ _ _⟩
@@ -60,11 +60,11 @@ theorem zeroSet_sum_image {d : ℕ} (f : Fin d → Prop) :
     (fun x : Fin d → Bit => ∑ i,x i) '' zeroSet f =
       if ∀ i,f i then {0} else Set.univ := by
   by_cases hf : ∀ i,f i
-  · rw [if_pos hf]
+  · rw [ite_eq_left hf]
     apply image_singleton_of_forall (zeroSet_nonempty f)
     intro x hx
     simp only [hx _ (hf _),Finset.sum_const_zero]
-  · rw [if_neg hf]
+  · rw [ite_eq_right hf]
     push Not at hf
     obtain ⟨i,hi⟩ := hf
     apply Set.eq_univ_of_forall
@@ -165,7 +165,7 @@ variable {G : Type uG} {E : Type uE} (C : Circuit G E)
 
 theorem all_forced_iff (g : G) : (∀ i,C.Forced g i) ↔ C.TrueAt g := by
   by_cases hs : C.kind g = .scalar
-  · simp only [Forced,if_pos hs]
+  · simp only [Forced,ite_eq_left hs]
     exact ⟨fun h => h ⟨0,(C.kind g).dim_pos⟩,fun h _ => h⟩
   · rw [TrueAt]
     simp only [hs,ite_false,Forced,PortTrue,exists_prop]
@@ -173,14 +173,14 @@ theorem all_forced_iff (g : G) : (∀ i,C.Forced g i) ↔ C.TrueAt g := by
 theorem port_true_forced (g : G) (p : Fin (C.kind g).dim)
     (h : C.PortTrue g p.val) : C.Forced g p := by
   by_cases hs : C.kind g = .scalar
-  · simp only [Forced,if_pos hs]
-    rw [TrueAt,if_pos hs]
+  · simp only [Forced,ite_eq_left hs]
+    rw [TrueAt,ite_eq_left hs]
     obtain ⟨e,he,_,ht⟩ := h
     exact Or.inr ⟨e,he,ht⟩
-  · simpa only [Forced,if_neg hs] using h
+  · simpa only [Forced,ite_eq_right hs] using h
 
 theorem true_of_seed (g : G) (h : C.seed g = true) : C.TrueAt g := by
-  rw [TrueAt,if_pos (C.seed_scalar g h)]
+  rw [TrueAt,ite_eq_left (C.seed_scalar g h)]
   exact Or.inl h
 
 theorem output_scalar_eq_port (g : G) (hs : C.kind g = .scalar)
@@ -265,10 +265,10 @@ theorem canonicalGate_output (g : G) :
     C.output g '' C.canonicalGate g =
       if C.test g = true then {1} else if C.TrueAt g then {0} else Set.univ := by
   by_cases ht : C.test g = true
-  · rw [canonicalGate,if_pos ht,if_pos ht,Set.image_singleton]
+  · rw [canonicalGate,ite_eq_left ht,ite_eq_left ht,Set.image_singleton]
     congr 1
     exact C.output_scalar_eq_port g (C.test_scalar g ht) ⟨0,(C.kind g).dim_pos⟩ _
-  · rw [canonicalGate,if_neg ht,if_neg ht]
+  · rw [canonicalGate,ite_eq_right ht,ite_eq_right ht]
     exact (zeroSet_sum_image (C.Forced g)).trans (by simp only [C.all_forced_iff])
 
 theorem canonicalGate_port_true
@@ -280,9 +280,9 @@ theorem canonicalGate_port_true
   have ht : C.test g ≠ true := by
     intro ht
     have hs := C.test_scalar g ht
-    simp only [Forced,if_pos hs] at hf
+    simp only [Forced,ite_eq_left hs] at hf
     exact hT g ht hf
-  rw [canonicalGate,if_neg ht,zeroSet_coord_image,if_pos hf]
+  rw [canonicalGate,ite_eq_right ht,zeroSet_coord_image,ite_eq_left hf]
 
 open scoped Classical in
 noncomputable def canonicalBuffer (e : E) : Set (Fin 2 → Bit) :=
@@ -303,7 +303,7 @@ theorem canonicalBuffer_coord (e : E) (i : Fin 2) :
   simp only [Bool.false_eq_true,ite_false]
   by_cases ht : C.TrueAt (C.src e)
   · simp [canonicalBuffer,ht]
-  · rw [canonicalBuffer,if_neg ht,if_neg ht]
+  · rw [canonicalBuffer,ite_eq_right ht,ite_eq_right ht]
     exact diode_coord_image ((C.canonicalGate_nonempty _).image _) i
 
 theorem canonicalBuffer_sum (hT : ∀ g, C.test g = true → ¬C.TrueAt g) (e : E) :
@@ -311,10 +311,10 @@ theorem canonicalBuffer_sum (hT : ∀ g, C.test g = true → ¬C.TrueAt g) (e : 
       (fun x => x (C.port e)) '' C.canonicalGate (C.dst e) := by
   classical
   by_cases ht : C.TrueAt (C.src e)
-  · rw [canonicalBuffer,if_pos ht]
+  · rw [canonicalBuffer,ite_eq_left ht]
     rw [C.canonicalGate_port_true hT _ _ ⟨e,rfl,rfl,ht⟩]
     simp
-  · rw [canonicalBuffer,if_neg ht,diode_sum_image]
+  · rw [canonicalBuffer,ite_eq_right ht,diode_sum_image]
 
 noncomputable def canonicalWitness (hT : ∀ g, C.test g = true → ¬C.TrueAt g) : C.Witness where
   gate := C.canonicalGate
@@ -329,8 +329,8 @@ noncomputable def canonicalWitness (hT : ∀ g, C.test g = true → ¬C.TrueAt g
     rw [C.canonicalGate_output]
     have htrue := C.true_of_seed g hg
     have htest : C.test g ≠ true := fun h => hT g h htrue
-    rw [if_neg htest,if_pos htrue]
-  tests := by intro g hg; rw [C.canonicalGate_output,if_pos hg]
+    rw [ite_eq_right htest,ite_eq_left htrue]
+  tests := by intro g hg; rw [C.canonicalGate_output,ite_eq_left hg]
 
 theorem witness_iff_tests_false : Nonempty C.Witness ↔ ∀ g, C.test g = true → ¬C.TrueAt g :=
   ⟨fun ⟨W⟩ => W.all_tests_false,fun h => ⟨C.canonicalWitness h⟩⟩

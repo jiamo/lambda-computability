@@ -198,7 +198,7 @@ theorem h5s_reduces (x : ℕ) : betaEtaReduces (toLam (h5s x)) (h5nf x 0) := by
   simp [Lambda.subst, h5wa, h5U3]
   refine betaEtaReduces_lam ?_
   have a1 : ¬ x + 5 < 4 := by omega
-  simp only [a1, if_false]
+  simp only [a1, ite_false]
   refine betaEtaReduces_app_right _ (betaEtaReduces_app_right _ ?_)
   have h3 := betaEtaReduces_beta (.lam (.app (.var (x + 3 + 1)) (.app (.app (.var 3)
     (.lam (.lam (.app (.var (x + 5 + 1)) (.app (.app (.var 5) (.var 1)) (.var 0))))))

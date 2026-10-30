@@ -168,10 +168,10 @@ theorem pot_ge_of_pigeon {n : ℕ} {ρ : PAssign} {i : ℕ} (hi : i ≤ n)
     by_cases ht : taken n ρ j
     · have hspec := Classical.choose_spec ht
       apply Finset.mem_union_left
-      simp only [g, dif_pos ht, mset, Finset.mem_filter, mem_grid]
+      simp only [g, dite_eq_left ht, mset, Finset.mem_filter, mem_grid]
       exact ⟨⟨hspec.1, hj⟩, hspec.2⟩
     · apply Finset.mem_union_right
-      simp only [g, dif_neg ht, zset, Finset.mem_filter, mem_grid]
+      simp only [g, dite_eq_right ht, zset, Finset.mem_filter, mem_grid]
       exact ⟨⟨hi, hj⟩, hf j hj, hnm, ht⟩
   have hinj : Set.InjOn g (Finset.range n : Set ℕ) := by
     intro a _ b _ hab

@@ -131,7 +131,7 @@ theorem no_separatesBits_morphism (δ : AppMorphism (ℕ → ℕ) ℕ) : ¬ Sepa
     ext n
     have := hval n
     by_cases hS : n ∈ S <;> by_cases hT : n ∈ T <;>
-      simp only [hchi, hS, hT, if_true, if_false] at this ⊢ <;> simp_all
+      simp only [hchi, hS, hT, ite_true, ite_false] at this ⊢ <;> simp_all
   exact Function.cantor_injective code hinj
 
 /-- **No applicative morphism `K₂ → K₁` reads back the numerals.** -/

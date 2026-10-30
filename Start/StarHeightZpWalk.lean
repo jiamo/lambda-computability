@@ -254,24 +254,24 @@ lemma zpWalkState_snoc (s : ZMod p) (u : List β) (a : β) :
     zpWalkState σ s (u ++ [a]) = zpWalk σ (zpWalkState σ s u) a := by
   have hs : zpSum σ (u ++ [a]) = zpSum σ u + σ a := by rw [zpSum_append, zpSum_single]
   unfold zpWalkState
-  rw [if_neg (by simp)]
+  rw [ite_eq_right (by simp)]
   by_cases hu : u = []
   · subst hu
-    rw [if_pos rfl, if_pos]
+    rw [ite_eq_left rfl, ite_eq_left]
     · simp [zpWalk, zpSum_single]
     · intro q hq hne hqe
       rcases List.prefix_concat_iff.mp hq with h | h
       · exact absurd h hqe
       · exact absurd (List.prefix_nil.mp h) hne
-  rw [if_neg hu]
+  rw [ite_eq_right hu]
   by_cases hc : ∀ q, q <+: u → q ≠ [] → q ≠ u → s + zpSum σ q ≠ 0
-  · rw [if_pos hc]
+  · rw [ite_eq_left hc]
     by_cases h0 : s + zpSum σ u = 0
-    · rw [if_pos h0, if_neg]
+    · rw [ite_eq_left h0, ite_eq_right]
       · simp [zpWalk]
       · intro h
         exact h u (List.prefix_append _ _) hu (by simp) h0
-    · rw [if_neg h0, if_pos]
+    · rw [ite_eq_right h0, ite_eq_left]
       · simp only [zpWalk, hs, add_assoc]
       · intro q hq hne hqe
         rcases List.prefix_concat_iff.mp hq with h | h
@@ -279,7 +279,7 @@ lemma zpWalkState_snoc (s : ZMod p) (u : List β) (a : β) :
         · by_cases hqu : q = u
           · rw [hqu]; exact h0
           · exact hc q h hne hqu
-  · rw [if_neg hc, if_neg]
+  · rw [ite_eq_right hc, ite_eq_right]
     · simp [zpWalk]
     · intro h
       apply hc
@@ -303,8 +303,8 @@ lemma zpX_eq_walk : zpX σ = {u | u.foldl (zpWalk σ) (some (some 0)) = some non
   unfold zpWalkState
   constructor
   · rintro ⟨hne, h0, hpre⟩
-    rw [if_neg hne, if_pos (fun q h1 h2 h3 => by rw [zero_add]; exact hpre q h1 h2 h3),
-      if_pos (by rw [zero_add]; exact h0)]
+    rw [ite_eq_right hne, ite_eq_left (fun q h1 h2 h3 => by rw [zero_add]; exact hpre q h1 h2 h3),
+      ite_eq_left (by rw [zero_add]; exact h0)]
   · intro h
     split_ifs at h with hne hc h0
     all_goals first
@@ -347,7 +347,7 @@ lemma zpWalk_land {s : ZMod p} {u : List β} (hu : u ≠ []) (h0 : s + zpSum σ 
       u.foldl (zpWalk σ) (some (some s)) = none := by
   rw [← zpWalkState_eq_foldl]
   unfold zpWalkState
-  rw [if_neg hu]
+  rw [ite_eq_right hu]
   split_ifs <;> simp_all
 
 /-- A word of displacement `0` fixes the state, or kills it. -/

@@ -56,7 +56,7 @@ lemma vcountFrom_replicate {V : Type} [AddMonoid V] (δ : α → V) (q : V) (x a
       vcountFrom δ q x s (List.replicate j a ++ w) = vcountFrom δ q x (s + j • δ a) w
   | 0, s, w => by simp
   | j + 1, s, w => by
-      rw [List.replicate_succ, List.cons_append, vcountFrom_cons, if_neg (fun h => hax h.1),
+      rw [List.replicate_succ, List.cons_append, vcountFrom_cons, ite_eq_right (fun h => hax h.1),
         zero_add, vcountFrom_replicate δ q x a hax j, succ_nsmul', add_assoc]
 
 lemma leftQuot_replicate_height {β : Type} [DecidableEq β] {L : Language β}
@@ -116,7 +116,7 @@ lemma vcountFrom_odd (δ : α → ZMod 4) (hδ : ∀ y, δ y = 0 ∨ δ y = 2) (
     ∀ (w : List α) (s : ZMod 4), (s = 0 ∨ s = 2) → vcountFrom δ q x s w = 0
   | [], _, _ => vcountFrom_nil ..
   | b :: w, s, hs => by
-      rw [vcountFrom_cons, if_neg (fun h => hq (by rw [← h.2]; exact hs)), zero_add]
+      rw [vcountFrom_cons, ite_eq_right (fun h => hq (by rw [← h.2]; exact hs)), zero_add]
       exact vcountFrom_odd δ hδ q hq x w _ (zmod4_even_add hs (hδ b))
 
 /-- Case (a): no displacement `2`. -/

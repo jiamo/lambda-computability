@@ -83,7 +83,7 @@ lemma adC_prev (g s : ZMod 4) {p p' : Option (Fin 3)} (hp : p ≠ some 0) (hp' :
 
 lemma ad2_eq (u : List (Fin 3)) : ad2 u = ad0 (1 :: 1 :: u) := by
   unfold ad2 ad0
-  rw [adC, adC, if_neg (by simp), if_neg (by decide), zero_add, zero_add,
+  rw [adC, adC, ite_eq_right (by simp), ite_eq_right (by decide), zero_add, zero_add,
     show (0 : ZMod 4) + σm 1 + σm 1 = 2 from rfl, adC_shift 1 2 u 2 (some 1),
     show (1 : ZMod 4) + 2 = 3 from rfl, show (2 : ZMod 4) + 2 = 0 from rfl]
   exact adC_prev _ _ (by simp) (by simp) u
@@ -103,9 +103,9 @@ lemma Ncl_snoc (c : Fin 3) (u : List (Fin 3)) (a : Fin 3) :
   rw [splitW_snoc]
   unfold splitWStep
   split_ifs with h1 h2 h3
-  · rw [bcount_snoc, if_pos (show _ ∈ Ccl c from
+  · rw [bcount_snoc, ite_eq_left (show _ ∈ Ccl c from
       ⟨mem_Xc_snoc σm (splitW_spec σm u).2.2 h1, (bcls_snoc (tail_ne_nil_of_ret h1) a).trans h2.2⟩)]
-  · rw [bcount_snoc, if_neg]
+  · rw [bcount_snoc, ite_eq_right]
     rintro ⟨-, h⟩
     exact h2 ⟨h1, (bcls_snoc (tail_ne_nil_of_ret h1) a).symm.trans h⟩
   · exact absurd h3.1 h1
@@ -163,15 +163,15 @@ lemma ad0_eq_Nad (u : List (Fin 3)) : ad0 u = Nad u := by
           rfl
       unfold splitWStep
       by_cases h0 : dsum4 σm ((splitW σm u).2 ++ [a]) = 0
-      · rw [if_pos h0]
+      · rw [ite_eq_left h0]
         show _ = bcount _ ((splitW σm u).1 ++ [(splitW σm u).2 ++ [a]])
         rw [bcount_snoc]
         by_cases hm : (splitW σm u).2 ++ [a] = [0, 2]
-        · rw [if_pos (key.mpr ⟨h0, hm⟩),
-            if_pos (show _ ∈ ({[0, 2]} : Language (Fin 3)) from hm)]
-        · rw [if_neg (fun h => hm (key.mp h).2),
-            if_neg (show _ ∉ ({[0, 2]} : Language (Fin 3)) from hm)]
-      · rw [if_neg h0, if_neg (fun h => h0 (key.mp h).1)]
+        · rw [ite_eq_left (key.mpr ⟨h0, hm⟩),
+            ite_eq_left (show _ ∈ ({[0, 2]} : Language (Fin 3)) from hm)]
+        · rw [ite_eq_right (fun h => hm (key.mp h).2),
+            ite_eq_right (show _ ∉ ({[0, 2]} : Language (Fin 3)) from hm)]
+      · rw [ite_eq_right h0, ite_eq_right (fun h => h0 (key.mp h).1)]
         rfl
 
 /-! ### The identity -/
@@ -211,21 +211,21 @@ lemma idState4_snoc (u : List (Fin 3)) (a : Fin 3) :
     rw [splitW_snoc]
     unfold splitWStep
     by_cases h : dsum4 σm ((splitW σm u).2 ++ [a]) = 0
-    · simp only [if_pos h]
-      rw [if_pos (by rw [← hs]; exact h)]
+    · simp only [ite_eq_left h]
+      rw [ite_eq_left (by rw [← hs]; exact h)]
       rfl
-    · simp only [if_neg h]
-      rw [if_neg (by rw [← hs]; exact h)]
+    · simp only [ite_eq_right h]
+      rw [ite_eq_right (by rw [← hs]; exact h)]
       exact head?_snoc _ _
   · simp only
     rw [splitW_snoc]
     unfold splitWStep
     by_cases h : dsum4 σm ((splitW σm u).2 ++ [a]) = 0
-    · simp only [if_pos h]
-      rw [if_pos (by rw [← hs]; exact h)]
+    · simp only [ite_eq_left h]
+      rw [ite_eq_left (by rw [← hs]; exact h)]
       rfl
-    · simp only [if_neg h]
-      rw [if_neg (by rw [← hs]; exact h)]
+    · simp only [ite_eq_right h]
+      rw [ite_eq_right (by rw [← hs]; exact h)]
       simp
   · simp only [Phi4]
     rw [zc_snoc, Z2_snoc, Ncl_snoc, Ncl_snoc, ad2, adC_snoc, ← ad2]
@@ -264,7 +264,7 @@ theorem pm1_identity {u : List (Fin 3)} (h : dsum4 σm u = 0) :
   rw [← idState4_eq_foldl] at hg
   have ht : dsum4 σm (splitW σm u).2 = 0 := by rw [← dsum4_splitW]; exact h
   have : Phi4 u = 0 := by
-    simp only [idGood4, idState4, ht, if_true, decide_eq_true_eq] at hg
+    simp only [idGood4, idState4, ht, ite_true, decide_eq_true_eq] at hg
     exact hg
   unfold Phi4 at this
   linarith

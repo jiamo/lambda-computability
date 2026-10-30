@@ -181,9 +181,9 @@ theorem abst_dom (n : ℕ) (e : Expr A) (ρ : ℕ → A) : ((e.abst n).eval ρ).
   induction e with
   | var m =>
       by_cases h : m = n
-      · simp only [Expr.abst, if_pos h, Expr.eval_const]
+      · simp only [Expr.abst, ite_eq_left h, Expr.eval_const]
         trivial
-      · simp only [Expr.abst, if_neg h, Expr.eval_app, Expr.eval_const, Expr.eval_var,
+      · simp only [Expr.abst, ite_eq_right h, Expr.eval_app, Expr.eval_const, Expr.eval_var,
           papp_some_some]
         exact PCA.k_dom _
   | const a =>
@@ -206,7 +206,7 @@ theorem abst_app (n : ℕ) (e : Expr A) (ρ : ℕ → A) (a : A) :
       by_cases h : m = n
       · subst h
         simp [Expr.abst]
-      · simp only [Expr.abst, if_neg h, Expr.eval_var, Function.update_of_ne h,
+      · simp only [Expr.abst, ite_eq_right h, Expr.eval_var, Function.update_of_ne h,
           Expr.eval_app, Expr.eval_const, papp_some_some]
         rw [papp_some_right]
         exact le_of_eq (PCA.k_app _ _).symm

@@ -77,7 +77,7 @@ theorem subset_definablePower {A : ZFSet.{u}} (hA : Transitive A) : A ⊆ defina
   refine ⟨1,.member 0 1,fun _ => S,by decide,fun _ => hS,?_⟩
   apply ZFSet.ext; intro x
   simp only [mem_definedSubset,SentenceForm.Sat,cons_zero,cons_succ]
-  simp only [tupleEnv,show 0 < 1 by decide,dif_pos]
+  simp only [tupleEnv,show 0 < 1 by decide,dite_eq_left]
   exact ⟨fun hx => ⟨hA S hS x hx,hx⟩,And.right⟩
 
 theorem definablePower_transitive {A : ZFSet.{u}} (hA : Transitive A) :

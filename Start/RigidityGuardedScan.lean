@@ -90,8 +90,8 @@ theorem source_scan_succ (A : Oracle) (p : Condition) (d : Finset ℕ) (t n : �
       | some i => some i
       | none => if t+(n+1) ∉ d ∧ GuardedStage.Changes A (t+(n+1)) p then some (t+(n+1)) else none
     by_cases ht : t ∉ d ∧ GuardedStage.Changes A t p
-    · simp only [if_pos ht]
-    · simpa only [if_neg ht,Nat.add_assoc,Nat.add_comm,Nat.add_left_comm] using ih (t+1)
+    · simp only [ite_eq_left ht]
+    · simpa only [ite_eq_right ht,Nat.add_assoc,Nat.add_comm,Nat.add_left_comm] using ih (t+1)
 
 theorem scan_eq (A : Oracle) (p d n : ℕ) :
     scan A p d n = actionCode (GuardedStage.scan A (condition p) (members d) 0 n) := by

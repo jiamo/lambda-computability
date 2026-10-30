@@ -140,9 +140,9 @@ theorem reduces_subst_arg (t : Tm) :
   | var y =>
       intro v v' h x
       by_cases hy : y = x
-      · simp only [subst, if_pos hy]
+      · simp only [subst, ite_eq_left hy]
         exact reduces.step h (reduces.refl _)
-      · simp only [subst, if_neg hy]
+      · simp only [subst, ite_eq_right hy]
         exact reduces.refl _
   | app a b iha ihb => intro v v' h x; exact reduces_app (iha h x) (ihb h x)
   | lam t ih => intro v v' h x; exact reduces_lam (ih (step_lift h 1 0) (x + 1))

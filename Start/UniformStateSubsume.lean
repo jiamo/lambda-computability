@@ -42,10 +42,10 @@ theorem eval_tabU (m : ℕ) (f : ℕ → ℕ) (s p : ℕ) :
       = List.replicate (if s < m then f s else 0) true := by
   rw [tabU, Cob.eval_tableSel _ _ _ s (by simp)]
   by_cases hs : s < m
-  · rw [List.getD_eq_getElem?_getD, List.getElem?_map, List.getElem?_range hs, if_pos hs]
+  · rw [List.getD_eq_getElem?_getD, List.getElem?_map, List.getElem?_range hs, ite_eq_left hs]
     simp
   · rw [List.getD_eq_getElem?_getD, List.getElem?_map,
-      List.getElem?_eq_none (by simpa using Nat.le_of_not_lt hs), if_neg hs]
+      List.getElem?_eq_none (by simpa using Nat.le_of_not_lt hs), ite_eq_right hs]
     simp
 
 theorem eval_tabB (m : ℕ) (g : ℕ → Bool) (s p : ℕ) :
@@ -53,10 +53,10 @@ theorem eval_tabB (m : ℕ) (g : ℕ → Bool) (s p : ℕ) :
       = bw (if s < m then g s else false) := by
   rw [tabB, Cob.eval_tableSel _ _ _ s (by simp)]
   by_cases hs : s < m
-  · rw [List.getD_eq_getElem?_getD, List.getElem?_map, List.getElem?_range hs, if_pos hs]
+  · rw [List.getD_eq_getElem?_getD, List.getElem?_map, List.getElem?_range hs, ite_eq_left hs]
     simp
   · rw [List.getD_eq_getElem?_getD, List.getElem?_map,
-      List.getElem?_eq_none (by simpa using Nat.le_of_not_lt hs), if_neg hs]
+      List.getElem?_eq_none (by simpa using Nat.le_of_not_lt hs), ite_eq_right hs]
     simp
 
 /-! ### Finite automata -/
@@ -90,7 +90,7 @@ theorem foldl_autoDelta (hδ : ∀ s b, δ s b < m) (n : ℕ) : ∀ (p : Word) (
   | nil => intro k hk; exact ⟨rfl, hk⟩
   | cons b t ih =>
       intro k hk
-      have h1 : autoDelta m δ n k b = δ k b := by rw [autoDelta, if_pos hk]
+      have h1 : autoDelta m δ n k b = δ k b := by rw [autoDelta, ite_eq_left hk]
       rw [List.foldl_cons, List.foldl_cons, h1]
       exact ih (δ k b) (hδ k b)
 
@@ -99,7 +99,7 @@ theorem stateLang_autoDelta (hm : 0 < m) (hδ : ∀ s b, δ s b < m) :
     StateLang (autoDelta m δ) (autoAc m ac) = AutoLang δ ac := by
   funext x
   obtain ⟨h1, h2⟩ := foldl_autoDelta hδ x.length x 0 hm
-  simp only [StateLang, AutoLang, h1, autoAc, if_pos h2]
+  simp only [StateLang, AutoLang, h1, autoAc, ite_eq_left h2]
 
 /-- Its data is Cobham-computable in unary: the tables are finite. -/
 theorem stateUniform_auto (hm : 0 < m) (hδ : ∀ s b, δ s b < m) :
@@ -140,13 +140,13 @@ theorem foldl_countDelta (n : ℕ) : ∀ (p : Word) (k : ℕ), k + p.length ≤ 
       cases b with
       | true =>
           have hstep : countDelta n k true = k + 1 := by
-            rw [countDelta, if_pos rfl, Nat.min_eq_left (by omega)]
+            rw [countDelta, ite_eq_left rfl, Nat.min_eq_left (by omega)]
           rw [List.foldl_cons, hstep, ih (k + 1) hlen, List.count_cons]
           simp
           omega
       | false =>
           have hstep : countDelta n k false = k := by
-            rw [countDelta, if_neg (by simp), Nat.min_eq_left (by omega)]
+            rw [countDelta, ite_eq_right (by simp), Nat.min_eq_left (by omega)]
           rw [List.foldl_cons, hstep, ih k (by omega), List.count_cons]
           simp
 
@@ -188,13 +188,13 @@ theorem stateUniform_count {acc : ℕ → ℕ → Bool} (h : CountUniform acc) :
         = List.replicate s true := by simp
     have h1 : (Cob.proj 1).eval [List.replicate s true, List.replicate p true]
         = List.replicate p true := by simp
-    rw [eval_minU h0 h1, countDelta, if_neg (by simp)]
+    rw [eval_minU h0 h1, countDelta, ite_eq_right (by simp)]
   · have h0 : (Cob.comp (Cob.app true) [Cob.proj 0]).eval
         [List.replicate s true, List.replicate p true] = List.replicate (s + 1) true := by
       simp [List.replicate_succ]
     have h1 : (Cob.proj 1).eval [List.replicate s true, List.replicate p true]
         = List.replicate p true := by simp
-    rw [eval_minU h0 h1, countDelta, if_pos rfl]
+    rw [eval_minU h0 h1, countDelta, ite_eq_left rfl]
 
 /-- **Every symmetric language with a Cobham-decidable count predicate is decided by a P-uniform
 circuit family**, as an instance of the poly-state rule. -/

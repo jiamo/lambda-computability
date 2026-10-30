@@ -102,8 +102,8 @@ namespace Spend
 variable {e:Moon u} {x j:ℕ} {g:Coinage}
 lemma briefly (h:e.Spend x j g):g.verge=(if g.i=0 then none else some (g.i,g.p)):=by
    by_cases he:g.i=0
-   · rw [if_pos he]; exact (h.zero0 he).1
-   rw [if_neg he]; cases hv:g.verge
+   · rw [ite_eq_left he]; exact (h.zero0 he).1
+   rw [ite_eq_right he]; cases hv:g.verge
    · exact False.elim (he (by unfold Coinage.i; rw [hv]; rfl))
    unfold Coinage.i Coinage.p; rw [hv]; rfl
 end Spend
@@ -125,8 +125,8 @@ lemma cold (e:Moon u) (s:Nest u)(l:e.Lo){x b f y E i}
              change u.eye.Flora u.torch.p e.cageX.visN i x (s.ray.outR) at hh
              by_cases hr:title s=0
              · change u.eye.Flora u.torch.p e.cageX.visN i x (if title s=0 then _ else _)
-               rw [hf hr] at hh; rw [if_pos hr]; exact hh
-             change u.eye.Flora u.torch.p e.cageX.visN i x (if title s=0 then _ else _); rw [if_neg hr]
+               rw [hf hr] at hh; rw [ite_eq_left hr]; exact hh
+             change u.eye.Flora u.torch.p e.cageX.visN i x (if title s=0 then _ else _); rw [ite_eq_right hr]
              have h2 : s.ray.outR=some (title s,pointE s.ray.outR):=by
                   cases hz:s.ray.outR
                   · exact (hr (by unfold title; rw [hz]; rfl)).elim
@@ -142,7 +142,7 @@ lemma dun (e:Moon u){x i:ℕ}(l:e.Lo)(hx:x∈u.D.P)(h:Lily.arms u.r u.x (e.a,i)=
        simp
     have he:s.Good:= cam l bald x none _ ⟨heap l _ hx ..,
                 fun h=>by change s.ray.lampQ=true at h; simp only [he0,reduceCtorEq] at h,fun _ _ h=>by change s.ray.lampQ=true at h; simp only [he0,reduceCtorEq] at h⟩
-    have hp:s.ray.outR=none:= by unfold Crew.outR collect; rw [if_neg (show ¬s.ray.lampQ=true by simp [he0])]
+    have hp:s.ray.outR=none:= by unfold Crew.outR collect; rw [ite_eq_right (show ¬s.ray.lampQ=true by simp [he0])]
     have hu:title s=0:=by unfold title; rw [hp];rfl
     have hh:=cold e s l (y:=0) (b:=none) rfl he h (fun b=>by cases b <;> exact he.torn hu _) (fun _=>rfl)
                                                                (fun h=> (h hu).elim)
@@ -246,7 +246,7 @@ lemma armleg (e:ExactDerandomization.Chron.Moon u){q:Seed}(hp:ace u.w0 e.c q):
    Lily.arms u.r u.x (e.a,enc q)= Lily.recruit u.r u.x (e.c,q):=by
     have he :(dec e.a:Crt)=e.c:=therein ..
     unfold Lily.arms; have hh: clean u.w0 (e.a,enc q)=true:=by unfold clean; simp only [Wire.eq,he,decide_eq_true_eq]; exact ⟨trivial,hp⟩
-    rw [if_pos hh,he,Wire.eq]
+    rw [ite_eq_left hh,he,Wire.eq]
 
 end Moon
 end
@@ -576,11 +576,11 @@ lemma harvest {j k y:ℕ}:
       contradiction
     rintro ⟨hf,a,m,hw,hp,hs,hr,hq⟩
     change collect s u.n v.x v.b _=_
-    unfold collect; rw [if_pos (show s.frontC u.n v.x=true from hf),hw]
+    unfold collect; rw [ite_eq_left (show s.frontC u.n v.x=true from hf),hw]
     dsimp only
     rw [show (v.rest j).ray.exit0 m= v.F.f.coversF m j from rfl]; unfold Producer.coversF
-    simp only [if_pos hp]
-    rw [if_pos (show s.finalC _ _=true from hq),hs,← hr]; rfl
+    simp only [ite_eq_left hp]
+    rw [ite_eq_left (show s.finalC _ _=true from hq),hs,← hr]; rfl
 omit h0 in
 lemma mayor {j:ℕ}(h:v.medal j≠0) :
     v.front=true∧∃ a m, v.b=some (a,m) ∧
@@ -676,19 +676,19 @@ lemma dueP {y:ℕ} (h:v.screenP y ∧ v.goodY y){k m:ℕ}(hp:v.b=some (k,m))(j:�
         have hv: (v.rest j).ray.outR=some (k+1,y):=(Pale.Span.harvest (v := v)).mpr ⟨hf,k,m,hp,hE,rfl,hb,hT⟩
         change (iris (v.rest j).ray.outR≠0 ∧ pointE (v.rest j).ray.outR=y); rw [hv]; exact ⟨Nat.succ_ne_zero _,rfl⟩
    by_cases hc:v.F.f.locate m j=v.peel y
-   · rw [if_pos hc]
+   · rw [ite_eq_left hc]
      split
      · next hh=>
        have he:= hh.1
        change v.medal j ≠ 0 at he
        change (if v.medal j=0 then _ else _)=_
-       rw [if_neg he]; unfold harvest0; rw [hp]; rfl
+       rw [ite_eq_right he]; unfold harvest0; rw [hp]; rfl
      next hh=>
        have hp:¬v.F.f.awake m j:= fun k=>hh (hg.mpr ⟨hc,k⟩)
-       have hu:v.F.scholar m j=0:=if_neg hp
+       have hu:v.F.scholar m j=0:=ite_eq_right hp
        unfold prodQ; rw [hu,mul_zero,zero_mul]
        cases v.k.b <;> rfl
-   rw [if_neg hc,if_neg (fun h=>hc (hg.mp h).1)]
+   rw [ite_eq_right hc,ite_eq_right (fun h=>hc (hg.mp h).1)]
 
 lemma architect {y}: ∑ j∈range e.v.Rslots,(v.grade0 j).pigment y=v.seekR y:=by
    unfold seekR
@@ -696,7 +696,7 @@ lemma architect {y}: ∑ j∈range e.v.Rslots,(v.grade0 j).pigment y=v.seekR y:=
    · next h=>
      cases hs:v.b with
      | none=>
-       apply sum_eq_zero; intro j hj; apply if_neg; intro hc
+       apply sum_eq_zero; intro j hj; apply ite_eq_right; intro hc
        exact hc.1 ((Pale.Span.haze (v := v)) hs j)
      | some r=>
        obtain ⟨k,m⟩:=r
@@ -718,7 +718,7 @@ lemma architect {y}: ∑ j∈range e.v.Rslots,(v.grade0 j).pigment y=v.seekR y:=
              obtain ⟨i,hi,_⟩:= h0.fin.sturdy.sector.light.defend _ _ hn; exact hf i hi
        unfold till; rw [hu,mul_zero,zero_mul, boltzero _]
        apply sum_eq_zero; intro j hj; split
-       · unfold prodQ; rw [show v.F.scholar m j=0 from if_neg (hf j),mul_zero,zero_mul]; exact boltzero _
+       · unfold prodQ; rw [show v.F.scholar m j=0 from ite_eq_right (hf j),mul_zero,zero_mul]; exact boltzero _
        rfl
    next hm=> exact sum_eq_zero fun j _=> h0.fizzle hm j
  where
@@ -759,7 +759,7 @@ lemma draft {j:ℕ}(hj:j<e.v.Rslots):
    have he:= h0.flew j hj; let s:= v.rest j
    have hs:= hp.helm.1
    let t:=(v.grade0 j).dye
-   have hz:title s=0→ t=0:=fun h=> if_pos h
+   have hz:title s=0→ t=0:=fun h=> ite_eq_left h
    have hT:= h0.worn hj
    refine e.cold s hs (y:=t) (b:=v.b) rfl he (hp.step _ hj) ?_ hz ?_
    · intro b
@@ -767,7 +767,7 @@ lemma draft {j:ℕ}(hj:j<e.v.Rslots):
      · rw [hz hh]; cases b <;> exact he.torn hh _
      obtain ⟨hf,a,m,hA,hg,hj0,hL,h2⟩:=(Pale.Span.mayor (v := v)) hh
      have hh0: t=boltQ v.k.b (v.prodQ j m):=by
-         unfold t grade0; dsimp only; rw [if_neg hh]
+         unfold t grade0; dsimp only; rw [ite_eq_right hh]
          unfold harvest0; rw [hA]; rfl
      rw [hh0]
      have hu :s.optic=(2,v.k.b):=rfl
@@ -886,9 +886,9 @@ lemma boostOne (p:Pale e) (i:ℕ) (h:∀ j< u.w0.p.T,p.betaQ j i=1):
        intro j; induction j with
        | zero=>simp [Nest.Good.maxs]
        | succ j ih=>
-         intro hk; rw [Nest.Good.maxs,ih (by omega),h j (by omega),if_neg (show j+1 ≠ 0 by omega)]
+         intro hk; rw [Nest.Good.maxs,ih (by omega),h j (by omega),ite_eq_right (show j+1 ≠ 0 by omega)]
          split <;> norm_num
-    unfold astro; rw [he _ le_rfl,if_neg (Nat.ne_of_gt u.w0.p.tOK.1)]
+    unfold astro; rw [he _ le_rfl,ite_eq_right (Nat.ne_of_gt u.w0.p.tOK.1)]
     apply rising_top <;>norm_num
 lemma windId {p:Pale e}(h:p.o=Crest.postN) (y:ℕ) :p.goodY y ∧ p.peel y=y:=by
     unfold goodY peel; rw [h]; simp []; omega
@@ -910,7 +910,7 @@ structure Carnival (v:Weather e) (x:ℕ) (f:ℕ → ℕ → Coinage):Prop where
 
 abbrev creditD(v:Pale e):ℕ → ℕ → Coinage := fun i j=> if i=0 then v.grade0 j else Coinage.dies
 
-lemma only0(x): Coinage.dies.pigment x=0:=if_neg (fun h=>h.1 rfl)
+lemma only0(x): Coinage.dies.pigment x=0:=ite_eq_right (fun h=>h.1 rfl)
 lemma solace {v:Pale e}(he:v.p=0)(h:v.Kin)
     (hp:∀ i < u.w0.p.K,i≠0→∀ j < u.w0.p.K,Lily.arms u.r u.x (e.a,enc (v.k.lane0 i j))=bald)
     (hq:∀ y,v.seekR y=prize v.k v.x y):
@@ -928,7 +928,7 @@ lemma solace {v:Pale e}(he:v.p=0)(h:v.Kin)
     intro y
     rw [sum_eq_single 0]
     · unfold creditD; simp only [ite_true,h.geography.architect,hq]
-    · intro i _ h; unfold creditD; simp only [if_neg h,only0,sum_const_zero]
+    · intro i _ h; unfold creditD; simp only [ite_eq_right h,only0,sum_const_zero]
     intro hv; have hc:=mem_range.2 (he ▸ hE.pre); exact False.elim (hv hc)
 
 lemma festival {k:Weather e}{p:ℕ → Pale e}{x:ℕ}
@@ -986,7 +986,7 @@ lemma bears {x:ℕ}(hx:x∈u.D.P): (nave c f a x).Kin:=by
    have hb:v.Span:=by
       have hp:u.D.W 0+u.D.D e.a ≤ u.D.W e.a:= Stone.zeroR ..
       refine ⟨hS.chart,hx,Kpos _,hS.been,fun _=>rfl,?_,?_,(show 0<(1:ℕ) by omega),?_⟩
-      · intro j hj; change Lily.arms u.r u.x (e.a,enc (c.lane0 0 j))=v.ash j; rw [hS.via _ (Kpos _) _ hj,if_pos rfl,← hS.season]
+      · intro j hj; change Lily.arms u.r u.x (e.a,enc (c.lane0 0 j))=v.ash j; rw [hS.via _ (Kpos _) _ hj,ite_eq_left rfl,← hS.season]
         rfl
       · exact ⟨(NeZero.pos u.n),Nat.zero_le _⟩
       intro b j hl
@@ -1011,16 +1011,16 @@ lemma partake (x y:ℕ):
     have he:v.astro x=1:=Pale.boostOne v x (fun _ _=> rfl)
     have hf:= windId (p:=v) rfl y
     by_cases h:v.screenP y
-    · rw [if_pos (show v.screenP y ∧ v.goodY y from ⟨h,hf.1⟩),if_pos (show x∈e.v.S0 ∧ y∈e.zone c.b ∧ e.walking x y c.b c.scroll=true from h)]
+    · rw [ite_eq_left (show v.screenP y ∧ v.goodY y from ⟨h,hf.1⟩),ite_eq_left (show x∈e.v.S0 ∧ y∈e.zone c.b ∧ e.walking x y c.b c.scroll=true from h)]
       change boltQ _ (v.warm*1*f.aimP _ (v.peel y) * v.astro x) = _
       rw [he,hS.ship,hf.2,mul_one,mul_one]
       rfl
-    rw [if_neg (fun hz=>h hz.1),if_neg (show ¬(x∈e.v.S0 ∧ y∈e.zone c.b ∧ e.walking x y c.b c.scroll=true) from h)]
+    rw [ite_eq_right (fun hz=>h hz.1),ite_eq_right (show ¬(x∈e.v.S0 ∧ y∈e.zone c.b ∧ e.walking x y c.b c.scroll=true) from h)]
 
 lemma festival1 {x:ℕ}(hx:x∈u.D.P) :
      Carnival c x (creditD (nave c f a x)) :=
    solace rfl (hS.bears hx) (fun i hi hh j hj=>by
-       exact (hS.via i hi j hj).trans (if_neg hh)) (hS.partake x)
+       exact (hS.via i hi j hj).trans (ite_eq_right hh)) (hS.partake x)
 
 end Aim
 
@@ -1051,7 +1051,7 @@ lemma companion {c:Weather e}(he:c.forced)(h:c.b=false)(hv:Crude e) (x:ℕ)(hx:x
          have hs : (c.lane0 i j).fog.first0=false:=h
          rw [he.itemized i j hi hj]
          unfold RowD.pickA
-         dsimp only; rw [if_neg (show ¬(c.lane0 i j).fog.first0=true from by rw [hs];decide)]
+         dsimp only; rw [ite_eq_right (show ¬(c.lane0 i j).fog.first0=true from by rw [hs];decide)]
          change (if i=0 then _ else _)=_
          split
          · rw [h, show RowD.skies u.r u.x e.c (c.lane0 i j).fog=Print.issued f.s.dye from c.spokenE]
@@ -1099,7 +1099,7 @@ variable (hC:MillX c b)
 include hC
 lemma cash : c.job0 = e.v.t.pipe u.plotM e.v.roll b e.v.m := by
     unfold job0 ashes Quest.start
-    rw [hC.way,if_pos rfl]
+    rw [hC.way,ite_eq_left rfl]
     obtain ⟨ha,hh|⟨he,hb⟩⟩|⟨ha,hb,hk,j,hj⟩:=hC.M
     · rw [hh]; conv_rhs=> rw [show b=⟨b.pilot,b.count,false⟩ from by cases b;grind]
     · rw [he]; dsimp only; congr <;>grind
@@ -1117,7 +1117,7 @@ lemma safe (h:c.raysQ.2<2): c.raysQ.1∈ e.v.t.tray u.plotM e.v.t.i e.v.m:=by
 lemma joint (h:c.raysQ.2=1): 0<b.count := by
     have he:=hC.circle
     unfold company at he
-    by_contra! hc; rw [if_pos (by omega:b.count=0)] at he
+    by_contra! hc; rw [ite_eq_left (by omega:b.count=0)] at he
     obtain hm|hm:=mem_union.1 he
     · have ht:=mem_range.1 (mem_product.1 hm).2;omega
     split at hm
@@ -1184,8 +1184,8 @@ lemma actor (he:c.raysQ.2=0)(hT:Crude e)(x:ℕ)(hx:x∈u.D.P) :
         let s:= c.lane0 i j
         have hp:s.fog.first0=true:=hC.way
         have hm:(s.fog.ray (greenY e.c))=c.raysQ:=hC.health.house.2.1
-        rw [if_pos hp,if_neg hC.potC,
-            if_pos (show s.fog.cell0.2.1=0 from (congrArg Prod.snd hm).trans he),
+        rw [ite_eq_left hp,ite_eq_right hC.potC,
+            ite_eq_left (show s.fog.cell0.2.1=0 from (congrArg Prod.snd hm).trans he),
             show (c.lane0 i j).fog.k (greenY e.c)=k from congrArg Prod.fst hm,
             hC.way]
         change (if i=0 then _ else _)=_
@@ -1195,7 +1195,7 @@ lemma actor (he:c.raysQ.2=0)(hT:Crude e)(x:ℕ)(hx:x∈u.D.P) :
       rw [hC.cash,hC.health.shareq (k:=k) rfl hr]
       have hm:e.v.roll c.spark0=forecast u.plotM c.spark0:= vault _ _ hC.health.early0
       dsimp only [pipe,sign]
-      rw [if_pos he]
+      rw [ite_eq_left he]
       change _*(loaded u.n e.v.t.a k*(e.v.roll c.spark0).outR q c.arcQ i j)=_
       rw [hm,mul_assoc]
     exact ⟨_,HA.festival1 hx⟩
@@ -1231,13 +1231,13 @@ lemma lastC (he:2 ≤ c.raysQ.2)(hT:Crude e)(x:ℕ)(hx:x∈u.D.P) :
         have hp:t.fog.first0=true:=hC.way
         have hm:t.fog.ray (greenY e.c)=c.raysQ:=hC.health.house.2.1
         have hi : t.fog.cell0.2.1 =2:=(congrArg Prod.snd hm).trans h1
-        rw [if_pos hp,if_neg hC.potC,if_neg (by omega:t.fog.cell0.2.1≠0),if_neg (by omega:t.fog.cell0.2.1≠1),hC.way]
+        rw [ite_eq_left hp,ite_eq_right hC.potC,ite_eq_right (by omega:t.fog.cell0.2.1≠0),ite_eq_right (by omega:t.fog.cell0.2.1≠1),hC.way]
         rw [hC.wing, show RowD.skies u.r u.x e.c (c.lane0 i j).fog=Print.issued c.arcQ from (show RowD.skies u.r u.x e.c (c.lane0 i j).fog=_ from c.spokenE)]; rfl
       intro x y
       rw [hC.cash,show C.v=-c.β.v from Coin.neg0 c.β,hC.health.shareq h3 hw]
       have hm:e.v.roll c.spark0=forecast u.plotM c.spark0:= vault _ _ hC.health.early0
       dsimp only [pipe,sign]
-      rw [if_neg (by omega:c.raysQ.2≠0),if_neg (by omega:c.raysQ.2≠1)]
+      rw [ite_eq_right (by omega:c.raysQ.2≠0),ite_eq_right (by omega:c.raysQ.2≠1)]
       change _* (-(loaded u.n p.a i*(e.v.roll c.spark0).outR q c.arcQ x y))=_
       rw [hm,mul_neg,neg_mul,mul_assoc]
    exact ⟨_,HA.festival1 hx⟩
@@ -1333,7 +1333,7 @@ lemma royalty(x y:ℕ)(hx:x∈u.D.P) :
     let v(i):=servants c p t a x i
     rw [worth hC.loft]
     by_cases he:(v 0).screenP y
-    · rw [if_pos (show x∈e.v.S0 ∧ y∈e.zone c.b∧e.walking x y c.b c.scroll=true from he),hC.focus ..]
+    · rw [ite_eq_left (show x∈e.v.S0 ∧ y∈e.zone c.b∧e.walking x y c.b c.scroll=true from he),hC.focus ..]
       let f(k):ℝ:=p.scholar x k*t.aimP (p.f.locate x k) y
       let P:=p.s.S1
       have hm : ∑ j∈P,p.aimP x j*t.aimP j y=∑ i∈range u.w0.p.K,f i:= by
@@ -1346,25 +1346,25 @@ lemma royalty(x y:ℕ)(hx:x∈u.D.P) :
          apply sum_congr rfl; intro j hj
          let a0:= p.f.locate x j
          rw [sum_eq_single a0]
-         · rw [if_pos rfl]
-         · intro i _ he; rw [if_neg (Ne.symm he),zero_mul]
+         · rw [ite_eq_left rfl]
+         · intro i _ he; rw [ite_eq_right (Ne.symm he),zero_mul]
          intro ht
          have hh :¬p.f.awake x j:=fun e=>ht (hC.fitp.sturdy.sector.light.insured _ _ e).2
-         rw [show p.scholar x j=0 from if_neg hh]; split<;>rw [zero_mul]
+         rw [show p.scholar x j=0 from ite_eq_right hh]; split<;>rw [zero_mul]
       have hu(i): (v i).seekR y=boltQ c.b (a.v*f i):=by
            have hv:(v i).o=Crest.postN:=rfl
            have hp:(v i).screenP y:=he
-           unfold Pale.seekR; rw [if_pos ⟨hp,(Pale.windId hv y).1⟩]
+           unfold Pale.seekR; rw [ite_eq_left ⟨hp,(Pale.windId hv y).1⟩]
            change (match p.f.coversF x i with | none=> _| some (k,w)=> boltQ c.b ((v i).till w y))=_
            unfold Producer.coversF
            by_cases hl:p.f.awake x i
-           · rw [if_pos hl]; dsimp only
+           · rw [ite_eq_left hl]; dsimp only
              have hh: (v i).peel y=y:= (Pale.windId hv y).2
              unfold Pale.till; rw [hh,Pale.boostOne (v i) _ (by intro; intros; rfl)]
              unfold f; rw [mul_one,mul_assoc]; rfl
-           rw [if_neg hl]
+           rw [ite_eq_right hl]
            unfold f
-           rw [show p.scholar x i=0 from if_neg hl]; simp only [zero_mul,mul_zero]; cases c.b <;> rfl
+           rw [show p.scholar x i=0 from ite_eq_right hl]; simp only [zero_mul,mul_zero]; cases c.b <;> rfl
       rw [show ∑ i∈p.s.S1,_ = _ from hm,mul_sum]
       have hL (i:ℕ) : ∑ j∈range i,boltQ c.b (a.v*f j)=boltQ c.b (∑ j∈range i,a.v*f j):=by
            induction i with
@@ -1372,9 +1372,9 @@ lemma royalty(x y:ℕ)(hx:x∈u.D.P) :
            | succ i ih=> rw [sum_range_succ,sum_range_succ,ih]; cases c.b <;> simp [boltQ,harvest0.spread]
       change ∑ i∈range _,(v i).seekR y=_
       simp_rw [hu]; exact hL _
-    rw [if_neg (show ¬ (x∈e.v.S0 ∧ y∈e.zone c.b∧e.walking x y c.b c.scroll=true) from he)]; apply sum_eq_zero; intro i _
+    rw [ite_eq_right (show ¬ (x∈e.v.S0 ∧ y∈e.zone c.b∧e.walking x y c.b c.scroll=true) from he)]; apply sum_eq_zero; intro i _
     have hh:¬(v i).screenP y:=he
-    exact if_neg (fun hx=> hh hx.1)
+    exact ite_eq_right (fun hx=> hh hx.1)
 
 lemma bills(x:ℕ)(he:x∈u.D.P):
    ∃ f, Carnival c x f:=
@@ -1437,8 +1437,8 @@ lemma mix4 (hC:MillX c b)(he:c.raysQ.2=1)(hT:Crude e){x:ℕ}(hx:x∈u.D.P):
         unfold RowD.pickA; dsimp only
         let r:= c.lane0 j t
         have hm:r.fog.cell0.2.1=1 :=he
-        rw [if_pos (show r.fog.first0=true from hC.way),if_neg hC.potC,
-             if_neg (show r.fog.cell0.2.1≠0 by omega),if_pos hm,
+        rw [ite_eq_left (show r.fog.first0=true from hC.way),ite_eq_right hC.potC,
+             ite_eq_right (show r.fog.cell0.2.1≠0 by omega),ite_eq_left hm,
              show (c.lane0 j t).fog.k (greenY e.c)=k from congrArg Prod.fst hp.house.2.1,(Pore.MillX.beams (e := e))]
         rw [show RowD.skies u.r u.x e.c r.fog=Print.issued A from c.spokenE]
         have hU:RowD.hinge u.r.w e.c (stageQ e.c)=bitR p:=hC.wing _
@@ -1448,7 +1448,7 @@ lemma mix4 (hC:MillX c b)(he:c.raysQ.2=1)(hT:Crude e){x:ℕ}(hx:x∈u.D.P):
         rfl
       intro x y
       rw [hC.cash,hx',hp.shareq (k:=k) rfl h0]
-      simp only [pipe,sign,if_neg (show c.raysQ.2≠0 by omega),if_pos he]
+      simp only [pipe,sign,ite_eq_right (show c.raysQ.2≠0 by omega),ite_eq_left he]
       have he:= vault (s:=u.plotM) _ _ hp.early0
       let D:= q.plan u.plotM
       change c.α.v*(loaded u.n e.v.t.a k*(peeler u.n i*
@@ -1523,14 +1523,14 @@ lemma cornea (x z:ℕ): (ratchet c f l i j x).astro z=pick e f l i z:=by
     let v:= ratchet c f l i j x
     unfold pick
     by_cases h:i=0
-    · apply Eq.trans (v.boostOne z (by intro j hj; exact if_pos h))
-      unfold carrier; rw [if_pos h]
-    unfold carrier; rw [if_neg h]
+    · apply Eq.trans (v.boostOne z (by intro j hj; exact ite_eq_left h))
+      unfold carrier; rw [ite_eq_left h]
+    unfold carrier; rw [ite_eq_right h]
     let r:= fun a=> (e.v.roll f.s.m).outV (detector l a)
     have he(n:ℕ) : Nest.Good.maxs (fun j=>v.betaQ j z) n=Maxer r n f.s.dye z:= by
       induction n with
       | zero=> rfl
-      | succ n ih=>exact congrArg₂ max ih (show lace e f l i n z=_ from if_neg h)
+      | succ n ih=>exact congrArg₂ max ih (show lace e f l i n z=_ from ite_eq_right h)
     exact congrArg boost (he _)
 
 lemma labour {x:ℕ}(hx:x∈u.D.P): (ratchet c f l i j x).Kin := by
@@ -1541,7 +1541,7 @@ lemma labour {x:ℕ}(hx:x∈u.D.P): (ratchet c f l i j x).Kin := by
     have hZ:v.Span:=by
       refine ⟨h0.start,hx,Kpos _,h0.fuel,fun _=>rfl,?_,?_,h0.posJ,?_⟩
       · intro j hj
-        exact (h0.front x 0 (Kpos _) j hj).trans (if_pos rfl)
+        exact (h0.front x 0 (Kpos _) j hj).trans (ite_eq_left rfl)
       · exact ⟨h0.cardK.le,(h0.posJ.trans h0.cardK).le⟩
       intro b k h
       have hz:= (h0.fuel.sturdy.sector.light.insured _ _ h).2
@@ -1570,7 +1570,7 @@ lemma labour {x:ℕ}(hx:x∈u.D.P): (ratchet c f l i j x).Kin := by
       have hQ:¬(3+(i+m)=0):=by omega
       change (if x%m=i then some ((0,x/m):Rill.History) else none)=some (b,y) ↔
                  b<Era.budget u.r ∧ x≤u.n ∧ y≤u.n ∧ if 3+(i+m)=0 then x=y∧b=0 else if 3+(i+m)=1∨3+(i+m)=2 then _ else b=0 ∧ if 3+(i+m)-3 < m then _ else 3+(i+m)-3-m < m∧ x=radix m y (3+(i+m)-3-m)
-      simp only [if_neg hQ,if_neg hW,hE,if_neg (by omega: ¬ i+m < m),show i+m-m=i by omega]
+      simp only [ite_eq_right hQ,ite_eq_right hW,hE,ite_eq_right (by omega: ¬ i+m < m),show i+m-m=i by omega]
       constructor
       · intro hv; split at hv
         · next hw=>
@@ -1580,7 +1580,7 @@ lemma labour {x:ℕ}(hx:x∈u.D.P): (ratchet c f l i j x).Kin := by
           · rw [←hv.1]; exact Nat.zero_lt_succ _
           unfold radix; rw [←hv.2,←hw,Nat.mod_add_div]
         contradiction
-      rintro ⟨-,hc,hu,hD,hi,hT⟩;rw [hD,hT,(H y).1,(H y).2,if_pos rfl]
+      rintro ⟨-,hc,hu,hD,hi,hT⟩;rw [hD,hT,(H y).1,(H y).2,ite_eq_left rfl]
     intro b y hs hL; have h1:v.Span:=hZ
     have hc:(if x%m=i then some ((0,x/m):Rill.History) else none)=some (b,y):=hL
     split at hc
@@ -1593,22 +1593,22 @@ lemma labour {x:ℕ}(hx:x∈u.D.P): (ratchet c f l i j x).Kin := by
                  rw [abs_one]; exact one_le_pow₀ (by norm_num)
                · intro h; exact (h rfl).elim
                · intro a ha h
-                 have hm:i≠0:=fun e=> h (by show (if i=0 then _ else _) = 0;rw [if_pos e])
+                 have hm:i≠0:=fun e=> h (by show (if i=0 then _ else _) = 0;rw [ite_eq_left e])
                  have HE:= h0.pp.caul (wM:=f.s.dye) h0.start h0.momento.symm (h0.alive ha)
                                  (show y∈u.D.P from mem_range.2 (Nat.lt_succ_of_le hy))
                  let s:=v.rest z
                  refine ⟨wreath f l a,hole 1 0,?_,HE.1,?_⟩
                  · unfold Nest.catshot
-                   have hk:s.capV=wreath f l 0:=if_neg hm
+                   have hk:s.capV=wreath f l 0:=ite_eq_right hm
                    change rate0 (dec s.capV) a=_; rw [hk]
                    unfold wreath vecL clr; rw [dec_round]
                    rfl
                  change u.D.Voice _ _ _ _ _ (lace e f l i a _)
-                 unfold lace; rw [if_neg hm]; exact HE.2
+                 unfold lace; rw [ite_eq_right hm]; exact HE.2
                intro h b _
                have hl:i=0:=by
                   change (if i=0 then 0 else _) = 0 at h; split at h; assumption; exact False.elim (Age.cpos _ h)
-               exact if_pos hl
+               exact ite_eq_left hl
     contradiction
 
 lemma royale (x y:ℕ) :(ratchet c f l i j x).seekR y=prize c x y:= by
@@ -1617,23 +1617,23 @@ lemma royale (x y:ℕ) :(ratchet c f l i j x).seekR y=prize c x y:= by
      rw [worth h0.start]
      unfold Pale.seekR
      by_cases hp:v.screenP y
-     · rw [if_pos (show x∈e.v.S0∧ y∈e.zone c.b∧e.walking x y c.b c.scroll=true from hp),h0.shape]
+     · rw [ite_eq_left (show x∈e.v.S0∧ y∈e.zone c.b∧e.walking x y c.b c.scroll=true from hp),h0.shape]
        by_cases hz:v.goodY y
-       · rw [if_pos (show v.screenP y∧ v.goodY y from ⟨hp,hz⟩)]
+       · rw [ite_eq_left (show v.screenP y∧ v.goodY y from ⟨hp,hz⟩)]
          change (match (if x%m=i then some ((0,x/m):Rill.History)else none) with
                  |none=>_
                  |some (k,w)=>boltQ c.b (v.till w y))=_
          by_cases hc :x%m=i
-         · rw [if_pos hc,if_pos (show x%M u=i∧y%M u=j from ⟨hc,hz⟩)]
+         · rw [ite_eq_left hc,ite_eq_left (show x%M u=i∧y%M u=j from ⟨hc,hz⟩)]
            change boltQ _ (_*1*_ * v.astro (x/m))=_
            rw [show v.astro (x/m)=pick e f l i (x/m) from (Royal.Corona.cornea (c := c) (f := f) (l := l) (i := i) (j := j) x (x/m)),mul_one];rfl
-         rw [if_neg hc,if_neg (show ¬ (x%M u=i∧ y%M u=j) from fun he=>hc he.1)]; cases c.b <;> rfl
-       rw [if_neg (fun e=>hz e.2),if_neg (fun e=>hz e.2)]; cases c.b<;> rfl
-     rw [if_neg (show ¬(x∈e.v.S0∧ y∈e.zone c.b∧e.walking x y c.b c.scroll=true) from hp),if_neg (fun h=>hp h.1)]
+         rw [ite_eq_right hc,ite_eq_right (show ¬ (x%M u=i∧ y%M u=j) from fun he=>hc he.1)]; cases c.b <;> rfl
+       rw [ite_eq_right (fun e=>hz e.2),ite_eq_right (fun e=>hz e.2)]; cases c.b<;> rfl
+     rw [ite_eq_right (show ¬(x∈e.v.S0∧ y∈e.zone c.b∧e.walking x y c.b c.scroll=true) from hp),ite_eq_right (fun h=>hp h.1)]
 lemma spiral {x:ℕ}(hx:x∈u.D.P):∃ u, Carnival c x u:=by
     let v:=ratchet c f l i j x
     refine ⟨creditD v,solace rfl (h0.labour hx) ?_ (h0.royale x)⟩
-    intro b hb hh v hv; exact (h0.front x _ hb _ hv).trans (if_neg hh)
+    intro b hb hh v hv; exact (h0.front x _ hb _ hv).trans (ite_eq_right hh)
 end Corona
 end Royal
 end
@@ -1702,7 +1702,7 @@ lemma roadCrew {c:Weather e}(h:c.forced)(hb:c.b=true)(hc:Crude e)(ht:e.v.t.tag=.
             have he:origin e.c=0:=by change (shaped _).1=0;rw [ht]; rfl
             have hj:v.fog.first0=true:=hb
             have hD:v.fog.ray (greenY e.c)=q:=h.house.2.1
-            rw [if_pos hj,if_pos he]
+            rw [ite_eq_left hj,ite_eq_left he]
             change (if a=0 then _ else _)=_
             split
             · rw [show (c.lane0 a b).fog.k (greenY e.c)=q.1 from congrArg Prod.fst hD,show stageQ e.c=l+1 from hI, Nat.add_sub_cancel]
@@ -1727,13 +1727,13 @@ lemma roadCrew {c:Weather e}(h:c.forced)(hb:c.b=true)(hc:Crude e)(ht:e.v.t.tag=.
           change _*(_*(if _ then _ else _))=_
           split
           · next ha=>
-             rw [if_pos (show x%M u=i∧y%M u=j from ha)]
+             rw [ite_eq_left (show x%M u=i∧y%M u=j from ha)]
              unfold honor pick
              let g:=fun r=>carrier s e.v.roll r l i E (x/m)
              change c.α.v*(loaded u.n p.a q.1*((e.v.roll c.spark0).outR u0 E (x/m) (y/m)*g c.spark0))=
                c.α.v*loaded u.n p.a q.1*(forecast s c.spark0).outR u0 E (x/m) (y/m)*g c.spark0
              rw [← show e.v.roll c.spark0=forecast s c.spark0 from hx]; ring
-          next ha=> rw [if_neg (show ¬(x%M u=i∧ y%M u=j) from ha)]; ring
+          next ha=> rw [ite_eq_right (show ¬(x%M u=i∧ y%M u=j) from ha)]; ring
        exact hg.spiral hx
 
 end Royal
@@ -1867,8 +1867,8 @@ lemma legacy (j)(hj:j<q.u0.n): (q.s j).Good:=by
       have hh':= hA.insight.found.road j (ho.awake (ho.size0 j (show j < e.v.Snum l from hA.insight.card0 ▸ hj)))
       unfold pulse
       by_cases hm:q.u0.live j
-      · rw [if_pos hm]; rw [if_neg (show q.u0.tag j≠0 from hm)] at hh'; exact hh'
-      rw [if_neg hm]; rwa [if_pos (show q.u0.tag j=0 from by
+      · rw [ite_eq_left hm]; rw [ite_eq_right (show q.u0.tag j≠0 from hm)] at hh'; exact hh'
+      rw [ite_eq_right hm]; rwa [ite_eq_left (show q.u0.tag j=0 from by
                         unfold Depot.live at hm;exact not_not.1 hm)] at hh'
     intro i y hy; change (if q.u0.live j then _ else none)=some _ at hy
     split at hy
@@ -1894,11 +1894,11 @@ lemma harvested (j):
       rw [e.zeda] at h1
       have hv:s.finalC u.n y=true:= ((Lo.ending (e := e)) true (0,0) hc y (mem_filter.1 h1).1).mpr
                                                  ⟨h2,e.parked true false _⟩
-      rw [if_pos hi,if_pos hf]; change (match q.pulse j with|none=>none|some (a,y1)=> if s.finalC u.n y1 then some ((0+1,s.windC y1):Rill.History) else none)=some (1,y)
-      unfold pulse; rw [if_pos hi]; change (if s.finalC u.n y then _ else none)=_
-      rw [if_pos hv,ht]
-    have he:q.pulse j=none:=if_neg hi
-    rw [if_neg hi]
+      rw [ite_eq_left hi,ite_eq_left hf]; change (match q.pulse j with|none=>none|some (a,y1)=> if s.finalC u.n y1 then some ((0+1,s.windC y1):Rill.History) else none)=some (1,y)
+      unfold pulse; rw [ite_eq_left hi]; change (if s.finalC u.n y then _ else none)=_
+      rw [ite_eq_left hv,ht]
+    have he:q.pulse j=none:=ite_eq_right hi
+    rw [ite_eq_right hi]
     split; change (match q.pulse j with|none=>none|some (a,y1)=> if s.finalC u.n y1 then some ((0+1,s.windC y1):Rill.History) else none)=none; rw [he]
     rfl
 
@@ -2073,12 +2073,12 @@ lemma crystal {x:ℕ}(hx:x∈u.D.P){i:ℕ}(hi:i<2):
        · exact False.elim (h (by unfold title; rw [hh];rfl))
        next z=> obtain ⟨k,j⟩:=z; exact ⟨k,j,by unfold title; rw [hh];rfl,rfl⟩
     have hz:title s=0→a.dye=0:=by
-       intro h; exact if_pos h
+       intro h; exact ite_eq_left h
     have hp {k j}(h:title s=k)(hf:s.ray.outR=some (k,j)):
         a.dye=(trueW e x j,0):=by
          have hh:= kindness h0 he hx hi (show (sell e x i).verge = _ from hf)
          change (if title s=0 then _ else _)=_
-         rw [if_neg (h.symm ▸ hh.2.2.1),hf]
+         rw [ite_eq_right (h.symm ▸ hh.2.2.1),hf]
          rfl
     have hn : ht a.dye ≤ massB e.p.prism e.d:=by
        by_cases hh:title s=0
@@ -2138,7 +2138,7 @@ lemma basef (b:Bool)(x y) :
      simp; split<;>rfl
    unfold basepart
    by_cases h:x∈e.v.S0 ∧ y∈e.zone true∧e.i=0
-   · rw [if_pos h]
+   · rw [ite_eq_left h]
      split
      · rfl
      next ht=>
@@ -2150,7 +2150,7 @@ lemma basef (b:Bool)(x y) :
         cases hs:e.v.t.i
         · exact (ht ⟨⟨h.2.2,he,hs⟩,h.1,h.2.1⟩).elim
         rfl
-   rw [if_neg h, if_neg (fun h0=> h ⟨h0.2.1,h0.2.2,h0.1.1⟩)]
+   rw [ite_eq_right h, ite_eq_right (fun h0=> h ⟨h0.2.1,h0.2.2,h0.1.1⟩)]
    rfl
 
 namespace Local.Ready
@@ -2167,8 +2167,8 @@ lemma remits {x i y:ℕ} (_:x∈u.D.P) (_:i<2)(hh:x∈e.v.S0)(hy:y∈e.v.S1){b:�
    have hc:=hk; rw [e.zeda] at hc
    have hz:s.finalC u.n y=true:= ((Lo.ending (e := e)) true (0,0) hf _ (mem_filter.1 hc).1).mpr ⟨hk,e.parked ..⟩
    change collect s u.n x (interim _ i) (fun p=>some (0,p))=_
-   unfold collect; rw [if_pos hp,(knows ..).2 h]
-   dsimp only; rw [if_pos hz,hs]
+   unfold collect; rw [ite_eq_left hp,(knows ..).2 h]
+   dsimp only; rw [ite_eq_left hz,hs]
 lemma taunted {x y j:ℕ}(hx:x∈u.D.P)(hj:j<2) :
     ((sell e x j).fired∧(sell e x j).p=y) ↔
        x∈e.v.S0∧y∈e.v.S1∧∃ b,Was.Flight u.r u.x (j+1) b x y:=by
@@ -2176,7 +2176,7 @@ lemma taunted {x y j:ℕ}(hx:x∈u.D.P)(hj:j<2) :
     constructor
     · intro h; change s.fired ∧ s.p=y at h
       have hm:= ((crystal h0 he hx hj).1).briefly
-      rw [if_neg h.1,show (sell e x j).p=y from h.2] at hm
+      rw [ite_eq_right h.1,show (sell e x j).p=y from h.2] at hm
       obtain ⟨h1,h2,_,hp⟩:=kindness h0 he hx hj hm
       exact ⟨h1,h2,_,hp⟩
     rintro ⟨h1,h2,b,ha⟩; have hc:= remits h0 hx hj h1 h2 ha
@@ -2185,7 +2185,7 @@ lemma taunted {x y j:ℕ}(hx:x∈u.D.P)(hj:j<2) :
 lemma total {x:ℕ}(hx:x∈u.D.P)(y):
      ∑ i∈range 2,(sell e x i).pigment y=e.basepart x y:=by
     by_cases hm:x∈e.v.S0 ∧ y∈e.v.S1
-    · rw [basepart,if_pos ⟨he,hm⟩,truthX h0 he]
+    · rw [basepart,ite_eq_left ⟨he,hm⟩,truthX h0 he]
       let p:= u.r.P
       let i:=Was.bright u.r u.x true x y
       have hc: x ≤ u.n∧ y ≤ u.n:=by
@@ -2197,29 +2197,29 @@ lemma total {x:ℕ}(hx:x∈u.D.P)(y):
         · have hv:Was.Flight u.r u.x (i+1) (Was.bright u.r u.x false y x +1) x y:=by
                    unfold Was.Flight
                    refine ⟨hc.1,hc.2,?_⟩
-                   rw [if_neg (Nat.succ_ne_zero _),if_pos (by omega)]
+                   rw [ite_eq_right (Nat.succ_ne_zero _),ite_eq_left (by omega)]
                    exact ⟨hs,rfl,rfl⟩
           have hg:= (taunted h0 he hx ht (y:=y)).mpr ⟨hm.1,hm.2,_,hv⟩
-          unfold Coinage.pigment; rw [if_pos hg]
+          unfold Coinage.pigment; rw [ite_eq_left hg]
           change (if _ then _ else _)=_
-          change iris (ucanon e x i).ray.outR≠0∧pointE (ucanon e x i).ray.outR=y at hg; rw [if_neg hg.1,hg.2]
+          change iris (ucanon e x i).ray.outR≠0∧pointE (ucanon e x i).ray.outR=y at hg; rw [ite_eq_right hg.1,hg.2]
         · intro j hj hz
-          apply if_neg; intro h
+          apply ite_eq_right; intro h
           replace hj:=mem_range.1 hj
           obtain ⟨hx,hy,a,he⟩:= (taunted h0 he hx hj).mp h
           unfold Was.Flight at he
-          rw [if_neg (Nat.succ_ne_zero _),if_pos (by omega)] at he
+          rw [ite_eq_right (Nat.succ_ne_zero _),ite_eq_left (by omega)] at he
           exact hz (by have hm:= he.2.2.2.1; change j+1=i+1 at hm; omega)
         intro he; exact False.elim (he (mem_range.2 ht))
       rw [show trueW e x y=0 from ?_]
       · apply sum_eq_zero; intro j hj; replace hj:=mem_range.1 hj
-        apply if_neg; intro hm
+        apply ite_eq_right; intro hm
         obtain ⟨_,_,a,he⟩:= (taunted h0 he hx hj).mp hm
         unfold Was.Flight at he
-        rw [if_neg (Nat.succ_ne_zero _),if_pos (by omega)] at he; exact hs he.2.2.1
+        rw [ite_eq_right (Nat.succ_ne_zero _),ite_eq_left (by omega)] at he; exact hs he.2.2.1
       unfold Was.air at hs; unfold trueW; rw [show _=0 from Nat.eq_zero_of_not_pos hs]; simp
-    rw [basepart,if_neg (fun h=>hm h.2)]
-    apply sum_eq_zero; intro i hi; apply if_neg; intro h
+    rw [basepart,ite_eq_right (fun h=>hm h.2)]
+    apply sum_eq_zero; intro i hi; apply ite_eq_right; intro h
     obtain ⟨hp,hx,_⟩:= (taunted h0 he hx (mem_range.1 hi)).1 h
     exact hm ⟨hp,hx⟩
 end Local.Ready
@@ -2248,11 +2248,11 @@ lemma rains0 (b:Bool)(x y:ℕ):
     by_cases h:x∈ e.v.S0∧y∈ e.zone b
     · have hr:x∈src d.S d.u e.v.dye∧y∈dst d.S d.a e.v.dye:=by cases b <;> exact h
       have h1:x∈e.v.S0:=h.1; have h2:=h.2
-      rw [if_pos hr]; simp only [h1,h2,true_and,ite_true]
+      rw [ite_eq_left hr]; simp only [h1,h2,true_and,ite_true]
       exact add_comm _ _
     have hh : ¬(x∈src d.S d.u e.v.dye∧y∈dst d.S d.a e.v.dye):=by cases b <;> exact h
     have he:¬(x∈e.v.S0∧y∈e.zone b ∧ e.i=0):=fun p=> h ⟨p.1,p.2.1⟩
-    simp only [if_neg h,if_neg hh,if_neg he,sum_const_zero,add_zero]
+    simp only [ite_eq_right h,ite_eq_right hh,ite_eq_right he,sum_const_zero,add_zero]
 end Moon
 end
 end ExactDerandomization.Chron
@@ -2306,7 +2306,7 @@ lemma teach (j:ℕ)(hj:j<q.u0.n):Spend e x (enc (rear0 j)) (q.turns j):=by
        intro h
        have hm:¬q.u0.live j:=by
             rw [show title s=_ from hA.existent j] at h
-            intro ht; rw [if_pos ht] at h; omega
+            intro ht; rw [ite_eq_left ht] at h; omega
        unfold b diffq Depot.qpoint; simp [hm]
     apply e.cold s hA.east (b:=_) (by rfl) hS (hA.board j hj) _ hz
     · intro h
@@ -2318,7 +2318,7 @@ lemma teach (j:ℕ)(hj:j<q.u0.n):Spend e x (enc (rear0 j)) (q.turns j):=by
       have hz:x∈e.v.S0:=by by_contra! hs; exact hA.insight.kill hs j hl
       refine ⟨hz,?_⟩
       change pointE (q.s j).ray.outR∈ _
-      rw [hA.harvested,if_pos hl]
+      rw [hA.harvested,ite_eq_left hl]
       exact hA.insight.dst ▸ hA.insight.solid.into j hl
     intro B
 
@@ -2362,27 +2362,27 @@ lemma total (j:ℕ) (hj:j∈e.v.S1):
          unfold turns
          rw [hA.harvested]
          by_cases hp:s.live i
-         · rw [if_pos hp]
+         · rw [ite_eq_left hp]
            have hg:i=i:=rfl
            by_cases hk:s.pos i=j
-           · rw [if_pos ⟨hp,hk⟩]; rw [Coinage.pigment, if_pos (by change 1 ≠ (0:ℕ) ∧ q.u0.pos i=j; exact ⟨by decide,hk⟩)]
-             unfold diffq Depot.qpoint; rw [if_pos hp,hk]
-           rw [if_neg (fun h=>hk h.2)]
-           exact if_neg fun h=>hk h.2
-         rw [if_neg hp,if_neg (fun h=>hp h.1)]
-         exact if_neg fun h=>h.1 rfl
+           · rw [ite_eq_left ⟨hp,hk⟩]; rw [Coinage.pigment, ite_eq_left (by change 1 ≠ (0:ℕ) ∧ q.u0.pos i=j; exact ⟨by decide,hk⟩)]
+             unfold diffq Depot.qpoint; rw [ite_eq_left hp,hk]
+           rw [ite_eq_right (fun h=>hk h.2)]
+           exact ite_eq_right fun h=>hk h.2
+         rw [ite_eq_right hp,ite_eq_right (fun h=>hp h.1)]
+         exact ite_eq_right fun h=>h.1 rfl
    have hp:j∈s.S:=hA.insight.dst ▸ hj
    by_cases hl:∃ i,s.live i∧ s.pos i=j
    · obtain ⟨i,hi,hj'⟩:=hl
      rw [sum_eq_single i]
-     · rw [he,if_pos ⟨hi,hj'⟩]
+     · rw [he,ite_eq_left ⟨hi,hj'⟩]
      · intro b hb ht
-       rw [he]; exact if_neg fun h=>ht (hA.insight.solid.uniq b i h.1 hi (h.2.trans hj'.symm))
+       rw [he]; exact ite_eq_right fun h=>ht (hA.insight.solid.uniq b i h.1 hi (h.2.trans hj'.symm))
      intro h; exact False.elim (h (mem_range.mpr (hA.insight.solid.card0 i hi)))
    have hf : s.y.ts j=line s.y.base:=hA.insight.solid.off j hp (fun i hi e=>hl ⟨i,hi,e⟩)
    change _=s.y.ts j-line s.y.base
    rw [hf,sub_self]; apply sum_eq_zero
-   intro i _; rw [he,if_neg (fun h=>hl ⟨_,h⟩)]
+   intro i _; rw [he,ite_eq_right (fun h=>hl ⟨_,h⟩)]
 
 end Prints
 end Recent.Ink
@@ -2417,8 +2417,8 @@ lemma flooded (p:Fields)(he:Disjoint l.T p.T)(y):
    (l.meet p).rain y=l.rain y+p.rain y:=by
    unfold meet rain; dsimp only; rw [sum_union he]
    congr 1
-   · exact sum_congr rfl fun i hi=>congrArg (fun t:Coinage=> t.pigment y) (if_pos hi)
-   exact sum_congr rfl fun i hi=>congrArg (fun t:Coinage=> t.pigment y) (if_neg (fun ht=>Finset.disjoint_left.1 he ht hi))
+   · exact sum_congr rfl fun i hi=>congrArg (fun t:Coinage=> t.pigment y) (ite_eq_left hi)
+   exact sum_congr rfl fun i hi=>congrArg (fun t:Coinage=> t.pigment y) (ite_eq_right (fun ht=>Finset.disjoint_left.1 he ht hi))
 
 variable (e:Chron.Moon u)(x:ℕ)
 def fine : Prop:=∀ i∈l.T,ht (l.f i).dye ≤ massB e.p.prism e.d
@@ -2432,9 +2432,9 @@ lemma fused (h:l.Good p e x) (he:t.Good f e x)(hh:Disjoint l.T t.T):
    constructor
    · intro i; simp only [meet,mem_union,h.mem,he.mem]
    intro i hi; obtain hx|hx:=mem_union.1 hi
-   · change e.Spend _ _ (if i∈l.T then _ else _); rw [if_pos hx];exact h.sound _ hx
+   · change e.Spend _ _ (if i∈l.T then _ else _); rw [ite_eq_left hx];exact h.sound _ hx
    change e.Spend _ _ (if i∈l.T then _ else _)
-   rw [if_neg (fun ht=>Finset.disjoint_left.1 hh ht hx)]; exact he.sound _ hx
+   rw [ite_eq_right (fun ht=>Finset.disjoint_left.1 hh ht hx)]; exact he.sound _ hx
 lemma apart (h:l.Good p e x) (he:t.Good f e x)(hh:∀ i,p i→¬f i) :Disjoint l.T t.T:=
     Finset.disjoint_left.2 fun {i} hp hf=>hh _ ((h.mem i).mp hp) ((he.mem i).mp hf)
 lemma fairM (h:l.fine e)(ht:t.fine e): (meet l t).fine e:=by
@@ -2451,7 +2451,7 @@ def meadow (S:Finset α)(f:α → Seed)(g:α → Coinage):Fields:=
 lemma meadowed {S:Finset α}{f:α → Seed}{v:α}(g:α → Coinage)(h:Set.InjOn f S)(he:v∈S):
     (meadow S f g).f (f v)=g v:=by
     unfold meadow; dsimp only; have hz:∃ j∈S,f j=f v:=⟨_,he,rfl⟩
-    rw [dif_pos hz]; exact congrArg _ (h (Classical.choose_spec hz).1 he (Classical.choose_spec hz).2)
+    rw [dite_eq_left hz]; exact congrArg _ (h (Classical.choose_spec hz).1 he (Classical.choose_spec hz).2)
 lemma parkS {S:Finset α}{f:α → Seed}(g:α → Coinage)(h:Set.InjOn f S)(y): (meadow S f g).rain y=
               ∑ j∈S,(g j).pigment y:=by
    unfold rain; rw [show (meadow S f g).T=S.image f from rfl]
@@ -2531,7 +2531,7 @@ lemma appears {x:ℕ}(h:e.Lo)(hx:x∈u.D.P):
      · rw [ht,shaped] at hp; contradiction
      · next b i=>cases b <;> simp only [ht,shaped] at hp <;> omega
      rw [ht,shaped] at hp;contradiction
-   intro y; unfold Fields.empty Fields.rain basepart; dsimp only; rw [sum_empty,if_neg]; exact fun h=>he h.1
+   intro y; unfold Fields.empty Fields.rain basepart; dsimp only; rw [sum_empty,ite_eq_right]; exact fun h=>he h.1
 
 structure Frolic (l:Fields)(x:ℕ):Prop where
     gear:l.Good (fun i=>atmos u.w0 e.c i ∨ began e.c i) e x
@@ -2777,8 +2777,8 @@ lemma summer (F:Fields){x:ℕ}(h:F.Good (ace u.w0 e.c) e x) (he:e.Lo)(y:ℕ):
     ∑ i∈range e.cageX.m,(spread F i).pigment y= F.rain y:=by
    rw [←sum_subset (begins _ h he) ?_]
    · unfold limit; rw [sum_image (show ∀ i∈F.T,∀ j∈F.T,enc i=enc j → i=j from fun _ _ _ _ h=>genc h)]
-     apply sum_congr rfl; intro i hi; unfold spread; rw [if_pos (show enc i ∈ limit F from mem_image_of_mem _ hi),Wire.eq]
-   intro i _ hA; unfold spread; rw [if_neg hA]
+     apply sum_congr rfl; intro i hi; unfold spread; rw [ite_eq_left (show enc i ∈ limit F from mem_image_of_mem _ hi),Wire.eq]
+   intro i _ hA; unfold spread; rw [ite_eq_right hA]
    exact Weather.only0 _
 
 lemma emits (F:Fields){x:ℕ}(hx:x∈u.D.P)(h:F.Good (ace u.w0 e.c) e x)
@@ -2787,7 +2787,7 @@ lemma emits (F:Fields){x:ℕ}(hx:x∈u.D.P)(h:F.Good (ace u.w0 e.c) e x)
     · next hg=> obtain ⟨j,hj,rfl⟩:=mem_image.1 hg;rw [Wire.eq]; exact h.sound _ hj
     next hm=>
     have hs: ¬clean u.w0 (e.a,i)=true:= fun he0=>hm ((kinship F h he i).2 he0)
-    exact dun e he hx (if_neg hs)
+    exact dun e he hx (ite_eq_right hs)
 lemma terminal {α:Type}[DecidableEq α](f:α→Pt)(s:Finset α):
        ht (∑ i∈s,f i) ≤ ∑ i∈s,ht (f i):=by
    induction s using Finset.induction_on with
@@ -2843,7 +2843,7 @@ lemma enrolled (h:Weather.Crude e)(x:ℕ)(hx:x∈u.D.P){c:e.v.HistoryC e.p x e.i
    ·
      refine ⟨fun i hi=>(ha i).key hi,fun i hi=> (ha i).sizes hi,?_,fun i hi=>?_⟩
      · intro i hi; have he: i∉limit p:= fun hx=>Nat.not_lt_of_ge hi (mem_range.1 (begins p hp h.lane hx))
-       change (spread p i).i=0; rw [spread,if_neg he];rfl
+       change (spread p i).i=0; rw [spread,ite_eq_right he];rfl
      exact (ha i).faith hi
    · intro b; exact ⟨fun j hj=> (ha j).stats hj b⟩
    · intro y _

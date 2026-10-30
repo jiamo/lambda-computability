@@ -238,7 +238,7 @@ theorem head_lookup_con {Θ : List (Expr Srt)} {F T : Expr Srt} (h : HasTypeNW P
       have hsk : B'.skelK = D.skelK := (skelK_reduces _ hDa hr).trans hska
       refine ⟨U, hU, ?_, hDa.subject_reduces hr⟩
       rw [hsk]
-      cases hCk : C.isKindB <;> simp only [Expr.skelK, hCk, hDk, if_true] at hs <;>
+      cases hCk : C.isKindB <;> simp only [Expr.skelK, hCk, hDk, ite_true] at hs <;>
         exact .cod hs
 
 theorem hsubst_con_aux (n : Nat) :
@@ -395,7 +395,7 @@ theorem hsubst_con_aux (n : Nat) :
         | true =>
             have hlt : C'.skelK.size < n := by
               rw [hskel, ← hKn, ← hUK]
-              simp only [Expr.skelK, hCk, hDk, if_true] at hs
+              simp only [Expr.skelK, hCk, hDk, ite_true] at hs
               exact hs.dom_lt
             obtain ⟨Δ', e', E', hc', her, hEr, he'⟩ :=
               IHn _ hlt C' rfl (hC'kC.trans hCk) (CoC.ne_box_of_hasType hC'σ) (Δ₂ ++ Γ) a' ha' _ e B₁ he ([]) rfl

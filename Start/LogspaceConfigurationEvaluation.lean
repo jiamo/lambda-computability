@@ -159,7 +159,7 @@ lemma masked {n M:ℕ} [Fact n.Prime](h:0<M)(he:M<n)(i j:ℕ)(s:Pool n) :
      rw [ZMod.val_natCast,Nat.mod_eq_of_lt he,ZMod.val_zero] at hh; omega
    unfold swap Print.issued
    erw [Print.stretchy _ _ _ hs,Print.stretchy _ _ _ hs]
-   simp only [pane,replica,dif_neg hs]; rfl
+   simp only [pane,replica,dite_eq_right hs]; rfl
 def leftE (s:Issue):Issue:=(s.1,s.2.2,s.2.1)
 def rightE (s:Issue):Issue:=(s.2.2,s.2.1,s.1)
 def crossE (s:Issue):Issue:=(s.2.1,s.1,s.2.2)
@@ -619,7 +619,7 @@ lemma cupG {qB t c a b}(h:s.home.band c t a qB b):(prS s j).band c t a (liftq u.
 lemma engrave(k): offer u.s.pave u.x (stem s.ray.cage.visN j k)=s.ray.t.priceC k:=by
     have hs:s.ray.cage.visN=v.c 2 i:= congrArg CageQ.visN h0.cageX
     have he:(uphold s.ray.cage.visN).1=2:=by rw [hs,Stone.roleR]
-    unfold offer; rw [if_pos (show (uphold s.ray.cage.visN).1=2 from he),h0.yarn,goalF]; unfold pose0
+    unfold offer; rw [ite_eq_left (show (uphold s.ray.cage.visN).1=2 from he),h0.yarn,goalF]; unfold pose0
     have hf:pointer s.ray.cage.visN 1=s.a:=by
       rw [hs,Stone.pointing]
       exact congrArg CageQ.dataN h0.cageX |>.symm
@@ -721,7 +721,7 @@ lemma force (b:Bool)(j:ℕ):foreground u.w0 (owner v j) b=(ashes v b).rays :=by
     · cases he:a.i with
       | zero=> simp [shaped]
       | succ i=> simp only [Quest.agency,Quest.fleet,Quest.tray,shaped, Nat.add_sub_cancel,
-                         ite_true, if_neg (by omega:i+1≠0)]
+                         ite_true, ite_eq_right (by omega:i+1≠0)]
                  rfl
     · simp [shaped,Quest.pipe,Quest.company,Quest.tray]; rfl
     · next b k=> cases b <;> simp [shaped,Quest.pipe,Quest.company,Quest.tray] <;> rfl

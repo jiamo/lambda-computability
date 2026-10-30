@@ -108,13 +108,13 @@ theorem batch_size_count {r : ℕ → ℕ} {s t : SparseState V}
   by_cases h : step.batch.size = u
   · have hself : clausesOfSize step.batch.clauses u = step.batch.clauses :=
       clausesOfSize_eq_self _ _ (fun C hC => (step.batch.uniform C hC).trans h)
-    rw [if_pos h, hself]
+    rw [ite_eq_left h, hself]
   · have hempty : clausesOfSize step.batch.clauses u = ∅ := by
       apply clausesOfSize_eq_empty
       intro C hC
       rw [step.batch.uniform C hC]
       exact h
-    rw [if_neg h, hempty, Finset.card_empty]
+    rw [ite_eq_right h, hempty, Finset.card_empty]
 
 theorem removed_eq_empty_of_le {r : ℕ → ℕ} {s t : SparseState V} {b : ℕ}
     (step : SparseStep r s t) (hs : s.Valid b) (u : ℕ)
@@ -247,11 +247,11 @@ theorem online_insertion_bound (path : SparsePath r start finish)
       rw [insertions_snoc, insertions_sum_snoc]
       by_cases hlt : step.batch.size < u
       · have hne : step.batch.size ≠ u := Nat.ne_of_lt hlt
-        simp only [if_neg hne, if_pos hlt, Nat.add_zero] at hbalance ⊢
+        simp only [ite_eq_right hne, ite_eq_left hlt, Nat.add_zero] at hbalance ⊢
         nlinarith
       · have hremoved_zero := step.removed_eq_empty_of_le hs u (Nat.le_of_not_gt hlt)
         rw [hremoved_zero, Finset.card_empty, Nat.add_zero] at hbalance
-        simp only [if_neg hlt, Nat.add_zero]
+        simp only [ite_eq_right hlt, Nat.add_zero]
         omega
 
 theorem insertion_recurrence [Fintype V] (path : SparsePath r start finish)
@@ -276,7 +276,7 @@ theorem length_le_insertions (path : SparsePath r start finish)
       have hsize : step.batch.size < b :=
         step.batch.size_lt.trans_le (step.selected.size_le (path.valid hstart))
       change path.length + 1 ≤ _
-      rw [insertions_sum_snoc, if_pos hsize]
+      rw [insertions_sum_snoc, ite_eq_left hsize]
       omega
 
 theorem processed_le_insertions (path : SparsePath r start finish) (i : ℕ) :
@@ -289,9 +289,9 @@ theorem processed_le_insertions (path : SparsePath r start finish) (i : ℕ) :
       rw [insertions_sum_snoc]
       by_cases hi : step.size = i
       · have hsize : step.batch.size < i := hi ▸ step.batch.size_lt
-        simp only [if_pos hi, if_pos hsize]
+        simp only [ite_eq_left hi, ite_eq_left hsize]
         omega
-      · simp only [if_neg hi, Nat.add_zero]
+      · simp only [ite_eq_right hi, Nat.add_zero]
         split <;> omega
 
 theorem petalSteps_mul_le_insertions (path : SparsePath r start finish) (i : ℕ) :
@@ -306,9 +306,9 @@ theorem petalSteps_mul_le_insertions (path : SparsePath r start finish) (i : ℕ
       · have hsize : step.batch.size < i := hi.1 ▸ step.batch.size_lt
         have hcard : step.batch.clauses.card = r i := by
           simp only [SparseStep.batch, step.selected.batch_card, hi.2, ↓reduceIte, hi.1]
-        simp only [if_pos hi, if_pos hsize, Nat.mul_add, Nat.mul_one, hcard]
+        simp only [ite_eq_left hi, ite_eq_left hsize, Nat.mul_add, Nat.mul_one, hcard]
         omega
-      · simp only [if_neg hi, Nat.add_zero]
+      · simp only [ite_eq_right hi, Nat.add_zero]
         split <;> omega
 
 end SparsePath

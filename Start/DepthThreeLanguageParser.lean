@@ -45,11 +45,11 @@ def parseInput (w : List Bool) : Option ParsedInput :=
 
 theorem parseInput_of_fits {w : List Bool} (h : InputFits w) :
     parseInput w = some (decodeInput w) := by
-  simp only [parseInput, if_pos h]
+  simp only [parseInput, ite_eq_left h]
 
 theorem parseInput_of_not_fits {w : List Bool} (h : ¬InputFits w) :
     parseInput w = none := by
-  simp only [parseInput, if_neg h]
+  simp only [parseInput, ite_eq_right h]
 
 theorem parseInput_eq_some_iff (w : List Bool) (q : ParsedInput) :
     parseInput w = some q ↔ InputFits w ∧ decodeInput w = q := by

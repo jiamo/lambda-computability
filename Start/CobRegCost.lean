@@ -68,7 +68,7 @@ theorem cost_pushLoop (r o : ℕ) (b₀ b₁ : Bool) (R : Regs) :
     (fun L S => (S o).length + L.length ≤ (R o).length + (R r).length)
     (fun b L S hS => by
       simp only [List.length_cons] at hS
-      cases b <;> simp only [cond_true, cond_false, cost, run_push, Function.update_self,
+      cases b <;> simp only [Bool.cond_true, Bool.cond_false, cost, run_push, Function.update_self,
         List.length_append, List.length_singleton] <;> constructor <;> omega)
     (R r) R (le_refl _)
   nlinarith
@@ -93,7 +93,7 @@ theorem cost_clearRange_le (fr n B : ℕ) (R : Regs) (h : ∀ r, fr ≤ r → r 
   | succ n ih =>
       simp only [clearRange, cost]
       have h1 := ih (fun r hr1 hr2 => h r hr1 (by omega))
-      rw [run_clearRange, if_neg (by omega)]
+      rw [run_clearRange, ite_eq_right (by omega)]
       have h2 := h (fr + n) (by omega) (by omega)
       nlinarith
 
@@ -401,12 +401,12 @@ theorem bRecBody_cost {F h bd : Cob} {args : List ℕ} {fr : ℕ} {R : Regs} {b 
   -- the step program
   have hmap1 : (fr :: (fr + 1) :: args.tail).map S = (fr :: (fr + 1) :: args.tail).map
       (fun r => if r = fr then sl else if r = fr + 1 then F.eval (sl :: args.tail.map R) else R r) := by
-    simp only [List.map_cons, if_true, s0, s1, if_neg (show fr + 1 ≠ fr by omega)]
+    simp only [List.map_cons, ite_true, s0, s1, ite_eq_right (show fr + 1 ≠ fr by omega)]
     rw [hYs]
     congr 2
     refine (List.map_congr_left fun a ha => ?_).symm
     have := htail a ha
-    rw [if_neg (by omega), if_neg (by omega)]
+    rw [ite_eq_right (by omega), ite_eq_right (by omega)]
   have c1 := hhc _ _ _ S hargs1 (by omega) hout1 shigh s2
   rw [hmap1] at c1
   replace c1 := c1.trans (mfh hW1)
@@ -598,13 +598,13 @@ theorem bRec_cost (g h₀ h₁ bd : Cob)
     have hW1 : maxLen ((fr :: (fr + 1) :: args.tail).map (fun r => if r = fr then sl else
         if r = fr + 1 then F.eval (sl :: args.tail.map R) else R r)) ≤ W M := by
       refine maxLen_le_of fun x hx => ?_
-      simp only [List.map_cons, List.mem_cons, if_true, if_neg (show fr + 1 ≠ fr by omega),
+      simp only [List.map_cons, List.mem_cons, ite_true, ite_eq_right (show fr + 1 ≠ fr by omega),
         List.mem_map] at hx
       rcases hx with rfl | rfl | ⟨r, hr, rfl⟩
       · simp only [W]; omega
       · simp only [W]; omega
       · have := htail r hr
-        rw [if_neg (by omega), if_neg (by omega)]
+        rw [ite_eq_right (by omega), ite_eq_right (by omega)]
         have := length_le_maxLen (List.mem_map_of_mem (f := R) hr)
         simp only [W]; omega
     have hmax3 : maxLen (sl :: F.eval (sl :: args.tail.map R) :: args.tail.map R) ≤ M + LF M := by
@@ -628,7 +628,7 @@ theorem bRec_cost (g h₀ h₁ bd : Cob)
         have : cost body₀ S ≤ fh₀ (W M) + fbd (W M) + 10 * auxQ (W M) :=
           bRecBody_cost (F := F) hargs (hh₀s _ _ _) (hbds _ _ _) ph₀.1 pbd.1 ch₀ cbd hW1 hW2
             (by simp only [W]; omega) hWt hWw hS
-        simp only [cond_false]
+        simp only [Bool.cond_false]
         have hB : B M = fh₀ (W M) + fh₁ (W M) + fbd (W M) + 10 * auxQ (W M) := rfl
         omega
     | true =>
@@ -639,7 +639,7 @@ theorem bRec_cost (g h₀ h₁ bd : Cob)
         have : cost body₁ S ≤ fh₁ (W M) + fbd (W M) + 10 * auxQ (W M) :=
           bRecBody_cost (F := F) hargs (hh₁s _ _ _) (hbds _ _ _) ph₁.1 pbd.1 ch₁ cbd hW1 hW2
             (by simp only [W]; omega) hWt hWw hS
-        simp only [cond_true]
+        simp only [Bool.cond_true]
         have hB : B M = fh₀ (W M) + fh₁ (W M) + fbd (W M) + 10 * auxQ (W M) := rfl
         omega
   -- all iterations

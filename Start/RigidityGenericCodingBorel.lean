@@ -6,7 +6,6 @@ file `lean/OAI/Computability/DegreeRigidity/Representation/GenericCodingBorel.le
 paper "Rigidity of the Turing degrees".
 Adapted to this library's Lean v4.33.0 / Mathlib `v4.33.0` pin: the `OAI` namespace was dropped,
 imports were renamed to `Start.Rigidity*`, and proofs were repaired where the pin required it.
-Proof change: `Measurable.of_eval` (upstream pin) is `measurable_pi_lambda` on this pin.
 See `NOTICE` at the repository root.
 -/
 
@@ -37,7 +36,7 @@ theorem count_measurable (n : ℕ) : Measurable (fun G : Oracle => count G n) :=
     exact (measurable_of_countable (fun z : ℕ × ℕ => z.1+z.2)).comp (ih.prodMk hb)
 
 theorem code_measurable : Measurable (Function.uncurry code) := by
-  apply measurable_pi_lambda
+  apply Measurable.of_eval
   intro n
   have hc : Measurable (fun p : Oracle × Oracle => count p.2 n) := (count_measurable n).comp measurable_snd
   have ha := query_measurable (fun p : Oracle × Oracle => p.1) (fun p => count p.2 n) measurable_fst hc

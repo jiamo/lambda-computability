@@ -96,9 +96,9 @@ theorem approx_direct : ∀ t : Lambda, Approx (direct t) t
   | Lambda.app s t => by
       rw [direct_app]
       by_cases h : headVar s
-      · rw [if_pos h]
+      · rw [ite_eq_left h]
         exact Approx.app (approx_direct s) (approx_direct t)
-      · rw [if_neg h]
+      · rw [ite_eq_right h]
         exact Approx.omega _
 
 /-- The direct approximant of a neutral term is neutral. -/
@@ -107,7 +107,7 @@ theorem neutral_direct {t : Lambda} (h : Neutral t) : Neutral (direct t) := by
   | var n => exact Neutral.var n
   | @app M N hM ih =>
       have hh : headVar M = Bool.true := neutral_iff_headVar.1 hM
-      rw [direct_app, if_pos hh]
+      rw [direct_app, ite_eq_left hh]
       exact Neutral.app _ ih
 
 /-- The direct approximant of a head normal form is a head normal form. -/
@@ -129,9 +129,9 @@ theorem freeBelow_direct : ∀ {t : Lambda} {k : ℕ}, freeBelow k t → freeBel
       intro k h
       rw [direct_app]
       by_cases hh : headVar s
-      · rw [if_pos hh]
+      · rw [ite_eq_left hh]
         exact ⟨ihs h.1, ihu h.2⟩
-      · rw [if_neg hh]
+      · rw [ite_eq_right hh]
         exact freeBelow_omega k
 
 /-- The direct approximant of a closed term is closed. -/

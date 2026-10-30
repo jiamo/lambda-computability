@@ -114,7 +114,7 @@ theorem not_tracked_diag : ¬ Tracked natK1 natK1 diag := by
   have hget : (natApp r r).get hdom = diag r := Part.get_eq_of_mem hmem hdom
   have hstep : diag r = (natApp r r).get hdom + 1 := by
     classical
-    rw [diag, dif_pos hdom]
+    rw [diag, dite_eq_left hdom]
   omega
 
 /-- Not every function of natural numbers underlies a morphism of the standard numbers

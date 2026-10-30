@@ -62,8 +62,8 @@ theorem PairCodeCertificates.mono {M N : ZFSet.{u}} {a b : Ordinal.{u}}
     (h : PairCodeCertificates M a b) (hMN : M ⊆ N) : PairCodeCertificates N a b := by
   unfold PairCodeCertificates at h ⊢
   split <;> rename_i hc
-  · exact (by simpa only [if_pos hc] using h : CodeBranchCertificates M false a b).mono hMN
-  · exact (by simpa only [if_neg hc] using h : CodeBranchCertificates M true b a).mono hMN
+  · exact (by simpa only [ite_eq_left hc] using h : CodeBranchCertificates M false a b).mono hMN
+  · exact (by simpa only [ite_eq_right hc] using h : CodeBranchCertificates M true b a).mono hMN
 
 theorem pairCodeSentence_of_certificates (M : ZFSet.{u}) (hM : Transitive M)
     (hω : ZFSet.omega.{u} ∈ M) (e : ℕ → ZFSet.{u}) (he : ∀ i, e i ∈ M)
@@ -76,13 +76,13 @@ theorem pairCodeSentence_of_certificates (M : ZFSet.{u}) (hM : Transitive M)
   by_cases hle : b ≤ a
   · left
     refine ⟨hsub.mpr hle,codeBranchSentence_of_certificates M hM hω false e he a b ha hb ?_ ?_⟩
-    · simpa only [PairCodeCertificates,if_pos hle] using hcert
-    · simpa only [pairCode,if_pos hle,codeBranchValue,codeScale,Bool.false_eq_true,↓reduceIte] using hc
+    · simpa only [PairCodeCertificates,ite_eq_left hle] using hcert
+    · simpa only [pairCode,ite_eq_left hle,codeBranchValue,codeScale,Bool.false_eq_true,↓reduceIte] using hc
   · right
     refine ⟨fun h => hle (hsub.mp h),codeBranchSentence_of_certificates M hM hω true
       (fun i => e (if i = 0 then 0 else if i = 1 then 2 else 1)) (fun i => he _) b a hb ha ?_ ?_⟩
-    · simpa only [PairCodeCertificates,if_neg hle] using hcert
-    · simpa only [pairCode,if_neg hle,codeBranchValue,codeScale,↓reduceIte] using hc
+    · simpa only [PairCodeCertificates,ite_eq_right hle] using hcert
+    · simpa only [pairCode,ite_eq_right hle,codeBranchValue,codeScale,↓reduceIte] using hc
 
 end TuringRigidity.OrdinalCoding
 

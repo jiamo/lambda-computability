@@ -107,7 +107,7 @@ theorem stMod (M t p : ℕ) (hp : p < stH M) : (1 + stH M * t + p - 1) % stH M =
 
 variable {δ : ℕ → ℕ → Bool → ℕ} {ac : ℕ → ℕ → Bool} {M n t s j : ℕ}
 
-theorem stT_zero : stT δ ac M n 0 j = .cst (decide (j = 0)) := by rw [stT, if_pos rfl]
+theorem stT_zero : stT δ ac M n 0 j = .cst (decide (j = 0)) := by rw [stT, ite_eq_left rfl]
 
 /-- The gate of a block row, before the case analysis on the phase. -/
 theorem stT_block (ht : t < n) (p : ℕ) (hp : p < stH M) :
@@ -122,7 +122,7 @@ theorem stT_block (ht : t < n) (p : ℕ) (hp : p < stH M) :
         else if j = 0 then .disj (M * (1 + stH M * t + p - 1)) (M * (1 + stH M * t + p - 1))
         else .disj (M * (1 + stH M * t + p) + (j - 1))
           (M * (1 + stH M * t + p - 1) + j)) := by
-  rw [stT, if_neg (by omega), stDiv M t p hp, stMod M t p hp, if_neg (by omega)]
+  rw [stT, ite_eq_right (by omega), stDiv M t p hp, stMod M t p hp, ite_eq_right (by omega)]
 
 theorem stT_cstF (ht : t < n) : stT δ ac M n (1 + stH M * t) j = .cst false := by
   have h := stT_block (δ := δ) (ac := ac) (M := M) (j := j) ht 0 (stH_pos M)
@@ -148,8 +148,8 @@ theorem stT_conj (ht : t < n) (hs : s < M) :
   have hp : 4 + 2 * s < stH M := by simp [stH]; omega
   have h := stT_block (δ := δ) (ac := ac) (M := M) (j := j) ht (4 + 2 * s) hp
   have hs2 : (4 + 2 * s - 4) / 2 = s := by omega
-  rw [h, if_neg (by omega), if_neg (by omega), if_neg (by omega), if_neg (by omega),
-    if_pos (by omega), hs2]
+  rw [h, ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega),
+    ite_eq_left (by omega), hs2]
 
 theorem stT_acc (ht : t < n) (hs : s < M) :
     stT δ ac M n (1 + stH M * t + (5 + 2 * s)) j
@@ -159,8 +159,8 @@ theorem stT_acc (ht : t < n) (hs : s < M) :
           (M * (1 + stH M * t + (4 + 2 * s)) + j)) := by
   have hp : 5 + 2 * s < stH M := by simp [stH]; omega
   have h := stT_block (δ := δ) (ac := ac) (M := M) (j := j) ht (5 + 2 * s) hp
-  rw [h, if_neg (by omega), if_neg (by omega), if_neg (by omega), if_neg (by omega),
-    if_neg (by omega)]
+  rw [h, ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega),
+    ite_eq_right (by omega)]
   have he : 1 + stH M * t + (5 + 2 * s) - 1 = 1 + stH M * t + (4 + 2 * s) := by omega
   rw [he]
 
@@ -173,7 +173,7 @@ theorem stT_final :
   have hd : (1 + stH M * n - 1) / stH M = n := by
     have h := stDiv M n 0 (stH_pos M)
     simpa using h
-  rw [stT, if_neg (by omega), hd, if_pos (le_refl n)]
+  rw [stT, ite_eq_right (by omega), hd, ite_eq_left (le_refl n)]
 
 /-! ### Well-formedness -/
 
@@ -387,7 +387,7 @@ theorem lval_st_acc (hM : 0 < M) (ht : t < n) (hs : s < M)
       have hc := lval_st_conj (δ := δ) (ac := ac) (M := M) (n := n) (t := t) (s := s) (j := 0)
         (y := y) hM ht hs hM hprev
       simp only [Nat.add_zero] at hc
-      rw [lval, stF_block h0, stT_acc ht hs, if_pos rfl, gateVal, lval_st_ref hr, Bool.or_self,
+      rw [lval, stF_block h0, stT_acc ht hs, ite_eq_left rfl, gateVal, lval_st_ref hr, Bool.or_self,
         hc]
       cases hst : stRun δ n y t with
       | zero => simp
@@ -400,7 +400,7 @@ theorem lval_st_acc (hM : 0 < M) (ht : t < n) (hs : s < M)
       have hr2 : M * (1 + stH M * t + (4 + 2 * s)) + (j + 1)
           < M * (1 + stH M * t + (5 + 2 * s)) + (j + 1) :=
         st_row_lt (M := M) (j := j + 1) (by omega) hj
-      rw [lval, stF_block hj, stT_acc ht hs, if_neg (by omega), gateVal]
+      rw [lval, stF_block hj, stT_acc ht hs, ite_eq_right (by omega), gateVal]
       simp only [Nat.add_sub_cancel]
       rw [lval_st_ref hr1, lval_st_ref hr2, ih hjM,
         lval_st_conj (j := j + 1) hM ht hs hj hprev]
@@ -430,13 +430,13 @@ theorem lval_st_state (hM : 0 < M) (hδ : ∀ s b, δ n s b < M) :
       intro _ u hu
       have hF : stF δ ac M n u = stT δ ac M n 0 u := by
         simpa using stF_block (δ := δ) (ac := ac) (M := M) (n := n) (j := u) hu 0
-      rw [stPrevId, if_pos rfl, lval, hF, stT_zero]
+      rw [stPrevId, ite_eq_left rfl, lval, hF, stT_zero]
       rfl
   | succ t ih =>
       intro ht u hu
       have hprev := ih (by omega)
       have hid : stPrevId M (t + 1) u = M * (1 + stH M * t + (5 + 2 * u)) + (M - 1) := by
-        rw [stPrevId, if_neg (by omega), Nat.add_sub_cancel]
+        rw [stPrevId, ite_eq_right (by omega), Nat.add_sub_cancel]
         congr 2
         omega
       have hlt : stRun δ n y t < M := stRun_lt hM hδ y t
@@ -462,14 +462,14 @@ theorem lval_st_final (hM : 0 < M) (hδ : ∀ s b, δ n s b < M) :
   | zero =>
       intro h0
       have hr : stPrevId M n 0 < M * (1 + stH M * n) + 0 := stPrevId_lt hM hM (by omega)
-      rw [lval, stF_block h0, stT_final, if_pos rfl]
+      rw [lval, stF_block h0, stT_final, ite_eq_left rfl]
       by_cases hac0 : ac n 0
-      · rw [if_pos hac0, gateVal, lval_st_ref hr, Bool.or_self, hstate 0 hM]
+      · rw [ite_eq_left hac0, gateVal, lval_st_ref hr, Bool.or_self, hstate 0 hM]
         cases hst : stRun δ n y n with
         | zero => simp [hac0]
         | succ k => simp
       · have hac0' : ac n 0 = false := by simpa using hac0
-        rw [if_neg hac0, gateVal]
+        rw [ite_eq_right hac0, gateVal]
         cases hst : stRun δ n y n with
         | zero => simp [hac0']
         | succ k => simp
@@ -479,10 +479,10 @@ theorem lval_st_final (hM : 0 < M) (hδ : ∀ s b, δ n s b < M) :
       have hr1 : M * (1 + stH M * n) + j < M * (1 + stH M * n) + (j + 1) := by omega
       have hr2 : stPrevId M n (j + 1) < M * (1 + stH M * n) + (j + 1) :=
         stPrevId_lt hM hj (by omega)
-      rw [lval, stF_block hj, stT_final, if_neg (by omega)]
+      rw [lval, stF_block hj, stT_final, ite_eq_right (by omega)]
       simp only [Nat.add_sub_cancel]
       by_cases hacj : ac n (j + 1)
-      · rw [if_pos hacj, gateVal, lval_st_ref hr1, lval_st_ref hr2, ih hjM, hstate (j + 1) hj]
+      · rw [ite_eq_left hacj, gateVal, lval_st_ref hr1, lval_st_ref hr2, ih hjM, hstate (j + 1) hj]
         rw [Bool.eq_iff_iff]
         simp only [Bool.or_eq_true, Bool.and_eq_true, decide_eq_true_eq]
         constructor
@@ -496,7 +496,7 @@ theorem lval_st_final (hM : 0 < M) (hδ : ∀ s b, δ n s b < M) :
           · exact Or.inr (by omega)
           · exact Or.inl ⟨h, h2⟩
       · have hacj' : ac n (j + 1) = false := by simpa using hacj
-        rw [if_neg hacj, gateVal, lval_st_ref hr1, ih hjM, Bool.or_self]
+        rw [ite_eq_right hacj, gateVal, lval_st_ref hr1, ih hjM, Bool.or_self]
         rw [Bool.eq_iff_iff]
         simp only [Bool.and_eq_true, decide_eq_true_eq]
         constructor

@@ -203,20 +203,20 @@ theorem mem_free_cfgF {a q i j v : ℕ} (h : v ∈ (cfgF M x s a q i j).free) :
     have hlm : l < cfgWidth M x s := List.mem_range.1 hl
     have ha : (a + 1) * cfgWidth M x s = a * cfgWidth M x s + cfgWidth M x s := by ring
     by_cases h1 : l < M.states
-    · rw [if_pos h1] at hp'
+    · rw [ite_eq_left h1] at hp'
       have := mem_free_litF hp'
       exact Or.inr ⟨by omega, by omega⟩
-    · rw [if_neg h1] at hp'
+    · rw [ite_eq_right h1] at hp'
       by_cases h2 : l < M.states + (x.length + 1)
-      · rw [if_pos h2] at hp'
+      · rw [ite_eq_left h2] at hp'
         have := mem_free_litF hp'
         exact Or.inr ⟨by omega, by omega⟩
-      · rw [if_neg h2] at hp'
+      · rw [ite_eq_right h2] at hp'
         by_cases h3 : l < M.states + (x.length + 1) + s
-        · rw [if_pos h3, free_tt] at hp'
+        · rw [ite_eq_left h3, free_tt] at hp'
           simp only [List.mem_cons, List.not_mem_nil, or_false] at hp'
           exact Or.inl (by tauto)
-        · rw [if_neg h3] at hp'
+        · rw [ite_eq_right h3] at hp'
           have := mem_free_litF hp'
           exact Or.inr ⟨by omega, by omega⟩
 
@@ -230,26 +230,26 @@ theorem mem_free_tgtF {a b q' i' j' : ℕ} {w : Bool} {j v : ℕ}
     have ha : (a + 1) * cfgWidth M x s = a * cfgWidth M x s + cfgWidth M x s := by ring
     have hb : (b + 1) * cfgWidth M x s = b * cfgWidth M x s + cfgWidth M x s := by ring
     by_cases h1 : l < M.states
-    · rw [if_pos h1] at hp'
+    · rw [ite_eq_left h1] at hp'
       have := mem_free_litF hp'
       exact Or.inr (Or.inr ⟨by omega, by omega⟩)
-    · rw [if_neg h1] at hp'
+    · rw [ite_eq_right h1] at hp'
       by_cases h2 : l < M.states + (x.length + 1)
-      · rw [if_pos h2] at hp'
+      · rw [ite_eq_left h2] at hp'
         have := mem_free_litF hp'
         exact Or.inr (Or.inr ⟨by omega, by omega⟩)
-      · rw [if_neg h2] at hp'
+      · rw [ite_eq_right h2] at hp'
         by_cases h3 : l < M.states + (x.length + 1) + s
-        · rw [if_pos h3] at hp'
+        · rw [ite_eq_left h3] at hp'
           by_cases h4 : l - (M.states + (x.length + 1)) = j
-          · rw [if_pos h4] at hp'
+          · rw [ite_eq_left h4] at hp'
             have := mem_free_litF hp'
             exact Or.inr (Or.inr ⟨by omega, by omega⟩)
-          · rw [if_neg h4] at hp'
+          · rw [ite_eq_right h4] at hp'
             rcases mem_free_iffVar hp' with rfl | rfl
             · exact Or.inr (Or.inr ⟨by omega, by omega⟩)
             · exact Or.inr (Or.inl ⟨by omega, by omega⟩)
-        · rw [if_neg h3] at hp'
+        · rw [ite_eq_right h3] at hp'
           have := mem_free_litF hp'
           exact Or.inr (Or.inr ⟨by omega, by omega⟩)
 

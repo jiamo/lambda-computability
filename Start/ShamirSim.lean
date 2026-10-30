@@ -62,7 +62,7 @@ theorem cast_comb (dis : Bool) {b c : ℕ} (hb : b ≤ p) (hc : c ≤ p) :
       if dis then 1 - (1 - (b : ZMod p)) * (1 - (c : ZMod p)) else (b : ZMod p) * c := by
   cases dis
   · simp [comb, cast_fmul]
-  · simp only [comb, if_true]
+  · simp only [comb, ite_true]
     rw [cast_fsub _ (fmul_lt _ _).le, cast_fmul, cast_fsub _ hb, cast_fsub _ hc]
     simp only [Nat.cast_one]
 

@@ -290,11 +290,11 @@ end Environment
     (hm : Ω.profile (M.subst e.images).normalForm ∉ C) :
     (preEvaluate Ω C hno t e).read.val = Candidates.Top Ω (M.subst e.images).normalForm := by
   cases t with
-  | var ht hd hc => exact by simp only [preEvaluate,PreResult.lookup,PreResult.baseResult,PreResult.baseRead,dif_neg hm]
+  | var ht hd hc => exact by simp only [preEvaluate,PreResult.lookup,PreResult.baseResult,PreResult.baseRead,dite_eq_right hm]
   | sort ht ha hc => rfl
-  | product ht d b hr hc => exact by simp only [preEvaluate,PreResult.product,if_neg hm]
-  | abstraction ht d b hp hc => exact by simp only [preEvaluate,PreResult.abstraction,PreResult.baseResult,PreResult.baseRead,dif_neg hm]
-  | application ht f a hc => exact by simp only [preEvaluate,PreResult.application,PreResult.baseResult,PreResult.baseRead,dif_neg hm]
+  | product ht d b hr hc => exact by simp only [preEvaluate,PreResult.product,ite_eq_right hm]
+  | abstraction ht d b hp hc => exact by simp only [preEvaluate,PreResult.abstraction,PreResult.baseResult,PreResult.baseRead,dite_eq_right hm]
+  | application ht f a hc => exact by simp only [preEvaluate,PreResult.application,PreResult.baseResult,PreResult.baseRead,dite_eq_right hm]
 
  theorem preEvaluate_neutral_read_inactive {Γ : List (Expr S)} {M : Expr S} {s : S}
     (t : TypingTree P Γ M (.sort s)) (e : Environment (hw := hw) Ω C hno Γ)
@@ -303,7 +303,7 @@ end Environment
   have hb (v : ActiveLayer P C (Ω.profile (Expr.sort s |>.subst e.images).normalForm) →
       Value (hw := hw) Ω C hno (Expr.sort s |>.subst e.images).normalForm) :
       (PreResult.baseRead t.typing v).val = Candidates.Top Ω (M.subst e.images).normalForm := by
-    simp only [PreResult.baseRead,dif_neg ha]
+    simp only [PreResult.baseRead,dite_eq_right ha]
     split <;> try rfl
     split <;> rfl
   cases t with
@@ -403,10 +403,10 @@ abbrev ProductGood {Γ : List (Expr S)} {D E : Expr S} {a b : S}
           else Neutral ((Expr.app f n).subst σ))
         simp only [Expr.subst_compSub]
         split <;> rename_i hF
-        · rw [if_pos hF] at hg'
+        · rw [ite_eq_left hF] at hg'
           exact ⟨(ihf hΔ σ ts ξ hξ hguard hg).1 hF hg'.1,
             fun hA => (ihn hΔ σ ts ξ hξ hguard hg).1 hA (hg'.2 hA)⟩
-        · rw [if_neg hF] at hg'
+        · rw [ite_eq_right hF] at hg'
           exact skipped_application_subst Ω C hw ht ft.typing nt.typing hc hg' hcomp hguard ha hF
       refine ⟨hv,?_⟩
       intro hr hm
@@ -482,11 +482,11 @@ variable (C : Set (Set S)) {hw : SystemWeaklyNormalizing P} (hno : ¬ ForbiddenC
         (by simpa only [Expr.subst,Ω.profile_normalForm,Ω.profile_sort] using ha)
       refine Eq.trans ?_ (preEvaluate_neutral_read_inactive Ω C hno t' f hnew ha).symm
       have hex : ∃ s', Expr.sort s = Expr.sort s' ∧ ({s'} : Set S) ∈ C := ⟨s,rfl,hsC⟩
-      simp only [PreResult.baseRead,dif_pos hm,dif_pos hex,dif_neg ha]
+      simp only [PreResult.baseRead,dite_eq_left hm,dite_eq_left hex,dite_eq_right ha]
       exact congrArg (Candidates.Top Ω) hM
   · have hm' : Ω.profile ((M.subst σ).subst f.images).normalForm ∉ C := hM ▸ hm
     rw [preEvaluate_read_outside Ω C hno t' f hm']
-    simp only [PreResult.baseRead,dif_neg hm]
+    simp only [PreResult.baseRead,dite_eq_right hm]
     exact congrArg (Candidates.Top Ω) hM
 
  theorem preEvaluate_subst {Γ : List (Expr S)} {M T : Expr S} (t : TypingTree P Γ M T)
@@ -544,7 +544,7 @@ variable (C : Set (Set S)) {hw : SystemWeaklyNormalizing P} (hno : ¬ ForbiddenC
         · change (if ActiveLayer P C (Ω.profile (Expr.pi D E |>.subst e.images)) then
             ValGood Ω C gt e.images ∧ (ActiveLayer P C (Ω.profile (D.subst e.images)) → ValGood Ω C nt e.images)
             else Neutral (.app g n)) at hgood
-          rw [if_pos hF] at hgood
+          rw [ite_eq_left hF] at hgood
           apply PreResult.application_val_congr ht (ht.subst hΔ σ ts.typed) gt.typing
             (gt.typing.subst hΔ σ ts.typed) nt.typing (nt.typing.subst hΔ σ ts.typed)
             hc _ _ _ _ _ e f (he.normal_eq _) (he.normal_eq _) (he.normal_eq _)
@@ -561,7 +561,7 @@ variable (C : Set (Set S)) {hw : SystemWeaklyNormalizing P} (hno : ¬ ForbiddenC
             ((PreResult.application (ht.subst hΔ σ ts.typed) (gt.typing.subst hΔ σ ts.typed)
               (nt.typing.subst hΔ σ ts.typed) _ _ _ f).val hb).val
           change ¬ ActiveLayer P C (Ω.profile ((Expr.pi (D.subst σ) (E.subst (Expr.liftSub σ))).subst f.images).normalForm) at hF'
-          simp only [PreResult.application,PreResult.baseResult,PreResult.applicationValue,dif_neg hF0,dif_neg hF']
+          simp only [PreResult.application,PreResult.baseResult,PreResult.applicationValue,dite_eq_right hF0,dite_eq_right hF']
           exact distinguished_congr Ω C hno (he.normal_eq T)
       exact ⟨hv,fun hr => baseRead_substitution Ω C hno ht _ e f he.images hg _ _ hr hv⟩
   | @product Γ D E a b c T ht d bt hr hc ihd ihb =>
@@ -601,7 +601,7 @@ variable (C : Set (Set S)) {hw : SystemWeaklyNormalizing P} (hno : ¬ ForbiddenC
           change ((PreResult.product ht d.typing bt.typing hr hc _ _ e).val ha).val =
             ((PreResult.product (ht.subst hΔ σ ts.typed) hD hB hr (hc.subst σ) _ _ f).val hb).val
           change ¬ (({c} : Set S) ∈ C ∧ Ω.profile ((Expr.pi (D.subst σ) (E.subst (Expr.liftSub σ))).subst f.images).normalForm ∈ C) at hgate'
-          simp only [PreResult.product,dif_neg hgate,dif_neg hgate']
+          simp only [PreResult.product,dite_eq_right hgate,dite_eq_right hgate']
           exact distinguished_congr Ω C hno (he.normal_eq T)
       · intro hgood
         apply PreResult.product_read_congr ht (ht.subst hΔ σ ts.typed) d.typing bt.typing hr

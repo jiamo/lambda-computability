@@ -439,11 +439,11 @@ theorem blockCode_last (ρ' : Restriction n) (L : List (Lit n × ℕ))
 
 theorem cdt_falsified {C : Term n} {F : DNF n} {ρ : Restriction n} (h : C.Falsified ρ) :
     cdt (C :: F) ρ = cdt F ρ := by
-  rw [cdt, if_pos h]
+  rw [cdt, ite_eq_left h]
 
 theorem encode_falsified {C : Term n} {F : DNF n} {s : ℕ} {ρ : Restriction n}
     (h : C.Falsified ρ) : encode (C :: F) s ρ = encode F s ρ := by
-  rw [encode, if_pos h]
+  rw [encode, ite_eq_left h]
 
 theorem encode_lt {C : Term n} {F : DNF n} {s : ℕ} {ρ : Restriction n}
     (h : ¬ C.Falsified ρ) (hlt : (C.freeLits ρ).length < s) :
@@ -453,13 +453,13 @@ theorem encode_lt {C : Term n} {F : DNF n} {s : ℕ} {ρ : Restriction n}
         blockCode (choosePath C F (s - (C.freeLits ρ).length) ρ) (C.freeLits ρ) ++
           (encode F (s - (C.freeLits ρ).length)
             (choosePath C F (s - (C.freeLits ρ).length) ρ)).2) := by
-  rw [encode, if_neg h, if_pos hlt]
+  rw [encode, ite_eq_right h, ite_eq_left hlt]
 
 theorem encode_ge {C : Term n} {F : DNF n} {s : ℕ} {ρ : Restriction n}
     (h : ¬ C.Falsified ρ) (hlt : ¬ (C.freeLits ρ).length < s) :
     encode (C :: F) s ρ = (setLits ρ ((C.freeLits ρ).take s),
       blockCode ρ ((C.freeLits ρ).take s)) := by
-  rw [encode, if_neg h, if_neg hlt]
+  rw [encode, ite_eq_right h, ite_eq_right hlt]
 
 theorem encode_zero (F : DNF n) (ρ : Restriction n) : encode F 0 ρ = (ρ, []) := by
   induction F with
@@ -481,7 +481,7 @@ theorem choosePath_spec {C : Term n} {F : DNF n} {s : ℕ} {ρ : Restriction n}
   by_contra hne
   have hsat : ¬ C.Satisfied ρ := by
     intro h
-    rw [cdt, if_neg hfal, if_pos h] at hbad
+    rw [cdt, ite_eq_right hfal, ite_eq_left h] at hbad
     simp [DTree.depth] at hbad
     omega
   have hd := queryAll_depth_le
@@ -489,10 +489,10 @@ theorem choosePath_spec {C : Term n} {F : DNF n} {s : ℕ} {ρ : Restriction n}
     (s - (C.freeLits ρ).length - 1) (fun ρ' hρ' => by
       by_cases hs : C.Satisfied ρ'
       · simp [hs, DTree.depth]
-      · simp only [hs, if_false]
+      · simp only [hs, ite_false]
         have : ¬ (s - (C.freeLits ρ).length ≤ (cdt F ρ').depth) := fun h => hne ⟨ρ', hρ', hs, h⟩
         omega)
-  rw [cdt, if_neg hfal, if_neg hsat] at hbad
+  rw [cdt, ite_eq_right hfal, ite_eq_right hsat] at hbad
   have hlen : (C.freeVars ρ).length = (C.freeLits ρ).length := by simp [Term.freeVars]
   omega
 
@@ -710,7 +710,7 @@ theorem encode_inj_aux {k : ℕ} (F : DNF n) (hF : IsKDNF k F) : ∀ (s : ℕ) (
         have hnil : ∀ ρ, ¬ C.Falsified ρ → s ≤ (cdt (C :: F) ρ).depth → C.freeLits ρ ≠ [] := by
           intro ρ hf hb hn
           have := satisfied_of_freeLits_nil hf hn
-          rw [cdt, if_neg hf, if_pos this] at hb
+          rw [cdt, ite_eq_right hf, ite_eq_left this] at hb
           simp [DTree.depth] at hb
           omega
         have hz : ∀ ρ, ∀ p ∈ C.freeLits ρ, p ∈ C.zipIdx := fun ρ p hp => (mem_freeLits.1 hp).1
@@ -890,7 +890,7 @@ theorem card_fiber (S : Finset (Fin n)) :
       by_cases hi : ρ i = none
       · simp [freeSet, hi]
       · have : i ∉ freeSet ρ := by simp [freeSet, hi]
-        rw [if_neg this]
+        rw [ite_eq_right this]
         obtain ⟨b, hb⟩ := Option.ne_none_iff_exists'.1 hi
         cases b <;> simp [hb]
     · intro h
@@ -898,9 +898,9 @@ theorem card_fiber (S : Finset (Fin n)) :
       have hi := h i
       simp only [freeSet, mem_filter, mem_univ, true_and]
       by_cases his : i ∈ S
-      · rw [if_pos his] at hi
+      · rw [ite_eq_left his] at hi
         simpa [his] using hi
-      · rw [if_neg his] at hi
+      · rw [ite_eq_right his] at hi
         simp only [mem_insert, mem_singleton] at hi
         rcases hi with hi | hi <;> simp [hi, his]
   rw [h, Fintype.card_piFinset]

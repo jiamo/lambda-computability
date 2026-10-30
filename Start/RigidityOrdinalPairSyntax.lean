@@ -59,11 +59,11 @@ theorem pairCodeSentence_sound (M : ZFSet.{u}) (hM : Transitive M)
   rcases h with ⟨hle,hc⟩|⟨hnle,hc⟩
   · have hv := codeBranchSentence_sound M hM hω false e he _ _
       ha.toZFSet_rank_eq.symm hb.toZFSet_rank_eq.symm hc
-    simpa only [pairCode,if_pos (hsub.mp hle),codeBranchValue,codeScale,Bool.false_eq_true,↓reduceIte] using hv
+    simpa only [pairCode,ite_eq_left (hsub.mp hle),codeBranchValue,codeScale,Bool.false_eq_true,↓reduceIte] using hv
   · have hv := codeBranchSentence_sound M hM hω true
       (fun i => e (if i = 0 then 0 else if i = 1 then 2 else 1)) (fun i => he _) _ _
       hb.toZFSet_rank_eq.symm ha.toZFSet_rank_eq.symm hc
-    simpa only [pairCode,if_neg (fun h => hnle (hsub.mpr h)),codeBranchValue,codeScale,↓reduceIte] using hv
+    simpa only [pairCode,ite_eq_right (fun h => hnle (hsub.mpr h)),codeBranchValue,codeScale,↓reduceIte] using hv
 
 theorem pairCodeSentence_sourceT (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT M)
     (e : ℕ → ZFSet.{u}) (he : ∀ i, e i ∈ M) :
@@ -81,11 +81,11 @@ theorem pairCodeSentence_sourceT (M : ZFSet.{u}) (hM : Transitive M) (hT : Sourc
   · left
     refine ⟨hsub.mpr hle,(codeBranchSentence_sourceT M hM hT false e he _ _
       ha.toZFSet_rank_eq.symm hb.toZFSet_rank_eq.symm).mpr ?_⟩
-    simpa only [pairCode,if_pos hle,codeBranchValue,codeScale,Bool.false_eq_true,↓reduceIte] using hc
+    simpa only [pairCode,ite_eq_left hle,codeBranchValue,codeScale,Bool.false_eq_true,↓reduceIte] using hc
   · right
     refine ⟨fun h => hle (hsub.mp h),(codeBranchSentence_sourceT M hM hT true
       (fun i => e (if i = 0 then 0 else if i = 1 then 2 else 1)) (fun i => he _) _ _ hb.toZFSet_rank_eq.symm ha.toZFSet_rank_eq.symm).mpr ?_⟩
-    simpa only [pairCode,if_neg hle,codeBranchValue,codeScale,↓reduceIte] using hc
+    simpa only [pairCode,ite_eq_right hle,codeBranchValue,codeScale,↓reduceIte] using hc
 
 theorem pairCodeSentence_recovers (M : ZFSet.{u}) (hM : Transitive M)
     (hω : ZFSet.omega.{u} ∈ M) (e : ℕ → ZFSet.{u}) (he : ∀ i, e i ∈ M)

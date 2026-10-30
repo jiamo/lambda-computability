@@ -71,23 +71,23 @@ variable (W : ℤ) (fs : Fin (q + 1)) (st : ℕ) (pos : ℕ → ℕ) (tp : ℕ �
 
 theorem encR_cnt (j : ℕ) (hj : j < h) : encR M W fs st pos tp hp (rCnt j) = bnum (pos j) := by
   simp only [encR, rCnt]
-  rw [if_neg (by omega), if_neg (by omega), if_neg (by omega), if_neg (by omega),
-    if_pos (by omega)]
+  rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega),
+    ite_eq_left (by omega)]
   congr 2; omega
 
 theorem encR_L (k : ℕ) (hk : k < w) :
     encR M W fs st pos tp hp (rL h k) = lftOf (tp k) (hp k) W := by
   simp only [encR, rL]
-  rw [if_neg (by omega), if_neg (by omega), if_neg (by omega), if_neg (by omega),
-    if_neg (by omega), if_pos (by omega), if_pos (by omega)]
+  rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega),
+    ite_eq_right (by omega), ite_eq_left (by omega), ite_eq_left (by omega)]
   have : (7 + h + 2 * k - 7 - h) / 2 = k := by omega
   rw [this]
 
 theorem encR_R (k : ℕ) (hk : k < w) :
     encR M W fs st pos tp hp (rR h k) = rgtOf (tp k) (hp k) W := by
   simp only [encR, rR]
-  rw [if_neg (by omega), if_neg (by omega), if_neg (by omega), if_neg (by omega),
-    if_neg (by omega), if_pos (by omega), if_neg (by omega)]
+  rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega),
+    ite_eq_right (by omega), ite_eq_left (by omega), ite_eq_right (by omega)]
   have : (7 + h + 2 * k + 1 - 7 - h) / 2 = k := by omega
   rw [this]
 

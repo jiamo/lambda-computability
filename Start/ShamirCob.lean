@@ -91,7 +91,7 @@ theorem Cob.eval_dropFsR (A : Word) : ∀ i : Word, Cob.dropFsR.eval [i, A] = dr
       have hl : (dropF (dropFs i.length A)).length ≤ A.length :=
         (length_dropF_le _).trans (length_dropFs_le _ _)
       cases b <;>
-      · simp only [Bool.false_eq_true, if_false, if_true, Cob.eval_dropFT, Cob.eval_proj,
+      · simp only [Bool.false_eq_true, ite_false, ite_true, Cob.eval_dropFT, Cob.eval_proj,
           List.getD_cons_succ, List.getD_cons_zero, List.length_cons]
         rw [List.take_of_length_le hl, dropFs_succ']
 
@@ -364,7 +364,7 @@ theorem e_combT {xT yT : Cob} {x y : ℕ} (hx : xT.eval (encArgs p N d s) = un x
   rw [combT, Cob.eval_iteW (Cob.eval_nthBit 2 sC _) rfl rfl, bit_eq_getD]
   simp only [e_sC]
   by_cases hb : s.C.getD 2 false = true
-  · simp only [hb, if_true]
+  · simp only [hb, ite_true]
     exact Cob.eval_fSub hp h1 (Cob.eval_fMul hp (Cob.eval_fSub hp h1 hx hP)
       (Cob.eval_fSub hp h1 hy hP) hP) hP
   · simp only [Bool.not_eq_true] at hb

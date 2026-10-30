@@ -108,7 +108,7 @@ theorem HC.beta_lift {x : ℕ} {n' : ℤ} {R c0 T : Lambda} (hR : HC x n' R) (e 
     simp only [Lambda.lift, Lambda.subst, subst_lift_lift_one]
     have hx : Lambda.subst T 0 (.var (x + 2 + 1)) = .var (x + 2) := by
       simp [Lambda.subst]
-    rw [if_neg (by omega), hx, xPow_add]
+    rw [ite_eq_right (by omega), hx, xPow_add]
     exact .rq hR' (by push_cast; omega)
 
 /-- Firing a lifted component on `q`: an abstraction component `R` of index `i'` applied to the
@@ -274,7 +274,7 @@ theorem HB.step {x : ℕ} {n : ℤ} {P P' : Lambda} (h : HB x n P) (hs : betaEta
     rcases betaEtaStep_app_cases hs with ⟨c, hc, rfl⟩ | ⟨f', hf, _⟩ | ⟨a', ha, rfl⟩
     · simp only [lamM, Lambda.lam.injEq] at hc
       subst hc
-      simp only [Lambda.subst, if_pos]
+      simp only [Lambda.subst, ite_eq_left]
       exact .base (.rr hR hR)
     · exact (nf_lamM _ hf).elim
     · exact .base (.m (hR.step ha))
@@ -324,7 +324,7 @@ theorem HB.step {x : ℕ} {n : ℤ} {P P' : Lambda} (h : HB x n P) (hs : betaEta
     rcases betaEtaStep_app_cases hs with ⟨c, hc, rfl⟩ | ⟨f', hf, rfl⟩ | ⟨a', ha, rfl⟩
     · simp only [lamM, Lambda.lam.injEq] at hc
       subst hc
-      simp only [Lambda.subst, if_pos]
+      simp only [Lambda.subst, ite_eq_left]
       exact .base (.ww hW)
     · exact (nf_lamM _ hf).elim
     · exact .base (.mw (hW.step ha))

@@ -136,7 +136,7 @@ theorem atBlock_congr (K : ℕ)
   funext n
   by_cases hn : n ∈ I.footprint K b
   · simpa only [I.atBlock_apply K b R n hn,I.atBlock_apply K b S n hn] using h n hn
-  · simp only [atBlock,if_neg hn]
+  · simp only [atBlock,ite_eq_right hn]
 
 theorem maps_read (K : ℕ) {R : I.Readouts K} {x : I.Vertex K 0} {y : I.Vertex K 1}
     (h : I.Maps K R x y) (n : RawName (r := r) (m := m) (P := P) (E := E) K)
@@ -381,7 +381,7 @@ theorem queried_transform (K : ℕ) {s : ℕ} {f : Fin s → I.Block K} {ys : Fi
         · rw [Function.update_self]
           rw [← hout j hi]
           apply hkeep n
-          · simpa only [blend,if_neg hi] using hn
+          · simpa only [blend,ite_eq_right hi] using hn
           · exact hm
         · have hji : j ≠ i := by intro hh; subst j; exact hi hj
           rw [Function.update_of_ne hji]

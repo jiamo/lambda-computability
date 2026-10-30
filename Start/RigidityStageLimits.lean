@@ -92,8 +92,8 @@ theorem disagreement_recursive (A X : Oracle) (loc : ℕ → ℕ)
     simp only [Nat.unpair_pair,hbits]
     by_cases ht : loc (Nat.unpair v).2 < (left (Nat.unpair v).1).length ∧
         (left (Nat.unpair v).1).getD (loc (Nat.unpair v).2) false ≠ X (Nat.unpair v).2
-    · simp only [if_pos ht]
-    · simp only [if_neg ht])
+    · simp only [ite_eq_left ht]
+    · simp only [ite_eq_right ht])
 
 theorem reads_not_reduces (A : Oracle) (loc : ℕ → ℕ)
     (hloc : Nat.RecursiveIn {oracleFunction A} (fun n => Part.some (loc n)))

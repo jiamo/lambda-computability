@@ -109,7 +109,7 @@ theorem isNormal_of_mem_denot_direct :
       intro Γ hΓ σ hσ hmem
       rw [Lambda.direct_app] at hmem
       by_cases hh : Lambda.headVar P = Bool.true
-      · rw [if_pos hh] at hmem
+      · rw [ite_eq_left hh] at hmem
         obtain ⟨a, ha, harr⟩ := hmem
         have hPn : Lambda.Neutral P := Lambda.neutral_iff_headVar.2 hh
         have hprop : Proper (Tok.arrow a σ) :=
@@ -118,7 +118,7 @@ theorem isNormal_of_mem_denot_direct :
         have hτ : τ ∈ denot (Lambda.direct Q) (basisEnv Γ) := ha (mem_lset.2 hτa)
         exact Lambda.app_normal (ihP Γ hΓ _ hprop harr)
           (ihQ Γ hΓ τ (hprop.arrow_src τ hτa) hτ) hPn.ne_lam
-      · rw [if_neg hh, denot_omega] at hmem
+      · rw [ite_eq_right hh, denot_omega] at hmem
         exact absurd hmem (by simp)
 
 /-- **`ω`-free typability implies normalisation.** -/

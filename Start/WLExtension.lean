@@ -43,7 +43,7 @@ theorem linkRight_allowed (K : ℕ) (l : TypeLink K E) (i : Fin (r+1)) (a : Fin 
   dsimp only [linkRight]
   split_ifs with h
   · trivial
-  · simpa only [LabelAllowed, linkMatch, if_neg h, Equiv.refl_apply] using ha
+  · simpa only [LabelAllowed, linkMatch, ite_eq_right h, Equiv.refl_apply] using ha
 
 theorem low_allowed (K : ℕ) (b : RawBlock (r := r) (m := m) (P := P) (E := E) K)
     (hb : I.ValidBlock K b) (s : Bool) :
@@ -158,7 +158,7 @@ theorem rootfree_allowed (hr : 2 ≤ r) (d : I.WrapData K U)
     exact support_walk_wire K I.src I.dst _ w (fun p h => hreal ⟨p, h.symm⟩)
   have hallowed := I.low_allowed K b (hvalid b (d.subset hb)) false
   have hlabel := (d.reads b hb false).1
-  simp only [alignedLabel, supportFrame, if_neg hreal', Equiv.refl_apply] at hlabel
+  simp only [alignedLabel, supportFrame, ite_eq_right hreal', Equiv.refl_apply] at hlabel
   have hboundary := (I.drawing K).low_boundary b false
   rw [hrow] at hboundary
   change ((I.drawing K).low b false).boundary = i at hboundary
@@ -345,7 +345,7 @@ theorem changedAddress_both_real (d : I.WrapData K U)
     (h' : HasReal K I.src I.dst (BlockName.links W) d.rootType) :
     d.changedAddress W = d.address := by
   funext i
-  simp only [changedAddress, frameTransition, supportFrame, if_pos h, if_pos h',
+  simp only [changedAddress, frameTransition, supportFrame, ite_eq_left h, ite_eq_left h',
     Equiv.trans_apply, Equiv.apply_symm_apply]
 
 theorem changedAddress_neither_real (d : I.WrapData K U)
@@ -353,7 +353,7 @@ theorem changedAddress_neither_real (d : I.WrapData K U)
     (h' : ¬HasReal K I.src I.dst (BlockName.links W) d.rootType) :
     d.changedAddress W = d.address := by
   funext i
-  simp only [changedAddress, frameTransition, supportFrame, if_neg h, if_neg h',
+  simp only [changedAddress, frameTransition, supportFrame, ite_eq_right h, ite_eq_right h',
     Equiv.trans_apply, Equiv.apply_symm_apply]
 
 theorem changedAddress_new_real (d : I.WrapData K U)
@@ -362,7 +362,7 @@ theorem changedAddress_new_real (d : I.WrapData K U)
     (e : E) (j : Fin (4*K)) (he : d.rootType = .inr (e,j)) :
     d.changedAddress W = if j.val < 2*K then d.address else I.permuteAddress e d.address := by
   funext i
-  simp only [changedAddress, frameTransition, supportFrame, if_neg h, if_pos h',
+  simp only [changedAddress, frameTransition, supportFrame, ite_eq_right h, ite_eq_left h',
     Equiv.trans_apply, Equiv.refl_symm, Equiv.refl_apply, he, typeFrame]
   split_ifs <;> rfl
 
@@ -417,19 +417,19 @@ theorem newly_rooted_preimage [DecidableEq E] [DecidableEq P]
   have ha := d.changedAddress_new_real hV hU e j he
   have hU' : HasReal K I.src I.dst (BlockName.links U) (.inr (e,j)) := he ▸ hU
   by_cases hj : j.val < 2*K
-  · rw [if_pos hj] at ha
+  · rw [ite_eq_left hj] at ha
     obtain ⟨x, hx, hxs⟩ := Q.src_preimage e d.address hs
     let q := (atAddress Q (d.changedAddress U)).withReal (I.src e) x
     refine ⟨q, withReal_mem _ _ _ (atAddress_mem _ _) _ _ ?_, ?_⟩
     · rwa [ha]
-    · rw [q.values_internal, if_pos hU', if_pos hj]
+    · rw [q.values_internal, ite_eq_left hU', ite_eq_left hj]
       simpa only [q, withReal, Function.update_self] using hxs
-  · rw [if_neg hj] at ha
+  · rw [ite_eq_right hj] at ha
     obtain ⟨x, hx, hxs⟩ := Q.dst_preimage e d.address (d.rootfree_allowed hr hvalid e j he hV) hs
     let q := (atAddress Q (d.changedAddress U)).withReal (I.dst e) x
     refine ⟨q, withReal_mem _ _ _ (atAddress_mem _ _) _ _ ?_, ?_⟩
     · rwa [ha]
-    · rw [q.values_internal, if_pos hU', if_neg hj]
+    · rw [q.values_internal, ite_eq_left hU', ite_eq_right hj]
       simpa only [q, withReal, Function.update_self] using hxs
 
 theorem newly_rooted_image [DecidableEq E]
@@ -443,13 +443,13 @@ theorem newly_rooted_image [DecidableEq E]
     q.values K (BlockName.links U) (.inr (e,j)) ∈ Q.internalSet e d.address := by
   have ha := d.changedAddress_new_real hV hU e j he
   have hU' : HasReal K I.src I.dst (BlockName.links U) (.inr (e,j)) := he ▸ hU
-  rw [q.values_internal, if_pos hU']
+  rw [q.values_internal, ite_eq_left hU']
   by_cases hj : j.val < 2*K
-  · rw [if_pos hj] at ha ⊢
+  · rw [ite_eq_left hj] at ha ⊢
     apply Q.src_mem_internal e d.address
     rw [← ha]
     exact hq.1 _
-  · rw [if_neg hj] at ha ⊢
+  · rw [ite_eq_right hj] at ha ⊢
     apply Q.dst_mem_internal e d.address (d.rootfree_allowed hr hvalid e j he hV)
     rw [← ha]
     exact hq.1 _
@@ -477,7 +477,7 @@ theorem extend_on_wrapping [DecidableEq E] [DecidableEq P]
     · intro t ht
       have htV := (hasReal_of_reachable K I.src I.dst _ ht).mp hVr
       have htU := hasReal_mono K I.src I.dst hsub htV
-      simp only [values, canonicalShift, if_pos htV, if_pos htU]
+      simp only [values, canonicalShift, ite_eq_left htV, ite_eq_left htU]
   · by_cases hUr' : HasReal K I.src I.dst (BlockName.links U) d.rootType
     · obtain ⟨e,j,he⟩ : ∃ e j, d.rootType = Sum.inr (e,j) := by
         cases he : d.rootType with
@@ -492,7 +492,7 @@ theorem extend_on_wrapping [DecidableEq E] [DecidableEq P]
         (fun l hl => q'.values_solves K hK _ ((BlockName.links_card U).trans hUK) l (hsub hl))
         (q.values_solves K hK _ ((BlockName.links_card V).trans hVK)) hVr ht
       have hVr' : ¬HasReal K I.src I.dst (BlockName.links V) (.inr (e,j)) := he ▸ hVr
-      rw [he, q.values_internal, if_neg hVr']
+      rw [he, q.values_internal, ite_eq_right hVr']
       exact heq
     · have ha := d.changedAddress_neither_real hVr hUr'
       refine ⟨q, admissible_of_one q Q K hr U hUr f ?_, ?_⟩
@@ -503,7 +503,7 @@ theorem extend_on_wrapping [DecidableEq E] [DecidableEq P]
           mt (hasReal_of_reachable K I.src I.dst _ ht).mpr hVr
         have htU : ¬HasReal K I.src I.dst (BlockName.links U) t :=
           mt (hasReal_of_reachable K I.src I.dst _ (ht.mono (support_graph_mono K I.src I.dst hsub))).mpr hUr'
-        simp only [values, canonicalShift, if_neg htV, if_neg htU]
+        simp only [values, canonicalShift, ite_eq_right htV, ite_eq_right htU]
 
 theorem restrict_on_wrapping [DecidableEq E] [DecidableEq P]
     (Q : I.ArcWitness) (K : ℕ) (hK : 0 < K) (hr : 2 ≤ r)
@@ -527,7 +527,7 @@ theorem restrict_on_wrapping [DecidableEq E] [DecidableEq P]
     · intro t ht
       have htV := (hasReal_of_reachable K I.src I.dst _ ht).mp hVreal
       have htU := hasReal_mono K I.src I.dst hsub htV
-      simp only [values, canonicalShift, if_pos htV, if_pos htU]
+      simp only [values, canonicalShift, ite_eq_left htV, ite_eq_left htU]
   · by_cases hUr' : HasReal K I.src I.dst (BlockName.links U) d.rootType
     · obtain ⟨e,j,he⟩ : ∃ e j, d.rootType = Sum.inr (e,j) := by
         cases he : d.rootType with
@@ -544,7 +544,7 @@ theorem restrict_on_wrapping [DecidableEq E] [DecidableEq P]
         (q'.values_solves K hK _ ((BlockName.links_card V).trans hVK))
         (fun l hl => q.values_solves K hK _ ((BlockName.links_card U).trans hUK) l (hsub hl)) hVreal ht
       have hVr' : ¬HasReal K I.src I.dst (BlockName.links V) (.inr (e,j)) := he ▸ hVreal
-      rw [he, q'.values_internal, if_neg hVr']
+      rw [he, q'.values_internal, ite_eq_right hVr']
       exact Function.update_self e s (atAddress Q d.address).scalar
     · have ha := d.changedAddress_neither_real hVreal hUr'
       refine ⟨q, admissible_of_one q Q K hr V hVr d ?_, ?_⟩
@@ -554,7 +554,7 @@ theorem restrict_on_wrapping [DecidableEq E] [DecidableEq P]
           mt (hasReal_of_reachable K I.src I.dst _ ht).mpr hVreal
         have htU : ¬HasReal K I.src I.dst (BlockName.links U) t :=
           mt (hasReal_of_reachable K I.src I.dst _ (ht.mono (support_graph_mono K I.src I.dst hsub))).mpr hUr'
-        simp only [values, canonicalShift, if_neg htV, if_neg htU]
+        simp only [values, canonicalShift, ite_eq_right htV, ite_eq_right htU]
 
 end ShiftChoice
 end ConsistencyData

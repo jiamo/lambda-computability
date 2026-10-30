@@ -77,7 +77,7 @@ theorem theta_le_ddenot_of_not_tagFail_var :
       simp only [List.length_nil, Nat.zero_add, Nat.add_zero] at h
       omega
     have hL : Lambda.headTag base (fun _ => t) 0 0 m = t := by
-      rw [Lambda.headTag, Lambda.expEnv, if_neg (by omega : ¬ (0 : ℕ) < 0)]
+      rw [Lambda.headTag, Lambda.expEnv, ite_eq_right (by omega : ¬ (0 : ℕ) < 0)]
     have hR : Lambda.headTag base τ₂ m h₂ 0
         = if h₂ < m then base + 0 + h₂ else τ₂ (h₂ - m) := by
       rw [Lambda.headTag, Lambda.expEnv]
@@ -85,10 +85,10 @@ theorem theta_le_ddenot_of_not_tagFail_var :
       rw [← hL, ← hR]; exact hroot.1
     have hh2m : m ≤ h₂ := by
       by_contra hlt
-      rw [if_pos (by omega : h₂ < m)] at htag
+      rw [ite_eq_left (by omega : h₂ < m)] at htag
       omega
     have htau : τ₂ (h₂ - m) = t := by
-      rw [if_neg (by omega : ¬ h₂ < m)] at htag
+      rw [ite_eq_right (by omega : ¬ h₂ < m)] at htag
       exact htag.symm
     have hheadY : ρ₂ (h₂ - m) = Y := hmatch _ (by omega) htau
     -- the induction hypothesis, applied to the `r`-th argument of the node
@@ -103,31 +103,31 @@ theorem theta_le_ddenot_of_not_tagFail_var :
         exact hfail (Lambda.TagFail.arg (e₁ := m) (e₂ := 0) hleft hN (Or.inr rfl) (by omega)
           hroot.1 (by omega) (by omega) hc)
       rw [show Lambda.argEnvT base (fun _ => t) 0 m 0 r = fun _ => base + (0 + m - 1 - r) from by
-            rw [Lambda.argEnvT, if_neg (by omega)],
+            rw [Lambda.argEnvT, ite_eq_right (by omega)],
         show Lambda.argTermOf ([] : List Lambda) r = Lambda.var 0 from by
-            rw [Lambda.argTermOf, dif_neg (by simp)],
+            rw [Lambda.argTermOf, dite_eq_right (by simp)],
         show Lambda.argEnvT base τ₂ m 0 as₂.length r = Lambda.expEnv base τ₂ m 0 from by
-            rw [Lambda.argEnvT, if_pos (by omega)]] at hd
+            rw [Lambda.argEnvT, ite_eq_left (by omega)]] at hd
       refine ih k hk (d₂ := d₂ + m) hd (by omega) ?_ ?_ ?_
       · have hterm : Lambda.argTermOf as₂ r = as₂[r]'(by omega) := by
-          rw [Lambda.argTermOf, dif_pos (by omega)]
+          rw [Lambda.argTermOf, dite_eq_left (by omega)]
         rw [hterm]
         exact hargs₂ _ (List.getElem_mem _)
       · intro j hj
         rw [Lambda.expEnv]
         by_cases hjm : j < m
-        · rw [if_pos hjm]; omega
-        · rw [if_neg hjm]
+        · rw [ite_eq_left hjm]; omega
+        · rw [ite_eq_right hjm]
           have := hτ₂ (j - m) (by omega)
           omega
       · intro j hj hje
         rw [Lambda.expEnv] at hje
         by_cases hjm : j < m
-        · rw [if_pos hjm] at hje
+        · rw [ite_eq_left hjm] at hje
           have hjeq : j = m - 1 - r := by omega
           subst hjeq
           exact hσ
-        · rw [if_neg hjm] at hje
+        · rw [ite_eq_right hjm] at hje
           have := hτ₂ (j - m) (by omega)
           omega
     rw [ddenot_reduces hN ρ₂]
@@ -140,22 +140,22 @@ theorem theta_le_ddenot_of_not_tagFail_var :
       · -- enough levels: feed all the binders of the node to both sides
         obtain ⟨e, rfl⟩ : ∃ e, n = m + e := ⟨n - m, by omega⟩
         have hhead : envStack A m e ρ₂ h₂ = Y := by
-          rw [envStack, if_neg (by omega : ¬ h₂ < m), hheadY]
+          rw [envStack, ite_eq_right (by omega : ¬ h₂ < m), hheadY]
         rw [dappN_ddenot_spine ρ₂ A, hlen, hhead, dappN_eq_dappSeq]
         refine le_trans (theta_le 0 _) (dappSeq_le_of_lt ?_)
         intro r hr
         by_cases hrm : r < m
         · have hval : envStack A m e ρ₂ (m - 1 - r) = A (m + e - 1 - r) := by
-            rw [envStack, if_pos (by omega)]
+            rw [envStack, ite_eq_left (by omega)]
             congr 1
             omega
           have hkey := argle (envStack A m e ρ₂) (A (m + e - 1 - r)) r (m + e - 1 - r)
             hrm (by omega) hval
-            (fun i => by rw [envStack, if_neg (by omega), Nat.add_sub_cancel_left])
+            (fun i => by rw [envStack, ite_eq_right (by omega), Nat.add_sub_cancel_left])
           rw [hA _ (by omega)] at hkey
-          rw [argEnvD, if_pos (by omega)]
+          rw [argEnvD, ite_eq_left (by omega)]
           exact hkey
-        · rw [argEnvD, if_neg (by omega), Lambda.argTermOf, dif_neg (by omega), ddenot_var]
+        · rw [argEnvD, ite_eq_right (by omega), Lambda.argTermOf, dite_eq_right (by omega), ddenot_var]
       · -- not enough levels: the comparison bottoms out at level `0`
         obtain ⟨c, rfl⟩ : ∃ c, m = n + c := ⟨m - n, by omega⟩
         obtain ⟨B, hBval⟩ : ∃ B : ℕ → Dinf, ∀ k, B k = if k < c then Dinf.botDinf else A (k - c) :=
@@ -165,11 +165,11 @@ theorem theta_le_ddenot_of_not_tagFail_var :
           funext i
           simp only [envStack, Nat.zero_add]
           by_cases hic : i < c
-          · rw [if_pos hic, if_pos (by omega : i < n + c), hBval, if_pos hic]
-          · rw [if_neg hic]
+          · rw [ite_eq_left hic, ite_eq_left (by omega : i < n + c), hBval, ite_eq_left hic]
+          · rw [ite_eq_right hic]
             by_cases him : i < n + c
-            · rw [if_pos (by omega : i - c < n), if_pos him, hBval, if_neg hic]
-            · rw [if_neg (by omega : ¬ i - c < n), if_neg him]
+            · rw [ite_eq_left (by omega : i - c < n), ite_eq_left him, hBval, ite_eq_right hic]
+            · rw [ite_eq_right (by omega : ¬ i - c < n), ite_eq_right him]
               congr 1
               omega
         have hstrip : dappN (ddenot (Lambda.lamN (n + c)
@@ -181,7 +181,7 @@ theorem theta_le_ddenot_of_not_tagFail_var :
           rw [Nat.add_zero, dappN_zero] at h1
           exact h1
         have hhead : envStack B (n + c) 0 ρ₂ h₂ = Y := by
-          rw [envStack, if_neg (by omega : ¬ h₂ < n + c), hheadY]
+          rw [envStack, ite_eq_right (by omega : ¬ h₂ < n + c), hheadY]
         have hspine : ddenot (Lambda.appList (Lambda.var h₂) as₂) (envStack B (n + c) 0 ρ₂)
             = dappSeq Y (fun r => ddenot (Lambda.argTermOf as₂ r)
                 (argEnvD B (n + c) 0 ρ₂ as₂.length r)) (as₂.length + 0) := by
@@ -192,15 +192,15 @@ theorem theta_le_ddenot_of_not_tagFail_var :
         refine app_zero_dappSeq_le (by omega) ?_
         intro r hr
         have hval : envStack B (n + c) 0 ρ₂ (n + c - 1 - r) = A (n - 1 - r) := by
-          rw [envStack, if_pos (by omega), Nat.zero_add, hBval,
-            if_neg (by omega : ¬ n + c - 1 - r < c)]
+          rw [envStack, ite_eq_left (by omega), Nat.zero_add, hBval,
+            ite_eq_right (by omega : ¬ n + c - 1 - r < c)]
           congr 1
           omega
         have hkey := argle (envStack B (n + c) 0 ρ₂) (A (n - 1 - r)) r (n - 1 - r)
           (by omega) (by omega) hval
-          (fun i => by rw [envStack, if_neg (by omega), Nat.add_sub_cancel_left])
+          (fun i => by rw [envStack, ite_eq_right (by omega), Nat.add_sub_cancel_left])
         rw [hA _ (by omega)] at hkey
-        rw [argEnvD, if_pos (by omega)]
+        rw [argEnvD, ite_eq_left (by omega)]
         exact hkey
     have hgoal := theta_add_le_of_forall_dappN (q := 0) n hmain
     rwa [Nat.zero_add] at hgoal

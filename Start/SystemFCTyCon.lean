@@ -172,10 +172,10 @@ theorem Typing.lift_gen {Γ : List Ty} {t : Tm} {A : Ty} (h : Typing D Ax Γ t A
       intro k Δ hk
       have hb := hk i A hi
       by_cases hik : i < k
-      · rw [if_pos hik] at hb
+      · rw [ite_eq_left hik] at hb
         have hl : lift 1 k (Tm.var i) = Tm.var i := by simp [lift, hik]
         rw [hl]; exact Typing.var hb
-      · rw [if_neg hik] at hb
+      · rw [ite_eq_right hik] at hb
         have hl : lift 1 k (Tm.var i) = Tm.var (i + 1) := by simp [lift, hik]
         rw [hl]; exact Typing.var hb
   | app _ _ iha ihb => intro k Δ hk; exact Typing.app (iha k Δ hk) (ihb k Δ hk)
@@ -191,11 +191,11 @@ theorem Typing.lift_gen {Γ : List Ty} {t : Tm} {A : Ty} (h : Typing D Ax Γ t A
           have hj : Γ[j]? = some A' := by simpa using hi
           have hb := hk j A' hj
           by_cases hjk : j < k
-          · rw [if_pos hjk] at hb
-            rw [if_pos (by omega : j + 1 < k + 1)]
+          · rw [ite_eq_left hjk] at hb
+            rw [ite_eq_left (by omega : j + 1 < k + 1)]
             simpa using hb
-          · rw [if_neg hjk] at hb
-            rw [if_neg (by omega : ¬ (j + 1 < k + 1))]
+          · rw [ite_eq_right hjk] at hb
+            rw [ite_eq_right (by omega : ¬ (j + 1 < k + 1))]
             simpa using hb
   | @tlam Γ t A _ ih =>
       intro k Δ hk
@@ -225,11 +225,11 @@ theorem Typing.lift_gen {Γ : List Ty} {t : Tm} {A : Ty} (h : Typing D Ax Γ t A
           have hj : Γ[j]? = some A' := by simpa using hi
           have hb := hk j A' hj
           by_cases hjk : j < k
-          · rw [if_pos hjk] at hb
-            rw [if_pos (by omega : j + 1 < k + 1)]
+          · rw [ite_eq_left hjk] at hb
+            rw [ite_eq_left (by omega : j + 1 < k + 1)]
             simpa using hb
-          · rw [if_neg hjk] at hb
-            rw [if_neg (by omega : ¬ (j + 1 < k + 1))]
+          · rw [ite_eq_right hjk] at hb
+            rw [ite_eq_right (by omega : ¬ (j + 1 < k + 1))]
             simpa using hb
 
 theorem Typing.lift_one {Δ : List Ty} {u : Tm} {A : Ty} (h : Typing D Ax Δ u A) (B : Ty) :

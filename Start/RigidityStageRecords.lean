@@ -104,7 +104,7 @@ theorem members_seenReset (n a : ℕ) : members (seenReset n a) = reset (members
   by_cases ha : a = 0
   · simp [seenReset,ha,action,reset]
   · ext i
-    simp only [seenReset,if_neg ha,action,reset,members,record,encodek,Option.getD_some,
+    simp only [seenReset,ite_eq_right ha,action,reset,members,record,encodek,Option.getD_some,
       List.mem_toFinset,List.mem_filter,decide_eq_true_eq,Finset.mem_filter]
     constructor
     · rintro ⟨hm,hi⟩; exact ⟨hm,by omega⟩

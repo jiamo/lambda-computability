@@ -65,8 +65,8 @@ lemma posCount_snoc (P : List β → Prop) [DecidablePred P] (y x : β) (u : Lis
     simp
   rw [hcongr]
   by_cases h : x = y ∧ P u
-  · rw [if_pos (hlast.mpr h), if_pos h, Finset.card_insert_of_notMem (by simp)]
-  · rw [if_neg (fun h' => h (hlast.mp h')), if_neg h, add_zero]
+  · rw [ite_eq_left (hlast.mpr h), ite_eq_left h, Finset.card_insert_of_notMem (by simp)]
+  · rw [ite_eq_right (fun h' => h (hlast.mp h')), ite_eq_right h, add_zero]
 
 /-- `scount (w ++ [y]) (u ++ [x]) = scount (w ++ [y]) u + [x = y] scount w u`. -/
 lemma scount_snoc (y x : β) : ∀ (u w : List β),
@@ -123,7 +123,7 @@ lemma sum_mul_snoc (f : ZMod p × ZMod p → ZMod p) (c c' : ZMod p × ZMod p �
   simp only [h, Nat.cast_add, mul_add, Finset.sum_add_distrib]
   congr 1
   by_cases hb : b
-  · simp only [hb, true_and, if_true, Nat.cast_ite, Nat.cast_one, Nat.cast_zero, mul_ite, mul_one,
+  · simp only [hb, true_and, ite_true, Nat.cast_ite, Nat.cast_one, Nat.cast_zero, mul_ite, mul_one,
       mul_zero, Finset.sum_ite_eq, Finset.mem_univ]
   · simp [hb]
 

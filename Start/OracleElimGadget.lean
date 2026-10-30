@@ -47,19 +47,19 @@ theorem map_range'_regsAt (R : ℕ → List Bool) (b : ℕ) (y : List Bool) (ws 
   intro i h₁ h₂
   rw [List.getElem_map, List.getElem_range']
   simp only [regsAt, one_mul]
-  rw [if_pos (Nat.le_add_right b i), Nat.add_sub_cancel_left]
+  rw [ite_eq_left (Nat.le_add_right b i), Nat.add_sub_cancel_left]
   exact List.getD_eq_getElem _ _ h₂
 
 theorem regsAt_high {R : ℕ → List Bool} {b : ℕ} {y : List Bool} {ws : List (List Bool)} {r : ℕ}
     (hr : b + ws.length + 1 ≤ r) : regsAt R b y ws r = [] := by
   simp only [regsAt]
-  rw [if_pos (by omega)]
+  rw [ite_eq_left (by omega)]
   exact List.getD_eq_default _ _ (by simp; omega)
 
 theorem regsAt_low {R : ℕ → List Bool} {b : ℕ} {y : List Bool} {ws : List (List Bool)} {r : ℕ}
     (hr : r < b) : regsAt R b y ws r = R r := by
   simp only [regsAt]
-  rw [if_neg (by omega)]
+  rw [ite_eq_right (by omega)]
 
 theorem regsAt_len {R : ℕ → List Bool} {b : ℕ} {y : List Bool} {ws : List (List Bool)} {N : ℕ}
     (hR : ∀ r, (R r).length ≤ N) (hN : ∀ w ∈ y :: ws, w.length ≤ N) (r : ℕ) :
@@ -113,23 +113,23 @@ theorem runs_iterBodyAt (step : List Cob) (b m : ℕ) (hK : b + 2 * m + 1 + Cob.
   funext r
   simp only [R1, setFrom, regsAt, hws'len]
   by_cases h1 : r < b
-  · rw [if_neg (by omega), if_neg (by omega), if_neg (by omega), if_neg (by omega),
-      if_neg (by omega)]
+  · rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega),
+      ite_eq_right (by omega)]
   by_cases h2 : r = b
   · subst h2
-    rw [if_neg (by omega), if_neg (by omega), if_neg (by omega), if_pos le_rfl, if_pos le_rfl,
+    rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_left le_rfl, ite_eq_left le_rfl,
       Nat.sub_self]
     rfl
   by_cases h3 : r < b + 1 + m
-  · rw [if_neg (by omega), if_pos (by omega), if_pos (by omega), if_pos (by omega),
+  · rw [ite_eq_right (by omega), ite_eq_left (by omega), ite_eq_left (by omega), ite_eq_left (by omega),
       show r - b = (r - (b + 1)) + 1 by omega, List.getD_cons_succ]
     congr 1
     omega
   by_cases h4 : r < b + m + 1 + m
-  · rw [if_pos (by omega), if_pos (by omega)]
+  · rw [ite_eq_left (by omega), ite_eq_left (by omega)]
     exact (List.getD_eq_default _ _ (by simp; omega)).symm
-  · rw [if_neg (by omega), if_neg (by omega), if_neg (by omega), if_pos (by omega),
-      if_pos (by omega), List.getD_eq_default _ _ (by simp; omega),
+  · rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_left (by omega),
+      ite_eq_left (by omega), List.getD_eq_default _ _ (by simp; omega),
       List.getD_eq_default _ _ (by simp; omega)]
 
 /-! ### The gadget -/
@@ -251,25 +251,25 @@ theorem gadgetOK_iter (init step : List Cob) (m h a : ℕ) (L : Language) (A : O
     simp only [setFrom, regsAt, List.map_cons, List.map_nil, Function.update_self, cobIter,
       List.length_map, hi]
     by_cases h1 : r < fr
-    · rw [if_neg (by omega), if_neg (by omega), Function.update_of_ne (by omega)]
+    · rw [ite_eq_right (by omega), ite_eq_right (by omega), Function.update_of_ne (by omega)]
     by_cases h2 : r = fr
     · subst h2
-      rw [if_neg (by omega), if_pos le_rfl, Nat.sub_self, Function.update_self]
+      rw [ite_eq_right (by omega), ite_eq_left le_rfl, Nat.sub_self, Function.update_self]
       rfl
     by_cases h3 : r < fr + 1 + m
-    · rw [if_pos (by omega), if_pos (by omega), show r - fr = (r - (fr + 1)) + 1 by omega,
+    · rw [ite_eq_left (by omega), ite_eq_left (by omega), show r - fr = (r - (fr + 1)) + 1 by omega,
         List.getD_cons_succ]
-    · rw [if_neg (by omega), if_pos (by omega), Function.update_of_ne (by omega), hfr r (by omega),
+    · rw [ite_eq_right (by omega), ite_eq_left (by omega), Function.update_of_ne (by omega), hfr r (by omega),
         List.getD_eq_default _ _ (by simp [hi]; omega)]
   rw [h0] at hc
   refine hc.seq ?_
   -- the loop
   refine (runs_whileNE (fun k => regsAt R fr X (cobIter init step X k)) (fr + h + 1) Tx
     (by omega) _ (fun k hk => ?_) ?_ hwdB i (fun k hk => ?_)).seq ?_
-  · simp only [regsAt, if_pos (show fr ≤ fr + h + 1 by omega),
+  · simp only [regsAt, ite_eq_left (show fr ≤ fr + h + 1 by omega),
       show fr + h + 1 - fr = h + 1 by omega, List.getD_cons_succ]
     exact hTne k hk
-  · simp only [regsAt, if_pos (show fr ≤ fr + h + 1 by omega),
+  · simp only [regsAt, ite_eq_left (show fr ≤ fr + h + 1 by omega),
       show fr + h + 1 - fr = h + 1 by omega, List.getD_cons_succ]
     exact hTe
   · exact runs_iterBodyAt step fr m (by omega) hs R X (cobIter init step X k)
@@ -278,7 +278,7 @@ theorem gadgetOK_iter (init step : List Cob) (m h a : ℕ) (L : Language) (A : O
   set F := regsAt R fr X (cobIter init step X Tx) with hF
   set Y := (cobIter init step X Tx).getD a [] with hY
   have hFa : F (fr + a + 1) = Y := by
-    simp only [F, regsAt, if_pos (show fr ≤ fr + a + 1 by omega),
+    simp only [F, regsAt, ite_eq_left (show fr ≤ fr + a + 1 by omega),
       show fr + a + 1 - fr = a + 1 by omega, List.getD_cons_succ]
     exact hY.symm
   have hFN : ∀ r, (F r).length ≤ N := hFN Tx le_rfl
@@ -314,10 +314,10 @@ theorem gadgetOK_iter (init step : List Cob) (m h a : ℕ) (L : Language) (A : O
       refine ⟨R2, ?_, ?_, ?_, ?_⟩
       · refine (runs_whileNE (fun k => if k = 0 then Function.update F d [] else R2) (fr + a + 1)
           1 (by omega) _ (fun k hk => ?_) ?_ hwdB i (fun k hk => ?_)).of_eq (by simp) (by simp)
-        · rw [if_pos (by omega), Function.update_of_ne (by omega), hFa]; exact hY0
-        · simp only [one_ne_zero, if_false, R2]
+        · rw [ite_eq_left (by omega), Function.update_of_ne (by omega), hFa]; exact hY0
+        · simp only [one_ne_zero, ite_false, R2]
           rw [Function.update_of_ne (by omega), Function.update_self]
-        · rw [if_pos (by omega), if_neg (by omega)]
+        · rw [ite_eq_left (by omega), ite_eq_right (by omega)]
           refine (runs_clear _ (fr + a + 1) (by omega) N (hF0N _) hNB i).seq ?_
           refine (runs_append _ d (by omega) true N (by
             rw [Function.update_of_ne (by omega), Function.update_self]; simp; omega)
@@ -347,13 +347,13 @@ theorem gadgetOK_iter (init step : List Cob) (m h a : ℕ) (L : Language) (A : O
   funext r
   by_cases hrd : r = d
   · subst hrd
-    rw [if_neg (by omega), Function.update_self, hRfN.1]
+    rw [ite_eq_right (by omega), Function.update_self, hRfN.1]
   rw [Function.update_of_ne hrd]
   by_cases hr : r < fr
-  · rw [if_neg (by omega), hRfN.2.1 r hrd hr]
+  · rw [ite_eq_right (by omega), hRfN.2.1 r hrd hr]
   by_cases hr' : r < fr + (m + 1)
-  · rw [if_pos (by omega), hfr r (by omega)]
-  rw [if_neg (by omega), hfr r (by omega)]
+  · rw [ite_eq_left (by omega), hfr r (by omega)]
+  rw [ite_eq_right (by omega), hfr r (by omega)]
   rcases hRfN.2.2 r with h1 | h1 | h1
   · exact h1
   · rw [h1, hF, regsAt_high (by rw [length_cobIter hi hs]; omega)]

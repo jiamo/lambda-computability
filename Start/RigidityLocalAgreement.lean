@@ -68,7 +68,7 @@ theorem decide_exists (B : Oracle) : ∃ f : ℕ → ℕ,
   · exact (total_comp (total_primrec hmap) (total_pair (total_primrec Primrec.id) hs)).of_eq
       (fun v => by simp only [Nat.unpair_pair]; rfl)
   · rcases hsearch (encode [codes,x,p]) with ⟨hz,hn⟩ | ⟨hp,hc⟩
-    · have hout : out (encode [codes,x,p]) = p := by simp only [out,if_pos hz,item,encodek,Option.getD_some,List.getD_cons_zero,List.getD_cons_succ]
+    · have hout : out (encode [codes,x,p]) = p := by simp only [out,ite_eq_left hz,item,encodek,Option.getD_some,List.getD_cons_zero,List.getD_cons_succ]
       rw [hout]
       refine ⟨extends_refl _ _,Or.inr ⟨rfl,fun q hpq hd => ?_⟩⟩
       obtain ⟨n,a,b,hab,ha,hb⟩ := hd
@@ -78,7 +78,7 @@ theorem decide_exists (B : Oracle) : ∃ f : ℕ → ℕ,
         ← show right (code q) = q.right from congrArg Condition.right (condition_code q),condition_code] using
         And.intro hpq (And.intro hab (And.intro ha hb))
     · have hz : search (encode [codes,x,p]) ≠ 0 := by omega
-      simp only [out,if_neg hz]
+      simp only [out,ite_eq_right hz]
       have hc' := (cert_iff h x _).1 hc
       exact ⟨hc'.1,Or.inl ⟨_,_,_,hc'.2⟩⟩
 

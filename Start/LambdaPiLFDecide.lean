@@ -525,7 +525,7 @@ theorem algRun_terminates {k : EqvKind} {Δ : List STy} {M M' : Tm} {τ : STy}
             split
             · next hnone => exact absurd hnone (hnA m (by omega))
             · simp
-            · rw [if_pos he]; exact hnB m (by omega)
+            · rw [ite_eq_left he]; exact hnB m (by omega)
           · refine ⟨w₁ + w₂ + nA + 1, fun n hn => ?_⟩
             obtain ⟨m, rfl⟩ : ∃ m, n = m + 1 := ⟨n - 1, by omega⟩
             show (match whnfF m M, whnfF m N with
@@ -536,7 +536,7 @@ theorem algRun_terminates {k : EqvKind} {Δ : List STy} {M M' : Tm} {τ : STy}
             split
             · next hnone => exact absurd hnone (hnA m (by omega))
             · simp
-            · rw [if_neg he]; simp
+            · rw [ite_eq_right he]; simp
   | @var Δ i =>
       refine ⟨(fun h => by cases h), fun _ N N' τ' h2 => ?_⟩
       refine ⟨1, fun n hn => ?_⟩

@@ -80,7 +80,7 @@ noncomputable def witness (t : CobQ) (A : Oracle) (n : ℕ) : Word :=
 theorem witness_spec (t : CobQ) (A : Oracle) (n : ℕ) (hn : startLen t ≤ n) :
     (witness t A n).length = n ∧ witness t A n ∉ queries A t [unary n] := by
   have h : ∃ w : Word, w.length = n ∧ w ∉ queries A t [unary n] := startLen_spec t A n hn
-  rw [witness, dif_pos h]
+  rw [witness, dite_eq_left h]
   exact h.choose_spec
 
 /-! ### The stages -/
@@ -120,13 +120,13 @@ theorem stage_succ_snd (e : ℕ) :
 theorem stage_succ_fst_pos {e : ℕ}
     (h : eval (oracleOf (stage f e).1) (f e) [unary (diagLen f e)] ≠ []) :
     (stage f (e + 1)).1 = (stage f e).1 := by
-  rw [stage_succ_def, if_pos h]
+  rw [stage_succ_def, ite_eq_left h]
 
 theorem stage_succ_fst_neg {e : ℕ}
     (h : ¬ (eval (oracleOf (stage f e).1) (f e) [unary (diagLen f e)] ≠ [])) :
     (stage f (e + 1)).1
       = (stage f e).1 ++ [witness (f e) (oracleOf (stage f e).1) (diagLen f e)] := by
-  rw [stage_succ_def, if_neg h]
+  rw [stage_succ_def, ite_eq_right h]
 
 theorem lt_diagLen (e : ℕ) : (stage f e).2 < diagLen f e := by
   have : (stage f e).2 + 1 ≤ diagLen f e := le_max_right _ _
@@ -145,7 +145,6 @@ theorem qlen_le_stage_succ (e : ℕ) : qlen (f e) (diagLen f e) ≤ (stage f (e 
 theorem stage_subset_succ (e : ℕ) : (stage f e).1 ⊆ (stage f (e + 1)).1 := by
   by_cases h : eval (oracleOf (stage f e).1) (f e) [unary (diagLen f e)] ≠ []
   · rw [stage_succ_fst_pos f h]
-    exact fun w hw => hw
   · rw [stage_succ_fst_neg f h]
     intro w hw
     simp [hw]

@@ -58,16 +58,16 @@ theorem envStack_match {base b₁ e₁ b₂ e₂ d₁ d₂ i j : ℕ} {τ₁ τ�
   unfold expEnv at h
   unfold envStack
   by_cases h1 : i < b₁ <;> by_cases h2 : j < b₂
-  · rw [if_pos h1, if_pos h2] at h ⊢
+  · rw [ite_eq_left h1, ite_eq_left h2] at h ⊢
     congr 1
     omega
-  · rw [if_pos h1, if_neg h2] at h
+  · rw [ite_eq_left h1, ite_eq_right h2] at h
     have := hτ₂ (j - b₂) (by omega)
     exact absurd h (by omega)
-  · rw [if_neg h1, if_pos h2] at h
+  · rw [ite_eq_right h1, ite_eq_left h2] at h
     have := hτ₁ (i - b₁) (by omega)
     exact absurd h (by omega)
-  · rw [if_neg h1, if_neg h2] at h ⊢
+  · rw [ite_eq_right h1, ite_eq_right h2] at h ⊢
     exact hmatch _ _ (by omega) (by omega) h
 
 /-- The tags used inside the `r`-th argument of an η-expanded node stay below the new base. -/
@@ -77,14 +77,14 @@ theorem argEnvOf_lt_of_depth {base b e d r : ℕ} {τ : ℕ → ℕ} {as : List 
   intro i hi
   rw [argEnvOf]
   by_cases hlt : r < as.length
-  · rw [if_pos hlt, expEnv]
-    rw [argDepth, if_pos hlt] at hi
+  · rw [ite_eq_left hlt, expEnv]
+    rw [argDepth, ite_eq_left hlt] at hi
     by_cases hib : i < b
-    · rw [if_pos hib]; omega
-    · rw [if_neg hib]
+    · rw [ite_eq_left hib]; omega
+    · rw [ite_eq_right hib]
       have := hτ (i - b) (by omega)
       omega
-  · rw [if_neg hlt]
+  · rw [ite_eq_right hlt]
     omega
 
 /-- The free variables of the `r`-th argument of an η-expanded node stay below `argDepth`. -/
@@ -94,9 +94,9 @@ theorem freeVarsBelow_argTreeOf {b h d : ℕ} {as : List BohmNF}
   cases hx with
   | @node d b h as _ hargs =>
       by_cases hr : r < as.length
-      · rw [argTreeOf, dif_pos hr, argDepth, if_pos hr]
+      · rw [argTreeOf, dite_eq_left hr, argDepth, ite_eq_left hr]
         exact hargs _ (List.getElem_mem _)
-      · rw [argTreeOf, dif_neg hr, argDepth, if_neg hr]
+      · rw [argTreeOf, dite_eq_right hr, argDepth, ite_eq_right hr]
         exact .node (by omega) (by intro a ha; exact absurd ha List.not_mem_nil)
 
 /-- The cross-condition of the induction, propagated to the arguments of a node. -/
@@ -112,33 +112,33 @@ theorem argEnvD_match {base b₁ e₁ b₂ e₂ d₁ d₂ r i j : ℕ} {τ₁ τ
   rw [argEnvD, argEnvD]
   rw [argDepth] at hi hj
   by_cases h1 : r < as₁.length <;> by_cases h2 : r < as₂.length
-  · rw [if_pos h1, if_pos h2] at h ⊢
-    rw [if_pos h1] at hi
-    rw [if_pos h2] at hj
+  · rw [ite_eq_left h1, ite_eq_left h2] at h ⊢
+    rw [ite_eq_left h1] at hi
+    rw [ite_eq_left h2] at hj
     exact envStack_match hm hτ₁ hτ₂ hmatch hi hj h
-  · rw [if_pos h1, if_neg h2] at h ⊢
-    rw [if_pos h1] at hi
+  · rw [ite_eq_left h1, ite_eq_right h2] at h ⊢
+    rw [ite_eq_left h1] at hi
     rw [expEnv] at h
     rw [envStack]
     by_cases hib : i < b₁
-    · rw [if_pos hib] at h ⊢
+    · rw [ite_eq_left hib] at h ⊢
       congr 1
       omega
-    · rw [if_neg hib] at h
+    · rw [ite_eq_right hib] at h
       have := hτ₁ (i - b₁) (by omega)
       exact absurd h (by omega)
-  · rw [if_neg h1, if_pos h2] at h ⊢
-    rw [if_pos h2] at hj
+  · rw [ite_eq_right h1, ite_eq_left h2] at h ⊢
+    rw [ite_eq_left h2] at hj
     rw [expEnv] at h
     rw [envStack]
     by_cases hjb : j < b₂
-    · rw [if_pos hjb] at h ⊢
+    · rw [ite_eq_left hjb] at h ⊢
       congr 1
       omega
-    · rw [if_neg hjb] at h
+    · rw [ite_eq_right hjb] at h
       have := hτ₂ (j - b₂) (by omega)
       exact absurd h (by omega)
-  · rw [if_neg h1, if_neg h2] at h ⊢
+  · rw [ite_eq_right h1, ite_eq_right h2] at h ⊢
     congr 1
     omega
 
@@ -156,7 +156,7 @@ theorem dappN_ddenot_node {b h e : ℕ} {as : List BohmNF} (ρ : DEnv) (A : ℕ 
         = ddenot ((as.map BohmNF.toTerm)[r]) (envStack A b e ρ) := by
     intro r hr
     have hr' : r < as.length := by simpa using hr
-    simp only [argTreeOf, dif_pos hr', argEnvD, if_pos hr', List.getElem_map]
+    simp only [argTreeOf, dite_eq_left hr', argEnvD, ite_eq_left hr', List.getElem_map]
   have h1 : ddenot (Lambda.appList (Lambda.var h) (as.map BohmNF.toTerm)) (envStack A b e ρ)
       = dappSeq (envStack A b e ρ h)
           (fun r => ddenot (argTreeOf as r).toTerm (argEnvD A b e ρ as.length r)) as.length := by
@@ -165,7 +165,7 @@ theorem dappN_ddenot_node {b h e : ℕ} {as : List BohmNF} (ρ : DEnv) (A : ℕ 
   refine dappSeq_congr rfl ?_
   intro s hs
   have hns : ¬ as.length + s < as.length := by omega
-  simp only [argTreeOf, dif_neg hns, argEnvD, if_neg hns]
+  simp only [argTreeOf, dite_eq_right hns, argEnvD, ite_eq_right hns]
   rw [ddenot_leaf]
   congr 1
   omega

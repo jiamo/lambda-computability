@@ -143,7 +143,7 @@ theorem TW.fire {base : ℤ → Lambda → Prop} {x : ℕ} {i : ℤ} {W c : Lamb
     simp only [Lambda.lam.injEq] at e
     subst e
     simp only [Lambda.subst, subst_xPow, zero_add]
-    rw [if_neg (by omega), if_pos (by omega), show x + 2 - 1 = x + 1 by omega,
+    rw [ite_eq_right (by omega), ite_eq_left (by omega), show x + 2 - 1 = x + 1 by omega,
       subst_lift_lift_one1]
     exact .rq hR hm
 

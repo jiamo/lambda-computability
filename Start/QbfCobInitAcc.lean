@@ -96,7 +96,7 @@ theorem eval_initTapeT (M : Machine) (x : List Bool) (s : ℕ) (a : ℕ) :
       omega
     simp only [List.length_append, List.length_cons, List.length_nil, enc_litF, length_unary,
       hlen]
-    simp only [if_neg (by simp : ¬ (false = true))]
+    simp only [ite_eq_right (by simp : ¬ (false = true))]
     simp only [List.length_cons, List.length_nil]
     omega
   rw [initTapeT, eval_rangeEmitTerm initTapeBlockT
@@ -370,10 +370,10 @@ theorem eval_acciBlockT (M : Machine) (x : List Bool) (s : ℕ) (b q i : ℕ) (h
       simp only [Cob.eval_comp, List.map_cons, List.map_nil, harg, hfld 1 (by omega), e1]
       exact eval_accjSweepT M x s b q i hq (by omega)
     rw [acciBlockT, Cob.eval_iteW (p := true) (by rw [hcond]; simp [hi]) hcore rfl,
-      acciWord, if_pos hi]
+      acciWord, ite_eq_left hi]
     simp
   · rw [acciBlockT, Cob.eval_iteW (p := false) (by rw [hcond]; simp [hi]) rfl
-      (Cob.eval_constT _ _), acciWord, if_neg hi]
+      (Cob.eval_constT _ _), acciWord, ite_eq_right hi]
     simp
 
 /-- The term sweeping the position of the input head. -/
@@ -392,7 +392,7 @@ theorem eval_acciSweepT (M : Machine) (x : List Bool) (s : ℕ) (b q : ℕ) (hq 
       (acciWord M x s b q i).length ≤ 6 * ((acciParam M x s b q).length + 1) := by
     intro i _
     by_cases hi : i < x.length + 1
-    · rw [acciWord, if_pos hi]
+    · rw [acciWord, ite_eq_left hi]
       have hall : ∀ j ∈ List.range s,
           ([true, false, true] ++ enc (cfgF M x s b q i j)).length
             ≤ 6 * ((cfgWidth M x s + b * cfgWidth M x s + 3) *
@@ -414,13 +414,13 @@ theorem eval_acciSweepT (M : Machine) (x : List Bool) (s : ℕ) (b q : ℕ) (hq 
               (cfgWidth M x s + b * cfgWidth M x s + 3)) :=
         Nat.mul_le_mul_right _ (by omega)
       omega
-    · rw [acciWord, if_neg hi]
+    · rw [acciWord, ite_eq_right hi]
       simp
   rw [acciSweepT, eval_rangeEmitTerm acciBlockT (acciWord M x s b q) (acciParam M x s b q)
     hlead (fun i => eval_acciBlockT M x s b q i hq) hb]
   refine List.flatMap_congr ?_
   intro i hi
-  rw [acciWord, if_pos (List.mem_range.1 hi)]
+  rw [acciWord, ite_eq_left (List.mem_range.1 hi)]
 
 /-- The parameter word of the accepting constraint. -/
 def accParam (M : Machine) (x : List Bool) (s : ℕ) (b : ℕ) : Word :=

@@ -101,7 +101,7 @@ theorem potentialFrom_edge (mark : V → V → F₂)
     potentialFrom (G := G) mark root u + potentialFrom (G := G) mark root v = mark u v := by
   classical
   have hv := hu.trans h.reachable
-  simp only [potentialFrom, dif_pos hu, dif_pos hv]
+  simp only [potentialFrom, dite_eq_left hu, dite_eq_left hv]
   have hp := walkWeight_independent mark hsymm hclosed
     (hu.some.append (.cons h .nil)) hv.some
   simp only [walkWeight_append, walkWeight_cons, walkWeight_nil, add_zero] at hp

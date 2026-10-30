@@ -719,7 +719,7 @@ lemma helm {l a m p o h e c z y w} (ht:u.Tidy)(hp:u.Chess a p h e c z y w)
    apply u.p.meets1 u.s ht.reserve (u.taking ht hp.hr hx ho hp.hr.littleR hp.kin.before0) ?_ ?_ ?_ hp.hx
    · exact congrArg Prod.fst (h1 0)
    · rw [hs,hp.chosen]
-     exact (congrArg (fun x=>x.2.2) (h1 h)).trans (if_neg hp.extant)
+     exact (congrArg (fun x=>x.2.2) (h1 h)).trans (ite_eq_right hp.extant)
    unfold Mill.afoot; rw [hs]
    exact ⟨hp.hr.get, u.timeok ht hp.hr hx hp.hr.littleR ho hp.hr.heat⟩
 
@@ -800,7 +800,7 @@ lemma pop5 {l f a m} (hp:u.Course (enc f::l) a m)
       rfl
    change (if Jet.tug (mesh l) f≤1 then _ else _)=_
    have he1 : ¬Jet.tug (mesh l) f≤1:=not_le_of_gt (cord_fine ..).2.2
-   rw [if_neg he1]
+   rw [ite_eq_right he1]
    change Bow.purec (going o (Jet.tug (aft (Jet.tug (mesh l) f)) (Jet.turn (Jet.cap (Jet.tug (mesh l) f)) 4))+1)=_
    rw [Jet.aft_tug,Jet.cap_tug]; rfl
 
@@ -813,7 +813,7 @@ lemma reverse_fit (p:Mill)(s:Mill.Fuel){v w}(h:p.fitting s v w):p.fitting s w v:
 lemma flagdown {l a m p h e o c z y w}(ht:u.Tidy)(hp:u.Chess a p h e c z y w)
     (hx:u.Course l a m) (ho:u.Stringent o) (hy:u.dives a p h=false):
    u.Cr (cart o l (u.kidJ a p h e 2),z) (cart o l (u.kidJ a p h e 4),z):=
-    u.blink0 ht ((u.ore2 hx o p h e 0).trans (if_neg (by simp [hy])))
+    u.blink0 ht ((u.ore2 hx o p h e 0).trans (ite_eq_right (by simp [hy])))
            (u.taking ht hp.hr hx ho (hp.kin.passed 2 (by omega)) (hp.kin.passed 4 (by omega))) hp.hz
 
 lemma ladder {a m p l o h e c w} (ht:u.Tidy) (hp:u.Herd a p c h e w)
@@ -833,7 +833,7 @@ lemma ladder {a m p l o h e c w} (ht:u.Tidy) (hp:u.Herd a p c h e w)
       have hs:= u.downfit ht hr.hr hx ho (hr.kin.passed 2 (by omega)) hf hy' hf.littleR hy
       have hs2:= u.downfit ht hr.hr hx ho (hr.kin.passed 4 (by omega)) hf hy' (hh.passed 5 (by omega)) hy
       have hp1: u.Cr (cart o l (u.kidJ a p h e 2),z) (cart o S (u.fill (u.lower a p h) (u.portD a p h)),z):=
-         u.blink0 ht (hu0.trans (if_pos hv)) hs hr.hz
+         u.blink0 ht (hu0.trans (ite_eq_left hv)) hs hr.hz
       have hp5:u.b.loom u.x0 (u.q,cart o S (u.kidJ (u.lower a p h) (u.portD a p h) f g 5),0)=
                         Bow.purec (future1 o l (u.kidJ a p h e 4)):=
          u.pop5 hy' o (u.portD a p h) f g 0

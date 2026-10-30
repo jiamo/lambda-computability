@@ -98,11 +98,11 @@ theorem IdxE.eval_term {mmT MT : Cob} {args : List Word} {j mm M : ℕ}
   | mod a b iha ihb =>
       rcases Nat.eq_zero_or_pos (b.val j mm M) with hb | hb
       · simp only [IdxE.term, IdxE.val, eval_iteT_eval, ihb, hb, List.replicate_zero,
-          iha, Nat.mod_zero, if_pos]
+          iha, Nat.mod_zero, ite_eq_left]
       · have hne : List.replicate (b.val j mm M) true ≠ [] := by
           simp only [ne_eq, List.replicate_eq_nil_iff]
           omega
-        rw [IdxE.term, eval_iteT_eval, ihb, if_neg hne, Cob.eval_modT hb iha ihb, IdxE.val]
+        rw [IdxE.term, eval_iteT_eval, ihb, ite_eq_right hne, Cob.eval_modT hb iha ihb, IdxE.val]
 
 /-! ### Conditions -/
 
@@ -241,9 +241,9 @@ theorem GateE.eval_term {mmT MT : Cob} {args : List Word} {j mm M : ℕ}
   | iteE c t f iht ihf =>
       rw [GateE.term, eval_iteT_eval, GateE.gate]
       by_cases hc : c.holds j mm M
-      · rw [if_neg (fun h => ((CondE.eval_term_eq_nil_iff hj hmm hM c).1 h) hc), if_pos hc]
+      · rw [ite_eq_right (fun h => ((CondE.eval_term_eq_nil_iff hj hmm hM c).1 h) hc), ite_eq_left hc]
         exact iht
-      · rw [if_pos ((CondE.eval_term_eq_nil_iff hj hmm hM c).2 hc), if_neg hc]
+      · rw [ite_eq_left ((CondE.eval_term_eq_nil_iff hj hmm hM c).2 hc), ite_eq_right hc]
         exact ihf
 
 end Tseitin

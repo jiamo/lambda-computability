@@ -52,7 +52,6 @@ theorem grpdIdStruct_not_UIP : ¬ grpdIdStruct.{u}.UIP := by
   have key : ∀ y : GObj (disp (IdC loopTy) ⋙ IdC loopTy), y = x0 →
       (y.base.fib ⟶ y.fib) → False := by
     rintro y rfl ⟨⟨h⟩⟩
-    cases h
   exact key _ (Functor.congr_obj s.2 x0) (s.1.obj x0).fib.as
 
 /-- **UIP is independent of the identity-type rules.**  The rules of `Cwa.IdStruct` (formation,

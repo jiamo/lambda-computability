@@ -71,7 +71,7 @@ theorem eval_certificate_matrix (φ : Formula) (d k f o : ZFSet.{u})
     exact (eval_code φ hd ho hf e' he' p (cons f (cons k (cons d env)))
       2 (ci+3) 1 (oi+3) 0 (fun i => truncate (bound φ+1) v i+3) (pi+3)
       ⟨rfl,hc,hk,ho',rfl,hp⟩ ht).trans
-      (forces_congr φ e' e (fun i hi => if_pos (by omega)) p)
+      (forces_congr φ e' e (fun i hi => ite_eq_left (by omega)) p)
   simp only [CertificateCode.matrix,Formula.Eval,Formula.eval_transitive,
     AtomicFormula.eval_product,CertificateCode.eval_slots,cons_zero,cons_succ,hv]
   constructor

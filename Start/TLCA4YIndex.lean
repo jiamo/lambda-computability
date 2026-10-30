@@ -201,7 +201,7 @@ theorem YBase.reduces_chainNf {x n : ℕ} {P : Lambda} (h : YBase x n P) :
   | .q hR => exact betaEtaReduces_app_right _ hR.to_bym3
   | .m hR =>
     refine (betaEtaReduces_beta _ _).trans ?_
-    simp only [Lambda.subst, if_pos]
+    simp only [Lambda.subst, ite_eq_left]
     exact ((betaEtaReduces_app_left _ hR.to_bym3).trans
       (betaEtaReduces_app_right _ hR.to_bym3)).trans (wq_wq x)
   | .rr h1 h2 =>

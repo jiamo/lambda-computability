@@ -117,7 +117,7 @@ theorem Lambda.rho_code_correct (t : Lambda) :
           have h0 : (Lambda.encode (Lambda.var n)).unpair = (0, n) := Nat.unpair_pair 0 n
           have hb : (Lambda.encode (Lambda.var n)).unpair.1 ≠ 2 := by
             simp [h0]
-          simp only [if_neg hb]
+          simp only [ite_eq_right hb]
           rw [Lambda.getD_range_map h1, Lambda.getD_range_map h2, ih1, ih2]
           rfl
       | app a b =>
@@ -126,7 +126,7 @@ theorem Lambda.rho_code_correct (t : Lambda) :
             Nat.unpair_pair 1 (Nat.pair (Lambda.encode a) (Lambda.encode b))
           have hb : (Lambda.encode (Lambda.app a b)).unpair.1 ≠ 2 := by
             simp [h0]
-          simp only [if_neg hb]
+          simp only [ite_eq_right hb]
           rw [Lambda.getD_range_map h1, Lambda.getD_range_map h2, ih1, ih2]
           rfl
   | lam b ih =>

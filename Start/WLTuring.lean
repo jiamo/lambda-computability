@@ -397,7 +397,7 @@ theorem run_succ (w : List Bool) (t : ℕ) : M.run w (t+1)=M.step (M.run w t) :=
   Function.iterate_succ_apply' _ _ _
 
 theorem step_frozen (C : M.Config) (h : M.halted C) : M.step C=C := by
-  rw [step,if_pos h]
+  rw [step,ite_eq_left h]
 
 theorem run_frozen (w : List Bool) {t u : ℕ} (hh : M.halted (M.run w t))
     (hu : t ≤ u) : M.run w u=M.run w t := by
@@ -406,12 +406,12 @@ theorem run_frozen (w : List Bool) {t u : ℕ} (hh : M.halted (M.run w t))
   exact Function.iterate_fixed (M.step_frozen _ hh) a
 
 theorem time_halted (w : List Bool) (h : M.halts w) : M.halted (M.run w (M.time w)) := by
-  simp only [time,dif_pos h]
+  simp only [time,dite_eq_left h]
   exact Nat.find_spec h
 
 theorem time_le_of_halted (w : List Bool) {t : ℕ} (h : M.halted (M.run w t)) : M.time w ≤ t := by
   have hh : M.halts w := ⟨t,h⟩
-  simp only [time,dif_pos hh]
+  simp only [time,dite_eq_left hh]
   exact Nat.find_min' hh h
 
 theorem accepts_iff_at_halt (w : List Bool) {t : ℕ} (h : M.halted (M.run w t)) :

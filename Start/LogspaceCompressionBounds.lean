@@ -515,7 +515,7 @@ lemma trim_safe {theta C f} (h : TS theta C f) (ht: delta ≤ theta)
       rw [h.full _ ((le_of_not_gt hp).trans ht0),h.full _ (hh1.trans ht0)]
    by_cases hb:i∈F
    · unfold Blob.val Trio.eval; rw [hw]
-     simp only [w,trim,if_pos hb]
+     simp only [w,trim,ite_eq_left hb]
    have hp : mist≤theta/8 := by linarith [mistp,mist_shut ht]
    unfold Blob.val Trio.eval
    rw [h.shut _ (le_trans (hh i hi hb) hp),h.shut _ (show ((trim F v).ts i).1≤theta/8 from ?_)]
@@ -864,7 +864,7 @@ lemma next_bridge {R kap i L H} (h: r.bridged H (r.mid i) (r.actual R kap i))
         have hs2 : (r.mid (i+1)).base=p.Z w:=(suit0 hC).1
         rw [hs2]; exact ⟨hs1,hs1⟩
       left
-      rw [r.actual_push]; dsimp only [taken]; rw [if_neg hd]
+      rw [r.actual_push]; dsimp only [taken]; rw [ite_eq_right hd]
       exact suit0_trans hC (suit0_symm (suit_idem _ _ _ _ hh))
     · right
       rw [r.actual_base,r.mid_succ]
@@ -982,7 +982,7 @@ lemma tower_push {F L v} (h:tall F L v) (hh:12≤L) (hv:v.base≤4) (p : Params)
      simp only [u,ears,hi,ite_true,towering h hh _ hi]
    have hg : u.ts i=v.ts i:=by simp [u,ears,hi]
    change (p.push u).ts i = if _ then _ else _
-   rw [if_neg hi]
+   rw [ite_eq_right hi]
    dsimp only [Params.push]
    rw [heZ,heU,hg]
 lemma tower_val {F L v theta C f} (h:tall F L v) (hh:12≤L)
@@ -1001,7 +1001,7 @@ def steady (r : Run) (j : ℕ) : ℕ → Blob
    | i+1=> if j≤ i then (r.pm i).push (r.steady j i) else r.corrected j
 lemma steady_zero (j) : r.steady j j=r.corrected j := by cases j <;> simp [steady]
 lemma steady_push {i j} (he : j≤ i) :
-    r.steady j (i+1) = (r.pm i).push (r.steady j i) := by rw [steady,if_pos he]
+    r.steady j (i+1) = (r.pm i).push (r.steady j i) := by rw [steady,ite_eq_left he]
 
 lemma still_here_c (h:r.Good) {i j} (hi : j≤ i) (hj:i≤r.L) (hp:r.pre j) :
     Calm r.S (r.steady j i) := by
@@ -1105,11 +1105,11 @@ lemma hood_at (h:r.Good) {j B i} (he : j≤ i) (hi : i<r.L)
    have hr:=r.bad_nn i
    have ht1 : r.bad i ≤ wideK B*r.bad i := by unfold wideK; nlinarith
    by_cases hz:x∈r.wide B
-   · unfold blast; rw [if_pos hz]; change max |(0:ℝ)| |_-_| ≤ _
+   · unfold blast; rw [ite_eq_left hz]; change max |(0:ℝ)| |_-_| ≤ _
      rw [max_le_iff]
      exact ⟨by rw [abs_zero]; linarith,hq.trans ht1⟩
    have hu : (r.aim x).1≤4*B := le_of_not_gt fun e=>hz (mem_filter.2 ⟨hx,e⟩)
-   unfold blast; rw [if_neg hz,ht_sub]
+   unfold blast; rw [ite_eq_right hz,ht_sub]
    exact ⟨hp.trans (mul_le_mul_of_nonneg_right (by unfold wideK; grind) hr),hq.trans ht1⟩
 
 lemma hood_prev (h:r.Good) {j B i} (he : j≤ i) (hi : i+1<r.L)

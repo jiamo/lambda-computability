@@ -208,7 +208,7 @@ theorem run_round_accept (d : ℕ) (P : Strat F) (p t : Op) (i : ℕ) (check : L
           (hist ++ [P hist t a, [ρ.headD 0]]) ρ.tail := by
   rw [hrun] at h ⊢
   split at h
-  · rename_i hc; exact ⟨hc.1, hc.2, by rw [if_pos hc]⟩
+  · rename_i hc; exact ⟨hc.1, hc.2, by rw [ite_eq_left hc]⟩
   · simp at h
 
 theorem run_all_def (d : ℕ) (P : Strat F) (p : Op) (i : ℕ) (a : ℕ → F) (v : F)
@@ -400,7 +400,7 @@ theorem run_replay (d : ℕ) (P Q : Strat F) :
       have e2 := ihq a c _ (ρ.tail.drop p.rounds) hl2 h2
         (fun H n x hH hlt => by rw [← hout] at hH hlt ⊢; exact hQ H n x hH hlt)
       rw [run_conj_def, run_conj_def, hQm, hm]
-      simp only [if_pos hbc, e1, e2]
+      simp only [ite_eq_left hbc, e1, e2]
   | disj p q ihp ihq =>
       intro a v hist ρ hρ h hQ
       obtain ⟨b, c, hm, hbc, h1, h2, hout⟩ := run_bin_accept d P p q _
@@ -420,7 +420,7 @@ theorem run_replay (d : ℕ) (P Q : Strat F) :
       have e2 := ihq a c _ (ρ.tail.drop p.rounds) hl2 h2
         (fun H n x hH hlt => by rw [← hout] at hH hlt ⊢; exact hQ H n x hH hlt)
       rw [run_disj_def, run_disj_def, hQm, hm]
-      simp only [if_pos hbc, e1, e2]
+      simp only [ite_eq_left hbc, e1, e2]
   | all i p ih =>
       intro a v hist ρ hρ h hQ
       obtain ⟨hl, hc, heq⟩ := run_round_accept d P p _ i (fun m => evalL m 0 * evalL m 1 = v)
@@ -432,7 +432,7 @@ theorem run_replay (d : ℕ) (P Q : Strat F) :
           (lt_of_lt_of_le (by simp) hp0.length_le), prefix_getD hp0 (by simp)]
         simp
       rw [heq] at h hQ ⊢
-      rw [run_all_def, hQm, if_pos ⟨hl, hc⟩]
+      rw [run_all_def, hQm, ite_eq_left ⟨hl, hc⟩]
       exact ih _ _ _ _ (by simp only [Op.rounds] at hρ; simp [hρ]) h hQ
   | ex i p ih =>
       intro a v hist ρ hρ h hQ
@@ -446,7 +446,7 @@ theorem run_replay (d : ℕ) (P Q : Strat F) :
           (lt_of_lt_of_le (by simp) hp0.length_le), prefix_getD hp0 (by simp)]
         simp
       rw [heq] at h hQ ⊢
-      rw [run_ex_def, hQm, if_pos ⟨hl, hc⟩]
+      rw [run_ex_def, hQm, ite_eq_left ⟨hl, hc⟩]
       exact ih _ _ _ _ (by simp only [Op.rounds] at hρ; simp [hρ]) h hQ
   | lin j p ih =>
       intro a v hist ρ hρ h hQ
@@ -460,7 +460,7 @@ theorem run_replay (d : ℕ) (P Q : Strat F) :
           (lt_of_lt_of_le (by simp) hp0.length_le), prefix_getD hp0 (by simp)]
         simp
       rw [heq] at h hQ ⊢
-      rw [run_lin_def, hQm, if_pos ⟨hl, hc⟩]
+      rw [run_lin_def, hQm, ite_eq_left ⟨hl, hc⟩]
       exact ih _ _ _ _ (by simp only [Op.rounds] at hρ; simp [hρ]) h hQ
 
 /-! ### Causality -/
@@ -714,7 +714,7 @@ theorem run_congr (d : ℕ) (P Q : Strat F) :
       rcases M with _ | ⟨b, _ | ⟨c, _ | ⟨e, rest⟩⟩⟩ <;> try exact ⟨rfl, fun _ => rfl⟩
       simp only [List.headD_cons, List.tail_cons]
       by_cases hbc : b * c = v
-      · simp only [if_pos hbc]
+      · simp only [ite_eq_left hbc]
         obtain ⟨e1v, e1o⟩ := ihp a b (hist ++ [[b, c], [s]]) (ρ'.take p.rounds)
           (ρ'.drop p.rounds ++ R) hl1 (even_hist_pair he _ _) fun H n x hH hp => hPQ H n x hH (by
             have heq : ptsOf (hist ++ [[b, c], [s]]) ++ ρ'.take p.rounds ++
@@ -738,7 +738,7 @@ theorem run_congr (d : ℕ) (P Q : Strat F) :
         · simp only [Bool.not_eq_true] at hacc
           rw [hacc] at e1v
           simp [hacc, ← e1v]
-      · simp [if_neg hbc]
+      · simp [ite_eq_right hbc]
   | disj p q ihp ihq =>
       intro a v hist ρ R hρ he hPQ
       have hm : Q hist (.disj p q) a = P hist (.disj p q) a :=
@@ -754,7 +754,7 @@ theorem run_congr (d : ℕ) (P Q : Strat F) :
       rcases M with _ | ⟨b, _ | ⟨c, _ | ⟨e, rest⟩⟩⟩ <;> try exact ⟨rfl, fun _ => rfl⟩
       simp only [List.headD_cons, List.tail_cons]
       by_cases hbc : 1 - (1 - b) * (1 - c) = v
-      · simp only [if_pos hbc]
+      · simp only [ite_eq_left hbc]
         obtain ⟨e1v, e1o⟩ := ihp a b (hist ++ [[b, c], [s]]) (ρ'.take p.rounds)
           (ρ'.drop p.rounds ++ R) hl1 (even_hist_pair he _ _) fun H n x hH hp => hPQ H n x hH (by
             have heq : ptsOf (hist ++ [[b, c], [s]]) ++ ρ'.take p.rounds ++
@@ -778,7 +778,7 @@ theorem run_congr (d : ℕ) (P Q : Strat F) :
         · simp only [Bool.not_eq_true] at hacc
           rw [hacc] at e1v
           simp [hacc, ← e1v]
-      · simp [if_neg hbc]
+      · simp [ite_eq_right hbc]
   | all i p ih =>
       intro a v hist ρ R hρ he hPQ
       have hm : Q hist (.all i p) a = P hist (.all i p) a :=

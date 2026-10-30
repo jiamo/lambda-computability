@@ -83,11 +83,11 @@ theorem le_of_forall_dappN {m : ℕ} {x v : Dinf} (h : ∀ A : ℕ → Dinf, dap
       refine le_of_forall_Phi_le fun a => ?_
       refine ih fun A => ?_
       have hA' := h (fun i => if i = m then a else A i)
-      rw [dappN_succ, dappN_succ, if_pos rfl] at hA'
+      rw [dappN_succ, dappN_succ, ite_eq_left rfl] at hA'
       rwa [dappN_congr (A := fun i => if i = m then a else A i) (B := A)
-          (fun k hk => if_neg (by omega)),
+          (fun k hk => ite_eq_right (by omega)),
         dappN_congr (A := fun i => if i = m then a else A i) (B := A)
-          (fun k hk => if_neg (by omega))] at hA'
+          (fun k hk => ite_eq_right (by omega))] at hA'
 
 /-! ## Stripping binders, one finite level at a time -/
 
@@ -108,17 +108,17 @@ theorem theta_add_le_of_forall_dappN {q : ℕ} : ∀ (j : ℕ) {x v : Dinf},
       refine ih (x := Phi x (psiFun (q + j) z)) (v := Phi v (psiFun (q + j) z)) ?_
       intro A hA
       have hA' := h (fun i => if i = j then psiFun (q + j) z else A i) ?_
-      · rw [dappN_succ, dappN_succ, if_pos rfl] at hA'
+      · rw [dappN_succ, dappN_succ, ite_eq_left rfl] at hA'
         rwa [dappN_congr (A := fun i => if i = j then psiFun (q + j) z else A i) (B := A)
-            (fun k hk => if_neg (by omega)),
+            (fun k hk => ite_eq_right (by omega)),
           dappN_congr (A := fun i => if i = j then psiFun (q + j) z else A i) (B := A)
-            (fun k hk => if_neg (by omega))] at hA'
+            (fun k hk => ite_eq_right (by omega))] at hA'
       · intro i hi
         by_cases hij : i = j
         · subst hij
-          simp only [if_pos]
+          simp only [ite_eq_left]
           exact theta_psiFun _ z
-        · simp only [if_neg hij]
+        · simp only [ite_eq_right hij]
           exact hA i (by omega)
 
 /-! ## The base level -/
@@ -182,7 +182,7 @@ theorem dappN_ddenot_spine {b h e : ℕ} {as : List Lambda} (ρ : DEnv) (A : ℕ
       (fun r => ddenot (argTermOf as r) (argEnvD A b e ρ as.length r)) r
         = ddenot as[r] (envStack A b e ρ) := by
     intro r hr
-    simp only [argTermOf, dif_pos hr, argEnvD, if_pos hr]
+    simp only [argTermOf, dite_eq_left hr, argEnvD, ite_eq_left hr]
   have h1 : ddenot (Lambda.appList (Lambda.var h) as) (envStack A b e ρ)
       = dappSeq (envStack A b e ρ h)
           (fun r => ddenot (argTermOf as r) (argEnvD A b e ρ as.length r)) as.length := by
@@ -191,7 +191,7 @@ theorem dappN_ddenot_spine {b h e : ℕ} {as : List Lambda} (ρ : DEnv) (A : ℕ
   refine dappSeq_congr rfl ?_
   intro s hs
   have hns : ¬ as.length + s < as.length := by omega
-  simp only [argTermOf, dif_neg hns, argEnvD, if_neg hns]
+  simp only [argTermOf, dite_eq_right hns, argEnvD, ite_eq_right hns]
   rw [ddenot_argTerm_leaf]
   congr 1
   omega

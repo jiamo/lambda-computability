@@ -156,7 +156,7 @@ theorem progRun_of_false {c s : ℕ} (h : f c = Bool.false) :
     progRun f (c, s) = Part.some Bool.false := by
   have hrf : (Nat.rfind fun _ : ℕ => (Part.some Bool.true : Part Bool)) = Part.some 0 :=
     Part.eq_some_iff.2 (Nat.mem_rfind.2 ⟨Part.mem_some _, fun {m} hm => absurd hm (by omega)⟩)
-  simp only [progRun, h, cond_false, hrf, Part.map_some]
+  simp only [progRun, h, Bool.cond_false, hrf, Part.map_some]
 
 theorem progRun_of_true {t : Lambda} {s : ℕ} (h : f (Lambda.encode t) = Bool.true)
     (hnf : HasNormalForm t) :
@@ -181,7 +181,7 @@ theorem progRun_of_true {t : Lambda} {s : ℕ} (h : f (Lambda.encode t) = Bool.t
     Part.eq_some_iff.2 hmem
   have hiter : nstep_code^[haltTime t] (Lambda.encode t) = Lambda.encode (nf t) := by
     rw [nstep_code_iterate]; rfl
-  simp only [progRun, h, cond_true, hrf, Part.map_some, hiter]
+  simp only [progRun, h, Bool.cond_true, hrf, Part.map_some, hiter]
 
 open Classical in
 /-- The total program test extracted from `Lambda.progRun`. -/
@@ -204,7 +204,7 @@ theorem progRun_eq_progTest (hfe : ∀ c, CodeHasNormalForm c ↔ f c = Bool.tru
   classical
   obtain ⟨b, hb⟩ := progRun_dom hfe p
   have hdom : (progRun f p).Dom := by rw [hb]; trivial
-  rw [hb, progTest, dif_pos hdom]
+  rw [hb, progTest, dite_eq_left hdom]
   congr 1
   exact (Part.get_eq_iff_eq_some.2 hb).symm
 
@@ -243,14 +243,14 @@ theorem progTest_encode (hfe : ∀ c, CodeHasNormalForm c ↔ f c = Bool.true) (
         intro hcon
         rw [← isClosed_code_correct t, hcl] at hcon
         exact Bool.noConfusion hcon
-      simp only [cond_false]
+      simp only [Bool.cond_false]
       constructor
       · intro hcon; exact Bool.noConfusion hcon
       · rintro ⟨hclosed, -⟩; exact absurd hclosed hncl
     · have hcl' : IsClosed t := (isClosed_code_correct t).1 hcl
       have hchurch : Lambda.church_code s = Lambda.encode (Lambda.church s) :=
         (Lambda.encode_church_eq_church_code s).symm
-      simp only [cond_true, decide_eq_true_eq, hchurch]
+      simp only [Bool.cond_true, decide_eq_true_eq, hchurch]
       constructor
       · intro hc
         exact ⟨hcl', (Lambda.encode_injective hc) ▸ reduces_nf t⟩
@@ -296,7 +296,7 @@ theorem kolm_le_minProg (hfe : ∀ c, CodeHasNormalForm c ↔ f c = Bool.true) (
         have : kolm s ≤ size_code c := by
           rw [← hte, size_code_correct]
           exact kolm_le_of_isProgramFor hprog
-        simp only [minProg, hb, cond_true, le_min_iff]
+        simp only [minProg, hb, Bool.cond_true, le_min_iff]
         exact ⟨this, ih⟩
 
 theorem minProg_le_of_isProgramFor (hfe : ∀ c, CodeHasNormalForm c ↔ f c = Bool.true)
@@ -309,13 +309,13 @@ theorem minProg_le_of_isProgramFor (hfe : ∀ c, CodeHasNormalForm c ↔ f c = B
       · have := ih hlt
         rcases hb : progTest f (c, s) with _ | _
         · simpa [minProg, hb] using this
-        · simp only [minProg, hb, cond_true, min_le_iff]
+        · simp only [minProg, hb, Bool.cond_true, min_le_iff]
           exact Or.inr this
       · subst heq
         have hb : progTest f (Lambda.encode t, s) = Bool.true := by
           rw [progTest_encode hfe t s]
           simpa using hprog
-        simp only [minProg, hb, cond_true, min_le_iff]
+        simp only [minProg, hb, Bool.cond_true, min_le_iff]
         left
         rw [size_code_correct]
 

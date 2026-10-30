@@ -41,7 +41,7 @@ def hashDimension (d : ℕ) : ℕ :=
 
 theorem hashDimension_spec {d : ℕ} (hd : 0 < d) :
     0 < hashDimension d ∧ d ^ 2 ≤ hashDimension d ^ 3 := by
-  rw [hashDimension, dif_neg (Nat.ne_of_gt hd)]
+  rw [hashDimension, dite_eq_right (Nat.ne_of_gt hd)]
   exact Nat.find_spec (hashDimension_exists d hd)
 
 theorem hashDimension_pos {d : ℕ} (hd : 0 < d) : 0 < hashDimension d :=
@@ -55,7 +55,7 @@ theorem hashDimension_cube_bound (d : ℕ) : d ^ 2 ≤ hashDimension d ^ 3 := by
 
 theorem hashDimension_minimal {d r : ℕ} (hd : 0 < d)
     (hr : 0 < r) (hcube : d ^ 2 ≤ r ^ 3) : hashDimension d ≤ r := by
-  rw [hashDimension, dif_neg (Nat.ne_of_gt hd)]
+  rw [hashDimension, dite_eq_right (Nat.ne_of_gt hd)]
   exact Nat.find_min' _ ⟨hr, hcube⟩
 
 theorem hashDimension_le (d : ℕ) : hashDimension d ≤ d := by

@@ -143,9 +143,9 @@ theorem leastB_spec (p : ℕ → Bool) (m : ℕ) (h : leastB p m ≤ m) :
       | false => simp [leastB, hp] at h
   | succ m ih =>
       by_cases hc : leastB p m ≤ m
-      · simp only [leastB, if_pos hc] at h ⊢
+      · simp only [leastB, ite_eq_left hc] at h ⊢
         exact ih hc
-      · simp only [leastB, if_neg hc] at h ⊢
+      · simp only [leastB, ite_eq_right hc] at h ⊢
         cases hp : p (m + 1) with
         | true => simp [hp]
         | false => simp [hp] at h
@@ -160,11 +160,11 @@ theorem leastB_le (p : ℕ → Bool) : ∀ (m u : ℕ), u ≤ m → p u = Bool.t
   | succ m ih =>
       intro u hu hp
       by_cases hc : leastB p m ≤ m
-      · simp only [leastB, if_pos hc]
+      · simp only [leastB, ite_eq_left hc]
         rcases Nat.lt_succ_iff_lt_or_eq.1 (Nat.lt_succ_of_le hu) with h | rfl
         · exact ih u (Nat.lt_succ_iff.1 h) hp
         · omega
-      · simp only [leastB, if_neg hc]
+      · simp only [leastB, ite_eq_right hc]
         rcases Nat.eq_or_lt_of_le hu with rfl | h
         · simp [hp]
         · have hle := ih u (Nat.lt_succ_iff.1 h) hp
@@ -232,8 +232,8 @@ theorem computable₂_leastB_family {f : ℕ → ℕ → Bool} (hf : Computable�
       simp only [leastB, ← ih]
       by_cases hc : (Nat.rec (motive := fun _ => ℕ) (cond (f a 0) 0 1)
         (fun y IH => cond (decide (IH ≤ y)) IH (cond (f a (y + 1)) (y + 1) (y + 2))) m) ≤ m
-      · simp [hc]
-      · simp [hc]
+      · simp
+      · simp
 
 theorem computable₂_aliveUpTo {r : ℕ → Bool} (hr : Computable r) :
     Computable₂ (aliveUpTo r) :=

@@ -312,7 +312,7 @@ theorem rcnt_encGate_append (hw : rst dstate 0 w = 0) :
   rw [encGate_append, rcnt, rst_tokT g hw, tokT, rcnt_replicate_true, h1]
   obtain ⟨ha, h6⟩ := tag_le g
   have : cinc (2 + tag g) false = 1 := by
-    rw [cinc, if_pos]
+    rw [cinc, ite_eq_left]
     simp [emits]
     omega
   rw [this]
@@ -351,7 +351,7 @@ theorem brun_encGate_append (F : ℕ → Gate → Word) (hw : rst dstate 0 w = 0
     rw [tokT, rcnt_replicate_true, tokS1, rcnt, rst_tokF1 g hw, tokF1, rcnt_replicate_true, h2']
     simp [cinc, emits]
   rw [encGate_append, brun, rst_tokT g hw, hcnt, tokT, brun_replicate_true, h1, gblk,
-    if_pos, ← tokT, readGate_tokT g hlead]
+    ite_eq_left, ← tokT, readGate_tokT g hlead]
   obtain ⟨ha, h6⟩ := tag_le g
   simp only [emits, Bool.not_false, Bool.true_and, decide_eq_true_eq, Bool.and_eq_true]
   omega

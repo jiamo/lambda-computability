@@ -148,19 +148,19 @@ abbrev TapeConfig := TypedTape.Config M.Control M.TrackSymbol
     M.storageTracks s (-(i:ℤ)-2)= fun k => M.stackCell (s k) i := by
   have hi : -(i:ℤ)-2< -1 := by omega
   have he : (-(-(i:ℤ)-2)-2).toNat=i := by omega
-  simp only [storageTracks,if_pos hi,he]
+  simp only [storageTracks,ite_eq_left hi,he]
 
  theorem stackCell_push (s : List (Fin M.alphabet)) (x : Fin M.alphabet) (i : ℕ) :
     M.stackCell (x::s) i = if i=s.length then some x else M.stackCell s i := by
   simp only [stackCell,List.reverse_cons,List.getElem?_append,List.length_reverse]
   by_cases h : i<s.length
-  · rw [if_pos h,if_neg (by omega)]
-  · rw [if_neg h]
+  · rw [ite_eq_left h,ite_eq_right (by omega)]
+  · rw [ite_eq_right h]
     by_cases he : i=s.length
     · simp [he]
     · have hi : s.length ≤ i := by omega
       have hx : i-s.length ≠ 0 := by omega
-      rw [if_neg he]
+      rw [ite_eq_right he]
       rw [List.getElem?_eq_none (l := [x]) (by simp only [List.length_singleton]; omega)]
       rw [List.getElem?_eq_none (l := s.reverse) (by simpa using hi)]
 
@@ -168,11 +168,11 @@ abbrev TapeConfig := TypedTape.Config M.Control M.TrackSymbol
     M.stackCell s.tail i = if i+1=s.length then none else M.stackCell s i := by
   simp only [stackCell,← List.dropLast_reverse,List.getElem?_dropLast,List.length_reverse]
   by_cases h : i+1<s.length
-  · rw [if_pos (show i<s.length-1 by omega),if_neg (show i+1≠s.length by omega)]
-  · rw [if_neg (show ¬i<s.length-1 by omega)]
+  · rw [ite_eq_left (show i<s.length-1 by omega),ite_eq_right (show i+1≠s.length by omega)]
+  · rw [ite_eq_right (show ¬i<s.length-1 by omega)]
     by_cases he : i+1=s.length
-    · rw [if_pos he]
-    · rw [if_neg he,List.getElem?_eq_none (by simp only [List.length_reverse]; omega)]
+    · rw [ite_eq_left he]
+    · rw [ite_eq_right he,List.getElem?_eq_none (by simp only [List.length_reverse]; omega)]
 
  theorem stackCell_none (s : List (Fin M.alphabet)) : M.stackCell s s.length=none := by
   exact List.getElem?_eq_none (by simp)
@@ -220,7 +220,7 @@ abbrev TapeConfig := TypedTape.Config M.Control M.TrackSymbol
     · funext j
       by_cases he : j=k
       · subst j
-        rw [hk,if_neg (by omega)]
+        rw [hk,ite_eq_right (by omega)]
       · rw [hj j he]
     · rfl
 
@@ -291,7 +291,7 @@ abbrev TapeConfig := TypedTape.Config M.Control M.TrackSymbol
     have hz : -((x::xs).length:ℤ)-1= -(xs.length:ℤ)-2 := by simp; omega
     rw [hz,M.storageTracks_index]
     change M.stackCell (s k) xs.length=_
-    rw [he,M.stackCell_push,if_pos rfl]
+    rw [he,M.stackCell_push,ite_eq_left rfl]
     rfl
 
  theorem peek_run (k : Fin M.count) (q : Fin M.states) (v : M.Tops)
@@ -353,7 +353,7 @@ abbrev TapeConfig := TypedTape.Config M.Control M.TrackSymbol
  theorem partialTops_all (s : Fin M.count → List (Fin M.alphabet)) :
     M.partialTops s M.count=M.topTuple s := by
   funext k
-  exact if_pos k.isLt
+  exact ite_eq_left k.isLt
 
  theorem finish_next (k : Fin M.count) (q : Fin M.states) (v : M.Tops)
     (s : Fin M.count → List (Fin M.alphabet)) (hk : k.val+1<M.count) :
@@ -362,7 +362,7 @@ abbrev TapeConfig := TypedTape.Config M.Control M.TrackSymbol
   change M.sweep.step _=_
   have ht : M.sweep.transition (.inr (.returnPeek k q v)) (M.storage s (-1))=
       (.inr (.seek (.peek ⟨k.val+1,hk⟩ q v)),M.storage s (-1),.left) := by
-    simp only [sweep,sweepTransition,M.storage_bottom,decide_true,ite_true,finishPeek,dif_pos hk]
+    simp only [sweep,sweepTransition,M.storage_bottom,decide_true,ite_true,finishPeek,dite_eq_left hk]
   rw [located,M.sweep.step_keep _ _ _ _ _ ht]
   rfl
 
@@ -380,7 +380,7 @@ abbrev TapeConfig := TypedTape.Config M.Control M.TrackSymbol
   change M.sweep.step _=_
   have ht : M.sweep.transition (.inr (.returnPeek k q v)) (M.storage s (-1))=
       M.dispatch (M.transition q v) (M.storage s (-1)) := by
-    simp only [sweep,sweepTransition,M.storage_bottom,decide_true,ite_true,finishPeek,dif_neg hk]
+    simp only [sweep,sweepTransition,M.storage_bottom,decide_true,ite_true,finishPeek,dite_eq_right hk]
   rw [located,M.sweep.step_live _ _ _ _ _ _ ht]
   cases M.transition q v <;> simp only [Function.update_eq_self] <;> rfl
 
@@ -393,7 +393,7 @@ abbrev TapeConfig := TypedTape.Config M.Control M.TrackSymbol
   | zero =>
     refine ⟨0,by omega,?_⟩
     have hh : M.partialTops s 0=(fun _ => none) := by
-      funext k; exact if_neg (Nat.not_lt_zero _)
+      funext k; exact ite_eq_right (Nat.not_lt_zero _)
     rw [hh]
     rfl
   | succ i ih =>

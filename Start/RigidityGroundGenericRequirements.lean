@@ -45,7 +45,7 @@ theorem ground_generic_with_requirements (N : ZFSet.{u}) [Countable (Conditions 
   obtain ⟨n,rfl⟩ := he m
   have hd' : Dense {q : Conditions c | label c q ∈ label N (e n)} := by rw [hm]; exact hd
   obtain ⟨q,hq,hqn⟩ := hGD n
-  exact ⟨q,hq,by simpa only [D,if_pos hd',Set.mem_ofPred_eq,hm] using hqn⟩
+  exact ⟨q,hq,by simpa only [D,ite_eq_left hd',Set.mem_ofPred_eq,hm] using hqn⟩
 
 end TuringRigidity.AtomicForcing
 

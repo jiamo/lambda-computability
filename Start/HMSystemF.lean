@@ -58,7 +58,7 @@ theorem upsN_apply (K : ℕ) (s : ℕ → FTy) (i : ℕ) :
     upsN K s i = if i < K then FTy.var i else shiftN K (s (i - K)) := by
   induction K generalizing i with
   | zero =>
-    simp only [upsN, Nat.not_lt_zero, if_false, Nat.sub_zero, shiftN, Nat.add_zero]
+    simp only [upsN, Nat.not_lt_zero, ite_false, Nat.sub_zero, shiftN, Nat.add_zero]
     exact (tySubst_var_id _).symm
   | succ K ih =>
     cases i with
@@ -68,7 +68,7 @@ theorem upsN_apply (K : ℕ) (s : ℕ → FTy) (i : ℕ) :
       by_cases hj : j < K
       · simp [hj, tyShift, tyRename]
       · have : ¬ j + 1 < K + 1 := by omega
-        simp only [hj, if_false, this, shiftN_succ]
+        simp only [hj, ite_false, this, shiftN_succ]
         congr 2
         omega
 
@@ -97,7 +97,7 @@ theorem typing_allN_inst {Γ : List FTy} {t : Lambda} (K : ℕ) :
       by_cases hj : j < K
       · simp [hj]
       · have : ¬ j + 1 < K + 1 := by omega
-        simp only [hj, this, if_false]
+        simp only [hj, this, ite_false]
         congr 1
         omega
 
@@ -188,10 +188,10 @@ theorem tySubst_schF (g : ℕ → FTy) (σ : Sch) :
   apply bodyF_congr
   · intro v _
     change upsN σ.bnd g (σ.bnd + v) = _
-    rw [upsN_apply, if_neg (by omega), Nat.add_sub_cancel_left]
+    rw [upsN_apply, ite_eq_right (by omega), Nat.add_sub_cancel_left]
   · intro k hk
     change upsN σ.bnd g k = _
-    rw [upsN_apply, if_pos hk]
+    rw [upsN_apply, ite_eq_left hk]
 
 /-- The erasure of a mini-ML term: `let x = a in b` becomes `(λx. b) a`. -/
 def erase : Expr → Lambda
@@ -247,7 +247,7 @@ theorem typing_systemF {Γ : List Sch} {e : Expr} {τ : Ty} (h : HM.Typing Γ e 
     apply bodyF_congr _ (fun _ _ => rfl)
     intro v hv
     have : v ∈ ctxFvs Γ := mem_ctxFvs.2 ⟨σ, hσ, hv⟩
-    simp only [this, if_true, tySubst]
+    simp only [this, ite_true, tySubst]
     congr 1
     omega
 

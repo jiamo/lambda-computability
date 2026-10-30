@@ -38,7 +38,7 @@ theorem tmDownStep_neTy {R : CFns} {Γ : Ctx} {t u A : Tm} (hA : Neutral A) :
   have key : tmDownStep R Γ t u A =
       if isNe A = true then neCmp R Γ t u Option.isSome else some false := by
     cases hA <;> rfl
-  rw [key, if_pos h]
+  rw [key, ite_eq_left h]
 
 theorem neCmp_left_not_ne {R : CFns} {Γ : Ctx} {t u : Tm} {f : Option Tm → Bool}
     (ht : isNe t = false) : neCmp R Γ t u f = some false := by

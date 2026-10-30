@@ -211,7 +211,7 @@ theorem sigUniform_app {r : ℕ} {b : Bool} {m : ℕ → ℕ} {mT : Cob} (hr : 0
   · intro n y c
     simp only [hblkT, eval_iteT_eval, hccn n c y]
     rcases Nat.eq_zero_or_pos c with rfl | hc0
-    · rw [if_pos (show List.replicate 0 true = ([] : Word) from rfl)]
+    · rw [ite_eq_left (show List.replicate 0 true = ([] : Word) from rfl)]
       have ht := CircCode.eval_tokTerm (g := Tseitin.Gate.cst true)
         (aT := (.empty : Cob)) (bT := (.empty : Cob))
         (args := [y, List.replicate 0 true, dmW n (2 * m n)])
@@ -219,9 +219,9 @@ theorem sigUniform_app {r : ℕ} {b : Bool} {m : ℕ → ℕ} {mT : Cob} (hr : 0
       rw [show CircCode.tag (Tseitin.Gate.cst true) = 3 from rfl] at ht
       rw [ht]
       simp [appTmpl]
-    · rw [if_neg (by simp only [List.replicate_eq_nil_iff]; omega)]
+    · rw [ite_eq_right (by simp only [List.replicate_eq_nil_iff]; omega)]
       by_cases hcm : c = m n
-      · rw [if_pos ((hneqn n c y).2 hcm)]
+      · rw [ite_eq_left ((hneqn n c y).2 hcm)]
         have ht := CircCode.eval_tokTerm (g := Tseitin.Gate.cst b)
           (aT := (.empty : Cob)) (bT := (.empty : Cob))
           (args := [y, List.replicate c true, dmW n (2 * m n)])
@@ -229,8 +229,8 @@ theorem sigUniform_app {r : ℕ} {b : Bool} {m : ℕ → ℕ} {mT : Cob} (hr : 0
         rw [show CircCode.tag (Tseitin.Gate.cst b) = (if b then 3 else 2) by
           cases b <;> rfl] at ht
         rw [ht]
-        simp only [appTmpl, if_neg (show ¬ c = 0 by omega), if_pos hcm]
-      · rw [if_neg (fun h => hcm ((hneqn n c y).1 h))]
+        simp only [appTmpl, ite_eq_right (show ¬ c = 0 by omega), ite_eq_left hcm]
+      · rw [ite_eq_right (fun h => hcm ((hneqn n c y).1 h))]
         have htail : (Cob.comp Cob.tail [cc]).eval [y, List.replicate c true, dmW n (2 * m n)]
             = List.replicate (c - 1) true := by
           simp only [Cob.eval_comp, List.map_cons, List.map_nil, Cob.eval_tail, hccn n c y,
@@ -241,7 +241,7 @@ theorem sigUniform_app {r : ℕ} {b : Bool} {m : ℕ → ℕ} {mT : Cob} (hr : 0
           (by rw [htail]; rfl) (by simp [CircCode.fld2])
         rw [show CircCode.tag (Tseitin.Gate.inp (c - 1)) = 1 from rfl] at ht
         rw [ht]
-        simp only [appTmpl, if_neg (show ¬ c = 0 by omega), if_neg hcm]
+        simp only [appTmpl, ite_eq_right (show ¬ c = 0 by omega), ite_eq_right hcm]
   · intro n c l hc
     rw [CircCode.length_encGate]
     simp only [appTmpl]
@@ -258,13 +258,13 @@ theorem sigUniform_app {r : ℕ} {b : Bool} {m : ℕ → ℕ} {mT : Cob} (hr : 0
     simp only [List.getElem_map, List.getElem_range, hrhs, appTmpl]
     rcases Nat.eq_zero_or_pos j with rfl | hj0
     · have hm0 : 0 < m n := by omega
-      rw [if_pos rfl, getD_encSig_lt _ hm0]
+      rw [ite_eq_left rfl, getD_encSig_lt _ hm0]
       simp [Tseitin.gateVal]
-    · rw [if_neg (by omega)]
+    · rw [ite_eq_right (by omega)]
       by_cases hjm : j = m n
-      · rw [if_pos hjm, getD_encSig_ge _ (by omega) hj, hjm]
+      · rw [ite_eq_left hjm, getD_encSig_ge _ (by omega) hj, hjm]
         simp [Tseitin.gateVal]
-      · rw [if_neg hjm]
+      · rw [ite_eq_right hjm]
         have hval : Tseitin.gateVal (encArgs (m n) args) [] (Tseitin.Gate.inp (j - 1))
             = (encArgs (m n) args).getD (j - 1) false := rfl
         rw [hval, getD_encArgs_zero (m n) args (by omega), ← hu]

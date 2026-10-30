@@ -542,7 +542,7 @@ noncomputable def normalForm (M : Expr S) : Expr S := by
 
 theorem normalForm_spec {M : Expr S} (h : WeaklyNormalizing M) :
     Reduces M M.normalForm ∧ Normal M.normalForm := by
-  rw [normalForm, dif_pos h]
+  rw [normalForm, dite_eq_left h]
   exact Classical.choose_spec h
 
 theorem normalForm_eq {M N : Expr S} (hr : Reduces M N) (hn : Normal N) :

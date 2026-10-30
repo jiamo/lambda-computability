@@ -200,7 +200,7 @@ theorem eval_negBlkT (y : Word) (c : ℕ) (p : Word) :
       simp only [Cob.eval_comp, List.map_cons, List.map_nil, Cob.eval_iteC, Cob.eval_proj,
         List.getD_cons_succ, List.getD_cons_zero, Cob.eval_catL, Cob.eval_constT, Cob.eval_app,
         Cob.eval_tail, List.tail_replicate, List.flatten_cons, List.flatten_nil, List.append_nil,
-        if_neg (by simp : ¬ List.replicate (k + 1) true = []), negTmpl_succ, encGate]
+        ite_eq_right (by simp : ¬ List.replicate (k + 1) true = []), negTmpl_succ, encGate]
       simp only [tag, fld1, fld2]
       simp [List.replicate_succ]
 

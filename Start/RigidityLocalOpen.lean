@@ -40,7 +40,7 @@ theorem uniform_open_decision (B : Oracle) :
     (total_pair (total_primrec (item_primrec.comp Primrec.id (Primrec.const 2))) hg)
   refine ⟨step,hstep,fun F codes e p h => ?_⟩
   rcases hs (encode [codes,e,p]) with ⟨hz,hn⟩ | ⟨hp,hw⟩
-  · have he : step (encode [codes,e,p]) = p := by simp only [step,EffectiveForcing.answer,Nat.unpair_pair,if_pos hz,item,encodek,Option.getD_some,List.getD_cons_zero,List.getD_cons_succ]
+  · have he : step (encode [codes,e,p]) = p := by simp only [step,EffectiveForcing.answer,Nat.unpair_pair,ite_eq_left hz,item,encodek,Option.getD_some,List.getD_cons_zero,List.getD_cons_succ]
     rw [he]
     refine ⟨extends_refl _ _,Or.inr ⟨rfl,fun q hq hhalt => ?_⟩⟩
     apply hn
@@ -48,7 +48,7 @@ theorem uniform_open_decision (B : Oracle) :
     simpa only [P,Nat.unpair_pair,item,encodek,Option.getD_some,List.getD_cons_zero,List.getD_cons_succ] using
       And.intro ((extension_condition_iff h).2 hq) hhalt
   · have hz : g (encode [codes,e,p]) ≠ 0 := by omega
-    have he : step (encode [codes,e,p]) = g (encode [codes,e,p]) - 1 := by simp only [step,EffectiveForcing.answer,Nat.unpair_pair,if_neg hz]
+    have he : step (encode [codes,e,p]) = g (encode [codes,e,p]) - 1 := by simp only [step,EffectiveForcing.answer,Nat.unpair_pair,ite_eq_right hz]
     rw [he]
     have hh : Extension B (encode [codes,p,g (encode [codes,e,p])-1]) ∧ Halts B e (g (encode [codes,e,p])-1) := by
       simpa only [P,Nat.unpair_pair,item,encodek,Option.getD_some,List.getD_cons_zero,List.getD_cons_succ] using hw

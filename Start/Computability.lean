@@ -149,8 +149,8 @@ theorem Lambda.unbody_code_eq_ite (c : ℕ) :
       else none := by
   rw [Lambda.unbody_code, Nat.strongRecOn_eq]
   by_cases h1 : c = Nat.pair 0 0
-  · rw [if_pos h1, if_pos h1]
-  · rw [if_neg h1, if_neg h1]
+  · rw [ite_eq_left h1, ite_eq_left h1]
+  · rw [ite_eq_right h1, ite_eq_right h1]
     split
     · next m heq =>
         split
@@ -158,7 +158,7 @@ theorem Lambda.unbody_code_eq_ite (c : ℕ) :
           simp only [heq, heq2, true_and]
           split_ifs <;> rfl
     · next heq =>
-        rw [if_neg]
+        rw [ite_eq_right]
         rintro ⟨ha, -⟩
         exact heq _ (Prod.ext ha rfl)
 
@@ -279,14 +279,14 @@ theorem Lambda.unbody_code_step_primrec : Primrec Lambda.unbody_code_step := by
         intro h
         rw [h] at hP
         simp at hP
-      rw [if_neg hlen]
-      simp only [hP, decide_true, cond_true, and_self, if_true]
+      rw [ite_eq_right hlen]
+      simp only [hP, decide_true, Bool.cond_true, and_self, ite_true]
       unfold Lambda.unbody_code_step_inner
       by_cases hr : (Nat.unpair (Nat.unpair L.length).2).2 < L.length
-      · rw [if_pos hr]
-      · rw [if_neg hr, List.getElem?_eq_none (by omega)]
+      · rw [ite_eq_left hr]
+      · rw [ite_eq_right hr, List.getElem?_eq_none (by omega)]
         rfl
-    · simp only [hP, decide_false, cond_false, if_false]
+    · simp only [hP, decide_false, Bool.cond_false, ite_false]
 
 /-
 The step function `Lambda.unbody_code_step` correctly computes `Lambda.unbody_code` given the list
@@ -302,9 +302,9 @@ theorem Lambda.unbody_code_eq_step (n : ℕ) :
       have hget : ((List.range n).map Lambda.unbody_code)[(Nat.unpair (Nat.unpair n).2).2]? =
           some (Lambda.unbody_code (Nat.unpair (Nat.unpair n).2).2) := by
         simp [hlt]
-      simp only [hP, and_self, if_true, if_pos hlt, Lambda.unbody_code_step_inner, hget,
+      simp only [hP, and_self, ite_true, ite_eq_left hlt, Lambda.unbody_code_step_inner, hget,
         Option.bind_some]
-    · simp only [hP, if_false]
+    · simp only [hP, ite_false]
 
 /-
 `Lambda.unbody_code` is primitive recursive.
@@ -411,19 +411,19 @@ theorem Lambda.unbody_code_eq_some_iff (c n : ℕ) :
       intro hc
       rw [Lambda.unbody_code_eq_ite] at hc
       by_cases h0 : c = Nat.pair 0 0
-      · rw [if_pos h0, Option.some_inj] at hc
+      · rw [ite_eq_left h0, Option.some_inj] at hc
         rw [← hc, h0]
         rfl
-      · rw [if_neg h0] at hc
+      · rw [ite_eq_right h0] at hc
         by_cases hP : c.unpair.1 = 1 ∧ c.unpair.2.unpair.1 = Nat.pair 0 1
-        · rw [if_pos hP] at hc
+        · rw [ite_eq_left hP] at hc
           obtain ⟨k, hk, hkn⟩ := Option.map_eq_some_iff.mp hc
           have hlt : c.unpair.2.unpair.2 < c := Lambda.decode_lt_2 (Prod.ext hP.1 rfl) rfl
           have hbody := ih _ hlt _ hk
           subst hkn
           change c = Nat.pair 1 (Nat.pair (Nat.pair 0 1) (Lambda.body_code k))
           rw [← hbody, ← hP.2, Nat.pair_unpair, ← hP.1, Nat.pair_unpair]
-        · rw [if_neg hP] at hc
+        · rw [ite_eq_right hP] at hc
           exact absurd hc (by simp)
   · exact fun h => h ▸ Lambda.unbody_code_correct n
 
@@ -445,13 +445,13 @@ theorem Lambda.unchurch_code_eq_some_iff (c n : ℕ) :
   · intro h
     rw [Lambda.unchurch_code_eq_ite] at h
     by_cases hP : c.unpair.1 = 2 ∧ c.unpair.2.unpair.1 = 2
-    · rw [if_pos hP] at h
+    · rw [ite_eq_left hP] at h
       have hbody := (Lambda.unbody_code_eq_some_iff _ _).mp h
       have h2 : Nat.pair 2 (Lambda.body_code n) = c.unpair.2 := by
         rw [← hbody, ← hP.2, Nat.pair_unpair]
       change c = Nat.pair 2 (Nat.pair 2 (Lambda.body_code n))
       rw [h2, ← hP.1, Nat.pair_unpair]
-    · rw [if_neg hP] at h
+    · rw [ite_eq_right hP] at h
       exact absurd h (by simp)
   · exact fun h => h ▸ Lambda.unchurch_code_correct n
 

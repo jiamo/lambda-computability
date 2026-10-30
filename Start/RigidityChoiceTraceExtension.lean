@@ -79,7 +79,7 @@ theorem FunctionGraph.exists_presentation {d r f : ZFSet.{u}} (hf : TransitiveNa
   classical
   let j := fun x => if hx : x ∈ d then (hf.2 x hx).choose else ∅
   have hj (x : ZFSet.{u}) (hx : x ∈ d) : j x ∈ r ∧ ZFSet.pair x (j x) ∈ f := by
-    simp only [j,dif_pos hx]
+    simp only [j,dite_eq_left hx]
     exact ⟨(hf.2 x hx).choose_spec.1,(hf.2 x hx).choose_spec.2.1⟩
   refine ⟨j,?_,fun x hx => (hj x hx).1⟩
   intro z

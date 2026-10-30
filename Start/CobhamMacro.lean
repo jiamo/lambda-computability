@@ -105,7 +105,7 @@ theorem codeS_injective (s₀ : σ) : Function.Injective (codeS s₀) := by
   · rw [hs, ht]
   · simp [hs, ht] at h
   · simp [hs, ht] at h
-  · simp only [hs, ht, if_false, add_left_inj] at h
+  · simp only [hs, ht, ite_false, add_left_inj] at h
     exact (Fintype.equivFin σ).injective (Fin.ext h)
 
 /-- Decoding a state index. -/
@@ -114,7 +114,7 @@ noncomputable def decS (s₀ : σ) (k : ℕ) : σ :=
 
 theorem decS_codeS (s₀ s : σ) : decS s₀ (codeS s₀ s) = s := by
   have h : ∃ t, codeS s₀ t = codeS s₀ s := ⟨s, rfl⟩
-  simp only [decS, h, dif_pos]
+  simp only [decS, h, dite_eq_left]
   exact codeS_injective s₀ h.choose_spec
 
 /-! ### The bit-level transducer -/
@@ -195,7 +195,7 @@ theorem ones_step (δ : σ → A → σ) (out : σ → A → List A) (s₀ s : �
   | i + 1, c, h => by
     have hc : c < wd A := by unfold wd; omega
     have hstep : bitδ δ s₀ (codeS s₀ s * wd A + c) true = codeS s₀ s * wd A + (c + 1) := by
-      simp only [bitδ, if_true, div_wd s₀ s hc, mod_wd s₀ s hc, decS_codeS]
+      simp only [bitδ, ite_true, div_wd s₀ s hc, mod_wd s₀ s hc, decS_codeS]
       congr 1
       omega
     have hout : bitOut out s₀ (codeS s₀ s * wd A + c) true = [] := by simp [bitOut]
@@ -210,10 +210,10 @@ theorem sym_step (δ : σ → A → σ) (out : σ → A → List A) (s₀ s : σ
   simp only [Nat.add_zero, Nat.zero_add] at h
   have hc : codeA a < wd A := by have := codeA_lt a; unfold wd; omega
   have hδ : bitδ δ s₀ (codeS s₀ s * wd A + codeA a) false = codeS s₀ (δ s a) * wd A := by
-    simp only [bitδ, Bool.false_eq_true, if_false, div_wd s₀ s hc, mod_wd s₀ s hc, decS_codeS,
+    simp only [bitδ, Bool.false_eq_true, ite_false, div_wd s₀ s hc, mod_wd s₀ s hc, decS_codeS,
       decA_codeA]
   have hout : bitOut out s₀ (codeS s₀ s * wd A + codeA a) false = enc (out s a) := by
-    simp only [bitOut, Bool.false_eq_true, if_false, div_wd s₀ s hc, mod_wd s₀ s hc, decS_codeS,
+    simp only [bitOut, Bool.false_eq_true, ite_false, div_wd s₀ s hc, mod_wd s₀ s hc, decS_codeS,
       decA_codeA]
   constructor
   · rw [encSym, lst_append', h.1, lst, lst, hδ]

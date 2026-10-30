@@ -68,14 +68,14 @@ theorem useStage_lt_use (h : Converges A c x) : useStage A c x < use A c x := by
 theorem isSome_oracleStep_useStage (h : Converges A c x) :
     (oracleStep A c x (useStage A c x)).isSome := by
   classical
-  rw [useStage, dif_pos h]
+  rw [useStage, dite_eq_left h]
   exact Nat.find_spec h
 
 /-- No stage below the use stage succeeds. -/
 theorem oracleStep_eq_none_of_lt_useStage (h : Converges A c x) {m : ℕ}
     (hm : m < useStage A c x) : oracleStep A c x m = none := by
   classical
-  rw [useStage, dif_pos h] at hm
+  rw [useStage, dite_eq_left h] at hm
   have := Nat.find_min h hm
   cases hval : oracleStep A c x m with
   | none => rfl
@@ -85,7 +85,7 @@ theorem oracleStep_eq_none_of_lt_useStage (h : Converges A c x) {m : ℕ}
 theorem useStage_le_of_isSome (h : Converges A c x) {s : ℕ} (hs : (oracleStep A c x s).isSome) :
     useStage A c x ≤ s := by
   classical
-  rw [useStage, dif_pos h]
+  rw [useStage, dite_eq_left h]
   exact Nat.find_le hs
 
 /-- Minimality of the use: it is the least bound of the form "stage `+ 1`". -/

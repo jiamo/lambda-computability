@@ -43,10 +43,10 @@ termination_by n
 theorem decode_encodeTy : ∀ T : Ty, decodeTy (encodeTy T) = T
   | .top => by simp [encodeTy, decodeTy]
   | .var i => by
-      rw [encodeTy, decodeTy, dif_neg (by omega), if_pos (by omega)]
+      rw [encodeTy, decodeTy, dite_eq_right (by omega), ite_eq_left (by omega)]
       congr 1; omega
   | .all S T => by
-      rw [encodeTy, decodeTy, dif_neg (by omega), if_neg (by omega)]
+      rw [encodeTy, decodeTy, dite_eq_right (by omega), ite_eq_right (by omega)]
       have : (2 * Nat.pair (encodeTy S) (encodeTy T) + 2 - 2) / 2 =
           Nat.pair (encodeTy S) (encodeTy T) := by omega
       simp only [this, Nat.unpair_pair, decode_encodeTy S, decode_encodeTy T]
@@ -132,7 +132,7 @@ theorem frameD_range' (h : ℕ → ℕ) (q : ℕ) : ∀ (m s : ℕ),
   | 0, s => by simp [frameD, Ty.lift]
   | m + 1, s => by
       rw [List.range'_succ, List.map_cons, frameD, frameD_range' h q m (s + 1)]
-      simp only [List.foldr_cons, Ty.lift, Nat.not_lt_zero, if_false]
+      simp only [List.foldr_cons, Ty.lift, Nat.not_lt_zero, ite_false]
       congr 3
       congr 1
       omega

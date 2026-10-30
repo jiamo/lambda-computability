@@ -79,7 +79,7 @@ theorem Lambda.code_step'_sound_lam (t : Lambda) (ih : Lambda.code_step'_sound_p
       simp only [List.length_map, List.length_range, hu]
       rw [Lambda.step_code_case2_eq]
       simp only [List.length_map, List.length_range, hu]
-      rw [if_pos hlt, hget]
+      rw [ite_eq_left hlt, hget]
       rfl
     have hstep : Lambda.code_step' (Lambda.encode (Lambda.lam t)) =
         (Lambda.step_code_case2_inner (Lambda.code_step' (Lambda.encode t))).join := by
@@ -182,7 +182,7 @@ theorem Lambda.code_step'_app_left (t1 t2 : Lambda) (c1' : ℕ)
         show (Nat.unpair (Nat.unpair (Lambda.encode (Lambda.app t1 t2))).2)
             = (Lambda.encode t1, Lambda.encode t2) from by rw [Lambda.encode]; simp]
       dsimp only
-      rw [if_pos ⟨hlt1, hlt2⟩]
+      rw [ite_eq_left ⟨hlt1, hlt2⟩]
       rcases hc1 : Nat.unpair (Lambda.encode t1) with ⟨a, b⟩
       have ha : a ≠ 2 := by
         have h2 := Lambda.encode_tag_ne_2_of_not_lam t1 h_not_lam
@@ -228,7 +228,7 @@ theorem Lambda.code_step'_app_right (t1 t2 : Lambda) (c2' : ℕ)
         show (Nat.unpair (Nat.unpair (Lambda.encode (Lambda.app t1 t2))).2)
             = (Lambda.encode t1, Lambda.encode t2) from by rw [Lambda.encode]; simp]
       dsimp only
-      rw [if_pos ⟨hlt1, hlt2⟩]
+      rw [ite_eq_left ⟨hlt1, hlt2⟩]
       rcases hc1 : Nat.unpair (Lambda.encode t1) with ⟨a, b⟩
       have ha : a ≠ 2 := by
         have h2 := Lambda.encode_tag_ne_2_of_not_lam t1 h_not_lam
@@ -272,7 +272,7 @@ theorem Lambda.code_step'_app_none (t1 t2 : Lambda)
         show (Nat.unpair (Nat.unpair (Lambda.encode (Lambda.app t1 t2))).2)
             = (Lambda.encode t1, Lambda.encode t2) from by rw [Lambda.encode]; simp]
       dsimp only
-      rw [if_pos ⟨hlt1, hlt2⟩]
+      rw [ite_eq_left ⟨hlt1, hlt2⟩]
       rcases hc1 : Nat.unpair (Lambda.encode t1) with ⟨a, b⟩
       have ha : a ≠ 2 := by
         have h2 := Lambda.encode_tag_ne_2_of_not_lam t1 h_not_lam
@@ -649,7 +649,7 @@ theorem Lambda.code_step'_eq_step_normal (t : Lambda) :
       simp only [Nat.unpair_pair, List.getElem?_map]
       have hlt : Lambda.encode t < Nat.pair 2 (Lambda.encode t) := by
         exact Lambda.decode_lt_3 (by simp )
-      rw [if_pos hlt]
+      rw [ite_eq_left hlt]
       have hget :
           Option.map Lambda.code_step' ((List.range t.lam.encode)[t.encode]?) =
             some (Lambda.code_step' t.encode) := by

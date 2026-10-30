@@ -303,7 +303,7 @@ theorem eval_guardT (M : Machine) (x : List Bool) (s : ℕ) (a b i j q : ℕ) (b
         rw [Cob.eval_bitU, h6]
         simp
       rw [Cob.eval_iteW (p := false) (by rw [heq]; simp [hend]) rfl rfl]
-      simp only [Bool.false_eq_true, if_false, hsome]
+      simp only [Bool.false_eq_true, ite_false, hsome]
       cases hx : x.getD i false with
       | false =>
           rw [Cob.eval_iteW (p := false) (by rw [hbit, hx]) (Cob.eval_constT _ _)
@@ -332,7 +332,7 @@ theorem eval_caseTerm (M : Machine) (x : List Bool) (s : ℕ) (a b i j q : ℕ) 
     (Cob.eval_constT _ _)]
   by_cases h : t ∈ M.delta q x[i]? bit ∧ moveWork j t.2.2.2 < s
   · simp [h.1, h.2]
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     by_cases h₁ : t ∈ M.delta q x[i]? bit
     · have h₂ : ¬ moveWork j t.2.2.2 < s := fun hc => h ⟨h₁, hc⟩
       simp [h₁, h₂]

@@ -100,9 +100,9 @@ theorem restrictionAvg_lower_tail (p : ℝ) (hp : 0 ≤ p) (hp1 : p ≤ 1) :
         (2 : ℝ) ^ (μ / 2) * (2 : ℝ) ^ (-(Fintype.card (Live σ) : ℝ)) := by
     intro σ
     by_cases hσ : (Fintype.card (Live σ) : ℝ) < μ / 2
-    · rw [if_pos hσ, ← Real.rpow_add (by norm_num : (0 : ℝ) < 2)]
+    · rw [ite_eq_left hσ, ← Real.rpow_add (by norm_num : (0 : ℝ) < 2)]
       exact Real.one_le_rpow (by norm_num) (by linarith)
-    · rw [if_neg hσ]
+    · rw [ite_eq_right hσ]
       exact mul_nonneg (Real.rpow_nonneg (by norm_num) _)
         (Real.rpow_nonneg (by norm_num) _)
   calc
@@ -127,9 +127,9 @@ theorem restrictionAvg_upper_tail (p : ℝ) (hp : 0 ≤ p) (hp1 : p ≤ 1) :
         (2 : ℝ) ^ (-(2 * μ)) * (2 : ℝ) ^ (Fintype.card (Live σ) : ℝ) := by
     intro σ
     by_cases hσ : 2 * μ < (Fintype.card (Live σ) : ℝ)
-    · rw [if_pos hσ, ← Real.rpow_add (by norm_num : (0 : ℝ) < 2)]
+    · rw [ite_eq_left hσ, ← Real.rpow_add (by norm_num : (0 : ℝ) < 2)]
       exact Real.one_le_rpow (by norm_num) (by linarith)
-    · rw [if_neg hσ]
+    · rw [ite_eq_right hσ]
       exact mul_nonneg (Real.rpow_nonneg (by norm_num) _)
         (Real.rpow_nonneg (by norm_num) _)
   calc

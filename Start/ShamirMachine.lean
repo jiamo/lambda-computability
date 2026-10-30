@@ -142,7 +142,7 @@ def stepW (p N d : ℕ) (s : St) : St :=
 /-! ### Halting -/
 
 theorem stepW_halted {p N d : ℕ} {s : St} (h : s.H ≠ []) : stepW p N d s = s := by
-  rw [stepW, if_pos h]
+  rw [stepW, ite_eq_left h]
 
 theorem iterate_halted {p N d : ℕ} {s : St} (h : s.H ≠ []) :
     ∀ K, (stepW p N d)^[K] s = s
@@ -190,7 +190,7 @@ theorem stepW_bin {s : St} (hH : s.H = []) {b : Bool} {X : Word} (hC : s.C = tru
           S := encMsg s.A ++ encMsg (un (fieldAt 1 (trimW w) % p)) ++ s.S
           T := T' }
       else rej s := by
-  simp only [stepW, hH, hC, hT, bit, ne_eq, not_true_eq_false, if_false, List.drop_zero,
+  simp only [stepW, hH, hC, hT, bit, ne_eq, not_true_eq_false, ite_false, List.drop_zero,
     List.headD_cons, List.drop_succ_cons, recGet_encMsg, recSkip_encMsg]
   simp
 
@@ -207,8 +207,8 @@ theorem stepW_lin {s : St} (hH : s.H = []) {b : Bool} {X : Word}
           V := un (hornerN (z.length % p) p (decF w))
           T := T' }
       else rej s := by
-  simp only [stepW, hH, hC, hT, bit, ne_eq, not_true_eq_false, if_false, List.drop_zero,
-    List.headD_cons, List.drop_succ_cons, recGet_encMsg, recSkip_encMsg, hJ, if_true,
+  simp only [stepW, hH, hC, hT, bit, ne_eq, not_true_eq_false, ite_false, List.drop_zero,
+    List.headD_cons, List.drop_succ_cons, recGet_encMsg, recSkip_encMsg, hJ, ite_true,
     Bool.true_eq_false]
   by_cases h1 : dropFs (d + 1) (trimW w) = [] <;> simp [h1]
 
@@ -225,7 +225,7 @@ theorem stepW_quant {s : St} (hH : s.H = []) {b : Bool} {i : ℕ} {X : Word}
           V := un (hornerN (z.length % p) p (decF w))
           T := T' }
       else rej s := by
-  simp only [stepW, hH, hC, hT, bit, ne_eq, not_true_eq_false, if_false, List.drop_zero,
+  simp only [stepW, hH, hC, hT, bit, ne_eq, not_true_eq_false, ite_false, List.drop_zero,
     List.headD_cons, List.drop_succ_cons, recGet_encMsg, recSkip_encMsg, hJ,
     Bool.true_eq_false, EvalW.lead1_unary, EvalW.drop1_unary, List.tail_cons]
   by_cases h1 : dropFs (d + 1) (trimW w) = [] <;> simp [h1]

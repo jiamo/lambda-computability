@@ -39,7 +39,7 @@ theorem countable_ground_generic (M : ZFSet.{u}) [Countable (Conditions M)]
     rw [hm]; exact hE
   obtain ⟨q,hq,hqn⟩ := hG n
   refine ⟨q,hq,?_⟩
-  simpa only [D,if_pos hd,Set.mem_ofPred_eq,hm] using hqn
+  simpa only [D,ite_eq_left hd,Set.mem_ofPred_eq,hm] using hqn
 
 end TuringRigidity.AtomicForcing
 

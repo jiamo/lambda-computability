@@ -44,7 +44,7 @@ theorem evalC_resolvent {τ : ℕ → Bool} {k : ℕ} {C₁ C₂ : Clause} (h₁
   by_cases e1 : l = (true, k)
   · by_cases e2 : l' = (false, k)
     · subst e1; subst e2
-      simp only [if_true] at hlv
+      simp only [ite_true] at hlv
       simp [hlv] at hl'v
     · exact ⟨l', List.mem_append_right _ (List.mem_filter.2 ⟨hl', by simpa using e2⟩), hl'v⟩
   · exact ⟨l, List.mem_append_left _ (List.mem_filter.2 ⟨hl, by simpa using e1⟩), hlv⟩
@@ -213,14 +213,14 @@ theorem isCrit_moveHole {i j l : ℕ} {g : ℕ → Option ℕ} (hg : IsCrit P H 
     · simp [e1] at h1
     by_cases e3 : a' = j
     · simp [e3] at h2
-    simp only [e1, e3, if_false] at h1 h2
+    simp only [e1, e3, ite_false] at h1 h2
     by_cases e2 : a = i <;> by_cases e4 : a' = i
     · rw [e2, e4]
-    · simp only [e2, if_true, Option.some.injEq, e4, if_false] at h1 h2
+    · simp only [e2, ite_true, Option.some.injEq, e4, ite_false] at h1 h2
       subst h1; exact absurd (hg.inj _ _ _ h2 hl) e3
-    · simp only [e2, if_false, e4, if_true, Option.some.injEq] at h1 h2
+    · simp only [e2, ite_false, e4, ite_true, Option.some.injEq] at h1 h2
       subst h2; exact absurd (hg.inj _ _ _ h1 hl) e1
-    · simp only [e2, e4, if_false] at h1 h2; exact hg.inj _ _ _ h1 h2
+    · simp only [e2, e4, ite_false] at h1 h2; exact hg.inj _ _ _ h1 h2
   · intro b hb
     obtain ⟨a, ha⟩ := hg.surj b hb
     by_cases haj : a = j
@@ -254,7 +254,7 @@ theorem mem_monoVars_of_flip {i j l : ℕ} {g : ℕ → Option ℕ} (hg : IsCrit
       simp [critAsg, hupd, hkj]
     rw [h1] at hv
     cases b
-    · simp only [Bool.false_eq_true, if_false] at hv hfl
+    · simp only [Bool.false_eq_true, ite_false] at hv hfl
       have h2 : critAsg n g k = true := by simpa using hfl
       simp only [critAsg, hkj, hl, decide_eq_true_eq, Option.some.injEq] at h2
       right
@@ -267,7 +267,7 @@ theorem mem_monoVars_of_flip {i j l : ℕ} {g : ℕ → Option ℕ} (hg : IsCrit
       rw [h1] at hfl
       cases b
       · simp at hfl
-      · simp only [if_true] at hv
+      · simp only [ite_true] at hv
         have hv' : l = k % n := by
           simp [critAsg, hupd, hki] at hv
           exact hv.2

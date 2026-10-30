@@ -63,12 +63,12 @@ theorem hashUpdateRow_getD_self (u x : List Bool) (i : ℕ)
     (hashUpdateRow u x i js c).getD i false =
       Bool.xor (c.getD i false)
         (xorBits (js.map fun j => u.getD (i + j) false && x.getD j false)) := by
-  simpa only [if_pos rfl, ite_true] using hashUpdateRow_getD u x i js c i hi
+  simpa only [ite_eq_left rfl, ite_true] using hashUpdateRow_getD u x i js c i hi
 
 theorem hashUpdateRow_getD_ne (u x : List Bool) (i : ℕ)
     (js : List ℕ) (c : List Bool) (k : ℕ) (hi : i < c.length) (hik : i ≠ k) :
     (hashUpdateRow u x i js c).getD k false = c.getD k false := by
-  simpa only [if_neg hik, Bool.xor_false] using hashUpdateRow_getD u x i js c k hi
+  simpa only [ite_eq_right hik, Bool.xor_false] using hashUpdateRow_getD u x i js c k hi
 
 def hashRowBit (u x : List Bool) (i : ℕ) : Bool :=
   xorBits ((List.range x.length).map fun j =>
@@ -251,7 +251,7 @@ theorem hashByUpdates_ofFn_eq {d r : ℕ} (u : BitWord (d + r - 1)) (x : BitWord
   · intro k hk hl
     have hkr : k < r := by simpa only [List.length_ofFn] using hl
     have hleft := hashByUpdates_getD r (List.ofFn u) (List.ofFn x) k
-    rw [if_pos hkr, List.getD_eq_getElem _ _ hk] at hleft
+    rw [ite_eq_left hkr, List.getD_eq_getElem _ _ hk] at hleft
     simpa using hleft.trans (hashRowBit_ofFn u x ⟨k, hkr⟩)
 
 end DepthThreeLowerBound

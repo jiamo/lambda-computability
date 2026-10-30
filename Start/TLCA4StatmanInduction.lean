@@ -43,7 +43,7 @@ theorem neutral_subst_ne {h : Lambda} (hn : Neutral h) {z w : ℕ} (hh : hd h = 
   | var n =>
       simp only [hd, Option.some.injEq] at hh
       subst hh
-      simp only [Lambda.subst, hw, if_false]
+      simp only [Lambda.subst, hw, ite_false]
       split_ifs <;> exact ⟨Neutral.var _, rfl⟩
   | app N _ ih =>
       obtain ⟨h1, h2⟩ := ih hh
@@ -94,7 +94,7 @@ theorem neutral_subst_head {h : Lambda} (hn : Neutral h) {Q : Lambda} {z q : ℕ
   | var n =>
       simp only [hd, Option.some.injEq] at hh
       subst hh
-      simp only [Lambda.subst, if_true]
+      simp only [Lambda.subst, ite_true]
       exact ⟨hQ, hq⟩
   | app N _ ih =>
       obtain ⟨h1, h2⟩ := ih hh

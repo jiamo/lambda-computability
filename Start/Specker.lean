@@ -84,7 +84,7 @@ theorem speckerVal_eq_sum_range {s s' : ℕ} (h : s ≤ s') :
   refine Finset.sum_subset (Finset.range_subset_range.mpr h) ?_
   intro k _ hk
   simp only [speckerTerm, Finset.mem_range] at hk ⊢
-  rw [if_neg]
+  rw [ite_eq_right]
   rintro ⟨h1, _⟩
   exact hk h1
 
@@ -92,7 +92,7 @@ theorem speckerTerm_le {s s' k : ℕ} (h : s ≤ s') : speckerTerm s k ≤ speck
   unfold speckerTerm
   split
   · rename_i hs
-    rw [if_pos ⟨lt_of_lt_of_le hs.1 h, entered_mono h hs.2⟩]
+    rw [ite_eq_left ⟨lt_of_lt_of_le hs.1 h, entered_mono h hs.2⟩]
   · exact speckerTerm_nonneg _ _
 
 theorem speckerVal_monotone : Monotone speckerVal := by
@@ -130,20 +130,20 @@ theorem speckerVal_jump {k s s' : ℕ} (hss : s ≤ s') (hk : k < s') (hne : ent
     · subst hjk
       have h1 : speckerTerm s j = 0 := by
         unfold speckerTerm
-        rw [if_neg]
+        rw [ite_eq_right]
         rintro ⟨_, h2⟩
         rw [hne] at h2
         exact Bool.noConfusion h2
       have h2 : speckerTerm s' j = (1 : ℚ) / 2 ^ (j + 1) := by
         unfold speckerTerm
-        rw [if_pos ⟨hk, he⟩]
-      rw [h1, h2, if_pos rfl]
+        rw [ite_eq_left ⟨hk, he⟩]
+      rw [h1, h2, ite_eq_left rfl]
       simp
-    · rw [if_neg hjk, add_zero]
+    · rw [ite_eq_right hjk, add_zero]
       exact speckerTerm_le hss
   have hsum := Finset.sum_le_sum hsplit
   rw [Finset.sum_add_distrib, Finset.sum_ite_eq' (Finset.range s') k
-    (fun _ => (1 : ℚ) / 2 ^ (k + 1)), if_pos (Finset.mem_range.2 hk)] at hsum
+    (fun _ => (1 : ℚ) / 2 ^ (k + 1)), ite_eq_left (Finset.mem_range.2 hk)] at hsum
   rw [speckerVal_eq_sum_range hss]
   exact hsum
 
@@ -195,7 +195,7 @@ theorem speckerNumAux_eq (n : ℕ) : ∀ j, j ≤ n →
         cases entered j (m + (j + 1)) with
         | false => simp
         | true =>
-            rw [if_pos (And.intro (show j < m + (j + 1) by omega) rfl)]
+            rw [ite_eq_left (And.intro (show j < m + (j + 1) by omega) rfl)]
             simp only [Bool.cond_true, Nat.add_sub_cancel, pow_add]
             field_simp
       rw [hterm]

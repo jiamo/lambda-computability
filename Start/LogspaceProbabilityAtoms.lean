@@ -208,10 +208,10 @@ lemma bin_mem {x k} (h:0≤x) : 0 ≤ bin k x ∧ bin k x ≤ x := by
 
 lemma sw_bot {x k} (h:x≤1/2) : sw k x=0 := by rw [sw,cut_low h]; ring
 lemma sw_top {x k} (h:16≤x) (e:k≠0) : sw k x=0 := by
-  rw [sw,highcut,if_neg e,cut_high (show 1≤x/16 by linarith)]; ring
+  rw [sw,highcut,ite_eq_right e,cut_high (show 1≤x/16 by linarith)]; ring
 
 lemma sw_succ (k x) : sw (k+1) x=cut x-cut (x/16) := by
-   rw [sw,highcut,if_neg (by omega)]
+   rw [sw,highcut,ite_eq_right (by omega)]
    rcases le_total 1 x with h|h
    · rw [cut_high h]; ring
    · rw [cut_low (by linarith : x/16≤1/2)]; ring
@@ -307,7 +307,7 @@ lemma dir_regular (P : Const) :
     intro x
     refine ⟨?_,share_le h0 _⟩
     unfold share Hie.slice
-    rw [if_pos rfl, div_eq_mul_inv]
+    rw [ite_eq_left rfl, div_eq_mul_inv]
     obtain ⟨hv,hu⟩ := rising_mem bound0 bound1 x
     change q ≤ 1-_+_*q
     have hh:q ≤ 1 := by unfold q; rw [inv_le_one₀ hp]; exact hm
@@ -771,7 +771,7 @@ lemma has_main {f} (he : 0<t.z) (h:t.Agree g f)
     y ∈ t.present f false x := by
   unfold pre at hi; split at hi
   · next e=>
-    obtain ⟨e,s,-⟩:=e; unfold present; rw [if_pos e]
+    obtain ⟨e,s,-⟩:=e; unfold present; rw [ite_eq_left e]
     exact Blob.exposed_main (h x e) he s v hw hi
   · exact (hi rfl).elim
 
@@ -779,7 +779,7 @@ lemma has_witness {f x y} (he : 0<t.z) (h:t.Agree g f) (hi:t.witness g false x y
     y∈ t.present f true x := by
   unfold witness pre at hi; split at hi
   · next e=>
-    obtain ⟨e,s,-⟩:=e; unfold present; rw [if_pos e]
+    obtain ⟨e,s,-⟩:=e; unfold present; rw [ite_eq_left e]
     exact Blob.exposed_supp (h x e) he s hi
   · exact (hi rfl).elim
 
@@ -818,7 +818,7 @@ lemma nonzero_present {f w x y v b col} (he:0<t.z) (h:t.Agree g f)
       obtain ⟨e,w⟩:=mem_filter.1 hh
       exact mem_filter.2 ⟨e,le_of_eq (Eq.symm (t.protect g he h w))⟩
     apply hz
-    rw [incG,if_pos s,shutoff_zero (by linarith : 1/2≤ t.rankin g y)]
+    rw [incG,ite_eq_left s,shutoff_zero (by linarith : 1/2≤ t.rankin g y)]
     ring
   · exact hi
 

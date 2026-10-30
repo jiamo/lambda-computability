@@ -212,17 +212,17 @@ theorem eval_blkT (s : ℕ) (b : Bool) (c : ℕ) :
         · simp [blkT, cblk, gblk, emits]
         · simp [blkT, cblk, gblk, emits]
         · simp [blkT, cblk, gblk, emits]
-        · rw [show blkT 3 false = inpT from rfl, cblk, gblk, if_pos (by simp [emits]),
+        · rw [show blkT 3 false = inpT from rfl, cblk, gblk, ite_eq_left (by simp [emits]),
             show readGate 3 y = Gate.inp (fldA y) from rfl, eval_inpT]
-        · rw [show blkT 4 false = cstFT from rfl, cblk, gblk, if_pos (by simp [emits]),
+        · rw [show blkT 4 false = cstFT from rfl, cblk, gblk, ite_eq_left (by simp [emits]),
             show readGate 4 y = Gate.cst false from rfl, eval_cstFT]
-        · rw [show blkT 5 false = cstTT from rfl, cblk, gblk, if_pos (by simp [emits]),
+        · rw [show blkT 5 false = cstTT from rfl, cblk, gblk, ite_eq_left (by simp [emits]),
             show readGate 5 y = Gate.cst true from rfl, eval_cstTT]
-        · rw [show blkT 6 false = negT from rfl, cblk, gblk, if_pos (by simp [emits]),
+        · rw [show blkT 6 false = negT from rfl, cblk, gblk, ite_eq_left (by simp [emits]),
             show readGate 6 y = Gate.neg (fldA y) from rfl, eval_negT]
-        · rw [show blkT 7 false = conjT from rfl, cblk, gblk, if_pos (by simp [emits]),
+        · rw [show blkT 7 false = conjT from rfl, cblk, gblk, ite_eq_left (by simp [emits]),
             show readGate 7 y = Gate.conj (fldA y) (fldB y) from rfl, eval_conjT]
-        · rw [show blkT 8 false = disjT from rfl, cblk, gblk, if_pos (by simp [emits]),
+        · rw [show blkT 8 false = disjT from rfl, cblk, gblk, ite_eq_left (by simp [emits]),
             show readGate 8 y = Gate.disj (fldA y) (fldB y) from rfl, eval_disjT]
       · obtain ⟨n, rfl⟩ : ∃ n, s = n + 9 := ⟨s - 9, by omega⟩
         simp [blkT, cblk, gblk, emits]

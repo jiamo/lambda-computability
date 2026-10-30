@@ -89,16 +89,16 @@ theorem next_exists (A : Oracle) : ∃ g : ℕ → ℕ,
       (fun v => by simp only [Nat.unpair_pair]; rfl)
   refine ⟨g,hrec,fun x p => ?_,fun x p hn => ?_⟩
   · by_cases hz : search (Nat.pair x p) = 0
-    · simpa only [g,if_pos hz,Nat.unpair_pair] using next_extends A (Nat.pair x p)
-    · simp only [g,if_neg hz,Nat.unpair_pair,EffectiveSplitConditions.update,↓reduceIte,condition_code]
+    · simpa only [g,ite_eq_left hz,Nat.unpair_pair] using next_extends A (Nat.pair x p)
+    · simp only [g,ite_eq_right hz,Nat.unpair_pair,EffectiveSplitConditions.update,↓reduceIte,condition_code]
       exact ⟨append_extends _ _ _,rfl⟩
   · rcases hsearch (Nat.pair x p) with ⟨hz,hno⟩ | ⟨hpos,hbad⟩
-    · simp only [g,if_pos hz]
+    · simp only [g,ite_eq_left hz]
       rcases (StablePair.next_precise A x p hn).2.2 with ⟨he,ho⟩ | hd
       · exact Or.inr ⟨he,hno,ho⟩
       · exact Or.inl (Or.inr hd)
     · have hz : search (Nat.pair x p) ≠ 0 := by omega
-      simp only [g,if_neg hz,Nat.unpair_pair]
+      simp only [g,ite_eq_right hz,Nat.unpair_pair]
       exact Or.inl (bad_decisive A x p _ hn hbad)
 
 theorem pair_exists (A : Oracle) : ∃ f : ℕ → ℕ,

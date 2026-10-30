@@ -204,7 +204,7 @@ theorem exists_code_decider_of_computablePred {C : ℕ → Prop} (h : Computable
     · intro hCn
       have hfx : f n = Bool.true := hiff.2 hCn
       rw [hfx] at hred
-      simp only [cond_true] at hred
+      simp only [Bool.cond_true] at hred
       exact Lambda.reduces_trans hred Lambda.isZero_zero
     · intro hCn
       have hfx : f n = Bool.false := by
@@ -212,7 +212,7 @@ theorem exists_code_decider_of_computablePred {C : ℕ → Prop} (h : Computable
         · exact absurd (hiff.1 hb) hCn
         · simpa using hb
       rw [hfx] at hred
-      simp only [cond_false] at hred
+      simp only [Bool.cond_false] at hred
       exact Lambda.reduces_trans hred (Lambda.isZero_succ 0)
 
 /-- From a computable characteristic function for `CodeSet A` we can build a closed lambda term

@@ -98,7 +98,7 @@ theorem stepList_scan_lt {x : List Bool} {n : ℕ} (hn : n < x.length) :
       M.step (M.evalFrom M.start (x.take n)) x[n] := by
     rw [List.take_add_one, hx, Option.toList_some, DFA.evalFrom_append_singleton]
   have hmin : min (n + 1) x.length = n + 1 := by omega
-  simp only [Machine.stepList, machine, scan, hlt, if_true, hx, getD_tp, dec_enc]
+  simp only [Machine.stepList, machine, scan, hlt, ite_true, hx, getD_tp, dec_enc]
   simp only [moveIn, moveWork, hmin, htake, List.map_cons, List.map_nil, writeAt_tp, List.cons.injEq,
     and_true]
   simp [tp]
@@ -107,7 +107,7 @@ theorem stepList_scan_length (x : List Bool) :
     (machine M).stepList x (scan M x x.length) = [final M x] := by
   have hlt := enc_lt M (M.evalFrom M.start x)
   have hx : x[x.length]? = none := List.getElem?_eq_none (le_refl _)
-  simp only [scan, List.take_length, Machine.stepList, machine, hlt, if_true, hx, getD_tp]
+  simp only [scan, List.take_length, Machine.stepList, machine, hlt, ite_true, hx, getD_tp]
   simp [moveIn, moveWork, writeAt_tp, final, DFA.eval]
 
 theorem stepList_final (x : List Bool) : (machine M).stepList x (final M x) = [] := by

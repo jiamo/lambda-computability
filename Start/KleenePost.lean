@@ -87,7 +87,7 @@ theorem diag_spec (sigma tau : List Bool) (e : ℕ) (A B : ℕ → Bool)
   rw [diag] at hA hB
   split at hA
   · rename_i h
-    rw [dif_pos h] at hB
+    rw [dite_eq_left h] at hB
     -- the forced value converges, but the characteristic function was chosen to differ from it
     have hpre : h.choose.1 <+: h.choose.1 ++ [false] := ⟨_, rfl⟩
     have hforce : h.choose.2 ∈ Phi B e sigma.length :=
@@ -103,7 +103,7 @@ theorem diag_spec (sigma tau : List Bool) (e : ℕ) (A B : ℕ → Bool)
     · rw [hAx] at hval; simp [hone] at hval
     · rw [hAx] at hval; simp [hone] at hval
   · rename_i h
-    rw [dif_neg h] at hB
+    rw [dite_eq_right h] at hB
     -- no extension forces a value, so the computation diverges while the oracle answer does not
     have hdiv := not_mem_of_no_forcing_extension h (strAgree_of_prefix ⟨_, rfl⟩ hB)
     exact hdiv _ (hEq ▸ (by simp [oracleFun] : (if A sigma.length then 1 else 0) ∈
@@ -197,7 +197,7 @@ theorem kpA_ne_phi (e : ℕ) : Phi kpB e ≠ oracleFun kpA := by
   intro hEq
   have hstage : kpPair (2 * e + 1) = diag (kpPair (2 * e)).1 (kpPair (2 * e)).2 e := by
     rw [kpPair]
-    rw [if_pos (by omega), show 2 * e / 2 = e by omega]
+    rw [ite_eq_left (by omega), show 2 * e / 2 = e by omega]
   have hA : strAgree (diag (kpPair (2 * e)).1 (kpPair (2 * e)).2 e).1 kpA := by
     rw [← hstage]; exact kpA_agree _
   have hB : strAgree (diag (kpPair (2 * e)).1 (kpPair (2 * e)).2 e).2 kpB := by
@@ -211,7 +211,7 @@ theorem kpB_ne_phi (e : ℕ) : Phi kpA e ≠ oracleFun kpB := by
   have hstage : kpPair (2 * e + 2) =
       Prod.swap (diag (kpPair (2 * e + 1)).2 (kpPair (2 * e + 1)).1 e) := by
     rw [show 2 * e + 2 = (2 * e + 1) + 1 from rfl, kpPair]
-    rw [if_neg (by omega), show (2 * e + 1) / 2 = e by omega]
+    rw [ite_eq_right (by omega), show (2 * e + 1) / 2 = e by omega]
   have hA : strAgree
       (diag (kpPair (2 * e + 1)).2 (kpPair (2 * e + 1)).1 e).1 kpB := by
     have := kpB_agree (2 * e + 2)

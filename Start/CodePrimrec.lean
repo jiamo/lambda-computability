@@ -567,8 +567,8 @@ theorem eval_ecf_primrec : Primrec₂ eval_ecf := by
     intro f x
     unfold eval_ecf
     by_cases h : x < f.1.length
-    · rw [if_pos h, List.getElem?_eq_getElem h, Option.getD_some, getElem!_pos f.1 x h]
-    · rw [if_neg h, List.getElem?_eq_none (not_lt.mp h), Option.getD_none]
+    · rw [ite_eq_left h, List.getElem?_eq_getElem h, Option.getD_some, getElem!_pos f.1 x h]
+    · rw [ite_eq_right h, List.getElem?_eq_none (not_lt.mp h), Option.getD_none]
   have h_get : Primrec (fun p : (List ℕ × ℕ) × ℕ => p.1.1[p.2]?) :=
     Primrec.list_getElem?.comp (Primrec.fst.comp Primrec.fst) Primrec.snd
   exact Primrec.of_eq (Primrec.option_getD.comp h_get (Primrec.snd.comp Primrec.fst))
@@ -819,7 +819,7 @@ theorem Lambda.lift_ecf_eq_step (n : ℕ) (m : ℕ) :
                 unfold Lambda.lift_ecf
                 rw [Nat.strongRecOn_eq]
                 dsimp
-                rw [if_neg htag0, if_pos htag1]
+                rw [ite_eq_right htag0, ite_eq_left htag1]
                 rw [hm_data, hdata]
               simpa [htarget] using hstep
           | succ tag =>
@@ -849,7 +849,7 @@ theorem Lambda.lift_ecf_eq_step (n : ℕ) (m : ℕ) :
                     unfold Lambda.lift_ecf
                     rw [Nat.strongRecOn_eq]
                     dsimp
-                    rw [if_neg htag0, if_neg htag1, if_pos htag2]
+                    rw [ite_eq_right htag0, ite_eq_right htag1, ite_eq_left htag2]
                     rw [hm_data]
                   simpa [htarget] using hstep
               | succ tag =>
@@ -1232,7 +1232,7 @@ theorem Lambda.step_code_case2_spec (L : List (Option ℕ)) (t1 : Lambda) (c' : 
     unfold Lambda.step_code_case2 at h_res
     simp only [h_len, show Lambda.encode (Lambda.lam t1) = Nat.pair 2 (Lambda.encode t1) from rfl,
       Nat.unpair_pair] at h_res
-    rw [if_pos (Lambda.lt_pair_of_pos (by norm_num) _)] at h_res
+    rw [ite_eq_left (Lambda.lt_pair_of_pos (by norm_num) _)] at h_res
     rcases hL : L[Lambda.encode t1]? with _ | res
     · rw [hL] at h_res
       exact absurd h_res (by simp)
@@ -1282,16 +1282,16 @@ theorem Lambda.subst_ecf_eq (s_code n : ℕ) :
   conv_lhs => unfold Lambda.subst_ecf
   rw [Nat.strongRecOn_eq]
   by_cases h0 : (Nat.unpair n).1 = 0
-  · rw [dif_pos h0, if_pos h0]
-  · rw [dif_neg h0, if_neg h0]
+  · rw [dite_eq_left h0, ite_eq_left h0]
+  · rw [dite_eq_right h0, ite_eq_right h0]
     by_cases h1 : (Nat.unpair n).1 = 1
-    · rw [dif_pos h1, if_pos h1]
+    · rw [dite_eq_left h1, ite_eq_left h1]
       rfl
-    · rw [dif_neg h1, if_neg h1]
+    · rw [dite_eq_right h1, ite_eq_right h1]
       by_cases h2 : (Nat.unpair n).1 = 2
-      · rw [dif_pos h2, if_pos h2]
+      · rw [dite_eq_left h2, ite_eq_left h2]
         rfl
-      · rw [dif_neg h2, if_neg h2]
+      · rw [dite_eq_right h2, ite_eq_right h2]
 
 open Lambda in
 theorem Lambda.subst_ecf_eq_step (s_code : ℕ) (n : ℕ) :
@@ -1310,15 +1310,15 @@ theorem Lambda.subst_ecf_eq_step (s_code : ℕ) (n : ℕ) :
   rcases htag : Nat.unpair n with ⟨tag, m⟩
   simp only [htag]
   by_cases h0 : tag = 0
-  · rw [if_pos h0, if_pos h0]
-  · rw [if_neg h0, if_neg h0]
+  · rw [ite_eq_left h0, ite_eq_left h0]
+  · rw [ite_eq_right h0, ite_eq_right h0]
     by_cases h1 : tag = 1
-    · rw [if_pos h1, if_pos h1, hget (Nat.unpair m).1 (Lambda.decode_lt_1 (h1 ▸ htag) rfl),
+    · rw [ite_eq_left h1, ite_eq_left h1, hget (Nat.unpair m).1 (Lambda.decode_lt_1 (h1 ▸ htag) rfl),
         hget (Nat.unpair m).2 (Lambda.decode_lt_2 (h1 ▸ htag) rfl)]
-    · rw [if_neg h1, if_neg h1]
+    · rw [ite_eq_right h1, ite_eq_right h1]
       by_cases h2 : tag = 2
-      · rw [if_pos h2, if_pos h2, hget m (Lambda.decode_lt_3 (h2 ▸ htag))]
-      · rw [if_neg h2, if_neg h2]
+      · rw [ite_eq_left h2, ite_eq_left h2, hget m (Lambda.decode_lt_3 (h2 ▸ htag))]
+      · rw [ite_eq_right h2, ite_eq_right h2]
 
 -- `subst_ecf_step` is primitive recursive and satisfies the strong-recursion equation
 -- `subst_ecf_step a (List.map (subst_ecf a) (List.range n)) = some (subst_ecf a n)`.

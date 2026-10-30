@@ -147,7 +147,7 @@ lemma aft {a i j:ℕ}(hx:lb j ≤ p.vol*u.D.D (v.c a i)):u.smallQ (v.c a i) j:=b
 lemma endUnits (a:ℕ) (hj:a=14∨a=15∨(a=12 ∧ delta0 (bitR v.t))∨(a=16∧redV (bitR v.t))):
         u.D.Suite (v.c a 0):=by
    apply Fabric.Good.booked h0.chart h0.good
-   · rw [Age.Period,if_neg (by unfold Brole; omega)]; omega
+   · rw [Age.Period,ite_eq_right (by unfold Brole; omega)]; omega
    exact ⟨rightR _,Or.inr (by grind)⟩
 
 variable (hc:v.activeR)

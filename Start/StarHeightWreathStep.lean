@@ -53,7 +53,7 @@ lemma tpairs_count_eq_qcount : ∀ (w : List Alphabet) (s : G ⧸ N),
       congr 1
       by_cases h : b = a ∧ s = q
       · obtain ⟨rfl, rfl⟩ := h; simp
-      · rw [if_neg h]
+      · rw [ite_eq_right h]
         have : ¬ ((s, b) == (q, a)) = true := by
           simp only [beq_iff_eq, Prod.mk.injEq]
           exact fun h' => h ⟨h'.2, h'.1⟩
@@ -126,15 +126,15 @@ lemma qcount_succ_iff (c : ℕ) : ∀ (w : List Alphabet) (s : G ⧸ N),
         rw [qcount] at h
         by_cases hb : b = a ∧ s = q
         · obtain ⟨rfl, rfl⟩ := hb
-          rw [if_pos ⟨rfl, rfl⟩] at h
+          rw [ite_eq_left ⟨rfl, rfl⟩] at h
           exact ⟨[], w, rfl, rfl, by simp, by omega⟩
-        · rw [if_neg hb, zero_add] at h
+        · rw [ite_eq_right hb, zero_add] at h
           obtain ⟨u, v, rfl, h1, h2, h3⟩ := (qcount_succ_iff c w _).mp h
           refine ⟨b :: u, v, rfl, ?_, ?_, h3⟩
-          · rw [qcount, if_neg hb, h1]
+          · rw [qcount, ite_eq_right hb, h1]
           · simpa [FreeMonoid.ofList_cons, mul_assoc] using h2
       · rintro ⟨u, v, huv, h1, h2, h3⟩
-        rw [huv, qcount_append, h1, h2, qcount, if_pos ⟨rfl, rfl⟩, h3]
+        rw [huv, qcount_append, h1, h2, qcount, ite_eq_left ⟨rfl, rfl⟩, h3]
         omega
 
 /-- The blocks: a segment from state `q·ψ(a)` back to `q` with no counted position, then `a`. -/
@@ -209,7 +209,7 @@ lemma qcount_mod_eq (s : G ⧸ N) {m r : ℕ} (hm : 0 < m) (hr : r < m) :
     · left
       rw [hc, Nat.zero_mod] at hw'
       subst hw'
-      simp only [if_true]
+      simp only [ite_true]
       exact hc
     · right
       rw [hc] at hw'

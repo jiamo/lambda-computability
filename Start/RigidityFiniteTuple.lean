@@ -134,8 +134,8 @@ theorem prepend_rotate (xs : List ZFSet.{u}) (x t : ZFSet.{u}) (e : ℕ → ZFSe
   | succ i =>
     change prepend xs (cons t (cons x e)) (if i < xs.length then i else i+2) = prepend xs e i
     by_cases hi : i < xs.length
-    · rw [if_pos hi]; exact prepend_congr xs _ _ i hi
-    · rw [if_neg hi]
+    · rw [ite_eq_left hi]; exact prepend_congr xs _ _ i hi
+    · rw [ite_eq_right hi]
       obtain ⟨j,rfl⟩ := Nat.exists_eq_add_of_le (Nat.le_of_not_gt hi)
       rw [Nat.add_assoc,prepend_tail,prepend_tail]
       rfl

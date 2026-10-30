@@ -74,7 +74,7 @@ theorem Graph.wellFounded {d r b f : ZFSet.{u}} (hr : On d r)
     if hx : x ∈ d then (hg.2.2.2.1 x hx).choose else ∅
   have hF (x : ZFSet.{u}) (hx : x ∈ d) :
       F x ∈ b ∧ ZFSet.pair x (F x) ∈ f := by
-      simpa only [F,dif_pos hx] using (hg.2.2.2.1 x hx).choose_spec |>.imp_right And.left
+      simpa only [F,dite_eq_left hx] using (hg.2.2.2.1 x hx).choose_spec |>.imp_right And.left
   have wf : WellFounded (fun y x => F y ∈ F x) := InvImage.wf F ZFSet.mem_wf
   apply wf.mono
   intro y x hyx

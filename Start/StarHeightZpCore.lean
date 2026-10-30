@@ -88,7 +88,7 @@ lemma pc0_zero (Q : β → β → Prop) :
       have h1 : s + σ c ≠ 0 := by
         have := h [c] (List.cons_prefix_cons.mpr ⟨rfl, List.nil_prefix⟩) (by simp)
         rwa [zpSum_single] at this
-      rw [pc0, if_neg (fun h' => h1 h'.2), zero_add]
+      rw [pc0, ite_eq_right (fun h' => h1 h'.2), zero_add]
       refine pc0_zero Q u _ _ fun q hq hne => ?_
       have := h (c :: q) (List.cons_prefix_cons.mpr ⟨rfl, hq⟩) (by simp)
       rwa [zpSum_cons, ← add_assoc] at this
@@ -128,15 +128,15 @@ lemma pc0_block (Q : β → β → Prop) (hQ : ∀ a c, Q a c → σ c ≠ 0) {e
   simp only [pc0, zero_add, add_zero, h0, and_true]
   rcases List.eq_nil_or_concat e' with rfl | ⟨t, a, rfl⟩
   · simp only [List.nil_append, zpSum_nil, zero_add] at h0 ⊢
-    rw [if_neg (not_mem_pairEnd_single Q c), if_neg]
+    rw [ite_eq_right (not_mem_pairEnd_single Q c), ite_eq_right]
     rintro ⟨a, -, hac⟩
     exact hQ a c hac (by simpa using h0)
   · simp only [List.concat_eq_append] at h0 ⊢
     rw [lastOr_snoc]
     by_cases hP : Q a c
-    · rw [if_pos ⟨a, rfl, hP⟩, if_pos ((mem_pairEnd_snoc2 Q t a c).mpr hP)]
-    · rw [if_neg (fun ⟨a', ha', h'⟩ => hP (by cases ha'; exact h')),
-        if_neg (fun h => hP ((mem_pairEnd_snoc2 Q t a c).mp h))]
+    · rw [ite_eq_left ⟨a, rfl, hP⟩, ite_eq_left ((mem_pairEnd_snoc2 Q t a c).mpr hP)]
+    · rw [ite_eq_right (fun ⟨a', ha', h'⟩ => hP (by cases ha'; exact h')),
+        ite_eq_right (fun h => hP ((mem_pairEnd_snoc2 Q t a c).mp h))]
 
 lemma pc0_flatten (Q : β → β → Prop) (hQ : ∀ a c, Q a c → σ c ≠ 0) {t : List β}
     (ht : t ∈ zpNR σ) :
@@ -216,8 +216,8 @@ lemma pcB_eq_shift (Q : β → β → Prop) {d s₀ : ZMod p} (hd : ∀ a c, Q a
           refine ⟨⟨some a, rfl, a, c, rfl, rfl, hQ⟩, ?_⟩
           rw [hd a c hQ]; ring
       by_cases h : (∃ a, prev = some a ∧ Q a c) ∧ s = s₀
-      · rw [if_pos (hiff.mpr h), if_pos h]
-      · rw [if_neg (fun h' => h (hiff.mp h')), if_neg h]
+      · rw [ite_eq_left (hiff.mpr h), ite_eq_left h]
+      · rw [ite_eq_right (fun h' => h (hiff.mp h')), ite_eq_right h]
 
 lemma pcB_eq_bcount (Q : β → β → Prop) {d s₀ : ZMod p} (hd : ∀ a c, Q a c → σ c = d)
     (hQ : ∀ a c, Q a c → σ c ≠ 0) (u : List β) :
@@ -225,7 +225,7 @@ lemma pcB_eq_bcount (Q : β → β → Prop) {d s₀ : ZMod p} (hd : ∀ a c, Q 
       (zpSplit (shiftσ σ (s₀ + d)) (none :: u.map some)).1 := by
   rw [← pc0_eq_bcount (shiftσ σ (s₀ + d)) (liftQ Q) ?_ _ none, ← pcB_eq_shift σ Q hd u 0 none,
     pc0]
-  · rw [if_neg (fun h => by obtain ⟨⟨a, ha, -⟩, -⟩ := h; simp at ha)]
+  · rw [ite_eq_right (fun h => by obtain ⟨⟨a, ha, -⟩, -⟩ := h; simp at ha)]
     simp [shiftσ, liftP, sub_eq_add_neg]
   · rintro _ _ ⟨a, c, rfl, rfl, h⟩
     exact hQ a c h
@@ -284,14 +284,14 @@ lemma zphi_step [Fact p.Prime] (s : ZMod p) :
   by_cases h : s.val + 1 = p
   · have e1 : (s + 1).val = 0 := by rw [h1, h, Nat.mod_self]
     have hn : ¬ s = 0 := fun h' => by rw [hs0] at h'; omega
-    rw [if_pos (hs1.mpr e1), if_neg hn, if_neg hn]
+    rw [ite_eq_left (hs1.mpr e1), ite_eq_right hn, ite_eq_right hn]
     omega
   · have e1 : (s + 1).val = s.val + 1 := by rw [h1, Nat.mod_eq_of_lt (by omega)]
     have hn : ¬ s + 1 = 0 := fun h' => by rw [hs1, e1] at h'; omega
-    rw [if_neg hn, e1]
+    rw [ite_eq_right hn, e1]
     by_cases h0 : s = 0
-    · rw [if_pos h0, if_pos h0]; rw [hs0] at h0; omega
-    · rw [if_neg h0, if_neg h0]; rw [hs0] at h0; omega
+    · rw [ite_eq_left h0, ite_eq_left h0]; rw [hs0] at h0; omega
+    · rw [ite_eq_right h0, ite_eq_right h0]; rw [hs0] at h0; omega
 
 /-- `QA a c`: `a ≠ x`, `c = x`. -/
 def QA (x : β) : β → β → Prop := fun a c => a ≠ x ∧ c = x
@@ -342,8 +342,8 @@ lemma zp_identity_aux [Fact p.Prime] (x : β) (hx : σ x = 1) :
                 else 0) = 0 := by simp
             have i6 : (if (none : Option β) = some x then zphi (0 : ZMod p) else 0) = 0 := by simp
             have i7 : zphi (0 : ZMod p) = 0 := by simp [zphi]
-            rw [i5, i6, if_pos rfl]
-            rw [i7, if_pos rfl] at hstep
+            rw [i5, i6, ite_eq_left rfl]
+            rw [i7, ite_eq_left rfl] at hstep
             rw [zero_add] at ih hstep
             omega
         | some b =>

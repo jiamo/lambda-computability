@@ -49,9 +49,9 @@ theorem extendCoins_cons_succ {t : ℕ} (b : Bool) (bits : Fin t → Bool) :
   funext i
   unfold extendCoins
   by_cases hi : i < t
-  · rw [dif_pos (by omega), dif_pos hi]
+  · rw [dite_eq_left (by omega), dite_eq_left hi]
     exact Fin.cons_succ (α := fun _ => Bool) b bits ⟨i, hi⟩
-  · rw [dif_neg (by omega), dif_neg hi]
+  · rw [dite_eq_right (by omega), dite_eq_right hi]
 
 /-- The number of coin strings of length `t` after which the run from `c` has output `true`. -/
 def goodCount (t : ℕ) (c : Configuration q w h x.length) : ℕ :=

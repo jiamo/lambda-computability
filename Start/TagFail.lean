@@ -69,11 +69,11 @@ theorem argEnvT_lt {B base b e k r : ℕ} {τ : ℕ → ℕ} (hτ : ∀ j, τ j 
   intro j
   rw [argEnvT]
   by_cases hlt : r < k
-  · rw [if_pos hlt, expEnv]
+  · rw [ite_eq_left hlt, expEnv]
     by_cases hj : j < b
-    · rw [if_pos hj]; omega
-    · rw [if_neg hj]; exact hτ _
-  · rw [if_neg hlt]; omega
+    · rw [ite_eq_left hj]; omega
+    · rw [ite_eq_right hj]; exact hτ _
+  · rw [ite_eq_right hlt]; omega
 
 /-! ## Failure witnesses -/
 
@@ -165,11 +165,11 @@ theorem getD_expArgsT {B K base b e r : ℕ} {as : List Lambda} {τ : ℕ → �
       simp only [List.length_append, hmaplen, argsFor_length]
       omega
     rw [← List.getElem_eq_getD (fallback := Lambda.var 0) (h := h2),
-      List.getElem_append_left h1, List.getElem_map, argTermOf, dif_pos hlt, argEnvT,
-      if_pos hlt]
+      List.getElem_append_left h1, List.getElem_map, argTermOf, dite_eq_left hlt, argEnvT,
+      ite_eq_left hlt]
   · rw [getD_append_right _ _ _ _ (by rw [hmaplen]; omega), hmaplen,
-      getD_argsFor _ e (r - as.length) (by omega), argTermOf, dif_neg hlt, argEnvT,
-      if_neg hlt, csub_var_ge (Nat.le_refl 0)]
+      getD_argsFor _ e (r - as.length) (by omega), argTermOf, dite_eq_right hlt, argEnvT,
+      ite_eq_right hlt, csub_var_ge (Nat.le_refl 0)]
     simp only [tagEnv, baseTags]
     congr 2
     omega

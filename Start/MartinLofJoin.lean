@@ -27,7 +27,7 @@ open MeasureTheory
 def halfSeq (b : ℕ) (Z : ℕ → Bool) : ℕ → Bool := fun n => Z (2 * n + b)
 
 theorem measurable_halfSeq (b : ℕ) : Measurable (halfSeq b) :=
-  measurable_pi_lambda _ fun n => measurable_pi_apply (2 * n + b)
+  Measurable.of_eval fun n => measurable_pi_apply (2 * n + b)
 
 /-- `n ↦ 2n + b`, as an embedding. -/
 def halfEmb (b : ℕ) : ℕ ↪ ℕ := ⟨(2 * · + b), fun x y h => by simp only at h; omega⟩
@@ -158,7 +158,7 @@ theorem MLRandom.join_right (A B : ℕ → Bool) :
   have e : halfSeq 1 (fun n => if n % 2 = 0 then A (n / 2) else B (n / 2)) = B := by
     funext n
     simp only [halfSeq]
-    rw [if_neg (by omega)]
+    rw [ite_eq_right (by omega)]
     congr 1
     omega
   simpa [e] using MLRandom.of_halfSeq 1 (by decide) h

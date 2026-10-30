@@ -439,13 +439,13 @@ theorem CoTyping.nthCos {Ax : AxSet} {T T' : ℕ} {σ ρ : List Ty} {γ : Co}
   intro j
   unfold FCTyCon.nthCos
   by_cases hj : j < σ.length
-  · rw [if_pos hj]
+  · rw [ite_eq_left hj]
     have hj' : j < ρ.length := by omega
     have := CoTyping.nthCo h hσ j hj hj'
     simp only [listSub, List.getD_eq_getElem?_getD, List.getElem?_eq_getElem hj,
       List.getElem?_eq_getElem hj', Option.getD_some]
     exact this
-  · rw [if_neg hj]
+  · rw [ite_eq_right hj]
     have hj' : ¬ j < ρ.length := by omega
     simp only [listSub, List.getD_eq_getElem?_getD, List.getElem?_eq_none (by omega : σ.length ≤ j),
       List.getElem?_eq_none (by omega : ρ.length ≤ j), Option.getD_none]

@@ -272,11 +272,11 @@ theorem joint_color_of_wins {n K k : ℕ} {G H : Graph n} (hk : k < K)
     let P₀ : Position K n := fun l => if l ∈ Set.range slot then P l else none
     have h₀ : Wins G H P₀ := hP.forget (fun l => by
       by_cases hl : l ∈ Set.range slot
-      · exact Or.inr (if_pos hl)
-      · exact Or.inl (if_neg hl))
+      · exact Or.inr (ite_eq_left hl)
+      · exact Or.inl (ite_eq_right hl))
     have h₀j : P₀ j = none := by
       simp only [P₀, Set.mem_range]
-      exact if_neg (by rintro ⟨i, hi⟩; exact hj i hi)
+      exact ite_eq_right (by rintro ⟨i, hi⟩; exact hj i hi)
     obtain ⟨e, he⟩ := h₀.extend j h₀j
     apply Prod.ext (ih hs hP hm)
     apply multiset_match_of_equiv _ _ e
@@ -288,7 +288,7 @@ theorem joint_color_of_wins {n K k : ℕ} {G H : Graph n} (hk : k < K)
     · subst l
       simp only [Function.update_self]
     · simp only [Function.update_of_ne hl, Function.update_of_ne (hj l), P₀]
-      rw [if_pos (Set.mem_range_self l)]
+      rw [ite_eq_left (Set.mem_range_self l)]
       exact hm l
 
 theorem separate_color_of_wins {n K k : ℕ} {G H : Graph n}
@@ -661,9 +661,9 @@ theorem Wins.neighborhood_bijection {n K : ℕ} {G H : Graph n} (hK : 2 ≤ K)
   let Q : Position K n := fun a => if a = i then P a else none
   have hQ : Wins G H Q := hP.forget (fun a => by
     by_cases ha : a = i
-    · right; exact if_pos ha
-    · left; exact if_neg ha)
-  have hQj : Q j = none := if_neg hij.symm
+    · right; exact ite_eq_left ha
+    · left; exact ite_eq_right ha)
+  have hQj : Q j = none := ite_eq_right hij.symm
   obtain ⟨e, he⟩ := hQ.extend j hQj
   have hat (z : Fin n) := (he z).atomic i j x y z (e z)
     (by simp only [Function.update_of_ne hij, Q, hi, ite_true])

@@ -121,9 +121,9 @@ theorem decode_invalid (n : ℕ) (hv : ¬valid n) : decode (α := ℚ) n = none 
 theorem canonicalCode_eq (n : ℕ) : canonicalCode n = encode (rationalEnumeration n) := by
   by_cases hv : valid n
   · obtain ⟨q,rfl⟩ := (valid_iff n).mp hv
-    simp only [canonicalCode,if_pos hv,rationalEnumeration,encodek,Option.getD_some]
+    simp only [canonicalCode,ite_eq_left hv,rationalEnumeration,encodek,Option.getD_some]
   · have hn := decode_invalid n hv
-    simp only [canonicalCode,if_neg hv,rationalEnumeration,hn,Option.getD_none]
+    simp only [canonicalCode,ite_eq_right hv,rationalEnumeration,hn,Option.getD_none]
 
 def numeratorCode (n : ℕ) : ℕ := (Nat.unpair (canonicalCode n)).1
 def numeratorMagnitude (n : ℕ) : ℕ := magnitude (numeratorCode n)

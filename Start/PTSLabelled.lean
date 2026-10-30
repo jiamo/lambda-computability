@@ -309,13 +309,13 @@ theorem triangle (h : Parallel M N) : Parallel N M.develop := by
             cases hf with
             | lam hA hb =>
                 cases ihf with
-                | lam ihA ihb => simpa only [Expr.develop, if_pos rfl, ite_true] using
+                | lam ihA ihb => simpa only [Expr.develop, ite_eq_left rfl, ite_true] using
                     (Parallel.head (l := l) _ ihb iha)
-          · simpa only [Expr.develop, if_neg hl] using (Parallel.app (l := l) ihf iha)
+          · simpa only [Expr.develop, ite_eq_right hl] using (Parallel.app (l := l) ihf iha)
   | lam _ _ ihA ihb => exact .lam ihA ihb
   | pi _ _ ihA ihB => exact .pi ihA ihB
   | head A _ _ ihb iha =>
-      simpa only [Expr.develop, if_pos rfl, ite_true] using ihb.instantiate iha
+      simpa only [Expr.develop, ite_eq_left rfl, ite_true] using ihb.instantiate iha
 
 theorem diamond {a b c : Expr S} (hab : Parallel a b) (hac : Parallel a c) :
     ∃ d, Parallel b d ∧ Parallel c d := ⟨a.develop, hab.triangle, hac.triangle⟩

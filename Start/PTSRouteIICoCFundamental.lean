@@ -107,12 +107,12 @@ variable {Γ : List (Expr Srt)} {ξ : ValK Cand} {Δ : List (Expr Srt)} {T X Y :
 
 theorem SemC_ne (hT : T ≠ .sort .box) :
     SemC Γ ξ Δ T X Y ↔ interpK candAlg (ctxCl Γ) T .star ξ Δ X Y := by
-  unfold SemC; rw [if_neg hT]
+  unfold SemC; rw [ite_eq_right hT]
 
 theorem SemC_sort {s : Srt} : SemC Γ ξ Δ (.sort s) X Y ↔ NormNW PC Δ X Y := by
   cases s with
-  | box => unfold SemC; rw [if_pos rfl]
-  | star => unfold SemC; rw [if_neg (by simp)]; rfl
+  | box => unfold SemC; rw [ite_eq_left rfl]
+  | star => unfold SemC; rw [ite_eq_right (by simp)]; rfl
 
 theorem SemC.norm (hT : TyOK Γ ξ T) (h : SemC Γ ξ Δ T X Y) : NormNW PC Δ X Y := by
   unfold SemC at h

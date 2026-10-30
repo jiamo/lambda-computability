@@ -49,7 +49,7 @@ theorem qsF_pairsW (v : ℕ) : ∀ (L : List (Word × Word)) (f : ℕ), L.length
       have e : pairsW (ab :: L) ++ encMsg (un v) =
           encMsg ab.1 ++ (encMsg ab.2 ++ (pairsW L ++ encMsg (un v))) := by
         simp [pairsW, List.append_assoc]
-      rw [qsF, if_neg hne, e, recGet_encMsg, recSkip_encMsg, recSkip_encMsg,
+      rw [qsF, ite_eq_right hne, e, recGet_encMsg, recSkip_encMsg, recSkip_encMsg,
         qsF_pairsW v L f (by simp at hf; omega)]
       simp
 
@@ -274,7 +274,7 @@ theorem accProb_shamirV_complete (q : QBF) (hc : q.Closed) (ht : TQBF q) :
         simp only [← hout] at hlt hol
         obtain ⟨k, hk⟩ := he
         have hk2 : H.length / 2 = k := by omega
-        simp only [Q', show Even H.length from ⟨k, hk⟩, if_true, idxStrat_eq, hk2]
+        simp only [Q', show Even H.length from ⟨k, hk⟩, ite_true, idxStrat_eq, hk2]
         rw [mW_honP (by omega) hdeg htrue hvs hRv hMd (by omega)]
         rw [show H.length = 2 * k by omega]
       · simp [Q', he, hout]

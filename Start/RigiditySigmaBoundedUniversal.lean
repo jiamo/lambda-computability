@@ -66,7 +66,7 @@ theorem realize_allMem (M : ZFSet.{u}) (hM : Transitive M)
     apply φ.realize_congr; intro i hi
     cases i with
     | zero => rfl
-    | succ i => exact (if_pos (show i < φ.scope by omega)).symm
+    | succ i => exact (ite_eq_left (show i < φ.scope by omega)).symm
   have matrix (d : ZFSet.{u}) (hd : d ∈ M) :
       (allDomainMatrix a φ).Realize M (cons d e) ↔ Transitive d ∧ (∅ : ZFSet.{u}) ∈ d ∧
         (∀ i, i < φ.scope → e i ∈ d) ∧ e a ∈ d ∧ ∀ x ∈ e a, φ.Realize d (cons x e) := by

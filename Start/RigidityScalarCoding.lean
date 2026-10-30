@@ -81,7 +81,7 @@ theorem divideIndex_recursive {O : Set (ℕ →. ℕ)} (r : ℚ) (hr : r ≠ 0) 
       have heq : r*rationalEnumeration j=rationalEnumeration i := by exact_mod_cast he
       have hval : rationalEnumeration j=rationalEnumeration i/r :=
         (eq_div_iff hr).mpr (by simpa [mul_comm] using heq)
-      have hj : canonicalCode j=j := if_pos h.1
+      have hj : canonicalCode j=j := ite_eq_left h.1
       rw [canonicalCode_eq,hval] at hj
       exact hj.symm
     · simp at ha

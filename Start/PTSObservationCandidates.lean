@@ -132,7 +132,7 @@ noncomputable def ofImages {Γ : List (Expr S)} (σ : Nat → Expr S)
     (PayloadFits.exists_of_actual (hno := hno) ⟨_,(hσ _ _ hi.choose_spec).actual_type hw⟩).choose else none
   lawful := by
     intro i A hi
-    simp only [dif_pos (show ∃ B, Lookup Γ i B from ⟨A,hi⟩)]
+    simp only [dite_eq_left (show ∃ B, Lookup Γ i B from ⟨A,hi⟩)]
     have he := Lookup.unique (show Lookup Γ i (Exists.choose (show ∃ B, Lookup Γ i B from ⟨A,hi⟩)) from
       (show ∃ B, Lookup Γ i B from ⟨A,hi⟩).choose_spec) hi
     simpa only [he] using (PayloadFits.exists_of_actual (hno := hno)

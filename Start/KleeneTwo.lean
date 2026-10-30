@@ -80,10 +80,10 @@ theorem searchFrom_complete {f : ℕ → ℕ} : ∀ {fuel k j v : ℕ}, k ≤ j 
       intro k j v h1 h2 h3 h4
       rw [searchFrom]
       by_cases hk : f k = 0
-      · rw [if_pos hk]
+      · rw [ite_eq_left hk]
         have hkj : k ≠ j := by rintro rfl; omega
         exact ih (by omega) (by omega) h3 fun i hi1 hi2 => h4 i (by omega) hi2
-      · rw [if_neg hk]
+      · rw [ite_eq_right hk]
         have hkj : k = j := by
           by_contra hne
           exact hk (h4 k le_rfl (by omega))
@@ -100,9 +100,9 @@ theorem searchFrom_congr {f g : ℕ → ℕ} : ∀ {fuel k : ℕ},
       have hk : f k = g k := h k le_rfl (by omega)
       rw [searchFrom, searchFrom, hk]
       by_cases hz : g k = 0
-      · rw [if_pos hz, if_pos hz]
+      · rw [ite_eq_left hz, ite_eq_left hz]
         exact ih fun i hi1 hi2 => h i (by omega) (by omega)
-      · rw [if_neg hz, if_neg hz]
+      · rw [ite_eq_right hz, ite_eq_right hz]
 
 /-! ### A maximum over a list -/
 
@@ -295,7 +295,7 @@ theorem exists_appAt_sOne (α β : ℕ → ℕ) (y : ℕ) : ∃ v, AppAt (sOne �
   obtain ⟨K, hK⟩ := exists_guard (dec y).tail β
   have hpos : 0 < qv (sOne α) β y K := by
     have h1 : qv (sOne α) β y K = approx α (restr β K) y + 1 := by
-      rw [qv, sOne_cons (dec_enc _), hK K le_rfl, cond_true]
+      rw [qv, sOne_cons (dec_enc _), hK K le_rfl, Bool.cond_true]
     omega
   obtain ⟨k, hk, hmin⟩ := exists_least (P := fun k => 0 < qv (sOne α) β y k) ⟨K, hpos⟩
   exact ⟨qv (sOne α) β y k - 1, k, by omega, fun j hj => by have := hmin j hj; omega⟩
@@ -386,12 +386,12 @@ theorem sOne_value {α β W : ℕ → ℕ} (hW : ∀ y, AppAt (sOne α) β y (W 
   simp only [List.tail_cons] at hkt
   cases hgd : guardB l (restr β kt) with
   | true =>
-      rw [hgd, cond_true] at hkt
+      rw [hgd, Bool.cond_true] at hkt
       refine ⟨kt, hgd, ?_⟩
       rw [← approx_cons (dec_enc (n :: l))]
       omega
   | false =>
-      rw [hgd, cond_false] at hkt
+      rw [hgd, Bool.cond_false] at hkt
       exact absurd hkt (by omega)
 
 /-- **The composite is computed**: if `W` is the value of `(s · α) · β`, then applying `W` to `γ`

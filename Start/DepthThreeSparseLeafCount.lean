@@ -53,7 +53,7 @@ theorem card_le_entropy_sum (t : SparseDecisionTree Label) (N r : Label → ℕ)
   calc
     (Fintype.card t.Leaf : ℝ) ≤ ∏ i, ((admitted i).card : ℝ) := hreal
     _ ≤ ∏ i, (2 : ℝ) ^ ((N i : ℝ) * binaryEntropy (1 / (r i : ℝ))) := by
-      apply Finset.prod_le_prod
+      apply Finset.prod_le_prod₀
       · intro i _
         exact Nat.cast_nonneg _
       · intro i _

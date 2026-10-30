@@ -118,13 +118,13 @@ variable {θ : Nat → Sk} {Γ : List (Expr Srt3)} {ξ : ValK (CandP S)} {Δ : L
 
 theorem SemC_ne (hT : T.mapSort srtC ≠ .sort .box) :
     SemC P θ Γ ξ Δ T X Y ↔ interpK (candAlg P) (CT θ Γ) (T.mapSort srtC) .star ξ Δ X Y := by
-  unfold SemC; rw [if_neg hT]
+  unfold SemC; rw [ite_eq_right hT]
 
 theorem SemC_sort {s : Srt3} : SemC P θ Γ ξ Δ (.sort s) X Y ↔ NormNW P Δ X Y := by
   cases s with
-  | box => unfold SemC; exact iff_of_eq (if_pos rfl)
-  | top => unfold SemC; exact iff_of_eq (if_pos rfl)
-  | star => unfold SemC; rw [if_neg (by simp [Expr.mapSort, srtC])]; rfl
+  | box => unfold SemC; exact iff_of_eq (ite_eq_left rfl)
+  | top => unfold SemC; exact iff_of_eq (ite_eq_left rfl)
+  | star => unfold SemC; rw [ite_eq_right (by simp [Expr.mapSort, srtC])]; rfl
 
 theorem SemC.norm (hT : TyOK P θ Γ ξ T) (h : SemC P θ Γ ξ Δ T X Y) : NormNW P Δ X Y := by
   unfold SemC at h
@@ -514,7 +514,7 @@ theorem fundamental (m : TopMorphism P) (θ : Nat → Sk) {Γ : List (Expr S)} {
       have hAok := tyOK_of_typed hsn hMc hσ.good
       have h2 := h1.conv hAok (Converts.subst hc σ)
       by_cases hBb : (B.mapSort m.φ).mapSort srtC = .sort .box
-      · unfold SemC; rw [if_pos hBb]; exact h2.norm hAok
+      · unfold SemC; rw [ite_eq_left hBb]; exact h2.norm hAok
       have hs : m.φ s ≠ .top := by
         intro e
         rcases not_top_typed hBc with h' | h'

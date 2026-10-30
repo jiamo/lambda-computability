@@ -81,8 +81,8 @@ theorem deleteWide_length_le (H : CNF V) (k : ℕ) :
   | cons C H ih =>
     rw [deleteWide_cons]
     by_cases hk : C.width ≤ k
-    · simpa only [if_pos hk, List.length_cons] using Nat.succ_le_succ ih
-    · simpa only [if_neg hk, List.length_cons] using ih.trans (Nat.le_succ H.length)
+    · simpa only [ite_eq_left hk, List.length_cons] using Nat.succ_le_succ ih
+    · simpa only [ite_eq_right hk, List.length_cons] using ih.trans (Nat.le_succ H.length)
 
 theorem eval_deleteWide_of_eval (H : CNF V) (k : ℕ) {x : Cube V}
     (hx : H.eval x = true) : (H.deleteWide k).eval x = true := by
@@ -129,9 +129,9 @@ theorem deletion_error_bound [Fintype V] (H : CNF V) (hH : H.Normalized) (k : �
         if C.width ≤ k then 0 else 1 - indicator (C.eval x)) ≤
         ((2 : ℝ) ^ k)⁻¹ := by
       by_cases hk : C.width ≤ k
-      · simp only [if_pos hk, finiteAvg_zero]
+      · simp only [ite_eq_left hk, finiteAvg_zero]
         exact inv_nonneg.mpr (pow_nonneg (by norm_num) k)
-      · simp only [if_neg hk]
+      · simp only [ite_eq_right hk]
         rw [Clause.false_probability C hC]
         have hkw : k ≤ C.width := Nat.le_of_lt (Nat.lt_of_not_ge hk)
         have hpow : (2 : ℝ) ^ k ≤ (2 : ℝ) ^ C.width :=

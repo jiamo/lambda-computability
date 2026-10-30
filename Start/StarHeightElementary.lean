@@ -93,7 +93,7 @@ lemma charSum_vcount [Fintype (Module.Dual (ZMod p) V)] (δ : α → V) (q : V) 
       rw [ih (s + δ b), List.count_cons]
       by_cases hb : b = x
       · subst hb
-        simp only [true_and, beq_self_eq_true, if_true]
+        simp only [true_and, beq_self_eq_true, ite_true]
         rw [← Finset.card_filter]
         have hf : (Finset.univ.filter fun φ : Module.Dual (ZMod p) V => φ s = φ q) =
             Finset.univ.filter fun φ : Module.Dual (ZMod p) V => φ (s - q) = 0 := by
@@ -102,14 +102,14 @@ lemma charSum_vcount [Fintype (Module.Dual (ZMod p) V)] (δ : α → V) (q : V) 
         rw [hf]
         by_cases hs : s = q
         · subst hs
-          simp only [sub_self, map_zero, Finset.filter_true, Finset.card_univ, hc0, if_true]
+          simp only [sub_self, map_zero, Finset.filter_true, Finset.card_univ, hc0, ite_true]
           obtain ⟨p', rfl⟩ : ∃ p', p = p' + 1 := ⟨p - 1, by omega⟩
           simp only [Nat.add_sub_cancel]
           ring
-        · rw [hc _ (sub_ne_zero.mpr hs), if_neg hs]
+        · rw [hc _ (sub_ne_zero.mpr hs), ite_eq_right hs]
           ring
       · have hb' : ¬ (b == x) = true := by simpa using hb
-        simp only [hb, false_and, if_false, Finset.sum_const_zero, hb', Bool.false_eq_true,
+        simp only [hb, false_and, ite_false, Finset.sum_const_zero, hb', Bool.false_eq_true,
           add_zero, zero_add]
 
 end Characters

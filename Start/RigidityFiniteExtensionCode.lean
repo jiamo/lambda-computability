@@ -36,10 +36,10 @@ theorem finiteIndex_mem (t : ZFSet.{u}) (xs : List ZFSet.{u}) (x : ZFSet.{u}) :
   classical
   unfold finiteIndex
   by_cases hx : x ∈ t
-  · rw [if_pos hx]
+  · rw [ite_eq_left hx]
     exact ZFSet.mem_union.mpr (Or.inl (ZFSet.mem_prod.mpr
       ⟨_,ZFSet.mem_singleton.mpr rfl,x,hx,rfl⟩))
-  · rw [if_neg hx]
+  · rw [ite_eq_right hx]
     exact ZFSet.mem_union.mpr (Or.inr (ZFSet.mem_prod.mpr
       ⟨_,ZFSet.mem_singleton.mpr rfl,_,(mem_omega _).mpr ⟨xs.idxOf x,rfl⟩,rfl⟩))
 
@@ -49,15 +49,15 @@ theorem finiteIndex_injective (t : ZFSet.{u}) (xs : List ZFSet.{u})
   classical
   unfold finiteIndex at he
   by_cases hxt : x ∈ t <;> by_cases hyt : y ∈ t
-  · rw [if_pos hxt,if_pos hyt] at he
+  · rw [ite_eq_left hxt,ite_eq_left hyt] at he
     exact (ZFSet.pair_inj.mp he).2
-  · rw [if_pos hxt,if_neg hyt] at he
+  · rw [ite_eq_left hxt,ite_eq_right hyt] at he
     have hf := natSet_injective (ZFSet.pair_inj.mp he).1
     omega
-  · rw [if_neg hxt,if_pos hyt] at he
+  · rw [ite_eq_right hxt,ite_eq_left hyt] at he
     have hf := natSet_injective (ZFSet.pair_inj.mp he).1
     omega
-  · rw [if_neg hxt,if_neg hyt] at he
+  · rw [ite_eq_right hxt,ite_eq_right hyt] at he
     have hidx := natSet_injective (ZFSet.pair_inj.mp he).2
     have hxl : x ∈ xs := (mem_elements x xs).mp ((ZFSet.mem_union.mp hx).resolve_left hxt)
     exact (List.idxOf_inj hxl).mp hidx
@@ -92,7 +92,7 @@ theorem internal_finite_extension_injection (M : ZFSet.{u}) (hM : Transitive M)
       · rintro ⟨v,_,hy,rfl⟩; exact hy
       · intro hy
         have hjx := finiteIndex_mem t xs x
-        rw [finiteIndex,if_pos hx] at hjx
+        rw [finiteIndex,ite_eq_left hx] at hjx
         exact ⟨_,hjx,hy,rfl⟩)
   let f := b ∪ elements (xs.map (fun x => ZFSet.pair x (j x)))
   have hf : f ∈ M := binary_union_mem M hM hP hU hb
@@ -107,12 +107,12 @@ theorem internal_finite_extension_injection (M : ZFSet.{u}) (hM : Transitive M)
   constructor
   · rintro (⟨x,hx,rfl⟩|⟨x,hx,rfl⟩)
     · refine ⟨x,ZFSet.mem_union.mpr (Or.inl hx),?_⟩
-      simp only [finiteIndex,if_pos hx]
+      simp only [finiteIndex,ite_eq_left hx]
     · exact ⟨x,ZFSet.mem_union.mpr (Or.inr ((mem_elements x xs).mpr hx)),rfl⟩
   · rintro ⟨x,hx,rfl⟩
     rcases ZFSet.mem_union.mp hx with hx|hx
     · apply Or.inl
-      exact ⟨x,hx,by simp only [finiteIndex,if_pos hx]⟩
+      exact ⟨x,hx,by simp only [finiteIndex,ite_eq_left hx]⟩
     · exact Or.inr ⟨x,(mem_elements x xs).mp hx,rfl⟩
 
 end FiniteTuple

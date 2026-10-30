@@ -193,11 +193,11 @@ variable {K : Type uK} {L : Type uL} {A : Type uA} {S : Type uS} {T : Type uT} [
     Execution tr' (g q) (Sum.elim frame s) t (answer b) (Sum.elim frame out) := by
   have hi (s : Stacks K A) : Code.liftStacks (Sum.inr : K → L ⊕ K) (Sum.elim frame s) s=Sum.elim frame s := by
     funext j; cases j with
-    | inl l => simp only [Code.liftStacks,dif_neg (show ¬∃ k : K,(Sum.inr k : L ⊕ K)=Sum.inl l from by rintro ⟨k,hk⟩; cases hk),Sum.elim_inl]
+    | inl l => simp only [Code.liftStacks,dite_eq_right (show ¬∃ k : K,(Sum.inr k : L ⊕ K)=Sum.inl l from by rintro ⟨k,hk⟩; cases hk),Sum.elim_inl]
     | inr k => exact Code.liftStacks_apply _ Sum.inr_injective _ _ k
   have ho : Code.liftStacks (Sum.inr : K → L ⊕ K) (Sum.elim frame s) out=Sum.elim frame out := by
     funext j; cases j with
-    | inl l => simp only [Code.liftStacks,dif_neg (show ¬∃ k : K,(Sum.inr k : L ⊕ K)=Sum.inl l from by rintro ⟨k,hk⟩; cases hk),Sum.elim_inl]
+    | inl l => simp only [Code.liftStacks,dite_eq_right (show ¬∃ k : K,(Sum.inr k : L ⊕ K)=Sum.inl l from by rintro ⟨k,hk⟩; cases hk),Sum.elim_inl]
     | inr k => exact Code.liftStacks_apply _ Sum.inr_injective _ _ k
   simpa only [hi,ho] using h.transport Sum.inr Sum.inr_injective g answer htr (Sum.elim frame s)
 end WLTime.TypedStack.Execution
@@ -236,7 +236,7 @@ structure Tape (A : Type uA) where
     s.getD z.toNat blank=if z=0 then s.headD blank else s.tail.getD (z-1).toNat blank := by
   by_cases h0 : z=0
   · subst z; cases s <;> rfl
-  · rw [if_neg h0,getD_tail]
+  · rw [ite_eq_right h0,getD_tail]
     congr 1
     omega
 

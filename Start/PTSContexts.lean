@@ -91,7 +91,7 @@ Outside that context it is the identity. -/
 def reverseIndex (n i : Nat) : Nat := if i < n then n - 1 - i else i
 
 theorem reverseIndex_lt {n i : Nat} (hi : i < n) : reverseIndex n i < n := by
-  simp only [reverseIndex, if_pos hi]
+  simp only [reverseIndex, ite_eq_left hi]
   omega
 
 theorem reverseIndex_involutive (n : Nat) : Function.Involutive (reverseIndex n) := by
@@ -114,8 +114,8 @@ theorem Scoped.reverseIndex_succ {n : Nat} {M : Expr S} (h : Scoped n M) :
   rw [rename_comp]
   apply h.rename_congr
   intro i hi
-  simp only [Function.comp_apply, Expr.reverseIndex, if_pos hi]
-  rw [if_pos (Nat.lt_succ_of_lt hi)]
+  simp only [Function.comp_apply, Expr.reverseIndex, ite_eq_left hi]
+  rw [ite_eq_left (Nat.lt_succ_of_lt hi)]
   omega
 
 end Expr
@@ -280,7 +280,7 @@ theorem at_scheduled {n : Nat} (s : S)
   classical
   have ht : ∃ t, HasType P (stages P h₀ n).context
       ((scheduled n).rename (Expr.reverseIndex n)) (.sort t) := ⟨s,h⟩
-  simp only [contexts, stages, next, dif_pos ht]
+  simp only [contexts, stages, next, dite_eq_left ht]
 
 theorem saturated (n : Nat) (A : Expr S) (s : S)
     (h : HasType P (contexts P h₀ n) (A.rename (Expr.reverseIndex n)) (.sort s))

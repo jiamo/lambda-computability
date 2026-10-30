@@ -364,7 +364,7 @@ theorem TGram.step {x i : ℕ} {P P' : Lambda} (h : TGram x i P) (hs : betaEtaSt
       rcases betaEtaStep_app_cases hH with ⟨c, hc, rfl⟩ | ⟨f', hf, rfl⟩ | ⟨a', ha, rfl⟩
       · simp only [lamM, Lambda.lam.injEq] at hc
         subst hc
-        simp only [Lambda.subst, if_pos]
+        simp only [Lambda.subst, ite_eq_left]
         exact .rr hR hR hm
       · exact (nf_lamM _ hf).elim
       · exact .mr (hR.step ha) hm

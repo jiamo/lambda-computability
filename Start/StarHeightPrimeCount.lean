@@ -93,7 +93,7 @@ lemma pcount_filterMap {β : Type*} [DecidableEq β] (φ : α → Option β) (mv
       cases hb : φ b with
       | none =>
           obtain ⟨hm, hx⟩ := h0 b hb
-          rw [List.filterMap_cons, hb, pcount, if_neg (fun h => hx h.1), hm, ih]
+          rw [List.filterMap_cons, hb, pcount, ite_eq_right (fun h => hx h.1), hm, ih]
           simp
       | some c =>
           obtain ⟨hm, hx⟩ := h1 b c hb
@@ -107,7 +107,7 @@ lemma pcount_zero_of_avoid :
   | b :: w, s, hs => by
       rw [pcount]
       have hs0 : s % p ≠ h := hs s le_rfl (by omega)
-      rw [if_neg (fun h' => hs0 h'.2), zero_add]
+      rw [ite_eq_right (fun h' => hs0 h'.2), zero_add]
       apply pcount_zero_of_avoid w
       intro i hi1 hi2
       apply hs i
@@ -121,7 +121,7 @@ lemma pcount_zero_of_avoid_len (hmv : ∀ b, mv b = true) :
   | b :: w, s, hs => by
       rw [pcount]
       have hs0 : s % p ≠ h := hs s le_rfl (by simp)
-      rw [if_neg (fun h' => hs0 h'.2), zero_add, if_pos (hmv b)]
+      rw [ite_eq_right (fun h' => hs0 h'.2), zero_add, ite_eq_left (hmv b)]
       apply pcount_zero_of_avoid_len hmv w
       intro i hi1 hi2
       exact hs i (by omega) (by simp; omega)
@@ -251,12 +251,12 @@ lemma sum_blocks (f : List Bool → ℤ) :
         by_cases h : t = t0
         · subst h
           have hm : e ∈ ({t0.toList} : Language Bool) := rfl
-          simp only [hm, decide_true, if_true]
+          simp only [hm, decide_true, ite_true]
           have : t0.toList = e := rfl
           rw [this]
           push_cast; ring
         · have hne : ¬ e ∈ ({t.toList} : Language Bool) := fun h' => h (Subtype.ext h'.symm)
-          rw [if_neg (fun hc => hne (of_decide_eq_true hc)), if_neg h]
+          rw [ite_eq_right (fun hc => hne (of_decide_eq_true hc)), ite_eq_right h]
           simp
       rw [Finset.sum_congr rfl (fun t _ => hsplit t), Finset.sum_add_distrib,
         Finset.sum_ite_eq' Finset.univ]
@@ -476,7 +476,7 @@ lemma countP_nmv (w : List Bool) : w.countP nmv = w.count false := by
 lemma pcount_cons_ne {mv : Bool → Bool} {q h : ℕ} {x b : Bool} (hb : b ≠ x) (s : ℕ)
     (w : List Bool) :
     pcount mv q h x s (b :: w) = pcount mv q h x (if mv b then s + 1 else s) w := by
-  rw [pcount, if_neg (fun h' => hb h'.1), zero_add]
+  rw [pcount, ite_eq_right (fun h' => hb h'.1), zero_add]
 
 /-- First returns to state `0` that read no `true` in state `0`. -/
 def Pblk (p : ℕ) : Language Bool := {[false]} * countIs false (p - 2) * {[false]}
@@ -509,7 +509,7 @@ lemma Pblk_pcount (hp : 2 ≤ p) {e : List Bool} (he : e ∈ Pblk p) {s : ℕ} (
     pcount nmv p 0 true s e = 0 := by
   obtain ⟨z, hz, rfl⟩ := mem_Pblk.mp he
   rw [pcount_cons_ne (by decide), pcount_append, pcount_cons_ne (by decide)]
-  simp only [nmv, Bool.not_false, if_true]
+  simp only [nmv, Bool.not_false, ite_true]
   rw [pcount_zero_of_avoid]
   · rfl
   · intro i hi1 hi2
@@ -577,7 +577,7 @@ lemma pcount_flatten_Eb (hp : 2 ≤ p) :
           unfold bcount
           rw [List.countP_cons]
           simp only [show ([true] : List Bool) ∈ ({[true]} : Language Bool) from rfl,
-            decide_true, if_true]
+            decide_true, ite_true]
           omega
         · rw [List.countP_append, hcp]; simpa using h2
       · have hcp : e.countP nmv = p := by rw [countP_nmv]; exact Pblk_count hp he
@@ -591,7 +591,7 @@ lemma pcount_flatten_Eb (hp : 2 ≤ p) :
           simp at h'
         refine ⟨?_, ?_⟩
         · unfold bcount
-          rw [List.countP_cons, if_neg (fun hc => hne (of_decide_eq_true hc))]
+          rw [List.countP_cons, ite_eq_right (fun hc => hne (of_decide_eq_true hc))]
           omega
         · rw [List.countP_append, hcp, ← add_assoc]; exact h2
 
@@ -605,7 +605,7 @@ lemma Pref_pcount (hp : 2 ≤ p) {y : List Bool} (hy : y ∈ Pref p) {s : ℕ} (
   obtain ⟨k, hk⟩ := Language.mem_iSup.mp hz
   have hk' : z.count false = k := hk
   rw [List.singleton_append, pcount_cons_ne (by decide)]
-  simp only [nmv, Bool.not_false, if_true]
+  simp only [nmv, Bool.not_false, ite_true]
   apply pcount_zero_of_avoid
   intro i hi1 hi2 hi
   rw [countP_nmv, hk'] at hi2
@@ -706,7 +706,7 @@ lemma Blang_eq {h : ℕ} (h0 : 0 < h) (hh : h < p) {m r : ℕ} (hr : r < m) :
         rw [Nat.mod_eq_of_lt (by omega)]; omega
       rw [hz, Nat.zero_mod] at hw'
       subst hw'
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       exact Language.mem_iSup.mpr ⟨⟨_, hc⟩, rfl⟩
     · right
       push Not at hc

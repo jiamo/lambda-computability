@@ -100,7 +100,7 @@ theorem sigma1_choice {Y : Oracle} {P : ℕ → Prop} (hP : Sigma Y 1 P) :
     exact hn ⟨Nat.pair a b, by simpa [Q'] using hb⟩
   · have hn : witness Q' x ≠ 0 := by omega
     refine Or.inr ⟨by simp [f,hn], ?_⟩
-    simp only [f, if_neg hn, Nat.add_sub_cancel]
+    simp only [f, ite_eq_right hn, Nat.add_sub_cancel]
     exact (he _).mpr ⟨(Nat.unpair (witness Q' x - 1)).2, by simpa [Q'] using hy⟩
 
 end TuringRigidity.EffectiveWitness

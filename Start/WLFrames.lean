@@ -99,7 +99,7 @@ theorem link_midpoint_depth (K : ℕ) (src dst : E → P) (hK : 0 < K)
     typeDepth K (linkRight K dst l) = 2 * K := by
   have h0 : l.2.val ≠ 0 := by omega
   have h4 : l.2.val ≠ 4 * K := by omega
-  simp only [linkLeft, linkRight, dif_neg h0, dif_neg h4, typeDepth]
+  simp only [linkLeft, linkRight, dite_eq_right h0, dite_eq_right h4, typeDepth]
   omega
 
 theorem link_root_preserved (K : ℕ) (src dst : E → P) (hK : 0 < K)
@@ -219,11 +219,11 @@ theorem link_internal_same_wire (K : ℕ) (src dst : E → P) (l : TypeLink K E)
     nodeWire K (linkLeft K src l) = nodeWire K (linkRight K dst l) := by
   have h0 : l.2.val ≠ 0 := by
     intro h
-    exact hl (src l.1) (dif_pos h)
+    exact hl (src l.1) (dite_eq_left h)
   have h4 : l.2.val ≠ 4 * K := by
     intro h
-    exact hr (dst l.1) (dif_pos h)
-  simp only [linkLeft, linkRight, dif_neg h0, dif_neg h4, nodeWire]
+    exact hr (dst l.1) (dite_eq_left h)
+  simp only [linkLeft, linkRight, dite_eq_right h0, dite_eq_right h4, nodeWire]
 
 theorem support_edge_wire (K : ℕ) (src dst : E → P) (S : Finset (TypeLink K E))
     {x y : TypeNode K P E} (hxy : (typeSupportGraph K src dst S).Adj x y)
@@ -318,7 +318,7 @@ theorem supportFrame_match [DecidableEq E] {Λ : Type uΛ} (K : ℕ) (src dst : 
   have heq := hasReal_of_reachable K src dst S (support_link_reachable K src dst S hl)
   by_cases hreal : HasReal K src dst S (linkLeft K src l)
   · have hreal' := heq.mp hreal
-    simp only [supportFrame, if_pos hreal, if_pos hreal']
+    simp only [supportFrame, ite_eq_left hreal, ite_eq_left hreal']
     apply frame_match K src dst hK
     intro hmid
     obtain ⟨p, hp⟩ := hreal
@@ -329,8 +329,8 @@ theorem supportFrame_match [DecidableEq E] {Λ : Type uΛ} (K : ℕ) (src dst : 
     have h4 : l.2.val ≠ 4 * K := by
       intro h
       apply hreal'
-      simpa only [linkRight, dif_pos h] using hasReal_inl K src dst S (dst l.1)
-    simp only [supportFrame, if_neg hreal, if_neg hreal', linkMatch, if_neg h4,
+      simpa only [linkRight, dite_eq_left h] using hasReal_inl K src dst S (dst l.1)
+    simp only [supportFrame, ite_eq_right hreal, ite_eq_right hreal', linkMatch, ite_eq_right h4,
       Equiv.refl_apply]
 
 theorem support_graph_mono (K : ℕ) (src dst : E → P)
@@ -374,9 +374,9 @@ theorem frame_eq_on_internal_edge (K : ℕ) (src dst : E → P)
   have aux : ∀ l ∈ S, (∀ p, linkRight K dst l ≠ Sum.inl p) →
       frame (linkLeft K src l) = frame (linkRight K dst l) := by
     intro l hl hr
-    have h4 : l.2.val ≠ 4*K := by intro h; exact hr (dst l.1) (dif_pos h)
+    have h4 : l.2.val ≠ 4*K := by intro h; exact hr (dst l.1) (dite_eq_left h)
     ext a
-    simpa only [linkMatch, if_neg h4, Equiv.refl_apply] using halign l hl a
+    simpa only [linkMatch, ite_eq_right h4, Equiv.refl_apply] using halign l hl a
   obtain ⟨_, l, hl, he | he⟩ := hxy
   · obtain ⟨rfl, rfl⟩ := he; exact aux l hl hy
   · obtain ⟨rfl, rfl⟩ := he; exact (aux l hl hx).symm

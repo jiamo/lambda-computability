@@ -94,7 +94,7 @@ def Cob.dropOnes : Cob :=
   | cons b x ih =>
       rw [Cob.dropOnes, Cob.eval_bRec_cons, ← Cob.dropOnes, ih]
       cases b
-      · simp only [Bool.false_eq_true, if_false, Cob.eval_comp, List.map_cons, List.map_nil,
+      · simp only [Bool.false_eq_true, ite_false, Cob.eval_comp, List.map_cons, List.map_nil,
           Cob.eval_app, Cob.eval_proj, List.getD_cons_zero, Cob.eval_smash, Cob.eval_trueC,
           List.length_replicate, List.length_cons]
         rw [List.take_of_length_le (by simp)]
@@ -188,9 +188,9 @@ theorem eval_cntTerm {m Ki : ℕ} {δ : ℕ → Bool → ℕ} (hm : 0 < m) (hδ 
         calc inc (rst δ 0 x) b + rcnt δ inc x ≤ Ki + x.length * Ki := Nat.add_le_add h₁ h₂
           _ = (x.length + 1) * Ki := by ring
       cases b
-      · rw [if_neg (by simp), hstep false, List.take_of_length_le hle]
+      · rw [ite_eq_right (by simp), hstep false, List.take_of_length_le hle]
         rfl
-      · rw [if_pos rfl, hstep true, List.take_of_length_le hle]
+      · rw [ite_eq_left rfl, hstep true, List.take_of_length_le hle]
         rfl
 
 /-! ### The block-emitting recursion -/
@@ -310,9 +310,9 @@ theorem eval_blkRunTerm {m Ki K : ℕ} {δ : ℕ → Bool → ℕ} (hm : 0 < m) 
           _ ≤ ((x.length + 1) * K) * (x.length + 2 + p.length) :=
               Nat.mul_le_mul_left _ (by omega)
       cases b
-      · rw [if_neg (by simp), hstep false, List.take_of_length_le hle]
+      · rw [ite_eq_right (by simp), hstep false, List.take_of_length_le hle]
         rfl
-      · rw [if_pos rfl, hstep true, List.take_of_length_le hle]
+      · rw [ite_eq_left rfl, hstep true, List.take_of_length_le hle]
         rfl
 
 end Complexity

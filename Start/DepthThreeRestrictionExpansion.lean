@@ -326,7 +326,7 @@ theorem finite_violation_expansion (scope : I → Finset V) (T : Finset V)
         simp
       have htel := finite_alternating_telescoping t r hr (T.card / (b + 1))
       rw [hfirst, hlast, mul_zero, add_zero] at htel
-      simp only [he, hq, if_pos, ite_false, one_mul]
+      simp only [he, hq, ite_eq_left, ite_false, one_mul]
       change 0 = 1 + ∑ j ∈ Finset.range (T.card / (b + 1)),
         (-1 : ℝ) ^ (j + 1) * t (j + 1)
       rw [htel]

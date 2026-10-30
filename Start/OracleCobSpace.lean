@@ -424,7 +424,7 @@ theorem compileQOK_comp (f : CobQ) (gs : List CobQ) (hf : CompileQOK A K x B f)
   refine ORunsQ.seq (hf (List.range' fr gs.length) d (fr + gs.length) (setFrom R fr ws) M i
     (fun a ha => by rw [List.mem_range'_1] at ha; omega) (by omega)
     (fun h => by rw [List.mem_range'_1] at h; omega) (by omega)
-    (fun r hr => by simp only [setFrom]; rw [if_neg (by omega)]; exact hfr r (by omega))
+    (fun r hr => by simp only [setFrom]; rw [ite_eq_right (by omega)]; exact hfr r (by omega))
     hlen2 (le_trans (Nat.mul_le_mul_right _ (by omega)) hB)) ?_
   rw [show List.range' fr gs.length = List.range' fr ws.length by rw [hwsl],
     map_range'_setFrom]
@@ -500,11 +500,11 @@ theorem oruns_brStep (h bd : CobQ) (hh : CompileQOK A K x B h) (hbd : CompileQOK
     (by omega) (fun ha => by simp only [List.mem_cons] at ha; rcases ha with h | ha <;>
       [omega; (have := has _ ha; omega)])
     (by omega) (fun r hr => by
-      simp only [R2, R1, Function.update_apply]; rw [if_neg (by omega), if_neg (by omega)]
+      simp only [R2, R1, Function.update_apply]; rw [ite_eq_right (by omega), ite_eq_right (by omega)]
       exact hfr r (by omega)) hR2N hB2
   have hR2a : as'.map R2 = as'.map R := hmap R2 (fun a ha => by
     have := has a ha
-    simp only [R2, R1, Function.update_apply]; rw [if_neg (by omega), if_neg (by omega)])
+    simp only [R2, R1, Function.update_apply]; rw [ite_eq_right (by omega), ite_eq_right (by omega)])
   have hR21 : R2 (fr + 1) = β :: R (fr + 1) := by
     simp [R2, R1]
   simp only [List.map_cons, hR2a, hR21] at h3
@@ -672,11 +672,11 @@ theorem compileQOK_bRec (g h₀ h₁ bd : CobQ) (hg : CompileQOK A K x B g)
   have hR'1 : R' (fr + 1) = X.drop (L - k) := by simp [R', Rs]
   have hR'2 : R' (fr + 2) = V k := by simp [R', Rs]
   have hR'a : as'.map R' = rest := hmapR R' (fun r hr => by
-    simp only [R', Rs, Function.update_apply]; rw [if_neg (by omega), if_neg (by omega),
-      if_neg (by omega), if_neg (by omega)])
+    simp only [R', Rs, Function.update_apply]; rw [ite_eq_right (by omega), ite_eq_right (by omega),
+      ite_eq_right (by omega), ite_eq_right (by omega)])
   have hR'fr : ∀ r, fr + 3 ≤ r → R' r = [] := fun r hr => by
-    simp only [R', Rs, Function.update_apply]; rw [if_neg (by omega), if_neg (by omega),
-      if_neg (by omega), if_neg (by omega)]; exact hfr r (by omega)
+    simp only [R', Rs, Function.update_apply]; rw [ite_eq_right (by omega), ite_eq_right (by omega),
+      ite_eq_right (by omega), ite_eq_right (by omega)]; exact hfr r (by omega)
   have hR'N : ∀ r, (R' r).length ≤ M := fun r => by
     simp only [R', Function.update_apply]; split_ifs
     · simp only [List.length_dropLast]; have := hRsN k fr; omega
@@ -710,9 +710,9 @@ theorem compileQOK_bRec (g h₀ h₁ bd : CobQ) (hg : CompileQOK A K x B g)
     split_ifs <;> first | rfl | omega | exact hV.symm | exact hdrop.symm
   rw [hlast]
   cases hβ : X[L - k - 1]'(by omega)
-  · simp only [Bool.false_eq_true, if_false]
+  · simp only [Bool.false_eq_true, ite_false]
     exact key false h₀ hh₀ (by omega) (by omega) hβ (fun ys => by simp [CobQ.eval_bRec_cons])
-  · simp only [if_true]
+  · simp only [ite_true]
     exact key true h₁ hh₁ (by omega) (by omega) hβ (fun ys => by simp [CobQ.eval_bRec_cons])
 
 mutual

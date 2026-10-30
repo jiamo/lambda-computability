@@ -39,7 +39,7 @@ Main results:
 
 import Start.CwaLocalUniverse
 import Start.Lccc
-import Mathlib.CategoryTheory.Limits.Shapes.BinaryProducts
+import Mathlib.CategoryTheory.Limits.Shapes.BinaryProducts.ProdComparison
 
 set_option relaxedAutoImplicit false
 set_option autoImplicit false

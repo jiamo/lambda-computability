@@ -435,10 +435,10 @@ theorem initN_eq (l : List (tm.Γ tm.k₀)) :
     funext i
     by_cases h : i = eK tm tm.k₀
     · subst h
-      rw [encStk_apply, if_pos rfl]
+      rw [encStk_apply, ite_eq_left rfl]
       congr 1
       simp [Turing.initList]
-    · rw [if_neg h]
+    · rw [ite_eq_right h]
       have h2 : (eK tm).symm i ≠ tm.k₀ := fun hh => h (by rw [← hh]; simp)
       have h3 : encStk tm (Turing.initList tm l).stk i
           = ((Turing.initList tm l).stk ((eK tm).symm i)).map (encG tm) := rfl

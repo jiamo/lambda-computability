@@ -64,11 +64,11 @@ theorem Construction.decodedOrdinalBody_bound (t : Construction.{u}) (q : Senten
     · dsimp only [ordinalBodySlots]; split <;> omega
   · intro i _
     by_cases hi : i < t.ownRealsMembership.bound
-    · rw [Construction.decodedOrdinalInput,dif_pos hi]
+    · rw [Construction.decodedOrdinalInput,dite_eq_left hi]
       cases t.ordinalData i with
       | none => simp only [SentenceForm.bound]; omega
       | some o => exact (largestPaddedEntrySentence_bound _ _).trans (by omega)
-    · rw [Construction.decodedOrdinalInput,dif_neg hi]
+    · rw [Construction.decodedOrdinalInput,dite_eq_right hi]
       simp only [SentenceForm.bound]; omega
 
 theorem Construction.decodedOrdinalBody_spec (t : Construction.{u}) (q : SentenceForm)
@@ -90,13 +90,13 @@ theorem Construction.decodedOrdinalBody_spec (t : Construction.{u}) (q : Sentenc
   have hf (k : ℕ) (hk : k < n) (x : ZFSet.{u}) (hx : x ∈ A) :
       (t.decodedOrdinalInput k).Sat (A : Set ZFSet) (cons x (cons z (fun _ => realCode P))) ↔ x = w k := by
     have hk' : k < t.ownRealsMembership.bound := hk
-    rw [Construction.decodedOrdinalInput,dif_pos hk']
+    rw [Construction.decodedOrdinalInput,dite_eq_left hk']
     cases ho : t.ordinalData k with
-    | none => simp only [SentenceForm.Sat,w,Construction.ordinalInputs,cons_succ,cons_zero,if_pos hk',ho]
+    | none => simp only [SentenceForm.Sat,w,Construction.ordinalInputs,cons_succ,cons_zero,ite_eq_left hk',ho]
     | some o =>
       have h := largestPaddedEntrySentence_of_certificates M hM hT n ⟨k,hk⟩ t.ordinalVector β hoff
         (cons x (cons z (fun _ => realCode P))) hx hcert
-      simpa only [cons_zero,w,Construction.ordinalInputs,cons_succ,if_pos hk',
+      simpa only [cons_zero,w,Construction.ordinalInputs,cons_succ,ite_eq_left hk',
         Construction.ordinalVector,ho,Option.getD_some] using h
   rw [Construction.decodedOrdinalBody,bindComputed_spec A n t.decodedOrdinalInput _
     (cons z (fun _ => realCode P)) w (fun i _ => he (i+1)) hf,SentenceForm.sat_rename]
@@ -107,9 +107,9 @@ theorem Construction.decodedOrdinalBody_spec (t : Construction.{u}) (q : Sentenc
     · exact prependValues_tail w n _ 0
     · exact prependValues_tail w n _ 1
     · by_cases hk : k < n
-      · simpa only [ordinalBodySlots,if_pos hk,cons_succ,w] using prependValues_lt w n _ k hk
+      · simpa only [ordinalBodySlots,ite_eq_left hk,cons_succ,w] using prependValues_lt w n _ k hk
       · have hk' : ¬ k < t.ownRealsMembership.bound := hk
-        simp only [ordinalBodySlots,if_neg hk,cons_succ,Construction.ordinalInputs,if_neg hk']
+        simp only [ordinalBodySlots,ite_eq_right hk,cons_succ,Construction.ordinalInputs,ite_eq_right hk']
         exact prependValues_tail w n _ 1
   rw [henv]
 

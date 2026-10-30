@@ -116,11 +116,11 @@ theorem Fml.ofNat_toNat (φ : Fml) : Fml.ofNat φ.toNat = φ := by
         by omega, Fml.ofNat_succ]
       have h1 : (3 * Nat.pair p.toNat q.toNat + 1) % 3 = 1 := by omega
       have h2 : (3 * Nat.pair p.toNat q.toNat + 1) / 3 = Nat.pair p.toNat q.toNat := by omega
-      rw [if_neg (by omega), if_pos h1, h2, Nat.unpair_pair, ihp, ihq]
+      rw [ite_eq_right (by omega), ite_eq_left h1, h2, Nat.unpair_pair, ihp, ihq]
   | box p ih =>
       rw [Fml.toNat, show 3 * p.toNat + 3 = (3 * p.toNat + 2) + 1 by omega, Fml.ofNat_succ]
       have h2 : (3 * p.toNat + 2) / 3 = p.toNat := by omega
-      rw [if_neg (by omega), if_neg (by omega), h2, ih]
+      rw [ite_eq_right (by omega), ite_eq_right (by omega), h2, ih]
 
 theorem add_le_pair (a b : ℕ) : a + b ≤ Nat.pair a b := by
   unfold Nat.pair

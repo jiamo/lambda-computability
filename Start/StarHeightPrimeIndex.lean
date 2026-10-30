@@ -91,7 +91,7 @@ theorem height_one_of_prime_index_pure_aux [Finite Alphabet] [Fintype G]
     simp only [mv, psi_apply]
     by_cases ha : T (FreeMonoid.of a) ∈ N
     · simp [ha, (QuotientGroup.eq_one_iff _).mpr ha]
-    · simp only [ha, not_false_eq_true, decide_true, if_true, hγ]
+    · simp only [ha, not_false_eq_true, decide_true, ite_true, hγ]
       rcases hT a with h | h
       · exact absurd h ha
       · exact (QuotientGroup.eq.mpr (by simpa using h)).symm

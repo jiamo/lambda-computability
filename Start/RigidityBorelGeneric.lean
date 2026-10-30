@@ -6,7 +6,6 @@ file `lean/OAI/Computability/DegreeRigidity/Representation/BorelGeneric.lean`, f
 paper "Rigidity of the Turing degrees".
 Adapted to this library's Lean v4.33.0 / Mathlib `v4.33.0` pin: the `OAI` namespace was dropped,
 imports were renamed to `Start.Rigidity*`, and proofs were repaired where the pin required it.
-Proof change: `Measurable.of_eval` (upstream pin) is `measurable_pi_lambda` on this pin.
 See `NOTICE` at the repository root.
 -/
 
@@ -78,7 +77,7 @@ noncomputable def generic (x : X) : Oracle :=
 
 theorem generic_measurable (hR : ∀ n t, MeasurableSet {x | R x n t}) :
     Measurable (generic R hd) := by
-  apply measurable_pi_lambda
+  apply Measurable.of_eval
   intro i
   exact (measurable_of_countable (fun k : ℕ => (word k).getD i false)).comp
     (stage_measurable R hd hR (i+1))

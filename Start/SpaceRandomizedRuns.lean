@@ -103,13 +103,13 @@ theorem acceptWithin_stable : ∀ (N : ℕ) (c : Config), M.Ends x c N →
 theorem acceptWithin_single {c d : Config} (hl : M.stepList x c = [d])
     (hacc : M.accept c.state = false) (T : ℕ) :
     M.acceptWithin x (T + 1) c = M.acceptWithin x T d := by
-  simp only [acceptWithin, hl, hacc, Bool.false_eq_true, if_false]
+  simp only [acceptWithin, hl, hacc, Bool.false_eq_true, ite_false]
 
 /-- One branching between two successors. -/
 theorem acceptWithin_pair {c d₀ d₁ : Config} (hl : M.stepList x c = [d₀, d₁])
     (hacc : M.accept c.state = false) (T : ℕ) :
     M.acceptWithin x (T + 1) c = (M.acceptWithin x T d₀ + M.acceptWithin x T d₁) / 2 := by
-  simp only [acceptWithin, hl, hacc, Bool.false_eq_true, if_false]
+  simp only [acceptWithin, hl, hacc, Bool.false_eq_true, ite_false]
 
 /-- A halting non-accepting configuration has probability `0`. -/
 theorem acceptWithin_halt {c : Config} (hl : M.stepList x c = [])

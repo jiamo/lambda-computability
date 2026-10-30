@@ -131,19 +131,19 @@ theorem transportForm_apply (K : ℕ) {s t : TypeNode K P E} (hst : s = t)
 noncomputable def leftForm (K : ℕ) (l : TypeLink K E) :
     I.Value K (linkLeft K I.src l) →ₗ[F₂] F₂ :=
   if h : l.2.val = 0 then
-    I.transportForm K (t := .inl (I.src l.1)) (by simp only [linkLeft, dif_pos h]) (I.linearSrc l.1)
+    I.transportForm K (t := .inl (I.src l.1)) (by simp only [linkLeft, dite_eq_left h]) (I.linearSrc l.1)
   else
     I.transportForm K (show linkLeft K I.src l = Sum.inr
-      (l.1, ⟨l.2.val - 1, by have := l.2.isLt; omega⟩) by simp only [linkLeft, dif_neg h])
+      (l.1, ⟨l.2.val - 1, by have := l.2.isLt; omega⟩) by simp only [linkLeft, dite_eq_right h])
       LinearMap.id
 
 noncomputable def rightForm (K : ℕ) (l : TypeLink K E) :
     I.Value K (linkRight K I.dst l) →ₗ[F₂] F₂ :=
   if h : l.2.val = 4 * K then
-    I.transportForm K (t := .inl (I.dst l.1)) (by simp only [linkRight, dif_pos h]) (I.linearDst l.1)
+    I.transportForm K (t := .inl (I.dst l.1)) (by simp only [linkRight, dite_eq_left h]) (I.linearDst l.1)
   else
     I.transportForm K (show linkRight K I.dst l = Sum.inr
-      (l.1, ⟨l.2.val, by have := l.2.isLt; omega⟩) by simp only [linkRight, dif_neg h])
+      (l.1, ⟨l.2.val, by have := l.2.isLt; omega⟩) by simp only [linkRight, dite_eq_right h])
       LinearMap.id
 
 def linkBias (K : ℕ) (l : TypeLink K E) : F₂ :=
@@ -168,22 +168,22 @@ theorem rootedShift_link (K : ℕ) (hK : 0 < K) (h : (p : P) → I.RealValue p)
   have hj := l.2.isLt
   by_cases h0 : l.2.val = 0
   · have h4 : l.2.val ≠ 4 * K := by omega
-    simp only [leftForm, rightForm, dif_pos h0, dif_neg h4]
+    simp only [leftForm, rightForm, dite_eq_left h0, dite_eq_right h4]
     rw [transportForm_apply, transportForm_apply]
     simp only [rootedShift, LinearMap.id_coe, id_eq, h0, show 0 < 2 * K by omega, ite_true,
       affineSrc, linkBias]
     rw [← add_assoc, CharTwo.add_self_eq_zero, zero_add]
   · by_cases h4 : l.2.val = 4 * K
     · have hhalf : ¬l.2.val - 1 < 2 * K := by omega
-      simp only [leftForm, rightForm, dif_neg h0, dif_pos h4]
+      simp only [leftForm, rightForm, dite_eq_right h0, dite_eq_left h4]
       rw [transportForm_apply, transportForm_apply]
-      simp only [rootedShift, LinearMap.id_coe, id_eq, if_neg hhalf, affineDst, linkBias,
-        if_neg h0, if_pos h4]
+      simp only [rootedShift, LinearMap.id_coe, id_eq, ite_eq_right hhalf, affineDst, linkBias,
+        ite_eq_right h0, ite_eq_left h4]
       rw [add_right_comm, CharTwo.add_self_eq_zero, zero_add]
     · have heq : l.2.val - 1 < 2 * K ↔ l.2.val < 2 * K := by omega
-      simp only [leftForm, rightForm, dif_neg h0, dif_neg h4]
+      simp only [leftForm, rightForm, dite_eq_right h0, dite_eq_right h4]
       rw [transportForm_apply, transportForm_apply]
-      simp only [rootedShift, LinearMap.id_coe, id_eq, linkBias, if_neg h0, if_neg h4,
+      simp only [rootedShift, LinearMap.id_coe, id_eq, linkBias, ite_eq_right h0, ite_eq_right h4,
         heq, CharTwo.add_self_eq_zero]
 
 def interiorShift (K : ℕ) (s : F₂) : (t : TypeNode K P E) → I.Value K t
@@ -194,35 +194,35 @@ theorem interiorShift_link (K : ℕ) (s : F₂) (l : TypeLink K E)
     (h0 : l.2.val ≠ 0) (h4 : l.2.val ≠ 4 * K) :
     I.leftForm K l (I.interiorShift K s (linkLeft K I.src l)) +
       I.rightForm K l (I.interiorShift K s (linkRight K I.dst l)) = I.linkBias K l := by
-  simp only [leftForm, rightForm, dif_neg h0, dif_neg h4]
+  simp only [leftForm, rightForm, dite_eq_right h0, dite_eq_right h4]
   rw [transportForm_apply, transportForm_apply]
-  simp only [interiorShift, LinearMap.id_coe, id_eq, linkBias, if_neg h0, if_neg h4,
+  simp only [interiorShift, LinearMap.id_coe, id_eq, linkBias, ite_eq_right h0, ite_eq_right h4,
     CharTwo.add_self_eq_zero]
 
 theorem leftForm_section_zero (K : ℕ) (l : TypeLink K E) (h0 : l.2.val = 0)
     (h : (t : TypeNode K P E) → I.Value K t) :
     I.leftForm K l (h (linkLeft K I.src l)) = I.linearSrc l.1 (h (.inl (I.src l.1))) := by
-  simp only [leftForm, dif_pos h0]
+  simp only [leftForm, dite_eq_left h0]
   exact I.transportForm_apply K _ _ h
 
 theorem leftForm_section_internal (K : ℕ) (l : TypeLink K E) (h0 : l.2.val ≠ 0)
     (h : (t : TypeNode K P E) → I.Value K t) :
     I.leftForm K l (h (linkLeft K I.src l)) =
       h (.inr (l.1, ⟨l.2.val - 1, by have := l.2.isLt; omega⟩)) := by
-  simp only [leftForm, dif_neg h0]
+  simp only [leftForm, dite_eq_right h0]
   exact I.transportForm_apply K _ _ h
 
 theorem rightForm_section_last (K : ℕ) (l : TypeLink K E) (h4 : l.2.val = 4 * K)
     (h : (t : TypeNode K P E) → I.Value K t) :
     I.rightForm K l (h (linkRight K I.dst l)) = I.linearDst l.1 (h (.inl (I.dst l.1))) := by
-  simp only [rightForm, dif_pos h4]
+  simp only [rightForm, dite_eq_left h4]
   exact I.transportForm_apply K _ _ h
 
 theorem rightForm_section_internal (K : ℕ) (l : TypeLink K E) (h4 : l.2.val ≠ 4 * K)
     (h : (t : TypeNode K P E) → I.Value K t) :
     I.rightForm K l (h (linkRight K I.dst l)) =
       h (.inr (l.1, ⟨l.2.val, by have := l.2.isLt; omega⟩)) := by
-  simp only [rightForm, dif_neg h4]
+  simp only [rightForm, dite_eq_right h4]
   exact I.transportForm_apply K _ _ h
 
 noncomputable def canonicalShift (K : ℕ) (S : Finset (TypeLink K E))
@@ -243,7 +243,7 @@ theorem canonicalShift_solves [DecidableEq E] (K : ℕ) (hK : 0 < K)
   have heq := hasReal_of_reachable K I.src I.dst S hreach
   by_cases hreal : HasReal K I.src I.dst S (linkLeft K I.src l)
   · have hreal' := heq.mp hreal
-    simp only [canonicalShift, if_pos hreal, if_pos hreal']
+    simp only [canonicalShift, ite_eq_left hreal, ite_eq_left hreal']
     apply I.rootedShift_link K hK
     intro hmid
     obtain ⟨p, hp⟩ := hreal
@@ -254,20 +254,20 @@ theorem canonicalShift_solves [DecidableEq E] (K : ℕ) (hK : 0 < K)
     have h0 : l.2.val ≠ 0 := by
       intro h
       apply hreal
-      simpa only [linkLeft, dif_pos h] using hasReal_inl K I.src I.dst S (I.src l.1)
+      simpa only [linkLeft, dite_eq_left h] using hasReal_inl K I.src I.dst S (I.src l.1)
     have h4 : l.2.val ≠ 4 * K := by
       intro h
       apply hreal'
-      simpa only [linkRight, dif_pos h] using hasReal_inl K I.src I.dst S (I.dst l.1)
+      simpa only [linkRight, dite_eq_left h] using hasReal_inl K I.src I.dst S (I.dst l.1)
     rw [I.leftForm_section_internal K l h0, I.rightForm_section_internal K l h4]
     have hlreal : ¬ HasReal K I.src I.dst S
         (.inr (l.1, ⟨l.2.val - 1, by have := l.2.isLt; omega⟩)) := by
-      simpa only [linkLeft, dif_neg h0] using hreal
+      simpa only [linkLeft, dite_eq_right h0] using hreal
     have hrreal : ¬ HasReal K I.src I.dst S
         (.inr (l.1, ⟨l.2.val, by have := l.2.isLt; omega⟩)) := by
-      simpa only [linkRight, dif_neg h4] using hreal'
-    simp only [canonicalShift, if_neg hlreal, if_neg hrreal, linkBias,
-      if_neg h0, if_neg h4, CharTwo.add_self_eq_zero]
+      simpa only [linkRight, dite_eq_right h4] using hreal'
+    simp only [canonicalShift, ite_eq_right hlreal, ite_eq_right hrreal, linkBias,
+      ite_eq_right h0, ite_eq_right h4, CharTwo.add_self_eq_zero]
 
 theorem rootedShift_congr (K : ℕ) (x y : (p : P) → I.RealValue p)
     (t : TypeNode K P E) (h : x (realRoot K I.src I.dst t) = y (realRoot K I.src I.dst t)) :
@@ -279,9 +279,9 @@ theorem rootedShift_congr (K : ℕ) (x y : (p : P) → I.RealValue p)
     dsimp only [rootedShift]
     dsimp only [realRoot] at h
     split_ifs with hj
-    · rw [if_pos hj] at h
+    · rw [ite_eq_left hj] at h
       rw [h]
-    · rw [if_neg hj] at h
+    · rw [ite_eq_right hj] at h
       rw [h]
 
 structure ArcWitness where
@@ -339,8 +339,8 @@ theorem scalar_eq_on_internal_link (K : ℕ) (l : TypeLink K E)
     (h0 : l.2.val ≠ 0) (h4 : l.2.val ≠ 4 * K) :
     I.scalarOf K h (linkLeft K I.src l) = I.scalarOf K h (linkRight K I.dst l) := by
   rw [I.leftForm_section_internal K l h0, I.rightForm_section_internal K l h4] at hl
-  simp only [linkBias, if_neg h0, if_neg h4] at hl
-  simp only [linkLeft, linkRight, dif_neg h0, dif_neg h4, scalarOf]
+  simp only [linkBias, ite_eq_right h0, ite_eq_right h4] at hl
+  simp only [linkLeft, linkRight, dite_eq_right h0, dite_eq_right h4, scalarOf]
   calc
     _ = _ + (h (.inr (l.1, ⟨l.2.val - 1, by have := l.2.isLt; omega⟩)) +
       h (.inr (l.1, ⟨l.2.val, by have := l.2.isLt; omega⟩))) := by rw [hl, add_zero]
@@ -356,8 +356,8 @@ theorem scalar_eq_on_internal_edge (K : ℕ) (S : Finset (TypeLink K E))
       I.scalarOf K h (linkLeft K I.src l) = I.scalarOf K h (linkRight K I.dst l) := by
     intro l hl hleft hright
     apply I.scalar_eq_on_internal_link K l h (hs l hl)
-    · intro hz; exact hleft (I.src l.1) (dif_pos hz)
-    · intro hz; exact hright (I.dst l.1) (dif_pos hz)
+    · intro hz; exact hleft (I.src l.1) (dite_eq_left hz)
+    · intro hz; exact hright (I.dst l.1) (dite_eq_left hz)
   obtain ⟨_, l, hl, he | he⟩ := hxy
   · obtain ⟨rfl, rfl⟩ := he; exact aux l hl hx hy
   · obtain ⟨rfl, rfl⟩ := he; exact (aux l hl hy hx).symm

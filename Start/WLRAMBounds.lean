@@ -131,8 +131,8 @@ def answer (v : Tops (Reg A K) (Letter A)) : Bool :=
       simp only [Function.update_apply,Sum.inr.injEq,Sum.inr_ne_inl,ite_false,Sum.elim_inr,
         RAMAlphabet.inputState,Code.listMap,ho,List.map_reverse,List.reverse_reverse,List.append_nil]
       by_cases hr : r=(.inl 0 : RAMAlphabet.Reg A)
-      · simp only [if_pos hr]
-      · simp only [if_neg hr]
+      · simp only [ite_eq_left hr]
+      · simp only [ite_eq_right hr]
   rw [he] at hf
   simpa only [prelude,Code.listMap,Sum.elim_inl,Sum.elim_inr,ho,List.length_map,List.length_reverse] using hf
  theorem code_exec (c : Code K Bool) (input output : K) (n : ℕ) (w ys : List Bool)
@@ -151,8 +151,8 @@ def answer (v : Tops (Reg A K) (Letter A)) : Bool :=
     cases r with
     | inl r =>
       by_cases hr : r=input
-      · simp only [Code.listMap,Sum.elim_inl,Sum.inl.injEq,if_pos hr]
-      · simp only [Code.listMap,Sum.elim_inl,Sum.inl.injEq,if_neg hr,List.map_nil]
+      · simp only [Code.listMap,Sum.elim_inl,Sum.inl.injEq,ite_eq_left hr]
+      · simp only [Code.listMap,Sum.elim_inl,Sum.inl.injEq,ite_eq_right hr,List.map_nil]
     | inr r => simp only [Sum.elim_inr,Sum.inr_ne_inl,ite_false]
   rw [hs] at hf
   refine ⟨t+(5*ys.length+1)+v,by omega,_,b,hf,?_,hb⟩

@@ -285,7 +285,7 @@ theorem eval_pairBlk (n : ℕ) (y : Word) (s c : ℕ) :
       simp only [Cob.eval_comp, List.map_cons, List.map_nil, Cob.eval_iteC, Cob.eval_proj,
         List.getD_cons_zero, List.getD_cons_succ, Cob.eval_pre, Cob.eval_smash,
         Cob.eval_tail, Cob.eval_constT, List.tail_replicate, List.length_replicate,
-        if_neg (by simp : ¬ List.replicate (i + 1) true = [])]
+        ite_eq_right (by simp : ¬ List.replicate (i + 1) true = [])]
       rw [← List.replicate_add]
       congr 1
       change 3 + i * 4 = 4 * i + 3

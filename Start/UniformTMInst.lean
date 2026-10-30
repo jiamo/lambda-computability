@@ -61,7 +61,7 @@ theorem tmConf_scanTM (W n : ℕ) (bit : ℕ → Bool) (hn : 0 < n) :
   induction t with
   | zero =>
       intro _ _
-      rw [tmConf_scanTM_zero, if_pos hn]
+      rw [tmConf_scanTM_zero, ite_eq_left hn]
   | succ t ih =>
       intro hfalse hle
       have h1 := ih (fun i hi => hfalse i (by omega)) (by omega)
@@ -78,9 +78,9 @@ theorem tmConf_scanTM (W n : ℕ) (bit : ℕ → Bool) (hn : 0 < n) :
           else scanTape n bit j) = scanTape n bit := by
         funext j
         by_cases hj : j = t
-        · rw [if_pos hj, hj]
+        · rw [ite_eq_left hj, hj]
           rfl
-        · rw [if_neg hj]
+        · rw [ite_eq_right hj]
       exact Prod.ext htape (Prod.ext (by simp [scanTM]) (by simp [scanTM, hbt]))
 
 /-- **On an all-`false` input the machine never leaves its initial state**, so it never
@@ -112,9 +112,9 @@ theorem tmConf_scanTM_of_false (W n : ℕ) (bit : ℕ → Bool) (hb : ∀ i, i <
                 ((tmConf scanTM W n bit t).1 (tmConf scanTM W n bit t).2.1)
             else (tmConf scanTM W n bit t).1 j) = false
           by_cases hj : j = (tmConf scanTM W n bit t).2.1
-          · rw [if_pos hj]
+          · rw [ite_eq_left hj]
             exact ih.2 _
-          · rw [if_neg hj]
+          · rw [ite_eq_right hj]
             exact ih.2 j
 
 theorem not_tmAccAt_scanTM (W n : ℕ) (bit : ℕ → Bool) (hb : ∀ i, i < n → bit i = false) (t : ℕ) :

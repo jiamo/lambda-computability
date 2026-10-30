@@ -85,7 +85,7 @@ theorem esc_spec (b x : ℕ) (hex : ∃ i < b, F (iterGF F G i x) ∉ out) :
       · -- the first value is unusable: continue the chase from `G (F x)`
         have h1b : out.elem (F x) = true := List.contains_iff_mem.2 h1
         have hstep : escStep F G out (x, 0, false) = (G (F x), 0, false) := by
-          rw [escStep, if_pos h1b]
+          rw [escStep, ite_eq_left h1b]
         have hrun : escRun F G out (b + 1) x = escRun F G out b (G (F x)) := by
           rw [escRun, Function.iterate_succ_apply, hstep, escRun]
         have hex' : ∃ i < b, F (iterGF F G i (G (F x))) ∉ out := by
@@ -105,7 +105,7 @@ theorem esc_spec (b x : ℕ) (hex : ∃ i < b, F (iterGF F G i x) ∉ out) :
       · -- the first value is usable
         have h1' : ¬ out.elem (F x) = true := fun hmem => h1 (List.contains_iff_mem.1 hmem)
         have hstep : escStep F G out (x, 0, false) = (x, F x, true) := by
-          rw [escStep, if_neg h1']
+          rw [escStep, ite_eq_right h1']
         have hrun : escRun F G out (b + 1) x = (x, F x, true) := by
           rw [escRun, Function.iterate_succ_apply, hstep]
           exact escRun_stable F G out x (F x) b
@@ -194,7 +194,7 @@ theorem look_eq_of_mem : ∀ {p : PMap}, (dom p).Nodup → ∀ {x y : ℕ}, (x, 
         simp [look]
       · have hx : x ∈ dom t := mem_dom_iff.2 ⟨y, hq⟩
         have hax : a ≠ x := fun hax => hnot (hax ▸ hx)
-        simp only [look, if_neg hax]
+        simp only [look, ite_eq_right hax]
         exact ih hnd' hq
 
 theorem colook_eq_of_mem {p : PMap} (hnd : (ran p).Nodup) {x y : ℕ} (h : (x, y) ∈ p) :
@@ -213,7 +213,7 @@ theorem look_mem {p : PMap} {x : ℕ} (h : x ∈ dom p) : (x, look p x) ∈ p :=
           rcases List.mem_cons.1 (show x ∈ a :: dom t from h) with h' | h'
           · exact absurd h'.symm hax
           · exact h'
-        simp only [look, if_neg hax]
+        simp only [look, ite_eq_right hax]
         exact List.mem_cons_of_mem _ (ih hx)
 
 theorem mem_of_mem_ran {p : PMap} {y : ℕ} (h : y ∈ ran p) : (colook p y, y) ∈ p :=
@@ -353,10 +353,10 @@ def extDom (f : ℕ → ℕ) (p : PMap) (x : ℕ) : PMap :=
   if x ∈ dom p then p
   else p ++ [(x, esc f (colook p) (ran p) (p.length + 1) x)]
 
-theorem extDom_of_mem {x : ℕ} (h : x ∈ dom p) : extDom f p x = p := if_pos h
+theorem extDom_of_mem {x : ℕ} (h : x ∈ dom p) : extDom f p x = p := ite_eq_left h
 
 theorem extDom_of_notMem {x : ℕ} (h : x ∉ dom p) :
-    extDom f p x = p ++ [(x, esc f (colook p) (ran p) (p.length + 1) x)] := if_neg h
+    extDom f p x = p ++ [(x, esc f (colook p) (ran p) (p.length + 1) x)] := ite_eq_right h
 
 theorem extDom_prefix (f : ℕ → ℕ) (p : PMap) (x : ℕ) : p <+: extDom f p x := by
   by_cases h : x ∈ dom p
@@ -470,14 +470,14 @@ theorem good_stage (hf : Function.Injective f) (hAB : ∀ z, A z ↔ B (f z))
 
 theorem mem_dom_stage (f g : ℕ → ℕ) (x : ℕ) : x ∈ dom (stage f g (2 * x + 1)) := by
   rw [stage_succ]
-  rw [if_pos (Nat.mul_mod_right 2 x), Nat.mul_div_cancel_left x (by omega)]
+  rw [ite_eq_left (Nat.mul_mod_right 2 x), Nat.mul_div_cancel_left x (by omega)]
   exact mem_dom_extDom f _ x
 
 theorem mem_ran_stage (f g : ℕ → ℕ) (y : ℕ) : y ∈ ran (stage f g (2 * y + 2)) := by
   have h1 : (2 * y + 1) % 2 ≠ 0 := by omega
   have h2 : (2 * y + 1) / 2 = y := by omega
   have : stage f g (2 * y + 2) = extRan g (stage f g (2 * y + 1)) y := by
-    rw [show 2 * y + 2 = (2 * y + 1) + 1 from rfl, stage_succ, if_neg h1, h2]
+    rw [show 2 * y + 2 = (2 * y + 1) + 1 from rfl, stage_succ, ite_eq_right h1, h2]
   rw [this]
   exact mem_ran_extRan g _ y
 

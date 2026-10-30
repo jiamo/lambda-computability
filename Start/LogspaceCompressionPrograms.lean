@@ -74,7 +74,7 @@ lemma deserted {y:ℕ}(he:y∈v.S) (hg:∀ i∈v.P,¬v.mayor i ∨ v.place i≠y
     rw [h.plan y he]
     rw [sum_eq_zero]
     · simp
-    intro j hj; rw [if_neg (hh j hj)]
+    intro j hj; rw [ite_eq_right (hh j hj)]
 
 omit h in
 lemma unique {i j:ℕ} (hi:v.mayor i)(hj:v.mayor j)(he:v.place i=v.place j):i=j:=by
@@ -103,12 +103,12 @@ lemma sampled (f:Pt→ℝ)(hf:f (line v.b)=v.b){x:ℝ}(hp:v.b  ≤  x):
        · intro hx; obtain ⟨i,he,rfl⟩:=mem_image.1 hx
          obtain ⟨ha,hb⟩:=h0 i he; obtain ⟨he,hf'⟩:=mem_filter.1 he
          refine mem_filter.2 ⟨h.atS _ he ha.1,?_⟩
-         unfold listP at hf'; rw [if_pos ha,hb] at hf'; exact hf'
+         unfold listP at hf'; rw [ite_eq_left ha,hb] at hf'; exact hf'
        intro he; obtain ⟨he,hg⟩:=mem_filter.1 he
        have hv:v.raw.ts j≠line v.b:=by intro hw; rw [hw,hf] at hg; linarith
        obtain ⟨i,hi,hA,hB⟩:=h.citizens he hv
        apply mem_image.2; refine ⟨i,mem_filter.2 ⟨hi,?_⟩,hB⟩
-       unfold listP; rw [if_pos hA,h.serves hi hA.1,hB]; exact hg
+       unfold listP; rw [ite_eq_left hA,h.serves hi hA.1,hB]; exact hg
     change P.card=S.card
     rw [← hl]; symm; apply card_image_iff.mpr
     intro i hi j hj h1
@@ -300,19 +300,19 @@ lemma book {i:ℕ}(he:i<v.m):
       constructor
       · intro hg j hj ht
         have hq:0<((range i).filter (fun j=> (if v.pals i j then 1 else (0:ℕ))≠0)).card:=
-          card_pos.mpr ⟨j,mem_filter.2 ⟨hj,by rw [if_pos ht]; omega⟩⟩
+          card_pos.mpr ⟨j,mem_filter.2 ⟨hj,by rw [ite_eq_left ht]; omega⟩⟩
         omega
       intro hg
       rw [le_zero_iff,card_eq_zero]
       ext j
       simp only [mem_filter,notMem_empty,iff_false]
-      rintro ⟨hj,hq⟩; rw [if_neg (hg _ hj)] at hq; contradiction
+      rintro ⟨hj,hq⟩; rw [ite_eq_right (hg _ hj)] at hq; contradiction
    apply Seats.steer hp.2
    · intro hl; have hA:=hh.1 hl
      have hu :solar v i=v.tag i:=by unfold solar; split <;> grind
      rw [hu]; exact higher (h.tagM i he).1 (by omega) (by omega)
    intro hl
-   have hu:solar v i=0:=if_neg (fun hv=> hl (hh.2 hv.2))
+   have hu:solar v i=0:=ite_eq_right (fun hv=> hl (hh.2 hv.2))
    rw [hu]; exact Seats.blankD hz (by omega)
 
 end Holds
@@ -407,12 +407,12 @@ lemma chorus {i}(he:i<v.m): Cext p s c T i 0 (p.warmth) (if v.mayor i then 1 els
    apply Chor.byear
    apply Seats.avis hz
    · intro hl
-     rw [if_neg (show ¬v.mayor i by intro e; exact ((nowEQ v i).2 e) hl)]
+     rw [ite_eq_right (show ¬v.mayor i by intro e; exact ((nowEQ v i).2 e) hl)]
      have ht:=sing hp.sil (h.currency.2.2) (H:=T) (by simp [tail,zeroE,son])
      exact flex ht (by change 1  ≤  powder 100; unfold powder; omega)
              (by change powder 100  ≤  goalCost c; unfold goalCost powder; omega) le_rfl
    intro hl
-   rw [if_pos ((nowEQ v i).1 hl)]
+   rw [ite_eq_left ((nowEQ v i).1 hl)]
    have hh:Cext p s c T i 0 (son 1 0) 1:=by
       convert hp.shins b 0 1 (by simp [massB]) using 1; norm_num
    exact flex (sing hh (h.currency.2.2) (H:=T) (by simp [son,tail])) (by change 1  ≤  powder 100; unfold powder; omega)
@@ -424,17 +424,17 @@ lemma slices {i j:ℕ}(hi:i<v.m)(hj:j<v.m)(b:Bool):
    apply Chor.byear
    apply Seats.avis (higher (h.both i hi j hj) he.1 he.2.1)
    · intro hl
-     have hh :¬ v.pals i j:=by intro x; unfold gcat at hl; rw [if_pos x] at hl; omega
+     have hh :¬ v.pals i j:=by intro x; unfold gcat at hl; rw [ite_eq_left x] at hl; omega
      have ht:Cext p s c T i j (son 0 p.inp) 0:=by
         convert hp.shins (goalCost c) p.inp 0 (by simp) using 1; norm_num
-     unfold Poolx.grainp; rw [if_neg hh]
+     unfold Poolx.grainp; rw [ite_eq_right hh]
      have hh2:sideq 0 b=0:=by cases b <;> rfl
      rw [hh2]
      exact flex (sing ht (h.currency.2.2) (H:=T) (by simp [tail,son])) (by change 1 ≤  powder 100; unfold powder; omega)
              (by change powder 100  ≤  goalCost c; unfold goalCost powder; omega) le_rfl
    intro hh
-   have hz:v.pals i j:=by by_contra hc; unfold gcat at hh; rw [if_neg hc] at hh; contradiction
-   unfold Poolx.grainp; rw [if_pos hz]
+   have hz:v.pals i j:=by by_contra hc; unfold gcat at hh; rw [ite_eq_right hc] at hh; contradiction
+   unfold Poolx.grainp; rw [ite_eq_left hz]
    exact flex (h.glow i hi j hj hz b) he.1 he.2.1 le_rfl
 end Holds
 
@@ -749,7 +749,7 @@ lemma brooms (hr:p.burn*s.d ≤ T):∃ b:Broom p s c v,b.Fell:=by
            · exact punct_up hr.2 (hk.2.1.trans hM.1)
            exact punct0 (stable_home h.good).1 hM.2
          · intro hw; have hu:=(nowEQ v i).1 hw
-           refine ⟨if_pos hu,hu,?_⟩
+           refine ⟨ite_eq_left hu,hu,?_⟩
            have hz:=hB hj; change u<y; linarith
          intro ht _; exact (nowEQ v i).2 ht
        exact ⟨0,fun hl=> (hi hl).elim⟩
@@ -771,11 +771,11 @@ lemma brooms (hr:p.burn*s.d ≤ T):∃ b:Broom p s c v,b.Fell:=by
                             have hg:f.bench p.jack.b j=film s j 0:= by exact p.backBE s true i 0 _ j
                             rw [hg]; exact ⟨(hw j hj).2.1,(hw j hj).1⟩)
      dsimp only at he
-     have heX:b.answer i=(Seek.relief w i v.m).2:=if_pos hq
+     have heX:b.answer i=(Seek.relief w i v.m).2:=ite_eq_left hq
      rw [hmK,hmN] at he; rw [heX]
      exact ⟨Seats.steer hh (fun _=>he.2) (fun h1=>(h1 hq).elim),punct_up he.1
                                         (by unfold payC; unfold z; omega)⟩
-   have heX:b.answer i=0:=if_neg hq
+   have heX:b.answer i=0:=ite_eq_right hq
    have hx0: 2 ≤ p.payC c:=by unfold z at hM; unfold payC; omega
    rw [heX]; exact ⟨Seats.steer hh (fun y=> (hq y).elim)
                          (fun _=> Seats.blankD hp hx0),punct0 (stable_home h.good).1 hx0⟩
@@ -842,15 +842,15 @@ lemma locale {i}(he:b.answer i≠0):
                                           (Seek.part b.marked (b.who i)).card=i:=by
     unfold answer at he
     by_cases hg:b.hot=0
-    · rw [if_pos hg] at he
+    · rw [ite_eq_left hg] at he
       obtain ⟨j,h1,h2,h3⟩:= (Seek.casebook b.marked i v.m).resolve_left he
-      have hu:b.answer i=Seek.bin j (b.marked j):=(if_pos hg).trans h3
+      have hu:b.answer i=Seek.bin j (b.marked j):=(ite_eq_left hg).trans h3
       have hh:b.who i=j:=by unfold who; rw [hu]; simp [Seek.bin,Relay.mark]
       have ht :=mem_filter.1 h1
       have ha :b.marked j=v.tag j :=(g.matches0 j ht.1 ht.2).1
-      unfold reach; rw [hh,if_pos hg]
+      unfold reach; rw [hh,ite_eq_left hg]
       exact ⟨hg,h1,ha ▸ hu,h2⟩
-    rw [if_neg hg] at he; contradiction
+    rw [ite_eq_right hg] at he; contradiction
 
 omit g in
 lemma allot {i}:b.answer i≠0 ↔ i< b.reach.card:=by
@@ -863,7 +863,7 @@ lemma locates {j}(he:j∈b.reach): ∃ i,b.answer i≠0 ∧ b.who i=j:= by
    · next hg=>
      obtain ⟨h1,h2⟩:=mem_filter.1 he
      let i:=(Seek.part b.marked j).card
-     have hp:b.answer i=Seek.bin j (b.marked j):=(if_pos hg).trans (Seek.order (mem_range.1 h1) h2 rfl)
+     have hp:b.answer i=Seek.bin j (b.marked j):=(ite_eq_left hg).trans (Seek.order (mem_range.1 h1) h2 rfl)
      refine ⟨i,?_,?_⟩
      · rw [hp]; exact ne_of_gt (Seek.binpos j _)
      unfold who; rw [hp,Relay.marked]
@@ -880,7 +880,7 @@ lemma framed (hv:v.Nice)(hr: 4 ≤ p.R s) (i) (hi:i∈v.S)
     · next hc=>
       refine hv.coverHome (B:=b.reach) ?_ _ hr hi ?_
       · intro i hi hv hp
-        unfold reach; rw [if_pos hc]
+        unfold reach; rw [ite_eq_left hc]
         exact mem_filter.2 ⟨hi,g.total i hi hv hp⟩
       intro hd
       obtain ⟨j,hg,hj⟩:=mem_image.1 hd
@@ -916,15 +916,15 @@ lemma turmoil {b:Broom p s c v}(g:b.Fell){H}(hr:H+p.prompt*s.d  ≤ T)(i)(a):
     have hh:=h.tune0; have hc:=h.tune1; have he:=g.arrival i
     have ht:= higher he.1 hh.1 hh.2.1
     apply Seats.avis (higher ht hc hh.2.2)
-    · intro hz; rw [Broom.valueq,if_pos hz]
+    · intro hz; rw [Broom.valueq,ite_eq_left hz]
       exact flex (h.baseHear hr i a) hc hh.2.2 le_rfl
     intro hp
-    rw [Broom.valueq,if_neg hp]
+    rw [Broom.valueq,ite_eq_right hp]
     obtain ⟨hu,h1,h2,h3⟩:=g.locale hp
     obtain ⟨h4,h5,h6⟩:=g.there h1
     have hz := sing (h.foam (mem_range.1 h4) h5 a) h.currency.2.2 (p.pays_sides a hr).1
     unfold Broom.product
-    rw [if_pos hu]
+    rw [ite_eq_left hu]
     let f:=film s i 0; let k:Cub History ℕ:=⟨_,rearmK⟩
     have hk: berth k f (b.answer i) = film s (b.who i) 0:=by simp [berth,k,panelx,f,film,
                                                    rearm,stairs,who,Relay.mark,info]

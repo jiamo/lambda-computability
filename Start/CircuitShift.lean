@@ -177,25 +177,25 @@ theorem eval_sblkT (y : Word) (k : ℕ) (s : ℕ) (b : Bool) (c : ℕ) :
         · simp [sblkT, sblk, gblk, emits]
         · simp [sblkT, sblk, gblk, emits]
         · simp [sblkT, sblk, gblk, emits]
-        · rw [show sblkT 3 false = _ from rfl, sblk, gblk, if_pos (by simp [emits]),
+        · rw [show sblkT 3 false = _ from rfl, sblk, gblk, ite_eq_left (by simp [emits]),
             show readGate 3 y = Gate.inp (fldA y) from rfl]
           simp [sblkT, Cob.eval_catL, Cob.eval_constT, shiftGate, encGate, tag, fld1, fld2,
             List.replicate_succ]
-        · rw [show sblkT 4 false = _ from rfl, sblk, gblk, if_pos (by simp [emits]),
+        · rw [show sblkT 4 false = _ from rfl, sblk, gblk, ite_eq_left (by simp [emits]),
             show readGate 4 y = Gate.cst false from rfl]
           simp [sblkT, Cob.eval_constT, shiftGate]
-        · rw [show sblkT 5 false = _ from rfl, sblk, gblk, if_pos (by simp [emits]),
+        · rw [show sblkT 5 false = _ from rfl, sblk, gblk, ite_eq_left (by simp [emits]),
             show readGate 5 y = Gate.cst true from rfl]
           simp [sblkT, Cob.eval_constT, shiftGate]
-        · rw [show sblkT 6 false = _ from rfl, sblk, gblk, if_pos (by simp [emits]),
+        · rw [show sblkT 6 false = _ from rfl, sblk, gblk, ite_eq_left (by simp [emits]),
             show readGate 6 y = Gate.neg (fldA y) from rfl]
           simp [sblkT, Cob.eval_catL, Cob.eval_constT, shiftGate, encGate, tag, fld1, fld2,
             List.replicate_succ, List.replicate_add, -List.replicate_append_replicate]
-        · rw [show sblkT 7 false = _ from rfl, sblk, gblk, if_pos (by simp [emits]),
+        · rw [show sblkT 7 false = _ from rfl, sblk, gblk, ite_eq_left (by simp [emits]),
             show readGate 7 y = Gate.conj (fldA y) (fldB y) from rfl]
           simp [sblkT, Cob.eval_catL, Cob.eval_constT, shiftGate, encGate, tag, fld1, fld2,
             List.replicate_succ, List.replicate_add, -List.replicate_append_replicate]
-        · rw [show sblkT 8 false = _ from rfl, sblk, gblk, if_pos (by simp [emits]),
+        · rw [show sblkT 8 false = _ from rfl, sblk, gblk, ite_eq_left (by simp [emits]),
             show readGate 8 y = Gate.disj (fldA y) (fldB y) from rfl]
           simp [sblkT, Cob.eval_catL, Cob.eval_constT, shiftGate, encGate, tag, fld1, fld2,
             List.replicate_succ, List.replicate_add, -List.replicate_append_replicate]

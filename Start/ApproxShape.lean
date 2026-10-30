@@ -71,8 +71,8 @@ theorem direct_eq_var {t : Lambda} {n : ℕ} (h : direct t = Lambda.var n) : t =
   | app s u =>
       rw [direct_app] at h
       by_cases hh : headVar s
-      · rw [if_pos hh] at h; exact absurd h (by simp)
-      · rw [if_neg hh] at h; exact absurd h (by simp [Lambda.omega])
+      · rw [ite_eq_left hh] at h; exact absurd h (by simp)
+      · rw [ite_eq_right hh] at h; exact absurd h (by simp [Lambda.omega])
 
 theorem direct_eq_lam {t s : Lambda} (h : direct t = Lambda.lam s) :
     ∃ t', t = Lambda.lam t' ∧ direct t' = s := by
@@ -82,8 +82,8 @@ theorem direct_eq_lam {t s : Lambda} (h : direct t = Lambda.lam s) :
   | app a b =>
       rw [direct_app] at h
       by_cases hh : headVar a
-      · rw [if_pos hh] at h; exact absurd h (by simp)
-      · rw [if_neg hh] at h; exact absurd h (by simp [Lambda.omega])
+      · rw [ite_eq_left hh] at h; exact absurd h (by simp)
+      · rw [ite_eq_right hh] at h; exact absurd h (by simp [Lambda.omega])
 
 /-- Inverting `direct` at an application.  The second alternative is real: the direct approximant
 of a head redex is `Ω`, which is itself an application. -/
@@ -96,13 +96,13 @@ theorem direct_eq_app {t s u : Lambda} (h : direct t = Lambda.app s u) :
   | app a b =>
       rw [direct_app] at h
       by_cases hh : headVar a
-      · rw [direct_app, if_pos hh]
+      · rw [direct_app, ite_eq_left hh]
         refine Or.inr ⟨a, b, rfl, hh, ?_, ?_⟩
-        · rw [if_pos hh] at h
+        · rw [ite_eq_left hh] at h
           exact (Lambda.app.injEq _ _ _ _ ▸ h).1
-        · rw [if_pos hh] at h
+        · rw [ite_eq_left hh] at h
           exact (Lambda.app.injEq _ _ _ _ ▸ h).2
-      · exact Or.inl (by rw [direct_app, if_neg hh])
+      · exact Or.inl (by rw [direct_app, ite_eq_right hh])
 
 /-! ## The shape lemma -/
 

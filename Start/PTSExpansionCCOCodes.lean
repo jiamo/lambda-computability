@@ -70,7 +70,7 @@ theorem zfApp_zfLam {A x : ZFSet} (f : ZFSet → ZFSet) (hx : x ∈ A) :
     zfApp (zfLam A f) x = f x := by
   have h : ∃ y, pair x y ∈ zfLam A f := ⟨f x, by
     simp only [zfLam, mem_map]; exact ⟨x, hx, rfl⟩⟩
-  rw [zfApp, dif_pos h]
+  rw [zfApp, dite_eq_left h]
   exact eq_of_pair_mem_zfLam (Classical.choose_spec h)
 
 /-- A point of the domain of `zfLam A f` is a point of `A`. -/
@@ -104,7 +104,7 @@ theorem zfApp_mem_zfPi {A g x : ZFSet} {f : ZFSet → ZFSet} (hg : g ∈ zfPi A 
   obtain ⟨y, hy, hyf⟩ := hval x hx
   have h : ∃ y, pair x y ∈ g := ⟨y, hy⟩
   have e : zfApp g x = y := by
-    rw [zfApp, dif_pos h]
+    rw [zfApp, dite_eq_left h]
     exact (huniq x hx).unique (Classical.choose_spec h) hy
   rw [e]
   exact ⟨hy, hyf⟩

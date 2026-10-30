@@ -30,8 +30,8 @@ theorem prepend_outputFirst (xs junk : List ZFSet.{u}) (y : ZFSet.{u})
     change prepend xs (cons y (prepend junk e))
       (if i < xs.length then i else i+junk.length+1) = prepend xs e i
     by_cases hi : i < xs.length
-    · rw [if_pos hi]; exact prepend_congr xs _ _ i hi
-    · rw [if_neg hi]
+    · rw [ite_eq_left hi]; exact prepend_congr xs _ _ i hi
+    · rw [ite_eq_right hi]
       obtain ⟨j,rfl⟩ := Nat.exists_eq_add_of_le (Nat.le_of_not_gt hi)
       have harith : xs.length+j+junk.length+1 = xs.length+(junk.length+j+1) := by omega
       rw [harith,prepend_tail,prepend_tail,cons_succ,prepend_tail]

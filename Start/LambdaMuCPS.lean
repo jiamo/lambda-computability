@@ -90,11 +90,11 @@ theorem typing_lift {Δ : List Lambda.Ty} {t : Lambda} {T : Lambda.Ty} (h : Lamb
       have hlt : i < Δ.length := by
         by_contra hc; rw [List.getElem?_eq_none (by omega)] at hi; cases hi
       by_cases hik : i < k
-      · simp only [Lambda.lift, hik, if_true]
+      · simp only [Lambda.lift, hik, ite_true]
         refine .var ?_
         rw [List.getElem?_append_left (by simp; omega), List.getElem?_take_of_lt hik]
         exact hi
-      · simp only [Lambda.lift, hik, if_false]
+      · simp only [Lambda.lift, hik, ite_false]
         refine .var ?_
         have hk : (Δ.take k).length = k := by simp; omega
         rw [List.getElem?_append_right (by omega), hk]
@@ -755,7 +755,7 @@ theorem cpsE_struct (β : ℕ) (t u : Tm) (ρ : ℕ → Lambda) (ht : TermFree 0
     cases i with
     | zero => simp [consN, upd, Lambda.subst, hK]
     | succ i =>
-        simp only [consN, upd, liftE, if_neg (Nat.succ_ne_zero i)]
+        simp only [consN, upd, liftE, ite_eq_right (Nat.succ_ne_zero i)]
         exact Lambda.subst_lift _ _ 0
   have hstep : Lambda.step (cpsE ρ (.app (.mu β t) u))
       (.lam (.app (cpsE (upd (consN ρ) 0 Kn) t) (upd (consN ρ) 0 Kn β))) := by

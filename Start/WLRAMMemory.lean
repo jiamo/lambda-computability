@@ -85,14 +85,14 @@ noncomputable def factor : ℕ := 50+4*(TMTransducer.stepFactor M+TMTransducer.r
   cases k with
   | inl i =>
     have hn : (Sum.inl i : Reg M)∉privateRegs M := by rw [private_mem]; simp
-    simp only [Code.cleared,if_neg hn,inputState]
+    simp only [Code.cleared,ite_eq_right hn,inputState]
     by_cases h : (Sum.inl i : Reg M)=port M
-    · rw [if_pos h,h,Function.update_self]
-    · rw [if_neg h,Function.update_of_ne h,Function.update_of_ne (show (Sum.inl i : Reg M)≠tapeIn M from Sum.inl_ne_inr)]
+    · rw [ite_eq_left h,h,Function.update_self]
+    · rw [ite_eq_right h,Function.update_of_ne h,Function.update_of_ne (show (Sum.inl i : Reg M)≠tapeIn M from Sum.inl_ne_inr)]
       rfl
   | inr r =>
     have hn : (Sum.inr r : Reg M)∈privateRegs M := by rw [private_mem]; exact ⟨r,rfl⟩
-    simp only [Code.cleared,if_pos hn,inputState,port,Sum.inr_ne_inl,ite_false]
+    simp only [Code.cleared,ite_eq_left hn,inputState,port,Sum.inr_ne_inl,ite_false]
  theorem program_exec (input output : List Bool) (ho : M.outputs input output) :
     ∃u ≤ factor M*(input.length+M.time input+output.length+1),
       (program M input.length output.length).Exec (inputState M input) u (inputState M output) := by
@@ -282,7 +282,7 @@ namespace WLTime.RegisterFile
     simp only [xs,List.getElem_ofFn]
   · intro v
     unfold registerBits
-    rw [update_list,List.set_eq_take_append_cons_drop,if_pos (by simp)]
+    rw [update_list,List.set_eq_take_append_cons_drop,ite_eq_left (by simp)]
     simp only [List.flatten_append,List.flatten_cons,List.append_assoc]
     rfl
 end WLTime.RegisterFile

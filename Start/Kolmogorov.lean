@@ -94,7 +94,7 @@ def valOf (t : Lambda) : ℕ :=
 theorem valOf_eq {t : Lambda} {s : ℕ} (h : Lambda.reduces t (Lambda.church s)) : valOf t = s := by
   classical
   have hex : ∃ s : ℕ, Lambda.reduces t (Lambda.church s) := ⟨s, h⟩
-  rw [valOf, dif_pos hex]
+  rw [valOf, dite_eq_left hex]
   exact Lambda.unique_church_reduct hex.choose_spec h
 
 /-- Only finitely many numbers have complexity at most `n`. -/

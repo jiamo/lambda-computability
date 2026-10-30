@@ -108,7 +108,7 @@ variable (c₀ : ℕ)
 theorem rcompile_delta_of_ne {s : ℕ} (h1 : s ≠ stFlip M c₀) (h2 : s ≠ stHalt M c₀)
     (a : Option Bool) (v : Bool) :
     (rcompile M c₀).delta s a v = (mainProg M c₀).machine.delta s a v := by
-  simp only [rcompile, if_neg h1, if_neg h2]
+  simp only [rcompile, ite_eq_right h1, ite_eq_right h2]
 
 theorem rcompile_wellFormed : (rcompile M c₀).WellFormed := by
   refine ⟨Nat.succ_pos _, ?_⟩
@@ -134,7 +134,7 @@ theorem rcompile_fairCoin : (rcompile M c₀).FairCoin := by
 
 theorem rcompile_length_le {s : ℕ} (h1 : s ≠ stFlip M c₀) (a : Option Bool) (v : Bool) :
     ((rcompile M c₀).delta s a v).length ≤ 1 := by
-  simp only [rcompile, if_neg h1]
+  simp only [rcompile, ite_eq_right h1]
   split
   · simp
   · exact machine_deterministic _ s a v

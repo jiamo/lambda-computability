@@ -31,7 +31,7 @@ theorem Construction.stageInputs_child (R : ZFSet.{u})
     (i : Fin n) (k : ℕ) :
     (Construction.define o n p c).stageInputs R (Nat.pair i k+1) = (c i).stageInputs R k := by
   simp only [Construction.stageInputs,Construction.inputData,Nat.unpair_pair]
-  rw [dif_pos i.isLt]
+  rw [dite_eq_left i.isLt]
   cases (c i).inputData k <;> rfl
 
 theorem Construction.stageInputs_mem (t : Construction.{u}) (M R : ZFSet.{u})
@@ -74,14 +74,14 @@ theorem Construction.singleFormula_spec (t : Construction.{u}) (M R : ZFSet.{u})
     let v : ℕ → ZFSet.{u} := fun i => if h : i < n then
       (c ⟨i,h⟩).value R (realPart (bitOracle P bs) i) else R
     have hv (i : ℕ) (hin : i < n) : v i ∈ M := by
-      dsimp [v]; rw [dif_pos hin]
+      dsimp [v]; rw [dite_eq_left hin]
       exact hM _ (show level R o ∈ M from (show e (r 0) = level R o from hr 0) ▸ he (r 0)) _ (ht.2 ⟨i,hin⟩).2
     have hf (i : ℕ) (hin : i < n) (x : ZFSet.{u}) (hx : x ∈ M) :
         (if h : i < n then
           (c ⟨i,h⟩).singleFormula (bs ++ partBits i) 0 (rR+1) (rP+1) (w+1) (a+1) (d+1)
             (fun k => r (Nat.pair i k+1)+1) else .equal 0 0).Sat
           (M : Set ZFSet) (cons x e) ↔ x = v i := by
-      rw [dif_pos hin,show v i = (c ⟨i,hin⟩).value R (realPart (bitOracle P bs) i) from dif_pos hin,
+      rw [dite_eq_left hin,show v i = (c ⟨i,hin⟩).value R (realPart (bitOracle P bs) i) from dite_eq_left hin,
         bitOracle_part]
       have hc : (c ⟨i,hin⟩).Certified R (bitOracle P (bs ++ partBits i)) := by
         rw [← bitOracle_part]; exact (ht.2 ⟨i,hin⟩).1
@@ -97,7 +97,7 @@ theorem Construction.singleFormula_spec (t : Construction.{u}) (M R : ZFSet.{u})
     rw [hA]
     have hvs : (fun i : Fin n => v i) =
         (fun i : Fin n => (c i).value R (realPart (bitOracle P bs) i)) := by
-      funext i; exact dif_pos i.isLt
+      funext i; exact dite_eq_left i.isLt
     rw [hvs]
     rfl
 

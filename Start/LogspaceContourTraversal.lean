@@ -909,7 +909,7 @@ def tree : Fir where
 
 lemma probeU {x i y} : p.tree.probe true x i=some y ↔ p.goes x y ∧ y.1=i:= by
    unfold Fir.probe Fir.riseQ
-   rw [if_pos rfl]
+   rw [ite_eq_left rfl]
    cases h:p.tree.up x with
    | none=>
       refine ⟨by simp,fun he=>?_⟩
@@ -1077,7 +1077,7 @@ lemma alive {v i c e:ℕ} (hc:c∈s.cursor) :
    unfold Hill lit; simp only [invert,ite_true]
    by_cases hv:p.ready s v i=true
    · obtain ⟨ha,hb,h1,h2⟩:=h.scaled hv
-     rw [if_pos hv]
+     rw [ite_eq_left hv]
      cases hk:p.entry s v with
      | zero=>
        by_cases ht:p.nextx s v 0=i+1 <;> simp [hv,walled,ha,hb,hc,ht] ; grind
@@ -1097,7 +1097,7 @@ lemma hover {v i c e:ℕ} (hc:c∈s.cursor) :
    unfold Hill lit; simp only [invert,Bool.false_eq_true,ite_false]
    by_cases hv:p.ready s v i=true
    · obtain ⟨ha,hb,h1,h2⟩:=h.scaled hv
-     rw [if_pos hv]
+     rw [ite_eq_left hv]
      cases hk:p.entry s v with
      | zero=>
        by_cases ht:p.nextx s v 0=i+1 <;> simp [hv,walled,ha,hb,hc,ht] ; grind
@@ -1237,21 +1237,21 @@ lemma handle {v c} (hv:v∈s.raw) (hc:c∈s.cursor) {i} (hi:i<p.range0 s v)
        · have hu : p.lit s b (v,i) c=some c:=by
              unfold lit; simp only [ht',ite_true]
              change (match p.entry s z.1 with | 0=> _ | 1=>_ | _=>_)=_
-             rw [he]; exact if_pos he0
+             rw [he]; exact ite_eq_left he0
          rw [hu]
          refine etches _ _ ?_ ha (h.size hv hc i hi.le true)
          change p.printx b s.l.x ((s.q,a),0)=(true,v,i)
-         dsimp only [printx]; rw [hy,he,if_pos (by omega)]
+         dsimp only [printx]; rw [hy,he,ite_eq_left (by omega)]
          change (decide (p.nextx s z.1 0=z.2+1),v,i)=(true,v,i)
          simp [he0]
        · have hu : p.lit s b (v,i) c=none:=by
              unfold lit; simp only [ht',ite_true]
              change (match p.entry s z.1 with | 0=> _ | 1=>_ | _=>_)=_
-             rw [he]; exact if_neg he0
+             rw [he]; exact ite_eq_right he0
          rw [hu]
          refine etches _ _ ?_ ha ha
          change p.printx b s.l.x ((s.q,a),0)=(false,v,i)
-         dsimp only [printx]; rw [hy,he,if_pos (by omega)]
+         dsimp only [printx]; rw [hy,he,ite_eq_left (by omega)]
          change (decide (p.nextx s z.1 0=z.2+1),v,i)=(false,v,i); simp [he0]
      | succ n=>
        apply Lot.Mane.no (by rw [hm,he]; simp)
@@ -1270,17 +1270,17 @@ lemma handle {v c} (hv:v∈s.raw) (hc:c∈s.cursor) {i} (hi:i<p.range0 s v)
          · have hu:p.lit s b (v,i) c=some c:=by
              unfold lit; simp only [ht',ite_true]
              change (match p.entry s z.1 with | 0=>_ | 1=>_ | _=>_)=_
-             rw [he]; exact if_pos hb
+             rw [he]; exact ite_eq_left hb
            have hs:p.printx b s.l.x ((s.q,a),t)=(true,v,i):=by
-              dsimp only [printx]; rw [hy,he,if_pos (by omega)]
+              dsimp only [printx]; rw [hy,he,ite_eq_left (by omega)]
               change (decide (p.nextx s z.1 t=z.2+1),v,i)=(true,v,i); simp [hb]
            rw [hu]; exact .toss hc2 ((hc3 t (s.hand c)).trans (congrArg (fun n=>Pause n (s.hand c)) hs)) ha (h.size hv hc i hi.le true) hc1 hh
          have hu:p.lit s b (v,i) c=none:=by
              unfold lit; simp only [ht',ite_true]
              change (match p.entry s z.1 with | 0=>_ | 1=>_ | _=>_)=_
-             rw [he]; exact if_neg hb
+             rw [he]; exact ite_eq_right hb
          have hs:p.printx b s.l.x ((s.q,a),t)=(false,v,i):=by
-              dsimp only [printx]; rw [hy,he,if_pos (by omega)]
+              dsimp only [printx]; rw [hy,he,ite_eq_left (by omega)]
               change (decide (p.nextx s z.1 t=z.2+1),v,i)=(false,v,i); simp [hb]
          rw [hu]; exact .toss hc2 ((hc3 t (s.hand c)).trans (congrArg (fun n=>Pause n (s.hand c)) hs)) ha ha hc1 hh
        | succ n=>
@@ -1296,18 +1296,18 @@ lemma handle {v c} (hv:v∈s.raw) (hc:c∈s.cursor) {i} (hi:i<p.range0 s v)
          cases he0:s.stream z.1 (p.code s z.1 z.2) b c with
          | none=>
            have hs:p.printx b s.l.x ((s.q,a),0)=(false,v,i):=by
-              dsimp only [printx]; rw [hy,he,if_neg (show ¬ n+1+1 ≤ 1 by omega)]
+              dsimp only [printx]; rw [hy,he,ite_eq_right (show ¬ n+1+1 ≤ 1 by omega)]
               rfl
            rw [he0] at hh1; exact .toss hc2 ((hc3 0 (s.hand c)).trans (congrArg (fun n=>Pause n (s.hand c)) hs)) ha ha hc1 hh1
          | some w=>
            have hs:p.printx b s.l.x ((s.q,a),1)=(true,v,i):=by
-              dsimp only [printx]; rw [hy,he,if_neg (show ¬ n+1+1 ≤ 1 by omega)]
+              dsimp only [printx]; rw [hy,he,ite_eq_right (show ¬ n+1+1 ≤ 1 by omega)]
               rfl
            rw [he0] at hh1
            exact .toss hc2 ((hc3 1 (s.hand w)).trans (congrArg (fun n=>Pause n (s.hand w)) hs)) ha (h.size hv (hh.2 _ he0).1 i hi.le true) hc1 hh1
    have hx : p.ready s z.1 z.2=false := by simp_all
    apply Lot.Mane.no (hg.trans hx)
-   have hu:p.lit s b (v,i) c=none:=by unfold lit; apply if_neg ht
+   have hu:p.lit s b (v,i) c=none:=by unfold lit; apply ite_eq_right ht
    rw [hu]; exact .edit rfl ha ha
 
 theorem yields : p.showall.Covers (arena h) := by

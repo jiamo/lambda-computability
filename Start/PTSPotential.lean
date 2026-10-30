@@ -521,7 +521,7 @@ theorem frame_potential_drop (hw : SystemWeaklyNormalizing P)
   have hJ := hD.codomain_interpolation hl htr hK hL hp
   refine ⟨potential_subst_le hw hno hD hplain hneg htr hJ hK hn.valid
     (TypedSubstitution.single hn) (SingleSource.single hw hA) hB hnT.pi_body hJ, ?_⟩
-  simp only [potential, if_pos hJ]
+  simp only [potential, ite_eq_left hJ]
   omega
 
 theorem frame_domain_drop (hplain : ∀ I ∈ D, PlainLayer P C I)
@@ -530,7 +530,7 @@ theorem frame_domain_drop (hplain : ∀ I ∈ D, PlainLayer P C I)
     potential P C D Γ A < potential P C D Γ (.pi A B) := by
   have hc : Profile P Γ A ∈ D ∧ ActiveLayer P C (Profile P (A :: Γ) B) :=
     ⟨hI, (hplain _ hJ).active⟩
-  simp only [potential, if_pos hc, if_pos hJ]
+  simp only [potential, ite_eq_left hc, ite_eq_left hJ]
   omega
 
 /-- The potential counts positions, so valid thinning does not change it.
@@ -662,7 +662,7 @@ theorem potential_at (C D : Set (Set S)) {n : Nat} {T : Expr S} {s : S}
       PlainObservations.potential P C D (Ω.context n) (T.rename (Expr.reverseIndex n)) := by
   have h : ∃ m t, PureTypeSystem.HasType P (Ω.context m) (T.rename (Expr.reverseIndex m)) (.sort t) :=
     ⟨n, s, ht⟩
-  rw [potential, dif_pos h]
+  rw [potential, dite_eq_left h]
   obtain ⟨t, hT⟩ := h.choose_spec
   exact (Ω.potential_at_mono hw C D hT (le_max_left h.choose n)).symm.trans
     (Ω.potential_at_mono hw C D ht (le_max_right h.choose n))
@@ -768,7 +768,7 @@ theorem frame_domain_drop {C D : Set (Set S)}
         (B.rename (Expr.liftRen (Expr.reverseIndex n)))) := by
     exact ⟨Ω.profile_at hw hA ▸ hI, hJ⟩
   rw [Ω.potential_at hw C D hA, Ω.potential_at hw C D (T := .pi A B) hT]
-  simp only [Expr.rename, PlainObservations.potential, if_pos hc]
+  simp only [Expr.rename, PlainObservations.potential, ite_eq_left hc]
   omega
 
 end

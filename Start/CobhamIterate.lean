@@ -87,9 +87,9 @@ theorem runs_assignFrom (n : ℕ) : ∀ (R : ℕ → List Bool) (s d : ℕ), d +
       by_cases h1 : r = d
       · subst h1; simp
       · by_cases h2 : d + 1 ≤ r ∧ r < d + 1 + n
-        · rw [if_pos h2, if_neg (by omega), if_pos (by omega)]
+        · rw [ite_eq_left h2, ite_eq_right (by omega), ite_eq_left (by omega)]
           congr 1; omega
-        · rw [if_neg h2, if_neg h1, if_neg (by omega)]
+        · rw [ite_eq_right h2, ite_eq_right h1, ite_eq_right (by omega)]
 
 /-- One round of the loop: compute the next state into the scratch registers `m + 1, …, 2m`, copy
 it back into the registers `1, …, m`, and clear the scratch registers. -/
@@ -140,7 +140,7 @@ theorem runs_iterBody (step : List Cob) (m : ℕ) (hK : 2 * m + 1 + Cob.needs st
   · simp
   · simp only [List.getD_cons_succ]
     by_cases h1 : r < m
-    · rw [if_neg (by omega), if_pos (by omega), if_pos (by omega)]
+    · rw [ite_eq_right (by omega), ite_eq_left (by omega), ite_eq_left (by omega)]
       congr 1; omega
     · have e1 : ws'.getD r [] = [] := List.getD_eq_default _ _ (by omega)
       have e2 : ws.getD r [] = [] := List.getD_eq_default _ _ (by omega)

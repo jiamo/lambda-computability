@@ -165,7 +165,7 @@ theorem simulates_queryCurry (A : ℕ → Bool) (n : ℕ) :
       rw [hval]
       simp only [queryTarget] at hy
       by_cases hA : A n
-      · simp only [hA, if_true] at hy
+      · simp only [hA, ite_true] at hy
         have hy0 : y = 0 := by simpa using hy
         simp [segQuery_segNum_of_lt (Nat.lt_succ_self n), hA, hy0]
       · simp [hA] at hy
@@ -175,10 +175,10 @@ theorem simulates_queryCurry (A : ℕ → Bool) (n : ℕ) :
       obtain ⟨b, hb, hy⟩ := hs
       rw [segQuery_segNum] at hb
       by_cases hns : n < s
-      · simp only [hns, if_true, Option.some_inj] at hb
+      · simp only [hns, ite_true, Option.some_inj] at hb
         subst hb
         by_cases hA : A n
-        · simp only [hA, if_true, Option.some_inj] at hy
+        · simp only [hA, ite_true, Option.some_inj] at hy
           simp [queryTarget, hA, ← hy]
         · simp [hA] at hy
       · simp [hns] at hb

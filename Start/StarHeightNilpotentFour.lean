@@ -194,13 +194,13 @@ lemma count_mul_scount_dc {c d : α} (hcd : c ≠ d) :
       simp only [scount_cons_cons, scount_singleton, count_cons_eq]
       by_cases hzc : z = c
       · subst hzc
-        simp only [if_true, if_neg hcd]
+        simp only [ite_true, ite_eq_right hcd]
         nlinarith
       · by_cases hzd : z = d
         · subst hzd
-          simp only [if_true, if_neg hzc, add_zero]
+          simp only [ite_true, ite_eq_right hzc, add_zero]
           nlinarith
-        · simp only [if_neg hzc, if_neg hzd, add_zero]
+        · simp only [ite_eq_right hzc, ite_eq_right hzd, add_zero]
           exact ih
 
 /-- `scount [x, y] u ^ 2 = 4 xxyy + 2 xyxy + 2 xxy + 2 xyy + xy`. -/
@@ -219,9 +219,9 @@ lemma scount_xy_sq {x y : α} (hxy : x ≠ y) :
       simp only [scount_cons_cons, scount_singleton]
       by_cases hzx : z = x
       · subst hzx
-        simp only [if_true]
+        simp only [ite_true]
         nlinarith
-      · simp only [if_neg hzx, add_zero]
+      · simp only [ite_eq_right hzx, add_zero]
         exact ih
 
 /-- `|u|_x · scount [y, y, x] u = xyyx + yxyx + 2 yyxx + yyx`. -/
@@ -236,13 +236,13 @@ lemma count_mul_scount_yyx {x y : α} (hxy : x ≠ y) :
       simp only [scount_cons_cons, count_cons_eq]
       by_cases hzx : z = x
       · subst hzx
-        simp only [if_true, if_neg hxy, add_zero]
+        simp only [ite_true, ite_eq_right hxy, add_zero]
         nlinarith
       · by_cases hzy : z = y
         · subst hzy
-          simp only [if_true, if_neg hzx, add_zero]
+          simp only [ite_true, ite_eq_right hzx, add_zero]
           nlinarith
-        · simp only [if_neg hzx, if_neg hzy, add_zero]
+        · simp only [ite_eq_right hzx, ite_eq_right hzy, add_zero]
           exact ih
 
 variable [Finite α]

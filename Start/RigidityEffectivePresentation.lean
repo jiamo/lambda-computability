@@ -79,7 +79,7 @@ theorem effective_coding (A : Oracle) (P : ℕ → Prop) (hP : RecursivePred A P
       have hvalid : P (pick P j₀ j) := by by_cases h : P j <;> simp [pick,h,hj₀]
       exact ⟨pick P j₀ j,hvalid,fun i => by simpa only [F,selected_column] using hj i⟩
     · rintro ⟨j,hj,hv⟩
-      exact ⟨j,fun i => by simpa only [F,selected_column,pick,if_pos hj] using hv i⟩
+      exact ⟨j,fun i => by simpa only [F,selected_column,pick,ite_eq_left hj] using hv i⟩
   · refine ⟨emptyRelation n,emptyRelation_below _ _,fun v => ?_⟩
     constructor
     · intro h

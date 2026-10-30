@@ -52,7 +52,7 @@ lemma offChoice_none {z : C → RobustClock.Circle} (he : offChoice clock z = no
   classical
   by_contra hn
   have hx : ∃ ab : T × T, ab.1 ≠ ab.2 ∧ Edge clock z ab.1 ab.2 := ⟨(a,b),hn,hab⟩
-  simp only [offChoice,dif_pos hx] at he
+  simp only [offChoice,dite_eq_left hx] at he
   cases he
 
 lemma offChoice_of_offedge {z : C → RobustClock.Circle} {a b : T}

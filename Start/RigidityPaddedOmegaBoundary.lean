@@ -59,7 +59,7 @@ theorem padded_omega_boundary_certificates (M : ZFSet.{u}) (hM : Transitive M) (
     (hc.mono (level_mono R (hβ3.le.trans le_self_add))) hpM hbM hprod
   have hbcode : b < paddedCode v β := by
     change b < pairCode β (vectorCode v)
-    rw [pairCode,if_pos hv]
+    rw [pairCode,ite_eq_left hv]
     simpa only [add_zero] using (add_lt_add_iff_left b).mpr
       (Ordinal.opow_pos (vectorCode v) Ordinal.omega0_pos)
   have hcodeabs := offset_absorbed_above realSeedOffset β (paddedCode v β) hoff

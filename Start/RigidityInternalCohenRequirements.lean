@@ -52,14 +52,14 @@ theorem ground_family (M : ZFSet.{0}) [Countable (Conditions M)] (hne : ∃ x, x
     have hg : good n := by dsimp only [good]; rw [hq]; exact hE
     obtain ⟨s,hs,hAs⟩ := h n
     dsimp only [D] at hs
-    rw [if_pos hg] at hs
+    rw [ite_eq_left hg] at hs
     obtain ⟨t,ht,htE⟩ := hs
     exact ⟨t,realizes_mono ht hAs,by simpa only [hq] using htE⟩
   · intro h n
     by_cases hg : good n
     · obtain ⟨t,ht,htE⟩ := h (label M (e n)) (label_mem M (e n)) hg
-      exact ⟨t.word,by dsimp only [D]; rw [if_pos hg]; exact ⟨t,List.prefix_rfl,htE⟩,ht⟩
-    · exact ⟨[],by dsimp only [D]; rw [if_neg hg]; trivial,by intro i hi; simp at hi⟩
+      exact ⟨t.word,by dsimp only [D]; rw [ite_eq_left hg]; exact ⟨t,List.prefix_rfl,htE⟩,ht⟩
+    · exact ⟨[],by dsimp only [D]; rw [ite_eq_right hg]; trivial,by intro i hi; simp at hi⟩
 
 theorem generic_below (D : ℕ → List Bool → Prop) (hD : ∀ n, DenseOpen (D n))
     (s : List Bool) : ∃ A : Oracle, ShuffleRequirements.GenericFor D A ∧ Realizes s A := by

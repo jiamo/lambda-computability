@@ -25,7 +25,11 @@ extensional).
 
 import Mathlib.Tactic
 import Mathlib.Order.ScottContinuity
-import Mathlib.Data.Set.Lattice
+import Mathlib.Data.Set.Lattice.Bounded
+import Mathlib.Data.Set.Lattice.Disjoint
+import Mathlib.Data.Set.Lattice.Image
+import Mathlib.Data.Set.Lattice.Indexed
+import Mathlib.Data.Set.Lattice.Order
 
 set_option relaxedAutoImplicit false
 set_option autoImplicit false

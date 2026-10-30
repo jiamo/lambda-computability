@@ -852,7 +852,7 @@ lemma deflect (u : Shears → Equiv.Perm α) :
     · have hg := ping (b:=(b,s)) h.1 h.2
       have hp : (!sector (m k))=b ∧ signcode (m k)=s ∧ m k≠0 :=
         ⟨hg.2.1,hg.2.2,hg.1⟩
-      unfold dirsum back; rw [if_pos h,if_pos hp]; exact trial F k _ _
+      unfold dirsum back; rw [ite_eq_left h,ite_eq_left hp]; exact trial F k _ _
     · simp only [dirsum,h,ite_false,mul_zero]
       have ht : 0≤back (m k) b s := by unfold back; split; apply ann; rfl
       have hx : 0≤changed F (b,s) (u (b,s)) k := ann _ _
@@ -894,10 +894,10 @@ lemma wings (k : T n) :
   rw [Fintype.sum_bool]
   have h0 (b) := ann (shifted F b) k
   by_cases he : k=0
-  · rw [if_pos he]
-    rw [if_neg (show ¬core k from fun h=> h.1 he)]
+  · rw [ite_eq_left he]
+    rw [ite_eq_right (show ¬core k from fun h=> h.1 he)]
     linarith [h0 true,h0 false]
-  rw [if_neg he]; split
+  rw [ite_eq_right he]; split
   · linarith [h0 true,h0 false]
   · rename_i hv
     have hh : ¬ near k.1 ∨ ¬ near k.2 := by unfold core at hv; tauto
@@ -1655,7 +1655,7 @@ lemma pairMean {k j} {x y : ZMod n} (he : y≠x) :
   rw [hk]
   refine le_trans (av_mono (f:=value) (g:=fun _ => pct n j) (fun i=>?_)) (le_of_eq (av_const _))
   have he := hv i
-  rw [ri,if_pos (wrest j i).1] at he
+  rw [ri,ite_eq_left (wrest j i).1] at he
   have ht := pct_le n j
   nlinarith
 
@@ -1685,8 +1685,8 @@ lemma count_var {α : Type} (s : Finset α) (g : α → ZMod n)
       av (fun i=>ind k (g a) i*ind k (g b) i) ≤
            p*p+(if a=b then p else 0) := by
     by_cases hx:a=b
-    · subst a; rw [if_pos rfl]; simp only [ind_mul,marginal]; dsimp [p]; nlinarith
-    · rw [if_neg hx,add_zero,pair_avg]
+    · subst a; rw [ite_eq_left rfl]; simp only [ind_mul,marginal]; dsimp [p]; nlinarith
+    · rw [ite_eq_right hx,add_zero,pair_avg]
       have eq := pairMean (k:=k) (j:=k) (x:=g a) (y:=g b) (fun w=>hx (h ha hb w.symm))
       exact mul_le_mul_of_nonneg_left (eq.2 rfl) (le_of_lt (pct_pos (NeZero.pos n) k))
   have hj : av (fun i=>(f i)^2) =
@@ -2422,7 +2422,7 @@ lemma sampler_identity (k j : ℕ) (x y : ZMod n) (e : d ≤ w) (z : Salt (w-d))
        weight * (if live k j x y e p v (o (fullact k j a s)) then
           weight^l*f (go k j e p v (o (fullact k j a s))) else 0) := by
       have hg : rol k j e a b (o s)=o (fullact k j a s) := winner_roll ..
-      rw [live,if_pos rfl,go,Equiv.trans_apply,hg]
+      rw [live,ite_eq_left rfl,go,Equiv.trans_apply,hg]
       split; rw [pow_succ',mul_assoc]; rw [mul_zero]
     rw [Finset.sum_eq_single b]
     · rw [← ih]

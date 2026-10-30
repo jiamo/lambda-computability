@@ -78,7 +78,7 @@ theorem ExtL.step {core : ℤ → ℤ → Lambda → Prop} {x : ℕ}
     · rcases betaEtaStep_app_cases hs with ⟨c, hc, rfl⟩ | ⟨f', hf, rfl⟩ | ⟨a', ha, rfl⟩
       · simp only [lamM, Lambda.lam.injEq] at hc
         subst hc
-        simp only [Lambda.subst, if_pos]
+        simp only [Lambda.subst, ite_eq_left]
         exact .base ⟨k + 1, .inr (.inr ⟨W, W, rfl, hWk⟩)⟩
       · exact (nf_lamM _ hf).elim
       · obtain ⟨k', hk'⟩ := hW (by simp only [Lambda.nodes_app]; omega) hWk ha
@@ -154,7 +154,7 @@ theorem TW.unique {base : ℤ → ℤ → Lambda → Prop} {x : ℕ} (hc : TailC
       | @rq _ i'' m'' R'' T'' hR'' hm'' =>
         rw [lift_xPow] at e2
         simp only [Lambda.lift] at e2
-        rw [if_neg (by omega)] at e2
+        rw [ite_eq_right (by omega)] at e2
         have hA : Lambda.lift 1 1 (Lambda.lift 1 0 R'') ≠ .var (x + 1 + 1) := by
           rw [← lift_lift_zero_one]; exact lift2_ne_var (hR''.ne_var hc x)
         obtain ⟨rfl, e3, -⟩ := xPow_app_unique (lift2_ne_var (hR.ne_var hc x)) hA e2
@@ -174,7 +174,7 @@ theorem TW.unique {base : ℤ → ℤ → Lambda → Prop} {x : ℕ} (hc : TailC
       | @rq _ i₂ m₂ R₂ T₂ hR₂ hm₂ =>
         rw [lift_xPow] at e2
         simp only [Lambda.lift] at e2
-        rw [if_neg (by omega)] at e2
+        rw [ite_eq_right (by omega)] at e2
         have hA : Lambda.lift 1 1 (Lambda.lift 1 0 R₂) ≠ .var (x + 1 + 1) := by
           rw [← lift_lift_zero_one]; exact lift2_ne_var (hR₂.ne_var hc x)
         obtain ⟨rfl, e3, -⟩ := xPow_app_unique (lift2_ne_var (hR'.ne_var hc x)) hA e2

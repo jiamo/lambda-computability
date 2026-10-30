@@ -246,9 +246,9 @@ theorem eval_fstRunTerm {m K : ℕ} {δ : ℕ → Bool → ℕ} (hm : 0 < m) (h�
             ≤ (K + p.length) + x.length * (K + p.length) := Nat.add_le_add h₁ h₂
           _ = (x.length + 1) * (K + p.length) := by ring
       cases b
-      · rw [if_neg (by simp), hstep false, List.take_of_length_le hle]
+      · rw [ite_eq_right (by simp), hstep false, List.take_of_length_le hle]
         rfl
-      · rw [if_pos rfl, hstep true, List.take_of_length_le hle]
+      · rw [ite_eq_left rfl, hstep true, List.take_of_length_le hle]
         rfl
 
 /-! ### Scanning from the left -/

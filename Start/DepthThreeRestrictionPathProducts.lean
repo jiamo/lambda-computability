@@ -49,13 +49,13 @@ theorem pathNumerator_eq_indicator_support (violation : I → Bool) (P : List I)
     pathNumerator violation P = if ∀ i ∈ P, violation i = true then 1 else 0 := by
   classical
   by_cases hs : ∀ i ∈ P, violation i = true
-  · rw [if_pos hs]
+  · rw [ite_eq_left hs]
     unfold pathNumerator
     apply List.prod_eq_one
     intro r hr
     obtain ⟨i, hi, rfl⟩ := List.mem_map.mp hr
     simp [violationValue, hs i hi]
-  · rw [if_neg hs]
+  · rw [ite_eq_right hs]
     by_contra hne
     exact hs ((pathNumerator_ne_zero_iff violation P).mp hne)
 
@@ -69,9 +69,9 @@ theorem pathTerm_eq_support_prod_inv (scope : I → Finset V) (T : Finset V)
       else 0 := by
   classical
   by_cases hs : ∀ i ∈ P, violation i = true
-  · simp only [pathTerm, pathNumerator_eq_indicator_support, if_pos hs,
+  · simp only [pathTerm, pathNumerator_eq_indicator_support, ite_eq_left hs,
       pathDenominator_eq_prod_prefix, one_div, Finset.prod_inv_distrib]
-  · simp only [pathTerm, pathNumerator_eq_indicator_support, if_neg hs, zero_div]
+  · simp only [pathTerm, pathNumerator_eq_indicator_support, ite_eq_right hs, zero_div]
 
 end DepthThreeLowerBound
 

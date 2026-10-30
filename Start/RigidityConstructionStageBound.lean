@@ -56,13 +56,13 @@ theorem Construction.stageInputs_bounded (t : Construction.{u}) (R : ZFSet.{u}) 
       unfold Construction.stageInputs
       simp only [Construction.inputData]
       by_cases h : (Nat.unpair k).1 < n
-      · rw [dif_pos h]
+      · rw [dite_eq_left h]
         have hchild := level_mono R (hupper ⟨(Nat.unpair k).1,h⟩)
           (ih ⟨(Nat.unpair k).1,h⟩ (Nat.unpair k).2)
         unfold Construction.stageInputs at hchild
         cases hd : (c ⟨(Nat.unpair k).1,h⟩).inputData (Nat.unpair k).2 <;>
           simpa only [hd,ConstructionInput.prefix] using hchild
-      · rw [dif_neg h]
+      · rw [dite_eq_right h]
         exact hR _
 
 end TuringRigidity.RelativeConstructible

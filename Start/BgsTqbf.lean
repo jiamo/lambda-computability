@@ -192,7 +192,7 @@ theorem runs_npProgT {A : Oracle} {G : ℕ → ℕ → ℕ → ℕ → Prog} {q 
     (fun j hj => by
       have := runs_npBodyT hTm hTid hGK v N (bits m j) (foundW A v x m j) (contW m j) n
         (by omega) (by omega) (by omega) (by omega) (by simp; omega) (length_foundW_le A v x m j)
-        (by simp only [contW, hj, if_true, List.length_singleton]; omega) (by omega) hBF hBN hBI
+        (by simp only [contW, hj, ite_true, List.length_singleton]; omega) (by omega) hBF hBN hBI
       refine this.of_eq rfl ?_
       rw [incrW_bits, notAllW_bits m j hj]
       rfl)
@@ -201,7 +201,7 @@ theorem runs_npProgT {A : Oracle} {G : ℕ → ℕ → ℕ → ℕ → Prog} {q 
     simp [foundW, contW, hpos]
   rw [h0]
   refine Runs.seq hloop ?_
-  simp only [contW, lt_irrefl, if_false]
+  simp only [contW, lt_irrefl, ite_false]
   exact (runs_mvR 5 _ 0 n (by omega)).of_eq rfl (by simp)
 
 /-- **`NP^A ⊆ PSPACE`** for every oracle `A` with a gadget of polynomial space: try every

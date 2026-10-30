@@ -50,10 +50,10 @@ theorem freeBelow_argTermOf {b h d : ℕ} {as : List Lambda}
   have hb := (freeBelow_lamN_iff b).1 hx
   obtain ⟨-, hargs⟩ := (freeBelow_appList_iff as).1 hb
   by_cases hr : r < as.length
-  · rw [argTermOf, dif_pos hr, ScottDinf.argDepth, if_pos hr]
+  · rw [argTermOf, dite_eq_left hr, ScottDinf.argDepth, ite_eq_left hr]
     have := hargs _ (List.getElem_mem hr)
     exact freeBelow_mono (by omega) this
-  · rw [argTermOf, dif_neg hr, ScottDinf.argDepth, if_neg hr]
+  · rw [argTermOf, dite_eq_right hr, ScottDinf.argDepth, ite_eq_right hr]
     exact (by omega : (0 : ℕ) < 1)
 
 /-- The tags used inside the `r`-th argument of an η-expanded node stay below the new base. -/
@@ -63,14 +63,14 @@ theorem argEnvT_lt_of_depth {base b e d k r : ℕ} {τ : ℕ → ℕ}
   intro i hi
   rw [argEnvT]
   by_cases hlt : r < k
-  · rw [if_pos hlt, expEnv]
-    rw [ScottDinf.argDepth, if_pos hlt] at hi
+  · rw [ite_eq_left hlt, expEnv]
+    rw [ScottDinf.argDepth, ite_eq_left hlt] at hi
     by_cases hib : i < b
-    · rw [if_pos hib]; omega
-    · rw [if_neg hib]
+    · rw [ite_eq_left hib]; omega
+    · rw [ite_eq_right hib]
       have := hτ (i - b) (by omega)
       omega
-  · rw [if_neg hlt]
+  · rw [ite_eq_right hlt]
     omega
 
 end Lambda
@@ -110,33 +110,33 @@ theorem argEnvD_match_len {base b₁ e₁ b₂ e₂ d₁ d₂ k₁ k₂ r i j : 
   rw [argEnvD, argEnvD]
   rw [argDepth] at hi hj
   by_cases h1 : r < k₁ <;> by_cases h2 : r < k₂
-  · rw [if_pos h1, if_pos h2] at h ⊢
-    rw [if_pos h1] at hi
-    rw [if_pos h2] at hj
+  · rw [ite_eq_left h1, ite_eq_left h2] at h ⊢
+    rw [ite_eq_left h1] at hi
+    rw [ite_eq_left h2] at hj
     exact envStack_match hm hτ₁ hτ₂ hmatch hi hj h
-  · rw [if_pos h1, if_neg h2] at h ⊢
-    rw [if_pos h1] at hi
+  · rw [ite_eq_left h1, ite_eq_right h2] at h ⊢
+    rw [ite_eq_left h1] at hi
     rw [expEnv] at h
     rw [envStack]
     by_cases hib : i < b₁
-    · rw [if_pos hib] at h ⊢
+    · rw [ite_eq_left hib] at h ⊢
       congr 1
       omega
-    · rw [if_neg hib] at h
+    · rw [ite_eq_right hib] at h
       have := hτ₁ (i - b₁) (by omega)
       exact absurd h (by omega)
-  · rw [if_neg h1, if_pos h2] at h ⊢
-    rw [if_pos h2] at hj
+  · rw [ite_eq_right h1, ite_eq_left h2] at h ⊢
+    rw [ite_eq_left h2] at hj
     rw [expEnv] at h
     rw [envStack]
     by_cases hjb : j < b₂
-    · rw [if_pos hjb] at h ⊢
+    · rw [ite_eq_left hjb] at h ⊢
       congr 1
       omega
-    · rw [if_neg hjb] at h
+    · rw [ite_eq_right hjb] at h
       have := hτ₂ (j - b₂) (by omega)
       exact absurd h (by omega)
-  · rw [if_neg h1, if_neg h2] at h ⊢
+  · rw [ite_eq_right h1, ite_eq_right h2] at h ⊢
     congr 1
     omega
 
@@ -237,34 +237,34 @@ theorem le_ddenot_of_not_tagFail_approx : ∀ (n : ℕ) {A : Lambda}, Lambda.siz
             have hra : r < as.length := by omega
             have := hall.get (by omega) (by omega)
             rw [List.get_eq_getElem, List.get_eq_getElem] at this
-            rw [Lambda.argTermOf, dif_pos hra, Lambda.argTermOf, dif_pos hrk]
+            rw [Lambda.argTermOf, dite_eq_left hra, Lambda.argTermOf, dite_eq_left hrk]
             exact this
           have hsz : Lambda.size (Lambda.argTermOf as r) ≤ n := by
             have hra : r < as.length := by omega
             have hmem : as[r] ∈ as := List.getElem_mem hra
             have h1 := Lambda.size_lt_appList as (Lambda.var h) as[r] hmem
             have h2 := Lambda.size_lamN b (Lambda.appList (Lambda.var h) as)
-            rw [Lambda.argTermOf, dif_pos hra]
+            rw [Lambda.argTermOf, dite_eq_left hra]
             omega
           have hfreeArg₁ : Lambda.freeBelow (argDepth b d₁ bs.length r)
               (Lambda.argTermOf bs r) := Lambda.freeBelow_argTermOf hM r
           exact ih hsz hAr hargfail hfreeArg₁ hfreeArg₂ hτ₁' hτ₂' hmatch'
         · -- a variable supplied by the η-expansion
           have hrk' : ¬ r < as.length := by omega
-          rw [Lambda.argTermOf, dif_neg hrk', argEnvD, if_neg hrk, ddenot_var]
+          rw [Lambda.argTermOf, dite_eq_right hrk', argEnvD, ite_eq_right hrk, ddenot_var]
           have hleft : Lambda.argTermOf bs r = Lambda.var 0 := by
-            rw [Lambda.argTermOf, dif_neg hrk]
+            rw [Lambda.argTermOf, dite_eq_right hrk]
           have htagl : Lambda.argEnvT base τ₁ b e₁ bs.length r
               = fun _ => base + (bs.length + e₁ - 1 - r) := by
-            rw [Lambda.argEnvT, if_neg hrk]
+            rw [Lambda.argEnvT, ite_eq_right hrk]
           rw [hleft, htagl] at hargfail
           refine le_ddenot_of_not_tagFail_var (base := base + (b + e₁)) hargfail (by omega)
             hfreeArg₂ hτ₂' ?_
           intro j hj hjt
           have hi0 : (0 : ℕ) < argDepth b d₁ bs.length r := by
-            rw [argDepth, if_neg hrk]; omega
+            rw [argDepth, ite_eq_right hrk]; omega
           have hkey := hmatch' 0 j hi0 hj (by rw [htagl]; exact hjt.symm)
-          rw [argEnvD, if_neg hrk] at hkey
+          rw [argEnvD, ite_eq_right hrk] at hkey
           rw [← hkey]
 
 /-! ## The semantic principle, proved -/

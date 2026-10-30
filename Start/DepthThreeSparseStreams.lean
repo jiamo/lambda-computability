@@ -76,21 +76,21 @@ theorem streamBit_injective [DecidableEq Label] (t : SparseDecisionTree Label) :
                 funext i k
                 by_cases hi : i = a
                 · subst i
-                  simpa only [streamBit, stream, if_pos rfl, ite_true, List.getD_cons_succ] using
+                  simpa only [streamBit, stream, ite_eq_left rfl, ite_true, List.getD_cons_succ] using
                     congrFun (congrFun h a) (k + 1)
-                · simpa only [streamBit, stream, if_neg hi] using
+                · simpa only [streamBit, stream, ite_eq_right hi] using
                     congrFun (congrFun h i) k)
               exact congrArg Sum.inl hpq
           | inr q =>
               have hfalse : False := by
-                simpa only [streamBit, stream, if_pos rfl, ite_true, List.getD_cons_zero,
+                simpa only [streamBit, stream, ite_eq_left rfl, ite_true, List.getD_cons_zero,
                   Bool.false_eq_true] using congrFun (congrFun h a) 0
               exact hfalse.elim
       | inr p =>
           cases q with
           | inl q =>
               have hfalse : False := by
-                simpa only [streamBit, stream, if_pos rfl, ite_true, List.getD_cons_zero,
+                simpa only [streamBit, stream, ite_eq_left rfl, ite_true, List.getD_cons_zero,
                   Bool.true_eq_false] using congrFun (congrFun h a) 0
               exact hfalse.elim
           | inr q =>
@@ -98,9 +98,9 @@ theorem streamBit_injective [DecidableEq Label] (t : SparseDecisionTree Label) :
                 funext i k
                 by_cases hi : i = a
                 · subst i
-                  simpa only [streamBit, stream, if_pos rfl, ite_true, List.getD_cons_succ] using
+                  simpa only [streamBit, stream, ite_eq_left rfl, ite_true, List.getD_cons_succ] using
                     congrFun (congrFun h a) (k + 1)
-                · simpa only [streamBit, stream, if_neg hi] using
+                · simpa only [streamBit, stream, ite_eq_right hi] using
                     congrFun (congrFun h i) k)
               exact congrArg Sum.inr hpq
 

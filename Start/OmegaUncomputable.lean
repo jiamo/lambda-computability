@@ -315,8 +315,8 @@ theorem omegaPartial_eq_sum (k : ℕ) :
       have ihm := ih (by omega)
       rw [Finset.range_add_one, Finset.filter_insert]
       rcases hb : stageHalt k m with _ | _
-      · simp only [Bool.false_eq_true, if_false]
-        simp only [omegaPartial, hb, cond_false, Nat.add_zero]
+      · simp only [Bool.false_eq_true, ite_false]
+        simp only [omegaPartial, hb, Bool.cond_false, Nat.add_zero]
         exact ihm
       · have hnotmem : m ∉ (Finset.range m).filter
             (fun c => stageHalt k c = Bool.true) := by simp
@@ -327,8 +327,8 @@ theorem omegaPartial_eq_sum (k : ℕ) :
         have hle : bitsLen_code m ≤ 4 * k + 2 := by
           have := bitsLen_code_le m hvalid
           omega
-        rw [if_pos rfl, Finset.sum_insert hnotmem]
-        simp only [omegaPartial, hb, cond_true]
+        rw [ite_eq_left rfl, Finset.sum_insert hnotmem]
+        simp only [omegaPartial, hb, Bool.cond_true]
         push_cast
         rw [ihm, mul_add, two_pow_mul_inv_pow hle]
         ring
@@ -602,7 +602,7 @@ theorem haltRun_of_invalid {c : ℕ} (h : is_valid_code c = Bool.false) :
     haltRun g c = Part.some Bool.false := by
   have hrf : (Nat.rfind fun _ : ℕ => (Part.some Bool.true : Part Bool)) = Part.some 0 :=
     Part.eq_some_iff.2 (Nat.mem_rfind.2 ⟨Part.mem_some _, fun {m} hm => absurd hm (by omega)⟩)
-  simp only [haltRun, h, cond_false, hrf, Part.map_some]
+  simp only [haltRun, h, Bool.cond_false, hrf, Part.map_some]
 
 /-- The search terminates: some stage passes the estimate. -/
 theorem exists_omegaTest (hg : ∀ n : ℕ, |chaitinOmega - (g n : ℝ) / 2 ^ n| ≤ 1 / 2 ^ n) (c : ℕ) :
@@ -680,7 +680,7 @@ theorem haltRun_spec (hg : ∀ n : ℕ, |chaitinOmega - (g n : ℝ) / 2 ^ n| ≤
   · obtain ⟨m, hm⟩ := exists_omegaTest hg c
     set q : ℕ → Bool := fun k => cond (is_valid_code c) (omegaTest g c k) Bool.true with hqdef
     have hpm : q m = Bool.true := by
-      simp only [hqdef, hv, cond_true]
+      simp only [hqdef, hv, Bool.cond_true]
       exact hm
     obtain ⟨k, hk, -⟩ := Nat.rfind_min' hpm
     have hcoe : ((q : ℕ →. Bool)) = fun k => Part.some (q k) := rfl
@@ -694,7 +694,7 @@ theorem haltRun_spec (hg : ∀ n : ℕ, |chaitinOmega - (g n : ℝ) / 2 ^ n| ≤
     refine ⟨decide (closure_code c ≤ k) && haltsBy_code (closure_code c) k, ?_, ?_⟩
     · simp only [haltRun, hqdef] at hrf ⊢
       rw [hrf]
-      simp only [Part.map_some, hv, cond_true]
+      simp only [Part.map_some, hv, Bool.cond_true]
     · rw [codeHasNormalForm_iff_decodeD hv,
         halts_iff_of_omegaTest hg hv hspec, Bool.and_eq_true, decide_eq_true_eq]
 
@@ -703,7 +703,7 @@ theorem haltRun_eq (hg : ∀ n : ℕ, |chaitinOmega - (g n : ℝ) / 2 ^ n| ≤ 1
   classical
   obtain ⟨b, hb, -⟩ := haltRun_spec hg c
   have hdom : (haltRun g c).Dom := by rw [hb]; trivial
-  rw [hb, haltDecide, dif_pos hdom]
+  rw [hb, haltDecide, dite_eq_left hdom]
   congr 1
   exact (Part.get_eq_iff_eq_some.2 hb).symm
 

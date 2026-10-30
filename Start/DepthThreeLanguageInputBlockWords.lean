@@ -99,7 +99,7 @@ theorem hornerBitLists_ofFn {r t : ℕ} (p h : BitWord r) (b : Fin t → BitWord
   have hb : (fun j : Fin t => listWord r
       ((List.ofFn fun j => List.ofFn (b j)).getD j.val [])) = b := by
     funext j
-    simp only [List.getD_eq_getElem?_getD, List.getElem?_ofFn, dif_pos j.isLt,
+    simp only [List.getD_eq_getElem?_getD, List.getElem?_ofFn, dite_eq_left j.isLt,
       Option.getD_some]
     exact listWord_wordList (b j)
   unfold hornerBitLists

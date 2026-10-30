@@ -77,7 +77,8 @@ lemma comm_of_le_central [Finite G] (H K : Subgroup G) (hKH : K ≤ H)
     · exact (hK y hy x hhH).symm
     · exact hK x hx y hhH
     · exact hK x hx y (hKH hy)
-  have hLc := Subgroup.isMulCommutative_closure hcomm
+  have hLc := Subgroup.isMulCommutative_closure (k := insert h (K : Set G))
+    fun x hx y hy _ => hcomm x hx y hy
   have hLH : closure (insert h (K : Set G)) ≤ H :=
     (Subgroup.closure_le H).mpr (Set.insert_subset hhH hKH)
   have hKL : K ≤ closure (insert h (K : Set G)) :=
@@ -104,7 +105,8 @@ lemma closure_insert_center_comm (g : G) :
       · rfl
       · exact ((Subgroup.mem_center_iff.mp hy) x)
     · exact ((Subgroup.mem_center_iff.mp hx) y).symm
-  have hLc := Subgroup.isMulCommutative_closure hcomm
+  have hLc := Subgroup.isMulCommutative_closure (k := insert g (center G : Set G))
+    fun x hx y hy _ => hcomm x hx y hy
   intro x hx y hy
   exact congrArg Subtype.val (hLc.is_comm.comm ⟨x, hx⟩ ⟨y, hy⟩)
 

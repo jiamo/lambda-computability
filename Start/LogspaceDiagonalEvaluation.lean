@@ -50,12 +50,12 @@ abbrev raw0(x i:ℕ):ℝ:=if x∈p.S then p.s.prefixR p.tire p.ds i p.dye x x el
 abbrev chipV(x i:ℕ):ℝ :=if x∈p.S then p.s.portion p.tire p.ds i p.dye x x else 0
 lemma goal0(x:ℕ)(h:p.works):p.fwd0 x=smooth (p.raw0 x p.tire.L):=by
     have he:p.fwd0 x=(Peek.activeV u.plotM p.p p.r p.m p.dye) x:=by
-        exact congrArg (fun u:Paint _=> u p.dye x) (if_pos h)
+        exact congrArg (fun u:Paint _=> u p.dye x) (ite_eq_left h)
     rw [he]
     by_cases he:x∈p.S
-    · change (if x∈p.S then _ else _)=_; rw [if_pos he]; unfold raw0; rw [if_pos he]
+    · change (if x∈p.S then _ else _)=_; rw [ite_eq_left he]; unfold raw0; rw [ite_eq_left he]
     change (if x∈p.S then _ else _)=_
-    rw [if_neg he]; unfold raw0; rw [if_neg he]; simp [smooth]
+    rw [ite_eq_right he]; unfold raw0; rw [ite_eq_right he]; simp [smooth]
 
 lemma pos0(x:ℕ):p.raw0 x 0=0:=by unfold raw0;rw [Flame.prefix0];split<;>rfl
 lemma next0(x i) : p.raw0 x (i+1)=p.raw0 x i+p.chipV x i:=by
@@ -212,14 +212,14 @@ lemma agroV(j): p.s.rays= PlanV.trees u.w0 (p.c j):=by
    unfold OrbitV.s Peek.weave PlanV.trees
    cases he:p.p.ask
    · have ht:¬PlanV.sensor (p.c j):=by unfold PlanV.sensor Garden.origin; simp [c, Foil.kit, Garden.fence, bitV, he]
-     rw [if_neg ht]
+     rw [ite_eq_right ht]
      change _=(if p.p.i=0 then _ else _)
      cases hk:p.p.i with
      | zero=>rfl
      | succ a=> simp only [Peek.roy,hk,Nat.succ_ne_zero,ite_false]; rw [←hk];rfl
    next k=>
    have ht:PlanV.sensor (p.c j):=by unfold PlanV.sensor Garden.origin; simp [c, Foil.kit, Garden.fence,bitV,he]
-   rw [if_pos ht];rfl
+   rw [ite_eq_left ht];rfl
 
 lemma awakeV {g:ℕ}{r:Census.Arc}(h:r∈p.areaV g) (i:ℕ)(hi:i<u.w0.p.K):
    PlanV.beats u.w0 (p.c g) (p.grounds r i):= by
@@ -633,10 +633,10 @@ lemma motion {v t:ℕ}(he:u.D.dual v t):v=hole (cell v) (Scheme.inside v)∧
    split
    · next h=>
      change (if cell v=0 then Scheme.inside v ≤ u.v.bonus ∧ t ≤ u.v.bonus else _) at hb
-     rwa [if_pos h] at hb
+     rwa [ite_eq_left h] at hb
    next h=>
    change (if cell v=0 then _ else licensed _ _ _ ∧ _ ) at hb
-   rw [if_neg h] at hb; exact hb.2.1
+   rw [ite_eq_right h] at hb; exact hb.2.1
 
 /-- Hear open units by two predicates. -/
 lemma asked(a) (hm : ∀ i j o,a≠0→Orbit.taps (uphold a).1 o j→u.smallQ a i→j  ≤  u.D.high a→
@@ -656,7 +656,7 @@ lemma incline {a:ℕ}(ha:a≠0)(hp:(uphold a).1≠12):∀ i t,u.D.dual (hole a i
         ∃ f,u.D.Streams (hole a i) f:=by
     intro i t h
     have hz:=(motion u h).2
-    rw [show cell (hole a i)=a from by simp [cell,hole],if_neg ha] at hz
+    rw [show cell (hole a i)=a from by simp [cell,hole],ite_eq_right ha] at hz
     contradiction
 lemma free {a r:ℕ}(he:a≠0)(ht:(uphold a).1=r)(hk:∀ i t,¬ Orbit.taps r i t) (h:r≠12):u.D.Ears0 a:=
     asked _ a (fun _ t i _ hu=>False.elim (hk i t (ht ▸ hu))) (incline _ he (ht.symm ▸ h))
@@ -1308,13 +1308,13 @@ lemma fitted {x:ℕ}(hx:x∈u.D.P)(p:Seed)(hp:valid0 s p):(flareP s x p).Good:=b
     refine ⟨he.may,hx,he.read,he.oath,he.aid,?_⟩
     unfold PrintV.garment
     dsimp only; rw [Vessel.Basket.Sack.Ground.phase0]; dsimp only
-    rw [Wire.eq,Vessel.Basket.Sack.Ground.deco0,if_pos (show enc p=enc p ∧ PlanV.validV u.w0 _ p from ⟨rfl,hp⟩)]
+    rw [Wire.eq,Vessel.Basket.Sack.Ground.deco0,ite_eq_left (show enc p=enc p ∧ PlanV.validV u.w0 _ p from ⟨rfl,hp⟩)]
 lemma else0 {x j:ℕ}(hx:x∈u.D.P)
      (hp:¬(enc (dec j:Seed)=j ∧valid0 s (dec j))):(phantom s x j).Good:=by
     refine ⟨he.may,hx,he.read,he.oath,he.aid,?_⟩
     unfold PrintV.garment
     dsimp only; rw [Vessel.Basket.Sack.Ground.phase0];dsimp only
-    rw [Vessel.Basket.Sack.Ground.deco0,if_neg hp]
+    rw [Vessel.Basket.Sack.Ground.deco0,ite_eq_right hp]
 omit he in
 lemma tabs0 (p:Wax u)(hp:p.Good)(hr:p.p=PrintV.black):
      (p.s.home p.x p.i).band p.due p.H p.g.prism p.s.g 0:=by
@@ -1387,7 +1387,7 @@ lemma voice0(x:ℕ):
    dsimp only
    split
    · next hx=> simp only [hx,true_and];rfl
-   next hx=> rw [if_neg (fun h=>hx h.1)]
+   next hx=> rw [ite_eq_right (fun h=>hx h.1)]
 lemma steam0 {x:ℕ}(hx:x∈u.D.P){i:ℕ}(hi:i<u.w0.p.K): (flareP s x (p.cur i)).Good :=
       h0.pools.he.fitted hx _ (Or.inr (s.v.awakeV h0.aligned _ hi))
 end Hand
@@ -1467,17 +1467,17 @@ lemma red0(k:ℕ)(h:s.v.p.ask=some k)(i x:ℕ):
            simp [PlanV.j,Garden.origin,r,core0,OrbitV.c,Foil.kit,bitV,Garden.fence,h]
     have ha:PlanV.x r=s.v.p.i:=rfl
     unfold PrintV.model; dsimp only
-    rw [if_neg (show (p.cur i).1.1≠1 from by change (2:ℕ)≠1; omega),if_pos hf.1,hf.2]
+    rw [ite_eq_right (show (p.cur i).1.1≠1 from by change (2:ℕ)≠1; omega),ite_eq_left hf.1,hf.2]
     rw [show Garden.params r |>.2.1=s.v.p.u from rfl, show Garden.m r=s.v.m from rfl]
     have hz:=Vessel.Ferry.ArcQ.Hand.step0 (p := p)
     split
     · next hz0=>
         change i=0 at hz0
-        rw [if_pos hz0]
+        rw [ite_eq_left hz0]
         exact congrArg (fun x=>PrintV.detectors p.hullK s.v.p.i k p.forward x p.α) hz
     next hh=>
     change i≠0 at hh
-    rw [if_neg hh]
+    rw [ite_eq_right hh]
 
 lemma cuvette (k:ℕ) (h:s.v.p.ask=some k)(x:ℕ):
      p.intended x= if p.okQ x then p.α.v* Pond.rankE (p.pores k) x else 0:=by
@@ -1491,7 +1491,7 @@ lemma cuvette (k:ℕ) (h:s.v.p.ask=some k)(x:ℕ):
     rw [h]
     change ridge (Axis.spout s.v.d ((s.v.r p.forward).outR (Peek.score s.v.p.i k))
                   u.w0.p.J p.routeP) x x=_
-    rw [ridge,if_pos rfl]
+    rw [ridge,ite_eq_left rfl]
     unfold Axis.spout
     rw [hh]
     change rank (src s.v.d.S s.v.p.u (crossP p.routeP)) (fun i=>v i x) _=_
@@ -1505,7 +1505,7 @@ lemma hearC (k:ℕ)(h:s.v.p.ask=some k){x:ℕ}(hx:x∈u.D.P):
     let g:=p.pores k; let b:=g.c 16 0
     have hh:=hp.pools.shoreP g (hp.poresReady k h) hp.swift rfl ⟨k,rfl⟩
     refine ⟨b,hole 1 0,?_,hp.signalF (a:=g) rfl 16 0,hh x hx⟩
-    rw [show a.p=p.horn k from ((Vessel.Ferry.ArcQ.Hand.red0 (p := p)) k h ..).trans (if_pos rfl)]; rfl
+    rw [show a.p=p.horn k from ((Vessel.Ferry.ArcQ.Hand.red0 (p := p)) k h ..).trans (ite_eq_left rfl)]; rfl
 omit hp in
 lemma heightB {p:Wax u} {x y j:ℕ}{A:ℝ}(hx:p.postX x y j A):|A| ≤  (2:ℝ)^j:=by
     obtain ⟨i,k,hh,hz,w,hW,hr⟩:=hx
@@ -1516,7 +1516,7 @@ lemma marsD (k:ℕ)(h:s.v.p.ask=some k){x:ℕ}(hx:x∈u.D.P):
    (a.s.home a.x a.i).band a.due a.H a.g.prism a.s.g (p.intended x):=by
     intro a
     have hc:a.Good:= hp.steam0 hx (Fen.Kpos ..)
-    have he:(p.palette x 0).p=p.horn k:=((Vessel.Ferry.ArcQ.Hand.red0 (p := p)) k h ..).trans (if_pos rfl)
+    have he:(p.palette x 0).p=p.horn k:=((Vessel.Ferry.ArcQ.Hand.red0 (p := p)) k h ..).trans (ite_eq_left rfl)
     have hQ:a.p.h0=p.hullK:=congrArg MeterQ.h0 he
     have hk:a.p.headQ=2:=congrArg MeterQ.headQ he
     have hv:a.pullP=p.α.v:=congrArg (fun a:MeterQ=>a.value.v) he
@@ -1525,13 +1525,13 @@ lemma marsD (k:ℕ)(h:s.v.p.ask=some k){x:ℕ}(hx:x∈u.D.P):
        change Fort.light _ _ x a.p=true↔_; rw [hp0,hk]; unfold okQ;grind
     have hh:= hp.cuvette k h x
     by_cases hb:p.okQ x
-    · rw [hh,if_pos hb,←hv]
+    · rw [hh,ite_eq_left hb,←hv]
       have hx1:=hp.hearC k h hx
       apply hc.boil0 (hl.mpr hb)
       have hr:|a.pullP| ≤ 1:= hv ▸ hp.chaste
       exact hc.boonEye hk hx1 (hr.trans (mass1 ..)) ((abs_mul ..).le.trans ((mul_le_mul_of_nonneg_right hr (abs_nonneg _)).trans
                          ((one_mul _).le.trans ((Vessel.Ferry.ArcQ.Hand.heightB hx1).trans Vessel.Sleigh.Wax.Good.power0))))
-    rw [hh,if_neg hb]
+    rw [hh,ite_eq_right hb]
     exact hc.dark (Bool.eq_false_iff.mpr (fun h=> hb (hl.1 h)))
 
 lemma voyage (k:ℕ)(h:s.v.p.ask=some k){x:ℕ}(hx:x∈u.D.P) :
@@ -1539,9 +1539,9 @@ lemma voyage (k:ℕ)(h:s.v.p.ask=some k){x:ℕ}(hx:x∈u.D.P) :
     refine ⟨Vessel.Ferry.ArcQ.Hand.united0 x,fun i hi=>?_⟩
     unfold prickF
     by_cases ht:i=0
-    · subst i; rw [if_pos rfl]; exact hp.marsD k h hx
-    rw [if_neg ht]
-    exact Vessel.Ferry.TorchE.tabs0 _ (hp.steam0 hx hi) (((Vessel.Ferry.ArcQ.Hand.red0 (p := p)) k h i x).trans (if_neg ht))
+    · subst i; rw [ite_eq_left rfl]; exact hp.marsD k h hx
+    rw [ite_eq_right ht]
+    exact Vessel.Ferry.TorchE.tabs0 _ (hp.steam0 hx hi) (((Vessel.Ferry.ArcQ.Hand.red0 (p := p)) k h i x).trans (ite_eq_right ht))
 end Hand
 end
 end ExactDerandomization.Vessel.Ferry.ArcQ
@@ -1658,7 +1658,7 @@ lemma mixG {x y k:ℕ} (hx:x∈u.D.P)(ht:0<k) (hz:EscortV p x y (Fort.secondC k)
    (hh:|p.pullP*prismV p z*B*A| ≤ p.amountP):
    (p.s0 x).band p.due p.H p.g.prism (spriteV p k) (p.pullP*prismV p z*B*A):=by
         have hr:=he.remains hx
-        unfold spriteV; rw [if_neg (Nat.ne_of_gt ht)]
+        unfold spriteV; rw [ite_eq_right (Nat.ne_of_gt ht)]
         exact he.bornC hx (show p.Approved _ from ⟨k,Or.inr (Or.inr (Or.inr rfl))⟩)
                        (hr.mult0 (hr.mult0 (he.oldera hx z h hs) (he.sperm hx ha)) (he.crafts hz hf)) hh
 lemma frostC {x:ℕ}(hx:x∈u.D.P): (p.s0 x).band p.due p.H p.g.prism (spriteV p 0) 0:=by
@@ -1780,7 +1780,7 @@ lemma clay (j:ℕ) (x:ℕ) :
     have ha:PlanV.x r=s.v.p.i:=rfl
     change PrintV.model u.r u.x r (a.cur j)=_
     unfold PrintV.model; dsimp only
-    rw [if_neg (show (a.cur j).1.1≠1 from by change (2:ℕ)≠1; omega),if_neg hf]
+    rw [ite_eq_right (show (a.cur j).1.1≠1 from by change (2:ℕ)≠1; omega),ite_eq_right hf]
     have hs:PlanV.x r-1=p.l:=by change p.g0.i-1=p.l; omega
     rw [hs]
 
@@ -1793,17 +1793,17 @@ lemma clay (j:ℕ) (x:ℕ) :
     by_cases h:p.b=false
     · rw [h] at hr
       have hf:p.onC j:=Or.inl h
-      simp only [if_neg (show ¬(p.b=true) by rw [h];decide),if_pos hf,Nat.add_sub_cancel,
-                 if_neg (show ¬ p.i+M s<M s by omega)]
+      simp only [ite_eq_right (show ¬(p.b=true) by rw [h];decide),ite_eq_left hf,Nat.add_sub_cancel,
+                 ite_eq_right (show ¬ p.i+M s<M s by omega)]
       exact hr
     have h:p.b=true:=by cases he:p.b <;> grind
     rw [h] at hr
     have hf : p.onC j↔j=0 :=by unfold onC; rw [h]; simp
-    simp only [if_pos h,if_pos ht.hi]
+    simp only [ite_eq_left h,ite_eq_left ht.hi]
     by_cases hz:j=0
-    · rw [if_pos hz,if_pos (hf.2 hz)]
+    · rw [ite_eq_left hz,ite_eq_left (hf.2 hz)]
       exact hr
-    rw [if_neg hz,if_neg (fun h=>hz (hf.1 h))]
+    rw [ite_eq_right hz,ite_eq_right (fun h=>hz (hf.1 h))]
 
 lemma pointI(j):
    let f:=p.Hport j
@@ -1823,7 +1823,7 @@ lemma autocross(j)(h:p.b=false):
 lemma dim {x j:ℕ}(h:p.onC j):
     Wax.Good.lampY (p.pad0 x j)=true ↔ p.hitC x := by
    let f:=p.pad0 x j
-   have hc:f.p=p.Hport j:=(ht.clay j x).trans (if_pos h)
+   have hc:f.p=p.Hport j:=(ht.clay j x).trans (ite_eq_left h)
    unfold Wax.Good.lampY; change Fort.light u.n (M s) x f.p=true ↔ _
    obtain ⟨h1,h2,h3,-⟩:=ht.pointI j; have he:=ht.he.pools.he.lampq (p:=p.Hport j) (c:=p.v.bx) h1 x
    have hm: 0<p.ptr∧ ¬p.ptr<3:=by unfold ptr; split<;>omega
@@ -1873,7 +1873,7 @@ namespace Ward
 variable {p:Slant s}{x i:ℕ}(hp:p.Ward x i)
 include hp
 lemma fame0 : (p.pad0 x i).Good:= hp.he.he.steam0 hp.hx hp.ha
-lemma clue0 :(p.pad0 x i).p=p.Hport i:=(hp.he.clay i x).trans (if_pos hp.hV)
+lemma clue0 :(p.pad0 x i).p=p.Hport i:=(hp.he.clay i x).trans (ite_eq_left hp.hV)
 lemma dawn0 :(p.pad0 x i).p.ago=p.f0:=by rw [hp.clue0]; exact (hp.he.pointI i).2.2.2.2.1
 lemma canon0 :(p.pad0 x i).p.headQ=p.ptr:=by rw [hp.clue0]; exact (hp.he.pointI i).2.1
 lemma watt0 :(p.pad0 x i).pullP=p.dyeV.v:=by unfold Wax.pullP; rw [hp.clue0]; exact congrArg Coin.v (hp.he.pointI i).2.2.2.1
@@ -1887,19 +1887,19 @@ lemma serves(v:OrbitV u)(h:v.estate) (he:v.m=p.v.forward){y:ℕ}(hy:y∈u.D.P):
 lemma northV {j:ℕ}(hL:p.i≠0):
    Wax.midOld (p.pad0 x i) j=hole ((p.impala j).channel 17 0) (hole 1 0):=by
     let a:=p.pad0 x i; let v:=p.impala 0
-    have hf:upQ.f u.x a.quote0=v.channel 17 0:= (Vessel.Sleigh.Wax.Good.ancient (p := a)).trans (hp.dawn0.trans (if_neg hL))
+    have hf:upQ.f u.x a.quote0=v.channel 17 0:= (Vessel.Sleigh.Wax.Good.ancient (p := a)).trans (hp.dawn0.trans (ite_eq_right hL))
     change Wear.rate0 (dec (upQ.f u.x a.quote0)) j=_
     rw [hf]
     unfold v OrbitV.channel vecL clr; rw [dec_round]; rfl
 lemma cycleF {y:ℕ}(hy:y∈u.D.P): Wax.carrierV (p.pad0 x i) y (archive p y) u.w0.p.T:=by
     refine ⟨?_,?_⟩
     · intro j hj ht
-      have hL:p.i≠0:= fun e=> ht (hp.dawn0.trans (if_pos e))
-      rw [hp.northV hL,archive,if_neg hL]
+      have hL:p.i≠0:= fun e=> ht (hp.dawn0.trans (ite_eq_left e))
+      rw [hp.northV hL,archive,ite_eq_right hL]
       exact hp.serves _ (hp.he.north j hj) rfl hy
     intro he j hj; unfold archive
     rw [hp.dawn0] at he; unfold f0 at he; split at he
-    · rw [if_pos ‹_›]
+    · rw [ite_eq_left ‹_›]
     next hu=>exact (Age.cpos _ he).elim
 lemma arctic (y:ℕ):
    Wax.prismV (p.pad0 x i) (archive p y)=p.Y y:=by
@@ -1911,13 +1911,13 @@ lemma arctic (y:ℕ):
            intro j _
            induction j with
            | zero=>simp [Rime.Nest.Good.maxs]
-           | succ j ih=>rw [Rime.Nest.Good.maxs,ih (by omega),archive,if_pos he,if_neg (show j+1≠0 by omega)];split <;> norm_num
-        rw [hh _ le_rfl,if_neg (Nat.ne_of_gt u.w0.p.tOK.1)]
+           | succ j ih=>rw [Rime.Nest.Good.maxs,ih (by omega),archive,ite_eq_left he,ite_eq_right (show j+1≠0 by omega)];split <;> norm_num
+        rw [hh _ le_rfl,ite_eq_right (Nat.ne_of_gt u.w0.p.tOK.1)]
         apply rising_top <;> norm_num
       next hu=>
         let f(i:ℕ):Paint u.n:=(s.v.r p.v.forward).outV (detector p.l i)
         have hb(i:ℕ):archive p y i=f i p.blade0 y:=by
-             unfold archive f;rw [if_neg hu,show s.v.r p.v.forward=_ from vault _ _ hp.he.he.ll0]
+             unfold archive f;rw [ite_eq_right hu,show s.v.r p.v.forward=_ from vault _ _ hp.he.he.ll0]
         have HH(j:ℕ):Rime.Nest.Good.maxs (archive p y) j = Maxer f j p.blade0 y:=by
               induction j with
               | zero=> rfl
@@ -1955,7 +1955,7 @@ lemma dives (ht:p.hitC x): Wax.EscortV (p.pad0 x i) x (p.xB x) (premier u.r):=by
        change if p.hop=0 then _ else if p.hop=1∨p.hop=2 then _ else
                          0=0 ∧ if p.hop-3< m then _ else p.hop-3-m < m ∧ x=radix m y (p.hop-3-m)
        have ht:p.hop=3+(p.i+m):=rfl
-       rw [if_neg (by omega),if_neg (by omega),if_neg (by omega),show p.hop-3-m=p.i from by omega]
+       rw [ite_eq_right (by omega),ite_eq_right (by omega),ite_eq_right (by omega),show p.hop-3-m=p.i from by omega]
        refine ⟨rfl,hB,?_⟩
        unfold radix;rw [←hc]; exact (Nat.mod_add_div ..).symm
     constructor; dsimp only
@@ -2045,7 +2045,7 @@ lemma blood (h:p.b=false){f:Producer}(hk:p.stopE.Efine s.k f){z:ℕ}(hz:z∈u.D.
      rw [hM]; refine ⟨⟨?_,hz,h1,h2⟩,?_⟩
      · rw [show cell (v.slotWord i)=v.c 12 0 from by simp [Fabric.slotWord,cell,hole]]
        exact hp.he.he.signalF (a:=v) rfl _ _
-     have HH := h3 z hz; rw [if_pos rfl] at HH; exact HH
+     have HH := h3 z hz; rw [ite_eq_left rfl] at HH; exact HH
 lemma used1 {z:ℕ}(h:z∈u.D.P):
    let a:=p.pad0 x i
    (a.s0 z).band a.due a.H a.g.prism (roost (Wax.k0 u) (Fort.fresh u.r a.g u.v) a.g.prism)
@@ -2071,7 +2071,7 @@ lemma usedQ (h:p.b=false){f:Producer}(hk:p.stopE.Efine s.k f){z:ℕ}(hz:z∈u.D.
      apply ht.stamped hz (hp.tagL h hk hz)
      by_cases hb : k=0
      · rw [show p.flowQ f z i=0 from ?_,show f.tag z i=0 from hb]; exact ht.frostC hz
-       have he:p.hueP f z i=0:=if_neg (fun h=> h hb)
+       have he:p.hueP f z i=0:=ite_eq_right (fun h=> h hb)
        rw [flowQ,he];ring
      have hx :=hp.blood h hk hz (show 0<k from Nat.pos_of_ne_zero hb)
      have hy:y∈u.D.P:=ht.already hx
@@ -2133,45 +2133,45 @@ lemma glimpse :s.v.s=p.SceneF:=by
     unfold Peek.weave;rw [hx];simp only [hp.hl]
 
 lemma prumb (h:p.b=true)(x:ℕ):p.v.intended x=p.sense1 x:=by
-   have hm: p.v.r.1.2=p.i:=hp.rateP.trans (if_pos h)
+   have hm: p.v.r.1.2=p.i:=hp.rateP.trans (ite_eq_left h)
    let r:= s.v.r; let m:=p.v.forward
    have hv:(s.v.s.lines p.v.r.1)=p.headA:=by
      rw [hp.glimpse]
-     unfold SceneF Peek.roy;dsimp only;rw [hm,if_pos (show p.i < u.plotM.P.M from hp.hi)]
-   have hO:p.startO=p.born (prizep p.l p.k) p.blade0:= if_pos h
-   have hc: p.dyeV=p.v.α:=if_pos h
+     unfold SceneF Peek.roy;dsimp only;rw [hm,ite_eq_left (show p.i < u.plotM.P.M from hp.hi)]
+   have hO:p.startO=p.born (prizep p.l p.k) p.blade0:= ite_eq_left h
+   have hc: p.dyeV=p.v.α:=ite_eq_left h
    rw [hp.he.voice0,hv]
    unfold headA Peek.primeQ; dsimp only
-   unfold Est.core ridge;rw [if_pos rfl]
+   unfold Est.core ridge;rw [ite_eq_left rfl]
    unfold vim mint sense1
    by_cases hQ:p.hitC x
-   · rw [if_pos hQ,if_pos (show x%u.plotM.P.M=p.i from hQ.1),if_pos hQ.2]
+   · rw [ite_eq_left hQ,ite_eq_left (show x%u.plotM.P.M=p.i from hQ.1),ite_eq_left hQ.2]
      let z:=p.xB x
      unfold flow1
      rw [hc,show p.Z z=(r m).outV (prizep p.l p.k) p.blade0 z from
                       (by unfold Z;rw [hO]; exact (congrArg (fun h:Tick u.n=>h.outV _ _ _) (show r m=_ from vault _ _ hp.he.ll0)).symm)]
      change p.v.α.v*(p.Y z* _)=_
      exact (mul_assoc ..).symm
-   rw [if_neg hQ]
+   rw [ite_eq_right hQ]
    split
-   · next he=> rw [if_neg (show ¬x%u.plotM.P.M=p.i from fun e=>hQ ⟨e,he⟩),mul_zero]
+   · next he=> rw [ite_eq_right (show ¬x%u.plotM.P.M=p.i from fun e=>hQ ⟨e,he⟩),mul_zero]
    rfl
 lemma mumb (h:p.b=false)(x:ℕ):p.v.intended x= if p.hitC x then p.beacon x else 0:=by
-   have hm:p.v.r.1.2=p.i+M s:=hp.rateP.trans (if_neg (show ¬p.b=true by rw [h]; decide))
+   have hm:p.v.r.1.2=p.i+M s:=hp.rateP.trans (ite_eq_right (show ¬p.b=true by rw [h]; decide))
    let r:= s.v.r; let m:=p.v.forward
    have hv:(s.v.s.lines p.v.r.1)=p.headB:=by
      rw [hp.glimpse]
      unfold SceneF Peek.roy; dsimp only; rw [hm]
-     rw [if_neg (show ¬p.i+M s < u.plotM.P.M by change ¬p.i+M s<M s; omega),show p.i+M s-u.plotM.P.M=p.i from Nat.add_sub_cancel ..]
-   have hO:p.startO=p.born (prizep p.l p.l) (rightP p.blade0):= if_neg (show ¬p.b=true by rw [h];decide)
+     rw [ite_eq_right (show ¬p.i+M s < u.plotM.P.M by change ¬p.i+M s<M s; omega),show p.i+M s-u.plotM.P.M=p.i from Nat.add_sub_cancel ..]
+   have hO:p.startO=p.born (prizep p.l p.l) (rightP p.blade0):= ite_eq_right (show ¬p.b=true by rw [h];decide)
    have ht: r m=forecast u.plotM m:=vault _ _ hp.he.ll0
    have hc: p.dyeV.v=p.v.α.v*peeler u.n p.l:=by
-      unfold dyeV;rw [if_neg (show ¬p.b=true by rw [h];decide),Coin.mul0,Aqua.raw _ hp.agedE.2.2.2]
+      unfold dyeV;rw [ite_eq_right (show ¬p.b=true by rw [h];decide),Coin.mul0,Aqua.raw _ hp.agedE.2.2.2]
    rw [hp.he.voice0,hv]; unfold headB Peek.syncQ;dsimp only
-   unfold Est.core ridge; rw [if_pos rfl]
+   unfold Est.core ridge; rw [ite_eq_left rfl]
    unfold vim mint
    by_cases hQ:p.hitC x
-   · rw [if_pos hQ,if_pos (show x%u.plotM.P.M=p.i from hQ.1),if_pos hQ.2]
+   · rw [ite_eq_left hQ,ite_eq_left (show x%u.plotM.P.M=p.i from hQ.1),ite_eq_left hQ.2]
      let z:=p.xB x; let f:=p.stopE
      have hr: p.Z=(r m).outV (prizep p.l p.l) (rightP p.blade0):= by
          ext z; change p.startO.fwd0 z=_; rw [hO,ht]
@@ -2179,15 +2179,15 @@ lemma mumb (h:p.b=false)(x:ℕ):p.v.intended x= if p.hitC x then p.beacon x else
               ((r m).outR f.t f.dye z i)*((r m).outV (prizep p.l p.l) (rightP p.blade0) i)))=
                    p.Y z*p.dyeV.v*∑ i∈f.S1,f.finalE z i*p.Z i
      rw [hr,hc,show f.finalE= (r m).outR f.t f.dye from by rw [ht]]; ring
-   rw [if_neg hQ]
+   rw [ite_eq_right hQ]
    split
-   · next he=> rw [if_neg (show ¬x%u.plotM.P.M=p.i from fun e=>hQ ⟨e,he⟩),mul_zero]
+   · next he=> rw [ite_eq_right (show ¬x%u.plotM.P.M=p.i from fun e=>hQ ⟨e,he⟩),mul_zero]
    rfl
 lemma primes (h:p.b=false){f:Producer}(hh:p.stopE.Efine s.k f) (x:ℕ)(hx:x∈u.D.P):
     ∑ i∈range (K s), p.senseB f x i=p.v.intended x:=by
      rw [hp.mumb h x]; unfold senseB
      by_cases he:p.hitC x
-     · simp_rw [if_pos he]
+     · simp_rw [ite_eq_left he]
        let S:=range (K s)
        let z:=p.xB x; let v:=p.stopE
        have hz:z∈u.D.P:= mem_range.2 ((show z ≤ x from Nat.div_le_self ..).trans_lt (mem_range.1 hx))
@@ -2201,14 +2201,14 @@ lemma primes (h:p.b=false){f:Producer}(hh:p.stopE.Efine s.k f) (x:ℕ)(hx:x∈u.
            apply sum_congr rfl; intro i hi
            let a:=f.locate z i
            rw [sum_eq_single a]
-           · rw [if_pos rfl]
-           · intro j _ he; rw [if_neg (Ne.symm he),zero_mul]
+           · rw [ite_eq_left rfl]
+           · intro j _ he; rw [ite_eq_right (Ne.symm he),zero_mul]
            intro ha; have hq:¬f.awake z i:= fun e=>ha (hh.sector.light.insured _ _ e).2
-           rw [show p.hueP f z i=0 from if_neg hq];split<;>ring
+           rw [show p.hueP f z i=0 from ite_eq_right hq];split<;>ring
        change _=p.Y z*p.dyeV.v*∑ i∈v.S1,_
        rw [ht,mul_sum]
        apply sum_congr rfl; intro i hi; unfold flowQ; unfold z;ring
-     simp only [if_neg he,sum_const_zero]
+     simp only [ite_eq_right he,sum_const_zero]
 
 lemma ship1 {x:ℕ}(hx:x∈u.D.P)(h:p.b=true):
    VisitF p.v x (p.v.prickF x):=by
@@ -2216,20 +2216,20 @@ lemma ship1 {x:ℕ}(hx:x∈u.D.P)(h:p.b=true):
       let a:=p.pad0 x j; have ht:a.Good:=hp.he.steam0 hx hj
       unfold prickF
       by_cases hv:j=0
-      · rw [if_pos hv,hp.prumb h x]
+      · rw [ite_eq_left hv,hp.prumb h x]
         have hc:p.onC j:= Or.inr hv
         have hf:Ward p x j:=⟨hp,hx,hj,hc⟩
         unfold sense1;split
         · next hh=>
           have hl:= hf.dives hh; let z:=p.xB x; have hw:= hf.used1 (ht.already hl)
-          have hb:a.p.headQ=3:=hf.canon0.trans (if_pos h)
+          have hb:a.p.headQ=3:=hf.canon0.trans (ite_eq_left h)
           exact ht.boil0 ((hp.dim hc).2 hh)
                      (ht.sidle hl (le_of_eq hb.symm)
                               (Song.pinTrue (starC 3) (((Vessel.Sleigh.Wax.Good.body0 (p := a)) 3).trans (decide_eq_true hb)) hw))
         next he=> exact ht.dark (Bool.eq_false_iff.2 (fun e=>he ((hp.dim hc).1 e)))
-      rw [if_neg hv]; apply Vessel.Ferry.TorchE.tabs0 _ ht
+      rw [ite_eq_right hv]; apply Vessel.Ferry.TorchE.tabs0 _ ht
       have hc:¬p.onC j:=by unfold onC;rw [h]; simp [hv]
-      exact (hp.clay j x).trans (if_neg hc)
+      exact (hp.clay j x).trans (ite_eq_right hc)
 
 lemma shipB {x:ℕ}(hx:x∈u.D.P)(h:p.b=false){f:Producer}(hh:p.stopE.Efine s.k f):
    VisitF p.v x (p.senseB f x):=by
@@ -2240,7 +2240,7 @@ lemma shipB {x:ℕ}(hx:x∈u.D.P)(h:p.b=false){f:Producer}(hh:p.stopE.Efine s.k 
       unfold senseB; split
       · next hu=>
         have hl:=hf.dives hu; have hw:=hf.usedQ h hh (ht.already hl)
-        have hb:a.p.headQ=4:= hf.canon0.trans (if_neg (show ¬p.b=true by rw [h];decide))
+        have hb:a.p.headQ=4:= hf.canon0.trans (ite_eq_right (show ¬p.b=true by rw [h];decide))
         exact ht.boil0 ((hp.dim hc).2 hu)
                      (ht.sidle hl (show 3 ≤ a.p.headQ from by omega)
                          (Song.pinFalse (starC 3) (((Vessel.Sleigh.Wax.Good.body0 (p := a)) 3).trans (decide_eq_false (by omega))) hw))
@@ -2386,10 +2386,10 @@ lemma value0(h:zero0 s)(x:ℕ):
 
 lemma cheap (h:zero0 s){x:ℕ}(hx:x∈u.D.P):bandS s x (ZeroS s) (zcost s x):=by
    let z:= ZeroS s
-   have hz:z∈jug s:=by unfold jug; rw [if_pos h];exact mem_singleton_self ..
+   have hz:z∈jug s:=by unfold jug; rw [ite_eq_left h];exact mem_singleton_self ..
    let A:=flareP s x z
    have hg:A.Good:= he.fitted hx z (Or.inl ((begun s).1 hz))
-   have hc:A.p=PrintV.dawn (W0 s (0,0)):=by change PrintV.model _ _ _ z=_; unfold PrintV.model; apply if_pos (show z.1.1=1 from rfl)
+   have hc:A.p=PrintV.dawn (W0 s (0,0)):=by change PrintV.model _ _ _ z=_; unfold PrintV.model; apply ite_eq_left (show z.1.1=1 from rfl)
    have hf:A.p.h0=W0 s (0,0):=hc.symm ▸rfl
    have hh:A.p.headQ=1:=hc.symm ▸rfl
    have hl:Wax.Good.lampY A=true↔x∈s.v.S:=by
@@ -2495,11 +2495,11 @@ lemma harvests(x:ℕ)(hx:x∈u.D.P) : ∃ f, s.harvest x f:=by
    · have hu:p⊆range s.Pn:=by
         intro i hi; obtain ⟨j,hj,rfl⟩:=mem_image.1 hi
         exact mem_range.2 (Perch.TorchE.kosmos he.he j ((tagroot ..).1 hj))
-     rw [←sum_subset hu (fun i _ hz=> if_neg hz)]
+     rw [←sum_subset hu (fun i _ hz=> ite_eq_right hz)]
      have hU : ∑ i∈p,h i=∑ i∈galaxy s,f i:=by
         unfold p orbitZ; rw [sum_image (by
              intro x _ y _ he; exact (Wire.eq _).symm.trans ((congrArg dec he).trans (Wire.eq _)))]
-        apply sum_congr rfl; intro i hi; unfold h;rw [if_pos (show enc i∈p from mem_image_of_mem _ hi),Wire.eq]
+        apply sum_congr rfl; intro i hi; unfold h;rw [ite_eq_left (show enc i∈p from mem_image_of_mem _ hi),Wire.eq]
      rw [hU, galaxy,sum_union (aperture s)]
      have ht : ∑ i∈jar s,f i= ∑ i∈areaS s,flowC s i x:=by
         unfold jar;rw [sum_image (fun x hx y hy he=> rayC s hx hy he)]
@@ -2507,10 +2507,10 @@ lemma harvests(x:ℕ)(hx:x∈u.D.P) : ∃ f, s.harvest x f:=by
         rw [hl,stars,sum_product]; apply sum_congr rfl; intro i hi; exact (hg i hi).union0
      have hh : ∑ i∈jug s,f i=zcost s x:=by
         by_cases ha:zero0 s
-        · have hh:jug s={ZeroS s}:=if_pos ha
+        · have hh:jug s={ZeroS s}:=ite_eq_left ha
           rw [hh,sum_singleton]
           exact hl _ (by simp [hh])
-        rw [show jug s=∅ from if_neg ha,sum_empty];exact (Perch.TorchE.quietC ha x).symm
+        rw [show jug s=∅ from ite_eq_right ha,sum_empty];exact (Perch.TorchE.quietC ha x).symm
      rw [ht,hh]; exact (atmosphere s x).symm
    unfold h; split
    · next hu=> obtain ⟨j,hj,rfl⟩:=mem_image.1 hu; rw [Wire.eq]; exact hp j hj
@@ -2650,7 +2650,7 @@ lemma deadL(pC:render k ≤ u.v.slope){x:ℕ}(hx:x∈u.D.P)(hs:¬p.works):
     (Home p x).band (render k) (Hx p) 0 (shine k u.r u.v) (p.fwd0 x):=by
        apply Song.pinFalse (mature u.w0) ((Vessel.OrbitV.Counsel.working x 0).trans (decide_eq_false hs))
        have hh:p.fwd0 x=0:= by
-         unfold fwd0 forecast current; dsimp only; rw [if_neg (show ¬Net.onQ u.plotM.gap p.m (p.p.key u.plotM)=true from hs)]
+         unfold fwd0 forecast current; dsimp only; rw [ite_eq_right (show ¬Net.onQ u.plotM.gap p.m (p.p.key u.plotM)=true from hs)]
        obtain ⟨h1,h2,h3,h4,h5,h6⟩:= wealthy k
        have hu: 1 ≤ coal:=le_trans (by omega) h4
        rw [hh]

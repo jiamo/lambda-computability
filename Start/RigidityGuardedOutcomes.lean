@@ -105,10 +105,10 @@ theorem scan_hits {A : Oracle} {p : Condition} {d : Finset ℕ} {start n t : ℕ
   | zero => omega
   | succ n ih =>
     by_cases h : start ∉ d ∧ Changes A start p
-    · exact ⟨start,hlo,by simp only [scan,if_pos h]⟩
+    · exact ⟨start,hlo,by simp only [scan,ite_eq_left h]⟩
     · have hne : start ≠ t := by rintro rfl; exact h ⟨hd,hc⟩
       obtain ⟨i,hi,he⟩ := ih (start := start+1) (by omega) (by omega)
-      exact ⟨i,hi,by simpa only [scan,if_neg h] using he⟩
+      exact ⟨i,hi,by simpa only [scan,ite_eq_right h] using he⟩
 
 theorem common_eventually_unchanged {A Y Z : Oracle} {t : ℕ}
     (hbase : OracleCode.eval (oracleFunction A) (meaning (machine (item t 0))) = oracleFunction Y)

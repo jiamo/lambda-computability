@@ -43,7 +43,7 @@ theorem sstr_nameFree : ∀ (t : Tm) (a : ℕ) (v : Tm), NameFree a t → sstr a
   | var _, _, _, _ => rfl
   | lam t, a, v, h => by simp only [sstr, sstr_nameFree t (a + 1) _ h]
   | app t u, a, v, h => by simp only [sstr, sstr_nameFree t a v h.1, sstr_nameFree u a v h.2]
-  | mu β t, a, v, h => by simp only [sstr, if_neg h.1, sstr_nameFree t (a + 1) _ h.2]
+  | mu β t, a, v, h => by simp only [sstr, ite_eq_right h.1, sstr_nameFree t (a + 1) _ h.2]
 
 theorem nameFree_ren : ∀ (t : Tm) (r : ℕ → ℕ) (a b : ℕ), (∀ i, r i = b → i = a) →
     NameFree a t → NameFree b (ren r t)
@@ -164,9 +164,9 @@ theorem subst_sstr : ∀ (t : Tm) (τ : ℕ → Tm) (a : ℕ) (v : Tm), NamesVar
       rw [hj] at hcond
       simp only [nameOf] at hcond
       by_cases hβ : β = a + 1
-      · rw [if_pos hβ, if_pos (hcond.1 hβ)]
+      · rw [ite_eq_left hβ, ite_eq_left (hcond.1 hβ)]
         simp only [subst, ih, ren_succ_upS]
-      · rw [if_neg hβ, if_neg (fun h => hβ (hcond.2 h))]
+      · rw [ite_eq_right hβ, ite_eq_right (fun h => hβ (hcond.2 h))]
         rw [ih]
 
 /-! ### Stability of reduction -/
@@ -198,12 +198,12 @@ theorem step_ren {t t' : Tm} (hs : Step t t') :
       have := Step.struct (up r β) (ren (up r) t) (ren r u)
       simp only [ren]
       by_cases h : β = 0
-      · rw [if_pos h]
-        rw [if_pos (hβ.2 h)] at this
+      · rw [ite_eq_left h]
+        rw [ite_eq_left (hβ.2 h)] at this
         simp only [ren, hs, hv]
         exact this
-      · rw [if_neg h]
-        rw [if_neg (fun h' => h (hβ.1 h'))] at this
+      · rw [ite_eq_right h]
+        rw [ite_eq_right (fun h' => h (hβ.1 h'))] at this
         simp only [hs]
         exact this
   | rename β γ t =>
@@ -277,12 +277,12 @@ theorem step_subst {t t' : Tm} (hs : Step t t') :
       have := Step.struct j (subst (upS σ) t) (subst σ u)
       simp only [subst, hj, nameOf]
       by_cases h : β = 0
-      · rw [if_pos h]
-        rw [if_pos (hβ.1 h)] at this
+      · rw [ite_eq_left h]
+        rw [ite_eq_left (hβ.1 h)] at this
         simp only [subst, hc, ren_succ_upS]
         exact this
-      · rw [if_neg h]
-        rw [if_neg (fun h' => h (hβ.2 h'))] at this
+      · rw [ite_eq_right h]
+        rw [ite_eq_right (fun h' => h (hβ.2 h'))] at this
         rw [hc]
         exact this
   | rename β γ t =>

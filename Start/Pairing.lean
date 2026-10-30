@@ -129,11 +129,11 @@ theorem Lambda.ite_lt'_church (p q : ℕ) (x y : Lambda) :
       (if p < q then x else y) := by
   have hc := Lambda.lt'_works p q
   by_cases h : p < q
-  · rw [if_pos h] at hc ⊢
+  · rw [ite_eq_left h] at hc ⊢
     exact Lambda.reduces_trans
       (Lambda.reduces_app_left (Lambda.reduces_app_left (Lambda.reduces_app_right hc)))
       (Lambda.ifThenElse_true x y)
-  · rw [if_neg h] at hc ⊢
+  · rw [ite_eq_right h] at hc ⊢
     exact Lambda.reduces_trans
       (Lambda.reduces_app_left (Lambda.reduces_app_left (Lambda.reduces_app_right hc)))
       (Lambda.ifThenElse_false x y)

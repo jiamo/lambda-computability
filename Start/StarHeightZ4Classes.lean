@@ -130,31 +130,31 @@ lemma fState4_snoc (c : Fin 3) (u : List (Fin 3)) (a : Fin 3) :
   by_cases h0 : dsum4 σm ((splitW σm u).2 ++ [a]) = 0
   · have hs0 : dsum4 σm (splitW σm u).2 + σm a = 0 := by rw [← hs]; exact h0
     have hcl := bcls_snoc (tail_ne_nil_of_ret h0) a
-    simp only [if_pos h0]
+    simp only [ite_eq_left h0]
     by_cases hall : ∀ e ∈ (splitW σm u).1, bcls e = c
-    · simp only [if_pos hall, fSt4, if_pos hs0]
+    · simp only [ite_eq_left hall, fSt4, ite_eq_left hs0]
       by_cases hc : clsB (splitW σm u).2.head? (splitW σm u).2.getLast? a = c
-      · rw [if_pos hc, if_pos]
+      · rw [ite_eq_left hc, ite_eq_left]
         · rfl
         · intro e he
           simp only [List.mem_append, List.mem_singleton] at he
           rcases he with he | rfl
           · exact hall e he
           · rw [hcl]; exact hc
-      · rw [if_neg hc, if_neg]
+      · rw [ite_eq_right hc, ite_eq_right]
         intro h
         exact hc (hcl ▸ h _ (by simp))
-    · rw [if_neg hall, if_neg]
+    · rw [ite_eq_right hall, ite_eq_right]
       · rfl
       · intro h
         exact hall fun e he => h e (List.mem_append_left _ he)
   · have hs0 : ¬ (dsum4 σm (splitW σm u).2 + σm a = 0) := by rw [← hs]; exact h0
-    simp only [if_neg h0]
+    simp only [ite_eq_right h0]
     by_cases hall : ∀ e ∈ (splitW σm u).1, bcls e = c
-    · simp only [if_pos hall, fSt4, if_neg hs0]
+    · simp only [ite_eq_left hall, fSt4, ite_eq_right hs0]
       rw [hs, head?_snoc, List.getLast?_append, List.getLast?_singleton]
       rfl
-    · simp only [if_neg hall]
+    · simp only [ite_eq_right hall]
       rfl
 
 lemma fState4_eq_foldl (c : Fin 3) (u : List (Fin 3)) :
@@ -174,19 +174,19 @@ lemma mem_kstar_Ccl_iff (c : Fin 3) (u : List (Fin 3)) :
     rw [hsp]
     dsimp only
     have hall : ∀ e ∈ es, bcls e = c := fun e he => (hes e he).2
-    rw [if_pos hall]
+    rw [ite_eq_left hall]
     simp [fAcc4]
   · intro h
     unfold fState4 at h
     by_cases hall : ∀ e ∈ (splitW σm u).1, bcls e = c
-    · rw [if_pos hall] at h
+    · rw [ite_eq_left hall] at h
       simp only [fAcc4, decide_eq_true_eq] at h
       have ht := NR_eq_nil σm (splitW_spec σm u).2.2 h
       refine ⟨(splitW σm u).1, ?_, fun e he => ⟨(splitW_spec σm u).2.1 e he, hall e he⟩⟩
       have := (splitW_spec σm u).1
       rw [ht, List.append_nil] at this
       exact this.symm
-    · rw [if_neg hall] at h
+    · rw [ite_eq_right hall] at h
       exact absurd h (by simp [fAcc4])
 
 /-! ### Six-state automata for `C⁺∗` and `C⁻∗` -/

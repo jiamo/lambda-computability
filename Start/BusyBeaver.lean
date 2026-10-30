@@ -64,7 +64,7 @@ theorem haltTime_le_bbTime {t : Lambda} {n : ℕ} (hn : Lambda.encode t ≤ n)
     simp only [Set.Finite.mem_toFinset, Set.mem_ofPred_eq]
     exact hn
   have hle := Finset.le_sup (f := fun t => if HasNormalForm t then haltTime t else 0) hmem
-  simp only [if_pos ht] at hle
+  simp only [ite_eq_left ht] at hle
   exact hle
 
 theorem bbTime_mono : Monotone bbTime := by
@@ -170,12 +170,12 @@ theorem bbTime_exceeds_computable {f : ℕ → ℕ} (hf : Computable f) (N : ℕ
     by_contra hcon
     push Not at hcon
     have : g n = bbTime n := by
-      simp only [hg, hcon, decide_true, cond_true, htable]
+      simp only [hg, hcon, decide_true, Bool.cond_true, htable]
       rw [List.getD_eq_getElem?_getD, List.getElem?_map, List.getElem?_range hcon]
       rfl
     omega
   refine ⟨n, hnN, ?_⟩
-  have : g n = f n := by simp [hg, Nat.not_lt.mpr hnN, decide_eq_false]
+  have : g n = f n := by simp [hg, Nat.not_lt.mpr hnN]
   omega
 
 ------------------------------------------------------------------------

@@ -32,7 +32,7 @@ theorem paddedEntrySentence_sound (M : ZFSet.{u}) (hM : Transitive M)
   have hv := paddedCodeSentence_recovers M hM hω n (cons (e 1) w')
     (fun i => by cases i; exact he 1; exact hw' _) v β hc hp'
   have hk := hv k
-  simpa only [cons_succ,w',if_pos k.isLt,← hy] using hk
+  simpa only [cons_succ,w',ite_eq_left k.isLt,← hy] using hk
 
 theorem paddedEntrySentence_sourceT (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT M)
     (n : ℕ) (k : Fin n) (e : ℕ → ZFSet.{u}) (he : ∀ i, e i ∈ M)

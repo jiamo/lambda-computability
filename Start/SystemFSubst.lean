@@ -212,12 +212,12 @@ theorem Typing.lift_gen {Γ : List FTy} {t : Lambda} {A : FTy} (h : Typing Γ t 
       intro k Δ hk
       have hb := hk i A hi
       by_cases hik : i < k
-      · rw [if_pos hik] at hb
+      · rw [ite_eq_left hik] at hb
         have hl : Lambda.lift 1 k (Lambda.var i) = Lambda.var i := by
           simp [Lambda.lift, hik]
         rw [hl]
         exact Typing.var hb
-      · rw [if_neg hik] at hb
+      · rw [ite_eq_right hik] at hb
         have hl : Lambda.lift 1 k (Lambda.var i) = Lambda.var (i + 1) := by
           simp [Lambda.lift, hik]
         rw [hl]
@@ -239,13 +239,13 @@ theorem Typing.lift_gen {Γ : List FTy} {t : Lambda} {A : FTy} (h : Typing Γ t 
           have hj : Γ[j]? = some A' := by simpa using hi
           have hb := hk j A' hj
           by_cases hjk : j < k
-          · rw [if_pos hjk] at hb
+          · rw [ite_eq_left hjk] at hb
             have hlt : j + 1 < k + 1 := by omega
-            rw [if_pos hlt]
+            rw [ite_eq_left hlt]
             simpa using hb
-          · rw [if_neg hjk] at hb
+          · rw [ite_eq_right hjk] at hb
             have hlt : ¬ (j + 1 < k + 1) := by omega
-            rw [if_neg hlt]
+            rw [ite_eq_right hlt]
             simpa using hb
   | @tlam Γ t A _ ih =>
       intro k Δ hk

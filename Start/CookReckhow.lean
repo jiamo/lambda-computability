@@ -169,7 +169,7 @@ theorem polyBounded_of_inNP_UNSAT (h : InNP Sat.UNSAT) :
     · intro hx
       obtain ⟨w, hw⟩ := (hchar x).1 hx
       refine ⟨pairW x w, ?_⟩
-      rw [eval_proofSystemOf, fstOf_pairW, sndOf_pairW, if_neg hw]
+      rw [eval_proofSystemOf, fstOf_pairW, sndOf_pairW, ite_eq_right hw]
     · rintro ⟨π, rfl⟩
       rw [eval_proofSystemOf]
       split_ifs with hv
@@ -182,7 +182,7 @@ theorem polyBounded_of_inNP_UNSAT (h : InNP Sat.UNSAT) :
       have := hbound x w hw
       show 2 * x.length + 2 + w.length ≤ 2 * x.length + 2 + p x.length
       omega
-    · rw [eval_proofSystemOf, fstOf_pairW, sndOf_pairW, if_neg hw]
+    · rw [eval_proofSystemOf, fstOf_pairW, sndOf_pairW, ite_eq_right hw]
 
 /-- **The Cook–Reckhow theorem**: `NP = coNP` if and only if there is a polynomially bounded
 propositional proof system. -/

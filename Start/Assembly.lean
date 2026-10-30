@@ -20,7 +20,7 @@ Cartesian closedness is `Start/AssemblyCcc.lean`.
 -/
 
 import Start.PCA
-import Mathlib.CategoryTheory.Limits.Shapes.BinaryProducts
+import Mathlib.CategoryTheory.Limits.Shapes.BinaryProducts.ProdComparison
 import Mathlib.CategoryTheory.Limits.Shapes.Terminal
 
 set_option relaxedAutoImplicit false

@@ -70,7 +70,7 @@ theorem card_fiber_rel (ρ₀ : Restriction n) (S : Finset (Fin n)) (hS : S ⊆ 
       by_cases hi : ρ i = none
       · simp [freeSet, hi]
       · have : i ∉ freeSet ρ := by simp [freeSet, hi]
-        rw [if_neg this]
+        rw [ite_eq_right this]
         obtain ⟨b, hb⟩ := Option.ne_none_iff_exists'.1 hi
         split_ifs with h0
         · cases b <;> simp [hb]
@@ -85,15 +85,15 @@ theorem card_fiber_rel (ρ₀ : Restriction n) (S : Finset (Fin n)) (hS : S ⊆ 
           have := hS hiS
           simp [freeSet, hb] at this
         have hif : i ∉ freeSet ρ₀ := by simp [freeSet, hb]
-        rw [if_neg hiS, if_neg hif, mem_singleton] at hi
+        rw [ite_eq_right hiS, ite_eq_right hif, mem_singleton] at hi
         rw [hi, hb]
       · ext i
         have hi := h i
         simp only [freeSet, mem_filter, mem_univ, true_and]
         by_cases his : i ∈ S
-        · rw [if_pos his] at hi
+        · rw [ite_eq_left his] at hi
           simpa [his] using hi
-        · rw [if_neg his] at hi
+        · rw [ite_eq_right his] at hi
           split_ifs at hi with hif
           · simp only [mem_insert, mem_singleton] at hi
             rcases hi with hi | hi <;> simp [hi, his]
@@ -108,12 +108,12 @@ theorem card_fiber_rel (ρ₀ : Restriction n) (S : Finset (Fin n)) (hS : S ⊆ 
     intro i
     by_cases h1 : i ∈ S
     · have : i ∉ freeSet ρ₀ \ S := by simp [h1]
-      rw [if_pos h1, if_neg this]; rfl
+      rw [ite_eq_left h1, ite_eq_right this]; rfl
     · by_cases h2 : i ∈ freeSet ρ₀
       · have : i ∈ freeSet ρ₀ \ S := by simp [h1, h2]
-        rw [if_neg h1, if_pos h2, if_pos this]; rfl
+        rw [ite_eq_right h1, ite_eq_left h2, ite_eq_left this]; rfl
       · have : i ∉ freeSet ρ₀ \ S := by simp [h2]
-        rw [if_neg h1, if_neg h2, if_neg this]; rfl
+        rw [ite_eq_right h1, ite_eq_right h2, ite_eq_right this]; rfl
   simp only [hc]
   rw [Fintype.prod_ite_mem, prod_const, card_sdiff_of_subset hS]
 
@@ -311,7 +311,7 @@ theorem isKDNF_toDNF :
       intro C hC
       cases b
       · simp [toDNF] at hC
-      · simp only [toDNF, if_true, List.mem_singleton] at hC
+      · simp only [toDNF, ite_true, List.mem_singleton] at hC
         subst hC
         exact ⟨by simp, hacc⟩
   | .node i t₀ t₁, acc, hacc => by
@@ -633,7 +633,7 @@ theorem rounds {C : ACCirc} (hC : C.NoNot) {s : ℕ} (hs : 1 ≤ s) (hsize : C.s
       obtain ⟨ρ', -, hc', hg'⟩ := round hC ht hts hsize hg
       refine ⟨ρ', by simpa using hg', ?_⟩
       rw [hc', hcard]
-      simp only [Nat.add_eq_zero_iff, one_ne_zero, and_false, if_false, Nat.add_sub_cancel]
+      simp only [Nat.add_eq_zero_iff, one_ne_zero, and_false, ite_false, Nat.add_sub_cancel]
       split_ifs with hr
       · subst hr; simp
       · rw [Nat.div_div_eq_div_mul]
@@ -805,7 +805,7 @@ theorem parity_circuit_bound {C : ACCirc} {n d : ℕ} (hd : C.depth ≤ d) (h2 :
   set s := Nat.log2 C'.size + 1 with hsdef
   have h := Parity.final_bound hC (d := d) (s := s) (by omega) hpar' (by omega)
     (by rw [hsdef]; exact Nat.lt_log2_self)
-  rw [if_neg (by omega), if_neg (by omega)] at h
+  rw [ite_eq_right (by omega), ite_eq_right (by omega)] at h
   have hK : 0 < 32 * (32 * s) ^ (d - 1 - 1) := by positivity
   have h1 : n < (s + 1) * (32 * (32 * s) ^ (d - 1 - 1)) :=
     (Nat.div_lt_iff_lt_mul hK).1 (Nat.lt_succ_of_le h)

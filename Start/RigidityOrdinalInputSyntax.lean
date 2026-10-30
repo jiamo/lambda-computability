@@ -70,7 +70,7 @@ theorem ordinalBodySlots_spec (p : SentenceForm) (N : ZFSet.{u})
   rcases i with _|_|k
   · exact prependValues_tail w p.bound e 0
   · exact prependValues_tail w p.bound e 1
-  · simp only [ordinalBodySlots,if_pos (show k < p.bound by omega),cons_succ]
+  · simp only [ordinalBodySlots,ite_eq_left (show k < p.bound by omega),cons_succ]
     exact prependValues_lt w p.bound e k (by omega)
 
 theorem Construction.ordinalMembership_spec (t : Construction.{u}) (p : SentenceForm)

@@ -25,7 +25,7 @@ theorem cnf_monomial (x : Ordinal.{u}) :
 
 theorem pairCode_cnf_left (x y : Ordinal.{u}) (hy : y ≤ x) :
     CNF omega0 (pairCode x y) = [(x+1,1),(y,1)] := by
-  rw [pairCode,if_pos hy]
+  rw [pairCode,ite_eq_left hy]
   have h := CNF.opow_mul_add (b := omega0) (e := x+1) (x := 1) (y := omega0 ^ y)
     one_lt_omega0 one_ne_zero one_lt_omega0
     ((opow_lt_opow_iff_right one_lt_omega0).mpr (hy.trans_lt (lt_add_one x)))
@@ -33,7 +33,7 @@ theorem pairCode_cnf_left (x y : Ordinal.{u}) (hy : y ≤ x) :
 
 theorem pairCode_cnf_right (x y : Ordinal.{u}) (hy : ¬ y ≤ x) :
     CNF omega0 (pairCode x y) = [(y+1,2),(x,1)] := by
-  rw [pairCode,if_neg hy]
+  rw [pairCode,ite_eq_right hy]
   have h := CNF.opow_mul_add (b := omega0) (e := y+1) (x := 2) (y := omega0 ^ x)
     one_lt_omega0 (by simp) (by exact_mod_cast natCast_lt_omega0 2)
     ((opow_lt_opow_iff_right one_lt_omega0).mpr
@@ -60,10 +60,10 @@ theorem pairCode_inj (x y x' y' : Ordinal.{u}) :
 
 theorem max_lt_pairCode (x y : Ordinal.{u}) : max x y < pairCode x y := by
   by_cases hy : y ≤ x
-  · rw [max_eq_left hy,pairCode,if_pos hy]
+  · rw [max_eq_left hy,pairCode,ite_eq_left hy]
     exact ((lt_add_one x).trans_le (right_le_opow (x+1) one_lt_omega0)).trans_le le_self_add
   · have hx : x ≤ y := (lt_of_not_ge hy).le
-    rw [max_eq_right hx,pairCode,if_neg hy]
+    rw [max_eq_right hx,pairCode,ite_eq_right hy]
     have hmul : omega0 ^ (y+1) ≤ omega0 ^ (y+1) * 2 :=
       Ordinal.le_mul_left _ (zero_lt_one.trans_le one_le_two)
     exact ((lt_add_one y).trans_le (right_le_opow (y+1) one_lt_omega0)).trans_le

@@ -270,13 +270,13 @@ def assign (x : Word) (C : Circuit) : ℕ → Bool := fun v =>
 
 @[simp] theorem assign_even (x : Word) (C : Circuit) (i : ℕ) :
     assign x C (2 * i) = x.getD i false := by
-  simp only [assign, if_pos (by omega : 2 * i % 2 = 0)]
+  simp only [assign, ite_eq_left (by omega : 2 * i % 2 = 0)]
   congr 1
   omega
 
 @[simp] theorem assign_odd (x : Word) (C : Circuit) (j : ℕ) :
     assign x C (2 * j + 1) = (vals x C).getD j false := by
-  simp only [assign, if_neg (by omega : ¬ (2 * j + 1) % 2 = 0)]
+  simp only [assign, ite_eq_right (by omega : ¬ (2 * j + 1) % 2 = 0)]
   congr 1
   omega
 

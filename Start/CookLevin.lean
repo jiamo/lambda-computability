@@ -75,7 +75,7 @@ theorem polyManyOne_SAT_of_inP {L : Language} (h : InP L) : L ≤ₘᵖ Sat.SAT 
     exact iff_of_false hL hbad
   · have hL : L x := (hc x).2 hx
     simp only [Cob.eval_comp, List.map_cons, List.map_nil, Cob.eval_iteC, Cob.eval_empty,
-      Cob.eval_constW, if_neg hx]
+      Cob.eval_constW, ite_eq_right hx]
     exact iff_of_true hL hnil
 
 /-! ### The compilation step -/

@@ -221,7 +221,7 @@ noncomputable def wit (e : ℕ) : ℕ :=
 
 theorem wit_eq {e k : ℕ} (hk : hit e k = Bool.true) : wit e = (Nat.unpair k).2 := by
   have hex : ∃ k, hit e k = Bool.true := ⟨k, hk⟩
-  rw [wit, dif_pos hex]
+  rw [wit, dite_eq_left hex]
   exact congrArg (fun j => (Nat.unpair j).2) (hit_unique (Exists.choose_spec hex) hk)
 
 /-- An element of the set that is smaller than `2 * n` comes from an index smaller than `n`. -/

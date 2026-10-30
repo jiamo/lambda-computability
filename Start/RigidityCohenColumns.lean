@@ -60,9 +60,9 @@ theorem eraseWord_set (i : ℕ) (s : List Bool) (m : ℕ) (hi : (Nat.unpair m).1
     have he : (eraseWord i (s.set m b)).getD n false = (eraseWord i s).getD n false := by
       rw [h₀,h₁]
       by_cases hni : (Nat.unpair n).1 = i
-      · simp only [if_pos hni]
+      · simp only [ite_eq_left hni]
       · have hmn : m ≠ n := by rintro rfl; exact hni hi
-        simp only [if_neg hni,List.getD_eq_getElem?_getD,List.getElem?_set_ne hmn]
+        simp only [ite_eq_right hni,List.getD_eq_getElem?_getD,List.getElem?_set_ne hmn]
     simpa only [List.getD_eq_getElem?_getD,List.getElem?_eq_getElem hn,
       List.getElem?_eq_getElem hn',Option.getD_some] using he
 

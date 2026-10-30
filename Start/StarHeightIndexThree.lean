@@ -313,7 +313,7 @@ noncomputable def psi : FreeMonoid Alphabet →* G ⧸ N := (QuotientGroup.mk' N
 /-- Coset representatives, with `rep 1 = 1`. -/
 noncomputable def rep (q : G ⧸ N) : G := if q = 1 then 1 else q.out
 
-lemma rep_one : rep N 1 = 1 := if_pos rfl
+lemma rep_one : rep N 1 = 1 := ite_eq_left rfl
 
 lemma mk_rep (q : G ⧸ N) : ((rep N q : G) : G ⧸ N) = q := by
   unfold rep
@@ -373,7 +373,7 @@ lemma rcount_eq_count (qs : G ⧸ N) (a : Alphabet) (q : G ⧸ N) (u : List Alph
       simp only [rcount, rpairs, List.count_cons, ih]
       by_cases h : b = a ∧ q = qs
       · obtain ⟨rfl, rfl⟩ := h; simp; omega
-      · rw [if_neg h]
+      · rw [ite_eq_right h]
         have : ¬ ((q, b) == (qs, a)) = true := by
           simp only [beq_iff_eq, Prod.mk.injEq]
           exact fun h' => h ⟨h'.2, h'.1⟩
@@ -696,7 +696,7 @@ lemma Rv_eq [Finite N] (h3 : Nat.card (G ⧸ N) = 3) (hab : ∀ x ∈ N, ∀ y �
     | nil =>
         refine Or.inl ?_
         have hf : f = 1 := by rw [← hTw]; simp
-        rw [if_pos hf]
+        rw [ite_eq_left hf]
         exact (Language.mem_one _).mpr rfl
     | cons x v =>
         obtain ⟨hx, hT⟩ := rem_value N T h3 hab hr

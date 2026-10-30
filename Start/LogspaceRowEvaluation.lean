@@ -121,7 +121,7 @@ lemma lastE {x:Word}{t i j m:ℕ}(hm:j < m):
           rintro ⟨y,h⟩; have hc:=(codePos r).2 h; rw [hi,he] at hc; omega
         simpa only [ite_true] using ih (by omega)
       | succ y=>
-        rw [if_neg (by omega: y+1 ≠ 0)]
+        rw [ite_eq_right (by omega: y+1 ≠ 0)]
         have ha:=(codePos r).1 he
         refine ⟨fun e=>⟨y,(show j=m by omega) ▸ ha⟩,?_⟩
         rintro ⟨y',ht⟩
@@ -418,13 +418,13 @@ lemma wreath :
    iris p.outR ≤ p.bound ∧ p.stationP.rite p.c (p.host0.garden u.D.s) (iris p.outR):=by
     have hh:=hp.throng
     by_cases hz:p.lampQ=true
-    · rw [if_pos hz] at hh
+    · rw [ite_eq_left hz] at hh
       refine ⟨le_trans (iris_le ..) (hp.next hz).1,?_⟩
       cases h:p.entrance with
       | none=>
         rw [h] at hh
         change p.stationP.rite p.c _ (iris (collect _ _ _ _ _))
-        rw [collect.eq_def,if_pos hz,h]; exact hh.asleep
+        rw [collect.eq_def,ite_eq_left hz,h]; exact hh.asleep
       | some s=>
         obtain ⟨k,i⟩:=s
         rw [h] at hh
@@ -433,7 +433,7 @@ lemma wreath :
         have hr :portM (some (k,i))-1=k:=by simp [portM]
         have hg: win (enc (exitE p.t u.n (p.exit0 i))) (portM (some (k,i)))=iris p.outR:=by
              unfold outR collect
-             rw [if_pos hz,h]
+             rw [ite_eq_left hz,h]
              dsimp only
              cases ht:p.exit0 i with
              | none => rfl
@@ -446,8 +446,8 @@ lemma wreath :
         apply hh.morning (by simp [portM]) (t:=p.t.A.1) _ (hr ▸ he) (hr ▸hz0)
              (Mica.theEnd (hs.chart.rent hs.pro.pos) hx hs.fiat (by omega) h1)
         exact congrArg (fun a:Surf=>a.A.1) hs.fiat
-    rw [if_neg hz] at hh
-    unfold outR collect; rw [if_neg hz]; exact ⟨Nat.zero_le _,hh.asleep⟩
+    rw [ite_eq_right hz] at hh
+    unfold outR collect; rw [ite_eq_right hz]; exact ⟨Nat.zero_le _,hh.asleep⟩
 
 lemma paths {i:ℕ} (he:u.smallQ p.src i)
     (hv:u.D.swears (post p.src p.cage.tagop i 0) p.x (iris p.outR))
@@ -642,7 +642,7 @@ lemma echoPort {p:Crew u} {w:Fabric u}{f:Producer}{s:MintV}(h:p.Good) (h0:w.Efin
          cases hq:p.entrance with
          | none=> have hj :K=0:=by by_contra hc; have hp:= (hh K (f.locate p.x i) e).2 ⟨hc,rfl,rfl⟩; simp [hp] at hq
                   unfold Keel.cream; rw [hj]; rfl
-         | some r=>obtain ⟨k,j⟩:=r; obtain ⟨hv,hw,_⟩:=(hh _ _ e).1 hq; unfold Keel.cream K; rw [hw,if_neg hv]; rfl
+         | some r=>obtain ⟨k,j⟩:=r; obtain ⟨hv,hw,_⟩:=(hh _ _ e).1 hq; unfold Keel.cream K; rw [hw,ite_eq_right hv]; rfl
       rw [hX]
       have hu:Keel.cream K ≤ p.bound:=by unfold Keel.cream; split<;>omega
       refine ⟨hu,Keel.summons p.g (h.chart.rent h.pro.pos) ((by omega:2 ≤ 4).trans h.capcost)
@@ -656,7 +656,7 @@ lemma echoPort {p:Crew u} {w:Fabric u}{f:Producer}{s:MintV}(h:p.Good) (h0:w.Efin
     · unfold Crew.hitP; rw [h1]
       exact ⟨by rw [show cell (w.slotWord i)=w.c 12 0 from by simp [Fabric.slotWord,cell,hole]]; exact hW,
                              h.ix,he,hq⟩
-    rw [h1,hx p.x h.ix,if_pos hk0,hj]
+    rw [h1,hx p.x h.ix,ite_eq_left hk0,hj]
 
 end Era
 end
@@ -1127,18 +1127,18 @@ lemma stellar (b:Bool)(X:ℝ){f:Lyric}
 
 lemma torn (hx:title s=0)(b:Bool): gross s b 0:=by
    apply hp.inoculates; unfold holding coast
-   dsimp only; rw [if_pos hx]; exact hp.lame
+   dsimp only; rw [ite_eq_left hx]; exact hp.lame
 lemma partOld {b X}(hr:title s≠0)(hs:s.optic.1=0)(ht:s.beaming (bia b s.t (krod u)) X)
     (he:capsum s X): gross s b X:=by
    apply hp.inoculates b X
-   unfold holding coast; dsimp only; rw [if_neg hr]
+   unfold holding coast; dsimp only; rw [ite_eq_right hr]
    apply Song.pinTrue _ _ (hp.stellar b X (Or.inl rfl) ht he)
    rw [hp.zen0,hs]; rfl
 
 lemma youngNo {b}(hr:title s≠0)(hs:s.optic.1≠0)(ht:s.optic.2≠b):
     gross s b 0:=by
    apply hp.inoculates b 0
-   unfold holding coast; dsimp only; rw [if_neg hr]
+   unfold holding coast; dsimp only; rw [ite_eq_right hr]
    refine Song.pinFalse _ ?_ (Song.pinFalse _ ?_ hp.lame)
    · rw [hp.zen0]; simp [hs]
    rw [hp.help0]; simp [ht]
@@ -1147,7 +1147,7 @@ lemma youngYes {b X}(hr:title s≠0)(hs:s.optic.1≠0)(ht:s.optic.2=b)
     (hA : s.optic.1≠1 → s.beaming (gemini (title s) (krod u) u.D.s s.t u.r.w.p.T) X)
     (he:capsum s X): gross s b X:=by
    apply hp.inoculates b X
-   unfold holding coast; dsimp only; rw [if_neg hr]
+   unfold holding coast; dsimp only; rw [ite_eq_right hr]
    refine Song.pinFalse (shapeC 0) (by rw [hp.zen0]; simp [hs]) (Song.pinTrue (sourceB b) (by rw [hp.help0];simp [ht]) ?_)
    · by_cases hv:s.optic.1=1
      · apply Song.pinTrue _ _ (hp.stellar b X (Or.inr (Or.inr rfl)) (hT hv) he)

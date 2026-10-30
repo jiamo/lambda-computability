@@ -177,7 +177,7 @@ theorem good_all : ∀ (n : ℕ) (X : Tm), IsBMI X → Good n X := by
                 lapps (.app (toLam U) (.app (.var x) (.var y))) (rest.map Lambda.var) := by
               rw [subst_lapps, subst_toLam_of_isBMI hU]
               simp only [List.map_cons, List.map_map]
-              simp only [lapps, Lambda.subst, if_true]
+              simp only [lapps, Lambda.subst, ite_true]
               congr 1
             rw [← eP] at hT2 hst
             obtain ⟨h, r, hrs, hsh, hh, _⟩ := hnIn_split_subst _ hT2
@@ -211,7 +211,7 @@ theorem good_all : ∀ (n : ℕ) (X : Tm), IsBMI X → Good n X := by
             lapps (.app (toLam U) (.app (toLam V) (.var x))) (ys.map Lambda.var) := by
           rw [subst_lapps, subst_toLam_of_isBMI hU]
           simp only [List.map_cons, List.map_map]
-          simp only [lapps, Lambda.subst, if_true]
+          simp only [lapps, Lambda.subst, ite_true]
           congr 1
         rw [← eP] at hT2 hst
         obtain ⟨h, r, hrs, hsh, hh, hT3⟩ := hnIn_split_subst _ hT2

@@ -270,31 +270,31 @@ theorem Hosts.seq_left {M : Machine} {p q : Prog} {b e : ℕ} (h : Hosts M (seq 
     Hosts M p b (b + p.size) := by
   intro st h1 h2 a w
   rw [h st h1 (by simp only [size]; omega) a w]
-  simp only [delta, if_pos h2]
+  simp only [delta, ite_eq_left h2]
 
 theorem Hosts.seq_right {M : Machine} {p q : Prog} {b e : ℕ} (h : Hosts M (seq p q) b e) :
     Hosts M q (b + p.size) e := by
   intro st h1 h2 a w
   rw [h st (by omega) (by simp only [size]; omega) a w]
-  simp only [delta, if_neg (show ¬ st < b + p.size by omega)]
+  simp only [delta, ite_eq_right (show ¬ st < b + p.size by omega)]
 
 theorem Hosts.ite_left {M : Machine} {t : Test} {p q : Prog} {b e : ℕ}
     (h : Hosts M (ite t p q) b e) : Hosts M p (b + 1) e := by
   intro st h1 h2 a w
   rw [h st (by omega) (by simp only [size]; omega) a w]
-  simp only [delta, if_neg (show st ≠ b by omega), if_pos h2]
+  simp only [delta, ite_eq_right (show st ≠ b by omega), ite_eq_left h2]
 
 theorem Hosts.ite_right {M : Machine} {t : Test} {p q : Prog} {b e : ℕ}
     (h : Hosts M (ite t p q) b e) : Hosts M q (b + 1 + p.size) e := by
   intro st h1 h2 a w
   rw [h st (by omega) (by simp only [size]; omega) a w]
-  simp only [delta, if_neg (show st ≠ b by omega), if_neg (show ¬ st < b + 1 + p.size by omega)]
+  simp only [delta, ite_eq_right (show st ≠ b by omega), ite_eq_right (show ¬ st < b + 1 + p.size by omega)]
 
 theorem Hosts.loop_body {M : Machine} {t : Test} {p : Prog} {b e : ℕ}
     (h : Hosts M (loop t p) b e) : Hosts M p (b + 1) b := by
   intro st h1 h2 a w
   rw [h st (by omega) (by simp only [size]; omega) a w]
-  simp only [delta, if_neg (show st ≠ b by omega)]
+  simp only [delta, ite_eq_right (show st ≠ b by omega)]
 
 theorem Hosts.test {M : Machine} {t : Test} {p q : Prog} {b e : ℕ}
     (h : Hosts M (ite t p q) b e) (a : Option Bool) (w : Bool) :
@@ -382,7 +382,7 @@ def machine (p : Prog) : Machine where
 theorem machine_hosts (p : Prog) : Hosts p.machine p 0 p.size := by
   intro q _ hq a w
   simp only [machine, zero_add] at hq ⊢
-  rw [if_pos hq]
+  rw [ite_eq_left hq]
 
 theorem machine_wellFormed (p : Prog) : p.machine.WellFormed := by
   refine ⟨Nat.succ_pos _, ?_⟩
@@ -478,16 +478,16 @@ theorem realizes_loop {σ : Type*} {A : AbsMachine σ} {t : Test} {body : Prog}
     rw [machine_accept]; simp only [decide_eq_false_iff_not]; omega
   refine ⟨?_, ?_, ?_, ?_, ?_⟩
   · intro x
-    simp only [hstart x, if_true, h0]
+    simp only [hstart x, ite_true, h0]
     rfl
   · intro x s hs
     cases hA : A.step s with
     | none =>
-        simp only [Option.isSome_none, Bool.false_eq_true, if_false, Config.at_state,
+        simp only [Option.isSome_none, Bool.false_eq_true, ite_false, Config.at_state,
           machine_accept, decide_true]
         exact ((hacc x s hs).2 hA).symm
     | some s' =>
-        simp only [Option.isSome_some, if_true, Config.at_state, hq0]
+        simp only [Option.isSome_some, ite_true, Config.at_state, hq0]
         cases h : A.accept s
         · rfl
         · exact absurd ((hacc x s hs).1 h) (by simp [hA])
@@ -496,13 +496,13 @@ theorem realizes_loop {σ : Type*} {A : AbsMachine σ} {t : Test} {body : Prog}
     · exact hsp x s hs
     · rw [Config.at_space, space_touch]; exact hsp x s hs
   · intro x s hs hA
-    simp only [hA, Option.isSome_none, Bool.false_eq_true, if_false]
+    simp only [hA, Option.isSome_none, Bool.false_eq_true, ite_false]
     exact machine_final_halts _ _ _ rfl
   · intro x s s' hs hA
     obtain ⟨ht, hb⟩ := hstep x s s' hs hA
     have hseg := loop_seg ht hb
     have hs' := hs.tail hA
-    simp only [hA, Option.isSome_some, if_true]
+    simp only [hA, Option.isSome_some, ite_true]
     split
     · exact hseg
     · rename_i hn

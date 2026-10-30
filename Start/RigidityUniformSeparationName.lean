@@ -92,7 +92,7 @@ theorem uniform_separation_name (M : ZFSet.{u}) (hM : Transitive M)
       | succ n =>
         simp only [cons_succ,push_succ]
         dsimp only [e',truncate]
-        rw [if_pos (by omega)]
+        rw [ite_eq_left (by omega)]
     exact hfinite.trans (internal_bounded_truth M hM hP hU hPow hS hR hI hc hoM ho G hG φ _
       (fun n => hM d hd _ (hpush i n)))
   intro x

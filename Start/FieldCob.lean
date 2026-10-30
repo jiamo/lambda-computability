@@ -169,7 +169,7 @@ theorem Cob.eval_hornerT {p : ℕ} (hp : 0 < p) (x : ℕ) :
         simp [Cob.uSucc, Cob.uAdd]; omega
       rw [hbd]
       cases b
-      · simp only [Bool.false_eq_true, if_false]
+      · simp only [Bool.false_eq_true, ite_false]
         set V := (hornerSt x p w).1
         set c := (hornerSt x p w).2
         have hst : (Cob.proj 1).eval
@@ -192,7 +192,7 @@ theorem Cob.eval_hornerT {p : ℕ} (hp : 0 < p) (x : ℕ) :
           have := Nat.mod_lt (c + x * V) hp
           omega)]
         simp [hornerSt, dmW, V, c]
-      · simp only [if_true]
+      · simp only [ite_true]
         simp only [Cob.eval_comp, List.map_cons, List.map_nil, Cob.eval_concat, Cob.eval_proj,
           List.getD_cons_succ, List.getD_cons_zero, Cob.eval_constT]
         rw [List.take_of_length_le (by
@@ -268,7 +268,7 @@ theorem Cob.eval_primLoop (k : ℕ) :
   | j + 1 => by
       have ih := Cob.eval_primLoop k j
       rw [List.replicate_succ, Cob.primLoop, Cob.eval_bRec_cons, ← Cob.primLoop, ih]
-      simp only [if_true]
+      simp only [ite_true]
       set args : List Word := List.replicate j true :: bw (decide (noSmallDiv k j)) ::
         [List.replicate k true]
       have hd : (Cob.uSucc (.proj 0)).eval args = List.replicate (j + 1) true :=
@@ -349,7 +349,7 @@ theorem Cob.primeSearch_inv (m : ℕ) :
   | j + 1, hj => by
       have ih := Cob.primeSearch_inv m j (by omega)
       rw [List.replicate_succ, Cob.primeSearch, Cob.eval_bRec_cons, ← Cob.primeSearch]
-      simp only [if_true]
+      simp only [ite_true]
       set acc := Cob.primeSearch.eval [List.replicate j true, List.replicate m true]
       set args : List Word := List.replicate j true :: acc :: [List.replicate m true]
       have hcand : (Cob.comp Cob.dropU [.proj 0, Cob.uAdd (.proj 2) (.proj 2)]).eval args =
@@ -365,11 +365,11 @@ theorem Cob.primeSearch_inv (m : ℕ) :
             List.replicate (m + m) true := Cob.eval_uAdd (by simp) (by simp)
       rw [hbd]
       by_cases hpr : Nat.Prime (2 * m - j)
-      · simp only [hpr, decide_true, if_true]
+      · simp only [hpr, decide_true, ite_true]
         rw [List.take_of_length_le (by simp; omega)]
         right
         exact ⟨_, rfl, hpr, by omega, by omega⟩
-      · simp only [hpr, decide_false, Bool.false_eq_true, if_false]
+      · simp only [hpr, decide_false, Bool.false_eq_true, ite_false]
         rcases ih with ⟨hacc, hnone⟩ | ⟨q, hacc, hq, h1, h2⟩
         · left
           rw [hacc]

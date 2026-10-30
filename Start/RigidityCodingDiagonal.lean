@@ -38,7 +38,7 @@ theorem prescribe (A : ℕ → Oracle) (p : Condition) (m : ℕ)
   · simp only [append, List.length_append, List.length_replicate]
     omega
   · simp only [append, List.getD_eq_getElem?_getD, List.getElem?_append,
-      if_neg (Nat.not_lt.mpr hm)]
+      ite_eq_right (Nat.not_lt.mpr hm)]
     simp
 
 theorem diagonal_dense (A : ℕ → Oracle) (hA : ∀ k, {a | A k a = true}.Infinite)

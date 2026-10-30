@@ -110,7 +110,7 @@ lemma sum2 (a : α) (A : α → α → ZMod n) (B : α → ZMod n) (f : α → �
   congr 1
   have : ∀ x, (∑ y, if a = x then B y * f x y else 0) = if a = x then ∑ y, B y * f x y else 0 := by
     intro x; split_ifs <;> simp
-  simp only [this, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  simp only [this, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
 
 lemma sum3 (a : α) (A : α → α → α → ZMod n) (B : α → α → ZMod n) (f : α → α → α → ZMod n) :
     ∑ x, ∑ y, ∑ z, (A x y z + if a = x then B y z else 0) * f x y z =
@@ -120,7 +120,7 @@ lemma sum3 (a : α) (A : α → α → α → ZMod n) (B : α → α → ZMod n)
   have : ∀ x, (∑ y, ∑ z, if a = x then B y z * f x y z else 0) =
       if a = x then ∑ y, ∑ z, B y z * f x y z else 0 := by
     intro x; split_ifs <;> simp
-  simp only [this, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  simp only [this, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
 
 lemma entries_nil : entries t [] = 1 := by
   ext <;> simp [entries, sc, one_def]

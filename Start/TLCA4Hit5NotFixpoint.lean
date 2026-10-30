@@ -117,7 +117,7 @@ theorem TW.uniqueS {base : ℤ → ℤ → Lambda → Prop} {x : ℕ} (hc : Tail
       | @rq _ i'' m'' R'' T'' hR'' hm'' =>
         rw [lift_xPow] at e2
         simp only [Lambda.lift] at e2
-        rw [if_neg (by omega)] at e2
+        rw [ite_eq_right (by omega)] at e2
         have hA : Lambda.lift 1 1 (Lambda.lift 1 0 R'') ≠ .var (x + 1 + 1) := by
           rw [← lift_lift_zero_one]; exact lift2_ne_var (TC.ne_varS hc hR'' x)
         obtain ⟨rfl, e3, -⟩ := xPow_app_unique (lift2_ne_var (TC.ne_varS hc hR x)) hA e2
@@ -137,7 +137,7 @@ theorem TW.uniqueS {base : ℤ → ℤ → Lambda → Prop} {x : ℕ} (hc : Tail
       | @rq _ i₂ m₂ R₂ T₂ hR₂ hm₂ =>
         rw [lift_xPow] at e2
         simp only [Lambda.lift] at e2
-        rw [if_neg (by omega)] at e2
+        rw [ite_eq_right (by omega)] at e2
         have hA : Lambda.lift 1 1 (Lambda.lift 1 0 R₂) ≠ .var (x + 1 + 1) := by
           rw [← lift_lift_zero_one]; exact lift2_ne_var (TC.ne_varS hc hR₂ x)
         obtain ⟨rfl, e3, -⟩ := xPow_app_unique (lift2_ne_var (TC.ne_varS hc hR' x)) hA e2

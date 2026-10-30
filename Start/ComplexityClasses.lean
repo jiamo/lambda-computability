@@ -206,12 +206,12 @@ that the class is usable. -/
         simp only [List.length_cons, List.length_append]
         nlinarith [Nat.zero_le (x.length * y.length)]
       cases b
-      · rw [if_neg (by simp)]
+      · rw [ite_eq_right (by simp)]
         simp only [Cob.eval_comp, List.map_cons, List.map_nil, Cob.eval_proj,
           List.getD_cons_succ, List.getD_cons_zero, Cob.eval_app]
         rw [List.take_of_length_le hlen]
         rfl
-      · rw [if_pos rfl]
+      · rw [ite_eq_left rfl]
         simp only [Cob.eval_comp, List.map_cons, List.map_nil, Cob.eval_proj,
           List.getD_cons_succ, List.getD_cons_zero, Cob.eval_app]
         rw [List.take_of_length_le hlen]

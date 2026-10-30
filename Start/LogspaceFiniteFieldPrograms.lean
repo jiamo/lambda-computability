@@ -80,7 +80,7 @@ lemma px_eq (x n): primex x n=true↔n.Prime:=by
    by_cases ht:n<2
    · simp only [ht,ite_true,Bool.false_eq_true,false_iff]
      intro h; have he:=h.two_le; omega
-   rw [if_neg ht,decide_eq_true_eq,unique_small]
+   rw [ite_eq_right ht,decide_eq_true_eq,unique_small]
    constructor
    · intro h
      rw [Nat.prime_def_lt]
@@ -818,16 +818,16 @@ lemma mintK {α β} [Wire α][Wire β](f:Token→ PT α β) (h:∀ v,Kn (f v))
        generalize k x a % rad=n
        by_cases he:n=s
        · subst s
-         rw [if_pos (by omega),if_pos rfl]
-       rw [if_neg he]
+         rw [ite_eq_left (by omega),ite_eq_left rfl]
+       rw [ite_eq_right he]
        by_cases ht:n<s
-       · rw [if_pos (by omega),if_pos ht]
-       rw [if_neg (by omega),if_neg ht]
+       · rw [ite_eq_left (by omega),ite_eq_left ht]
+       rw [ite_eq_right (by omega),ite_eq_right ht]
   have ht (v):v%rad<rad:=Nat.mod_lt v rad_pos
   convert he rad using 1
   ext x a
   dsimp only
-  rw [if_pos (ht _)]
+  rw [ite_eq_left (ht _)]
   simp only [mark,Nat.mod_mod]
 
 def queue : (l c:ℕ) → Paths Atom l×Paths Roller l

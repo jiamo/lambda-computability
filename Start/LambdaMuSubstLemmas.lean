@@ -199,10 +199,10 @@ theorem sstr_ren (r : ℕ → ℕ) (hr : Function.Injective r) (a : ℕ) (v t : 
               simp [hr h]
       by_cases h : β = a + 1
       · have h' : up r β = r a + 1 := hcond.1 h
-        simp only [sstr, ren, if_pos h, if_pos h', ih (up r) hup, hv]
+        simp only [sstr, ren, ite_eq_left h, ite_eq_left h', ih (up r) hup, hv]
         rfl
       · have h' : ¬ up r β = r a + 1 := fun hc => h (hcond.2 hc)
-        simp only [sstr, ren, if_neg h, if_neg h', ih (up r) hup, hv]
+        simp only [sstr, ren, ite_eq_right h, ite_eq_right h', ih (up r) hup, hv]
         rfl
 
 end Tm

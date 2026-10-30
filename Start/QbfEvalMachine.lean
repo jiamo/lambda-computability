@@ -882,7 +882,7 @@ theorem length_fieldsWord_le {s : QS} (hs : Inv x s) :
   obtain ⟨_, _, hlen, hent, _⟩ := hs
   rw [length_fieldsWord]
   have : s.S.sum ≤ s.S.length * (x.length + 4) := by
-    have := List.sum_le_card_nsmul s.S (x.length + 4) hent
+    have := List.sum_le_length_nsmul s.S (x.length + 4) hent
     simpa using this
   nlinarith
 

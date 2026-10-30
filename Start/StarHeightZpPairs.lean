@@ -90,7 +90,7 @@ lemma pk_nr : ∀ (t : List β) (a : β), t ++ [a] ∈ zpNR σ →
       rw [List.foldl_append, ih b hb]
       simp only [List.foldl_cons, List.foldl_nil, pkStep]
       rw [zpSum_append (u := t ++ [b]), zpSum_single] at h ⊢
-      rw [if_neg h]
+      rw [ite_eq_right h]
 
 lemma pk_block {e : List β} (he : e ∈ zpX σ) :
     e.foldl (pkStep σ P) (some none) = if e ∈ PairEnd P then some none else none := by
@@ -113,7 +113,7 @@ lemma pk_block {e : List β} (he : e ∈ zpX σ) :
     rw [zpSum_append] at h0
     simp only [List.foldl_cons, List.foldl_nil, pkStep]
     rw [zpSum_single] at h0
-    rw [if_pos h0]
+    rw [ite_eq_left h0]
     have hiff : t ++ [a] ++ [c] ∈ PairEnd P ↔ P a c := by
       constructor
       · rintro ⟨v, a', c', hv, hP⟩
@@ -125,24 +125,24 @@ lemma pk_block {e : List β} (he : e ∈ zpX σ) :
       · intro h
         exact ⟨t, a, c, by simp, h⟩
     by_cases hP : P a c
-    · rw [if_pos hP, if_pos (hiff.mpr hP)]
-    · rw [if_neg hP, if_neg (fun h => hP (hiff.mp h))]
+    · rw [ite_eq_left hP, ite_eq_left (hiff.mpr hP)]
+    · rw [ite_eq_right hP, ite_eq_right (fun h => hP (hiff.mp h))]
 
 lemma pk_flatten : ∀ {es : List (List β)}, AllIn (zpX σ) es →
     es.flatten.foldl (pkStep σ P) (some none) =
       if AllIn (PairEnd P) es then some none else none
-  | [], _ => by rw [if_pos (show AllIn (PairEnd P) [] from fun e he => by simp at he)]; rfl
+  | [], _ => by rw [ite_eq_left (show AllIn (PairEnd P) [] from fun e he => by simp at he)]; rfl
   | e :: es, hes => by
       rw [List.flatten_cons, List.foldl_append, pk_block σ P (hes e (by simp))]
       have ih := pk_flatten (es := es) (fun f hf => hes f (by simp [hf]))
       have hall : AllIn (PairEnd P) (e :: es) ↔ e ∈ PairEnd P ∧ AllIn (PairEnd P) es := by
         simp [AllIn]
       by_cases he : e ∈ PairEnd P
-      · rw [if_pos he, ih]
+      · rw [ite_eq_left he, ih]
         by_cases h : AllIn (PairEnd P) es
-        · rw [if_pos h, if_pos (hall.mpr ⟨he, h⟩)]
-        · rw [if_neg h, if_neg (fun h' => h (hall.mp h').2)]
-      · rw [if_neg he, pk_dead, if_neg (fun h' => he (hall.mp h').1)]
+        · rw [ite_eq_left h, ite_eq_left (hall.mpr ⟨he, h⟩)]
+        · rw [ite_eq_right h, ite_eq_right (fun h' => h (hall.mp h').2)]
+      · rw [ite_eq_right he, pk_dead, ite_eq_right (fun h' => he (hall.mp h').1)]
 
 lemma pk_tail : ∀ (t : List β) (q : Option (Option (ZMod p × β))), t ∈ zpNR σ → t ≠ [] →
     (q = none ∨ q = some none) → t.foldl (pkStep σ P) q ≠ some none := by
@@ -162,7 +162,7 @@ lemma pcls_kstar_eq :
   · intro hu
     obtain ⟨es, rfl, hes⟩ := Language.mem_kstar.mp hu
     show es.flatten.foldl (pkStep σ P) (some none) = some none
-    rw [pk_flatten σ P (fun e he => (hes e he).1), if_pos (show AllIn (PairEnd P) es from fun e he => (hes e he).2)]
+    rw [pk_flatten σ P (fun e he => (hes e he).1), ite_eq_left (show AllIn (PairEnd P) es from fun e he => (hes e he).2)]
   · intro hu
     change u.foldl (pkStep σ P) (some none) = some none at hu
     obtain ⟨h1, h2, h3⟩ := zpSplit_spec σ u
@@ -172,7 +172,7 @@ lemma pcls_kstar_eq :
     by_cases ht : t = []
     · have hall : AllIn (PairEnd P) es := by
         by_contra h
-        rw [if_neg h, ht] at hu
+        rw [ite_eq_right h, ht] at hu
         simp at hu
       refine Language.mem_kstar.mpr ⟨es, ?_, fun e he => ⟨h2 e he, hall e he⟩⟩
       rw [← h1, ht, List.append_nil]

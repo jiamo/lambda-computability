@@ -84,13 +84,13 @@ lemma count_mul_scount_yy {x y : α} (hxy : x ≠ y) :
       simp only [scount_cons_cons, scount_singleton, count_cons_eq]
       by_cases hzx : z = x
       · subst hzx
-        simp only [if_true, if_neg hxy, add_zero]
+        simp only [ite_true, ite_eq_right hxy, add_zero]
         nlinarith
       · by_cases hzy : z = y
         · subst hzy
-          simp only [if_true, if_neg hzx, add_zero]
+          simp only [ite_true, ite_eq_right hzx, add_zero]
           nlinarith
-        · simp only [if_neg hzx, if_neg hzy, add_zero]
+        · simp only [ite_eq_right hzx, ite_eq_right hzy, add_zero]
           exact ih
 
 /-- `|u|_x · scount [x, y, y] u = 2 xxyy + xyxy + xyyx + xyy`. -/
@@ -105,13 +105,13 @@ lemma count_mul_scount_xyy {x y : α} (hxy : x ≠ y) :
       simp only [scount_cons_cons, count_cons_eq]
       by_cases hzx : z = x
       · subst hzx
-        simp only [if_true]
+        simp only [ite_true]
         nlinarith
       · by_cases hzy : z = y
         · subst hzy
-          simp only [if_neg hzx, add_zero]
+          simp only [ite_eq_right hzx, add_zero]
           exact ih
-        · simp only [if_neg hzx, add_zero]
+        · simp only [ite_eq_right hzx, add_zero]
           exact ih
 
 /-- `xxyy + yyxx + xyy + yxx + C(|u|_x, 2) C(|u|_y, 2) = |u|_x · xyy + |u|_y · yxx`. -/
@@ -128,15 +128,15 @@ lemma scount_xxyy_add_yyxx {x y : α} (hxy : x ≠ y) :
       simp only [scount_cons_cons, count_cons_eq]
       by_cases hzx : z = x
       · subst hzx
-        simp only [if_true, if_neg hxy, add_zero, Nat.choose_succ_succ', Nat.choose_one_right]
+        simp only [ite_true, ite_eq_right hxy, add_zero, Nat.choose_succ_succ', Nat.choose_one_right]
         rw [← hyy]
         nlinarith
       · by_cases hzy : z = y
         · subst hzy
-          simp only [if_true, if_neg hzx, add_zero, Nat.choose_succ_succ', Nat.choose_one_right]
+          simp only [ite_true, ite_eq_right hzx, add_zero, Nat.choose_succ_succ', Nat.choose_one_right]
           rw [← hxx]
           nlinarith
-        · simp only [if_neg hzx, if_neg hzy, add_zero]
+        · simp only [ite_eq_right hzx, ite_eq_right hzy, add_zero]
           exact ih
 
 end Identities
