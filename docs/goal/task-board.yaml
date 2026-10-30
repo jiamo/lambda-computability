@@ -9447,7 +9447,7 @@ tasks:
     track: impl/c
     title: "C implementation, type checkers and normalizers: STLC NbE, System F, System T, algorithm W, F<:, λΠ/LF, CoC, PTS, MLTT"
     latest_evidence: "docs/goal/evidence/M32-C-IMPL.md"
-    open_boundary: "Not started: round 2 (task 56a7f0de) stopped in part F when the credit ran low; part H is next after F in c/README.md."
+    open_boundary: "Not started: round 2 (task 56a7f0de) stopped in part F when the credit ran low, and round 3 (task 3b6a35bc, part H first) ran out of credit with no output."
     milestone: M32
     depends_on:
       - M32-C-ROUND1

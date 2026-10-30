@@ -133,3 +133,14 @@ Aristotle put writing C ahead of proving, and stopped in part F.
   `Lambda.step_normal` (Start/EvalSound.lean), `nstep` and `closure` (Start/LeftmostRun.lean).
 - The other six modules were not read line by line against Lean. Their agreement with Lean rests on
   their tests until F3–F32 are proved or independently checked.
+
+## Round 3 (task 3b6a35bc): stopped for lack of credit, no output
+
+- The prompt asked for C first and proofs only after all C was written, in the order H, rest of
+  F, G, I, J, K. It is in `../church-turing-scratch/ari-c/prompt-round3.txt`.
+- After 1 h the task ended with status `OUT_OF_BUDGET`. The event log says: "This run stopped
+  because your organization does not have enough Credits left."
+- The downloaded project is the round-2 result unchanged. Every C, test and PROOFS.md file is
+  byte-identical to `dd9db65`, so the work of the run was lost.
+- Rows M32-C-TYPES, -COBMT, -COMPLEXITY, -AUTOMATA, -FURTHER and the open part of -MACHINES
+  stay as they were after round 2. Continuing with Aristotle needs new credits.
