@@ -451,6 +451,10 @@
 | 3300 | `M31-FOUND-REALIZABILITY` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M31-UNIFY.md |  |
 | 3310 | `M31-FOUND-CWA-MLTT` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M31-UNIFY.md |  |
 | 3320 | `M31-FOUND-MLTT-LAMBDA` | `P1` | `DONE_STRONG` | - | docs/goal/evidence/M31-UNIFY.md |  |
+| 990 | `M32-C-ROUND1` | `P1` | `TODO_READY` | - | docs/goal/evidence/M32-C-IMPL.md | Specification in place: c/README.md (layout, conventions, verification goals) and c/spec/CTSpec.lean (the reference definitions copied verbatim from Start/, type-checked with import Mathlib). The C code is to be written by Aristotle (aristotlelib 3.1, C projects). |
+| 991 | `M32-C-MACHINES` | `P2` | `TODO_READY` | M32-C-ROUND1 | docs/goal/evidence/M32-C-IMPL.md | Not started; follows round 1 in the same Aristotle project. |
+| 992 | `M32-C-COBMT` | `P2` | `TODO_READY` | M32-C-ROUND1 | docs/goal/evidence/M32-C-IMPL.md | Not started; follows round 1 in the same Aristotle project. |
+| 993 | `M32-C-CI` | `P2` | `TODO_READY` | M32-C-ROUND1 | docs/goal/evidence/M32-C-IMPL.md | Not started. |
 
 Next: `M14-KRIVINE-SPACE-CLASS`
 

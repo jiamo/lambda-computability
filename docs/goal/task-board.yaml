@@ -1,7 +1,7 @@
 version: 2
 source_protocol: docs/goal/goal-prompt.md
 active_milestone: M14
-milestone_order: ["M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10", "M11", "M12", "M13", "M14", "M15", "M16", "M17", "M18", "M19", "M20", "M21", "M22", "M23", "M24", "M25", "M26", "M27", "M28", "M29", "M30", "M31"]
+milestone_order: ["M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10", "M11", "M12", "M13", "M14", "M15", "M16", "M17", "M18", "M19", "M20", "M21", "M22", "M23", "M24", "M25", "M26", "M27", "M28", "M29", "M30", "M31", "M32"]
 tasks:
   - id: M1-BOUNDARY-SORRY-CLOSURE
     priority: P0
@@ -9354,3 +9354,73 @@ tasks:
       - "python3 scripts/check_unification.py"
       - "python3 scripts/check_sorry.py"
       - "lake build --wfail"
+
+  - id: M32-C-ROUND1
+    priority: P1
+    status: TODO_READY
+    track: impl/c
+    title: "C implementation, round 1, written and verified by Aristotle: the base runtime, the λ-calculus, Cobham terms, QBF"
+    latest_evidence: "docs/goal/evidence/M32-C-IMPL.md"
+    open_boundary: "Specification in place: c/README.md (layout, conventions, verification goals) and c/spec/CTSpec.lean (the reference definitions copied verbatim from Start/, type-checked with import Mathlib). The C code is to be written by Aristotle (aristotlelib 3.1, C projects)."
+    milestone: M32
+    depends_on: []
+    rank: 990
+    exit_criteria:
+      - "c/include/ct/{base,lambda,cob,qbf}.h and c/src/*.c implement the modules of c/README.md round 1; make -C c test passes with -std=c11 -Wall -Wextra -Werror -pedantic."
+      - "No undefined behavior is verified for every public function of the four modules."
+      - "Agreement with c/spec/CTSpec.lean is verified for lift, subst, size, church, one-step leftmost-outermost reduction (and normal iff no step), QBF.eval and Cob.eval; c/PROOFS.md lists every property with its status and Lean artifact."
+    required_gates:
+      - "make -C c test"
+      - "python3 scripts/goal_state.py validate"
+
+  - id: M32-C-MACHINES
+    priority: P2
+    status: TODO_READY
+    track: impl/c
+    title: "C implementation, machines: the Krivine machine with a heap, multi-tape machines, space-bounded machines"
+    latest_evidence: "docs/goal/evidence/M32-C-IMPL.md"
+    open_boundary: "Not started; follows round 1 in the same Aristotle project."
+    milestone: M32
+    depends_on:
+      - M32-C-ROUND1
+    rank: 991
+    exit_criteria:
+      - "C modules for Krivine.Impl.hstep (Start/KrivineHeap.lean), multiTapeStep of FiniteMultiTapeMachine (Start/DepthThreeModel.lean) and the step relation of Start/SpaceMachine.lean, with their definitions added verbatim to c/spec/CTSpec.lean."
+      - "No undefined behavior and agreement with the Lean definitions verified, as in round 1."
+    required_gates:
+      - "make -C c test"
+      - "python3 scripts/goal_state.py validate"
+
+  - id: M32-C-COBMT
+    priority: P2
+    status: TODO_READY
+    track: impl/c
+    title: "C implementation, register programs and oracle terms: RProg, the LInstr interpreter, CobQ with an oracle callback"
+    latest_evidence: "docs/goal/evidence/M32-C-IMPL.md"
+    open_boundary: "Not started; follows round 1 in the same Aristotle project."
+    milestone: M32
+    depends_on:
+      - M32-C-ROUND1
+    rank: 992
+    exit_criteria:
+      - "C modules for RProg.run and the compiler of Start/CobRegProg.lean, the LInstr machine of Start/CobMultiTape.lean, and CobQ.eval of Start/OracleCob.lean with an oracle callback, with their definitions added to c/spec/CTSpec.lean."
+      - "No undefined behavior and agreement with the Lean definitions verified, as in round 1."
+    required_gates:
+      - "make -C c test"
+      - "python3 scripts/goal_state.py validate"
+
+  - id: M32-C-CI
+    priority: P2
+    status: TODO_READY
+    track: impl/c
+    title: "CI builds and tests the C implementation"
+    latest_evidence: "docs/goal/evidence/M32-C-IMPL.md"
+    open_boundary: "Not started."
+    milestone: M32
+    depends_on:
+      - M32-C-ROUND1
+    rank: 993
+    exit_criteria:
+      - "A job of .github/workflows runs make -C c test on every push."
+    required_gates:
+      - "python3 scripts/goal_state.py validate"
