@@ -63,3 +63,33 @@ and 16 it added for its static helpers. None was refuted or left open.
   therefore Aristotle's report, not something we can re-check.
 - The results are partial correctness: they say what holds if a function returns, not that it returns.
   Freedom from memory leaks is not claimed.
+
+## Round 2 (submitted 2026-10-30)
+
+**Scope: every executable definition of the development.** `c/README.md`, "Round 2", lists six parts
+in order of priority, F to K: machines, programs and compilers, type checkers and normalizers, logic
+and complexity, automata and star height, further programs. They cover 74 Lean modules, found by
+searching `Start/` for definitions named like step functions, evaluators, interpreters, checkers,
+compilers and decision procedures. The board rows are M32-C-MACHINES (F), M32-C-COBMT (G),
+M32-C-TYPES (H), M32-C-COMPLEXITY (I), M32-C-AUTOMATA (J) and M32-C-FURTHER (K).
+
+**Not in scope, because these are not programs.** This covers about 29,000 theorems, the 1,498
+`noncomputable` definitions, the Rigidity modules (measure, randomness, ordinals, categories),
+categories with attributes and realizability, and the functions the development proves
+uncomputable.
+
+**Reference sources.** The Lean sources were sent with the prompt instead of being restated by hand.
+They are the 74 modules and their import closure in `Start/`: 443 modules, 8.8 MB, from `lean-v4.34`
+at `ea40824`. Aristotle is asked to restate what it implements, verbatim, in `c/spec/<Part>.lean`.
+
+**Submission**
+- The first attempt failed at the transport level (`httpx.ReadError`). It uploaded 445 files in
+  one request, and no task was created.
+- The client also keeps only base names, so directories are lost on upload.
+- The second attempt sent three files: `README.md`, `test_base.c`, and `ref-start-v434.tar.gz`
+  (1.9 MB, which Aristotle is told to unpack into `ref/`). It created task `56a7f0de` of project
+  `19976abc`.
+- The prompt asks for parts F to K in order, each one implemented, tested and proved before the next.
+  When the budget runs low, Aristotle is to stop and report which parts are done, partly done or not
+  started. It is asked again to export the proofs, and in any case to give the Lean statement of
+  every property under `proofs/statements/`.

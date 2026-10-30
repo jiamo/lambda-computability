@@ -9391,17 +9391,17 @@ tasks:
 
   - id: M32-C-MACHINES
     priority: P2
-    status: TODO_READY
+    status: IN_PROGRESS
     track: impl/c
     title: "C implementation, machines: the Krivine machine with a heap, multi-tape machines, space-bounded machines"
     latest_evidence: "docs/goal/evidence/M32-C-IMPL.md"
-    open_boundary: "Not started; follows round 1 in the same Aristotle project."
+    open_boundary: "Submitted in round 2 (c/README.md part F) through aristotle continue 19976abc; the Lean sources go with the prompt as ref/Start/."
     milestone: M32
     depends_on:
       - M32-C-ROUND1
     rank: 991
     exit_criteria:
-      - "C modules for Krivine.Impl.hstep (Start/KrivineHeap.lean), multiTapeStep of FiniteMultiTapeMachine (Start/DepthThreeModel.lean) and the step relation of Start/SpaceMachine.lean, with their definitions added verbatim to c/spec/CTSpec.lean."
+      - "C modules for Krivine.Impl.hstep (Start/KrivineHeap.lean), multiTapeStep of FiniteMultiTapeMachine (Start/DepthThreeModel.lean) and the step relation of Start/SpaceMachine.lean, with their definitions restated verbatim in c/spec/Machines.lean."
       - "No undefined behavior and agreement with the Lean definitions verified, as in round 1."
     required_gates:
       - "make -C c test"
@@ -9409,17 +9409,17 @@ tasks:
 
   - id: M32-C-COBMT
     priority: P2
-    status: TODO_READY
+    status: IN_PROGRESS
     track: impl/c
     title: "C implementation, register programs and oracle terms: RProg, the LInstr interpreter, CobQ with an oracle callback"
     latest_evidence: "docs/goal/evidence/M32-C-IMPL.md"
-    open_boundary: "Not started; follows round 1 in the same Aristotle project."
+    open_boundary: "Submitted in round 2 (c/README.md part G) through aristotle continue 19976abc; the Lean sources go with the prompt as ref/Start/."
     milestone: M32
     depends_on:
       - M32-C-ROUND1
     rank: 992
     exit_criteria:
-      - "C modules for RProg.run and the compiler of Start/CobRegProg.lean, the LInstr machine of Start/CobMultiTape.lean, and CobQ.eval of Start/OracleCob.lean with an oracle callback, with their definitions added to c/spec/CTSpec.lean."
+      - "C modules for RProg.run and the compiler of Start/CobRegProg.lean, the LInstr machine of Start/CobMultiTape.lean, and CobQ.eval of Start/OracleCob.lean with an oracle callback, with their definitions restated verbatim in c/spec/Programs.lean."
       - "No undefined behavior and agreement with the Lean definitions verified, as in round 1."
     required_gates:
       - "make -C c test"
@@ -9439,4 +9439,76 @@ tasks:
     exit_criteria:
       - "A job of .github/workflows runs make -C c test on every push."
     required_gates:
+      - "python3 scripts/goal_state.py validate"
+
+  - id: M32-C-TYPES
+    priority: P2
+    status: IN_PROGRESS
+    track: impl/c
+    title: "C implementation, type checkers and normalizers: STLC NbE, System F, System T, algorithm W, F<:, λΠ/LF, CoC, PTS, MLTT"
+    latest_evidence: "docs/goal/evidence/M32-C-IMPL.md"
+    open_boundary: "Submitted in round 2 (c/README.md part H) through aristotle continue 19976abc; the Lean sources go with the prompt as ref/Start/."
+    milestone: M32
+    depends_on:
+      - M32-C-ROUND1
+    rank: 994
+    exit_criteria:
+      - "C modules for the executable definitions of Start/{StlcNbE, SystemF, SystemT, HMAlgorithmW, Unification, FsubComputable, LambdaPiInfer, LambdaPiNormalize, LambdaPiLFDecide, CoCInfer, PTSCheck, PTSNormalize, MLTTCheck, MLTTDecide, MLTTNormalize}.lean, restated verbatim in c/spec/Types.lean; definitions that are not programs listed under Not implemented in c/PROOFS.md with the reason."
+      - "No undefined behavior and agreement with the Lean definitions verified, as in round 1."
+    required_gates:
+      - "make -C c test"
+      - "python3 scripts/goal_state.py validate"
+
+  - id: M32-C-COMPLEXITY
+    priority: P2
+    status: IN_PROGRESS
+    track: impl/c
+    title: "C implementation, logic and complexity: SAT, Tseitin, resolution, Cook-Levin, QBF machine, Savitch, sum-check, circuits, tree evaluation"
+    latest_evidence: "docs/goal/evidence/M32-C-IMPL.md"
+    open_boundary: "Submitted in round 2 (c/README.md part I) through aristotle continue 19976abc; the Lean sources go with the prompt as ref/Start/."
+    milestone: M32
+    depends_on:
+      - M32-C-ROUND1
+    rank: 995
+    exit_criteria:
+      - "C modules for the executable definitions of Start/{Sat, ThreeSat, Tseitin, Resolution, CookLevinNPHard, QbfLinearize, QbfEvalMachine, SavitchReach, SavitchVM, SumCheck, ShamirVerifier, AC0, CircuitBuild, TreeEval}.lean, restated verbatim in c/spec/Complexity.lean; definitions that are not programs listed under Not implemented in c/PROOFS.md with the reason."
+      - "No undefined behavior and agreement with the Lean definitions verified, as in round 1."
+    required_gates:
+      - "make -C c test"
+      - "python3 scripts/goal_state.py validate"
+
+  - id: M32-C-AUTOMATA
+    priority: P2
+    status: IN_PROGRESS
+    track: impl/c
+    title: "C implementation, automata and star height: local DFAs, returns, the PST recognizer, translation, core class check"
+    latest_evidence: "docs/goal/evidence/M32-C-IMPL.md"
+    open_boundary: "Submitted in round 2 (c/README.md part J) through aristotle continue 19976abc; the Lean sources go with the prompt as ref/Start/."
+    milestone: M32
+    depends_on:
+      - M32-C-ROUND1
+    rank: 996
+    exit_criteria:
+      - "C modules for the executable definitions of Start/{StarHeightLocalDFA, StarHeightDFAReturns, StarHeightPSTRecognizer, StarHeightTranslation, StarHeightCoreClassCheck}.lean, restated verbatim in c/spec/Automata.lean; definitions that are not programs listed under Not implemented in c/PROOFS.md with the reason."
+      - "No undefined behavior and agreement with the Lean definitions verified, as in round 1."
+    required_gates:
+      - "make -C c test"
+      - "python3 scripts/goal_state.py validate"
+
+  - id: M32-C-FURTHER
+    priority: P2
+    status: IN_PROGRESS
+    track: impl/c
+    title: "C implementation, further programs: logspace and space programs, oracle and Shamir machines, uniform automata, Levin search, size change, Kleene two, TM2, Gödel-Kleene evaluation"
+    latest_evidence: "docs/goal/evidence/M32-C-IMPL.md"
+    open_boundary: "Submitted in round 2 (c/README.md part K) through aristotle continue 19976abc; the Lean sources go with the prompt as ref/Start/."
+    milestone: M32
+    depends_on:
+      - M32-C-ROUND1
+    rank: 997
+    exit_criteria:
+      - "C modules for the executable definitions of Start/{LogspaceDeterministic, LogspaceRecursivePrograms, LogspaceQueryPrograms, SpaceProgDecide, SpaceToLogspaceRun, OracleMachine, OracleSpace, ShamirMachine, UniformAuto, LevinSearch, SizeChange, KleeneTwo, TM2Partrec, EvalGK}.lean, restated verbatim in c/spec/Further.lean; definitions that are not programs listed under Not implemented in c/PROOFS.md with the reason."
+      - "No undefined behavior and agreement with the Lean definitions verified, as in round 1."
+    required_gates:
+      - "make -C c test"
       - "python3 scripts/goal_state.py validate"
