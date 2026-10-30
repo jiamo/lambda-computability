@@ -8,7 +8,6 @@ file `lean/OAI/Computability/DegreeRigidity/Effective/ProgramSelection.lean`, fa
 paper "Rigidity of the Turing degrees".
 Adapted to this library's Lean v4.33.0 / Mathlib `v4.33.0` pin: the `OAI` namespace was dropped,
 imports were renamed to `Start.Rigidity*`, and proofs were repaired where the pin required it.
-Proof change: `Measurable.of_eval` (upstream pin) is `measurable_pi_lambda` on this pin.
 See `NOTICE` at the repository root.
 -/
 
@@ -57,7 +56,7 @@ theorem codeEnumeration_surjective : Function.Surjective codeEnumeration := by
 
 theorem join_measurable {X : Type*} [MeasurableSpace X] (A B : X → Oracle)
     (hA : Measurable A) (hB : Measurable B) : Measurable (fun x => join (A x) (B x)) := by
-  apply measurable_pi_lambda
+  apply Measurable.of_eval
   intro n
   by_cases hn : n.bodd = true
   · simpa [join, hn, Function.comp_def] using (measurable_pi_apply (n/2)).comp hB

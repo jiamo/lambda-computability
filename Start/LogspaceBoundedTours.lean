@@ -248,14 +248,14 @@ lemma era {k r i a}(h:p.u.Tidy)(s:p.Licence h)(ha:a∈p.dom)(hi:i<p.slots):
    have hc0:= p.march (k:=flag) h ha hw rfl
    cases he:p.f a i with
    | none=>
-     rw [show flag=0 from if_pos (h1.2 he)] at hc0
+     rw [show flag=0 from ite_eq_left (h1.2 he)] at hc0
      refine ⟨none,fun b=> ⟨fun hz=>by have := s.entry hz; grind,by simp⟩,.seq hc0
             (.yes ?_ (.edit ?_ hc0.spots.2 hc0.spots.2))⟩
      · rfl
      · rfl
    | some b=>
     have hb:= h2 _ he
-    rw [show flag=1 from if_neg (fun hz=>by have hp:= h1.1 hz; grind)] at hc0
+    rw [show flag=1 from ite_eq_right (fun hz=>by have hp:= h1.1 hz; grind)] at hc0
     have hk:=p.u.drum (s.wheels b hb)
     have hv0: pledge a i∈p.trace b:=(s.traceL hb).2 ⟨ha,hi,he⟩
     obtain ⟨x,y,hxy⟩:=List.mem_iff_append.mp hv0
@@ -280,7 +280,7 @@ lemma era {k r i a}(h:p.u.Tidy)(s:p.Licence h)(ha:a∈p.dom)(hi:i<p.slots):
       · rintro hp; obtain rfl:=Option.some.inj hp; exact h0
       apply (snag p.u.p).climbed hk _ _ bad hxy
       · intro
-        rw [if_pos good.1.symm]
+        rw [ite_eq_left good.1.symm]
         exact etches _ _ rfl hs (p.bitAdm (k:=1) h hb (by omega))
       · intro e; have hz:=good.2; omega
     · refine ⟨none,fun c=> ⟨fun h0=>?_,by simp⟩,hpf ?_⟩
@@ -288,7 +288,7 @@ lemma era {k r i a}(h:p.u.Tidy)(s:p.Licence h)(ha:a∈p.dom)(hi:i<p.slots):
         exact False.elim (good ⟨uniq2 h0.2.2 ⟨x,y,hxy,rfl⟩ (s.wheels _ hb).unique,h0.2.1⟩)
       · apply (snag p.u.p).climbed hk _ _ bad hxy
         · intro hm
-          rw [if_neg (show ¬ x.length+1=r by grind)]
+          rw [ite_eq_right (show ¬ x.length+1=r by grind)]
           have hz:= hk.round; rw [hxy] at hz
           have hh:= hz.sever.1.every
                      (fun a b (h:(snag p.u.p).pass (p.hq h) a b)=>h.1)
@@ -543,11 +543,11 @@ lemma plusstep {i j m n u}(hi:i ≤ s.P)(ht:j ≤ s.k)(hp:0 < i)
     by_cases hx:j+m ≤ s.k
     · have hv : n=m+j:=by omega
       have hs:n ≤ s.k:=by omega
-      rw [hu,if_pos hs,hv]
+      rw [hu,ite_eq_left hs,hv]
       simp [WheelTop.update,WheelTop.minPt,WheelTop.point,pan,Sub.done,show s.P+i-1=s.P+(i-1) by omega,Nat.add_comm j m,show m+j ≤ s.k by omega]
     · have hn:n=s.k+1:=by omega
       have hs:¬ n≤ s.k:=by omega
-      rw [hu,if_neg hs,hn]; simp [WheelTop.update,WheelTop.minPt,hx]
+      rw [hu,ite_eq_right hs,hn]; simp [WheelTop.update,WheelTop.minPt,hx]
 
 lemma runout {i}(hi:i ≤ s.P)(ht:s.cur i ≤ s.k):
      ∃ n,n ≤ s.k+1 ∧
@@ -575,7 +575,7 @@ lemma runout {i}(hi:i ≤ s.P)(ht:s.cur i ≤ s.k):
         exact p.plusstep hi ht (by omega) (m:=m) rfl rfl hs
       have ht0:n ≤ s.k+1:=by omega
       refine ⟨n,ht0,.more (y:=s.term (i+1) n) he ?_ ?_⟩
-      · exact p.plusstep hi ht (by omega) (m:=m) rfl rfl (Eq.symm (if_neg hm))
+      · exact p.plusstep hi ht (by omega) (m:=m) rfl rfl (Eq.symm (ite_eq_right hm))
       have hz : i+1=rankN s.S s.tag s.k:= by
         have h1 := Nat.le_of_lt (aboveN (S:=s.S) (p:=s.tag) (k:=s.k) (i:=i)|>.2
                                                   (show s.k < s.cur i by omega))
@@ -655,7 +655,7 @@ lemma land (w:Tape)(T:ℕ)(L:ℕ)(h:enc (0:ℤ)≤L)(hz:∀ i≤T,enc (w i)≤L)
    induction T with
    | zero=>
      refine .cons h ?_
-     rw [neigh,dec_round,dec_round, dsign,if_pos rfl, mul_zero,zero_add]; exact .nil (hz _ le_rfl)
+     rw [neigh,dec_round,dec_round, dsign,ite_eq_left rfl, mul_zero,zero_add]; exact .nil (hz _ le_rfl)
    | succ T ih=>
      rw [rakeword]
      have hp:= Grid.Scan.snatch (ih (fun i hi=>hz i (by omega))) (p:=enc (w (T+1)))

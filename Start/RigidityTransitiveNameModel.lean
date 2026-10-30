@@ -63,7 +63,7 @@ theorem valueOnCode_encode (p : ZFSet.{u}) (G : Set (Conditions p))
   classical
   have h : ∃ σ : Name (Conditions p), Name.encode (label p) σ = Name.encode (label p) τ :=
     ⟨τ,rfl⟩
-  rw [valueOnCode,dif_pos h]
+  rw [valueOnCode,dite_eq_left h]
   exact Name.val_eq_of_encode_eq _ (label_injective p) G _ τ h.choose_spec
 
 theorem genericExtension_countable (M p : ZFSet.{u})

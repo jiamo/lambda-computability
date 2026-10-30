@@ -438,7 +438,6 @@ open Counter
 lemma cord_mono {a b c d} (h:a≤b) (e:c≤d) : cord a c≤cord b d := by
    have ht:=lb_mono h
    unfold cord; gcongr
-   all_goals norm_num
 lemma bead_mono {a b c d} (h:a≤b) (e:c≤d) : bead a c≤bead b d := cord_mono h (by omega)
 lemma pair_mono {a b c d : ℕ} (h:a≤b) (e:c≤d) : enc (a,c)≤enc (b,d):=bead_mono h e
 
@@ -736,15 +735,15 @@ lemma lays {r:Grid} {x F main} (m : Body main→ℕ)
                 (ih2 (fun i=>v (Sum.inr i)) t (fun i=>hu _) ht (fun i=>hh (Sum.inr i)))
    | @yes q f p z a b e h ih=>
      have hh1:= ih (fun i=>v (Sum.inr (Sum.inl i))) t (fun i=>hu _) ht (fun i=>hh (.inr (.inl i)))
-     exact .seq (.fork (hh _) (if_pos e) (hu _) (hu _) h.fits.1) hh1
+     exact .seq (.fork (hh _) (ite_eq_left e) (hu _) (hu _) h.fits.1) hh1
    | @no q f p z a b e h ih=>
      have hh1:= ih (fun i=>v (Sum.inr (Sum.inr i))) t (fun i=>hu _) ht (fun i=>hh (.inr (.inr i)))
-     exact .seq (.fork (hh _) (if_neg (by simp [e])) (hu _) (hu _) h.fits.1) hh1
+     exact .seq (.fork (hh _) (ite_eq_right (by simp [e])) (hu _) (hu _) h.fits.1) hh1
    | @more q f p a b c e h g ih1 ih2=>
      have hh2:= ih1 (fun i=>v (Sum.inr i)) (v (Sum.inl ())) (fun i=>hu _) (hu _)
            (fun i=> hh (.inr i))
-     exact .seq (.fork (hh _) (if_pos e) (hu _) (hu _) h.fits.1) (.seq hh2 (ih2 v t hu ht hh))
-   | lend e h=> exact .fork (hh _) (if_neg (by simp [e])) (hu _) ht h
+     exact .seq (.fork (hh _) (ite_eq_left e) (hu _) (hu _) h.fits.1) (.seq hh2 (ih2 v t hu ht hh))
+   | lend e h=> exact .fork (hh _) (ite_eq_right (by simp [e])) (hu _) ht h
 
 lemma room (p:Cog) :
     ∃ r:Grid, ∀ {x F q a b}, Boots x F p q p a b → r.Route x F q r.entry a 0 b := by
@@ -757,11 +756,11 @@ lemma room (p:Cog) :
                                                  else .rest
    have hl (i) : m i≤ n := (e i).isLt
    let r:Grid:=⟨n,m (first p),f,hl _,by simp [f],fun i hi=> by
-                                      exact dif_neg (by omega)⟩
+                                      exact dite_eq_right (by omega)⟩
    have he(i) : f (m i)=code p m 0 i := by
        unfold f
        have hz : m i<n+1∧m i≠0 := ⟨by have:=hl i; omega,Nat.succ_ne_zero _⟩
-       rw [dif_pos hz]
+       rw [dite_eq_left hz]
        congr 1; simp [m,e]
    exact ⟨r,fun {_ _ _ _ _} h=> lays (r:=r) m hl he rfl h m 0 hl (Nat.zero_le n) he⟩
 

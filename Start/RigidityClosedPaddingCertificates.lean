@@ -37,7 +37,7 @@ theorem padded_certificates_of_lower_closure (M : ZFSet.{u}) (hM : Transitive M)
   have hb1 : β+1 ≤ c := Order.add_one_le_iff.mpr hβc
   have hu : Ordinal.omega0 ^ (β+1) < c := by
     change Ordinal.omega0 ^ (β+1) < pairCode β (vectorCode v)
-    rw [pairCode,if_pos hv.le]
+    rw [pairCode,ite_eq_left hv.le]
     simpa only [add_zero] using (add_lt_add_iff_left (Ordinal.omega0 ^ (β+1))).mpr
       (Ordinal.opow_pos (vectorCode v) Ordinal.omega0_pos)
   have hvpow := level_mono R hβδ (hpow (vectorCode v) hv).1
@@ -46,7 +46,7 @@ theorem padded_certificates_of_lower_closure (M : ZFSet.{u}) (hM : Transitive M)
   have hck := (hpow (vectorCode v) hv).2.mono (level_mono R hβδ)
   have hsum := padded_final_sum_certificates M hM hT v β hβpos hoff hv.le
   refine ⟨hmem β hβc.le,hmem (vectorCode v) (hv.trans hβc).le,?_,hvec.mono (level_mono R hβδ)⟩
-  rw [PairCodeCertificates,if_pos hv.le]
+  rw [PairCodeCertificates,ite_eq_left hv.le]
   exact ⟨hmem (β+1) hb1,hmem _ hu.le,hvpow,hmem _ hu.le,hcβ,hck,
     fun h => Bool.noConfusion h,hsum⟩
 

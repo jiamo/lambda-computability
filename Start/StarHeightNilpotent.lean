@@ -93,7 +93,7 @@ lemma scount_rep_eq_sum (x y z : α) (j : ℕ) : ∀ (u : List α) (i : ℕ),
       simp only [List.getElem?_cons_succ, List.take_succ_cons, List.drop_succ_cons, count_cons_eq,
         List.take_zero, List.count_nil, Nat.choose_zero_succ, zero_mul, ite_self, add_zero]
       by_cases h : a = x
-      · simp only [h, if_true, Nat.choose_succ_succ', add_mul, ← Finset.sum_add_distrib]
+      · simp only [h, ite_true, Nat.choose_succ_succ', add_mul, ← Finset.sum_add_distrib]
         apply Finset.sum_congr rfl
         intro t _
         split_ifs <;> ring
@@ -162,7 +162,7 @@ lemma GoodCount.of_add_eq {f g h : List α → ℕ} (hg : GoodCount g) (hh : Goo
     fun b => by cases b <;> simpa, fun u w hw => by
       have h1 := natCast_eq_of_mod_eq (m := m) dvd_rfl (hw true)
       have h2 := natCast_eq_of_mod_eq (m := m) dvd_rfl (hw false)
-      simp only [if_true, Bool.false_eq_true, if_false] at h1 h2
+      simp only [ite_true, Bool.false_eq_true, ite_false] at h1 h2
       have e1 : (f u : ZMod m) = h u - g u := by rw [← heq u]; push_cast; ring
       have e2 : (f w : ZMod m) = h w - g w := by rw [← heq w]; push_cast; ring
       rw [e1, e2, h1, h2]⟩
@@ -215,11 +215,11 @@ lemma sum_pos_eq_sum_vcount {R : Type*} [CommRing R] (δ : α → V) (y : α) (u
   apply Finset.sum_congr rfl
   intro t _
   by_cases h : u[t]? = some y
-  · simp only [h, if_true, true_and]
+  · simp only [h, ite_true, true_and]
     rw [Finset.sum_eq_single (((u.take t).map δ).sum)]
     · simp
     · intro q _ hq
-      rw [if_neg (Ne.symm hq), Nat.cast_zero, mul_zero]
+      rw [ite_eq_right (Ne.symm hq), Nat.cast_zero, mul_zero]
     · simp
   · simp [h]
 
@@ -235,7 +235,7 @@ lemma scount_cast_eq_sum_vcount {R : Type*} [CommRing R] (x y z : α) (i j : ℕ
   apply Finset.sum_congr rfl
   intro t _
   by_cases h : u[t]? = some y
-  · simp only [h, if_true]
+  · simp only [h, ite_true]
     exact hW t h
   · simp [h]
 
@@ -396,7 +396,7 @@ theorem goodCount_scount_pst [Finite α] {x y : α} (hxy : x ≠ y) (i j : ℕ) 
       intro t ht
       rw [hsum, hsum]
       have hc := count_drop_of_getElem? ht x
-      rw [if_neg (Ne.symm hxy), add_zero] at hc
+      rw [ite_eq_right (Ne.symm hxy), add_zero] at hc
       push_cast
       rw [choose_cast_val hi, choose_cast_val hj]
       congr 4
@@ -493,16 +493,16 @@ theorem scount_abc_identity {α : Type*} [DecidableEq α] {a b c : α} (hab : a 
       simp only [List.map_cons, scount_cons_cons, scount_singleton, count_cons_eq]
       by_cases hza : z = a
       · subst hza
-        have hψa : ψ z = z := by rw [hψ, if_neg hac]
-        simp only [hψa, if_true, if_neg hac, add_zero]
+        have hψa : ψ z = z := by rw [hψ, ite_eq_right hac]
+        simp only [hψa, ite_true, ite_eq_right hac, add_zero]
         nlinarith
       · by_cases hzc : z = c
         · subst hzc
-          have hψc : ψ z = a := by rw [hψ, if_pos rfl]
-          simp only [hψc, hza, if_true, if_false, add_zero]
+          have hψc : ψ z = a := by rw [hψ, ite_eq_left rfl]
+          simp only [hψc, hza, ite_true, ite_false, add_zero]
           nlinarith
-        · have hψz : ψ z = z := by rw [hψ, if_neg hzc]
-          simp only [hψz, hza, hzc, if_false, add_zero]
+        · have hψz : ψ z = z := by rw [hψ, ite_eq_right hzc]
+          simp only [hψz, hza, hzc, ite_false, add_zero]
           linarith
 
 lemma goodCount_scount_abc [Finite α] {a b c : α} (hab : a ≠ b) (hbc : b ≠ c) (hac : a ≠ c) :

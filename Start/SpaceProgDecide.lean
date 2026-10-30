@@ -128,7 +128,7 @@ theorem dspace_of_runs (p : Prog) (L : Language) (B : List Bool → ℕ) (s : �
       (decider p).machine.Step x c ((touch x c).at (p.size + 3)) := by
     intro x c hc
     have := step_loop hloop x c (by rw [hsk1]; omega)
-    rw [if_pos rfl, hsk1, show 0 + p.size + 1 + 1 + 1 = p.size + 3 by omega] at this
+    rw [ite_eq_left rfl, hsk1, show 0 + p.size + 1 + 1 + 1 = p.size + 3 by omega] at this
     exact this
   have hstep_body : ∀ x (c : Config), c.state = p.size + 3 →
       (decider p).machine.Step x c ((touch x c).at (p.size + 2)) := by
@@ -187,7 +187,7 @@ theorem dspace_of_runs (p : Prog) (L : Language) (B : List Bool → ℕ) (s : �
       rcases s with ⟨_ | _, _ | _⟩ <;> simp [code, A, hacc, init]
     · intro x s _
       rcases s with ⟨_ | _, _ | _⟩ <;>
-        simp only [code, if_true, if_false, Bool.false_eq_true, Config.at_space, space_touch] <;>
+        simp only [code, ite_true, ite_false, Bool.false_eq_true, Config.at_space, space_touch] <;>
         first | exact le_trans (show init.space ≤ 1 by simp [Config.space, init]) (hB1 x) |
           exact hspace_d x
     · intro x s _ hs
@@ -195,7 +195,7 @@ theorem dspace_of_runs (p : Prog) (L : Language) (B : List Bool → ℕ) (s : �
       exact machine_final_halts _ _ _ (by simp [code, hsz])
     · intro x s s' hs hss
       rcases hreach x s hs with rfl | rfl
-      · simp only [A, Bool.false_eq_true, if_false, Option.some.injEq] at hss
+      · simp only [A, Bool.false_eq_true, ite_false, Option.some.injEq] at hss
         subst hss
         have hquiet : (decider p).machine.Quiet (B x) ((dd x).at p.size) :=
           ⟨by simpa using hspace_d x, by rw [hacc]; simp⟩
@@ -205,7 +205,7 @@ theorem dspace_of_runs (p : Prog) (L : Language) (B : List Bool → ℕ) (s : �
         cases hL : decide (L x)
         · rw [hL] at h1
           exact hseg.trans hquiet (Machine.Seg.single h1)
-        · rw [hL, if_pos rfl] at h1
+        · rw [hL, ite_eq_left rfl] at h1
           refine hseg.trans hquiet (Machine.Seg.trans (Machine.Seg.single h1) ⟨?_, ?_⟩
             (Machine.Seg.single (hstep_skip x _ rfl)))
           · simpa [space_touch] using hspace_d x
@@ -213,7 +213,7 @@ theorem dspace_of_runs (p : Prog) (L : Language) (B : List Bool → ℕ) (s : �
       · cases hL : decide (L x) <;>
           simp only [↓reduceIte, hL, Bool.false_eq_true, Option.some.injEq, reduceCtorEq, A] at hss
         subst hss
-        simp only [code, if_true, Bool.false_eq_true, if_false]
+        simp only [code, ite_true, Bool.false_eq_true, ite_false]
         have h1 := hstep_loop x ((touch x ((dd x).at p.size)).at (p.size + 2)) rfl
         have h3 := hstep_body x ((touch x ((touch x ((dd x).at p.size)).at (p.size + 2))).at
           (p.size + 3)) rfl

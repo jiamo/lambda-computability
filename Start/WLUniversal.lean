@@ -201,7 +201,7 @@ instance (R : Raw) : Decidable R.Valid := by unfold Raw.Valid; infer_instance
 
  theorem decode_description (M : OneTape) : decode (description M)=some M := by
   simp only [decode,description,parseRaw_bits _ (raw_valid M).2.2.1,Option.bind_eq_bind,Option.bind_some]
-  rw [dif_pos (raw_valid M),machine_raw]
+  rw [dite_eq_left (raw_valid M),machine_raw]
   rfl
 
  def designation (M : OneTape) : List Bool := unary (description M).length++description M
@@ -213,7 +213,7 @@ instance (R : Raw) : Decidable R.Valid := by unfold Raw.Valid; infer_instance
  theorem designated_prefix (M : OneTape) (z : List Bool) :
     designated (designation M++z)=some M := by
   simp only [designated,designation,List.append_assoc,parseUnary_encode,Option.bind_eq_bind,Option.bind_some]
-  rw [if_pos (by simp),List.take_left,decode_description M]
+  rw [ite_eq_left (by simp),List.take_left,decode_description M]
 
  def Language (s : ℕ) (w : List Bool) : Prop :=
   ∃ M, designated w=some M ∧ ¬∃ t ≤ w.length^s,(M.toTM.run w t).state.val=1

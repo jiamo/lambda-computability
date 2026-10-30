@@ -46,7 +46,7 @@ theorem h10s_red (x : ℕ) :
   have hΦ : betaEtaReduces (.app (Lambda.lift 1 0 (.app (Lambda.lift 1 0 (h5wnf x)) (.var 0)))
       (.var 0)) (xi10 x) := by
     simp only [Lambda.lift, lift_h5wnf]
-    simp only [show ¬ (0 < 0) from by omega, if_false]
+    simp only [show ¬ (0 < 0) from by omega, ite_false]
     refine (betaEtaReduces_app_left _ (betaEtaReduces_beta _ _)).trans ?_
     refine (betaEtaReduces_beta _ _).trans ?_
     simp [h5U3, xi10, Lambda.subst, Lambda.lift]

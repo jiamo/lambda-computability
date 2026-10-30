@@ -279,7 +279,7 @@ theorem on {D : Set S} (hw : SystemWeaklyNormalizing P) (d₀ : D) :
   have hf : Function.LeftInverse f Subtype.val := by
     intro s
     apply Subtype.ext
-    simp only [f, dif_pos s.property]
+    simp only [f, dite_eq_left s.property]
   intro Γ _ M hM
   obtain ⟨A, h | h⟩ := hM
   · have ht := h.mapSort Subtype.val (fun _ _ h => h) (fun _ _ _ h => h)
@@ -321,7 +321,7 @@ theorem finite_counterexample (h : HasType P Γ M T) (hn : ¬ StronglyNormalizin
   let d₀ : {s // s ∈ D} := ⟨s₀, (ax_mem h₀.2).1⟩
   let f : S → {s // s ∈ D} := fun s => if h : s ∈ D then ⟨s,h⟩ else d₀
   have f_val {s : S} (h : s ∈ D) : (f s).val = s := by
-    simp only [f, dif_pos h]
+    simp only [f, dite_eq_left h]
   have ha : ∀ s t, (P.restrict A R).axioms s t →
       (P.on (D : Set S)).axioms (f s) (f t) := by
     intro s t hst

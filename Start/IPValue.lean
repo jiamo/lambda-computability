@@ -157,7 +157,7 @@ theorem cntL_split (n : ℕ) (E : List Bool → Bool) (g : List Bool → Word) (
   congr 1
   funext r
   by_cases hE : E r
-  · simp only [hE, if_true, Bool.true_and, decide_eq_true_eq]
+  · simp only [hE, ite_true, Bool.true_and, decide_eq_true_eq]
     exact (sum_ite_eq_one hQ (hg r)).symm
   · simp [hE]
 
@@ -219,7 +219,7 @@ theorem decAux_encs : ∀ (l : List Word) (n : ℕ), l.length ≤ n → decAux n
   | w :: l, n, h => by
       obtain ⟨n, rfl⟩ : ∃ m, n = m + 1 := ⟨n - 1, by simp at h; omega⟩
       simp only [decAux, encs_cons]
-      rw [if_neg (by simp [encMsg]), recGet_encMsg, recSkip_encMsg,
+      rw [ite_eq_right (by simp [encMsg]), recGet_encMsg, recSkip_encMsg,
         decAux_encs l n (by simp at h; omega)]
 
 theorem length_le_length_encs : ∀ l : List Word, l.length ≤ (encs l).length

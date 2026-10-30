@@ -73,11 +73,11 @@ theorem Construction.ordinal_definition (t : Construction.{u}) :
       change (if k < n then match t.ordinalData k with | none => realCode P | some o => o.toZFSet
         else realCode P) ∈ level R δ
       by_cases hk : k < n
-      · rw [if_pos hk]
+      · rw [ite_eq_left hk]
         cases ho : t.ordinalData k with
         | none => exact he 1
         | some o => exact (hbs ⟨k,hk⟩ δ hδ (hbδ ⟨k,hk⟩) o ho).1
-      · rw [if_neg hk]; exact he 1
+      · rw [ite_eq_right hk]; exact he 1
   refine ⟨hv,hord,?_⟩
   intro z hz
   have hf (k : ℕ) (hk : k < n) (A : ZFSet.{u}) (hA : A ∈ level R δ) :

@@ -241,7 +241,7 @@ theorem lift_hyp_upS {Δ Δ' : ℕ → Cls} {ρ ρ' : ℕ → SkT} {σ : ℕ →
       RouteII.upS ρ' n
   | 0, _ => by
       show er (ncons c Δ) (RouteII.upS ρ) (.var 0) = .base 0
-      exact if_pos hc
+      exact ite_eq_left hc
   | n + 1, h => by
       simp only [Expr.liftSub_succ, er_rename, ncons_succ]
       show er Δ (fun i => (ρ i).rename Nat.succ) (σ n) = (ρ' n).rename Nat.succ
@@ -293,7 +293,7 @@ theorem er_instantiate_ncons (B U : Expr Srt) (Δ : ℕ → Cls) (ρ : ℕ → S
   intro n hn
   cases n with
   | zero => rfl
-  | succ n => simp only [Expr.single, er, ncons_succ] at hn ⊢; rw [if_pos hn]
+  | succ n => simp only [Expr.single, er, ncons_succ] at hn ⊢; rw [ite_eq_left hn]
 
 /-- **Erasure is invariant under object substitution**: substituting an object `N` (anything not
 classified as a constructor) leaves the skeleton unchanged, whatever skeleton the bound variable
@@ -305,7 +305,7 @@ theorem er_instantiate_obj (B N : Expr Srt) (Δ : ℕ → Cls) (ρ : ℕ → SkT
   intro n hn
   cases n with
   | zero => exact absurd hn hN
-  | succ n => simp only [Expr.single, er, ncons_succ] at hn ⊢; rw [if_pos hn]
+  | succ n => simp only [Expr.single, er, ncons_succ] at hn ⊢; rw [ite_eq_left hn]
 
 /-- In particular the skeleton of the bound object variable is irrelevant. -/
 theorem er_obj_irrel (B : Expr Srt) (Δ : ℕ → Cls) (ρ : ℕ → SkT) (t t' : SkT) :
@@ -341,15 +341,15 @@ theorem isC_bindC {c : Cls} (h : IsC (bindC c)) : ∃ k, c = .kind k := by
   | obj => exact h.elim
 
 theorem er_app_isC {Δ : ℕ → Cls} {ρ : ℕ → SkT} {F a : Expr Srt} (h : IsC (cl Δ (.app F a))) :
-    er Δ ρ (.app F a) = er Δ ρ F := if_pos h
+    er Δ ρ (.app F a) = er Δ ρ F := ite_eq_left h
 
 theorem er_lam_isC {Δ : ℕ → Cls} {ρ : ℕ → SkT} {A b : Expr Srt} (h : IsC (cl Δ (.lam A b))) :
-    er Δ ρ (.lam A b) = er (ncons (bindC (cl Δ A)) Δ) (ncons junk ρ) b := if_pos h
+    er Δ ρ (.lam A b) = er (ncons (bindC (cl Δ A)) Δ) (ncons junk ρ) b := ite_eq_left h
 
 theorem er_pi_isC {Δ : ℕ → Cls} {ρ : ℕ → SkT} {A B : Expr Srt} (h : IsC (cl Δ (.pi A B))) :
     er Δ ρ (.pi A B) = (match cl Δ A with
       | .kind _ => .all (er (ncons (bindC (cl Δ A)) Δ) (RouteII.upS ρ) B)
-      | _ => .arr (er Δ ρ A) (er (ncons (bindC (cl Δ A)) Δ) (ncons junk ρ) B)) := if_pos h
+      | _ => .arr (er Δ ρ A) (er (ncons (bindC (cl Δ A)) Δ) (ncons junk ρ) B)) := ite_eq_left h
 
 /-- The erasure of a quantifier `Π α:K. B` over a kind of skeleton `a`. -/
 theorem er_pi_kind {Δ : ℕ → Cls} {ρ : ℕ → SkT} {A B : Expr Srt} {a : CoC.Sk}

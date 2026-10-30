@@ -50,11 +50,11 @@ theorem eval_decPT {p : ℕ} (hp : 0 < p) :
         rw [decPH]
         refine Cob.eval_modT hp ?_ (by simp [un])
         cases c
-        · simp only [Bool.false_eq_true, if_false, Cob.eval_catT, Cob.eval_empty, Cob.eval_proj,
+        · simp only [Bool.false_eq_true, ite_false, Cob.eval_catT, Cob.eval_empty, Cob.eval_proj,
             List.getD_cons_succ, List.getD_cons_zero, List.nil_append, bitV, un,
             ← List.replicate_add]
           congr 1; omega
-        · simp only [if_true, Cob.eval_catT, Cob.eval_constT, Cob.eval_proj,
+        · simp only [ite_true, Cob.eval_catT, Cob.eval_constT, Cob.eval_proj,
             List.getD_cons_succ, List.getD_cons_zero, bitV, un, ← List.replicate_add]
           rw [← List.replicate_one, ← List.replicate_add]
           congr 1; omega
@@ -104,7 +104,7 @@ theorem eval_stepA (s : Word × Word) (x r t : Word) :
   rw [stepA, Cob.eval_iteT_word, h0, askStep]
   by_cases hs : s.1 = []
   · simp [hs]
-  · simp only [hs, if_false, eval_packT, List.map_cons, List.map_nil, Cob.eval_recSkipT, h0,
+  · simp only [hs, ite_false, eval_packT, List.map_cons, List.map_nil, Cob.eval_recSkipT, h0,
       Cob.eval_dropBy, h1, Cob.eval_comp, Cob.eval_proj, List.getD_cons_zero, List.getD_cons_succ,
       eval_kbT, length_un]
 
@@ -163,7 +163,7 @@ theorem iterate_askStep_pairsW (kb : ℕ) (r : Word) :
       have hne : pairsW (ab :: L) ≠ [] := by simp [pairsW, encMsg]
       rw [Function.iterate_succ_apply]
       have e : askStep kb (pairsW (ab :: L), r) = (pairsW L, r.drop kb) := by
-        rw [askStep, if_neg hne]
+        rw [askStep, ite_eq_right hne]
         simp [pairsW, List.append_assoc]
       rw [e, iterate_askStep_pairsW kb (r.drop kb) L j (by simp at hj; omega), List.drop_drop]
       simp only [List.length_cons]

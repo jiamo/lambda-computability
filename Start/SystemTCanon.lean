@@ -51,14 +51,14 @@ theorem typing_weaken {Γ : List Ty} {t : Tm} {A : Ty} (h : Typing Γ t A) :
   | @var Γ i A hi =>
       rintro Γ₁ Γ₂ B rfl
       by_cases hik : i < Γ₁.length
-      · simp only [lift, if_pos hik]
+      · simp only [lift, ite_eq_left hik]
         refine Typing.var ?_
         rw [List.getElem?_append_left hik]
         rw [List.getElem?_append_left hik] at hi
         exact hi
       · have hge : Γ₁.length ≤ i := Nat.le_of_not_lt hik
         rw [List.getElem?_append_right hge] at hi
-        simp only [lift, hik, if_false]
+        simp only [lift, hik, ite_false]
         refine Typing.var ?_
         rw [List.getElem?_append_right (by omega)]
         have : i + 1 - Γ₁.length = (i - Γ₁.length) + 1 := by omega
@@ -106,7 +106,7 @@ theorem typing_subst {Γ : List Ty} {t : Tm} {A : Ty} (h : Typing Γ t A) :
       rcases lt_trichotomy i Γ₁.length with hlt | heq | hgt
       · rw [List.getElem?_append_left hlt] at hi
         have : i ≠ Γ₁.length := by omega
-        simp only [subst, this, if_false, Nat.not_lt.mpr (le_of_lt hlt)]
+        simp only [subst, this, ite_false, Nat.not_lt.mpr (le_of_lt hlt)]
         exact Typing.var (by rw [List.getElem?_append_left hlt]; exact hi)
       · subst heq
         rw [List.getElem?_append_right (le_refl _)] at hi
@@ -117,7 +117,7 @@ theorem typing_subst {Γ : List Ty} {t : Tm} {A : Ty} (h : Typing Γ t A) :
       · rw [List.getElem?_append_right (by omega)] at hi
         have h1 : i - Γ₁.length = (i - Γ₁.length - 1) + 1 := by omega
         rw [h1, List.getElem?_cons_succ] at hi
-        simp only [subst, if_neg (by omega : i ≠ Γ₁.length), gt_iff_lt, if_pos hgt]
+        simp only [subst, ite_eq_right (by omega : i ≠ Γ₁.length), gt_iff_lt, ite_eq_left hgt]
         refine Typing.var ?_
         rw [List.getElem?_append_right (by omega)]
         have h2 : i - 1 - Γ₁.length = i - Γ₁.length - 1 := by omega

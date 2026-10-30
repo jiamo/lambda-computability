@@ -194,43 +194,43 @@ theorem Hosts.seq_left {M : Machine} {p q : NProg} {b e : ℕ} (h : Hosts M (seq
     Hosts M p b (b + p.size) := by
   intro st h1 h2 a w
   rw [h st h1 (by simp only [size]; omega) a w]
-  simp only [delta, if_pos h2]
+  simp only [delta, ite_eq_left h2]
 
 theorem Hosts.seq_right {M : Machine} {p q : NProg} {b e : ℕ} (h : Hosts M (seq p q) b e) :
     Hosts M q (b + p.size) e := by
   intro st h1 h2 a w
   rw [h st (by omega) (by simp only [size]; omega) a w]
-  simp only [delta, if_neg (show ¬ st < b + p.size by omega)]
+  simp only [delta, ite_eq_right (show ¬ st < b + p.size by omega)]
 
 theorem Hosts.ite_left {M : Machine} {t : Test} {p q : NProg} {b e : ℕ}
     (h : Hosts M (ite t p q) b e) : Hosts M p (b + 1) e := by
   intro st h1 h2 a w
   rw [h st (by omega) (by simp only [size]; omega) a w]
-  simp only [delta, if_neg (show st ≠ b by omega), if_pos h2]
+  simp only [delta, ite_eq_right (show st ≠ b by omega), ite_eq_left h2]
 
 theorem Hosts.ite_right {M : Machine} {t : Test} {p q : NProg} {b e : ℕ}
     (h : Hosts M (ite t p q) b e) : Hosts M q (b + 1 + p.size) e := by
   intro st h1 h2 a w
   rw [h st (by omega) (by simp only [size]; omega) a w]
-  simp only [delta, if_neg (show st ≠ b by omega), if_neg (show ¬ st < b + 1 + p.size by omega)]
+  simp only [delta, ite_eq_right (show st ≠ b by omega), ite_eq_right (show ¬ st < b + 1 + p.size by omega)]
 
 theorem Hosts.choose_left {M : Machine} {p q : NProg} {b e : ℕ}
     (h : Hosts M (choose p q) b e) : Hosts M p (b + 1) e := by
   intro st h1 h2 a w
   rw [h st (by omega) (by simp only [size]; omega) a w]
-  simp only [delta, if_neg (show st ≠ b by omega), if_pos h2]
+  simp only [delta, ite_eq_right (show st ≠ b by omega), ite_eq_left h2]
 
 theorem Hosts.choose_right {M : Machine} {p q : NProg} {b e : ℕ}
     (h : Hosts M (choose p q) b e) : Hosts M q (b + 1 + p.size) e := by
   intro st h1 h2 a w
   rw [h st (by omega) (by simp only [size]; omega) a w]
-  simp only [delta, if_neg (show st ≠ b by omega), if_neg (show ¬ st < b + 1 + p.size by omega)]
+  simp only [delta, ite_eq_right (show st ≠ b by omega), ite_eq_right (show ¬ st < b + 1 + p.size by omega)]
 
 theorem Hosts.loop_body {M : Machine} {t : Test} {p : NProg} {b e : ℕ}
     (h : Hosts M (loop t p) b e) : Hosts M p (b + 1) b := by
   intro st h1 h2 a w
   rw [h st (by omega) (by simp only [size]; omega) a w]
-  simp only [delta, if_neg (show st ≠ b by omega)]
+  simp only [delta, ite_eq_right (show st ≠ b by omega)]
 
 theorem Hosts.test {M : Machine} {t : Test} {p q : NProg} {b e : ℕ}
     (h : Hosts M (ite t p q) b e) (a : Option Bool) (w : Bool) :
@@ -336,7 +336,7 @@ def machine (p : NProg) : Machine where
 theorem machine_hosts (p : NProg) : Hosts p.machine p 0 p.size := by
   intro q _ hq a w
   simp only [machine, zero_add] at hq ⊢
-  rw [if_pos hq]
+  rw [ite_eq_left hq]
 
 /-- **The compiled machine is a well-formed nondeterministic machine.** -/
 theorem machine_wellFormed (p : NProg) : p.machine.WellFormed := by

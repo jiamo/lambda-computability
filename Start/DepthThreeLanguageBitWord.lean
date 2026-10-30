@@ -119,7 +119,7 @@ theorem wordPoly_shiftModulus {r m : ℕ} (p : BitWord r) (s : ℕ)
   ext i
   rw [coeff_wordPoly, Polynomial.coeff_X_pow_mul']
   by_cases hs : s ≤ i
-  · rw [if_pos hs]
+  · rw [ite_eq_left hs]
     by_cases he : i = s + r
     · subst i
       have hsub : s + r - s = r := by omega
@@ -139,7 +139,7 @@ theorem wordPoly_shiftModulus {r m : ℕ} (p : BitWord r) (s : ℕ)
         by_cases hi : i < m
         · simp [wordGet, shiftModulus, hi, he, hl]
         · simp [wordGet, hi]
-  · rw [if_neg hs]
+  · rw [ite_eq_right hs]
     have he : i ≠ s + r := by omega
     by_cases hi : i < m
     · simp [wordGet, shiftModulus, hi, he, hs]

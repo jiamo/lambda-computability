@@ -56,13 +56,13 @@ theorem subst_ne_self_of_not_freeBelow :
       simp only [freeBelow, not_lt] at h
       rcases Nat.lt_or_ge k n with hn | hn
       · have hne : n ≠ k := by omega
-        simp only [Lambda.subst, hne, if_false, gt_iff_lt, hn, if_true]
+        simp only [Lambda.subst, hne, ite_false, gt_iff_lt, hn, ite_true]
         intro hc
         have : n - 1 = n := by injection hc
         omega
       · have hnk : n = k := le_antisymm hn h
         subst hnk
-        simp only [Lambda.subst, if_true]
+        simp only [Lambda.subst, ite_true]
         intro hc
         have : n + 1 = n := by injection hc
         omega
@@ -78,7 +78,7 @@ theorem subst_ne_self_of_not_freeBelow :
       intro k h
       simp only [freeBelow] at h
       intro hc
-      simp only [Lambda.subst, Lambda.lift, Nat.not_lt_zero, if_false,
+      simp only [Lambda.subst, Lambda.lift, Nat.not_lt_zero, ite_false,
         Lambda.lam.injEq] at hc
       exact ih (k + 1) h hc
 

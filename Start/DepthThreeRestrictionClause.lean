@@ -77,11 +77,11 @@ theorem restrictClause_eval (σ : Restriction V) (C : Clause V)
     residualClauseEval (restrictClause σ C) z = C.eval (fill σ z) := by
   classical
   by_cases hs : ∃ l ∈ C, σ l.1 = some l.2
-  · simp only [restrictClause, if_pos hs, residualClauseEval_none]
+  · simp only [restrictClause, ite_eq_left hs, residualClauseEval_none]
     symm
     obtain ⟨l, hl, hlσ⟩ := hs
     exact (Clause.eval_eq_true C (fill σ z)).mpr ⟨l, hl, fill_fixed σ z l.1 l.2 hlσ⟩
-  · simp only [restrictClause, if_neg hs, residualClauseEval_some]
+  · simp only [restrictClause, ite_eq_right hs, residualClauseEval_some]
     apply Bool.eq_iff_iff.mpr
     rw [Clause.eval_eq_true, Clause.eval_eq_true]
     constructor

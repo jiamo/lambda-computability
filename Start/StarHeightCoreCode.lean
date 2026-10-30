@@ -180,28 +180,28 @@ lemma walkState_eq_foldl {q : ZMod 3} (hq : q ≠ 0) (v : W3) :
   induction v using List.reverseRecOn with
   | nil =>
       unfold walkState
-      rw [if_pos]
+      rw [ite_eq_left]
       · simp [dsum]
       · intro p hp; rw [List.prefix_nil.mp hp]; simpa [dsum] using hq
   | append_singleton v a ih =>
       rw [List.foldl_append, ← ih]
       unfold walkState
       by_cases hv : ∀ p, p <+: v → q + dsum step3 p ≠ 0
-      · rw [if_pos hv]
+      · rw [ite_eq_left hv]
         simp only [List.foldl_cons, List.foldl_nil, walkStep]
         by_cases ha : q + dsum step3 v + step3 a = 0
-        · rw [if_pos ha, if_neg]
+        · rw [ite_eq_left ha, ite_eq_right]
           intro h
           have := h (v ++ [a]) List.prefix_rfl
           rw [dsum_append, ← add_assoc] at this
           exact this (by simpa [dsum] using ha)
-        · rw [if_neg ha, if_pos]
+        · rw [ite_eq_right ha, ite_eq_left]
           · rw [dsum_append, ← add_assoc]; simp [dsum]
           · intro p hp
             rcases List.prefix_concat_iff.mp hp with h | h
             · rw [h, dsum_append, ← add_assoc]; simpa [dsum] using ha
             · exact hv p h
-      · rw [if_neg hv, if_neg]
+      · rw [ite_eq_right hv, ite_eq_right]
         · rfl
         · intro h
           exact hv fun p hp => h p (hp.trans (List.prefix_append _ _))
@@ -223,7 +223,7 @@ lemma mem_Mid_iff (b c : Fin 3) (v : W3) :
   show b :: v ++ [c] ∈ coreX ↔ _
   constructor
   · rintro ⟨-, h0, hpre⟩
-    rw [if_pos]
+    rw [ite_eq_left]
     · simp only [midAcc, decide_eq_true_eq]
       rw [List.cons_append, dsum_cons, dsum_append, ← add_assoc] at h0
       simpa [dsum] using h0
@@ -237,7 +237,7 @@ lemma mem_Mid_iff (b c : Fin 3) (v : W3) :
       rwa [dsum_cons] at this
   · intro h
     by_cases hw : ∀ p, p <+: v → step3 b + dsum step3 p ≠ 0
-    · rw [if_pos hw] at h
+    · rw [ite_eq_left hw] at h
       simp only [midAcc, decide_eq_true_eq] at h
       refine ⟨by simp, ?_, fun p hp hne hpw => ?_⟩
       · rw [List.cons_append, dsum_cons, dsum_append, ← add_assoc]; simpa [dsum] using h
@@ -247,7 +247,7 @@ lemma mem_Mid_iff (b c : Fin 3) (v : W3) :
         rcases List.prefix_concat_iff.mp hp' with h'' | h''
         · exact absurd (by rw [h'']) hpw
         · rw [dsum_cons]; exact hw p' h''
-    · rw [if_neg hw] at h
+    · rw [ite_eq_right hw] at h
       exact absurd h (by simp [midAcc])
 
 lemma mem_AvoidL_iff (b : Fin 3) (v : W3) :
@@ -256,7 +256,7 @@ lemma mem_AvoidL_iff (b : Fin 3) (v : W3) :
   show b :: v ∈ NoRet ↔ _
   constructor
   · intro h
-    rw [if_pos]
+    rw [ite_eq_left]
     · rfl
     · intro p hp
       have := h (b :: p) (List.cons_prefix_cons.mpr ⟨rfl, hp⟩) (by simp)
@@ -266,7 +266,7 @@ lemma mem_AvoidL_iff (b : Fin 3) (v : W3) :
     · rcases List.prefix_cons_iff.mp hp with h' | ⟨p', rfl, hp'⟩
       · exact absurd h' hne
       · rw [dsum_cons]; exact hw p' hp'
-    · rw [if_neg hw] at h
+    · rw [ite_eq_right hw] at h
       exact absurd h (by simp)
 
 lemma coreX_eq : coreX = ⨆ bc : Fin 3 × Fin 3, {[bc.1]} * Mid bc.1 bc.2 * {[bc.2]} := by

@@ -292,7 +292,7 @@ theorem mk_pres (K : ℕ) (P V : ℕ → ℕ → Bool) (b j : ℕ) (hj : j < K) 
   have h1 := pos_div K b (2 * j + 1) (by womega)
   have h2 := pos_mod K b (2 * j + 1) (by womega)
   simp only [mk, h1, h2]
-  rw [if_neg (by womega), if_pos (by womega)]
+  rw [ite_eq_right (by womega), ite_eq_left (by womega)]
   congr 1; womega
 
 theorem mk_val (K : ℕ) (P V : ℕ → ℕ → Bool) (b j : ℕ) (hj : j < K) :
@@ -300,7 +300,7 @@ theorem mk_val (K : ℕ) (P V : ℕ → ℕ → Bool) (b j : ℕ) (hj : j < K) :
   have h1 := pos_div K b (2 * j + 2) (by womega)
   have h2 := pos_mod K b (2 * j + 2) (by womega)
   simp only [mk, h1, h2]
-  rw [if_neg (by womega), if_neg (by womega)]
+  rw [ite_eq_right (by womega), ite_eq_right (by womega)]
   congr 1; womega
 
 theorem update_mk_pres (K : ℕ) (P V : ℕ → ℕ → Bool) (b j : ℕ) (hj : j < K) (β : Bool) :
@@ -315,7 +315,7 @@ theorem update_mk_pres (K : ℕ) (P V : ℕ → ℕ → Bool) (b j : ℕ) (hj : 
     simp only [mk, pos_div K b' o ho, pos_mod K b' o ho, Function.update_apply]
     split_ifs with h1 h2 h3 <;> try rfl
     all_goals
-      rw [Function.update_apply, if_neg, h3]
+      rw [Function.update_apply, ite_eq_right, h3]
       intro h4; apply h; subst h4; congr 1; womega
 
 theorem update_mk_val (K : ℕ) (P V : ℕ → ℕ → Bool) (b j : ℕ) (hj : j < K) (β : Bool) :
@@ -330,7 +330,7 @@ theorem update_mk_val (K : ℕ) (P V : ℕ → ℕ → Bool) (b j : ℕ) (hj : j
     simp only [mk, pos_div K b' o ho, pos_mod K b' o ho, Function.update_apply]
     split_ifs with h1 h2 h3 <;> try rfl
     all_goals
-      rw [Function.update_apply, if_neg, h3]
+      rw [Function.update_apply, ite_eq_right, h3]
       intro h4; apply h; subst h4; congr 1; womega
 
 /-- The layout of a register file: track `j` holds the word `R j`. -/

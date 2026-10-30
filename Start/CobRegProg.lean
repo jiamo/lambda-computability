@@ -169,7 +169,7 @@ theorem run_smashLoop {a₀ a₁ o : ℕ} (h₀ : a₀ ≠ o) (h₁ : a₁ ≠ o
         have hstep : (bif b then run (.forBits a₁ (.push o true) (.push o true)) R'
             else run (.forBits a₁ (.push o true) (.push o true)) R') =
             Function.update R' o (R' o ++ List.replicate (R a₁).length true) := by
-          cases b <;> simp only [cond_true, cond_false] <;> rw [run_forBits_push h₁, hR']
+          cases b <;> simp only [Bool.cond_true, Bool.cond_false] <;> rw [run_forBits_push h₁, hR']
         rw [hstep, ih _ (by rw [Function.update_of_ne h₁]; exact hR')]
         funext r
         by_cases hr : r = o
@@ -402,8 +402,8 @@ theorem spec_comp (f : Cob) (gs : List Cob) (hf : ∀ args out fr, Spec f args o
     simp only [List.getElem_map, List.getElem_range']
     rw [show fr + 1 * i = fr + i by ring, l1 i (by simpa [n] using h2)]
   refine ⟨?_, fun r hr hlt => ?_, fun r hr => ?_⟩
-  · rw [run_clearRange, if_neg (by omega), f1, hmap]
-  · rw [run_clearRange, if_neg (by omega), f2 r hr (by omega), l2 r (Or.inl hlt)]
+  · rw [run_clearRange, ite_eq_right (by omega), f1, hmap]
+  · rw [run_clearRange, ite_eq_right (by omega), f2 r hr (by omega), l2 r (Or.inl hlt)]
   · rw [run_clearRange]
     split
     · rfl
@@ -606,9 +606,9 @@ theorem spec_bRec (g h₀ h₁ bd : Cob) (hg : ∀ args out fr, Spec g args out 
   obtain ⟨f1, flow, fhigh⟩ := hfacts
   have hne : fr + 1 ≠ out := by omega
   refine ⟨?_, fun r hr hlt => ?_, fun r hr => ?_⟩
-  · rw [run_clearRange, if_neg (by omega), run_copy hne]
+  · rw [run_clearRange, ite_eq_right (by omega), run_copy hne]
     simp [f1]
-  · rw [run_clearRange, if_neg (by omega), run_copy hne, Function.update_of_ne hr]
+  · rw [run_clearRange, ite_eq_right (by omega), run_copy hne, Function.update_of_ne hr]
     exact flow r hlt
   · rw [run_clearRange]
     split

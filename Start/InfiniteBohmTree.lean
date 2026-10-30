@@ -69,7 +69,7 @@ theorem direct_ne_lam_of_headVar :
   | lam t _ => intro h; simp at h
   | app t v _ _ =>
       intro h u
-      rw [direct_app, if_pos (by simpa using h)]
+      rw [direct_app, ite_eq_left (by simpa using h)]
       simp
 
 /-- A term with a variable head has a direct approximant which is not `Ω`. -/
@@ -82,7 +82,7 @@ theorem direct_ne_omega_of_headVar :
   | app t v _ _ =>
       intro h
       have ht : headVar t = Bool.true := by simpa using h
-      rw [direct_app, if_pos ht, omega_eq_app]
+      rw [direct_app, ite_eq_left ht, omega_eq_app]
       intro hcon
       exact direct_ne_lam_of_headVar ht _ (Lambda.app.inj hcon).1
 
@@ -131,10 +131,10 @@ theorem direct_eq_app_inv : ∀ {r a b : Lambda}, direct r = Lambda.app a b →
   | app v w =>
       intro a b h
       by_cases hv : headVar v = Bool.true
-      · rw [direct_app, if_pos hv] at h
+      · rw [direct_app, ite_eq_left hv] at h
         obtain ⟨e₁, e₂⟩ := Lambda.app.inj h
         exact Or.inr ⟨v, w, e₁.symm, e₂.symm, hv⟩
-      · exact Or.inl (by rw [direct_app, if_neg hv])
+      · exact Or.inl (by rw [direct_app, ite_eq_right hv])
 
 theorem direct_eq_lam_inv : ∀ {r a : Lambda}, direct r = Lambda.lam a →
     ∃ w, r = Lambda.lam w ∧ a = direct w := by
@@ -145,8 +145,8 @@ theorem direct_eq_lam_inv : ∀ {r a : Lambda}, direct r = Lambda.lam a →
   | app v w =>
       intro a h
       by_cases hv : headVar v = Bool.true
-      · rw [direct_app, if_pos hv] at h; exact absurd h (by simp)
-      · rw [direct_app, if_neg hv] at h; exact absurd h (by simp [Lambda.omega])
+      · rw [direct_app, ite_eq_left hv] at h; exact absurd h (by simp)
+      · rw [direct_app, ite_eq_right hv] at h; exact absurd h (by simp [Lambda.omega])
 
 /-- **A direct approximant below `Ω` is `Ω`.** -/
 theorem eq_omega_of_approx_direct_omega {r : Lambda} (h : Approx (direct r) Lambda.omega) :
@@ -183,7 +183,7 @@ theorem approx_direct_trans : ∀ (t r c : Lambda),
   | app s u ihs ihu =>
       intro r c h₁ h₂
       by_cases hs : headVar s = Bool.true
-      · rw [direct_app, if_pos hs] at h₁ h₂
+      · rw [direct_app, ite_eq_left hs] at h₁ h₂
         rcases approx_app_left_inv h₂ with heq | ⟨c₁, c₂, rfl, hc₁, hc₂⟩
         · rw [omega_eq_app] at heq
           exact absurd (Lambda.app.inj heq).1 (direct_ne_lam_of_headVar hs _)
@@ -193,7 +193,7 @@ theorem approx_direct_trans : ∀ (t r c : Lambda),
             · rw [h'']; exact Approx.omega _
             · rw [ha]
               exact Approx.app (ihs v c₁ ha₁ hc₁) (ihu w c₂ ha₂ hc₂)
-      · rw [direct_app, if_neg hs] at h₁
+      · rw [direct_app, ite_eq_right hs] at h₁
         rw [eq_omega_of_approx_direct_omega h₁]
         exact Approx.omega _
 

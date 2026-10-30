@@ -33,15 +33,15 @@ lemma vcountFrom_filterMap_zc {α : Type} [DecidableEq α] (δ : α → ZMod 4) 
       cases hb : φ b with
       | none =>
           obtain ⟨hd, hx⟩ := h0 b hb
-          rw [List.filterMap_cons, hb, if_neg (fun h => hx h.1), hd, add_zero, zero_add]
+          rw [List.filterMap_cons, hb, ite_eq_right (fun h => hx h.1), hd, add_zero, zero_add]
           exact vcountFrom_filterMap_zc δ x σ φ h0 h1 w s
       | some c =>
           obtain ⟨hd, hx⟩ := h1 b c hb
           rw [List.filterMap_cons, hb, zc, ← hd, vcountFrom_filterMap_zc δ x σ φ h0 h1 w]
           congr 1
           by_cases hc : c = 0 ∧ s = 0
-          · rw [if_pos hc, if_pos ⟨hx.mpr hc.1, hc.2⟩]
-          · rw [if_neg hc, if_neg (fun h => hc ⟨hx.mp h.1, h.2⟩)]
+          · rw [ite_eq_left hc, ite_eq_left ⟨hx.mpr hc.1, hc.2⟩]
+          · rw [ite_eq_right hc, ite_eq_right (fun h => hc ⟨hx.mp h.1, h.2⟩)]
 
 /-- The cases `δ x = 0` and `δ x = 1`. -/
 theorem pm1_core_of_nonneg (α : Type) [Fintype α] [DecidableEq α] (δ : α → ZMod 4) (x : α)
@@ -67,8 +67,8 @@ theorem pm1_core_of_nonneg (α : Type) [Fintype α] [DecidableEq α] (δ : α �
     · subst e1
       refine ⟨?_, by simp⟩
       rcases hx with e | e
-      · simp only [σ, if_pos e, e]; rfl
-      · simp only [σ, if_neg (show δ y ≠ 0 by rw [e]; decide), e]; rfl
+      · simp only [σ, ite_eq_left e, e]; rfl
+      · simp only [σ, ite_eq_right (show δ y ≠ 0 by rw [e]; decide), e]; rfl
     · refine ⟨?_, by simp [e1]⟩
       rw [e2]
       simp only [σ]
@@ -84,10 +84,10 @@ theorem pm1_core_of_nonneg (α : Type) [Fintype α] [DecidableEq α] (δ : α �
     rw [vcount_eq_vcountFrom, vcountFrom_filterMap_zc δ x σ φ h0 h1 w 0]
   rw [heq]
   rcases hx with e | e
-  · have hσ : σ = σa := by simp only [σ, if_pos e]
+  · have hσ : σ = σa := by simp only [σ, ite_eq_left e]
     rw [hσ]
     exact (zcA_height hk).invAlph φ
-  · have hσ : σ = σm := by simp only [σ, if_neg (show δ x ≠ 0 by rw [e]; decide)]
+  · have hσ : σ = σm := by simp only [σ, ite_eq_right (show δ x ≠ 0 by rw [e]; decide)]
     rw [hσ]
     exact (zcM_height hk).invAlph φ
 

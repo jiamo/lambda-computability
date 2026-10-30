@@ -184,7 +184,7 @@ theorem eval_cfgBlockTerm (M : Machine) (x : List Bool) (s : ℕ) (a q i j l : �
         simp [h1', h2']
       · simp [h1']
     rw [Cob.eval_iteW hc (Cob.eval_constT _ _) rfl]
-    simp only [Bool.false_eq_true, if_false]
+    simp only [Bool.false_eq_true, ite_false]
     -- outside the tape region the conjunct is a literal, marked exactly at the three positions
     have hc' : (markedT 5 6 7).eval [List.replicate l true, fieldsWord as]
         = bw (decide (l = q) || (decide (l = M.states + i) ||
@@ -202,7 +202,7 @@ theorem eval_cfgBlockTerm (M : Machine) (x : List Bool) (s : ℕ) (a q i j l : �
         · have e1 : ¬ (l = q) := by omega
           have e3 : ¬ (l = M.states + (x.length + 1) + s + j) := by omega
           have e2 : (l - M.states = i) ↔ (l = M.states + i) := by omega
-          simp only [cfgConj, if_neg hA, if_pos hB, e1, e3, decide_false, Bool.false_or,
+          simp only [cfgConj, ite_eq_right hA, ite_eq_left hB, e1, e3, decide_false, Bool.false_or,
             Bool.or_false]
           congr 1
           simp [e2]
@@ -211,7 +211,7 @@ theorem eval_cfgBlockTerm (M : Machine) (x : List Bool) (s : ℕ) (a q i j l : �
           have e2 : ¬ (l = M.states + i) := by omega
           have e3 : (l - (M.states + (x.length + 1) + s) = j) ↔
               (l = M.states + (x.length + 1) + s + j) := by omega
-          simp only [cfgConj, if_neg hA, if_neg hB, if_neg hC, e1, e2, decide_false,
+          simp only [cfgConj, ite_eq_right hA, ite_eq_right hB, ite_eq_right hC, e1, e2, decide_false,
             Bool.false_or]
           congr 1
           simp [e3]
@@ -247,15 +247,15 @@ theorem enc_cfgF_eval (M : Machine) (x : List Bool) (s : ℕ) (a q i j : ℕ)
     have hsmall : (enc (cfgConj M x s a q i j l)).length
         ≤ 11 + (a * cfgWidth M x s + l + 1) := by
       by_cases hA : l < M.states
-      · simp only [cfgConj, if_pos hA, enc_litF]
+      · simp only [cfgConj, ite_eq_left hA, enc_litF]
         cases (decide (l = q)) <;> simp [length_unary] <;> omega
       · by_cases hB : l < M.states + (x.length + 1)
-        · simp only [cfgConj, if_neg hA, if_pos hB, enc_litF]
+        · simp only [cfgConj, ite_eq_right hA, ite_eq_left hB, enc_litF]
           cases (decide (l - M.states = i)) <;> simp [length_unary] <;> omega
         · by_cases hC : l < M.states + (x.length + 1) + s
-          · simp only [cfgConj, if_neg hA, if_neg hB, if_pos hC]
+          · simp only [cfgConj, ite_eq_right hA, ite_eq_right hB, ite_eq_left hC]
             simp [tt, enc, unary]
-          · simp only [cfgConj, if_neg hA, if_neg hB, if_neg hC, enc_litF]
+          · simp only [cfgConj, ite_eq_right hA, ite_eq_right hB, ite_eq_right hC, enc_litF]
             cases (decide (l - (M.states + (x.length + 1) + s) = j)) <;>
               simp [length_unary] <;> omega
     simp only [List.length_append, List.length_cons, List.length_nil]
@@ -346,7 +346,7 @@ theorem eval_tgtBlockTerm (M : Machine) (x : List Bool) (s : ℕ) (a b q' i' j' 
       have hB' : ¬ l < M.states + (x.length + 1) := by omega
       have hne : ¬ (l - (M.states + (x.length + 1)) = j) := by omega
       simp [tgtConj, hA', hB', hB, hne]
-    rw [hconj, if_pos rfl, hblk]
+    rw [hconj, ite_eq_left rfl, hblk]
   · have hc : (Cob.andT (inTapeT 3 4) (Cob.notT (Cob.eqU (.proj 0) (fldT 8)))).eval
         [List.replicate l true, fieldsWord as] = bw false := by
       rw [hand]
@@ -359,7 +359,7 @@ theorem eval_tgtBlockTerm (M : Machine) (x : List Bool) (s : ℕ) (a b q' i' j' 
         · simp [hB]
       · simp [hA]
     rw [tgtBlockTerm, Cob.eval_iteW hc rfl (rfl : (Cob.catL _).eval _ = _)]
-    simp only [Bool.false_eq_true, if_false]
+    simp only [Bool.false_eq_true, ite_false]
     rw [Cob.eval_catL]
     simp only [List.map_cons, List.map_nil, Cob.eval_constT, List.flatten_cons,
       List.flatten_nil, List.append_nil]
@@ -390,7 +390,7 @@ theorem eval_tgtBlockTerm (M : Machine) (x : List Bool) (s : ℕ) (a b q' i' j' 
           have e3 : ¬ (l = M.states + (x.length + 1) + s + j') := by omega
           have e4 : ¬ (l = M.states + (x.length + 1) + j) := by omega
           have e2 : (l - M.states = i') ↔ (l = M.states + i') := by omega
-          simp only [tgtConj, if_neg hA, if_pos hB, e1, e3, e4, decide_false, Bool.false_or,
+          simp only [tgtConj, ite_eq_right hA, ite_eq_left hB, e1, e3, e4, decide_false, Bool.false_or,
             Bool.or_false, Bool.and_false]
           congr 1
           simp [e2]
@@ -407,13 +407,13 @@ theorem eval_tgtBlockTerm (M : Machine) (x : List Bool) (s : ℕ) (a b q' i' j' 
                   (w && decide (l = M.states + (x.length + 1) + j))) = w := by
               have d4 : (decide (l = M.states + (x.length + 1) + j)) = true := decide_eq_true hPW
               simp [e1, e2, e3, d4]
-            simp only [tgtConj, if_neg hA, if_neg hB, if_pos hC, if_pos e5, hbool]
+            simp only [tgtConj, ite_eq_right hA, ite_eq_right hB, ite_eq_left hC, ite_eq_left e5, hbool]
           · have e1 : ¬ (l = q') := by omega
             have e2 : ¬ (l = M.states + i') := by omega
             have e4 : ¬ (l = M.states + (x.length + 1) + j) := by omega
             have e3 : (l - (M.states + (x.length + 1) + s) = j') ↔
                 (l = M.states + (x.length + 1) + s + j') := by omega
-            simp only [tgtConj, if_neg hA, if_neg hB, if_neg hC, e1, e2, e4, decide_false,
+            simp only [tgtConj, ite_eq_right hA, ite_eq_right hB, ite_eq_right hC, e1, e2, e4, decide_false,
               Bool.false_or, Bool.and_false, Bool.or_false]
             congr 1
             simp [e3]
@@ -451,19 +451,19 @@ theorem enc_tgtF_eval (M : Machine) (x : List Bool) (s : ℕ) (a b q' i' j' : �
     have hsmall : (enc (tgtConj M x s a b q' i' j' w j l)).length
         ≤ 40 + 2 * (b * cfgWidth M x s + l + 1) + 2 * (a * cfgWidth M x s + l + 1) := by
       by_cases hA : l < M.states
-      · simp only [tgtConj, if_pos hA, enc_litF]
+      · simp only [tgtConj, ite_eq_left hA, enc_litF]
         cases (decide (l = q')) <;> simp [length_unary] <;> omega
       · by_cases hB : l < M.states + (x.length + 1)
-        · simp only [tgtConj, if_neg hA, if_pos hB, enc_litF]
+        · simp only [tgtConj, ite_eq_right hA, ite_eq_left hB, enc_litF]
           cases (decide (l - M.states = i')) <;> simp [length_unary] <;> omega
         · by_cases hC : l < M.states + (x.length + 1) + s
           · by_cases hD : l - (M.states + (x.length + 1)) = j
-            · simp only [tgtConj, if_neg hA, if_neg hB, if_pos hC, if_pos hD, enc_litF]
+            · simp only [tgtConj, ite_eq_right hA, ite_eq_right hB, ite_eq_left hC, ite_eq_left hD, enc_litF]
               cases w <;> simp [length_unary] <;> omega
-            · simp only [tgtConj, if_neg hA, if_neg hB, if_pos hC, if_neg hD]
+            · simp only [tgtConj, ite_eq_right hA, ite_eq_right hB, ite_eq_left hC, ite_eq_right hD]
               simp [iffVar, enc, length_unary]
               omega
-          · simp only [tgtConj, if_neg hA, if_neg hB, if_neg hC, enc_litF]
+          · simp only [tgtConj, ite_eq_right hA, ite_eq_right hB, ite_eq_right hC, enc_litF]
             cases (decide (l - (M.states + (x.length + 1) + s) = j')) <;>
               simp [length_unary] <;> omega
     simp only [List.length_append, List.length_cons, List.length_nil]

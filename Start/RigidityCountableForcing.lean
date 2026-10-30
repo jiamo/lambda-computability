@@ -108,19 +108,19 @@ theorem requirements_mono (a : Sentence P) (n : ℕ) {p q : P}
   | conj a b ha hb =>
     dsimp only [Requirements] at hp ⊢
     by_cases h : n % 2 = 0
-    · simp only [if_pos h] at hp ⊢
+    · simp only [ite_eq_left h] at hp ⊢
       exact ha _ hp
-    · simp only [if_neg h] at hp ⊢
+    · simp only [ite_eq_right h] at hp ⊢
       exact hb _ hp
   | existsNat a ha => exact ha _ _ hp
   | neg a ha =>
     dsimp only [Requirements] at hp ⊢
     by_cases h : n = 0
-    · simp only [if_pos h] at hp ⊢
+    · simp only [ite_eq_left h] at hp ⊢
       rcases hp with hp | hp
       · exact Or.inl (forces_mono a hqp hp)
       · exact Or.inr (forces_mono (.neg a) hqp hp)
-    · simp only [if_neg h] at hp ⊢
+    · simp only [ite_eq_right h] at hp ⊢
       exact ha _ hp
 
 theorem generic_truth (a : Sentence P) (G : GenericFilter P)

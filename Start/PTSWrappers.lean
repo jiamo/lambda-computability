@@ -617,7 +617,7 @@ theorem exists_family [Fintype S] : ∃ Γ, ValidContext P Γ ∧
   have hp (I : Set S) (hI : FeasibleProfile P I) :
       (ty I).AllData ∧ (val I).AllData ∧ PureTypeSystem.Normal (ty I).erase ∧
       SortedAt P W.context (ty I) I ∧ HasType P W.context (val I) (ty I) := by
-    simpa only [ty,val,dif_pos hI] using (hw I hI).choose_spec.choose_spec
+    simpa only [ty,val,dite_eq_left hI] using (hw I hI).choose_spec.choose_spec
   exact ⟨W.context,W.valid,⟨⟨ty,val,fun I hi => (hp I hi).1,
     fun I hi => (hp I hi).2.2.1,fun I hi => (hp I hi).2.2.2.1,
     fun I hi => (hp I hi).2.2.2.2,fun I hi => (hp I hi).1.wellModed,

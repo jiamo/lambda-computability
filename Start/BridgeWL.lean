@@ -91,7 +91,7 @@ theorem symDec_code (g : M.Γ) : symDec M (symCode M g) = g := by
     have hs : 3 + ((Fintype.equivFin M.Γ) g : ℕ) - 3 < Fintype.card M.Γ := by omega
     simp only [symDec, show 3 + ((Fintype.equivFin M.Γ) g : ℕ) ≠ 0 by omega,
       show 3 + ((Fintype.equivFin M.Γ) g : ℕ) ≠ 1 by omega,
-      show 3 + ((Fintype.equivFin M.Γ) g : ℕ) ≠ 2 by omega, if_false, dif_pos hs]
+      show 3 + ((Fintype.equivFin M.Γ) g : ℕ) ≠ 2 by omega, ite_false, dite_eq_left hs]
     rw [Equiv.symm_apply_eq]
     exact Fin.ext (by simp)
 
@@ -126,7 +126,7 @@ theorem stDec_code (q : M.Q) : stDec M (stCode M q) = q := by
   have h : 3 ≤ stCode M q ∧ stCode M q - 3 < Fintype.card M.Q := by
     unfold stCode
     omega
-  rw [stDec, dif_pos h, Equiv.symm_apply_eq]
+  rw [stDec, dite_eq_left h, Equiv.symm_apply_eq]
   exact Fin.ext (by simp [stCode])
 
 theorem stDec_zero : stDec M 0 = M.initialState := by simp [stDec]
@@ -155,10 +155,10 @@ theorem mk₁_nth {Γ : Type} [Inhabited Γ] (l : List Γ) (z : ℤ) :
     (Turing.Tape.mk₁ l).nth z = if 0 ≤ z then l.getI z.toNat else default := by
   cases z with
   | ofNat n =>
-      simp only [Int.ofNat_eq_natCast, Int.natCast_nonneg, if_true, Int.toNat_natCast]
+      simp only [Int.ofNat_eq_natCast, Int.natCast_nonneg, ite_true, Int.toNat_natCast]
       exact Turing.Tape.mk'_nth_nat _ _ n
   | negSucc n =>
-      simp only [Int.negSucc_not_nonneg, if_false]
+      simp only [Int.negSucc_not_nonneg, ite_false]
       rfl
 
 /-! ### The compiled machine -/
@@ -220,10 +220,10 @@ theorem step_live {T : WLTime.TM} {C : T.Config} (h : ¬ T.halted C) :
                    ((T.transition C.state (fun a => C.tape a (C.head a))).2.2 a).displacement
                  tape := fun a z => if z = C.head a then
                    (T.transition C.state (fun a => C.tape a (C.head a))).2.1 a else C.tape a z } := by
-  simp only [WLTime.TM.step, if_neg h]
+  simp only [WLTime.TM.step, ite_eq_right h]
 
 theorem step_halted {T : WLTime.TM} {C : T.Config} (h : T.halted C) : T.step C = C := by
-  simp only [WLTime.TM.step, if_pos h]
+  simp only [WLTime.TM.step, ite_eq_left h]
 
 theorem read_eq {C : (tm M).Config} {c : M.Cfg} (hR : Rel M C c) :
     (fun k => symDec M (((fun a => C.tape a (C.head a)) (tapeNum M k) : Fin _) : ℕ)) =
@@ -244,14 +244,14 @@ theorem init_rel (w : List Bool) : Rel M ((tm M).initial w) (M.init w) := by
     by_cases ha : (a : ℕ) = 0
     · rw [tapeNum_symm_zero M a ha, FiniteMultiTapeMachine.init_inputTape, mk₁_nth]
       by_cases hz : 0 ≤ z ∧ z.toNat < w.length
-      · rw [if_pos ⟨ha, hz⟩, if_pos hz.1, List.getI_eq_getElem _ (by simpa using hz.2),
+      · rw [ite_eq_left ⟨ha, hz⟩, ite_eq_left hz.1, List.getI_eq_getElem _ (by simpa using hz.2),
           List.getElem_map, symCode_input, WLTime.TM.symbol, List.getD_eq_getElem _ _ hz.2]
         split <;> rfl
-      · rw [if_neg (fun h => hz h.2)]
+      · rw [ite_eq_right (fun h => hz h.2)]
         by_cases hz0 : 0 ≤ z
-        · rw [if_pos hz0, List.getI_eq_default _ (by simp; omega), symCode_default]
-        · rw [if_neg hz0, symCode_default]
-    · rw [if_neg (fun h => ha h.1), FiniteMultiTapeMachine.init_otherTape M w _
+        · rw [ite_eq_left hz0, List.getI_eq_default _ (by simp; omega), symCode_default]
+        · rw [ite_eq_right hz0, symCode_default]
+    · rw [ite_eq_right (fun h => ha h.1), FiniteMultiTapeMachine.init_otherTape M w _
         (tapeNum_symm_ne M a ha), mk₁_nth]
       split
       · rw [List.getI_nil, symCode_default]
@@ -283,7 +283,7 @@ theorem rel_step {C : (tm M).Config} {c c' : M.Cfg} (hR : Rel M C c) (h : M.step
     by_cases hz : z = C.head a
     · subst hz
       simp [encSym]
-    · rw [if_neg hz, if_neg (sub_ne_zero.mpr hz)]
+    · rw [ite_eq_right hz, ite_eq_right (sub_ne_zero.mpr hz)]
       exact hR.tape a z
 
 theorem state_halt {C : (tm M).Config} {c : M.Cfg} (hR : Rel M C c) (h : M.step c = none) :
@@ -365,7 +365,7 @@ theorem haltsIn_tm {w : List Bool} {b : Bool} {T : ℕ} (h : MultiTapeHaltsIn M 
     split <;> simp
   have hhalts : (tm M).halts w := ⟨k + 1, hhalted⟩
   refine ⟨hhalts, ?_, ?_⟩
-  · simp only [WLTime.TM.time, dif_pos hhalts]
+  · simp only [WLTime.TM.time, dite_eq_left hhalts]
     exact (Nat.find_min' hhalts hhalted).trans (by omega)
   · constructor
     · rintro ⟨t, ht⟩
@@ -380,7 +380,7 @@ theorem haltsIn_tm {w : List Bool} {b : Bool} {T : ℕ} (h : MultiTapeHaltsIn M 
         · cases ht
     · intro hb
       refine ⟨k + 1, ?_⟩
-      rw [hst, hout, if_pos hb]
+      rw [hst, hout, ite_eq_left hb]
 
 /-! ### The lower bound for host machines -/
 

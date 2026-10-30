@@ -22,7 +22,7 @@ theorem finite_real_tail (p : SentenceForm) (D : Set ZFSet.{u})
   rcases i with _|_|i
   · rfl
   · rfl
-  · simp only [cons_succ,tupleEnv,dif_pos (show i < p.bound by omega)]
+  · simp only [cons_succ,tupleEnv,dite_eq_left (show i < p.bound by omega)]
 
 theorem definedSubset_of_membership (M V : ZFSet.{u}) (hM : Transitive M)
     (hV : V ∈ M) (p : SentenceForm) (e : ℕ → ZFSet.{u})
@@ -36,7 +36,7 @@ theorem definedSubset_of_membership (M V : ZFSet.{u}) (hM : Transitive M)
       intro i hin
       cases i with
       | zero => rfl
-      | succ i => simp only [cons_succ,tupleEnv,dif_pos (show i < p.bound by omega)])
+      | succ i => simp only [cons_succ,tupleEnv,dite_eq_left (show i < p.bound by omega)])
   constructor
   · intro hz
     have hzM := hM V hV z hz

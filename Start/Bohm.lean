@@ -568,9 +568,9 @@ theorem separable_of_head_ne_gen {m₁ m₂ r₁ r₂ i j : ℕ} (hn : m₁ + r�
       · exact IsClosed_lamN IsClosed_false _
       · exact IsClosed_I
   have hfi : f (i + m₁) = lamN (Ms.length + m₁) Lambda.true := by
-    rw [hf]; dsimp only; rw [if_pos rfl]
+    rw [hf]; dsimp only; rw [ite_eq_left rfl]
   have hfj : f (j + m₂) = lamN (Ns.length + m₂) Lambda.false := by
-    rw [hf]; dsimp only; rw [if_neg fun h => hne h.symm, if_pos rfl]
+    rw [hf]; dsimp only; rw [ite_eq_right fun h => hne h.symm, ite_eq_left rfl]
   have hcl : ∀ a ∈ argsFor f (m₁ + r₁), Lambda.IsClosed a := by
     intro a ha
     obtain ⟨k, -, rfl⟩ := mem_argsFor ha
@@ -615,7 +615,7 @@ theorem separable_of_length_lt_gen {m₁ m₂ r₁ r₂ i j : ℕ} (hn : m₁ + 
     · exact IsClosed_lamN_var0 _
     · exact IsClosed_I
   have hfi : f (i + m₁) = lamN (p + d + 2) (Lambda.var 0) := by
-    rw [hf]; dsimp only; rw [if_pos rfl]
+    rw [hf]; dsimp only; rw [ite_eq_left rfl]
   have hfj : f (j + m₂) = lamN (p + d + 2) (Lambda.var 0) := by
     rw [← hhead]; exact hfi
   have hcl : ∀ a ∈ argsFor f (m₁ + r₁), Lambda.IsClosed a := by

@@ -47,7 +47,7 @@ namespace Lambda
 theorem Neutral.lift {t : Lambda} (h : Neutral t) (n k : ℕ) : Neutral (Lambda.lift n k t) := by
   induction h with
   | var m =>
-      by_cases hm : m < k <;> simp only [Lambda.lift, hm, if_true, if_false] <;>
+      by_cases hm : m < k <;> simp only [Lambda.lift, hm, ite_true, ite_false] <;>
         exact Neutral.var _
   | app N _ ih => exact Neutral.app _ ih
 

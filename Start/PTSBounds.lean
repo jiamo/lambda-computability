@@ -229,13 +229,13 @@ theorem minusContinue_level {T : ActiveType Ω C}
   unfold minusContinue
   by_cases h : Gate Ω C hno T a.1 (minusPayload Ω C hno a.2) false
   · have h' := hg.mp h
-    rw [dif_pos h,dif_pos h']
+    rw [dite_eq_left h,dite_eq_left h']
     have he := hr.gates hh.1 h h' (minusPayload_bounded Ω C hno k a)
       (minusPayload_bounded Ω C hno k a') hh.2
     rw [Value.asMinus_spec (h.frame.free_target hT h.not_plain) (act _ _ _),
       Value.asMinus_spec (h'.frame.free_target hT h'.not_plain) (act' _ _ _)] at he
     exact he
-  · rw [dif_neg h,dif_neg (mt hg.mpr h)]
+  · rw [dite_eq_right h,dite_eq_right (mt hg.mpr h)]
 
 theorem lambdaExit_level {X : Type u}
     (decode : FreeObservations.Payload (PlainValue (hw := hw) Ω C hno) X →
@@ -253,12 +253,12 @@ theorem lambdaExit_level {X : Type u}
   unfold lambdaExit
   by_cases h : Gate Ω C hno T a.1 (decode a.2) true
   · have h' := hg.mp h
-    rw [dif_pos h,dif_pos h']
+    rw [dite_eq_left h,dite_eq_left h']
     have hh := hr.gates hq h h' hb hb' he
     rw [← tagPlain_spec Ω C hno (h.frame.target hw) h.plain (act _ _ _),
       ← tagPlain_spec Ω C hno (h'.frame.target hw) h'.plain (act' _ _ _)] at hh
     exact congrArg some hh
-  · rw [dif_neg h,dif_neg (mt hg.mpr h)]
+  · rw [dite_eq_right h,dite_eq_right (mt hg.mpr h)]
 
 /-- Uniform body estimates prove the *exact* minus lambda table is in the
 colimit, so no fallback in `packMinus` is used. -/
@@ -470,16 +470,16 @@ theorem applyValue_level {T : ActiveType Ω C} {k j r : Nat}
       (applyValue Ω C hno T v' a p' hp').val := by
   unfold applyValue
   by_cases hT : PlainLayer P C (Ω.profile T.type)
-  · rw [dif_pos hT,dif_pos hT]
+  · rw [dite_eq_left hT,dite_eq_left hT]
     have hvv' : v = v' := Subtype.ext (RawValue.level_eq_of_plain hT v.property hvv)
     have hpp' : p = p' := Parameter.level_eq_of_not_plus
       (fun hf => hf.1 (a.plain_domain hw hT hf.active)) hp hpp
     subst v'
     subst p'
     exact RawValue.level_refl k _
-  · rw [dif_neg hT,dif_neg hT]
+  · rw [dite_eq_right hT,dite_eq_right hT]
     by_cases hF : FreeLayer P C (Ω.profile T.type) false
-    · rw [dif_pos hF,dif_pos hF]
+    · rw [dite_eq_left hF,dite_eq_left hF]
       have hpp' : p = p' := Parameter.level_eq_of_not_plus
         (fun hf => Bool.noConfusion (a.free_domain_sign hw hF hf)) hp hpp
       subst p'
@@ -492,7 +492,7 @@ theorem applyValue_level {T : ActiveType Ω C} {k j r : Nat}
         rw [he]
         exact RawValue.level_refl k _
       · exact hh.slice (le_max_left k r) _ ha
-    · rw [dif_neg hF,dif_neg hF]
+    · rw [dite_eq_right hF,dite_eq_right hF]
       have hM : FreeLayer P C (Ω.profile T.type) true := by
         rcases T.active.classify with hh | hh | hh
         · exact False.elim (hT hh)
@@ -578,7 +578,7 @@ variable {e f : Environment (hw := hw) Ω C hno Γ}
 
 theorem parameter_eq (r : PreResult Ω C hno M T e)
     (ha : ActiveLayer P C (Ω.profile (T.subst e.images).normalForm)) :
-    r.parameter = some (r.val ha).val := dif_pos ha
+    r.parameter = some (r.val ha).val := dite_eq_left ha
 
 theorem parameter_bounded {k : Nat} (r : PreResult Ω C hno M T e)
     (hb : ∀ ha, RawValue.Bounded Ω C hno k (r.val ha).val) :
@@ -601,10 +601,10 @@ theorem parameter_level {k : Nat} (r : PreResult Ω C hno M T e) (q : PreResult 
   unfold parameter
   by_cases ha : ActiveLayer P C (Ω.profile (T.subst e.images).normalForm)
   · have hb := ht ▸ ha
-    rw [dif_pos ha,dif_pos hb]
+    rw [dite_eq_left ha,dite_eq_left hb]
     exact hv ha hb
   · have hb : ¬ ActiveLayer P C (Ω.profile (T.subst f.images).normalForm) := ht ▸ ha
-    rw [dif_neg ha,dif_neg hb]
+    rw [dite_eq_right ha,dite_eq_right hb]
     trivial
 
 theorem val_level {k : Nat} (r : PreResult Ω C hno M T e) (q : PreResult Ω C hno M T f)
@@ -672,10 +672,10 @@ theorem testers_eq {t t' : ProductInstance (hw := hw) Ω C hno}
   unfold testers
   by_cases hh : Ω.profile t.domainNF ∈ C
   · have hh' : Ω.profile t'.domainNF ∈ C := hD ▸ hh
-    rw [if_pos hh,if_pos hh']
+    rw [ite_eq_left hh,ite_eq_left hh']
     exact hd hh
   · have hh' : Ω.profile t'.domainNF ∉ C := hD ▸ hh
-    rw [if_neg hh,if_neg hh',hD]
+    rw [ite_eq_right hh,ite_eq_right hh',hD]
 
 theorem fibers_eq {t t' : ProductInstance (hw := hw) Ω C hno}
     (hD : t.domainNF = t'.domainNF) (hE : t.bodyNF = t'.bodyNF)
@@ -687,11 +687,11 @@ theorem fibers_eq {t t' : ProductInstance (hw := hw) Ω C hno}
   unfold fibers
   by_cases hn : Ω.HasType n t.domainNF
   · have hn' : Ω.HasType n t'.domainNF := hD ▸ hn
-    rw [dif_pos hn,dif_pos hn']
+    rw [dite_eq_left hn,dite_eq_left hn']
     have ht := targetNF_eq hD hE hn
     by_cases hc : Ω.profile (t.targetNF n) ∈ C
     · have hc' : Ω.profile (t'.targetNF n) ∈ C := ht ▸ hc
-      rw [if_pos hc,if_pos hc']
+      rw [ite_eq_left hc,ite_eq_left hc']
       ext U
       constructor
       · rintro ⟨p,hp,rfl⟩
@@ -699,9 +699,9 @@ theorem fibers_eq {t t' : ProductInstance (hw := hw) Ω C hno}
       · rintro ⟨p,hp,rfl⟩
         exact ⟨p,hD.symm ▸ hp,(hb n hn p (hD.symm ▸ hp) hc).symm⟩
     · have hc' : Ω.profile (t'.targetNF n) ∉ C := ht ▸ hc
-      rw [if_neg hc,if_neg hc',ht]
+      rw [ite_eq_right hc,ite_eq_right hc',ht]
   · have hn' : ¬ Ω.HasType n t'.domainNF := hD ▸ hn
-    rw [dif_neg hn,dif_neg hn']
+    rw [dite_eq_right hn,dite_eq_right hn']
 
 theorem candidate_eq {t t' : ProductInstance (hw := hw) Ω C hno}
     (hD : t.domainNF = t'.domainNF) (hE : t.bodyNF = t'.bodyNF)
@@ -755,7 +755,7 @@ theorem lookup_parameter {n : Nat} {A : Expr S} (h : HasType P Γ (.var n) T)
   by_cases ha : ActiveLayer P C (Ω.profile (T.subst e.images).normalForm)
   · rw [parameter_eq _ ha]
     exact hp.value_spec ha
-  · rw [show (lookup h hd hc e).parameter = none from dif_neg ha]
+  · rw [show (lookup h hd hc e).parameter = none from dite_eq_right ha]
     cases hh : e.parameters n with
     | none => rfl
     | some v =>

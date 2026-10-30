@@ -30,7 +30,7 @@ theorem degree_pack_lt {r : ℕ} (v : Fin r → ZMod 2) :
     (pack v).coeff i.val = v i := by
   classical
   simp only [pack, Polynomial.finsetSum_coeff, Polynomial.coeff_monomial,
-    Fin.val_eq_val, Finset.sum_ite_eq', if_pos (Finset.mem_univ i)]
+    Fin.val_eq_val, Finset.sum_ite_eq', ite_eq_left (Finset.mem_univ i)]
 
 theorem coeff_pack_of_le {r : ℕ} (v : Fin r → ZMod 2) {j : ℕ} (hj : r ≤ j) :
     (pack v).coeff j = 0 :=
@@ -40,9 +40,9 @@ theorem coeff_pack_of_le {r : ℕ} (v : Fin r → ZMod 2) {j : ℕ} (hj : r ≤ 
 theorem coeff_pack_nat {r : ℕ} (v : Fin r → ZMod 2) (j : ℕ) :
     (pack v).coeff j = if h : j < r then v ⟨j, h⟩ else 0 := by
   by_cases hj : j < r
-  · rw [dif_pos hj]
+  · rw [dite_eq_left hj]
     exact coeff_pack v ⟨j, hj⟩
-  · rw [dif_neg hj]
+  · rw [dite_eq_right hj]
     exact coeff_pack_of_le v (Nat.le_of_not_lt hj)
 
 theorem pack_injective {r : ℕ} :
@@ -101,7 +101,7 @@ theorem inputPolynomial_ne_zero {r : ℕ} (v : Fin r → ZMod 2) :
 @[simp] theorem inputPolynomial_coeff_lt {r : ℕ} (v : Fin r → ZMod 2) (i : Fin r) :
     (inputPolynomial v).coeff i.val = v i := by
   rw [inputPolynomial, Polynomial.coeff_add, Polynomial.coeff_X_pow,
-    if_neg (Nat.ne_of_lt i.is_lt), zero_add, coeff_pack]
+    ite_eq_right (Nat.ne_of_lt i.is_lt), zero_add, coeff_pack]
 
 @[simp] theorem inputPolynomial_coeff_leading {r : ℕ} (v : Fin r → ZMod 2) :
     (inputPolynomial v).coeff r = 1 := by

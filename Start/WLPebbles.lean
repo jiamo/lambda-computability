@@ -383,16 +383,16 @@ theorem Wins.neighborhood_bijection {K : ℕ} {A : Type uA} {B : Type uB}
     intro h
     have hh := congrArg Fin.val h
     by_cases h0 : i.val=0
-    · simp only [j,if_pos h0,Fin.val_mk] at hh
+    · simp only [j,ite_eq_left h0,Fin.val_mk] at hh
       omega
-    · simp only [j,if_neg h0,Fin.val_mk] at hh
+    · simp only [j,ite_eq_right h0,Fin.val_mk] at hh
       exact h0 hh
   let Q : Position K A B := fun a => if a=i then P a else none
   have hQ : Wins G H C Q := hP.forget (fun a => by
     by_cases ha : a=i
-    · exact Or.inr (if_pos ha)
-    · exact Or.inl (if_neg ha))
-  obtain ⟨e,he⟩ := hQ.extend j (if_neg hij.symm)
+    · exact Or.inr (ite_eq_left ha)
+    · exact Or.inl (ite_eq_right ha))
+  obtain ⟨e,he⟩ := hQ.extend j (ite_eq_right hij.symm)
   have hat (z : A) := (he z).atomic.2 i j x y z (e z)
     (by simp only [Function.update_of_ne hij,Q,hi,ite_true])
     (Function.update_self _ _ _)

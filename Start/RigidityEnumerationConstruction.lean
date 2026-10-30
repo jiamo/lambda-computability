@@ -28,8 +28,8 @@ theorem rows_reduces (C H : Oracle) : Reduces (rows C H) (join C H) := by
   convert hh using 1
   funext v
   by_cases h : (Nat.unpair (Nat.unpair v).1).1 = 0
-  · simp only [rows,if_pos h,join_even]
-  · simp only [rows,if_neg h,join_odd]
+  · simp only [rows,ite_eq_left h,join_even]
+  · simp only [rows,ite_eq_right h,join_odd]
 
 @[simp] theorem row_zero (C H : Oracle) (k : ℕ) : columns (rows C H) (Nat.pair 0 k) = columns C k := by
   funext n; simp [columns,rows]

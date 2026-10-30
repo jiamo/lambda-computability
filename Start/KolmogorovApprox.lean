@@ -171,7 +171,7 @@ theorem kolm_le_minAt (s k b : ℕ) : kolm s ≤ minAt s k b := by
         have hsz : kolm s ≤ size_code c := by
           rw [← hte, size_code_correct]
           exact kolm_le_of_isProgramFor hprog
-        simp only [minAt, hb, cond_true, le_min_iff]
+        simp only [minAt, hb, Bool.cond_true, le_min_iff]
         exact ⟨hsz, ih⟩
 
 theorem minAt_le_of_progBy {s k b c : ℕ} (h : progBy s k c = Bool.true) (hc : c < b) :
@@ -183,10 +183,10 @@ theorem minAt_le_of_progBy {s k b c : ℕ} (h : progBy s k c = Bool.true) (hc : 
       · have hle := ih hlt
         rcases hb : progBy s k d with _ | _
         · simpa [minAt, hb] using hle
-        · simp only [minAt, hb, cond_true, min_le_iff]
+        · simp only [minAt, hb, Bool.cond_true, min_le_iff]
           exact Or.inr hle
       · subst heq
-        simp only [minAt, h, cond_true, min_le_iff]
+        simp only [minAt, h, Bool.cond_true, min_le_iff]
         exact Or.inl le_rfl
 
 theorem minAt_antitone {s k k' : ℕ} (hk : k ≤ k') (b : ℕ) : minAt s k' b ≤ minAt s k b := by
@@ -196,10 +196,10 @@ theorem minAt_antitone {s k k' : ℕ} (hk : k ≤ k') (b : ℕ) : minAt s k' b �
       rcases hb : progBy s k c with _ | _
       · rcases hb' : progBy s k' c with _ | _
         · simpa [minAt, hb, hb'] using ih
-        · simp only [minAt, hb, hb', cond_true, cond_false, min_le_iff]
+        · simp only [minAt, hb, hb', Bool.cond_true, Bool.cond_false, min_le_iff]
           exact Or.inr ih
       · have hb' : progBy s k' c = Bool.true := progBy_mono hk hb
-        simp only [minAt, hb, hb', cond_true, le_min_iff, min_le_iff]
+        simp only [minAt, hb, hb', Bool.cond_true, le_min_iff, min_le_iff]
         exact ⟨Or.inl le_rfl, Or.inr ih⟩
 
 theorem kolm_le_kolmAt (s k : ℕ) : kolm s ≤ kolmAt s k := kolm_le_minAt s k _

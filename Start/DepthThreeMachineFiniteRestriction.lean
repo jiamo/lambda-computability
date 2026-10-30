@@ -47,7 +47,7 @@ theorem retract_val
   classical
   have hr : retract M S hs q = (⟨q, hq⟩ : Label M S hs) := by
     unfold retract
-    exact dif_pos hq
+    exact dite_eq_left hq
   exact congrArg Subtype.val hr
 
 @[simp] theorem retract_default :

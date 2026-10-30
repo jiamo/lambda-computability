@@ -148,8 +148,8 @@ theorem runs_rdWork {K : ℕ} (R : ℕ → List Bool) (r : ℕ) (hr : r < K) (hn
       Function.update_eq_self]
     exact hc
   by_cases hl : (R r).getLast hne = true
-  · rw [if_pos hl]; exact key true hl
-  · rw [if_neg hl]; exact key false (by simpa using hl)
+  · rw [ite_eq_left hl]; exact key true hl
+  · rw [ite_eq_right hl]; exact key false (by simpa using hl)
 
 /-! ### The four phases of a transition -/
 
@@ -207,7 +207,7 @@ theorem runs_actProg (W : ℤ) (c : Configuration q w h x.length) (b : Bool)
   · intro j hj
     have hlt := (c.inputPos ⟨j, hj⟩).isLt
     rw [hsyms j hj]
-    simp only [posOf, hj, dif_pos, hst]
+    simp only [posOf, hj, dite_eq_left, hst]
     refine ⟨fun hd hs => ?_, fun hd hs => ?_, fun hd => ?_, fun hd => ?_⟩
     · rw [hd]
       simp only [Direction.moveInput]
@@ -236,7 +236,7 @@ theorem runs_actProg (W : ℤ) (c : Configuration q w h x.length) (b : Bool)
     · rw [hd]; rfl
     · rw [hd]; rfl
   · intro j hj
-    simp only [posOf, hj, dif_pos]
+    simp only [posOf, hj, dite_eq_left]
     exact (length_bnum_add_one_le (Nat.lt_succ_iff.mp (c.inputPos ⟨j, hj⟩).isLt)).trans hNp
   refine (runs_setState M W c.state c.state.val _ _ _ N hB a.nextState.val
     (by have := c.state.isLt; omega) (by have := a.nextState.isLt; omega)).seq ?_
@@ -303,9 +303,9 @@ theorem runs_stepProg (W : ℤ) (c : Configuration q w h x.length) (N : ℕ)
       simp only [hRk]; exact rgtOf_getLast _ _ _ (by rw [hpk]; exact hwk.2.1)
     rw [hl]; exact hc
   unfold leafProg
-  rw [dif_pos c.state.isLt]
+  rw [dite_eq_left c.state.isLt]
   by_cases hout : M.output c.state = none
-  · rw [Fin.eta, if_pos hout]
+  · rw [Fin.eta, ite_eq_left hout]
     have e1 : (fun j : Fin h => (fun i => if i < h then readNat x (posOf c i)
         else InputSymbol.leftMarker) (j : ℕ)) = fun j => readInput x (c.inputPos j) := by
       funext j; simp [j.isLt, posOf, readInput_eq]
@@ -315,7 +315,7 @@ theorem runs_stepProg (W : ℤ) (c : Configuration q w h x.length) (N : ℕ)
     rw [e1, e2]
     refine runs_actProg M W c false hout _ ?_ N hB hNW hNq hNp hwin
     intro j hj; simp [hj, posOf, readInput_eq]
-  · rw [Fin.eta, if_neg hout]
+  · rw [Fin.eta, ite_eq_right hout]
     obtain ⟨o, ho⟩ := Option.ne_none_iff_exists'.mp hout
     rw [ExactDerandomization.Machine.step_eq_self_of_output ho]
     exact runs_skip _ 0 0

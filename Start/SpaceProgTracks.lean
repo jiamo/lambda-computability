@@ -234,7 +234,7 @@ theorem runs_copyOff (R : ℕ → List Bool) (a d δ : ℕ) (ha : a < K) (hd : d
         · simp only [Function.update_apply, g]
           by_cases hb : b = k + δ
           · subst hb; simp [hβ]
-          · rw [if_neg hb]; bool_omega
+          · rw [ite_eq_right hb]; bool_omega
       · simp only [wd]; ring
     refine (runs_wmoveR _ _ i (by womega)).seq ?_
     have hv : (mk K (Function.update P0 d (f k)) (Function.update V0 d (g k)))
@@ -347,7 +347,7 @@ theorem valOf_dropLast (w : List Bool) :
   · rw [List.getD_eq_default _ _ (by simp; omega)]
   · by_cases hb : b < w.length - 1
     · rw [List.getD_eq_getElem?_getD, List.getD_eq_getElem?_getD, List.getElem?_dropLast,
-        if_pos hb]
+        ite_eq_left hb]
     · rw [List.getD_eq_default _ _ (by omega), List.getD_eq_default _ _ (by simp; omega)]
 
 theorem valOf_last (w : List Bool) (h : w ≠ []) : valOf w (w.length - 1) = w.getLast h := by
@@ -386,7 +386,7 @@ theorem runs_popBranch (R : ℕ → List Bool) (j : ℕ) (hj : j < K) (hne : R j
     rw [lay_val R j hj, ← valOf_last _ hne, hm, Nat.add_sub_cancel]
   refine Runs.ite (fun ht => ?_) (fun ht => ?_)
   · have h1 : (R j).getLast hne = true := by rw [← hv]; exact ht
-    rw [h1, if_pos rfl] at hp
+    rw [h1, ite_eq_left rfl] at hp
     exact hpop.seq hp
   · have h1 : (R j).getLast hne = false := by rw [← hv]; exact ht
     rw [h1] at hp
@@ -430,8 +430,8 @@ theorem runs_truncate (R : ℕ → List Bool) (w l : ℕ) (hw : w < K) (hl : l <
       · rw [List.getD_eq_default _ _ (by simp; omega)]
       · rw [List.getD_eq_getElem?_getD, List.getD_eq_getElem?_getD, List.getElem?_take]
         by_cases hb : b < M
-        · rw [if_pos hb]
-        · rw [if_neg hb, List.getElem?_eq_none (by omega)]
+        · rw [ite_eq_left hb]
+        · rw [ite_eq_right hb, List.getElem?_eq_none (by omega)]
   have hpos0 := blk_lt (k := 0) (N := N) (o := 2 * w + 1) (by omega) (by womega) hB
   refine (runs_mvR _ _ 0 i (by omega)).seq ?_
   refine Runs.seq ?_ ((runs_goHome (x := x) (B := B) _ _ L (2 * w + 1) i).of_eq rfl
@@ -500,7 +500,7 @@ theorem runs_prepend (R : ℕ → List Bool) (j s : ℕ) (hj : j < K) (hs : s < 
     · simp only [Function.update_apply, valOf]
       rcases b with _ | b
       · simp
-      · simp only [Nat.add_one_ne_zero, if_false, List.getD_cons_succ, Nat.add_sub_cancel]
+      · simp only [Nat.add_one_ne_zero, ite_false, List.getD_cons_succ, Nat.add_sub_cancel]
         split_ifs with h
         · rfl
         · rw [List.getD_eq_default _ _ (by omega)]
@@ -608,7 +608,7 @@ theorem runs_copyInput (R : ℕ → List Bool) (j : ℕ) (hj : j < K) (hRj : R j
         · simp only [Function.update_apply, g]
           by_cases hb : b = k
           · subst hb; simp [hβ]
-          · rw [if_neg hb]; bool_omega
+          · rw [ite_eq_right hb]; bool_omega
       · simp only [wd]; ring
       · omega
     refine Runs.ite (fun ht => ?_) (fun ht => ?_)

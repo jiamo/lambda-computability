@@ -168,7 +168,7 @@ theorem lval_sym_exact {acc : ℕ → ℕ → Bool} {n j cnt : ℕ} {z : Word} (
     lval z (symF acc n) (6 * j + 3) = decide (j = cnt) := by
   rw [lval_sym3, hz j hj]
   by_cases hjn : j < n
-  · rw [if_pos hjn, hz (j + 1) (by omega)]
+  · rw [ite_eq_left hjn, hz (j + 1) (by omega)]
     by_cases h1 : j ≤ cnt <;> by_cases h2 : j + 1 ≤ cnt <;>
       simp only [h1, h2, decide_true, decide_false, Bool.not_true, Bool.not_false,
         Bool.and_true, Bool.and_false] <;>
@@ -176,7 +176,7 @@ theorem lval_sym_exact {acc : ℕ → ℕ → Bool} {n j cnt : ℕ} {z : Word} (
         first
           | (rw [decide_eq_true_iff]; omega)
           | (rw [decide_eq_false_iff_not]; omega)
-  · rw [if_neg hjn]
+  · rw [ite_eq_right hjn]
     have hjn' : j = n := by omega
     subst hjn'
     by_cases h1 : j ≤ cnt <;>
@@ -191,11 +191,11 @@ theorem lval_sym4 {acc : ℕ → ℕ → Bool} {n j cnt : ℕ} {z : Word} (hcnt 
     lval z (symF acc n) (6 * j + 4) = (acc n j && decide (j = cnt)) := by
   rw [lval, symF_block acc n 4 j (by norm_num), symT]
   by_cases ha : acc n j
-  · rw [if_pos ha, ha, gateVal,
+  · rw [ite_eq_left ha, ha, gateVal,
       lval_sym_ref (acc := acc) (n := n) (z := z) (show 6 * j + 3 < 6 * j + 4 by omega),
       lval_sym_exact hcnt hj hz, Bool.and_self, Bool.true_and]
   · have ha' : acc n j = false := by simpa using ha
-    rw [if_neg ha, ha', Bool.false_and]
+    rw [ite_eq_right ha, ha', Bool.false_and]
     rfl
 
 /-- The accumulator of the block `j` is the verdict, provided the count is at most `j`. -/
@@ -206,7 +206,7 @@ theorem lval_sym5 {acc : ℕ → ℕ → Bool} {n cnt : ℕ} {z : Word} (hcnt : 
   induction j with
   | zero =>
       intro _
-      rw [lval, symF_block acc n 5 0 (by norm_num), symT, if_pos rfl, gateVal]
+      rw [lval, symF_block acc n 5 0 (by norm_num), symT, ite_eq_left rfl, gateVal]
       have h4 : (4 : ℕ) = 6 * 0 + 4 := by norm_num
       rw [h4, lval_sym_ref (acc := acc) (n := n) (z := z) (show 6 * 0 + 4 < 6 * 0 + 5 by omega),
         lval_sym4 hcnt (by omega) hz, Bool.or_self]
@@ -217,7 +217,7 @@ theorem lval_sym5 {acc : ℕ → ℕ → Bool} {n cnt : ℕ} {z : Word} (hcnt : 
         simp [e1, e2]
   | succ j ih =>
       intro hj
-      rw [lval, symF_block acc n 5 (j + 1) (by norm_num), symT, if_neg (by omega), gateVal]
+      rw [lval, symF_block acc n 5 (j + 1) (by norm_num), symT, ite_eq_right (by omega), gateVal]
       have he : 6 * (j + 1 - 1) + 5 = 6 * j + 5 := by omega
       rw [he,
         lval_sym_ref (acc := acc) (n := n) (z := z)
@@ -243,7 +243,7 @@ theorem out_symTop {acc : ℕ → ℕ → Bool} {n cnt : ℕ} {z : Word} (hcnt :
   rw [symTop, hlen, out_layer]
   have h := lval_sym5 (acc := acc) hcnt hz n (le_refl n)
   rw [show 6 * n + 5 = 6 * n + 5 from rfl] at h
-  rw [h, if_pos hcnt]
+  rw [h, ite_eq_left hcnt]
 
 /-! ### Writing the description -/
 
@@ -311,8 +311,8 @@ theorem eval_symBlkT {accT : Cob} {acc : ℕ → ℕ → Bool}
           (by simp [fld2])
       rw [symBlkT, eval_iteNe hcond hA hfalse, symT]
       by_cases hj : j < n
-      · rw [if_pos hj, if_neg (by rw [hnil]; omega : ¬ List.replicate (n - j) true = [])]
-      · rw [if_neg hj, if_pos (by rw [hnil]; omega : List.replicate (n - j) true = [])]
+      · rw [ite_eq_left hj, ite_eq_right (by rw [hnil]; omega : ¬ List.replicate (n - j) true = [])]
+      · rw [ite_eq_right hj, ite_eq_left (by rw [hnil]; omega : List.replicate (n - j) true = [])]
   | 1 =>
       rw [symBlkT, symT]
       exact eval_tokTerm (Gate.neg (6 * j)) (eval_linT hJa (by simp only [fld1]; omega))
@@ -357,8 +357,8 @@ theorem eval_symBlkT {accT : Cob} {acc : ℕ → ℕ → Bool}
         eval_tokTerm (Gate.disj 4 4) (by simp [fld1]) (by simp [fld2])
       rw [symBlkT, eval_iteNe hJ hA hB, symT]
       by_cases hj : j = 0
-      · rw [if_pos hj, if_pos (by rw [hnil, hj] : List.replicate j true = [])]
-      · rw [if_neg hj, if_neg (by rw [hnil]; omega : ¬ List.replicate j true = [])]
+      · rw [ite_eq_left hj, ite_eq_left (by rw [hnil, hj] : List.replicate j true = [])]
+      · rw [ite_eq_right hj, ite_eq_right (by rw [hnil]; omega : ¬ List.replicate j true = [])]
   | (s + 6) =>
       have hg : symT acc n (s + 6) j = Gate.cst false := rfl
       have ht : symBlkT accT (s + 6) = tokTerm 2 Cob.empty Cob.empty := rfl
@@ -543,9 +543,9 @@ theorem countUniform_maj : CountUniform (fun n c => decide (n ≤ 2 * c)) := by
     List.getD_cons_succ, hcat, Cob.eval_dropU, List.length_replicate, List.drop_replicate,
     Cob.eval_notC]
   by_cases h : n ≤ 2 * j
-  · rw [if_pos (by simp; omega), decide_eq_true h]
+  · rw [ite_eq_left (by simp; omega), decide_eq_true h]
     rfl
-  · rw [if_neg (by simp; omega), decide_eq_false h]
+  · rw [ite_eq_right (by simp; omega), decide_eq_false h]
     rfl
 
 /-- The majority language is the symmetric language of the predicate `n ≤ 2 * c`. -/
@@ -578,9 +578,9 @@ theorem countUniform_exactHalf : CountUniform (fun n c => decide (n = 2 * c)) :=
       List.getD_cons_succ, hcat, Cob.eval_dropU, List.length_replicate, List.drop_replicate,
       Cob.eval_notC]
     by_cases h : n ≤ 2 * j
-    · rw [if_pos (by simp; omega), decide_eq_true h]
+    · rw [ite_eq_left (by simp; omega), decide_eq_true h]
       rfl
-    · rw [if_neg (by simp; omega), decide_eq_false h]
+    · rw [ite_eq_right (by simp; omega), decide_eq_false h]
       rfl
   have h2 : (Cob.comp Cob.notC [Cob.comp Cob.dropU [Cob.proj 1,
       Cob.catL [Cob.proj 0, Cob.proj 0]]]).eval [List.replicate j true, List.replicate n true]
@@ -589,9 +589,9 @@ theorem countUniform_exactHalf : CountUniform (fun n c => decide (n = 2 * c)) :=
       List.getD_cons_succ, hcat, Cob.eval_dropU, List.length_replicate, List.drop_replicate,
       Cob.eval_notC]
     by_cases h : 2 * j ≤ n
-    · rw [if_pos (by simp; omega), decide_eq_true h]
+    · rw [ite_eq_left (by simp; omega), decide_eq_true h]
       rfl
-    · rw [if_neg (by simp; omega), decide_eq_false h]
+    · rw [ite_eq_right (by simp; omega), decide_eq_false h]
       rfl
   rw [Cob.eval_andT h1 h2]
   congr 1
@@ -628,9 +628,9 @@ theorem countUniform_countMod {k : ℕ} (hk : 0 < k) :
     Cob.eval_modT hk (by simp) (by simp)
   simp only [Cob.eval_comp, List.map_cons, List.map_nil, hmod, Cob.eval_notC]
   by_cases h : j % k = 0
-  · rw [if_pos (by simp [h]), decide_eq_true h]
+  · rw [ite_eq_left (by simp [h]), decide_eq_true h]
     rfl
-  · rw [if_neg (by simp [h]), decide_eq_false h]
+  · rw [ite_eq_right (by simp [h]), decide_eq_false h]
     rfl
 
 theorem symLang_countMod (k : ℕ) : SymLang (fun _ c => decide (c % k = 0)) = CountMod k := by

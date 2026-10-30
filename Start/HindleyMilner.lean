@@ -363,7 +363,7 @@ theorem moreGen_gen_rename (A C : Finset ℕ) (s : ℕ → Ty) (t : Ty)
   apply Ty.subst_congr
   intro v _
   by_cases hA : v ∈ A
-  · simp only [hA, if_true, Ty.subst_id]
+  · simp only [hA, ite_true, Ty.subst_id]
     conv_rhs => rw [← Ty.subst_id (s v)]
     apply Ty.subst_congr
     intro w hw
@@ -380,7 +380,7 @@ theorem moreGen_subst_gen (A C : Finset ℕ) (r : ℕ → Ty) (t : Ty)
   apply Ty.subst_congr
   intro v _
   by_cases hA : v ∈ A
-  · simp only [hA, if_true, Ty.subst_id]
+  · simp only [hA, ite_true, Ty.subst_id]
     conv_lhs => rw [← Ty.subst_id (r v)]
     apply Ty.subst_congr
     intro w hw

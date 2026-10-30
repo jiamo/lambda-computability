@@ -6,7 +6,6 @@ directory `lean/OAI/Computability/StarHeight/TagPartitions.lean`, family 134,
 paper "Finite monoid computations and a uniform generalized star height bound".
 Adapted to this library's Lean v4.33.0 / Mathlib `v4.33.0` pin: the `OAI` namespace was dropped,
 imports were renamed to `Start.StarHeight*`, and proofs were repaired where the pin required it.
-Proof change: `Finset.prod_le_prod₀` (upstream pin) is `Finset.prod_le_prod` on this pin.
 See `NOTICE` at the repository root.
 -/
 
@@ -192,7 +191,7 @@ lemma probability_failure [Fintype T] (N : ℕ) {a l g n : T}
   rw [heq, FiniteProduct.probability_allEvents E _ hdep hd]
   calc
     _ ≤ ∏ _i : Fin N, ((15 : ℝ) / 16) := by
-      apply Finset.prod_le_prod
+      apply Finset.prod_le_prod₀
       · intro i _; exact FiniteAvoidance.probability_nonneg _
       · intro i _
         change FiniteAvoidance.probability

@@ -79,14 +79,14 @@ lemma vcountFrom_z4_mod_two (δ : α → ZMod 4) (q : ZMod 4) (x : α) :
           (r + dNo2 δ b) + if (c + if δ b = 2 then 1 else 0) = 1 then 2 else 0 := by
         unfold dNo2
         by_cases hb : δ b = 2
-        · simp only [hb, if_true, add_zero, carry_step]
+        · simp only [hb, ite_true, add_zero, carry_step]
           abel
-        · simp only [hb, if_false, add_zero]
+        · simp only [hb, ite_false, add_zero]
           abel
       have hr : red4 r + dRed δ b = red4 (r + dNo2 δ b) := by
         unfold dRed dNo2
         by_cases hb : δ b = 2
-        · rw [if_pos hb, hb, add_zero, red4_two, add_zero]
+        · rw [ite_eq_left hb, hb, add_zero, red4_two, add_zero]
         · simp [hb]
       have hp : (red4 r, c) + dPair δ b = (red4 (r + dNo2 δ b), c + if δ b = 2 then 1 else 0) := by
         rw [← hr]; rfl
@@ -100,7 +100,7 @@ lemma vcountFrom_z4_mod_two (δ : α → ZMod 4) (q : ZMod 4) (x : α) :
         push_cast at this
         rw [this]
         ring
-      · simp only [hbx, false_and, if_false]
+      · simp only [hbx, false_and, ite_false]
         ring
 
 /-- **The `Z₄` identity modulo `2`.** -/
@@ -113,7 +113,7 @@ theorem vcount_z4_mod_two (δ : α → ZMod 4) (q : ZMod 4) (x : α) (w : List �
               if δ y = 2 then (1 : ZMod 2) else 0))
             ((ZMod.castHom (by decide : 2 ∣ 4) (ZMod 2)) q, 1) x w : ZMod 2) := by
   have := vcountFrom_z4_mod_two δ q x w 0 0
-  simp only [map_zero, show ((0 : ZMod 2) = 1) = False by decide, if_false,
+  simp only [map_zero, show ((0 : ZMod 2) = 1) = False by decide, ite_false,
     add_zero] at this
   simp only [vcount_eq_vcountFrom]
   exact this
@@ -144,9 +144,9 @@ theorem vcount_z4_mod_two_height {α : Type u} [Finite α] [DecidableEq α] (δ 
     · exact vcount_height_one_prime (p := 2) (V := ZMod 2 × ZMod 2) _ _ x 2 r hr
   · intro w
     change vcount δ q x w % 2 = k ↔ _
-    simp only [Fin.isValue, if_true, show ((1 : Fin 3) = 0) = False by decide,
+    simp only [Fin.isValue, ite_true, show ((1 : Fin 3) = 0) = False by decide,
       show ((2 : Fin 3) = 0) = False by decide, show ((2 : Fin 3) = 1) = False by decide,
-      if_false, ZMod.natCast_mod]
+      ite_false, ZMod.natCast_mod]
     have hid := vcount_z4_mod_two δ q x w
     change _ = _ + (vcount (dNo2 δ) (q + 2) x w : ZMod 2) + _ at hid
     rw [show (vcount (dRed δ) (red4 q) x w : ZMod 2) + (vcount (dNo2 δ) (q + 2) x w : ZMod 2) +

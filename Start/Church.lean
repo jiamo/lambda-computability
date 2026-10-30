@@ -157,7 +157,7 @@ theorem Lambda.succ_reduces_step1 (n : ℕ) :
 Substituting `s` for `x` in `var x` yields `s`.
 -/
 theorem Lambda.subst_var_eq (s : Lambda) (x : ℕ) : Lambda.subst s x (Lambda.var x) = s := by
-  exact if_pos rfl
+  exact ite_eq_left rfl
 
 /-
 Substituting `s` for `x` in `var y` yields `var y` when `y < x`.

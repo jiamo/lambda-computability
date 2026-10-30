@@ -228,7 +228,7 @@ lemma stamp (b:Bool) {v i} (h:p.compo s v=1) :
     p.road b s.l.x (view s v i)=p.slipk s v:=by simp_all [road,compo,axis,slipk]
 lemma stampm (b:Bool) {v i} (h:2≤p.compo s v) :
     p.road b s.l.x (view s v i)=p.swept s v (p.wherep s v i) b := by
-   unfold road; exact if_neg (by change ¬ p.compo s v ≤ 1; omega)
+   unfold road; exact ite_eq_right (by change ¬ p.compo s v ≤ 1; omega)
 
 lemma approved {v i} :
     p.bud.ready (p.clay s) v i=true ↔

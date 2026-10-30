@@ -7,7 +7,6 @@ file `lean/OAI/Computability/DegreeRigidity/SetModels/IdealSelection.lean`, fami
 paper "Rigidity of the Turing degrees".
 Adapted to this library's Lean v4.33.0 / Mathlib `v4.33.0` pin: the `OAI` namespace was dropped,
 imports were renamed to `Start.Rigidity*`, and proofs were repaired where the pin required it.
-Proof change: `Measurable.of_eval` (upstream pin) is `measurable_pi_lambda` on this pin.
 See `NOTICE` at the repository root.
 -/
 
@@ -18,7 +17,7 @@ noncomputable def programOutput (c : OracleCode) (A : Oracle) : Oracle :=
   fun n => by classical exact decide (1 ∈ OracleCode.eval (oracleFunction A) c n)
 
 theorem programOutput_measurable (c : OracleCode) : Measurable (programOutput c) := by
-  apply measurable_pi_lambda
+  apply Measurable.of_eval
   intro n
   apply measurable_to_countable'
   intro b
@@ -96,7 +95,7 @@ theorem borel_of_ideal_intersection {X : Type*} [MeasurableSpace X]
   let e := leastSuccess S hex
   have he : Measurable e := leastSuccess_measurable S hex hS
   have hout : Measurable (fun x => C (e x) x) := by
-    apply measurable_pi_lambda
+    apply Measurable.of_eval
     intro i
     apply measurable_to_countable'
     intro b

@@ -11,7 +11,6 @@ directory `lean/OAI/Computability/DepthThree/MomentBounds.lean`, family 112,
 paper "Beyond the square-root exponent for depth-three Boolean circuits".
 Adapted to this library's Lean v4.33.0 / Mathlib `v4.33.0` pin: the `OAI` namespace was dropped,
 imports were renamed to `Start.DepthThree*`, and proofs were repaired where the pin required it.
-Proof change: `Finset.prod_le_one₀` (upstream pin) is `Finset.prod_le_one` on this pin.
 See `NOTICE` at the repository root.
 -/
 
@@ -105,7 +104,7 @@ theorem sign_indicator_product_le_one {I : Type uDepth8} [Fintype I]
   calc
     _ ≤ |∏ i, sign (b i) * indicator (c i)| := le_abs_self _
     _ = ∏ i, |sign (b i) * indicator (c i)| := Finset.abs_prod _ _
-    _ ≤ 1 := Finset.prod_le_one
+    _ ≤ 1 := Finset.prod_le_one₀
       (fun _ _ => abs_nonneg _) (fun i _ => abs_sign_mul_indicator_le_one (b i) (c i))
 
 theorem even_moment_le {Ω : Type uDepth9} {Z : Type uDepth10} [Fintype Ω] [Nonempty Ω]
@@ -133,13 +132,13 @@ theorem even_moment_le {Ω : Type uDepth9} {Z : Type uDepth10} [Fintype Ω] [Non
       finiteAvg (fun ω => ∏ i, sign (bits ω (a i)) * indicator (J (a i))) ≤
         if TupleNoSingleton a then (1 : ℝ) else 0 := by
     by_cases ha : TupleNoSingleton a
-    · simp only [if_pos ha]
+    · simp only [ite_eq_left ha]
       calc
         _ ≤ finiteAvg (fun _ : Ω => (1 : ℝ)) :=
           finiteAvg_mono (fun ω => sign_indicator_product_le_one
             (fun i => bits ω (a i)) (fun i => J (a i)))
         _ = 1 := finiteAvg_const 1
-    · rw [if_neg ha, tuple_product_avg_zero bits hdist a (fun i => indicator (J (a i))) ha]
+    · rw [ite_eq_right ha, tuple_product_avg_zero bits hdist a (fun i => indicator (J (a i))) ha]
   calc
     _ = _ := hexpand
     _ ≤ ∑ a : Fin (2 * h) → Z, if TupleNoSingleton a then (1 : ℝ) else 0 :=

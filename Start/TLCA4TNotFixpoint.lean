@@ -77,7 +77,7 @@ theorem TShape.step {x : ℕ} {N N' : Lambda} (h : TShape x N) (hs : betaEtaStep
     rcases betaEtaStep_app_cases hH with ⟨c, hc, rfl⟩ | ⟨f', hf, rfl⟩ | ⟨a', ha, rfl⟩
     · simp only [lamM, Lambda.lam.injEq] at hc
       subst hc
-      simp only [Lambda.subst, if_pos]
+      simp only [Lambda.subst, ite_eq_left]
       exact .pair hQ hQ hk
     · exact (nf_lamM _ hf).elim
     · exact .mstage (hQ.step ha) hk
@@ -87,12 +87,12 @@ theorem TShape.step {x : ℕ} {N N' : Lambda} (h : TShape x N) (hs : betaEtaStep
     · cases hP.lam_inv with
       | @rq i' m R hR hm =>
         rw [subst_xPow_var]
-        simp only [Lambda.subst, Lambda.subst_lift, if_pos]
+        simp only [Lambda.subst, Lambda.subst_lift, ite_eq_left]
         rw [xPow_add]
         exact .pair hR hQ (by omega)
       | @qr m R hR hm =>
         rw [subst_xPow_var]
-        simp only [Lambda.subst, if_pos]
+        simp only [Lambda.subst, ite_eq_left]
         rw [xPow_add]
         exact .pair hQ (hR.subst hQ) (by simp only [tri]; omega)
       | @mr m R hR hm =>

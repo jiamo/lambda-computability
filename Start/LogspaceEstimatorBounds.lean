@@ -720,7 +720,7 @@ lemma stream_fee {k : ℕ} (hp: 2^(nar d.a k)≤n) {K : ℝ} (hK:1≤K) {f g : P
        unfold rel; have h:=hD i hi j hj; positivity
    have hk : 0<K := by linarith
    by_cases hu : k≤d.a
-   · rw [nar,max_eq_left hu,salary,if_pos hu]
+   · rw [nar,max_eq_left hu,salary,ite_eq_left hu]
      let p:= box (d.a-k)
      let e (i j):= fourth (d.fm f i j)-fourth (d.fm g i j)
      let a :=32*K*p
@@ -782,7 +782,7 @@ lemma stream_fee {k : ℕ} (hp: 2^(nar d.a k)≤n) {K : ℝ} (hK:1≤K) {f g : P
    apply le_trans (mul_le_mul_of_nonneg_left
               (mul_le_mul_of_nonneg_left hf1 (show 0≤2*box (k-d.a) from mul_nonneg (by norm_num) (box0 _).le))
                  (by positivity))
-   rw [salary,if_neg hu]
+   rw [salary,ite_eq_right hu]
    have hg : p*box (k-d.a)=1:=reunite _
    let w:=(d.narrowed k).terr f g
    change p^4 * (2 * box (k-d.a) * (4*K^3*w)) ≤ _*p^3*w
@@ -2136,7 +2136,7 @@ lemma receipt {theta C f p M} (h:s.Works p M) (hf:TS theta C f) (hz:delta≤thet
      apply (r.wave (s.ok h hi) hf hz hc hj hl hk).trans (mul_le_mul_of_nonneg_left _ (by linarith))
      unfold sumB r; linarith [s.beasts_nn u i]
    obtain hl1 : r.overflow j:=hp.resolve_left (fun e=> he (Or.inl e))
-   have hb : s.phantom j u i=1 := if_pos ⟨⟨hl,hl1⟩,fun e=>he (Or.inr e)⟩
+   have hb : s.phantom j u i=1 := ite_eq_left ⟨⟨hl,hl1⟩,fun e=>he (Or.inr e)⟩
    have hp : 1≤ s.beasts u i := by
       unfold beasts
       exact le_trans (le_of_eq hb.symm) (single_le_sum (f:=fun k=>s.phantom k u i)
@@ -2354,7 +2354,7 @@ lemma exact1 (s d a K) (v w : Flame n) (i q x y)
      rw [← v.next s d]; rw [Run.pile]; rw [Pi.add_apply,Prod.fst_add,ih]
      congr 1
      change v.bundle _ _ _ _ _ _=_
-     unfold bundle; rw [if_pos ⟨hx,hy⟩]
+     unfold bundle; rw [ite_eq_left ⟨hx,hy⟩]
 
 lemma exact2 (s d a K) (v w : Flame n) (i q x y) (hx:x∈src d.S d.u q) :
    (((spill s d a K v w).go q x).pile i y).2=
@@ -2505,7 +2505,7 @@ lemma drawn {s : Stair} {v:Flame n} {c : ℝ} (h : v.Owes s (d.narrowed 0) false
      have hh := hf x he1
      have hv : smooth (f x)=f x := by
         unfold smooth in01 at *; grind
-     unfold color; rw [if_pos hx]
+     unfold color; rw [ite_eq_left hx]
      refine le_trans (b:=|v.prefixR s b (i+1) u x x - f x|) ?_ ?_
      · rw [hs]
        conv_lhs=> rhs; rw [← hv]

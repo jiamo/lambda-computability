@@ -407,60 +407,60 @@ theorem Hosts.ask_left {M : OMachine} {p q : OProg} {b e : ℕ} (h : Hosts M (as
   intro st h1 h2
   obtain ⟨hq, hd⟩ := h st (by omega) (by simp only [size]; omega)
   refine ⟨?_, fun a w => ?_⟩
-  · rw [hq]; simp only [oquery, if_neg (show st ≠ b by omega), if_pos h2]
-  · rw [hd]; simp only [odelta, if_neg (show st ≠ b by omega), if_pos h2]
+  · rw [hq]; simp only [oquery, ite_eq_right (show st ≠ b by omega), ite_eq_left h2]
+  · rw [hd]; simp only [odelta, ite_eq_right (show st ≠ b by omega), ite_eq_left h2]
 
 theorem Hosts.ask_right {M : OMachine} {p q : OProg} {b e : ℕ} (h : Hosts M (ask p q) b e) :
     Hosts M q (b + 1 + p.size) e := by
   intro st h1 h2
   obtain ⟨hq, hd⟩ := h st (by omega) (by simp only [size]; omega)
   refine ⟨?_, fun a w => ?_⟩
-  · rw [hq]; simp only [oquery, if_neg (show st ≠ b by omega),
-      if_neg (show ¬ st < b + 1 + p.size by omega)]
-  · rw [hd]; simp only [odelta, if_neg (show st ≠ b by omega),
-      if_neg (show ¬ st < b + 1 + p.size by omega)]
+  · rw [hq]; simp only [oquery, ite_eq_right (show st ≠ b by omega),
+      ite_eq_right (show ¬ st < b + 1 + p.size by omega)]
+  · rw [hd]; simp only [odelta, ite_eq_right (show st ≠ b by omega),
+      ite_eq_right (show ¬ st < b + 1 + p.size by omega)]
 
 theorem Hosts.seq_left {M : OMachine} {p q : OProg} {b e : ℕ} (h : Hosts M (seq p q) b e) :
     Hosts M p b (b + p.size) := by
   intro st h1 h2
   obtain ⟨hq, hd⟩ := h st h1 (by simp only [size]; omega)
   refine ⟨?_, fun a w => ?_⟩
-  · rw [hq]; simp only [oquery, if_pos h2]
-  · rw [hd]; simp only [odelta, if_pos h2]
+  · rw [hq]; simp only [oquery, ite_eq_left h2]
+  · rw [hd]; simp only [odelta, ite_eq_left h2]
 
 theorem Hosts.seq_right {M : OMachine} {p q : OProg} {b e : ℕ} (h : Hosts M (seq p q) b e) :
     Hosts M q (b + p.size) e := by
   intro st h1 h2
   obtain ⟨hq, hd⟩ := h st (by omega) (by simp only [size]; omega)
   refine ⟨?_, fun a w => ?_⟩
-  · rw [hq]; simp only [oquery, if_neg (show ¬ st < b + p.size by omega)]
-  · rw [hd]; simp only [odelta, if_neg (show ¬ st < b + p.size by omega)]
+  · rw [hq]; simp only [oquery, ite_eq_right (show ¬ st < b + p.size by omega)]
+  · rw [hd]; simp only [odelta, ite_eq_right (show ¬ st < b + p.size by omega)]
 
 theorem Hosts.ite_left {M : OMachine} {t : Test} {p q : OProg} {b e : ℕ}
     (h : Hosts M (ite t p q) b e) : Hosts M p (b + 1) e := by
   intro st h1 h2
   obtain ⟨hq, hd⟩ := h st (by omega) (by simp only [size]; omega)
   refine ⟨?_, fun a w => ?_⟩
-  · rw [hq]; simp only [oquery, if_neg (show st ≠ b by omega), if_pos h2]
-  · rw [hd]; simp only [odelta, if_neg (show st ≠ b by omega), if_pos h2]
+  · rw [hq]; simp only [oquery, ite_eq_right (show st ≠ b by omega), ite_eq_left h2]
+  · rw [hd]; simp only [odelta, ite_eq_right (show st ≠ b by omega), ite_eq_left h2]
 
 theorem Hosts.ite_right {M : OMachine} {t : Test} {p q : OProg} {b e : ℕ}
     (h : Hosts M (ite t p q) b e) : Hosts M q (b + 1 + p.size) e := by
   intro st h1 h2
   obtain ⟨hq, hd⟩ := h st (by omega) (by simp only [size]; omega)
   refine ⟨?_, fun a w => ?_⟩
-  · rw [hq]; simp only [oquery, if_neg (show st ≠ b by omega),
-      if_neg (show ¬ st < b + 1 + p.size by omega)]
-  · rw [hd]; simp only [odelta, if_neg (show st ≠ b by omega),
-      if_neg (show ¬ st < b + 1 + p.size by omega)]
+  · rw [hq]; simp only [oquery, ite_eq_right (show st ≠ b by omega),
+      ite_eq_right (show ¬ st < b + 1 + p.size by omega)]
+  · rw [hd]; simp only [odelta, ite_eq_right (show st ≠ b by omega),
+      ite_eq_right (show ¬ st < b + 1 + p.size by omega)]
 
 theorem Hosts.loop_body {M : OMachine} {t : Test} {p : OProg} {b e : ℕ}
     (h : Hosts M (loop t p) b e) : Hosts M p (b + 1) b := by
   intro st h1 h2
   obtain ⟨hq, hd⟩ := h st (by omega) (by simp only [size]; omega)
   refine ⟨?_, fun a w => ?_⟩
-  · rw [hq]; simp only [oquery, if_neg (show st ≠ b by omega)]
-  · rw [hd]; simp only [odelta, if_neg (show st ≠ b by omega)]
+  · rw [hq]; simp only [oquery, ite_eq_right (show st ≠ b by omega)]
+  · rw [hd]; simp only [odelta, ite_eq_right (show st ≠ b by omega)]
 
 /-- **Compiler correctness.** -/
 theorem opath_of_oexec {M : OMachine} {A : Oracle} {x : List Bool} {P : OConfig → Prop}
@@ -496,7 +496,7 @@ theorem opath_of_oexec {M : OMachine} {A : Oracle} {x : List Bool} {P : OConfig 
       have hq' : M.query (c.at b).state = some (b + 1, b + 1 + p.size) := by
         rw [OConfig.at_state, hq]; simp [oquery]
       have hs := ostep_of_query (A := A) (x := x) hq'
-      simp only [OConfig.at_qtape, hA, if_true] at hs
+      simp only [OConfig.at_qtape, hA, ite_true] at hs
       refine OPath.head ⟨?_, le_rfl, by simp only [OConfig.at_state, size]; omega⟩ hs
         ((ihp hc0 hM.ask_left).mono ?_)
       · rw [OConfig.at_at, ← hc0]; exact hc
@@ -507,7 +507,7 @@ theorem opath_of_oexec {M : OMachine} {A : Oracle} {x : List Bool} {P : OConfig 
       have hq' : M.query (c.at b).state = some (b + 1, b + 1 + p.size) := by
         rw [OConfig.at_state, hqq]; simp [oquery]
       have hs := ostep_of_query (A := A) (x := x) hq'
-      simp only [OConfig.at_qtape, hA, Bool.false_eq_true, if_false] at hs
+      simp only [OConfig.at_qtape, hA, Bool.false_eq_true, ite_false] at hs
       refine OPath.head ⟨?_, le_rfl, by simp only [OConfig.at_state, size]; omega⟩ hs
         ((ihq hc0 hM.ask_right).mono ?_)
       · rw [OConfig.at_at, ← hc0]; exact hc
@@ -581,8 +581,8 @@ theorem omachine_hosts (p : OProg) : Hosts p.omachine p 0 p.size := by
   intro q _ hq
   simp only [zero_add] at hq
   refine ⟨?_, fun a w => ?_⟩
-  · simp only [omachine, if_pos hq]
-  · simp only [omachine, if_pos hq]
+  · simp only [omachine, ite_eq_left hq]
+  · simp only [omachine, ite_eq_left hq]
 
 theorem omachine_wellFormed (p : OProg) : p.omachine.WellFormed := by
   refine ⟨by simp [omachine], ?_, ?_⟩
@@ -687,7 +687,7 @@ theorem odspace_of_oexec (A : Oracle) (p : OProg) (L : Language) (B : List Bool 
       simp only [fin, OConfig.at_state]; split <;> omega
     have h2 : (fin x).state ≠ p.size := by
       simp only [fin, OConfig.at_state]; split <;> omega
-    simp only [OMachine.stepList, hM, omachine, if_neg h1, if_neg h2, List.map_nil]
+    simp only [OMachine.stepList, hM, omachine, ite_eq_right h1, ite_eq_right h2, List.map_nil]
   have hpath : ∀ x, OPath M A x (fun d => d.space ≤ B x ∧ d.state ≤ p.size) oinit (fin x) := by
     intro x
     have h := opath_of_oexec (hrun x) rfl (omachine_hosts p)

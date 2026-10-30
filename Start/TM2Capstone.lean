@@ -81,7 +81,7 @@ theorem primrec_natBits (b0 b1 : ℕ) : Primrec (natBits b0 b1) := by
         rw [List.getElem?_map]
         simp [List.getElem?_range hlt]
       simp only [hlen, hget, Option.getD_some]
-      rw [if_neg (by omega : ¬ n = 0)]
+      rw [ite_eq_right (by omega : ¬ n = 0)]
       exact congrArg some (natBits_pos b0 b1 (by omega)).symm
   exact hstrong.comp (Primrec.const ()) Primrec.id
 
@@ -100,7 +100,7 @@ theorem natBits_posNum (g : Γ' → ℕ) : ∀ p : PosNum,
       rw [hcast, natBits_pos _ _ (by omega)]
       have h1 : 2 * (p : ℕ) % 2 = 0 := by omega
       have h2 : 2 * (p : ℕ) / 2 = (p : ℕ) := by omega
-      rw [h1, h2, if_neg (by norm_num), ih]
+      rw [h1, h2, ite_eq_right (by norm_num), ih]
       simp [trPosNum]
   | bit1 p ih =>
       have hp : 0 < (p : ℕ) := by exact_mod_cast p.cast_pos (α := ℕ)
@@ -110,7 +110,7 @@ theorem natBits_posNum (g : Γ' → ℕ) : ∀ p : PosNum,
       rw [hcast, natBits_pos _ _ (by omega)]
       have h1 : (2 * (p : ℕ) + 1) % 2 = 1 := by omega
       have h2 : (2 * (p : ℕ) + 1) / 2 = (p : ℕ) := by omega
-      rw [h1, h2, if_pos rfl, ih]
+      rw [h1, h2, ite_eq_left rfl, ih]
       simp [trPosNum]
 
 /-- The code-level binary digits are the codes of the digit symbols the machine uses. -/
@@ -169,9 +169,9 @@ theorem numOf_natBits (b0 b1 e : ℕ) (h01 : b0 ≠ b1) (he0 : e ≠ b0) (he1 : 
       · have hlt : n / 2 < n := Nat.div_lt_self hn (by omega)
         rw [natBits_pos b0 b1 (by omega), List.cons_append, numOf_cons, ih _ hlt]
         by_cases hpar : n % 2 = 1
-        · rw [if_pos hpar, if_pos rfl]
+        · rw [ite_eq_left hpar, ite_eq_left rfl]
           omega
-        · rw [if_neg hpar, if_neg h01, if_pos rfl]
+        · rw [ite_eq_right hpar, ite_eq_right h01, ite_eq_left rfl]
           omega
 
 /-! ## The code-level behaviour of the bundled machine of a code -/

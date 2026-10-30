@@ -71,7 +71,7 @@ theorem skelK_size_pi_obj (A B : Expr S) (hA : A.isKindB = false) (hB : B.isKind
 
 theorem skelK_size_pi_kind (A B : Expr S) (hA : A.isKindB = true) (hB : B.isKindB = true) :
     styWeight A.skelK < styWeight (pi A B).skelK ∧ styWeight B.skelK < styWeight (pi A B).skelK := by
-  simp only [skelK, hA, hB, if_true, styWeight]; omega
+  simp only [skelK, hA, hB, ite_true, styWeight]; omega
 
 end Expr
 

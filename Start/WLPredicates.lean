@@ -314,10 +314,10 @@ def matchCode (K : ℕ) (l : TypeLink K E) (i : Fin (r+1)) (a : Expr J) : Expr J
     (hx : x∈I.domain l.1 i) (ha : a.eval σ w=x.val) :
     (matchCode Q K l i a).eval σ w=(linkMatch K (fun e => I.coordinatePerm e i) l x).val := by
   by_cases h : l.2.val=4*K
-  · simp only [matchCode,if_pos h,linkMatch]
+  · simp only [matchCode,ite_eq_left h,linkMatch]
     rw [I.coordinatePerm_apply l.1 i ⟨x,hx⟩]
     exact hQ _ _ a x hx ha
-  · simpa only [matchCode,if_neg h,linkMatch,Equiv.refl_apply] using ha
+  · simpa only [matchCode,ite_eq_right h,linkMatch,Equiv.refl_apply] using ha
 
 def formalFootprint (K : ℕ) : BlockTag (r:=r) (P:=P) (E:=E) K → Expr J → Expr J →
     List (FormalName (Tag (r:=r) (P:=P) (E:=E) K) J)

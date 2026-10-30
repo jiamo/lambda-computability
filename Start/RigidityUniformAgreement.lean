@@ -68,7 +68,7 @@ theorem decide_exists (A : Oracle) : ∃ f : ℕ → ℕ,
         ← show right (code q) = q.right from congrArg Condition.right (condition_code q),condition_code] using
         And.intro hpq (And.intro hab (And.intro ha hb))
     · have hz : search (Nat.pair x p) ≠ 0 := by omega
-      simp only [out,if_neg hz]
+      simp only [out,ite_eq_right hz]
       simp only [Cert,Nat.unpair_pair] at hc
       exact ⟨hc.1,Or.inl ⟨_,_,_,hc.2⟩⟩
 

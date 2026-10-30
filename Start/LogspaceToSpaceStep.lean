@@ -82,7 +82,7 @@ theorem runs_setFlags (fs' : Fin (q + 1)) (hfs : M.output fs = none) (hN1 : 1 �
           (if (none : Option Bool) = none then [true] else []) ) 1
           (if (none : Option Bool) = some true then [true] else []) =
           encR M W fs st pos tp hp := by
-        simp only [if_true, reduceCtorEq, if_false]
+        simp only [ite_true, reduceCtorEq, ite_false]
         rw [← h0, Function.update_eq_self, ← h1, Function.update_eq_self]
       rw [e]
       exact runs_skip _ 0 0
@@ -174,9 +174,9 @@ theorem runs_headsOp (pos' : ℕ → ℕ) (d : ℕ → Direction) (sym : ℕ →
       cases hd : d j with
       | right =>
           by_cases hsym : sym j = .rightMarker
-          · rw [if_pos hsym, hr1 hd hsym, ← hc, Function.update_eq_self]
+          · rw [ite_eq_left hsym, hr1 hd hsym, ← hc, Function.update_eq_self]
             exact runs_skip _ 0 0
-          · rw [if_neg hsym, hr2 hd hsym]
+          · rw [ite_eq_right hsym, hr2 hd hsym]
             have hi := runs_incr (x := x) (B := B) R (rCnt j) 4 5 hjK (lt_regK (by omega))
               (lt_regK (by omega)) (by unfold rCnt; omega) (by unfold rCnt; omega) (by omega)
               hRC hROF N (by rw [hc]; exact hN j hj) hB 0

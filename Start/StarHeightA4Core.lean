@@ -83,7 +83,7 @@ lemma zcount_transfer {β : Type*} [DecidableEq β] (φ : α → Option β) (δ'
       cases hb : φ b with
       | none =>
           obtain ⟨hd, hx⟩ := h0 b hb
-          rw [List.filterMap_cons, hb, zcount, if_neg (fun h' => hx h'.1), hd, add_zero, ih]
+          rw [List.filterMap_cons, hb, zcount, ite_eq_right (fun h' => hx h'.1), hd, add_zero, ih]
           simp
       | some c =>
           obtain ⟨hd, hx⟩ := h1 b c hb
@@ -99,7 +99,7 @@ lemma zcount_zero_of_avoid :
       have h1 : ¬ (b = x ∧ s = h) := by
         rintro ⟨rfl, rfl⟩
         exact hs [] w rfl (by simp [dsum])
-      rw [if_neg h1, zero_add]
+      rw [ite_eq_right h1, zero_add]
       apply zcount_zero_of_avoid w
       intro v₁ v₂ hv
       have := hs (b :: v₁) v₂ (by rw [hv]; rfl)
@@ -123,7 +123,7 @@ def coreLang (k n : ℕ) : Language (Fin 3) := {u | coreCount u % n = k}
 lemma zcount_state_quot {δ : Fin 3 → ZMod 3} {h : ZMod 3} (z : Fin 3) (hz : z ≠ 0)
     (hzh : δ z = -h) (u : List (Fin 3)) :
     zcount δ h 0 0 u = zcount δ 0 0 0 (z :: u) := by
-  rw [zcount, if_neg (fun h' => hz h'.1), zero_add, zcount_shift δ h 0 (-h) 0 u, hzh]
+  rw [zcount, ite_eq_right (fun h' => hz h'.1), zero_add, zcount_shift δ h 0 (-h) 0 u, hzh]
   simp
 
 /-- Height one of all state counts from height one in state `0`, by left quotients. -/
@@ -432,7 +432,7 @@ lemma Pblock_zcount {e : List (Fin 3)} (he : e ∈ Pblock) :
     zcount vstep 0 0 0 e = 0 ∧ dsum vstep e = 0 := by
   obtain ⟨m, v, b, rfl, hm, hv, hret⟩ := he
   refine ⟨?_, ?_⟩
-  · rw [zcount, if_neg (fun h => hm h.1), zero_add, zero_add]
+  · rw [zcount, ite_eq_right (fun h => hm h.1), zero_add, zero_add]
     exact zcount_avoid (vstep_ne_zero hm) hv [b] (by simp)
   · rw [dsum_cons, dsum_append, ← add_assoc, ← hret]
     simp [dsum]
@@ -440,7 +440,7 @@ lemma Pblock_zcount {e : List (Fin 3)} (he : e ∈ Pblock) :
 lemma PrefV_zcount {y : List (Fin 3)} (hy : y ∈ PrefV) : zcount vstep 0 0 0 y = 0 := by
   rcases hy with rfl | ⟨m, v, rfl, hm, hv⟩
   · rfl
-  · rw [zcount, if_neg (fun h => hm h.1), zero_add, zero_add]
+  · rw [zcount, ite_eq_right (fun h => hm h.1), zero_add, zero_add]
     simpa using zcount_avoid (vstep_ne_zero hm) hv [] (by simp)
 
 open Classical in
@@ -461,7 +461,7 @@ lemma zcount_flatten_EV : ∀ es : List (List (Fin 3)), AllIn EV es →
         unfold bcount
         rw [List.countP_cons]
         simp only [show ([0] : List (Fin 3)) ∈ ({[0]} : Language (Fin 3)) from rfl,
-          decide_true, if_true]
+          decide_true, ite_true]
         omega
       · obtain ⟨hz, hd⟩ := Pblock_zcount he
         simp only [hz, hd, add_zero, zero_add]
@@ -469,7 +469,7 @@ lemma zcount_flatten_EV : ∀ es : List (List (Fin 3)), AllIn EV es →
         refine ⟨?_, rfl⟩
         have hne : e ∉ ({[0]} : Language (Fin 3)) := fun h => (Pblock_ne_zero_head he).1 h
         unfold bcount
-        rw [List.countP_cons, if_neg (fun hc => hne (of_decide_eq_true hc))]
+        rw [List.countP_cons, ite_eq_right (fun hc => hne (of_decide_eq_true hc))]
         omega
 
 lemma decomp_EV : ∀ (n : ℕ) (w : List (Fin 3)), w.length ≤ n →

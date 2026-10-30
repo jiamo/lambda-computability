@@ -245,7 +245,7 @@ theorem sim (B : ℕ) : ∀ (n : ℕ) (p : Word), Good T x B n p → ∀ (S0 V0 
         refine ⟨⟨wf, ?_, ?_, ?_⟩, ?_⟩
         · rw [hsteps, show s0 + s1 + 3 = 1 + (s1 + (1 + (s0 + 1))) by omega,
             Function.iterate_add_apply, m3, Function.iterate_one, st3]
-        · simp only [val, hleaf, if_true, wf]
+        · simp only [val, hleaf, ite_true, wf]
           split
           · rw [nv_addW, v0, v1]
           · rw [nv_maxW, v0, v1]
@@ -284,7 +284,7 @@ theorem sim (B : ℕ) : ∀ (n : ℕ) (p : Word), Good T x B n p → ∀ (S0 V0 
         · simp [steps, step, hleaf]
         · simp [val, hleaf]
         · intro k hk
-          simp only [steps, hleaf, if_false] at hk
+          simp only [steps, hleaf, ite_false] at hk
           obtain rfl : k = 0 := by omega
           refine ⟨rfl, rfl, by simp, by simp, [(p, [], [])], by simp [stackW], by simp,
             by simp, ?_⟩

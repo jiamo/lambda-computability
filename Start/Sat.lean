@@ -75,7 +75,7 @@ def Cob.dropU : Cob := .bRec (.proj 0) (.comp .tailC [.proj 1]) (.comp .tailC [.
       cases b <;>
         simp only [Cob.eval_comp, List.map_cons, List.map_nil, Cob.eval_proj,
           List.getD_cons_zero, List.getD_cons_succ, Cob.eval_tailC, Bool.false_eq_true,
-          if_true, if_false, List.length_cons] <;>
+          ite_true, ite_false, List.length_cons] <;>
         rw [List.take_of_length_le hlen, List.tail_drop]
 
 /-- Iterated tail. -/
@@ -540,9 +540,9 @@ theorem eval_satMachine (u σ : Word) : satMachine.eval [u, σ] = encMSt (mrun �
         omega
       rw [satMachine, Cob.eval_bRec_cons, ← satMachine, ih]
       cases b
-      · rw [if_neg (by simp), eval_stepFalse, ← mrun_cons]
+      · rw [ite_eq_right (by simp), eval_stepFalse, ← mrun_cons]
         exact List.take_of_length_le hlen
-      · rw [if_pos rfl, eval_stepTrue, ← mrun_cons]
+      · rw [ite_eq_left rfl, eval_stepTrue, ← mrun_cons]
         exact List.take_of_length_le hlen
 
 /-! ### SAT is in NP -/

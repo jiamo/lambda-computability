@@ -104,14 +104,14 @@ theorem tAy0_reducesQ (x : ℕ) :
     have := reduces_B2 (.app lamB (.var (x + 1))) (.var 0)
     simpa [Lambda.lift, lamB] using this
   refine Lambda.reduces.step _ _ _ (Lambda.step.beta _ _) ?_
-  simp only [Lambda.subst, if_pos]
+  simp only [Lambda.subst, ite_eq_left]
   refine Lambda.reduces_trans (Lambda.reduces_app_left hW1) ?_
   have sB : ∀ (u : Lambda) (j : ℕ), Lambda.subst u j lamB = lamB := by
     intro u j; simp [lamB, Lambda.subst]
   have lB : ∀ (n k : ℕ), Lambda.lift n k lamB = lamB := by
     intro n k; simp [lamB, Lambda.lift]
   refine Lambda.reduces.step _ _ _ (Lambda.step.beta _ _) ?_
-  simp only [Lambda.subst, sB, if_pos, lt_irrefl, if_false]
+  simp only [Lambda.subst, sB, ite_eq_left, lt_irrefl, ite_false]
   refine Lambda.reduces_trans (reduces_B2 _ _) ?_
   apply Lambda.reduces_lam
   have hW2 : Lambda.reduces (.app (.app lamB (.app lamB (.var (x + 1)))) (.var 0))

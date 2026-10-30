@@ -94,7 +94,7 @@ theorem toLN_openRec_fvar (D : ℕ) : ∀ (d : ℕ) (u : Lambda),
         simp [toLN, Term.openRec]
       · have h1 : ¬ i < d := by omega
         have h2 : ¬ i < d + 1 := by omega
-        simp only [toLN, h1, h2, if_false, Term.openRec, Term.fvar.injEq]
+        simp only [toLN, h1, h2, ite_false, Term.openRec, Term.fvar.injEq]
         omega
   | app a b iha ihb => simp [toLN, Term.openRec, iha, ihb]
   | lam u ih => simp [toLN, Term.openRec, ih]
@@ -114,7 +114,7 @@ theorem toLN_lift (D : ℕ) : ∀ (e d : ℕ) (s : Lambda),
       · have h1 : y < e + d := by omega
         simp [Lambda.lift, toLN, h, h1]
       · have h1 : ¬ y + d < e + d := by omega
-        simp only [Lambda.lift, h, if_false, toLN, h1, Term.fvar.injEq]
+        simp only [Lambda.lift, h, ite_false, toLN, h1, Term.fvar.injEq]
         omega
   | app a b iha ihb => simp [Lambda.lift, toLN, iha, ihb]
   | lam u ih =>
@@ -138,14 +138,14 @@ theorem toLN_subst (D : ℕ) (s : Lambda) : ∀ (d : ℕ) (t : Lambda),
         simp [Lambda.subst, toLN, h, h1, h2, h3, h4, Term.openRec]
       · subst h
         have h1 : ¬ y < y + 1 - 1 := by omega
-        simp only [Lambda.subst, toLN, Nat.lt_succ_self, if_true, Term.openRec]
+        simp only [Lambda.subst, toLN, Nat.lt_succ_self, ite_true, Term.openRec]
         have := toLN_lift D 0 y s
         simpa using this
       · have h1 : ¬ y = d := by omega
         have h2 : y > d := h
         have h3 : ¬ y - 1 < d := by omega
         have h4 : ¬ y < d + 1 := by omega
-        simp only [Lambda.subst, h1, if_false, h2, if_true, toLN, h3, h4, Term.openRec,
+        simp only [Lambda.subst, h1, ite_false, h2, ite_true, toLN, h3, h4, Term.openRec,
           Term.fvar.injEq]
         omega
   | app a b iha ihb => simp [Lambda.subst, toLN, Term.openRec, iha, ihb]
@@ -185,7 +185,7 @@ theorem fv_toLN (D : ℕ) : ∀ (d : ℕ) (t : Lambda), freeMax t ≤ d + D →
       intro hle a ha
       by_cases h : i < d
       · simp [toLN, h] at ha
-      · simp only [toLN, h, if_false, Term.fv, Finset.mem_singleton] at ha
+      · simp only [toLN, h, ite_false, Term.fv, Finset.mem_singleton] at ha
         simp only [freeMax_var] at hle
         omega
   | app a b iha ihb =>
@@ -220,7 +220,7 @@ theorem ofLN_toLN (D : ℕ) : ∀ (d : ℕ) (t : Lambda), freeMax t ≤ d + D �
       simp only [freeMax_var] at hle
       by_cases h : i < d
       · simp [toLN, h]
-      · simp only [toLN, h, if_false, ofLN_fvar, Lambda.var.injEq]
+      · simp only [toLN, h, ite_false, ofLN_fvar, Lambda.var.injEq]
         omega
   | app a b iha ihb =>
       intro hle
@@ -244,7 +244,7 @@ theorem toLN_ofLN (D : ℕ) : ∀ (d : ℕ) (M : LNTerm), Term.LcAt d M →
       intro _ hfv
       have ha : a < D := hfv a (by simp [Term.fv])
       have h1 : ¬ d + (D - 1 - a) < d := by omega
-      simp only [ofLN_fvar, toLN, h1, if_false, Term.fvar.injEq]
+      simp only [ofLN_fvar, toLN, h1, ite_false, Term.fvar.injEq]
       omega
   | app l r ihl ihr =>
       intro hlc hfv
@@ -319,7 +319,7 @@ theorem freeMax_lift_le (n : ℕ) : ∀ (k : ℕ) (t : Lambda),
   intro k t
   induction t generalizing k with
   | var i =>
-      by_cases h : i < k <;> simp only [Lambda.lift, h, if_true, if_false, freeMax_var] <;> omega
+      by_cases h : i < k <;> simp only [Lambda.lift, h, ite_true, ite_false, freeMax_var] <;> omega
   | app a b iha ihb =>
       have ha := iha k
       have hb := ihb k
@@ -340,14 +340,14 @@ theorem freeMax_subst_le : ∀ (t s : Lambda) (x : ℕ),
       rcases lt_trichotomy y x with h | h | h
       · have h1 : ¬ y = x := by omega
         have h2 : ¬ y > x := by omega
-        simp only [Lambda.subst, h1, if_false, h2, freeMax_var]
+        simp only [Lambda.subst, h1, ite_false, h2, freeMax_var]
         omega
       · subst h
         have hs : Lambda.subst s y (Lambda.var y) = s := by simp [Lambda.subst]
         rw [hs]
         omega
       · have h1 : ¬ y = x := by omega
-        simp only [Lambda.subst, h1, if_false, h, if_true, freeMax_var]
+        simp only [Lambda.subst, h1, ite_false, h, ite_true, freeMax_var]
         omega
   | app a b iha ihb =>
       intro s x
@@ -507,7 +507,7 @@ theorem reflect_step : ∀ (t : Lambda) (D : ℕ) (N : LNTerm), freeMax t ≤ D 
   induction t with
   | var i =>
       intro D N _ hstep
-      simp only [toLN, Nat.not_lt_zero, if_false] at hstep
+      simp only [toLN, Nat.not_lt_zero, ite_false] at hstep
       cases hstep with
       | base hb => cases hb
   | app a b iha ihb =>

@@ -140,13 +140,13 @@ theorem discovered_mem_strings {T : MLTest} {c j : ℕ} {σ : List Bool}
   unfold discovered at h
   by_cases hen : T.enter c ((Encodable.decode (α := List Bool) j.unpair.1).getD []) j.unpair.2
       = Bool.true
-  · rw [if_pos hen] at h
+  · rw [ite_eq_left hen] at h
     have hσ : (Encodable.decode (α := List Bool) j.unpair.1).getD [] = σ := by
       simpa using h
     refine Set.mem_ofPred.2 ⟨j.unpair.2, ?_⟩
     rw [← hσ]
     exact hen
-  · rw [if_neg hen] at h
+  · rw [ite_eq_right hen] at h
     exact absurd h (by simp)
 
 theorem pieceCond_iff {T : MLTest} {c j m : ℕ} {σ : List Bool} :
@@ -589,7 +589,7 @@ theorem exists_piece_prefix {T : MLTest} {X : ℕ → Bool} {k : ℕ}
     unfold discovered
     rw [Nat.unpair_pair]
     simp only [Encodable.encodek, Option.getD_some]
-    rw [if_pos hs]
+    rw [ite_eq_left hs]
   have hP : ∃ j, ∃ σ' : List Bool, discovered T c j = some σ' ∧ X ∈ cylinder σ' :=
     ⟨_, σ, hdisc₀, hXσ⟩
   obtain ⟨σ₁, hd₁, hX₁⟩ := Nat.find_spec hP
@@ -616,7 +616,7 @@ theorem exists_piece_prefix {T : MLTest} {X : ℕ → Bool} {k : ℕ}
     have hcond : pieceCond T c j (BitStr.toNat (prefixList X N)) σ₁ = Bool.true :=
       pieceCond_iff.2 (by rw [← hN, hofNat]; exact ⟨hm, hpre, hcov⟩)
     unfold piece
-    rw [hd₁, Option.bind_some, hcond, cond_true, ← hN, hofNat]
+    rw [hd₁, Option.bind_some, hcond, Bool.cond_true, ← hN, hofNat]
   refine ⟨Nat.pair k (Nat.pair j (BitStr.toNat (prefixList X N))), N, ?_, ?_⟩
   · have hpo : pieceOf T (Nat.pair k (Nat.pair j (BitStr.toNat (prefixList X N))))
         = some (prefixList X N) := by

@@ -76,7 +76,7 @@ theorem codedRelation_wellFounded {d a f : ZFSet.{u}} {j : ZFSet.{u} → ZFSet.{
     if h : ∃ x ∈ a, j x = u then h.choose else ∅
   have hF (x : ZFSet.{u}) (hx : x ∈ a) : F (j x) = x := by
     have h : ∃ y ∈ a, j y = j x := ⟨x,hx,rfl⟩
-    simp only [F,dif_pos h]
+    simp only [F,dite_eq_left h]
     exact hi _ h.choose_spec.1 x hx h.choose_spec.2
   apply (show WellFounded (fun y x => F y ∈ F x) from InvImage.wf F ZFSet.mem_wf).mono
   intro u v huv

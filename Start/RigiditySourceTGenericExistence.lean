@@ -35,7 +35,7 @@ theorem countable_ground_generic (M : ZFSet.{u})
   have har : a ∈ Set.range e := he ▸ ha
   obtain ⟨n,rfl⟩ := har
   obtain ⟨q,hq,hqd⟩ := hG n
-  exact ⟨q,hq,by simpa only [D,if_pos had,Set.mem_ofPred_eq] using hqd⟩
+  exact ⟨q,hq,by simpa only [D,ite_eq_left had,Set.mem_ofPred_eq] using hqd⟩
 
 theorem sourceT_generic_exists (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT M)
     (hct : (M : Set ZFSet.{u}).Countable)

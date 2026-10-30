@@ -70,9 +70,9 @@ theorem prefix_approximates (g : ℕ → ℕ) (k : ℕ) :
   have he (m : ℕ) : (oraclePrefix g m)[k]? = if k < m then some (g k) else none := by
     simp only [oraclePrefix, List.getElem?_map]
     by_cases hk : k < m
-    · rw [List.getElem?_range hk, if_pos hk]
+    · rw [List.getElem?_range hk, ite_eq_left hk]
       rfl
-    · rw [List.getElem?_eq_none (by simpa using Nat.le_of_not_gt hk), if_neg hk]
+    · rw [List.getElem?_eq_none (by simpa using Nat.le_of_not_gt hk), ite_eq_right hk]
       rfl
   constructor
   · intro m a ha
@@ -86,7 +86,7 @@ theorem prefix_approximates (g : ℕ → ℕ) (k : ℕ) :
     subst a
     refine ⟨k+1,fun m hm => ?_⟩
     change g k ∈ ((oraclePrefix g m)[k]? : Part ℕ)
-    rw [he, if_pos (by omega)]
+    rw [he, ite_eq_left (by omega)]
     exact Part.mem_some _
 
 private def flag (e : ℕ) : ℕ :=

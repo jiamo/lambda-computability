@@ -80,7 +80,7 @@ def dlamAny (g : Dinf → Dinf) : Dinf :=
   if h : ωScottContinuous g then Psi (ContinuousHom.ofFun g h) else Dinf.botDinf
 
 theorem dlamAny_eq {g : Dinf → Dinf} (h : ωScottContinuous g) :
-    dlamAny g = Psi (ContinuousHom.ofFun g h) := dif_pos h
+    dlamAny g = Psi (ContinuousHom.ofFun g h) := dite_eq_left h
 
 theorem dlamAny_congr {g g' : Dinf → Dinf} (h : ∀ X, g X = g' X) : dlamAny g = dlamAny g' :=
   congrArg dlamAny (funext h)

@@ -191,7 +191,7 @@ theorem eval_cfgF (σ : ℕ → Bool) (a q i j : ℕ) :
         · have hls : l - (M.states + (x.length + 1)) < s := by omega
           have hbit : cfgBit M x s (⟨q, i, tapeOf M x s σ a, j⟩ : Config) l
               = σ (a * cfgWidth M x s + l) := by
-            simp only [cfgBit, if_neg h1, if_neg h2, if_pos h3]
+            simp only [cfgBit, ite_eq_right h1, ite_eq_right h2, ite_eq_left h3]
             rw [getD_tapeOf M x s σ a hls]
             congr 2
             omega
@@ -226,13 +226,13 @@ theorem eval_tgtF (σ : ℕ → Bool) (a b q' i' j' : ℕ) (w : Bool) (j : ℕ) 
           by_cases h4 : l - (M.states + (x.length + 1)) = j
           · have hbit : cfgBit M x s
                 (⟨q', i', writeAt (tapeOf M x s σ a) j w, j'⟩ : Config) l = w := by
-              simp only [cfgBit, if_neg h1, if_neg h2, if_pos h3]
+              simp only [cfgBit, ite_eq_right h1, ite_eq_right h2, ite_eq_left h3]
               rw [h4, getD_writeAt_self]
             simp [h1, h2, h3, h4, hbit]
           · have hbit : cfgBit M x s
                 (⟨q', i', writeAt (tapeOf M x s σ a) j w, j'⟩ : Config) l
                 = σ (a * cfgWidth M x s + l) := by
-              simp only [cfgBit, if_neg h1, if_neg h2, if_pos h3]
+              simp only [cfgBit, ite_eq_right h1, ite_eq_right h2, ite_eq_left h3]
               rw [getD_writeAt_of_ne _ _ _ _ h4, getD_tapeOf M x s σ a hls]
               congr 2
               omega

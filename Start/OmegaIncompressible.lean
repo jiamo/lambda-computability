@@ -220,7 +220,7 @@ theorem exists_stageOk (n : ℕ) : ∃ k, StageOk (omegaPrefix n) k := by
   have hle : f c ≤ (Finset.range (encBound n + 1)).sup f :=
     Finset.le_sup (Finset.mem_range.mpr hc)
   refine ⟨f c, by omega, ?_⟩
-  have : f c = hex.choose := by rw [hf]; exact dif_pos hex
+  have : f c = hex.choose := by rw [hf]; exact dite_eq_left hex
   rw [this]
   exact hex.choose_spec
 

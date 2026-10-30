@@ -58,8 +58,8 @@ theorem and {P Q} (hP : HasTest P) (hQ : HasTest Q) :
     refine ⟨fun k => if (Nat.unpair k).1 = 0 then f (Nat.unpair k).2 else g (Nat.unpair k).2,?_⟩
     intro n
     constructor
-    · simpa only [Nat.unpair_pair,if_pos rfl,ite_true] using hf n
-    · simpa only [Nat.unpair_pair,if_neg (Nat.one_ne_zero)] using hg n
+    · simpa only [Nat.unpair_pair,ite_eq_left rfl,ite_true] using hf n
+    · simpa only [Nat.unpair_pair,ite_eq_right (Nat.one_ne_zero)] using hg n
   · rintro ⟨f,hf⟩
     exact ⟨(ht O v).mpr ⟨_,fun n => (hf n).1⟩,
       (hs O v).mpr ⟨_,fun n => (hf n).2⟩⟩

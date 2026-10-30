@@ -203,9 +203,9 @@ theorem length_innerWord_le (M : Machine) (x : List Bool) (s : ℕ) (a b q i j :
     have hj : M.states + (x.length + 1) + j < cfgWidth M x s := by
       simp only [cfgWidth]
       omega
-    rw [if_pos hg]
+    rw [ite_eq_left hg]
     exact length_enc_stepCase_le M x s a b q i j z.1 z.2 hj
-  · rw [if_neg hg]
+  · rw [ite_eq_right hg]
     simp
 
 /-! ### The sweep over the position of the work head -/
@@ -287,10 +287,10 @@ theorem eval_jBlockT (M : Machine) (x : List Bool) (s : ℕ) (a b i q j : ℕ)
       simp only [jBlockCore, Cob.eval_comp, List.map_cons, List.map_nil, hx, hparam]
       exact eval_innerT M x s a b i j q hq hi hj
     rw [jBlockT, Cob.eval_iteW (p := true) (by rw [hcond]; simp [hj]) hcore rfl, jWord,
-      if_pos hj]
+      ite_eq_left hj]
     simp
   · rw [jBlockT, Cob.eval_iteW (p := false) (by rw [hcond]; simp [hj]) rfl
-      (Cob.eval_constT _ _), jWord, if_neg hj]
+      (Cob.eval_constT _ _), jWord, ite_eq_right hj]
     simp
 
 /-- The term sweeping the position of the work head. -/
@@ -316,7 +316,7 @@ theorem eval_jSweepT (M : Machine) (x : List Bool) (s : ℕ) (a b i q : ℕ)
     have hpad := pad_le_length_jParam M x s a b i
     by_cases h : j < s
     · have := length_innerWord_le M x s a b q i j hj
-      rw [jWord, if_pos h]
+      rw [jWord, ite_eq_left h]
       calc (innerWord M x s a b q i j).length
           ≤ (caseIdx M).length * (16 * padOf M x s a b) := this
         _ ≤ 16 * (caseIdx M).length * ((jParam M x s a b i).length + 1) := by
@@ -325,14 +325,14 @@ theorem eval_jSweepT (M : Machine) (x : List Bool) (s : ℕ) (a b i q : ℕ)
                 = 16 * (caseIdx M).length * padOf M x s a b := by ring
               _ ≤ 16 * (caseIdx M).length * ((jParam M x s a b i).length + 1) :=
                   Nat.mul_le_mul_left _ this
-    · rw [jWord, if_neg h]
+    · rw [jWord, ite_eq_right h]
       simp
   rw [jSweepT, eval_rangeEmitTerm (jBlockT M q) (jWord M x s a b q i)
     (jParam M x s a b i) (lead1_jParam M x s a b i)
     (fun j => eval_jBlockT M x s a b i q j hq hi) hb]
   refine List.flatMap_congr ?_
   intro j hj
-  rw [jWord, if_pos (List.mem_range.1 hj)]
+  rw [jWord, ite_eq_left (List.mem_range.1 hj)]
 
 /-! ### The sweep over the position of the input head -/
 
@@ -439,10 +439,10 @@ theorem eval_iBlockT (M : Machine) (x : List Bool) (s : ℕ) (a b q i : ℕ) (hq
         hfld 1 (by omega), e1]
       exact eval_jSweepT M x s a b i q hq (by omega)
     rw [iBlockT, Cob.eval_iteW (p := true) (by rw [hcond]; simp [hi]) hcore rfl, iWord,
-      if_pos hi]
+      ite_eq_left hi]
     simp
   · rw [iBlockT, Cob.eval_iteW (p := false) (by rw [hcond]; simp [hi]) rfl
-      (Cob.eval_constT _ _), iWord, if_neg hi]
+      (Cob.eval_constT _ _), iWord, ite_eq_right hi]
     simp
 
 /-- The term sweeping the position of the input head. -/
@@ -467,7 +467,7 @@ theorem eval_iSweepT (M : Machine) (x : List Bool) (s : ℕ) (a b q : ℕ) (hq :
     intro i _
     have hpad := padI_le_length_iParam M x s a b
     by_cases h : i < x.length + 1
-    · rw [iWord, if_pos h]
+    · rw [iWord, ite_eq_left h]
       have hall : ∀ j ∈ List.range s, (innerWord M x s a b q i j).length
           ≤ (caseIdx M).length * (16 * padOf M x s a b) := by
         intro j hj
@@ -483,14 +483,14 @@ theorem eval_iSweepT (M : Machine) (x : List Bool) (s : ℕ) (a b q : ℕ) (hq :
           Nat.mul_le_mul_right _ (by omega)
         omega
       exact Nat.mul_le_mul_left _ h3
-    · rw [iWord, if_neg h]
+    · rw [iWord, ite_eq_right h]
       simp
   rw [iSweepT, eval_rangeEmitTerm (iBlockT M q) (iWord M x s a b q)
     (iParam M x s a b) (lead1_iParam M x s a b)
     (fun i => eval_iBlockT M x s a b q i hq) hb]
   refine List.flatMap_congr ?_
   intro i hi
-  rw [iWord, if_pos (List.mem_range.1 hi)]
+  rw [iWord, ite_eq_left (List.mem_range.1 hi)]
 
 /-! ### The whole step formula -/
 

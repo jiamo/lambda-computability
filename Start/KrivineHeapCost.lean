@@ -255,7 +255,7 @@ theorem length_flatten_le {α : Type _} (l : List (List α)) (n : ℕ)
     simp only [List.mem_map] at hx
     obtain ⟨w, hw, rfl⟩ := hx
     exact h w hw
-  have hsum := List.sum_le_card_nsmul _ _ hmem
+  have hsum := List.sum_le_length_nsmul _ _ hmem
   simp only [List.length_map, smul_eq_mul] at hsum
   simpa only [List.length_flatten] using hsum
 

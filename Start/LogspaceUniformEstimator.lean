@@ -227,9 +227,9 @@ lemma fandom (w:Fabric u)(i j:ℕ)(h:u.D.active (w.c i j))(hp:Covenant u p (w.c 
        rcases h3.2 with hk|hk; exact hk.2
        omega
    have hh:i=1∨i=3→j<Age.L w.m:=by
-       intro hi; rwa [Period,if_pos (by unfold Brole;omega)] at h2
+       intro hi; rwa [Period,ite_eq_left (by unfold Brole;omega)] at h2
    have hh':i≥9→j=0:=by
-       intro hi; rw [Period,if_neg (by unfold Brole;omega)] at h2; omega
+       intro hi; rw [Period,ite_eq_right (by unfold Brole;omega)] at h2; omega
    by_cases h:i=1
    · subst i; apply Shift.earsTag u w 1 j (by omega)
      intro x hx i hi
@@ -479,7 +479,7 @@ lemma umbrella (v:Fabric u)(he:v.Good)(hu:v.activeR)(h:Promised u p (v.c 14 0))
        have hk:u.D.W (f.channel 17 0)+u.D.D (v.c 14 0) ≤ u.D.W (v.c 14 0):=by
           rw [Vessel.OrbitV.Counsel.costZ,Stone.D,Stone.W]; exact Age.renewal hx.le
        have hv := (h.sooner hJ.unitV.stage hk ht).old.ε f hF rfl
-       rw [paintE,if_pos (show j<e.heightR from hh)]
+       rw [paintE,ite_eq_left (show j<e.heightR from hh)]
        have hh:e.s.roll e.vale= forecast u.plotM e.vale:=vault _ _ (show e.vale<e.s.m from by change f.m<v.m; omega)
        rw [hh]; exact hv y hy
 

@@ -306,14 +306,14 @@ noncomputable def atBlock (K : ℕ)
     (b : RawBlock (r := r) (m := m) (P := P) (E := E) K) (R : I.Readouts K) : I.blockSpace K b := by
   classical
   exact ⟨fun n => if n ∈ I.footprint K b then R n else 0,
-    fun n hn => if_neg hn⟩
+    fun n hn => ite_eq_right hn⟩
 
 @[simp] theorem atBlock_apply (K : ℕ)
     (b : RawBlock (r := r) (m := m) (P := P) (E := E) K) (R : I.Readouts K)
     (n : RawName (r := r) (m := m) (P := P) (E := E) K) (hn : n ∈ I.footprint K b) :
     (I.atBlock K b R).val n = R n := by
   classical
-  exact if_pos hn
+  exact ite_eq_left hn
 
 theorem blockForm_congr (K : ℕ)
     (b : RawBlock (r := r) (m := m) (P := P) (E := E) K) (R S : I.Readouts K)

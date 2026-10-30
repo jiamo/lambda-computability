@@ -139,7 +139,7 @@ theorem Construction.finite_membership_definition (t : Construction.{u}) :
       | succ i =>
         simp only [cons_succ]
         change tupleEnv (fun j : Fin p.bound => (t.inputData j).value R P) i = t.inputs R P i
-        rw [tupleEnv, dif_pos (show i < p.bound by omega)]
+        rw [tupleEnv, dite_eq_left (show i < p.bound by omega)]
         exact (t.inputs_eq_data R P i).symm
     exact hf.trans (t.membershipFormula_spec M R hM hT hR P ht hi z hz)
 

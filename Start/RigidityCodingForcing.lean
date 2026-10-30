@@ -81,8 +81,8 @@ theorem append_extends (A : ℕ → Oracle) (p : Condition) (s : List Bool) :
   refine ⟨List.prefix_append _ _, List.prefix_append _ _, le_rfl, ?_⟩
   intro m hm _
   simp only [append, List.getD_eq_getElem?_getD, List.getElem?_append]
-  rw [if_neg (Nat.not_lt.mpr hm.1),
-    if_neg (by simpa [← p.sameLength] using Nat.not_lt.mpr hm.1), p.sameLength]
+  rw [ite_eq_right (Nat.not_lt.mpr hm.1),
+    ite_eq_right (by simpa [← p.sameLength] using Nat.not_lt.mpr hm.1), p.sameLength]
 
 theorem arbitrary_left_extension (A : ℕ → Oracle) (p : Condition)
     (s : List Bool) (hs : p.left <+: s) :

@@ -122,7 +122,7 @@ theorem bval_replicate_true (m : ℕ) (l : List Bool) :
   induction m with
   | zero => simp
   | succ m ih =>
-      rw [List.replicate_succ', ← List.append_assoc, bval_concat, if_pos rfl, pow_succ]
+      rw [List.replicate_succ', ← List.append_assoc, bval_concat, ite_eq_left rfl, pow_succ]
       linarith
 
 theorem bval_replicate_false (m : ℕ) (l : List Bool) :
@@ -131,7 +131,7 @@ theorem bval_replicate_false (m : ℕ) (l : List Bool) :
   | zero => simp
   | succ m ih =>
       rw [List.replicate_succ', ← List.append_assoc, bval_concat, pow_succ]
-      simp only [Bool.false_eq_true, if_false]
+      simp only [Bool.false_eq_true, ite_false]
       linarith
 
 /-- A numeral of value `v` has at most `log₂ (v + 1)` digits. -/
@@ -298,7 +298,7 @@ theorem runs_incr (R : ℕ → List Bool) (j c f : ℕ) (hj : j < K) (hc : c < K
           refine runs_popBranch _ j hj (by rw [upd3_j hjc hjf]; simp) N
             (by rw [upd3_j hjc hjf]; simp at hlen ⊢; omega) hB i _ _ _ ?_
           simp only [upd3_j hjc hjf, List.getLast_append_singleton, Bool.false_eq_true,
-            if_false, List.dropLast_concat, upd3_upd_j hjc hjf]
+            ite_false, List.dropLast_concat, upd3_upd_j hjc hjf]
           refine (runs_append _ j hj true N (by rw [upd3_j hjc hjf]; simp at hlen ⊢; omega)
             hB i).seq ?_
           rw [upd3_upd_j hjc hjf, upd3_j hjc hjf]
@@ -317,7 +317,7 @@ theorem runs_incr (R : ℕ → List Bool) (j c f : ℕ) (hj : j < K) (hc : c < K
         · refine runs_popBranch _ j hj hne N
             (by rw [upd3_j hjc hjf]; simp; omega) hB i _ _ _ ?_
           simp only [upd3_j hjc hjf, List.replicate_succ', ← List.append_assoc,
-            List.getLast_append_singleton, if_true, List.dropLast_concat, upd3_upd_j hjc hjf]
+            List.getLast_append_singleton, ite_true, List.dropLast_concat, upd3_upd_j hjc hjf]
           refine (runs_append _ c hc true N (by rw [upd3_c hcf]; simp; omega) hB i).of_eq rfl ?_
           rw [upd3_upd_c hcf, upd3_c hcf, show m - k = m - (k + 1) + 1 by omega,
             List.replicate_succ']
@@ -338,7 +338,7 @@ theorem runs_incr (R : ℕ → List Bool) (j c f : ℕ) (hj : j < K) (hc : c < K
         refine wl_step hc hwB _ _ _ i i i (by rw [upd3_c hcf]; simp) ?_ (ih (by omega))
         refine runs_popBranch _ c hc (by rw [upd3_c hcf]; simp) N
           (by rw [upd3_c hcf]; simp; omega) hB i _ _ _ ?_
-        simp only [upd3_c hcf, List.replicate_succ', List.getLast_append_singleton, if_true,
+        simp only [upd3_c hcf, List.replicate_succ', List.getLast_append_singleton, ite_true,
           List.dropLast_concat, upd3_upd_c hcf]
         refine (runs_append _ j hj false N (by rw [upd3_j hjc hjf]; simp; omega) hB i).of_eq rfl
           ?_
@@ -411,7 +411,7 @@ theorem bdecr_shape (pre : List Bool) (m : ℕ) (hpre : pre = [] ∨ ∃ t, pre 
   · simp [decrR_replicate_nil, decrHead, decrCarry]
   · rw [List.reverse_append, List.reverse_replicate, List.reverse_append]
     simp only [List.reverse_cons, decrHead, decrCarry]
-    simp only [List.append_eq_nil_iff, List.cons_ne_nil, and_false, if_false,
+    simp only [List.append_eq_nil_iff, List.cons_ne_nil, and_false, ite_false,
       List.dropLast_concat, List.reverse_nil, List.nil_append]
     rw [List.singleton_append, decrR_replicate_true]
     simp
@@ -421,7 +421,7 @@ theorem bval_bdecr (l : List Bool) : bval (bdecr l) = bval l - 1 := by
   rw [bdecr_shape pre m hpre]
   have h1 := bval_replicate_false m pre
   rcases hpre with rfl | ⟨t, rfl⟩
-  · simp only [decrHead, decrCarry, if_true, List.nil_append]
+  · simp only [decrHead, decrCarry, ite_true, List.nil_append]
     simp only [bval_nil, List.nil_append] at h1
     cases m with
     | zero => simp
@@ -431,9 +431,9 @@ theorem bval_bdecr (l : List Bool) : bval (bdecr l) = bval l - 1 := by
         rw [pow_succ] at h1
         omega
   · have hne : t ++ [true] ≠ [] := by simp
-    simp only [decrHead, decrCarry, hne, if_false, List.dropLast_concat]
+    simp only [decrHead, decrCarry, hne, ite_false, List.dropLast_concat]
     have h2 := bval_replicate_true m (t ++ [false])
-    simp only [bval_concat, if_true, Bool.false_eq_true, if_false] at h1 h2
+    simp only [bval_concat, ite_true, Bool.false_eq_true, ite_false] at h1 h2
     have : 2 ^ m * (2 * bval t + 1 + 2) = 2 ^ m * (2 * bval t + 2 + 1) := by ring_nf
     omega
 
@@ -478,7 +478,7 @@ theorem runs_decr (R : ℕ → List Bool) (j c f : ℕ) (hj : j < K) (hc : c < K
           obtain ⟨t, rfl⟩ := hpre.resolve_left hne
           refine runs_popBranch _ j hj (by rw [upd3_j hjc hjf]; simp) N
             (by rw [upd3_j hjc hjf]; simp at hlen ⊢; omega) hB i _ _ _ ?_
-          simp only [upd3_j hjc hjf, List.getLast_append_singleton, if_true,
+          simp only [upd3_j hjc hjf, List.getLast_append_singleton, ite_true,
             List.dropLast_concat, upd3_upd_j hjc hjf]
           refine (runs_append _ j hj false N (by rw [upd3_j hjc hjf]; simp at hlen ⊢; omega)
             hB i).seq ?_
@@ -496,7 +496,7 @@ theorem runs_decr (R : ℕ → List Bool) (j c f : ℕ) (hj : j < K) (hc : c < K
         · refine runs_popBranch _ j hj hne N
             (by rw [upd3_j hjc hjf]; simp; omega) hB i _ _ _ ?_
           simp only [upd3_j hjc hjf, List.replicate_succ', ← List.append_assoc,
-            List.getLast_append_singleton, Bool.false_eq_true, if_false, List.dropLast_concat,
+            List.getLast_append_singleton, Bool.false_eq_true, ite_false, List.dropLast_concat,
             upd3_upd_j hjc hjf]
           refine (runs_append _ c hc true N (by rw [upd3_c hcf]; simp; omega) hB i).of_eq rfl ?_
           rw [upd3_upd_c hcf, upd3_c hcf, show m - k = m - (k + 1) + 1 by omega,
@@ -521,7 +521,7 @@ theorem runs_decr (R : ℕ → List Bool) (j c f : ℕ) (hj : j < K) (hc : c < K
         refine wl_step hc hwB _ _ _ i i i (by rw [upd3_c hcf]; simp) ?_ (ih (by omega))
         refine runs_popBranch _ c hc (by rw [upd3_c hcf]; simp) N
           (by rw [upd3_c hcf]; simp; omega) hB i _ _ _ ?_
-        simp only [upd3_c hcf, List.replicate_succ', List.getLast_append_singleton, if_true,
+        simp only [upd3_c hcf, List.replicate_succ', List.getLast_append_singleton, ite_true,
           List.dropLast_concat, upd3_upd_c hcf]
         have hdh : (decrHead pre).length ≤ pre.length := by
           unfold decrHead; split

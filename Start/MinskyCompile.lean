@@ -363,9 +363,9 @@ theorem rfindBody_iff {cfP : Prog} {cf : Code} {b a m : ℕ}
     split_ifs <;> first | omega | simp_all
   · rw [seq_total (exec_clear _ _)]
     by_cases hv : v = 0
-    · rw [if_pos hv, total_iff (exec_ifPos_zero (by simp [hv]))]
+    · rw [ite_eq_left hv, total_iff (exec_ifPos_zero (by simp [hv]))]
       constructor <;> rintro rfl <;> upd_tac
-    · rw [if_neg hv, total_iff (exec_ifPos_pos (by simp [hv]) (.seq .inc .inc) (by upd_val))]
+    · rw [ite_eq_right hv, total_iff (exec_ifPos_pos (by simp [hv]) (.seq .inc .inc) (by upd_val))]
       constructor <;> rintro rfl <;> upd_tac
 
 /-- The search condition at `j`: the value of `cf` at `pair a (j + m)` is defined and nonzero. -/
@@ -395,12 +395,12 @@ theorem rfindLoop_sound {cfP : Prog} {cf : Code} {b a : ℕ}
       (by upd_val) (by upd_val) (by upd_val) (by upd_val) (zero_above hr (by omega) (by omega))
       _).1 e₁
     by_cases hw0 : w = 0
-    · rw [if_pos hw0] at e₂
+    · rw [ite_eq_left hw0] at e₂
       refine ⟨0, fun j hj => absurd hj (Nat.not_lt_zero j), by simpa [hw0] using hw, ?_⟩
       rw [(loop_zero_iff (by upd_val)).1 e₂]
       subst hm
       upd_tac
-    · simp only [if_neg hw0] at e₂ ih₂
+    · simp only [ite_eq_right hw0] at e₂ ih₂
       obtain ⟨k, hk, hk0, rfl⟩ := ih₂ trivial (m + 1) (by upd_val) (by upd_val) (by upd_val)
         (by upd_val) (by upd_val)
         (zero_above (c := b + 5) (zero_above (c := b + 5) (zero_above (c := b + 5) hr (by omega)
@@ -434,7 +434,7 @@ theorem rfindLoop_complete {cfP : Prog} {cf : Code} {b a : ℕ}
     refine ⟨_, (rfindBody_iff hf (r₀ := update r (b + 2) 0) (by upd_val) (by upd_val)
       (by upd_val) (by upd_val) (by upd_val) (zero_above hr (by omega) (by omega)) _).2
       ⟨w, by simpa [hm] using hw, rfl⟩, ?_⟩
-    rw [if_neg hw0]
+    rw [ite_eq_right hw0]
     refine (rfindLoop_complete hf k (m + 1) _ (by upd_val) (by upd_val) (by upd_val)
       (by upd_val) (by upd_val)
       (zero_above (c := b + 5) (zero_above (c := b + 5) (zero_above (c := b + 5) hr (by omega)

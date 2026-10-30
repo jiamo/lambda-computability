@@ -230,7 +230,7 @@ theorem finite_uniform_sunflower (family : Finset (Finset α)) (s r : ℕ)
         have hf : ∀ A ∈ family, f A ∈ A ∧ f A ∈ U := by
           intro A hA
           dsimp only [f]
-          rw [dif_pos (hmeet A hA)]
+          rw [dite_eq_left (hmeet A hA)]
           exact (hmeet A hA).choose_spec
         have hprod : U.card * (s.factorial * (r - 1) ^ s) < family.card := by
           calc

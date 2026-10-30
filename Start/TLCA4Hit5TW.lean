@@ -209,7 +209,7 @@ theorem SqT.step {x : ℕ} {P P' : Lambda} (h : SqT x P) (hs : betaEtaStep P P')
     rcases betaEtaStep_app_cases hs with ⟨c, hc, rfl⟩ | ⟨f', hf, rfl⟩ | ⟨a', ha, rfl⟩
     · simp only [lamM, Lambda.lam.injEq] at hc
       subst hc
-      simp only [Lambda.subst, if_pos]
+      simp only [Lambda.subst, ite_eq_left]
       exact .ww hW
     · exact (nf_lamM _ hf).elim
     · exact .mw (hW.step ha)

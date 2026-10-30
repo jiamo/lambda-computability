@@ -78,7 +78,7 @@ lemma gap_step {n i:ℕ} (h:i+1<L n):gap n i=2*gap n (i+1):=by
 lemma oldpay {n i a b:ℕ} (he:i+1<L n)(ha:Brole a)(hb:Brole b):
     weight n b i+slackT n a (i+1) ≤ weight n a (i+1):=by
     have he1:= (weights n b i).2; have he2:= (weights n a (i+1)).2
-    unfold slackT at *; rw [if_pos ha] at *; rw [if_pos hb,gap_step he] at he1
+    unfold slackT at *; rw [ite_eq_left ha] at *; rw [ite_eq_left hb,gap_step he] at he1
     unfold Brole at *
     have hp:64-a+1 ≤  (64-b)*2:=by omega
     nlinarith [Nat.mul_le_mul_right (gap n (i+1)) hp]
@@ -90,8 +90,8 @@ lemma renewal {n i a b m j:ℕ}(he:m+slackT n a i ≤ n):
     omega
 lemma endbirth {n i a b:ℕ}(h:i+1=L n)(ha:Brole a)(hb:¬Brole b)(ht:b ≤ 64):
     slackT n a i=1∧ weight n a i+1 ≤ weight n b 0:=by
-   have hk:slackT n a i=1:=by unfold slackT gap; rw [if_pos ha,h.symm]; simp
-   have hc:slackT n b 0=1:=if_neg hb
+   have hk:slackT n a i=1:=by unfold slackT gap; rw [ite_eq_left ha,h.symm]; simp
+   have hc:slackT n b 0=1:=ite_eq_right hb
    have hp:= sooner (k:=0) (hk.trans hc.symm)
                     (show a<b by unfold Brole at *; omega) ht
    rw [hc] at hp; exact ⟨hk,hp⟩
@@ -556,7 +556,7 @@ def schedule: Scheme:=
 
 lemma licensedW{x a}(he:licensed r x a): Age.W a ≤  planets r x:=by
     rcases he with he|⟨he,hh⟩
-    · unfold W; rw [if_pos he]; unfold planets; omega
+    · unfold W; rw [ite_eq_left he]; unfold planets; omega
     rw [←hh,WI]; unfold act weight planets
     have hp : MV (dec a:Crt)  ≤  M r x:= he.2.1
     omega
@@ -624,7 +624,7 @@ lemma scenic (x:Word) (P:Cog) (he:2 ≤ v.slope): (stageC r v x P).Shape:=by
      have he0:=(of_decide_eq_true ha).2
      by_cases hm:cell q=0
      · exact decide_eq_true (Or.inl hm)
-     rw [if_neg hm] at he0; exact decide_eq_true he0.1
+     rw [ite_eq_right hm] at he0; exact decide_eq_true he0.1
    intro i hi a ha
    have hh:i ≤  z.peak:= Nat.le_of_lt_succ (mem_range.1 hi)
    obtain ⟨h1,h2,h3⟩:=ha
@@ -759,14 +759,14 @@ lemma tints (x:Word)(a:Part)(he:(pigmentA r x).proper a.2): (pigmentA r x).prope
     rcases a with ⟨⟨⟨⟨m,b⟩,⟨k,j⟩,⟨L,n⟩,s⟩,i⟩, t⟩
     simp only [ray]
     by_cases h:m<4
-    · simp only [if_pos h]
+    · simp only [ite_eq_left h]
       have ht := (pigmentA r x).stay b i he
       cases denote m
       · exact ht.1
       · exact ht.2.1
       · exact ht.2.2.1
       exact ht.2.2.2
-    rw [if_neg h]
+    rw [ite_eq_right h]
     split <;> exact he
 lemma life (x:Word)(P:Cog)(p:Cone)(he:2  ≤  v.slope):Harp.Wick.Life (harp r v p) (wick r v x P) := by
    refine ⟨scenic _ _ _ _ he,rfl,rfl,fun q h u _ a z=>?_⟩
@@ -868,8 +868,8 @@ lemma fly_pair {x i z h v a b} (he:Flight r x i z a b)(hz:Flight r x i h a v):b=
                 let M:=r.w.p.M; have hk : 0<M:=by have hh:=r.w.p.mOK; unfold M; omega
                 dsimp only [radix] at *
                 by_cases he0:i-3<r.w.p.M
-                · simp only [if_pos he0] at *; grind
-                simp only [if_neg he0] at *
+                · simp only [ite_eq_left he0] at *; grind
+                simp only [ite_eq_right he0] at *
                 obtain ⟨_,_,hA,hB,hE⟩:=he; obtain ⟨_,_,hs,hV,hU⟩:=hz
                 unfold M at hk
                 constructor <;> nlinarith
@@ -886,10 +886,10 @@ lemma fly_one {x i z u v b} (he:Flight r x i z u b)(hz:Flight r x i z v b):u=v:=
                 simp only [hn,hm,ite_false] at hz
                 dsimp only [radix] at *
                 by_cases he0:i-3<r.w.p.M
-                · simp only [if_pos he0] at *
+                · simp only [ite_eq_left he0] at *
                   obtain ⟨_,_,_,hB⟩:=he; obtain ⟨_,_,_,hU⟩:=hz
                   unfold M at hk; nlinarith
-                simp only [if_neg he0] at *; grind
+                simp only [ite_eq_right he0] at *; grind
 
 section
 variable {α}[Wire α] {i j n a b: PT α ℕ}

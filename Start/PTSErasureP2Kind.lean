@@ -288,7 +288,7 @@ theorem liftP_hyp_upSP {Δ Δ' : ℕ → Cls} {ρ ρ' : ℕ → SkP} {σ : ℕ �
     ∀ n, IsC (ncons c Δ' n) → erP (ncons c Δ) (upSP ρ) (Expr.liftSub σ n) = upSP ρ' n
   | 0, _ => by
       show erP (ncons c Δ) (upSP ρ) (.var 0) = .base 0
-      exact if_pos hc
+      exact ite_eq_left hc
   | n + 1, h => by
       simp only [Expr.liftSub_succ, erP_rename, ncons_succ]
       show erP Δ (fun i => (ρ i).rename Nat.succ) (σ n) = (ρ' n).rename Nat.succ
@@ -371,7 +371,7 @@ theorem ncons_ne_kind {Δ : ℕ → Cls} (hΔ : ∀ n a, Δ n ≠ .kind a) {c : 
 theorem erP_single_hyp (U : Expr Srt) (Δ : ℕ → Cls) (ρ : ℕ → SkP) :
     ∀ n, IsC (ncons (cl Δ U) Δ n) → erP Δ ρ (Expr.single U n) = ncons (erP Δ ρ U) ρ n
   | 0, _ => rfl
-  | n + 1, hn => by simp only [Expr.single, erP, ncons_succ] at hn ⊢; rw [if_pos hn]
+  | n + 1, hn => by simp only [Expr.single, erP, ncons_succ] at hn ⊢; rw [ite_eq_left hn]
 
 /-- Erasure of an instance, for an argument of any non-kind class. -/
 theorem erPK_instantiate_ncons (B U : Expr Srt) (Δ : ℕ → Cls) (ρ : ℕ → SkP)
@@ -385,7 +385,7 @@ theorem erP_single_obj_hyp (N : Expr Srt) (Δ : ℕ → Cls) (ρ : ℕ → SkP) 
     (hN : ¬ IsC (cl Δ N)) :
     ∀ n, IsC (ncons (cl Δ N) Δ n) → erP Δ ρ (Expr.single N n) = ncons t ρ n
   | 0, h => absurd h hN
-  | n + 1, hn => by simp only [Expr.single, erP, ncons_succ] at hn ⊢; rw [if_pos hn]
+  | n + 1, hn => by simp only [Expr.single, erP, ncons_succ] at hn ⊢; rw [ite_eq_left hn]
 
 /-- **Erasure is invariant under object substitution** (types). -/
 theorem erP_instantiate_obj (B N : Expr Srt) (Δ : ℕ → Cls) (ρ : ℕ → SkP) (t : SkP)
@@ -429,10 +429,10 @@ theorem erK_instantiate (B U : Expr Srt) (Δ : ℕ → Cls) (ρ : ℕ → SkP)
 /-! ### Invariance under β-reduction of well-typed λP2 terms -/
 
 theorem erP_app_isC {Δ : ℕ → Cls} {ρ : ℕ → SkP} {F a : Expr Srt} (h : IsC (cl Δ (.app F a))) :
-    erP Δ ρ (.app F a) = erP Δ ρ F := if_pos h
+    erP Δ ρ (.app F a) = erP Δ ρ F := ite_eq_left h
 
 theorem erP_lam_isC {Δ : ℕ → Cls} {ρ : ℕ → SkP} {A b : Expr Srt} (h : IsC (cl Δ (.lam A b))) :
-    erP Δ ρ (.lam A b) = erP (ncons (bindC (cl Δ A)) Δ) (ncons junkP ρ) b := if_pos h
+    erP Δ ρ (.lam A b) = erP (ncons (bindC (cl Δ A)) Δ) (ncons junkP ρ) b := ite_eq_left h
 
 open CoC in
 /-- **Erasure is invariant under β-reduction of well-typed λP2 terms**, for types (`erP`) and,

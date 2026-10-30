@@ -134,7 +134,7 @@ noncomputable def cand (q v:ℕ):Site := by
     exact if h:∃ w,p.talk q v w then Classical.choose h else (0,0)
 lemma grab {q v w}(h:p.talk q v w):p.cand q v=w:=by
     unfold cand; have he : ∃ w,p.talk q v w:=⟨_,h⟩
-    rw [dif_pos he]
+    rw [dite_eq_left he]
     exact aon (Classical.choose_spec he) h
 
 noncomputable def echo (q i:ℕ):ℕ:=(p.cand q (glove clearG i)).1
@@ -188,13 +188,13 @@ variable {p:Dome}{t f} (h:p.Streams t f)
 include h
 lemma throve {z}(hz:p.dual t z){i}(hi:i∈p.P)(b:Bool):p.pour t z b i=f z b i:=by
    unfold pour
-   rw [if_pos ⟨hz,hi⟩,p.grab (h.runs z hz i hi b clearG p.cleared)]
+   rw [ite_eq_left ⟨hz,hi⟩,p.grab (h.runs z hz i hi b clearG p.cleared)]
    cases he:f z b i <;> simp [AtM]
 lemma lines {z}(hz:p.dual t z){i}(hi:i∈p.P)(b:Bool):p.curve t z b i=f z b i:=by
    unfold curve
    by_cases he : f z b i=none
    · rw [h.throve hz hi,he]; split<;> rfl
-   rw [if_pos ?_,h.throve hz hi]
+   rw [ite_eq_left ?_,h.throve hz hi]
    cases b
    · left; rfl
    right; intro u w hh
@@ -203,7 +203,7 @@ lemma lines {z}(hz:p.dual t z){i}(hi:i∈p.P)(b:Bool):p.curve t z b i=f z b i:=b
      cases h0:f z true i with
      | none=> contradiction
      | some a=> exact h.uniq i hi u hm z hz w a hh h0
-   unfold pour at hh; rw [if_neg (fun e=>hm e.1)] at hh; contradiction
+   unfold pour at hh; rw [ite_eq_right (fun e=>hm e.1)] at hh; contradiction
 lemma canonicalS : p.Streams t (p.curve t):=by
    constructor
    · intro z hz i hi b a ha; rw [h.lines hz hi]; exact h.runs z hz i hi b a ha

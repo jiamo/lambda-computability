@@ -105,7 +105,7 @@ theorem YBase.substH {x : ℕ} {K s : ℤ} {j : ℕ} {Q : Lambda} (hQ : HG x j Q
     H5Core x K ((k : ℤ) + s) (Lambda.subst Q 0 P) := by
   cases h with
   | q hR =>
-    simp only [Lambda.subst, if_pos]
+    simp only [Lambda.subst, ite_eq_left]
     exact .pq hQ (hR.substH hQ) (by push_cast at hK ⊢; omega)
   | m hR =>
     simp only [Lambda.subst, subst_lamM]
@@ -114,7 +114,7 @@ theorem YBase.substH {x : ℕ} {K s : ℤ} {j : ℕ} {Q : Lambda} (hQ : HG x j Q
     simp only [Lambda.subst]
     exact .pq (h1.substH hQ) (h2.substH hQ) (by push_cast at hK ⊢; omega)
   | comp hR =>
-    simp only [Lambda.subst, Lambda.subst_lift, if_pos]
+    simp only [Lambda.subst, Lambda.subst_lift, ite_eq_left]
     refine .pq (.yg hR) hQ ?_
     rw [tri_succ_int] at hK
     push_cast; omega
@@ -131,7 +131,7 @@ theorem HB.substH {x : ℕ} {K s : ℤ} {j : ℕ} {Q : Lambda} (hQ : HG x j Q)
     Ext (H5Core x) x K (i + s) (Lambda.subst Q 0 P) := by
   cases h with
   | q hR =>
-    simp only [Lambda.subst, if_pos]
+    simp only [Lambda.subst, ite_eq_left]
     exact ⟨0, .pq hQ (hR.substH hQ) (by omega)⟩
   | m hR =>
     simp only [Lambda.subst, subst_lamM]
@@ -140,7 +140,7 @@ theorem HB.substH {x : ℕ} {K s : ℤ} {j : ℕ} {Q : Lambda} (hQ : HG x j Q)
     simp only [Lambda.subst]
     exact ⟨0, .pq (h1.substH hQ) (h2.substH hQ) (by push_cast at hK ⊢; omega)⟩
   | comp hR hn =>
-    simp only [Lambda.subst, Lambda.subst_lift, if_pos]
+    simp only [Lambda.subst, Lambda.subst_lift, ite_eq_left]
     refine ⟨0, .pq hR hQ ?_⟩
     rw [tri_succ_int] at hK
     subst hn
@@ -148,7 +148,7 @@ theorem HB.substH {x : ℕ} {K s : ℤ} {j : ℕ} {Q : Lambda} (hQ : HG x j Q)
   | mw hW =>
     cases hW with
     | @ap W hW =>
-      simp only [Lambda.subst, subst_lamM, Lambda.subst_lift, if_pos]
+      simp only [Lambda.subst, subst_lamM, Lambda.subst_lift, ite_eq_left]
       exact ⟨0, .mwq hW hQ (by omega)⟩
     | body hT =>
       simp only [Lambda.subst, subst_lamM]
@@ -156,7 +156,7 @@ theorem HB.substH {x : ℕ} {K s : ℤ} {j : ℕ} {Q : Lambda} (hQ : HG x j Q)
   | ww hW =>
     cases hW with
     | @ap W hW =>
-      simp only [Lambda.subst, Lambda.subst_lift, if_pos]
+      simp only [Lambda.subst, Lambda.subst_lift, ite_eq_left]
       exact ⟨0, .wqy hW hQ (by omega)⟩
     | body hT =>
       simp only [Lambda.subst]
@@ -200,7 +200,7 @@ theorem H5Core.step {x : ℕ} {K n : ℤ} {P P' : Lambda} (h : H5Core x K n P)
     rcases betaEtaStep_app_cases hs with ⟨c, hc, rfl⟩ | ⟨f', hf, rfl⟩ | ⟨a', ha, rfl⟩
     · simp only [lamM, Lambda.lam.injEq] at hc
       subst hc
-      simp only [Lambda.subst, if_pos]
+      simp only [Lambda.subst, ite_eq_left]
       exact .base ⟨0, .pq hQ hQ hK⟩
     · exact (nf_lamM _ hf).elim
     · exact .base ⟨0, .mq (hQ.step ha) hK⟩
@@ -208,7 +208,7 @@ theorem H5Core.step {x : ℕ} {K n : ℤ} {P P' : Lambda} (h : H5Core x K n P)
     rcases betaEtaStep_app_cases hs with ⟨c, hc, rfl⟩ | ⟨f', hf, rfl⟩ | ⟨a', ha, rfl⟩
     · simp only [lamM, Lambda.lam.injEq] at hc
       subst hc
-      simp only [Lambda.subst, if_pos]
+      simp only [Lambda.subst, ite_eq_left]
       exact .base ⟨0, .wqy hW hQ hK⟩
     · exact (nf_lamM _ hf).elim
     · rcases betaEtaStep_app_cases ha with ⟨c, hc, rfl⟩ | ⟨f', hf, rfl⟩ | ⟨a', ha', rfl⟩

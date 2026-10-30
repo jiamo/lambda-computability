@@ -823,7 +823,7 @@ lemma amount (e:s.SetUp) {M} (h:q.ready s M) (hv:q.two=true) (x y)
    rw [normal s hv]
    have he : q.main=true := by unfold two at hv; grind
    exact bed.truth s.N (q.ownedValid s e h hv)
-       (fun x hx=> by unfold phi; rw [if_pos he]; exact q.tag.wall _ _ _ hx) _ _ hx hy
+       (fun x hx=> by unfold phi; rw [ite_eq_left he]; exact q.tag.wall _ _ _ hx) _ _ hx hy
 
 lemma slug (q:Quest) (s:Scene n) (h:q.two=true) :
    (q.goal s).BothPin (q.need s) := by rw [normal s h]; exact bed.twopin (n:=n) (q.question s) _ _ s.N _
@@ -840,7 +840,7 @@ lemma unscale {M} (h:q.ready s M) (he:s.SetUp) (hm:q.main=true) (hx : q.tag=.chi
    have ht : C≤ (s.P.T+1:ℝ)*rate q.i := (q.form0 s h he).key x y
    have hP : C=(s.stage q.i).C x y:=by simp [C,question,hx,Kind.matrix]
    have hd : q.damp s y=1:=by simp [damp,hx,Kind.narrow,hm]
-   rw [hd,mul_one,phi, if_pos hm,hx,binsV,←hP]
+   rw [hd,mul_one,phi, ite_eq_left hm,hx,binsV,←hP]
    have hh := bexact s.P q.a q.i none C ht
    rw [dirShare,mul_one] at hh
    exact hh
@@ -856,7 +856,7 @@ lemma transit {M} (h:q.ready s M) (he:s.SetUp) (hm:q.main=true) {j} (hx : q.tag=
    have ht : C≤ (s.P.T+1:ℝ)*rate q.i := (q.form0 s h he).key x y
    have hP : C=(s.stage q.i).D n x y:=by simp [C,question,hx,Kind.matrix]
    have hd : q.damp s y=1:=by simp [damp,hx,Kind.narrow,hm]
-   rw [hd,mul_one,phi, if_pos hm,hx,←hP]
+   rw [hd,mul_one,phi, ite_eq_left hm,hx,←hP]
    exact bexact s.P q.a q.i (some j) C ht
 
 lemma valid_E {M b k} (h:q.ready s M) (he:s.SetUp) (hm:q.main=true) (hx:q.tag=.echo b k)
@@ -879,7 +879,7 @@ lemma valid_E {M b k} (h:q.ready s M) (he:s.SetUp) (hm:q.main=true) (hx:q.tag=.e
        ((div_le_iff₀ hh).2 ht) (by unfold cap; linarith)⟩
    have hq : q.phi s ((q.question s).d x y)=Q (C/f) := by
       have hu : (q.question s).d x y=C/f:=by simp only [Ask.d,question,← ha1]; rfl
-      rw [hu,phi,if_pos hm,hx,Kind.piece]
+      rw [hu,phi,ite_eq_left hm,hx,Kind.piece]
       simp only [Qc,clip,max_eq_right heP.1,min_eq_right heP.2]
    rw [hq]
    have hw (g : ℝ) : f*(Q (C/f)*g)= f*Q (C/f)*g := by ring
@@ -903,8 +903,8 @@ lemma complete {b : Batch} (hb:0<b.count) {t M} (he:s.SetUp) (h:(q.bend b t).rea
    have hz:=(q.bend b t).valid_E s (k:=b.count-1) h he rfl rfl x y hx hy
    rw [show b.count-1+1=b.count by omega] at hz
    unfold previous; by_cases em:b.pilot=true
-   · rw [if_pos em]; rw [if_pos em] at hz; exact hz
-   · rw [if_neg em]; rw [if_neg em] at hz; exact hz
+   · rw [ite_eq_left em]; rw [ite_eq_left em] at hz; exact hz
+   · rw [ite_eq_right em]; rw [ite_eq_right em] at hz; exact hz
 
 end Quest
 
@@ -925,14 +925,14 @@ lemma peek_U (s:Scene n) (i j x) (h:x∈(s.stage i).S) :
    let u:=p.origin s t
    have hd : u=q.botRow:= funext fun i=>by simp [u,Quest.origin,Quest.truth_second,hp,q,Ask.botRow,Ask.raw]
    simp only [Grid.pre]
-   rw [if_pos (show x∈((p.builder s).sess t).src∧ y∈((p.builder s).sess t).dst∧
+   rw [ite_eq_left (show x∈((p.builder s).sess t).src∧ y∈((p.builder s).sess t).dst∧
                                 (True ∨ y∈((p.builder s).sess t).narrow) from ⟨hx,hy,Or.inl trivial⟩)]
    change (u x).val _ _ _ y * _ * _= _
    rw [hd]
    have he1 : ((p.builder s).sess t).sp=false := rfl
    have he2 : p.guardP s (crossP t) y=1 := by simp [p,Quest.guardP,Quest.damp,Peek.score,Kind.narrow]
    unfold Grid.incG
-   rw [if_neg (by simp only [he1]; decide),he2,mul_one,mul_one]
+   rw [ite_eq_right (by simp only [he1]; decide),he2,mul_one,mul_one]
    unfold Blob.val
    change light _*gate delta _*1= _
    rw [mul_one]; unfold mark; congr 1
@@ -1019,19 +1019,19 @@ lemma Befit.covering {T : Tonic s.P} (v:Purse T) (h:Befit s q b) (hs:s.SetUp) {M
       obtain ⟨-,h1,h2,h3⟩:=h
       have ho := s.rankok hs q.i
       have hH : p.f=rate q.i := by unfold Stg.f; rw [s.phase hs]
-      have hE : F=p.corr n s.P.T := by unfold F previous; rw [if_neg (by rw [h1]; decide),h2]
+      have hE : F=p.corr n s.P.T := by unfold F previous; rw [ite_eq_right (by rw [h1]; decide),h2]
       have hu := cover (S:=p.S) (g:=p.gm n p.p.T)
                     (T:=s.P.T) (x:=x) (y:=y) (hH.symm ▸ ho) (rate_pos (p.i))
                           (fun x=>gamma_mem _)
       change p.C x y+ p.corr n s.P.T x y+mm p.S (p.corr n s.P.T) p.C x y ≤
                (1+2*s.P.T/A)*
             (p.C x y+mm p.S (p.corr n s.P.T) p.C x y - p.corr n s.P.T x y) at hu
-      rw [if_pos hp] at ht ⊢
+      rw [ite_eq_left hp] at ht ⊢
       apply le_trans _ (mul_le_mul_of_nonneg_right v.peakD he)
       rw [ht,hE,add_right_comm]
       exact hu
     · have hx:=v.one_peak
-      rw [if_neg hp] at ht ⊢
+      rw [ite_eq_right hp] at ht ⊢
       nlinarith
 
 lemma eddy {M k m u} (he:q.ready s M) (hr:k∈q.tray s q.i M)
@@ -1045,7 +1045,7 @@ lemma eddy_rank (h:Befit s q b) {u k} (hv : u≤q.u) :
     Connection (q.key s) k s.P ((q.binReq u k).key s) := by
    have he:= h.outer
    refine ⟨?_,?_,hv⟩
-   · change 1+coreR s.P q.i+3+(if true=true then 1 else 0)<1+coreR s.P q.i+Kind.depth s.P q.tag+_ ; rw [if_pos (rfl)]; omega
+   · change 1+coreR s.P q.i+3+(if true=true then 1 else 0)<1+coreR s.P q.i+Kind.depth s.P q.tag+_ ; rw [ite_eq_left (rfl)]; omega
    dsimp only [key,binReq]; omega
 
 lemma BendOK {a m M} (e:Befit s q b) (hp : q.ready s M) (hh:0<b.count)
@@ -1062,8 +1062,8 @@ lemma BendRank {k a} (e:Befit s q b) (hh:0<b.count)
    rcases e with ⟨-,he|⟨he,hb⟩⟩|⟨-,hb,hq,j,he⟩
    · rw [he]
      cases b.pilot <;> dsimp [Kind.depth] <;> omega
-   · rw [he,hb,Kind.depth,Kind.depth,if_pos (rfl:Bool.true=Bool.true)]; omega
-   · rw [he,hb,Kind.depth,Kind.depth,if_pos (rfl:Bool.true=Bool.true)]; omega
+   · rw [he,hb,Kind.depth,Kind.depth,ite_eq_left (rfl:Bool.true=Bool.true)]; omega
+   · rw [he,hb,Kind.depth,Kind.depth,ite_eq_left (rfl:Bool.true=Bool.true)]; omega
 
 end Quest
 end
@@ -1202,7 +1202,7 @@ lemma negative (v:Purse T) (he:s.SetUp) (h:q.ready s M) {r:Roll n} (hr:Tuned T M
           have hw:= (s.rankok he q.i).nn
           have hp : 0≤p.C x y:=hw x y
           have hh : 0≤ mm p.S F p.C x y:=sum_nonneg fun i _=> mul_nonneg (hv ..) (hw ..)
-          dsimp only at hc; rw [if_pos hn] at hc
+          dsimp only at hc; rw [ite_eq_left hn] at hc
           apply le_trans _ hc; change F x y ≤ p.C x y + _ + F x y; linarith)
    exact ha.negR
 
@@ -1386,7 +1386,7 @@ lemma pipeDust (v:Purse T) (e:s.SetUp) (h:q.ready s M) (hw:Befit s q b) :
         ∑ k∈ q.company s b M,f k=(∑ k∈K,f k)+(if b.trim then f E else 0) := by
         have hs:E∉K:=by dsimp [K,E]; by_cases e:b.count=0<;> simp [e]
         change ∑ k∈(K∪if b.trim then {E} else ∅),_=_ ; by_cases e:b.trim=true
-        · rw [if_pos e,if_pos e,sum_union (disjoint_singleton_right.2 hs),sum_singleton]
+        · rw [ite_eq_left e,ite_eq_left e,sum_union (disjoint_singleton_right.2 hs),sum_singleton]
         simp [e]
      let g (t:Ray):=(q.sign s r b t).account i j
      unfold Flame.tail
@@ -1398,7 +1398,7 @@ lemma pipeDust (v:Purse T) (e:s.SetUp) (h:q.ready s M) (hw:Befit s q b) :
         · simp only [e, ite_true, sum_range_succ, sum_range_zero,zero_add]
           have hf:F=Hie.zero:=prev0 p e
           rw [hf]; simp [mm,Hie.zero,g,sign,localR,p,binsV,a]
-        · rw [if_neg e,sum_range_succ,sum_range_succ,sum_range_zero,zero_add]
+        · rw [ite_eq_right e,sum_range_succ,sum_range_succ,sum_range_zero,zero_add]
           rfl
      have hE:g E= -(F i j/a):=rfl
      let V:=∑ k∈ A, bin k (p.C i j)
@@ -1465,12 +1465,12 @@ lemma wellPiped (v:Purse T) (e:s.SetUp) (h:q.ready s M) (hr:Tuned T M r) (hw:Bef
    rcases mem_union.1 ht with he|he
    · obtain ⟨hx,hp⟩:=mem_product.mp he
      by_cases he:t.2=0
-     · rw [sign,if_pos he]; exact hw.staying v e h hr hx
+     · rw [sign,ite_eq_left he]; exact hw.staying v e h hr hx
      have hh := mem_range.mp hp
      split at hh
      · omega
      next hd=>
-     rw [sign,if_neg he,if_pos (by omega : t.2=1)]
+     rw [sign,ite_eq_right he,ite_eq_left (by omega : t.2=1)]
      exact hw.pooled v e h hr hx (Nat.pos_of_ne_zero hd)
    split at he
    · next hz=>
@@ -1509,8 +1509,8 @@ lemma castVote (h:Tuned T M r) {m} (hz:m<M) (q : StepKey) (k l i)
      rw [ht,mul_zero]; exact mul_nonneg T.positiveC (StepKey.allow_p ..).le
    have he:=h.election m hz q k l s.P.T boost T.boostR le_rfl hr hk
    have hc : (candidate s l i)= fun (_:Pool n) y=> boost ((s.stage l).probed n s.P.T y):= by
-      ext; unfold candidate Stg.fac; rw [if_neg hp,s.aligned]
-   rw [hc,carrier,if_neg hp]
+      ext; unfold candidate Stg.fac; rw [ite_eq_right hp,s.aligned]
+   rw [hc,carrier,ite_eq_right hp]
    exact he
 
 lemma candid (s : Scene n) (j i p x) : in01 (candidate s j i p x):= Stg.fac_mem ..
@@ -1963,7 +1963,7 @@ lemma ownsMix (v:Purse T) (h:s.SetUp) (hr:Tuned T M r) (hp:q.ready s M)
      have HH:= b.valid_E s (k:=A-1) hC h rfl rfl x j hx hj
      have ha : A-1+1=A:=by unfold A; omega
      change rate l * (b.goal s).fm _ x j= if false=true then _ else p.P.corr n (A-1+1) x j at HH
-     rw [if_neg (by decide),ha] at HH
+     rw [ite_eq_right (by decide),ha] at HH
      rw [← mul_assoc]; exact congrArg (fun v=> v*w j) HH
    · intro m hm x j
      have hx:= q.climb s hr.hM hm
@@ -2023,7 +2023,7 @@ lemma home {l} (he:q.i=l+1) (hw:q.ask=none) :
        p.P.fac n (x/K) i*(p.W (x/K)+v (x/K)) else 0 := by
     have h1 : ¬K+i<K:=by omega
     have h2 : K+i-K=i:=by omega
-    unfold f' f; rw [if_pos hi, if_neg h1,h2]
+    unfold f' f; rw [ite_eq_left hi, ite_eq_right h1,h2]
     dsimp only [primeQ,syncQ,ridge,mint]
     by_cases he:x=y
     · subst y; by_cases hk:x%s.P.M=i <;>
@@ -2034,9 +2034,9 @@ lemma home {l} (he:q.i=l+1) (hw:q.ask=none) :
   have hj:j<K:=Nat.mod_lt _ hM
   rw [sum_eq_single j,hv j hj]
   · unfold ridge; split
-    · next h=> rw [if_pos ⟨h,rfl⟩,hs]; ring
-    · next h=> rw [if_neg (fun e=> h e.1)]; ring
-  · intro i hi hk; rw [hv i (mem_range.mp hi), if_neg (fun e=>hk (Eq.symm e.2))]
+    · next h=> rw [ite_eq_left ⟨h,rfl⟩,hs]; ring
+    · next h=> rw [ite_eq_right (fun e=> h e.1)]; ring
+  · intro i hi hk; rw [hv i (mem_range.mp hi), ite_eq_right (fun e=>hk (Eq.symm e.2))]
   · simp [hj]
 
 end Peek
@@ -2085,7 +2085,7 @@ lemma residual_copies {l} (v:Purse T) (h:q.ready s M) (he:s.SetUp)
          have ht:=fromrad K i j (Nat.mod_lt y hk)
          rw [sum_eq_single (radix K i j)]
          · dsimp only [inbound]; change markM K ((radix K i j)/K) ((radix K i j)%K) _ x y/_=_
-           rw [ht.1,ht.2,markM,if_pos ⟨rfl,rfl⟩]
+           rw [ht.1,ht.2,markM,ite_eq_left ⟨rfl,rfl⟩]
            change C x*(_*A x y)/_=_
            change C x*(bin k (B x y)*A x y)/_=_
            ring
@@ -2098,7 +2098,7 @@ lemma residual_copies {l} (v:Purse T) (h:q.ready s M) (he:s.SetUp)
            unfold inbound; dsimp only
            unfold markM
            change (if x%K=t/K ∧ y%K=t%K then _ else 0) /_=_
-           rw [if_neg hu,zero_div]
+           rw [ite_eq_right hu,zero_div]
          intro he
          have hl:i<K:=Nat.mod_lt _ hk
          have hh:=Nat.mod_lt y hk

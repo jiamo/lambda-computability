@@ -139,7 +139,7 @@ theorem openHalts_complete {Y G : Oracle} {x : ℕ}
     | false => simpa only [hb,Bool.false_eq_true,↓reduceIte,join] using hv
     | true =>
       simp only [↓reduceIte]
-      exact ⟨by simpa using hh, by rw [hv,join,if_pos hb,initial_getD G hh]⟩
+      exact ⟨by simpa using hh, by rw [hv,join,ite_eq_left hb,initial_getD G hh]⟩
   · simp only [Nat.unpair_pair,table,encodek,Option.getD_some]
     exact Option.isSome_iff_exists.mpr ⟨a,ha⟩
 

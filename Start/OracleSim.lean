@@ -214,7 +214,7 @@ theorem simulates_queryFun (A : ℕ → Bool) : Simulates A queryFun (oracleFun 
     · rintro ⟨s, b, hb, hy⟩
       rw [segQuery_segNum] at hb
       by_cases hx : x < s
-      · simp only [hx, if_true, Option.some_inj] at hb
+      · simp only [hx, ite_true, Option.some_inj] at hb
         rw [← hy, hb]
       · simp [hx] at hb
 

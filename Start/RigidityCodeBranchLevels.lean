@@ -53,15 +53,15 @@ theorem pairCode_certificates_at_levels (M : ZFSet.{u}) (hM : Transitive M) (hT 
   · obtain ⟨γ,hγ,hL⟩ := codeBranch_certificates_at_levels M hM hT false a b ha hb
     refine ⟨γ,hγ,?_⟩
     intro δ hδ
-    simpa only [pairCode,if_pos hle,PairCodeCertificates,codeBranchValue,codeScale,
+    simpa only [pairCode,ite_eq_left hle,PairCodeCertificates,codeBranchValue,codeScale,
       Bool.false_eq_true,↓reduceIte] using hL δ hδ
   · obtain ⟨γ,hγ,hL⟩ := codeBranch_certificates_at_levels M hM hT true b a hb ha
     refine ⟨γ,hγ,?_⟩
     intro δ hδ
     obtain ⟨hbL,haL,hc,hcert⟩ := hL δ hδ
     refine ⟨haL,hbL,?_,?_⟩
-    · simpa only [pairCode,if_neg hle,codeBranchValue,codeScale,↓reduceIte] using hc
-    · simpa only [PairCodeCertificates,if_neg hle] using hcert
+    · simpa only [pairCode,ite_eq_right hle,codeBranchValue,codeScale,↓reduceIte] using hc
+    · simpa only [PairCodeCertificates,ite_eq_right hle] using hcert
 
 end TuringRigidity.OrdinalCoding
 

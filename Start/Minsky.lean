@@ -421,7 +421,7 @@ theorem testBlock_dvd {p o t₁ t₂ : ℕ} (hp : 2 ≤ p)
       rw [testF_at hP (j := p + 2) (by omega) (by omega)]
       simp only [testF]; blk)
     (0 + q) 0
-  simp only [Nat.add_zero, Nat.zero_add, exitL, if_pos] at h1 h2
+  simp only [Nat.add_zero, Nat.zero_add, exitL, ite_eq_left] at h1 h2
   exact h1.trans h2
 
 /-- The test block on a non-multiple of `p`: the number is restored, zero branch. -/

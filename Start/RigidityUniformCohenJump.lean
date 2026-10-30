@@ -69,14 +69,14 @@ theorem oneGeneric_jump_program (Y : Oracle) :
   have hs (G : X) (x p a : ℕ) (ha : a ∈ searchTrial Y G.val x p) : a = f G x := by
     by_cases hd : Deciding Y G.val (Nat.pair x p)
     · have ha' : a = (if OpenHalts Y x (encode (word p)) then 1 else 0) := by
-        exact (by simpa only [searchTrial,if_pos hd,Option.mem_some_iff] using ha :
+        exact (by simpa only [searchTrial,ite_eq_left hd,Option.mem_some_iff] using ha :
           (if OpenHalts Y x (encode (word p)) then 1 else 0) = a).symm
       rw [ha',deciding_correct hd]
     · simp [searchTrial,hd] at ha
   have hc (G : X) (x : ℕ) : ∃ p a, a ∈ searchTrial Y G.val x p := by
     obtain ⟨p,hp⟩ := deciding_total G.property x
     exact ⟨p,(if OpenHalts Y x (encode (word p)) then 1 else 0),by
-      simp only [searchTrial,if_pos hp,Option.mem_some_iff]⟩
+      simp only [searchTrial,ite_eq_left hp,Option.mem_some_iff]⟩
   obtain ⟨p,hp⟩ := total_search ht f hs hc
   refine ⟨p,fun G hG => ?_⟩
   have h := hp (⟨G,hG⟩ : X)

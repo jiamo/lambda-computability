@@ -132,14 +132,14 @@ theorem Cob.eval_dmStep (z : Word) {w r : ℕ} (q : ℕ) (hrw : r < w) :
       simp [h]
     simp only [Cob.dmStep, Cob.eval_comp, List.map_cons, List.map_nil, Cob.eval_iteC,
       Cob.eval_dropU, Cob.eval_catL, Cob.eval_proj, List.getD_cons_succ, List.getD_cons_zero,
-      Cob.eval_app, Cob.eval_constT, hq, hr, List.length_replicate, hdrop, if_pos h]
+      Cob.eval_app, Cob.eval_constT, hq, hr, List.length_replicate, hdrop, ite_eq_left h]
     simp [dmW, List.replicate_succ]
   · have hdrop : (List.replicate w true).drop (r + 1) ≠ [] := by
       simp only [ne_eq, List.drop_eq_nil_iff, List.length_replicate]
       omega
     simp only [Cob.dmStep, Cob.eval_comp, List.map_cons, List.map_nil, Cob.eval_iteC,
       Cob.eval_dropU, Cob.eval_catL, Cob.eval_proj, List.getD_cons_succ, List.getD_cons_zero,
-      Cob.eval_app, Cob.eval_constT, hq, hr, List.length_replicate, if_neg hdrop, if_neg h]
+      Cob.eval_app, Cob.eval_constT, hq, hr, List.length_replicate, ite_eq_right hdrop, ite_eq_right h]
     simp [dmW]
 
 /-- The recursion equation of the division term. -/
@@ -164,10 +164,10 @@ theorem Cob.eval_divmodT {w : ℕ} (hw : 0 < w) (c : ℕ) :
       have hle := div_add_mod_le c hw
       by_cases h : c % w + 1 = w
       · obtain ⟨hd, hm⟩ := succ_div_of_carry hw h
-        rw [if_pos h, hd, hm]
+        rw [ite_eq_left h, hd, hm]
         exact List.take_of_length_le (by rw [length_dmW]; omega)
       · obtain ⟨hd, hm⟩ := succ_div_of_no_carry hw h
-        rw [if_neg h, hd, hm]
+        rw [ite_eq_right h, hd, hm]
         exact List.take_of_length_le (by rw [length_dmW]; omega)
 
 /-- The quotient of two unary words. -/
@@ -286,7 +286,7 @@ theorem eval_gridBlk (n i j : ℕ) (y : Word) :
         congr 1
         simp [Nat.mul_comm]
       simp only [gridBlk, Cob.eval_comp, List.map_cons, List.map_nil, Cob.eval_iteC,
-        Cob.eval_proj, List.getD_cons_succ, List.getD_cons_zero, if_neg hne]
+        Cob.eval_proj, List.getD_cons_succ, List.getD_cons_zero, ite_eq_right hne]
       exact eval_tokTerm (gridG n (i + 1) j) hp hp
 
 theorem length_encGate_gridG (n i j l : ℕ) (hj : j < n + 1) (hl : (n + 1) * i + j ≤ l) :

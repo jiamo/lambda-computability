@@ -55,19 +55,19 @@ theorem approx_direct_step : ∀ {t t' : Lambda}, Lambda.step t t' →
   intro t t' h
   induction h with
   | beta t₁ t₂ =>
-      rw [direct_app, if_neg (by simp)]
+      rw [direct_app, ite_eq_right (by simp)]
       exact Approx.omega _
   | app_left a a' b hstep ih =>
       by_cases hh : headVar a = Bool.true
-      · rw [direct_app, if_pos hh, direct_app, if_pos (headVar_step hstep hh)]
+      · rw [direct_app, ite_eq_left hh, direct_app, ite_eq_left (headVar_step hstep hh)]
         exact Approx.app ih (Approx.refl _)
-      · rw [direct_app, if_neg hh]
+      · rw [direct_app, ite_eq_right hh]
         exact Approx.omega _
   | app_right a b b' _ ih =>
       by_cases hh : headVar a = Bool.true
-      · rw [direct_app, if_pos hh, direct_app, if_pos hh]
+      · rw [direct_app, ite_eq_left hh, direct_app, ite_eq_left hh]
         exact Approx.app (Approx.refl _) ih
-      · rw [direct_app, if_neg hh]
+      · rw [direct_app, ite_eq_right hh]
         exact Approx.omega _
   | lam t t' _ ih => exact Approx.lam ih
 
@@ -221,7 +221,7 @@ theorem arealAux_of_neutral_reduct : ∀ (b : Tok) (ρ : Env) (t : Lambda),
             obtain ⟨s', hs', hsub⟩ := exists_reduct_lset_subset ρ a s hred
             refine ih c hcn ρ _ ⟨Lambda.app t₀ s', Lambda.reduces_app ht₀ hs',
               Neutral.app _ hn₀, ?_⟩
-            rw [direct_app, if_pos (neutral_iff_headVar.1 hn₀)]
+            rw [direct_app, ite_eq_left (neutral_iff_headVar.1 hn₀)]
             exact ⟨a, hsub, hmem⟩
   intro b ρ t h
   exact key b.size b le_rfl ρ t h
@@ -230,9 +230,9 @@ theorem areal_var (b : Tok) (ρ : Env) (i : ℕ) (hb : b ∈ ρ i) : AReal b ρ 
   intro n ρ' hρ'
   refine arealAux_of_neutral_reduct b ρ' _ ⟨Lambda.lift n 0 (Lambda.var i),
     Lambda.reduces.refl _, ?_, ?_⟩
-  · simp only [Lambda.lift, if_neg (Nat.not_lt_zero i)]
+  · simp only [Lambda.lift, ite_eq_right (Nat.not_lt_zero i)]
     exact Neutral.var _
-  · simp only [Lambda.lift, if_neg (Nat.not_lt_zero i), direct_var, denot_var]
+  · simp only [Lambda.lift, ite_eq_right (Nat.not_lt_zero i), direct_var, denot_var]
     rw [hρ' i]
     exact hb
 
@@ -273,9 +273,9 @@ theorem arealAux_substEnv : ∀ (t : Lambda) (ρ ρ' : Env) (u : ℕ → Lambda)
               intro y hy n ρ'' hρ''
               refine arealAux_of_neutral_reduct y ρ'' _ ⟨Lambda.lift n 0 (Lambda.var 0),
                 Lambda.reduces.refl _, ?_, ?_⟩
-              · simp only [Lambda.lift, if_neg (Nat.not_lt_zero 0)]
+              · simp only [Lambda.lift, ite_eq_right (Nat.not_lt_zero 0)]
                 exact Neutral.var _
-              · simp only [Lambda.lift, if_neg (Nat.not_lt_zero 0), direct_var, denot_var]
+              · simp only [Lambda.lift, ite_eq_right (Nat.not_lt_zero 0), direct_var, denot_var]
                 rw [hρ'' 0]
                 exact hy
           | succ j =>

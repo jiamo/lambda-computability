@@ -115,10 +115,10 @@ theorem sstr_sstr : ∀ (t : Tm) (b c : ℕ) (x w : Tm), b ≠ c → NameFree b 
         sstr_nameFree _ _ _ (nameFree_ren_succ hw)
       by_cases h1 : β = b + 1
       · have h2 : ¬ β = c + 1 := by omega
-        simp only [sstr, if_pos h1, if_neg h2, ih, hx]
+        simp only [sstr, ite_eq_left h1, ite_eq_right h2, ih, hx]
       · by_cases h2 : β = c + 1
-        · simp only [sstr, if_pos h2, if_neg h1, ih, hx, hw']
-        · simp only [sstr, if_neg h1, if_neg h2, ih, hx]
+        · simp only [sstr, ite_eq_left h2, ite_eq_right h1, ih, hx, hw']
+        · simp only [sstr, ite_eq_right h1, ite_eq_right h2, ih, hx]
 
 /-! ### `sstr ∘ subst` -/
 
@@ -168,8 +168,8 @@ theorem sstr_subst : ∀ (t : Tm) (σ : ℕ → Tm) (a a' : ℕ) (v v' : Tm),
         · rintro rfl; rw [hfix']; rfl
         · intro h; exact hinj' β _ (nameOf_eq_succ h) rfl
       by_cases hβ : β = a' + 1
-      · simp only [sstr, subst, if_pos hβ, if_pos (hcond.1 hβ), hname, ih, hv1]
-      · simp only [sstr, subst, if_neg hβ, if_neg (fun h => hβ (hcond.2 h)), hname, ih]
+      · simp only [sstr, subst, ite_eq_left hβ, ite_eq_left (hcond.1 hβ), hname, ih, hv1]
+      · simp only [sstr, subst, ite_eq_right hβ, ite_eq_right (fun h => hβ (hcond.2 h)), hname, ih]
 
 /-- **Structural substitution after a substitution that merges two names `b₁ ≠ b₂` into `a`.** -/
 theorem sstr_subst2 : ∀ (t : Tm) (σ : ℕ → Tm) (a b₁ b₂ : ℕ) (v w : Tm), b₁ ≠ b₂ →
@@ -225,13 +225,13 @@ theorem sstr_subst2 : ∀ (t : Tm) (σ : ℕ → Tm) (a b₁ b₂ : ℕ) (v w : 
         · intro h; exact hinj' β _ (nameOf_eq_succ h) rfl
       by_cases hβ₁ : β = b₁ + 1
       · have hβ₂ : ¬ β = b₂ + 1 := by omega
-        simp only [sstr, subst, if_pos hβ₁, if_neg hβ₂, if_pos (hcond.1 (.inl hβ₁)), hname, ih,
+        simp only [sstr, subst, ite_eq_left hβ₁, ite_eq_right hβ₂, ite_eq_left (hcond.1 (.inl hβ₁)), hname, ih,
           hv1]
       · by_cases hβ₂ : β = b₂ + 1
-        · simp only [sstr, subst, if_pos hβ₂, if_neg hβ₁, if_pos (hcond.1 (.inr hβ₂)), hname, ih,
+        · simp only [sstr, subst, ite_eq_left hβ₂, ite_eq_right hβ₁, ite_eq_left (hcond.1 (.inr hβ₂)), hname, ih,
             hv1, hww]
         · have hn : ¬ nameOf (upS σ β) = a + 1 := fun h => (hcond.2 h).elim hβ₁ hβ₂
-          simp only [sstr, subst, if_neg hβ₁, if_neg hβ₂, if_neg hn, hname, ih]
+          simp only [sstr, subst, ite_eq_right hβ₁, ite_eq_right hβ₂, ite_eq_right hn, hname, ih]
 
 /-! ### Stability of reduction under structural substitution -/
 
@@ -290,15 +290,15 @@ theorem step_sstr {t t' : Tm} (hs : Step t t') :
       by_cases h0 : β = 0
       · subst h0
         have hne : ¬ (0 : ℕ) = a + 1 := by omega
-        simp only [if_neg hne, ↓reduceIte] at hst
-        simp only [sstr, if_neg hne, ↓reduceIte, hu, hcomm]
+        simp only [ite_eq_right hne, ↓reduceIte] at hst
+        simp only [sstr, ite_eq_right hne, ↓reduceIte, hu, hcomm]
         exact .single hst
       · by_cases ha : β = a + 1
-        · simp only [if_pos ha, if_neg h0, sstr, hv0] at hst
-          simp only [sstr, if_neg h0, if_pos ha, hcomm]
+        · simp only [ite_eq_left ha, ite_eq_right h0, sstr, hv0] at hst
+          simp only [sstr, ite_eq_right h0, ite_eq_left ha, hcomm]
           exact .single hst
-        · simp only [if_neg ha, if_neg h0] at hst
-          simp only [sstr, if_neg h0, if_neg ha, hcomm]
+        · simp only [ite_eq_right ha, ite_eq_right h0] at hst
+          simp only [sstr, ite_eq_right h0, ite_eq_right ha, hcomm]
           exact .single hst
   | rename β γ t =>
       intro a v _
@@ -405,9 +405,9 @@ theorem step_sstr {t t' : Tm} (hs : Step t t') :
   | mu β _ ih =>
       intro a v hfree
       by_cases hβ : β = a + 1
-      · simp only [sstr, if_pos hβ]
+      · simp only [sstr, ite_eq_left hβ]
         exact transGen_mu _ (transGen_appL _ (ih (a + 1) _ hfree))
-      · simp only [sstr, if_neg hβ]
+      · simp only [sstr, ite_eq_right hβ]
         exact transGen_mu _ (ih (a + 1) _ hfree)
 
 end Tm

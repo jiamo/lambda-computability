@@ -111,9 +111,9 @@ lemma vcount_eq_psum {V : Type} [AddMonoid V] [DecidableEq V] (δ : α → V) (q
   refine Finset.sum_congr rfl fun i _ => ?_
   by_cases h1 : u[i]? = some x
   · by_cases h2 : ((u.take i).map δ).sum = q
-    · rw [if_pos ⟨h1, h2⟩, if_pos h1]; exact (if_pos h2).symm
-    · rw [if_neg (fun h => h2 h.2), if_pos h1]; exact (if_neg h2).symm
-  · rw [if_neg (fun h => h1 h.1), if_neg h1]
+    · rw [ite_eq_left ⟨h1, h2⟩, ite_eq_left h1]; exact (ite_eq_left h2).symm
+    · rw [ite_eq_right (fun h => h2 h.2), ite_eq_left h1]; exact (ite_eq_right h2).symm
+  · rw [ite_eq_right (fun h => h1 h.1), ite_eq_right h1]
 
 /-- `scount (w ++ [y]) u` sums `scount w` over the positions reading `y`. -/
 lemma scount_snoc_eq_psum (w : List α) (y : α) (u : List α) :
@@ -293,10 +293,10 @@ lemma cpair_row_cast (a b c : α) (f : ZMod 2) (u : List α) :
     simp only [hf, Prod.mk.injEq, true_and]
     have : ∀ z : ZMod 2, z = 0 ∨ z = 1 := by decide
     rcases this ((u.take j).count b : ZMod 2) with h | h
-    · rw [if_neg (by rw [h]; decide)]
+    · rw [ite_eq_right (by rw [h]; decide)]
       push_cast
       exact h
-    · rw [if_pos h]
+    · rw [ite_eq_left h]
       push_cast
       exact h
   · have : psum b (fun v' => (if parCol a v' = 0 ∧ parCol a (List.take j u) = f then 1 else 0) +

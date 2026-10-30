@@ -52,7 +52,7 @@ theorem allLt_eq_true_iff (p : ℕ → Bool) :
         | false => rw [hk] at h; simp at h
         | true =>
             rw [hk] at h
-            simp only [cond_true] at h
+            simp only [Bool.cond_true] at h
             rcases Nat.lt_succ_iff_lt_or_eq.1 hy with hy' | rfl
             · exact (ih.1 hk) y hy'
             · exact h
@@ -75,7 +75,7 @@ theorem exLt_eq_true_iff (p : ℕ → Bool) :
             exact ⟨y, by omega, hpy⟩
         | false =>
             rw [hk] at h
-            simp only [cond_false] at h
+            simp only [Bool.cond_false] at h
             exact ⟨k, Nat.lt_succ_self k, h⟩
       · rintro ⟨y, hy, hpy⟩
         rw [exLt]

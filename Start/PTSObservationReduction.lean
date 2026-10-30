@@ -50,7 +50,7 @@ theorem lambdaExit_parameter {X : Type u}
       some (tagPlain Ω C hno (a.target hw) ht (act a p hp)) := by
   have hg : Gate Ω C hno T a.argument (decode q) true :=
     ⟨a,rfl,hq.symm ▸ hp,⟨fun _ => rfl,fun _ => ht⟩⟩
-  simp only [lambdaExit,dif_pos hg]
+  simp only [lambdaExit,dite_eq_left hg]
   subst p
   have H : ∀ (k : FrameKey Ω C T), k = a →
       ∀ (hpk : PayloadFits Ω C hno k.domain (decode q))
@@ -76,7 +76,7 @@ theorem plusContinue_gate (T : ActiveType Ω C)
   subst p
   have hg : Gate Ω C hno T a.argument (plusPayload Ω C hno v) false :=
     ⟨a,rfl,hp,⟨fun h => False.elim (ht h),fun h => Bool.noConfusion h⟩⟩
-  simp only [plusContinue,dif_pos hg]
+  simp only [plusContinue,dite_eq_left hg]
   have H : ∀ (k : FrameKey Ω C T), k = a →
       ∀ (hpk : PayloadFits Ω C hno k.domain (plusPayload Ω C hno v))
         (htk : ¬ PlainLayer P C (Ω.profile (k.target hw).type)),
@@ -110,7 +110,7 @@ theorem minusContinue_gate (T : ActiveType Ω C)
   subst p
   have hg : Gate Ω C hno T a.argument (minusPayload Ω C hno v) false :=
     ⟨a,rfl,hp,⟨fun h => False.elim (ht h),fun h => Bool.noConfusion h⟩⟩
-  simp only [minusContinue,dif_pos hg]
+  simp only [minusContinue,dite_eq_left hg]
   have H : ∀ (k : FrameKey Ω C T), k = a →
       ∀ (hpk : PayloadFits Ω C hno k.domain (minusPayload Ω C hno v))
         (htk : ¬ PlainLayer P C (Ω.profile (k.target hw).type)),
@@ -153,14 +153,14 @@ theorem lambda_beta (T : ActiveType Ω C) (act : LambdaAction (hw := hw) Ω C hn
     (hp : PayloadFits Ω C hno a.domain p) :
     applyValue Ω C hno T (lambdaValue Ω C hno T act) a p hp = act a p hp := by
   by_cases hT : PlainLayer P C (Ω.profile T.type)
-  · simp only [applyValue,lambdaValue,dif_pos hT]
+  · simp only [applyValue,lambdaValue,dite_eq_left hT]
     exact plain_beta Ω C hno T hT act a p hp
   · by_cases hF : FreeLayer P C (Ω.profile T.type) false
     · by_cases hA : PlainLayer P C (Ω.profile (a.target hw).type)
-      · simp only [applyValue,lambdaValue,dif_neg hT,dif_pos hF,dif_pos hA,Value.asPlus_plus,plusLambda]
+      · simp only [applyValue,lambdaValue,dite_eq_right hT,dite_eq_left hF,dite_eq_left hA,Value.asPlus_plus,plusLambda]
         rw [lambdaExit_parameter Ω C hno _ T act a p hp _ (a.plusPayload_parameter hF p hp) hA]
         exact exitValue_tag Ω C hno _ hA _
-      · simp only [applyValue,lambdaValue,dif_neg hT,dif_pos hF,dif_neg hA,Value.asPlus_plus]
+      · simp only [applyValue,lambdaValue,dite_eq_right hT,dite_eq_left hF,dite_eq_right hA,Value.asPlus_plus]
         apply Subtype.ext
         change RawValue.plus ((plusLambda Ω C hno T hF act).slice
           (a.argument,a.plusParameter hF p hp)) = _
@@ -173,13 +173,13 @@ theorem lambda_beta (T : ActiveType Ω C) (act : LambdaAction (hw := hw) Ω C hn
         · exact h
       have hb := packMinus_spec Ω C hno (minusLambdaBehavior Ω C hno T hM act) (hr hM)
       by_cases hA : PlainLayer P C (Ω.profile (a.target hw).type)
-      · simp only [applyValue,lambdaValue,dif_neg hT,dif_neg hF,dif_pos hA,Value.asMinus_minus]
+      · simp only [applyValue,lambdaValue,dite_eq_right hT,dite_eq_right hF,dite_eq_left hA,Value.asMinus_minus]
         rw [hb]
         change exitValue Ω C hno (a.target hw)
           (lambdaExit Ω C hno (minusPayload Ω C hno) T act (a.argument,a.minusParameter hM p hp)) = _
         rw [lambdaExit_parameter Ω C hno _ T act a p hp _ (a.minusPayload_parameter hM p hp) hA]
         exact exitValue_tag Ω C hno _ hA _
-      · simp only [applyValue,lambdaValue,dif_neg hT,dif_neg hF,dif_neg hA,Value.asMinus_minus]
+      · simp only [applyValue,lambdaValue,dite_eq_right hT,dite_eq_right hF,dite_eq_right hA,Value.asMinus_minus]
         apply Subtype.ext
         change RawValue.minus (FreeObservations.minusSlice
           (packMinus Ω C hno (minusLambdaBehavior Ω C hno T hM act))
@@ -224,7 +224,7 @@ theorem application_frame {f n A B : Expr S} (h : HasType P Γ (.app f n) T)
       ((application h hf hn hc ef en e).val ha).val =
         (applyValue Ω C hno _ ((ef e).val hF) k (en e).parameter hp).val := by
   unfold application baseResult applicationValue
-  simp only [dif_pos hF]
+  simp only [dite_eq_left hF]
   exact ⟨_,(en e).parameter_fits,rfl,rfl,rfl⟩
 
 theorem abstractionAction_raw {D m E : Expr S} {s : S}
@@ -333,12 +333,12 @@ structure GoodTransport {Γ : List (Expr S)} {M N T : Expr S}
       refine ⟨neutral_readGood Ω C t' hn' e.images hsC (by simpa only [Expr.subst,Ω.profile_sort,Ω.profile_normalForm] using ha),?_⟩
       have hex : ∃ s', Expr.sort s = Expr.sort s' ∧ ({s'} : Set S) ∈ C := ⟨s,rfl,hsC⟩
       rw [preEvaluate_neutral_read_inactive Ω C hno t' e hn' ha]
-      simp only [PreResult.baseRead,dif_pos hm,dif_pos hex,dif_neg ha]
+      simp only [PreResult.baseRead,dite_eq_left hm,dite_eq_left hex,dite_eq_right ha]
       exact congrArg (Candidates.Top Ω) hMN
   · have hm' : Ω.profile (N.subst e.images).normalForm ∉ C := hMN ▸ hm
     refine ⟨readGood_outside Ω C t' e.images (by simpa only [Ω.profile_normalForm] using hm'),?_⟩
     rw [preEvaluate_read_outside Ω C hno t' e hm']
-    simp only [PreResult.baseRead,dif_neg hm]
+    simp only [PreResult.baseRead,dite_eq_right hm]
     exact congrArg (Candidates.Top Ω) hMN
 
  theorem root_transport {Γ : List (Expr S)} {D m E A B n T : Expr S} {a s : S}
@@ -368,10 +368,10 @@ structure GoodTransport {Γ : List (Expr S)} {M N T : Expr S}
     have hF : ActiveLayer P C (Ω.profile ((Expr.pi A B).subst e.images)) := by
       by_contra hh
       change (if ActiveLayer P C (Ω.profile ((Expr.pi A B).subst e.images)) then _ else _) at hg
-      rw [if_neg hh] at hg
+      rw [ite_eq_right hh] at hg
       cases hg with | app hf => cases hf
     change (if ActiveLayer P C (Ω.profile ((Expr.pi A B).subst e.images)) then _ else _) at hg
-    rw [if_pos hF] at hg
+    rw [ite_eq_left hF] at hg
     obtain ⟨hraw,hpp,hbody,hguard,hbeta⟩ := application_abstraction_beta Ω C hno ht hf d b hp hcF nt hc hC e
       (by simpa only [Ω.profile_normalForm] using hF) ha
     let er := e.cons (ContextTower.HasType.subst hnD e.typed) (preEvaluate Ω C hno ntD e).parameter
@@ -453,7 +453,7 @@ end GoodTransport
     change (if ActiveLayer P C (Ω.profile ((Expr.pi D E).subst e.images)) then _ else _) at hg
     change (if ActiveLayer P C (Ω.profile ((Expr.pi D E).subst e.images)) then _ else _) ∧ _
     by_cases hF : ActiveLayer P C (Ω.profile ((Expr.pi D E).subst e.images))
-    · rw [if_pos hF] at hg ⊢
+    · rw [ite_eq_left hF] at hg ⊢
       have hFa : ActiveLayer P C (Ω.profile ((Expr.pi D E).subst e.images).normalForm) := by
         simpa only [Ω.profile_normalForm] using hF
       refine ⟨⟨(hf.val e hFa hg.1).1,fun haD => (hn.val e
@@ -462,12 +462,12 @@ end GoodTransport
         _ _ _ _ e e rfl rfl (e.expression_convert_eq nt.typing nt'.typing hnn)
       · exact fun _ _ => (hf.val e hFa hg.1).2
       · exact hn.parameter_eq e (fun haD => hg.2 (by simpa only [Ω.profile_normalForm] using haD))
-    · rw [if_neg hF] at hg ⊢
+    · rw [ite_eq_right hF] at hg ⊢
       refine ⟨?_,?_⟩
       · cases hg with | app hg => exact .app (hne hg)
       · have hFa : ¬ ActiveLayer P C (Ω.profile ((Expr.pi D E).subst e.images).normalForm) := by
           simpa only [Ω.profile_normalForm] using hF
-        simp only [preEvaluate,PreResult.application,PreResult.baseResult,PreResult.applicationValue,dif_neg hFa]
+        simp only [preEvaluate,PreResult.application,PreResult.baseResult,PreResult.applicationValue,dite_eq_right hFa]
   refine ⟨hval,?_⟩
   intro e hr
   apply baseRead_transport Ω C hno ht (.application ht' ft' nt' hc') e
@@ -596,7 +596,7 @@ end GoodTransport
           fun h => hs h.1
         have hgate' : ¬ (({c} : Set S) ∈ C ∧ Ω.profile ((Expr.pi D' E').subst e.images).normalForm ∈ C) :=
           fun h => hs h.1
-        simp only [preEvaluate,PreResult.product,dif_neg hgate,dif_neg hgate']
+        simp only [preEvaluate,PreResult.product,dite_eq_right hgate,dite_eq_right hgate']
   · intro e hg
     have hM := e.expression_convert_eq ht ht' (.pi hD hE)
     refine ⟨?_,?_⟩

@@ -107,12 +107,12 @@ theorem carry_value {d m : ℕ} (p : Fin (d+1)) (a : Word d m) (ha : Allowed p a
       have ha0 : (a 0).val+1< m := (allowed_zero a).mp ha
       simp only [Fin.val_zero,Ne.symm (Nat.succ_ne_zero d),ite_false]
       rw [value_succ,value_succ,apply_zero_head,inc_value]
-      simp only [apply_zero_tail,if_neg (Nat.ne_of_lt ha0)]
+      simp only [apply_zero_tail,ite_eq_right (Nat.ne_of_lt ha0)]
       omega
     · intro ha
       obtain ⟨ha0,hat⟩ := (allowed_succ p a).mp ha
       have ht := ih p (fun i => a i.succ) hat
-      rw [value_succ,value_succ,apply_succ_head,inc_value,if_pos ha0]
+      rw [value_succ,value_succ,apply_succ_head,inc_value,ite_eq_left ha0]
       simp only [apply_succ_tail,Fin.val_succ,Nat.add_right_cancel_iff]
       rw [ht]
       split_ifs with hp
@@ -145,8 +145,8 @@ theorem carry_rotation {d m : ℕ} (p : Fin (d+1)) (a : Word d m) (ha : Allowed 
   · have hv : value a+1 < m^d := by
       have hb := (encode (applyCarry p a)).isLt
       change value (applyCarry p a) < m^d at hb
-      simpa only [carry_value p a ha,if_neg hp] using hb
-    simp only [if_neg hp,if_neg (Nat.ne_of_lt hv)]
+      simpa only [carry_value p a ha,ite_eq_right hp] using hb
+    simp only [ite_eq_right hp,ite_eq_right (Nat.ne_of_lt hv)]
 
 theorem carry_relation {d m : ℕ} (a b : Word d m) :
     (∃ p : Fin (d+1), Allowed p a ∧ applyCarry p a=b) ↔
@@ -164,7 +164,7 @@ theorem nonwrap_relation {d m : ℕ} (a b : Word d m) :
       value b=value a+1 := by
   constructor
   · rintro ⟨p,ha,rfl⟩
-    rw [carry_value p.castSucc a ha]; simp only [Fin.val_castSucc,if_neg (Nat.ne_of_lt p.isLt)]
+    rw [carry_value p.castSucc a ha]; simp only [Fin.val_castSucc,ite_eq_right (Nat.ne_of_lt p.isLt)]
   · intro hab
     obtain ⟨p,ha⟩ := exists_allowed a
     have hp : p.val<d := by
@@ -179,7 +179,7 @@ theorem nonwrap_relation {d m : ℕ} (a b : Word d m) :
     refine ⟨p',he.symm ▸ ha,encode.injective ?_⟩
     apply Fin.ext
     change value (applyCarry p'.castSucc a)=value b
-    rw [he,carry_value p a ha,if_neg (Nat.ne_of_lt hp),hab]
+    rw [he,carry_value p a ha,ite_eq_right (Nat.ne_of_lt hp),hab]
 
 theorem value_eq_zero_iff {d m : ℕ} (hm : 0< m) (a : Word d m) :
     value a=0 ↔ ∀ i,(a i).val=0 := by
@@ -208,7 +208,7 @@ theorem value_last_iff {d m : ℕ} (a : Word d m) :
       by_contra hn
       have hb := (encode (applyCarry p a)).isLt
       change value (applyCarry p a)< m^d at hb
-      rw [carry_value p a hp,if_neg hn,h] at hb
+      rw [carry_value p a hp,ite_eq_right hn,h] at hb
       omega
     have he' : p=Fin.last d := Fin.ext he
     exact allowed_last_iff a |>.mp (he' ▸ hp)

@@ -564,7 +564,7 @@ lemma Lethe.bnd {p c T s f V}(h:Lethe p c T s f V):
      have hp:0 ≤ X:= (mass0 ..).le
      have hi (i:ℕ)(e:i∈q.S s):|V i| ≤ X:=ih i e
      cases b
-     · rw [if_neg (by simp),abs_of_nonneg (rank_nn ..)]; exact rank_le hp
+     · rw [ite_eq_right (by simp),abs_of_nonneg (rank_nn ..)]; exact rank_le hp
                               (fun i e=>le_trans (le_abs_self _) (hi _ e))
      · simp only [weight,ite_true]
        refine le_trans (abs_sum_le_sum_abs ..) ?_
@@ -1343,7 +1343,7 @@ lemma ticket {v:ℕ→ℕ}{k i:ℕ} (hi:i<k)(he:v i≠0): (part v i).card < (par
 lemma order {v:ℕ→ℕ}{k i j:ℕ}(hi:i<j) (he:v i≠0)(ht:(part v i).card=k):
      (relief v k j).2=bin i (v i):=by
     induction hi with
-    | refl=> simp only [relief,transfer,if_neg he,heightp,ht,ite_true]
+    | refl=> simp only [relief,transfer,ite_eq_right he,heightp,ht,ite_true]
     | @step j hi ih=>
       have hh : (relief v k j).1≠ k:=by rw [heightp,← ht]; exact ne_of_gt (ticket hi he)
       simp only [relief,transfer,hh,ite_false]

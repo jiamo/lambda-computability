@@ -183,16 +183,16 @@ theorem compR_path (g : ℕ → SCG n) (i : ℕ) :
       obtain ⟨y, b₁, b₂, h₁, h₂, rfl⟩ := SCG.mem_comp.1 h
       obtain ⟨t, l, ht0, ht1, harc, hdesc⟩ := compR_path g i m h₁
       refine ⟨fun p => if p ≤ i + m + 1 then t p else z,
-        fun p => if p = i + m + 1 then b₂ else l p, by dsimp only; rw [if_pos (by omega)]; exact ht0,
-        by dsimp only; rw [if_neg (by omega)], ?_, ?_⟩
+        fun p => if p = i + m + 1 then b₂ else l p, by dsimp only; rw [ite_eq_left (by omega)]; exact ht0,
+        by dsimp only; rw [ite_eq_right (by omega)], ?_, ?_⟩
       · intro p hp hp'
         by_cases hpe : p = i + m + 1
         · subst hpe
-          simp only [le_refl, if_true, show ¬ (i + m + 1 + 1 ≤ i + m + 1) by omega, if_false]
+          simp only [le_refl, ite_true, show ¬ (i + m + 1 + 1 ≤ i + m + 1) by omega, ite_false]
           rw [ht1]; exact h₂
         · have hlt : p < i + m + 1 := by omega
-          simp only [show p ≤ i + m + 1 by omega, show p + 1 ≤ i + m + 1 by omega, if_true,
-            hpe, if_false]
+          simp only [show p ≤ i + m + 1 by omega, show p + 1 ≤ i + m + 1 by omega, ite_true,
+            hpe, ite_false]
           exact harc p hp hlt
       · intro hb
         rcases Bool.or_eq_true_iff.1 hb with hb | hb
@@ -431,7 +431,7 @@ theorem InCl.realize {𝒢 : Finset (SCG n)} {G : SCG n} (hG : InCl 𝒢 G) :
         congr 1
         · exact compR_congr _ fun q hq => by simp [show q < L₁ by omega]
         · exact compR_congr _ fun q hq => by
-            simp only [show ¬ (0 + (L₁ - 1) + 1 + q < L₁) by omega, if_false]
+            simp only [show ¬ (0 + (L₁ - 1) + 1 + q < L₁) by omega, ite_false]
             congr 1; omega
 
 /-- **Completeness of the closure criterion**: size-change termination implies the criterion

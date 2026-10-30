@@ -98,7 +98,7 @@ def instruction (w : ℕ) : (I : RAMInstruction A.registers A.locations) →
       · convert hc using 1
         all_goals try rfl
         · omega
-        · simp only [SparseRAM.execute,if_pos hz]
+        · simp only [SparseRAM.execute,ite_eq_left hz]
     · have hb : (wordBits (C.registers reg)).any id=true := by
         cases hb : (wordBits (C.registers reg)).any id
         · exact False.elim (hz ((ZeroTest.word_zero_iff _).mp hb))
@@ -114,7 +114,7 @@ def instruction (w : ℕ) : (I : RAMInstruction A.registers A.locations) →
       · convert hc using 1
         all_goals try rfl
         · omega
-        · simp only [SparseRAM.execute,if_neg hz]
+        · simp only [SparseRAM.execute,ite_eq_right hz]
 end
 end WLTime.RAMAlphabet
 

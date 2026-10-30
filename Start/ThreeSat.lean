@@ -62,7 +62,7 @@ theorem InNP.inter_inP {L₁ L₂ : Language} (h₁ : InNP L₁) (h₂ : InP L�
       Cob.eval_andC] at hacc
     by_cases hx : c.eval [x] = []
     · simp [hx] at hacc
-    · rw [if_neg hx] at hacc
+    · rw [ite_eq_right hx] at hacc
       exact hbound x w hacc
   · intro x
     simp only [Cob.eval_comp, List.map_cons, List.map_nil, Cob.eval_proj, List.getD_cons_zero,
@@ -70,11 +70,11 @@ theorem InNP.inter_inP {L₁ L₂ : Language} (h₁ : InNP L₁) (h₂ : InP L�
     constructor
     · rintro ⟨h1, h2⟩
       obtain ⟨w, hw⟩ := (hchar x).1 h1
-      exact ⟨w, by rw [if_neg ((hc x).1 h2)]; exact hw⟩
+      exact ⟨w, by rw [ite_eq_right ((hc x).1 h2)]; exact hw⟩
     · rintro ⟨w, hw⟩
       by_cases hx : c.eval [x] = []
-      · rw [if_pos hx] at hw; exact absurd rfl hw
-      · exact ⟨(hchar x).2 ⟨w, by rw [if_neg hx] at hw; exact hw⟩, (hc x).2 hx⟩
+      · rw [ite_eq_left hx] at hw; exact absurd rfl hw
+      · exact ⟨(hchar x).2 ⟨w, by rw [ite_eq_right hx] at hw; exact hw⟩, (hc x).2 hx⟩
 
 /-! ### The Tseitin translation produces a 3-CNF -/
 
@@ -193,7 +193,7 @@ theorem tdec_abst_of_good {w : ℕ} {d : DSt} (h : ∀ C ∈ d.done, C.length �
   have hmod : (3 * min d.cur.length (w + 1) + phIdx d.phase) % 3 = phIdx d.phase := by omega
   have hdiv : (3 * min d.cur.length (w + 1) + phIdx d.phase) / 3
       = min d.cur.length (w + 1) := by omega
-  simp only [abst, if_pos h, tdec, if_pos hlt, hmod, hdiv, phOf_phIdx]
+  simp only [abst, ite_eq_left h, tdec, ite_eq_left hlt, hmod, hdiv, phOf_phIdx]
 
 /-- A step of the decoder only ever adds clauses to the ones already read. -/
 theorem mem_done_dstep (b : Bool) (d : DSt) {C : Clause} (hC : C ∈ d.done) :
@@ -218,19 +218,19 @@ theorem tdelta_abst (w : ℕ) (b : Bool) (d : DSt) :
         · exact hgood C hC
     cases hp : d.phase
     · cases b <;>
-        simp only [tstep, tenc, dstep, hp, abst, phIdx, if_pos hgood] <;> omega
+        simp only [tstep, tenc, dstep, hp, abst, phIdx, ite_eq_left hgood] <;> omega
     · cases b <;>
-        simp only [tstep, tenc, dstep, hp, abst, phIdx, if_pos hgood, List.length_cons] <;> omega
+        simp only [tstep, tenc, dstep, hp, abst, phIdx, ite_eq_left hgood, List.length_cons] <;> omega
     · cases b
       · simp only [tstep, tenc, dstep, hp, abst, phIdx, hsplit]
         by_cases hm : min d.cur.length (w + 1) ≤ w <;> simp [hm]
-      · simp only [tstep, tenc, dstep, hp, abst, phIdx, if_pos hgood, List.length_cons]
+      · simp only [tstep, tenc, dstep, hp, abst, phIdx, ite_eq_left hgood, List.length_cons]
         omega
-  · have h15 : abst w d = 3 * (w + 2) := by simp only [abst, if_neg hgood]
+  · have h15 : abst w d = 3 * (w + 2) := by simp only [abst, ite_eq_right hgood]
     have hbad : ¬ ∀ C ∈ (dstep b d).done, C.length ≤ w := by
       intro h
       exact hgood fun C hC => h C (mem_done_dstep b d hC)
-    rw [h15, tdelta, tdec, if_neg (by omega), tstep, tenc, abst, if_neg hbad]
+    rw [h15, tdelta, tdec, ite_eq_right (by omega), tstep, tenc, abst, ite_eq_right hbad]
 
 theorem rst_tdelta (w : ℕ) (u : Word) : rst (tdelta w) 0 u = abst w (drun u) := by
   induction u with
@@ -250,9 +250,9 @@ theorem abst_ne_dead_iff (w : ℕ) (d : DSt) :
   · refine ⟨fun _ => h, fun _ => ?_⟩
     have hph := phIdx_lt d.phase
     have hk : min d.cur.length (w + 1) ≤ w + 1 := min_le_right _ _
-    rw [show abst w d = 3 * min d.cur.length (w + 1) + phIdx d.phase from if_pos h]
+    rw [show abst w d = 3 * min d.cur.length (w + 1) + phIdx d.phase from ite_eq_left h]
     omega
-  · simp only [abst, if_neg h, ne_eq, not_true_eq_false, false_iff]
+  · simp only [abst, ite_eq_right h, ne_eq, not_true_eq_false, false_iff]
     exact h
 
 /-- The Cobham term deciding that a word decodes to a CNF of width at most `w`: run the width
@@ -276,11 +276,11 @@ theorem eval_widthTerm (w : ℕ) (x : Word) :
     rfl
   rw [hget, rst_tdelta]
   by_cases h : abst w (drun x) = 3 * (w + 2)
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     refine iff_of_false (by simp) ?_
     intro hx
     exact (abst_ne_dead_iff w (drun x)).2 hx h
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     exact iff_of_true (by simp) ((abst_ne_dead_iff w (drun x)).1 h)
 
 /-- **Being the code of a CNF of width at most `w` is decidable in polynomial time.** -/

@@ -125,7 +125,7 @@ theorem polyManyOne_SAT_of_pUniformDecidable {L : Language} (h : PUniformDecidab
       refine ⟨?_, ?_⟩
       · rw [hget _ (by omega)]
         simp [Nat.mul_mod_right]
-      · rw [hget _ (by omega), if_neg (by omega)]
+      · rw [hget _ (by omega), ite_eq_right (by omega)]
         congr 1
         omega
     refine ⟨pre, ?_, hpin⟩

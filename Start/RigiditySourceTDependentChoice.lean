@@ -24,7 +24,7 @@ theorem sourceT_dependent_choice (M : ZFSet.{u}) (hM : Transitive M) (hT : Sourc
   obtain ⟨F,hFM,hF,hrel⟩ := internal_serial_function M hM hT hd hr hser
   let next (y : ZFSet.{u}) : ZFSet.{u} := if hy : y ∈ d then (hF.2 y hy).choose else y
   have hn (y : ZFSet.{u}) (hy : y ∈ d) : next y ∈ d ∧ ZFSet.pair y (next y) ∈ F := by
-    simp only [next,dif_pos hy]
+    simp only [next,dite_eq_left hy]
     exact ⟨(hF.2 y hy).choose_spec.1,(hF.2 y hy).choose_spec.2.1⟩
   let a : ℕ → ZFSet.{u} := Nat.rec x (fun _ y => next y)
   have ha : ∀ n, a n ∈ d := by

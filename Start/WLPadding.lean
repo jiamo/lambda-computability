@@ -7,7 +7,6 @@ paper not included in the snapshot (its README describes the result as
 "n^Omega(k) lower bounds for k-dimensional Weisfeiler-Leman").
 Adapted to this library's Lean v4.33.0 / Mathlib `v4.33.0` pin: the `OAI` namespace was dropped,
 imports were renamed to `Start.WL*`, and proofs were repaired where the pin required it.
-Proof change: upstream's one-hypothesis `Finset.prod_le_prod` is `Finset.prod_le_prod'` on this pin.
 See `NOTICE` at the repository root.
 -/
 
@@ -272,7 +271,7 @@ theorem card_legal_le (K D : ℕ) (hD : 2 ≤ D) (hp : ∀ p, 2^(I.dim p) ≤ D)
     _ = ∏ n : {n // n ∈ I.footprint K b.val}, Fintype.card (I.ReadValue K n.val) :=
       Fintype.card_pi
     _ ≤ ∏ _n : {n // n ∈ I.footprint K b.val}, D :=
-      Finset.prod_le_prod' (fun n _ => I.card_readValue_le K D hD hp n.val)
+      Finset.prod_le_prod (fun n _ => I.card_readValue_le K D hD hp n.val)
     _ = D^(I.footprint K b.val).card := by simp
     _ ≤ D^4 := Nat.pow_le_pow_right (by omega) (I.footprint_card_le K b.val)
 

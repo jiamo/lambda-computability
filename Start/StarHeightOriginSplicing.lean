@@ -187,7 +187,7 @@ lemma factors {g : ℕ} {s b : ℤ} (hb : N+x.length≤b)
       exact (product_congr T (hm (Fin.castSucc_le_succ i))
         (H.agrees_left (hsearch _ _ (hp' _)))).symm
     · exact H.product T hT (hsearch _ _ (hp' _)) hb
-  · simp only [BoundarySnapshot.factors,dif_neg hpres,dif_neg (mt hp.mpr hpres)]
+  · simp only [BoundarySnapshot.factors,dite_eq_right hpres,dite_eq_right (mt hp.mpr hpres)]
 
 lemma later {g : ℕ} {s b : ℤ} (hs : s≤N) (hb : N+x.length≤b)
     (hT : T (FreeMonoid.ofList x)=T (FreeMonoid.ofList y))

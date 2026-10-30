@@ -48,13 +48,13 @@ lemma bcount_partition {L₀ L₁ : Language α} (hdisj : Disjoint L₀ L₁) :
       have he : e ∈ L₀ + L₁ := hes e (by simp)
       unfold bcount at ih ⊢
       simp only [List.countP_cons, decide_eq_true_eq]
-      rw [if_pos he]
+      rw [ite_eq_left he]
       rcases (Language.mem_add _ _ _).mp he with h | h
       · have h' : e ∉ L₁ := fun h1 => Set.disjoint_left.mp hdisj h h1
-        rw [if_pos h, if_neg h']
+        rw [ite_eq_left h, ite_eq_right h']
         omega
       · have h' : e ∉ L₀ := fun h0 => Set.disjoint_left.mp hdisj h0 h
-        rw [if_pos h, if_neg h']
+        rw [ite_eq_left h, ite_eq_right h']
         omega
 
 lemma bwords_compl_zero {L₀ L₁ : Language α} (hdisj : Disjoint L₀ L₁) :

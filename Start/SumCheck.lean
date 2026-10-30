@@ -221,33 +221,33 @@ theorem run_honest (d : ℕ) :
       intro hd a v hist ρ hv
       have hm : honest d hist (.conj p q) a = [p.eval a, q.eval a] := rfl
       simp only [run, hm]
-      rw [if_pos (by rw [hv]; rfl)]
+      rw [ite_eq_left (by rw [hv]; rfl)]
       simp only [Bool.and_eq_true]
       exact ⟨ihp hd.1 _ _ _ _ rfl, ihq hd.2 _ _ _ _ rfl⟩
   | disj p q ihp ihq =>
       intro hd a v hist ρ hv
       have hm : honest d hist (.disj p q) a = [p.eval a, q.eval a] := rfl
       simp only [run, hm]
-      rw [if_pos (by rw [hv]; rfl)]
+      rw [ite_eq_left (by rw [hv]; rfl)]
       simp only [Bool.and_eq_true]
       exact ⟨ihp hd.1 _ _ _ _ rfl, ihq hd.2 _ _ _ _ rfl⟩
   | all i p ih =>
       intro hd a v hist ρ hv
       obtain ⟨hlen, hval⟩ := honest_round hd.1 (.all i p) (Or.inl rfl) hist (a := a)
       simp only [run]
-      rw [if_pos ⟨hlen.le, by rw [hval, hval, hv]; rfl⟩]
+      rw [ite_eq_left ⟨hlen.le, by rw [hval, hval, hv]; rfl⟩]
       exact ih hd.2 _ _ _ _ (hval _)
   | ex i p ih =>
       intro hd a v hist ρ hv
       obtain ⟨hlen, hval⟩ := honest_round hd.1 (.ex i p) (Or.inr (Or.inl rfl)) hist (a := a)
       simp only [run]
-      rw [if_pos ⟨hlen.le, by rw [hval, hval, hv]; rfl⟩]
+      rw [ite_eq_left ⟨hlen.le, by rw [hval, hval, hv]; rfl⟩]
       exact ih hd.2 _ _ _ _ (hval _)
   | lin j p ih =>
       intro hd a v hist ρ hv
       obtain ⟨hlen, hval⟩ := honest_round hd.1 (.lin j p) (Or.inr (Or.inr rfl)) hist (a := a)
       simp only [run]
-      rw [if_pos ⟨hlen.le, by rw [hval, hval, hv]; rfl⟩]
+      rw [ite_eq_left ⟨hlen.le, by rw [hval, hval, hv]; rfl⟩]
       exact ih hd.2 _ _ _ _ (hval _)
 
 /-- **Perfect completeness**, as a probability. -/
@@ -279,9 +279,9 @@ theorem round_count {n d D : ℕ} (E : F → List F → Bool) {m : List F} {g : 
       (if evalL m s = g.eval s then k ^ n * k else 0) + D * k ^ n := by
     intro s
     by_cases hs : evalL m s = g.eval s
-    · rw [if_pos hs]
+    · rw [ite_eq_left hs]
       exact (Nat.mul_le_mul_right _ (cntL_le_pow n _)).trans (Nat.le_add_right _ _)
-    · rw [if_neg hs, zero_add]; exact ih s hs
+    · rw [ite_eq_right hs, zero_add]; exact ih s hs
   have hgood : (Finset.univ.filter fun s => evalL m s = g.eval s).card ≤ d := by
     have := card_eval_eq_le hne ((natDegree_toPoly m).trans (by omega)) hg
     simpa [eval_toPoly] using this
@@ -490,12 +490,12 @@ theorem quant_count {d : ℕ} (P : Strat F) (p : Op) (i : ℕ) (a : ℕ → F) (
     have heq : (fun ρ => (run d P t a v hist ρ).1) =
         (fun ρ => (run d P p (Function.update a i (ρ.headD 0)) (evalL m (ρ.headD 0))
           (hist ++ [m, [ρ.headD 0]]) ρ.tail).1) := by
-      funext ρ; rw [hrun ρ, if_pos hc]
+      funext ρ; rw [hrun ρ, ite_eq_left hc]
     rw [heq]
     calc _ ≤ (d + d * p.rounds) * Fintype.card F ^ (p.rounds + 1) := this
       _ = _ := by ring
   · have : cntL t.rounds (fun ρ => (run d P t a v hist ρ).1) = 0 :=
-      cntL_false _ fun ρ _ => by rw [hrun ρ, if_neg hc]
+      cntL_false _ fun ρ _ => by rw [hrun ρ, ite_eq_right hc]
     rw [this]; simp
 
 /-- **Soundness of sum-check**: on a false claim, every prover is accepted on at most

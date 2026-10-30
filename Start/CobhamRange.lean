@@ -54,7 +54,7 @@ def Cob.dropN : Cob :=
         List.take_of_length_le hlen
       cases b <;>
         simp only [Cob.eval_comp, List.map_cons, List.map_nil, Cob.eval_tail, Cob.eval_proj,
-          List.getD_cons_zero, List.getD_cons_succ, if_true, if_false, Bool.false_eq_true,
+          List.getD_cons_zero, List.getD_cons_succ, ite_true, ite_false, Bool.false_eq_true,
           htake, List.length_cons] <;>
         rw [List.tail_drop]
 

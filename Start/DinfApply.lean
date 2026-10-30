@@ -113,15 +113,15 @@ theorem envStack_succ (A : ℕ → Dinf) (b e : ℕ) (ρ : DEnv) :
     envStack A b e (dcons (A (b + e)) ρ) = envStack A (b + 1) e ρ := by
   funext i
   by_cases hi : i < b
-  · simp only [envStack, if_pos hi, if_pos (by omega : i < b + 1)]
+  · simp only [envStack, ite_eq_left hi, ite_eq_left (by omega : i < b + 1)]
   · by_cases hi2 : i = b
     · subst hi2
-      simp only [envStack, if_neg hi, if_pos (by omega : i < i + 1), Nat.sub_self, dcons_zero]
+      simp only [envStack, ite_eq_right hi, ite_eq_left (by omega : i < i + 1), Nat.sub_self, dcons_zero]
       congr 1
       omega
     · have h1 : ¬ i < b + 1 := by omega
       obtain ⟨j, rfl⟩ : ∃ j, i = b + (j + 1) := ⟨i - b - 1, by omega⟩
-      simp only [envStack, if_neg hi, if_neg h1]
+      simp only [envStack, ite_eq_right hi, ite_eq_right h1]
       rw [show b + (j + 1) - b = j + 1 from by omega, dcons_succ,
         show b + (j + 1) - (b + 1) = j from by omega]
 

@@ -126,7 +126,7 @@ noncomputable def evalVal (a b : ℕ) : ℕ :=
 
 theorem evalVal_of_mem {a b c : ℕ} (h : c ∈ Kleene.natApp a b) : evalVal a b = c := by
   have hdom : (Kleene.natApp a b).Dom := Part.dom_iff_mem.2 ⟨c, h⟩
-  rw [evalVal, dif_pos hdom]
+  rw [evalVal, dite_eq_left hdom]
   exact (Part.get_eq_iff_mem hdom).2 h
 
 /-- The operation on Baire space that reads its two arguments at `0` and runs the first, as a

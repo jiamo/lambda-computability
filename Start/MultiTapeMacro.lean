@@ -106,9 +106,9 @@ theorem info_L (q : Option M.Q) (k : M.K) (pd : Bool) (h : M.K → M.Γ) (L : Li
   induction L generalizing pd with
   | nil => simp
   | cons γ L ih =>
-    simp only [List.map_cons, mlst_cons, reduceCtorEq, if_false]
+    simp only [List.map_cons, mlst_cons, reduceCtorEq, ite_false]
     simp only [infoδ, sym]
-    rw [if_neg (by simp)]
+    rw [ite_eq_right (by simp)]
     rw [ih]
     split <;> rfl
 
@@ -119,7 +119,7 @@ theorem info_R_tail (q : Option M.Q) (k : M.K) (h : M.K → M.Γ) (R : List M.Γ
   | cons γ R ih =>
     simp only [List.map_cons, mlst_cons]
     simp only [infoδ, sym]
-    rw [if_neg (by simp)]
+    rw [ite_eq_right (by simp)]
     exact ih
 
 theorem info_seg (q : Option M.Q) (ph : Fin 3) (tp : Option M.K) (pd : Bool)
@@ -141,7 +141,7 @@ theorem info_seg (q : Option M.Q) (ph : Fin 3) (tp : Option M.K) (pd : Bool)
     cases R with
     | nil => rfl
     | cons γ R =>
-      simp only [List.map_cons, mlst_cons, reduceCtorEq, if_false, List.headI_cons]
+      simp only [List.map_cons, mlst_cons, reduceCtorEq, ite_false, List.headI_cons]
       simp only [infoδ, sym]
       exact info_R_tail M q k _ R
   split
@@ -284,7 +284,7 @@ theorem ed_L_copy (q' : M.Q) (w : M.K → M.Γ) (mv : M.K → HeadMove) (k : M.K
   | nil => simp
   | cons γ L ih =>
     simp only [List.map_cons, mrun_cons, mlst_cons]
-    simp only [edδ, edOut, sym, if_true, Bool.false_eq_true, false_and, if_false]
+    simp only [edδ, edOut, sym, ite_true, Bool.false_eq_true, false_and, ite_false]
     rw [ih.1, ih.2]
     exact ⟨rfl, rfl⟩
 
@@ -372,7 +372,7 @@ theorem ed_seg (q' : M.Q) (w : M.K → M.Γ) (mv : M.K → HeadMove) (st : EdSt 
   refine ⟨?_, rfl⟩
   cases hm : mv k with
   | left =>
-    simp only [isLeft, if_true, openOut, midOut, newL, newR, List.map_cons, List.cons_append,
+    simp only [isLeft, ite_true, openOut, midOut, newL, newR, List.map_cons, List.cons_append,
       List.nil_append]
     cases L with
     | nil => rfl

@@ -36,10 +36,10 @@ theorem delta_shift : ∀ (p : NProg) (b k e e' : ℕ) (g : ℕ → ℕ), g e' =
     simp only [size] at h2 hgb
     simp only [delta]
     by_cases hq : q < b + p.size
-    · rw [if_pos (by omega), if_pos hq]
+    · rw [ite_eq_left (by omega), ite_eq_left hq]
       exact delta_shift p b k (b + k + p.size) (b + p.size) g (by rw [hgb _ (by omega) (by omega)]; omega)
         (fun j hj1 hj2 => hgb j hj1 (by omega)) q a w h1 hq
-    · rw [if_neg (by omega), if_neg hq, show b + k + p.size = b + p.size + k by omega]
+    · rw [ite_eq_right (by omega), ite_eq_right hq, show b + k + p.size = b + p.size + k by omega]
       exact delta_shift r (b + p.size) k e e' g hg
         (fun j hj1 hj2 => hgb j (by omega) (by omega)) q a w (by omega) (by omega)
   | ite t p r, b, k, e, e', g, hg, hgb, q, a, w, h1, h2 => by
@@ -48,7 +48,7 @@ theorem delta_shift : ∀ (p : NProg) (b k e e' : ℕ) (g : ℕ → ℕ), g e' =
     simp only [delta]
     by_cases hqb : q = b
     · subst hqb
-      rw [if_pos rfl, if_pos rfl]
+      rw [ite_eq_left rfl, ite_eq_left rfl]
       cases t a w
       · simp only [Bool.false_eq_true, ↓reduceIte, List.map_cons, List.map_nil, List.cons.injEq,
           Prod.mk.injEq, and_true]
@@ -56,12 +56,12 @@ theorem delta_shift : ∀ (p : NProg) (b k e e' : ℕ) (g : ℕ → ℕ), g e' =
       · simp only [↓reduceIte, List.map_cons, List.map_nil, List.cons.injEq, Prod.mk.injEq,
           and_true]
         rw [hgb _ (by omega) (by omega)]; omega
-    · rw [if_neg (by omega), if_neg hqb]
+    · rw [ite_eq_right (by omega), ite_eq_right hqb]
       by_cases hq : q < b + 1 + p.size
-      · rw [if_pos (by omega), if_pos hq, show b + k + 1 = b + 1 + k by omega]
+      · rw [ite_eq_left (by omega), ite_eq_left hq, show b + k + 1 = b + 1 + k by omega]
         exact delta_shift p (b + 1) k e e' g hg
           (fun j hj1 hj2 => hgb j (by omega) (by omega)) q a w (by omega) hq
-      · rw [if_neg (by omega), if_neg hq, show b + k + 1 + p.size = b + 1 + p.size + k by omega]
+      · rw [ite_eq_right (by omega), ite_eq_right hq, show b + k + 1 + p.size = b + 1 + p.size + k by omega]
         exact delta_shift r (b + 1 + p.size) k e e' g hg
           (fun j hj1 hj2 => hgb j (by omega) (by omega)) q a w (by omega) (by omega)
   | loop t p, b, k, e, e', g, hg, hgb, q, a, w, h1, h2 => by
@@ -70,13 +70,13 @@ theorem delta_shift : ∀ (p : NProg) (b k e e' : ℕ) (g : ℕ → ℕ), g e' =
     simp only [delta]
     by_cases hqb : q = b
     · subst hqb
-      rw [if_pos rfl, if_pos rfl]
+      rw [ite_eq_left rfl, ite_eq_left rfl]
       cases t a w
       · simp [hg]
       · simp only [↓reduceIte, List.map_cons, List.map_nil, List.cons.injEq, Prod.mk.injEq,
           and_true]
         rw [hgb _ (by omega) (by omega)]; omega
-    · rw [if_neg (by omega), if_neg hqb, show b + k + 1 = b + 1 + k by omega]
+    · rw [ite_eq_right (by omega), ite_eq_right hqb, show b + k + 1 = b + 1 + k by omega]
       exact delta_shift p (b + 1) k (b + k) b g (hgb b le_rfl (by omega))
         (fun j hj1 hj2 => hgb j (by omega) (by omega)) q a w (by omega) (by omega)
   | choose p r, b, k, e, e', g, hg, hgb, q, a, w, h1, h2 => by
@@ -85,16 +85,16 @@ theorem delta_shift : ∀ (p : NProg) (b k e e' : ℕ) (g : ℕ → ℕ), g e' =
     simp only [delta]
     by_cases hqb : q = b
     · subst hqb
-      rw [if_pos rfl, if_pos rfl]
+      rw [ite_eq_left rfl, ite_eq_left rfl]
       simp only [List.map_cons, List.map_nil, List.cons.injEq, Prod.mk.injEq, and_true]
       rw [hgb (q + 1) (by omega) (by omega), hgb (q + 1 + p.size) (by omega) (by omega)]
       omega
-    · rw [if_neg (by omega), if_neg hqb]
+    · rw [ite_eq_right (by omega), ite_eq_right hqb]
       by_cases hq : q < b + 1 + p.size
-      · rw [if_pos (by omega), if_pos hq, show b + k + 1 = b + 1 + k by omega]
+      · rw [ite_eq_left (by omega), ite_eq_left hq, show b + k + 1 = b + 1 + k by omega]
         exact delta_shift p (b + 1) k e e' g hg
           (fun j hj1 hj2 => hgb j (by omega) (by omega)) q a w (by omega) hq
-      · rw [if_neg (by omega), if_neg hq, show b + k + 1 + p.size = b + 1 + p.size + k by omega]
+      · rw [ite_eq_right (by omega), ite_eq_right hq, show b + k + 1 + p.size = b + 1 + p.size + k by omega]
         exact delta_shift r (b + 1 + p.size) k e e' g hg
           (fun j hj1 hj2 => hgb j (by omega) (by omega)) q a w (by omega) (by omega)
 
@@ -111,7 +111,7 @@ theorem loop_delta_body (t : Test) (body : NProg) (q : ℕ) (hq : q < body.size)
     q a w (Nat.zero_le _) (by omega)
   simp only [zero_add] at h
   rw [h]
-  simp only [machine, if_pos hq]
+  simp only [machine, ite_eq_left hq]
 
 /-- The invariant of reachable configurations of the machine of a loop. -/
 def LoopInv (t : Test) (body : NProg) (x : List Bool) (I : Config → Prop) (B : ℕ)

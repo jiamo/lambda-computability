@@ -142,7 +142,7 @@ theorem fromCircuit3_gates (C : Circuit3 (Fin n)) :
       ((C.middle j).toList.map fun i => clauseOf (C.bottom i))))).sum ≤
         C.top.card * (C.bottomCount + 1) := by
     rw [← Finset.length_toList C.top]
-    refine (List.sum_le_card_nsmul _ (C.bottomCount + 1) fun a ha => ?_).trans
+    refine (List.sum_le_length_nsmul _ (C.bottomCount + 1) fun a ha => ?_).trans
       (le_of_eq (by simp [smul_eq_mul]))
     obtain ⟨j, -, rfl⟩ := List.mem_map.1 ha
     exact hmid j

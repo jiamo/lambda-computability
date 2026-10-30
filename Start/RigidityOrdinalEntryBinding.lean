@@ -78,7 +78,7 @@ theorem entryCodeSlots_env (n : ℕ) (e w : ℕ → ZFSet.{u}) :
   cases i with
   | zero => exact prependValues_tail w n e 1
   | succ i =>
-    simp only [entryCodeSlots,if_pos (show i < n by omega),cons_succ]
+    simp only [entryCodeSlots,ite_eq_left (show i < n by omega),cons_succ]
     exact prependValues_lt w n e i (by omega)
 
 theorem paddedEntrySentence_semantics (M : ZFSet.{u}) (n : ℕ) (k : Fin n)

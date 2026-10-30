@@ -8,13 +8,33 @@ on:
 permissions:
   contents: read # Read access to repository contents
 
+# Both jobs keep `.lake` in the GitHub cache themselves instead of through lean-action, whose
+# cache is only saved after a green build: a failing build then still leaves every module it did
+# compile for the next run, which matters after a toolchain change, when the first build is a
+# full one.  The key is the toolchain and the manifest, so a run restores the most recent build
+# of the same toolchain and dependencies; lake recompiles whatever changed since.
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v5
+
+      - uses: actions/cache/restore@v5
+        with:
+          path: .lake
+          key: lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}-${{ github.run_attempt }}
+          restore-keys: lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
+
       - uses: leanprover/lean-action@v1
+        with:
+          use-github-cache: false
+
+      - uses: actions/cache/save@v5
+        if: ${{ !cancelled() }}
+        with:
+          path: .lake
+          key: lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}-${{ github.run_attempt }}
 
   # Builds what the repository *ships*, not what happens to sit in a working tree:
   # the sources are packed into an archive, unpacked somewhere else, and built there.
@@ -43,12 +63,26 @@ jobs:
         working-directory: ${{ runner.temp }}/delivered
         run: python3 scripts/check_manifest.py
 
+      # `hashFiles` only sees the workspace; the checkout holds the same two files as the archive.
+      - uses: actions/cache/restore@v5
+        with:
+          path: ${{ runner.temp }}/delivered/.lake
+          key: lake-archive-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}-${{ github.run_attempt }}
+          restore-keys: lake-archive-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
+
       - name: Build the archive
         uses: leanprover/lean-action@v1
         with:
           lake-package-directory: ${{ runner.temp }}/delivered
           build-args: "--wfail"
           use-mathlib-cache: true
+          use-github-cache: false
+
+      - uses: actions/cache/save@v5
+        if: ${{ !cancelled() }}
+        with:
+          path: ${{ runner.temp }}/delivered/.lake
+          key: lake-archive-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}-${{ github.run_attempt }}
 
       - name: Refuse `sorry` and `admit` in the library
         working-directory: ${{ runner.temp }}/delivered

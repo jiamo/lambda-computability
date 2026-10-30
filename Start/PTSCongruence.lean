@@ -177,11 +177,11 @@ variable {Ω C hno} {Γ Δ : List (Expr S)} {T T' : Expr S}
   by_cases hA : ActiveLayer P C (Ω.profile (Expr.pi D E |>.subst e.images).normalForm)
   · have hA' : ActiveLayer P C (Ω.profile (Expr.pi D' E' |>.subst e'.images).normalForm) := hF ▸ hA
     dsimp only [application,baseResult,applicationValue]
-    simp only [dif_pos hA,dif_pos hA']
+    simp only [dite_eq_left hA,dite_eq_left hA']
     apply applyValue_congr Ω C hno hF _ _ (hvf _ _) _ _ hN _ _ hvn
   · have hA' : ¬ ActiveLayer P C (Ω.profile (Expr.pi D' E' |>.subst e'.images).normalForm) := hF ▸ hA
     dsimp only [application,baseResult,applicationValue]
-    simp only [dif_neg hA,dif_neg hA']
+    simp only [dite_eq_right hA,dite_eq_right hA']
     exact distinguished_congr Ω C hno hT
 
  theorem productCandidate_congr {D E D' E' : Expr S} {a b c a' b' c' : S}
@@ -226,13 +226,13 @@ variable {Ω C hno} {Γ Δ : List (Expr S)} {T T' : Expr S}
   by_cases hh : ({c} : Set S) ∈ C ∧ Ω.profile (Expr.pi D E |>.subst e.images).normalForm ∈ C
   · have hh' : ({c'} : Set S) ∈ C ∧ Ω.profile (Expr.pi D' E' |>.subst e'.images).normalForm ∈ C :=
       ⟨hcc.mp hh.1,hM ▸ hh.2⟩
-    simp only [product,dif_pos hh,dif_pos hh']
+    simp only [product,dite_eq_left hh,dite_eq_left hh']
     apply withBase_congr Ω C hno hT
     apply Base.update_congr Ω _ (Subtype.ext hM)
     exact hpc hh.2
   · have hh' : ¬ (({c'} : Set S) ∈ C ∧ Ω.profile (Expr.pi D' E' |>.subst e'.images).normalForm ∈ C) :=
       fun hcc' => hh ⟨hcc.mpr hcc'.1,hM.symm ▸ hcc'.2⟩
-    simp only [product,dif_neg hh,dif_neg hh']
+    simp only [product,dite_eq_right hh,dite_eq_right hh']
     exact distinguished_congr Ω C hno hT
 
  theorem product_read_congr {D E D' E' : Expr S} {a b c a' b' c' : S}
@@ -251,10 +251,10 @@ variable {Ω C hno} {Γ Δ : List (Expr S)} {T T' : Expr S}
     (product h hd hb hr hc ed eb e).read.val = (product h' hd' hb' hr' hc' ed' eb' e').read.val := by
   by_cases hh : Ω.profile (Expr.pi D E |>.subst e.images).normalForm ∈ C
   · have hh' : Ω.profile (Expr.pi D' E' |>.subst e'.images).normalForm ∈ C := hM ▸ hh
-    simp only [product,if_pos hh,if_pos hh']
+    simp only [product,ite_eq_left hh,ite_eq_left hh']
     exact hpc hh
   · have hh' : Ω.profile (Expr.pi D' E' |>.subst e'.images).normalForm ∉ C := hM ▸ hh
-    simp only [product,if_neg hh,if_neg hh']
+    simp only [product,ite_eq_right hh,ite_eq_right hh']
     exact congrArg (Candidates.Top Ω) hM
 end PreResult
 end PureTypeSystem.ObservationValues
@@ -1157,7 +1157,7 @@ theorem baseRead_eq (h : HasType P Γ M (.sort s))
     (ha : ActiveLayer P C (Ω.profile (Expr.sort s |>.subst e.images).normalForm)) :
     (baseRead h v).val = ((RawValue.base Ω C hno (v ha).val) (e.actualExpression h)).val := by
   have hex : ∃ s', Expr.sort s = Expr.sort s' ∧ ({s'} : Set S) ∈ C := ⟨s,rfl,hs⟩
-  simp only [baseRead,dif_pos hM,dif_pos hex,dif_pos ha]
+  simp only [baseRead,dite_eq_left hM,dite_eq_left hex,dite_eq_left ha]
 
 theorem product_read_base {D E : Expr S} {a b c : S}
     (h : HasType P Γ (.pi D E) (.sort s))
@@ -1172,7 +1172,7 @@ theorem product_read_base {D E : Expr S} {a b c : S}
       ((RawValue.base Ω C hno ((product h hd hb hr hc ed eb e).val ha).val) (e.actualExpression h)).val := by
   have hh : ({c} : Set S) ∈ C ∧ Ω.profile (Expr.pi D E |>.subst e.images).normalForm ∈ C := ⟨hc.sort_inj ▸ hs,hm⟩
   dsimp only [product]
-  rw [if_pos hm,dif_pos hh,withBase_base]
+  rw [ite_eq_left hm,dite_eq_left hh,withBase_base]
   simp only [Base.update_same]
 end PreResult
 

@@ -117,7 +117,7 @@ def setField (i s : ℕ) (A : Word) : Word := takeFs i A ++ (un s ++ [false]) ++
 theorem setField_fieldsWord {i : ℕ} (s : ℕ) {a : List ℕ} (hi : i < a.length) :
     setField i s (fieldsWord a) = fieldsWord (a.set i s) := by
   rw [setField, takeFs_fieldsWord, dropFs_fieldsWord, List.set_eq_take_append_cons_drop,
-    if_pos hi, fieldsWord_append]
+    ite_eq_left hi, fieldsWord_append]
   simp [fieldsWord, un]
 
 /-! ### Messages -/

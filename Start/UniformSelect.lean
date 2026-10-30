@@ -49,11 +49,11 @@ def gateId : Circuit → ℕ → Gate
   | g :: C, o => if o = C.length then g else gateId C o
 
 theorem gateId_cons_self (g : Gate) (C : Circuit) : gateId (g :: C) C.length = g := by
-  rw [gateId, if_pos rfl]
+  rw [gateId, ite_eq_left rfl]
 
 theorem gateId_cons_of_ne {g : Gate} {C : Circuit} {o : ℕ} (h : o ≠ C.length) :
     gateId (g :: C) o = gateId C o := by
-  rw [gateId, if_neg h]
+  rw [gateId, ite_eq_right h]
 
 /-- Two templates agreeing below `n` give the same layer. -/
 theorem layer_congr {f g : ℕ → Gate} :
@@ -87,7 +87,7 @@ theorem gmap_selF_of_le {C : Circuit} {o : ℕ} (h : C.length ≤ o) : gmap (sel
   | nil => rfl
   | cons g C ih =>
       have hlt : C.length < o := by simpa using h
-      rw [gmap, selF, if_neg (Nat.ne_of_lt hlt), ih (le_of_lt hlt), List.append_nil]
+      rw [gmap, selF, ite_eq_right (Nat.ne_of_lt hlt), ih (le_of_lt hlt), List.append_nil]
 
 /-- **The translation writes the token of the gate with identifier `o`.** -/
 theorem gmap_selF {C : Circuit} {o : ℕ} (h : o < C.length) :
@@ -96,12 +96,12 @@ theorem gmap_selF {C : Circuit} {o : ℕ} (h : o < C.length) :
   | nil => simp at h
   | cons g C ih =>
       rcases eq_or_ne o C.length with rfl | hne
-      · rw [gmap, selF, if_pos rfl, gateId_cons_self, gmap_selF_of_le (le_refl _),
+      · rw [gmap, selF, ite_eq_left rfl, gateId_cons_self, gmap_selF_of_le (le_refl _),
           List.append_nil]
       · have hlt : o < C.length := by
           have : o < C.length + 1 := by simpa using h
           omega
-        rw [gmap, selF, if_neg (Ne.symm hne), List.nil_append, ih hlt, gateId_cons_of_ne hne]
+        rw [gmap, selF, ite_eq_right (Ne.symm hne), List.nil_append, ih hlt, gateId_cons_of_ne hne]
 
 /-! ### The Cobham term -/
 
@@ -137,8 +137,8 @@ theorem eval_selGuard (t : Cob) (y : Word) (c o : ℕ) :
   rw [selGuard]
   simp only [Cob.eval_comp, List.map_cons, List.map_nil, Cob.eval_iteC, Cob.eval_empty]
   by_cases h : c = o
-  · rw [if_pos ((eval_neqT_eq_nil_iff y c o).2 h), if_pos h]
-  · rw [if_neg (fun hc => h ((eval_neqT_eq_nil_iff y c o).1 hc)), if_neg h]
+  · rw [ite_eq_left ((eval_neqT_eq_nil_iff y c o).2 h), ite_eq_left h]
+  · rw [ite_eq_right (fun hc => h ((eval_neqT_eq_nil_iff y c o).1 hc)), ite_eq_right h]
 
 /-- The token of an input gate, copied. -/
 def cpInpT : Cob := Cob.catL [Cob.constT [false, true, false], uFldA1, Cob.constT [false, true]]
@@ -181,42 +181,42 @@ theorem eval_selBlkT (y : Word) (s : ℕ) (b : Bool) (c o : ℕ) :
         · simp [selBlkT, gblk, emits]
         · simp [selBlkT, gblk, emits]
         · simp [selBlkT, gblk, emits]
-        · rw [show selBlkT 3 false = selGuard cpInpT from rfl, gblk, if_pos (by simp [emits]),
+        · rw [show selBlkT 3 false = selGuard cpInpT from rfl, gblk, ite_eq_left (by simp [emits]),
             show readGate 3 y = Gate.inp (fldA y) from rfl, eval_selGuard, selF]
           by_cases h : c = o
-          · rw [if_pos h, if_pos h, cpInpT]
+          · rw [ite_eq_left h, ite_eq_left h, cpInpT]
             simp [encGate, tag, fld1, fld2, List.replicate_succ]
-          · rw [if_neg h, if_neg h]
+          · rw [ite_eq_right h, ite_eq_right h]
         · rw [show selBlkT 4 false = selGuard (Cob.constT (encGate (.cst false))) from rfl, gblk,
-            if_pos (by simp [emits]), show readGate 4 y = Gate.cst false from rfl,
+            ite_eq_left (by simp [emits]), show readGate 4 y = Gate.cst false from rfl,
             eval_selGuard, selF]
           by_cases h : c = o
-          · rw [if_pos h, if_pos h]; simp
-          · rw [if_neg h, if_neg h]
+          · rw [ite_eq_left h, ite_eq_left h]; simp
+          · rw [ite_eq_right h, ite_eq_right h]
         · rw [show selBlkT 5 false = selGuard (Cob.constT (encGate (.cst true))) from rfl, gblk,
-            if_pos (by simp [emits]), show readGate 5 y = Gate.cst true from rfl,
+            ite_eq_left (by simp [emits]), show readGate 5 y = Gate.cst true from rfl,
             eval_selGuard, selF]
           by_cases h : c = o
-          · rw [if_pos h, if_pos h]; simp
-          · rw [if_neg h, if_neg h]
-        · rw [show selBlkT 6 false = selGuard cpNegT from rfl, gblk, if_pos (by simp [emits]),
+          · rw [ite_eq_left h, ite_eq_left h]; simp
+          · rw [ite_eq_right h, ite_eq_right h]
+        · rw [show selBlkT 6 false = selGuard cpNegT from rfl, gblk, ite_eq_left (by simp [emits]),
             show readGate 6 y = Gate.neg (fldA y) from rfl, eval_selGuard, selF]
           by_cases h : c = o
-          · rw [if_pos h, if_pos h, cpNegT]
+          · rw [ite_eq_left h, ite_eq_left h, cpNegT]
             simp [encGate, tag, fld1, fld2, List.replicate_succ]
-          · rw [if_neg h, if_neg h]
-        · rw [show selBlkT 7 false = selGuard cpConjT from rfl, gblk, if_pos (by simp [emits]),
+          · rw [ite_eq_right h, ite_eq_right h]
+        · rw [show selBlkT 7 false = selGuard cpConjT from rfl, gblk, ite_eq_left (by simp [emits]),
             show readGate 7 y = Gate.conj (fldA y) (fldB y) from rfl, eval_selGuard, selF]
           by_cases h : c = o
-          · rw [if_pos h, if_pos h, cpConjT]
+          · rw [ite_eq_left h, ite_eq_left h, cpConjT]
             simp [encGate, tag, fld1, fld2, List.replicate_succ]
-          · rw [if_neg h, if_neg h]
-        · rw [show selBlkT 8 false = selGuard cpDisjT from rfl, gblk, if_pos (by simp [emits]),
+          · rw [ite_eq_right h, ite_eq_right h]
+        · rw [show selBlkT 8 false = selGuard cpDisjT from rfl, gblk, ite_eq_left (by simp [emits]),
             show readGate 8 y = Gate.disj (fldA y) (fldB y) from rfl, eval_selGuard, selF]
           by_cases h : c = o
-          · rw [if_pos h, if_pos h, cpDisjT]
+          · rw [ite_eq_left h, ite_eq_left h, cpDisjT]
             simp [encGate, tag, fld1, fld2, List.replicate_succ]
-          · rw [if_neg h, if_neg h]
+          · rw [ite_eq_right h, ite_eq_right h]
       · obtain ⟨k, rfl⟩ : ∃ k, s = k + 9 := ⟨s - 9, by omega⟩
         simp [selBlkT, gblk, emits]
 

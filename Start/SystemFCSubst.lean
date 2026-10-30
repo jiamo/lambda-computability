@@ -220,7 +220,7 @@ theorem subst_subst (t u v : FTm) (x y : ℕ) (h : y ≤ x) :
       · by_cases h2 : i = x + 1
         · subst h2
           have hgt : x + 1 > y := by omega
-          simp only [subst, if_neg h1, if_pos hgt]
+          simp only [subst, ite_eq_right h1, ite_eq_left hgt]
           simpa using (subst_lift u (subst u x v) y).symm
         · by_cases h3 : i > x + 1
           · have hpos : 0 < i := by omega

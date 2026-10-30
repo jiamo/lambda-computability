@@ -71,12 +71,12 @@ theorem Construction.formula_spec (t : Construction.{u}) (M R : ZFSet.{u})
     let w : ℕ → ZFSet.{u} := fun i => if h : i < n then
       (c ⟨i,h⟩).value R (realPart P i) else R
     have hw (i : ℕ) (hin : i < n) : w i ∈ M := by
-      dsimp [w]; rw [dif_pos hin]
+      dsimp [w]; rw [dite_eq_left hin]
       exact hM _ (level_mem M R hM hT hR o hi.1) _ (ht.2 ⟨i,hin⟩).2
     have hf (i : ℕ) (hin : i < n) (x : ZFSet.{u}) (hx : x ∈ M) :
         (if h : i < n then (c ⟨i,h⟩).formula 0 (fun k => r (Nat.pair i k+1)+1)
           else .equal 0 0).Sat (M : Set ZFSet) (cons x e) ↔ x = w i := by
-      rw [dif_pos hin,show w i = (c ⟨i,hin⟩).value R (realPart P i) from dif_pos hin]
+      rw [dite_eq_left hin,show w i = (c ⟨i,hin⟩).value R (realPart P i) from dite_eq_left hin]
       apply ih ⟨i,hin⟩ _ (ht.2 ⟨i,hin⟩).1 (hi.2 ⟨i,hin⟩) 0 _ _
         (by intro k; cases k; exact hx; exact he _)
       intro k
@@ -87,7 +87,7 @@ theorem Construction.formula_spec (t : Construction.{u}) (M R : ZFSet.{u})
     have ha : e (r 0) = level R o := hr 0
     rw [ha]
     have hv : (fun i : Fin n => w i) = (fun i : Fin n => (c i).value R (realPart P i)) := by
-      funext i; exact dif_pos i.isLt
+      funext i; exact dite_eq_left i.isLt
     rw [hv]
     rfl
 

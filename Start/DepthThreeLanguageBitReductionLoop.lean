@@ -40,7 +40,7 @@ theorem modulusUpdateLoop_getD (p : List Bool) (v : Bool) (shift j : ℕ)
   | zero =>
       intro hbound
       have hk : ¬(shift ≤ k ∧ k < shift + 0) := by omega
-      simp only [modulusUpdateLoop_zero, if_neg hk, Bool.xor_false]
+      simp only [modulusUpdateLoop_zero, ite_eq_right hk, Bool.xor_false]
   | succ j ih =>
       intro hbound
       have hj : shift + j < (modulusUpdateLoop p v shift j c).length := by
@@ -54,14 +54,14 @@ theorem modulusUpdateLoop_getD (p : List Bool) (v : Bool) (shift j : ℕ)
         simp [he, hnext, hsub]
       · have hrange : (shift ≤ k ∧ k < shift + (j + 1)) ↔
             (shift ≤ k ∧ k < shift + j) := by omega
-        simp only [if_neg he, Bool.xor_false, hrange]
+        simp only [ite_eq_right he, Bool.xor_false, hrange]
 
 theorem modulusUpdateLoop_above (p : List Bool) (v : Bool) (shift j : ℕ)
     (c : List Bool) (hbound : shift + j ≤ c.length) (k : ℕ) (hk : shift + j ≤ k) :
     (modulusUpdateLoop p v shift j c).getD k false = c.getD k false := by
   rw [modulusUpdateLoop_getD p v shift j c hbound k]
   have hnot : ¬(shift ≤ k ∧ k < shift + j) := by omega
-  simp only [if_neg hnot, Bool.xor_false]
+  simp only [ite_eq_right hnot, Bool.xor_false]
 
 theorem modulusUpdateLoop_high (p : List Bool) (v : Bool) (shift : ℕ)
     (c : List Bool) (hbound : shift + p.length ≤ c.length) :
@@ -89,7 +89,7 @@ theorem cancelByUpdates_getD (p c : List Bool) (shift : ℕ)
     simpa only [modulusUpdateLoop_length] using hbound
   by_cases he : shift + p.length = k
   · subst k
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     unfold cancelByUpdates
     exact List.getD_eq_getElem?_getD.trans
       (congrArg (fun o : Option Bool => o.getD false)
@@ -97,7 +97,7 @@ theorem cancelByUpdates_getD (p c : List Bool) (shift : ℕ)
   · have hset : (cancelByUpdates p c shift).getD k false =
         (modulusUpdateLoop p (c.getD (shift + p.length) false) shift p.length c).getD k false := by
       simp only [cancelByUpdates, List.getD_eq_getElem?_getD, List.getElem?_set_ne he]
-    rw [hset, modulusUpdateLoop_getD _ _ _ _ _ (Nat.le_of_lt hbound) k, if_neg he]
+    rw [hset, modulusUpdateLoop_getD _ _ _ _ _ (Nat.le_of_lt hbound) k, ite_eq_right he]
 
 def reduceByUpdates (p : List Bool) : ℕ → List Bool → List Bool
   | 0, c => c
@@ -122,7 +122,7 @@ theorem cancelStep_read {r m : ℕ} (p : BitWord r) (a : BitWord m)
           (if shift ≤ i.val ∧ i.val < shift + r then
             a ⟨shift + r, hbound⟩ && wordGet p (i.val - shift) else false) := by
   by_cases he : shift + r = i.val
-  · rw [if_pos he, he]
+  · rw [ite_eq_left he, he]
     exact cancelStep_at p a i (by omega)
   · have hk : r ≤ shift + r ∧ shift + r < m := ⟨by omega, hbound⟩
     have hsub : shift + r - r = shift := by omega
@@ -161,7 +161,7 @@ theorem reduceLoop_below {r m : ℕ} (p : BitWord r) (k : ℕ) (a : BitWord m)
   | succ k ih =>
       intro hk
       have hskip : ¬(r ≤ k ∧ k < m) := by omega
-      simpa only [reduceLoop, cancelStep, dif_neg hskip] using ih a (by omega)
+      simpa only [reduceLoop, cancelStep, dite_eq_right hskip] using ih a (by omega)
 
 theorem reduceByUpdates_word_eq {r m : ℕ} (p : BitWord r) (s : ℕ)
     (a : BitWord m) (hbound : r + s ≤ m) :

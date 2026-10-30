@@ -24,7 +24,7 @@ theorem padded_final_sum_of_smaller_certificates (M : ZFSet.{u})
   let a := Ordinal.omega0 ^ (β+1)
   let b := Ordinal.omega0 ^ vectorCode v
   let c := paddedCode v β
-  have hc : c = a+b := by change pairCode β (vectorCode v) = _; rw [pairCode,if_pos hv]
+  have hc : c = a+b := by change pairCode β (vectorCode v) = _; rw [pairCode,ite_eq_left hv]
   have hca : a < c := by
     rw [hc]
     simpa only [add_zero] using (add_lt_add_iff_left a).mpr (Ordinal.opow_pos (vectorCode v) Ordinal.omega0_pos)

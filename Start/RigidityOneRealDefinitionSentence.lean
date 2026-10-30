@@ -69,7 +69,7 @@ theorem oneRealGraphSentence_spec (s p : SentenceForm) (M : ZFSet.{u})
     rcases i with _|i
     · rfl
     · change e 2 = tupleEnv (fun _ : Fin p.bound => e 2) i
-      simp only [tupleEnv,dif_pos (show i < p.bound by omega)]
+      simp only [tupleEnv,dite_eq_left (show i < p.bound by omega)]
   change (∃ A ∈ M, (s.rename _).Sat _ (cons A e) ∧ e 2 ∈ A ∧
     (FullSetForcing.definedSet _ _).Sat _ (cons A e)) ↔ _
   constructor

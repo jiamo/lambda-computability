@@ -78,10 +78,10 @@ theorem stageWord_eq (D : LocalInputs.Data) (s v : ℕ) :
   unfold stageWord
   simp only [Nat.unpair_pair]
   by_cases ha : stageAction D s v = 0
-  · have hn : LocalStage.stageAction D s (state v) = none := by simpa only [StageRecords.action,if_pos ha] using he.symm
+  · have hn : LocalStage.stageAction D s (state v) = none := by simpa only [StageRecords.action,ite_eq_left ha] using he.symm
     simp [ha,LocalStage.stageWord,hn,generic_eq]
   · have hn : LocalStage.stageAction D s (state v) = some (stageAction D s v-1) := by
-      simpa only [StageRecords.action,if_neg ha] using he.symm
+      simpa only [StageRecords.action,ite_eq_right ha] using he.symm
     simp [ha,LocalStage.stageWord,hn,candidate_eq,generic_eq]
 
 def grow (p s : ℕ) : ℕ := Nat.pair (encode (left p ++ [false]))

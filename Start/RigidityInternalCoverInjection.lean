@@ -56,7 +56,7 @@ theorem internal_injection_of_cover (M : ZFSet.{u}) (hM : Transitive M)
   let j := fun x => if hx : x ∈ h then (hsel x hx).choose else ∅
   have hj (x : ZFSet.{u}) (hx : x ∈ h) : j x ∈ K ∧ ZFSet.pair x (j x) ∈ f ∧
       ∀ c ∈ K, ZFSet.pair x c ∈ f → c = j x := by
-    simp only [j,dif_pos hx]
+    simp only [j,dite_eq_left hx]
     exact (hsel x hx).choose_spec
   have hEpair (x : ZFSet.{u}) (hx : x ∈ h) : ZFSet.pair (j x) x ∈ E :=
     ((inverseCover_pair h K E x (j x)).mp (hfr (hj x hx).2.1)).2.2

@@ -56,7 +56,7 @@ theorem putBit_le {ι : Type} (p : Condition ι) (i : ι) (b : Bool) (hi : p.val
   intro j d hd
   by_cases h : j = i
   · subst j; rw [hi] at hd; cases hd
-  · simpa only [putBit,if_neg h] using hd
+  · simpa only [putBit,ite_eq_right h] using hd
 
 theorem putBit_incompatible {ι : Type} (p : Condition ι) (i : ι) :
     ¬ ∃ r : Condition ι, r ≤ putBit p i false ∧ r ≤ putBit p i true := by

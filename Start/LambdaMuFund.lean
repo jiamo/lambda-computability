@@ -313,11 +313,11 @@ theorem sstr_msub : ∀ (t : Tm) (τ : ℕ → Tm) (ρ0 : ℕ → List Tm) (a : 
           rw [h]
       by_cases hβ : β = a + 1
       · have h2 : nameOf (upS τ β) = a + 1 := hcond.1 hβ
-        simp only [msub, sstr, sstr_apps, if_pos h2, ih, hstk, upR_updAt, updAt, if_pos hβ,
+        simp only [msub, sstr, sstr_apps, ite_eq_left h2, ih, hstk, upR_updAt, updAt, ite_eq_left hβ,
           apps_append]
         rfl
       · have h2 : ¬ nameOf (upS τ β) = a + 1 := fun h => hβ (hcond.2 h)
-        simp only [msub, sstr, sstr_apps, if_neg h2, ih, hstk, upR_updAt, updAt, if_neg hβ]
+        simp only [msub, sstr, sstr_apps, ite_eq_right h2, ih, hstk, upR_updAt, updAt, ite_eq_right hβ]
 
 /-- Appending a whole (shifted) stack to the stack of the name `0`. -/
 def updStk (ρ : ℕ → List Tm) (π : List Tm) : ℕ → List Tm :=
@@ -359,7 +359,7 @@ theorem sbs_msub : ∀ (π : List Tm) (t : Tm) (τ : ℕ → Tm) (ρ0 : ℕ → 
           have hn : nameOf (τ 0) = 0 := by rw [hfix]; rfl
           have hupd : updAt ρ0 0 w 0 = ρ0 0 ++ [w] := by simp [updAt]
           rw [hupd]
-          simp only [sb, if_pos hn, hsstr, apps_append]
+          simp only [sb, ite_eq_left hn, hsstr, apps_append]
           rfl
         · have hupd : updAt ρ0 0 w β = ρ0 β := by simp [updAt, hβ]
           have hn : ¬ nameOf (τ β) = 0 := by
@@ -368,7 +368,7 @@ theorem sbs_msub : ∀ (π : List Tm) (t : Tm) (τ : ℕ → Tm) (ρ0 : ℕ → 
             intro h
             exact hβ (hinj β (by rw [hj, h]))
           rw [hupd]
-          simp only [sb, if_neg hn, hsstr]
+          simp only [sb, ite_eq_right hn, hsstr]
       have ih := sbs_msub π t τ (updAt ρ0 0 w) β hfix hinj hfree hnv hρ1 ⟨j, hj⟩
       have hcomb : updStk (updAt ρ0 0 w) π = updStk ρ0 (v :: π) := by
         funext i

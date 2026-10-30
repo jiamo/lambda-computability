@@ -91,10 +91,10 @@ theorem exists_isWalk {r : C → C → Prop} {n : ℕ} {a b : C} (h : steps r n 
       rcases Nat.lt_succ_iff_lt_or_eq.1 hi with hi' | rfl
       · have h1 : i ≤ n := le_of_lt hi'
         have h2 : i + 1 ≤ n := hi'
-        simp only [if_pos h1, if_pos h2]
+        simp only [ite_eq_left h1, ite_eq_left h2]
         exact hstep i hi'
       · have h2 : ¬ i + 1 ≤ i := by omega
-        simp only [if_pos (le_refl i), if_neg h2]
+        simp only [ite_eq_left (le_refl i), ite_eq_right h2]
         rw [← hfn] at hmb
         exact hmb
 
@@ -144,26 +144,26 @@ theorem exists_steps_lt_card [Fintype C] {r : C → C → Prop} :
       refine steps_of_isWalk (f := fun k => if k < (i : ℕ) then f k else f (k + d)) ?_
       refine ⟨?_, ?_, ?_⟩
       · by_cases h0 : 0 < (i : ℕ)
-        · simp only [if_pos h0]
+        · simp only [ite_eq_left h0]
           exact hf0
         · have hi0 : (i : ℕ) = 0 := by omega
-          simp only [if_neg h0]
+          simp only [ite_eq_right h0]
           rw [show 0 + d = (j : ℕ) by omega, ← hfij, hi0]
           exact hf0
       · have hge : ¬ (n - d < (i : ℕ)) := by omega
-        simp only [if_neg hge]
+        simp only [ite_eq_right hge]
         rw [show n - d + d = n by omega, hfn]
       · intro k hk
         by_cases hki : k + 1 < (i : ℕ)
         · have hki' : k < (i : ℕ) := by omega
-          simp only [if_pos hki, if_pos hki']
+          simp only [ite_eq_left hki, ite_eq_left hki']
           exact hstep k (by omega)
         · by_cases hki2 : k < (i : ℕ)
           · have hk1 : k + 1 = (i : ℕ) := by omega
-            simp only [if_pos hki2, if_neg hki]
+            simp only [ite_eq_left hki2, ite_eq_right hki]
             rw [show k + 1 + d = (j : ℕ) by omega, ← hfij, ← hk1]
             exact hstep k (by omega)
-          · simp only [if_neg hki2, if_neg hki]
+          · simp only [ite_eq_right hki2, ite_eq_right hki]
             rw [show k + 1 + d = (k + d) + 1 by omega]
             exact hstep (k + d) (by omega)
 

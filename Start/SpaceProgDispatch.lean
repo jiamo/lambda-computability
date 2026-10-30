@@ -124,7 +124,7 @@ theorem runs_readAll {α : Type} (rd : ℕ → (α → Prog) → Prog) (dflt : �
   induction n with
   | zero =>
       intro k s' h
-      simp only [Nat.not_lt_zero, if_false] at h
+      simp only [Nat.not_lt_zero, ite_false] at h
       exact h
   | succ n ih =>
       intro k s' h

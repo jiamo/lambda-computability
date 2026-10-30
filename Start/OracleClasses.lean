@@ -85,8 +85,8 @@ theorem eval_ofCob_bRec {g h₀ h₁ bd : Cob} (A : Oracle)
   | cons b x ih =>
       rw [ofCob_bRec, eval_bRec_cons, Cob.eval_bRec_cons, ← ofCob_bRec, ih, Hbd]
       cases b
-      · simp only [Bool.false_eq_true, if_false, H0]
-      · simp only [if_true, H1]
+      · simp only [Bool.false_eq_true, ite_false, H0]
+      · simp only [ite_true, H1]
 
 theorem eval_ofCob_aux : ∀ (n : ℕ) (c : Cob), sizeOf c ≤ n →
     ∀ (A : Oracle) (args : List Word), eval A (ofCob c) args = c.eval args := by
@@ -195,8 +195,8 @@ theorem eval_erase_bRec {g h₀ h₁ bd : CobQ}
   | cons b x ih =>
       rw [erase_bRec, Cob.eval_bRec_cons, eval_bRec_cons, ← erase_bRec, ih, Hbd]
       cases b
-      · simp only [Bool.false_eq_true, if_false, H0]
-      · simp only [if_true, H1]
+      · simp only [Bool.false_eq_true, ite_false, H0]
+      · simp only [ite_true, H1]
 
 theorem eval_erase_aux : ∀ (n : ℕ) (t : CobQ), sizeOf t ≤ n →
     ∀ args : List Word, (erase t).eval args = eval emptyOracle t args := by

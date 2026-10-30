@@ -228,7 +228,7 @@ theorem interp_subst : ∀ (t s : Lambda) (x : ℕ) {X : C} (ρ : ℕ → (X ⟶
       | succ j =>
           by_cases hj : j = x
           · subst hj
-            simp only [shift_succ, if_true]
+            simp only [shift_succ, ite_true]
             exact R.interp_lift_zero_shift s ρ
           · by_cases hj' : x < j
             · have h2 : x + 1 < j + 1 := by omega

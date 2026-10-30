@@ -103,7 +103,7 @@ theorem case_true {H : Config} {c : Configuration q w h x.length} (hH : H.state 
       (rcompile M c₀).AllReach x (Sp (q := q) (w := w) (h := h) c₀ x) H := by
   have hv : rdW H = true := by rw [rdW_of_abs habs]; simp [encTS, view_res, hout]
   have hl := stepList_stL (x := x) hH
-  simp only [hv, runTest, Bool.not_true, Bool.false_eq_true, if_false] at hl
+  simp only [hv, runTest, Bool.not_true, Bool.false_eq_true, ite_false] at hl
   set A := (touch x H).at (stAcc M c₀)
   have hlA : (rcompile M c₀).stepList x A = [] :=
     stepList_of_delta_nil (delta_stAcc M c₀ _ _)
@@ -126,7 +126,7 @@ theorem to_flagTest {H : Config} {c : Configuration q w h x.length} (hH : H.stat
         H (d.at (stF M c₀)) := by
   have hv : rdW H = false := by rw [rdW_of_abs habs]; simp [encTS, view_res, hout]
   have hl := stepList_stL (x := x) hH
-  simp only [hv, runTest, Bool.not_false, if_true] at hl
+  simp only [hv, runTest, Bool.not_false, ite_true] at hl
   obtain ⟨d, hds, hdB, -, hp⟩ := path_of_runs M c₀ (rhosts_mvL2 M c₀) (range_mvL2 M c₀)
     ((runs_mvL 2 _ 3 0).of_eq rfl rfl) (c := touch x H) (by rw [abs_touch, habs]; rfl)
     (by rw [space_touch]; exact hsp)

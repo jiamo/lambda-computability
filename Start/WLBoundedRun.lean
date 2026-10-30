@@ -276,13 +276,13 @@ theorem initial_relative (M : OneTape) (w : List Bool) :
   dsimp only [OneTape.toTM] at *
   by_cases hz : z<0
   · have hn : ¬(0≤z ∧ z.toNat<w.length) := by omega
-    rw [if_pos hz,if_neg hn,List.getD_nil]
-  · rw [if_neg hz]
+    rw [ite_eq_left hz,ite_eq_right hn,List.getD_nil]
+  · rw [ite_eq_right hz]
     have hz' : 0≤z := by omega
     by_cases hb : z.toNat<w.length
-    · rw [if_pos ⟨hz',hb⟩,List.getD_eq_getElem _ _ (by simpa only [List.length_map] using hb)]
+    · rw [ite_eq_left ⟨hz',hb⟩,List.getD_eq_getElem _ _ (by simpa only [List.length_map] using hb)]
       rw [List.getElem_map,List.getD_eq_getElem _ _ hb]
-    · rw [if_neg (by omega),List.getD_eq_default _ _ (by simp only [List.length_map]; omega)]
+    · rw [ite_eq_right (by omega),List.getD_eq_default _ _ (by simp only [List.length_map]; omega)]
 
 theorem next_relative (M : OneTape) (C : M.Config ℤ) (c : Config M) (h : Relative M C c) :
     Relative M (M.step lineShift C) (next M c) := by

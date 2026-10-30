@@ -626,14 +626,14 @@ theorem bRec_run_congr {g h₀ h₁ bd : CobQ}
           refine H0 A B _ fun w hw => hAB' w ?_
           exact List.mem_append_right _ hw
         rw [run_bRec_cons, run_bRec_cons]
-        simp only [Bool.false_eq_true, if_false]
+        simp only [Bool.false_eq_true, ite_false]
         rw [hh0eq, hbdeq, hIH]
       · have hh1eq : run A h₁ (x :: (run A (.bRec g h₀ h₁ bd) (x :: rest)).1 :: rest)
             = run B h₁ (x :: (run A (.bRec g h₀ h₁ bd) (x :: rest)).1 :: rest) := by
           refine H1 A B _ fun w hw => hAB' w ?_
           exact List.mem_append_right _ hw
         rw [run_bRec_cons, run_bRec_cons]
-        simp only [if_true]
+        simp only [ite_true]
         rw [hh1eq, hbdeq, hIH]
 
 theorem run_congr_aux : ∀ (n : ℕ) (t : CobQ), sizeOf t ≤ n →

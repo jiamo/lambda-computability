@@ -107,8 +107,8 @@ lemma ind_height (L : Language β) (hL : HasHeightAtMost L 1) (M r : ℕ) :
     intro w
     show (if w ∈ L then 1 else 0) % M = r ↔ _
     by_cases hw : w ∈ L
-    · rw [if_pos hw, if_pos hw]
-    · rw [if_neg hw, if_neg hw]
+    · rw [ite_eq_left hw, ite_eq_left hw]
+    · rw [ite_eq_right hw, ite_eq_right hw]
   by_cases h1 : 1 % M = r <;> by_cases h0 : 0 % M = r
   · have : ({w : List β | (if w ∈ L then 1 else 0) % M = r} : Language β) = ⊤ := by
       ext w
@@ -119,15 +119,15 @@ lemma ind_height (L : Language β) (hL : HasHeightAtMost L 1) (M r : ℕ) :
       ext w
       rw [key]
       by_cases hw : w ∈ L
-      · rw [if_pos hw]; exact ⟨fun _ => hw, fun _ => h1⟩
-      · rw [if_neg hw]; exact ⟨fun h => absurd h h0, fun h => absurd h hw⟩
+      · rw [ite_eq_left hw]; exact ⟨fun _ => hw, fun _ => h1⟩
+      · rw [ite_eq_right hw]; exact ⟨fun h => absurd h h0, fun h => absurd h hw⟩
     rw [this]; exact hL
   · have : ({w : List β | (if w ∈ L then 1 else 0) % M = r} : Language β) = Lᶜ := by
       ext w
       rw [key]
       by_cases hw : w ∈ L
-      · rw [if_pos hw]; exact ⟨fun h => absurd h h1, fun h => absurd hw h⟩
-      · rw [if_neg hw]; exact ⟨fun _ => hw, fun _ => h0⟩
+      · rw [ite_eq_left hw]; exact ⟨fun h => absurd h h1, fun h => absurd hw h⟩
+      · rw [ite_eq_right hw]; exact ⟨fun _ => hw, fun _ => h0⟩
     rw [this]; exact hL.compl
   · have : ({w : List β | (if w ∈ L then 1 else 0) % M = r} : Language β) = (0 : Language β) := by
       ext w
@@ -164,8 +164,8 @@ lemma lastx_height [Finite β] [DecidableEq β] (x : β) (M r : ℕ) :
     show (if lastOr none w = some x then 1 else 0) % M = r ↔
       (if w ∈ (⊤ : Language β) * {[x]} then 1 else 0) % M = r
     by_cases hw : lastOr none w = some x
-    · rw [if_pos hw, if_pos ((lastOr_none_eq x w).mp hw)]
-    · rw [if_neg hw, if_neg (fun h => hw ((lastOr_none_eq x w).mpr h))]
+    · rw [ite_eq_left hw, ite_eq_left ((lastOr_none_eq x w).mp hw)]
+    · rw [ite_eq_right hw, ite_eq_right (fun h => hw ((lastOr_none_eq x w).mpr h))]
   rw [heq]; exact h
 
 end Simple
@@ -201,7 +201,7 @@ lemma zp_identity_cast (σ : β → ZMod p) (x : β) (hx : σ x = 1) (M : ℕ) (
         (if lastOr none w = some x then (zphi (zpSum σ w) : ZMod M) else 0) := by
   have : NeZero p := ⟨hp.out.ne_zero⟩
   have h := zp_identity_aux σ x hx w 0 none (fun _ => rfl)
-  rw [pairW_eq_sum2, pairW_eq_sum2, if_neg (by simp), zero_add] at h
+  rw [pairW_eq_sum2, pairW_eq_sum2, ite_eq_right (by simp), zero_add] at h
   rw [vcount_eq_vcountFrom]
   have h' := congrArg (fun t : ℕ => (t : ZMod M)) h
   simp only [Nat.cast_add, Nat.cast_mul, Nat.cast_sum, add_zero] at h'
@@ -244,8 +244,8 @@ theorem zpcore_moving (σ : β → ZMod p) (x : β) (hx : σ x = 1) (hne : ∀ c
     have hind : ((if lastOr none w = some x then 1 else 0) % (p * n) = 1) ↔
         lastOr none w = some x := by
       by_cases h : lastOr none w = some x
-      · simp only [h, if_true, Nat.mod_eq_of_lt hM2]
-      · simp only [h, if_false, Nat.zero_mod, iff_false]; omega
+      · simp only [h, ite_true, Nat.mod_eq_of_lt hM2]
+      · simp only [h, ite_false, Nat.zero_mod, iff_false]; omega
     have hsum : ∑ b : β, (((w.count b % (p * n) : ℕ)) : ZMod p) * σ b = zpSum σ w := by
       rw [zpSum_eq_sum]
       exact Finset.sum_congr rfl fun b _ => by rw [hcastp]
@@ -291,7 +291,7 @@ lemma vcountFrom_zero_of (x : β) :
       have h0 : s ≠ 0 := by
         have := h [] List.nil_prefix (by simp)
         simpa using this
-      rw [vcountFrom_cons, if_neg (fun h' => h0 h'.2), zero_add]
+      rw [vcountFrom_cons, ite_eq_right (fun h' => h0 h'.2), zero_add]
       refine vcountFrom_zero_of x u _ fun q hq hne => ?_
       have := h (c :: q) (List.cons_prefix_cons.mpr ⟨rfl, hq⟩) (by simpa using hne)
       rwa [zpSum_cons, ← add_assoc] at this
@@ -303,7 +303,7 @@ lemma vcountFrom_tail (x : β) (hx : σ x = 0) {c : β} {t : List β} (ht : c ::
     have := ht [c] (List.cons_prefix_cons.mpr ⟨rfl, List.nil_prefix⟩) (by simp)
     rwa [zpSum_single] at this
   have hcx : c ≠ x := fun h => hc (h ▸ hx)
-  rw [vcountFrom_cons, if_neg (fun h => hcx h.1), zero_add]
+  rw [vcountFrom_cons, ite_eq_right (fun h => hcx h.1), zero_add]
   refine vcountFrom_zero_of σ x t _ fun q hq _ => ?_
   have := ht (c :: q) (List.cons_prefix_cons.mpr ⟨rfl, hq⟩) (by simp)
   rwa [zpSum_cons, zero_add] at *
@@ -321,7 +321,7 @@ lemma vcountFrom_block_fixed (x : β) (hx : σ x = 0) {e : List β} (he : e ∈ 
         (by simpa using hne') (by rw [zpSum_single]; exact hx)
     subst he'
     simp [vcountFrom_cons, vcountFrom_nil]
-  · rw [if_neg (by simp [hcx]), vcountFrom_cons, if_neg (fun h => hcx h.1), zero_add]
+  · rw [ite_eq_right (by simp [hcx]), vcountFrom_cons, ite_eq_right (fun h => hcx h.1), zero_add]
     refine vcountFrom_zero_of σ x e' _ fun q hq hqne => ?_
     have := hpre (c :: q) (List.cons_prefix_cons.mpr ⟨rfl, hq⟩) (by simp) (by simpa using hqne)
     rwa [zpSum_cons, zero_add] at *
@@ -347,7 +347,7 @@ lemma vcount_fixed_eq (x : β) (hx : σ x = 0) (w : List β) :
       congr 1
       by_cases h : e = [x]
       · subst h
-        rw [if_pos rfl, if_pos]
+        rw [ite_eq_left rfl, ite_eq_left]
         exact decide_eq_true rfl
       · simp [h, show e ∉ ({[x]} : Language β) from h]
 
@@ -393,7 +393,7 @@ lemma vcountFrom_filterMap_erase {α β : Type} [DecidableEq α] [DecidableEq β
       cases hb : φ b with
       | none =>
           obtain ⟨hd, hx⟩ := h0 b hb
-          rw [List.filterMap_cons, hb, if_neg (fun h => hx h.1), hd, add_zero, zero_add]
+          rw [List.filterMap_cons, hb, ite_eq_right (fun h => hx h.1), hd, add_zero, zero_add]
           exact vcountFrom_filterMap_erase δ x σ x' φ h0 h1 w s
       | some c =>
           obtain ⟨hd, hx⟩ := h1 b c hb
@@ -401,8 +401,8 @@ lemma vcountFrom_filterMap_erase {α β : Type} [DecidableEq α] [DecidableEq β
             vcountFrom_filterMap_erase δ x σ x' φ h0 h1 w]
           congr 1
           by_cases hc : c = x' ∧ s = 0
-          · rw [if_pos hc, if_pos ⟨hx.mpr hc.1, hc.2⟩]
-          · rw [if_neg hc, if_neg (fun h => hc ⟨hx.mp h.1, h.2⟩)]
+          · rw [ite_eq_left hc, ite_eq_left ⟨hx.mpr hc.1, hc.2⟩]
+          · rw [ite_eq_right hc, ite_eq_right (fun h => hc ⟨hx.mp h.1, h.2⟩)]
 
 /-- **The `Z_p` core holds for every prime `p`.** -/
 theorem zpcore (p : ℕ) [Fact p.Prime] : ZpCoreHeightOne p := by

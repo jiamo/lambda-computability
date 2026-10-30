@@ -130,9 +130,9 @@ theorem extendEnv_baseTags {B K base b e : ℕ} (τ : ℕ → ℕ) :
       = tagEnv B K (expEnv base τ b e) := by
   funext j
   by_cases hj : j < b
-  · simp only [extendEnv, if_pos hj, baseTags, tagEnv, expEnv]
+  · simp only [extendEnv, ite_eq_left hj, baseTags, tagEnv, expEnv]
     rw [show base + (j + e) = base + e + j from by omega]
-  · simp only [extendEnv, if_neg hj, tagEnv, expEnv]
+  · simp only [extendEnv, ite_eq_right hj, tagEnv, expEnv]
 
 /-- **One step of the η-general descent.**  Feeding the `b + e` tagged arguments of the node to
 the instantiated tree exposes the tag of its head, applied to the instantiated arguments of the
@@ -171,13 +171,13 @@ theorem getD_expArgs {B K base b e r : ℕ} {as : List BohmNF} {τ : ℕ → ℕ
       simp only [List.length_append, hmaplen, argsFor_length]
       omega
     rw [← List.getElem_eq_getD (fallback := Lambda.var 0) (h := h2),
-      List.getElem_append_left h1, List.getElem_map, argTreeOf, dif_pos hlt, argEnvOf,
-      if_pos hlt]
+      List.getElem_append_left h1, List.getElem_map, argTreeOf, dite_eq_left hlt, argEnvOf,
+      ite_eq_left hlt]
   · have hmaplen : (as.map (instTree (tagEnv B K (expEnv base τ b e)))).length = as.length := by
       simp
     rw [getD_append_right _ _ _ _ (by rw [hmaplen]; omega), hmaplen,
-      getD_argsFor _ e (r - as.length) (by omega), argTreeOf, dif_neg hlt, argEnvOf,
-      if_neg hlt, instTree_leaf, baseTags, tagEnv]
+      getD_argsFor _ e (r - as.length) (by omega), argTreeOf, dite_eq_right hlt, argEnvOf,
+      ite_eq_right hlt, instTree_leaf, baseTags, tagEnv]
     congr 2
     omega
 
@@ -187,8 +187,8 @@ theorem headTag_lt {B base b h e : ℕ} {τ : ℕ → ℕ} (hτ : ∀ j, τ j < 
     (hbB : base + (b + e) ≤ B) : headTag base τ b h e < B := by
   rw [headTag, expEnv]
   by_cases hh : h < b
-  · rw [if_pos hh]; omega
-  · rw [if_neg hh]; exact hτ _
+  · rw [ite_eq_left hh]; omega
+  · rw [ite_eq_right hh]; exact hτ _
 
 theorem argEnvOf_lt {B base b e r : ℕ} {as : List BohmNF} {τ : ℕ → ℕ} (hτ : ∀ j, τ j < B)
     (hr : r < as.length + e) (hbB : base + (b + e) ≤ B) :
@@ -196,11 +196,11 @@ theorem argEnvOf_lt {B base b e r : ℕ} {as : List BohmNF} {τ : ℕ → ℕ} (
   intro j
   rw [argEnvOf]
   by_cases hlt : r < as.length
-  · rw [if_pos hlt, expEnv]
+  · rw [ite_eq_left hlt, expEnv]
     by_cases hj : j < b
-    · rw [if_pos hj]; omega
-    · rw [if_neg hj]; exact hτ _
-  · rw [if_neg hlt]; omega
+    · rw [ite_eq_left hj]; omega
+    · rw [ite_eq_right hj]; exact hτ _
+  · rw [ite_eq_right hlt]; omega
 
 theorem arityLe_argTreeOf {a b h : ℕ} {as : List BohmNF} (ha : BohmNF.ArityLe a (.node b h as))
     (r : ℕ) : BohmNF.ArityLe a (argTreeOf as r) := by
@@ -379,7 +379,7 @@ theorem BohmNF.size_argTreeOf (as : List BohmNF) (r : ℕ) (b h : ℕ) :
 
 theorem BohmNF.size_argTreeOf_lt {b h : ℕ} {as : List BohmNF} {r : ℕ} (hr : r < as.length) :
     (argTreeOf as r).size < (BohmNF.node b h as).size := by
-  rw [argTreeOf, dif_pos hr]
+  rw [argTreeOf, dite_eq_left hr]
   exact BohmNF.size_lt_of_mem (List.getElem_mem _)
 
 /-- Two η-variables carrying the same tag are η-equal. -/
@@ -423,11 +423,11 @@ theorem tagDiffer_of_not_tagEq_aux : ∀ (n : ℕ) {base : ℕ} {τ₁ τ₂ : �
             by_contra hc
             push Not at hc
             refine hrne ?_
-            have h1 : argTreeOf as₁ r = .node 0 0 [] := by rw [argTreeOf, dif_neg (by omega)]
-            have h2 : argTreeOf as₂ r = .node 0 0 [] := by rw [argTreeOf, dif_neg (by omega)]
+            have h1 : argTreeOf as₁ r = .node 0 0 [] := by rw [argTreeOf, dite_eq_right (by omega)]
+            have h2 : argTreeOf as₂ r = .node 0 0 [] := by rw [argTreeOf, dite_eq_right (by omega)]
             rw [h1, h2]
             refine tagEq_leaf ?_
-            rw [argEnvOf, if_neg (by omega), argEnvOf, if_neg (by omega)]
+            rw [argEnvOf, ite_eq_right (by omega), argEnvOf, ite_eq_right (by omega)]
             omega
           refine TagDiffer.arg hmin hm hhead hlen hr (ih ?_ hrne)
           have hs₁ : (argTreeOf as₁ r).size ≤ (BohmNF.node b₁ h₁ as₁).size :=

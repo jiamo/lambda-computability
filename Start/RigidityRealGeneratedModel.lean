@@ -25,7 +25,7 @@ noncomputable def hull (M X : ZFSet.{0}) : ZFSet.{0} := by
 
 theorem mem_hull (M X z : ZFSet.{0}) (h : ∃ N, Contains M X N) :
     z ∈ hull M X ↔ ∀ N, Contains M X N → z ∈ N := by
-  rw [hull,dif_pos h,ZFSet.mem_sep]
+  rw [hull,dite_eq_left h,ZFSet.mem_sep]
   exact ⟨fun hz => hz.2,fun hz => ⟨hz h.choose h.choose_spec,hz⟩⟩
 
 theorem hull_eq_of_least (M X H : ZFSet.{0}) (hH : Contains M X H)

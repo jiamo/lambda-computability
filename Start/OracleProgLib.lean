@@ -229,7 +229,7 @@ theorem oruns_popBranch (R : ℕ → List Bool) (j : ℕ) {K : ℕ} (hj : j < K)
     rw [lay_val R j hj, ← valOf_last _ hne, hm, Nat.add_sub_cancel]
   refine ORunsQ.ite (fun ht => ?_) (fun ht => ?_)
   · have h1 : (R j).getLast hne = true := by rw [← hv]; exact ht
-    rw [h1, if_pos rfl] at hp
+    rw [h1, ite_eq_left rfl] at hp
     exact (ORuns.lift hpop).seq hp
   · have h1 : (R j).getLast hne = false := by rw [← hv]; exact ht
     rw [h1] at hp

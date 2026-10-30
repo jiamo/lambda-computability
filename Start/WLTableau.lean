@@ -250,16 +250,16 @@ theorem setsOfWitness_nonempty (W : C.expand.Witness) (p : Node P E) (a : Addres
   | buffer e =>
     change (if h : ProductAllowed (C.domain e) a then W.buffer ⟨e,⟨a,h⟩⟩ else Set.univ).Nonempty
     by_cases h : ProductAllowed (C.domain e) a
-    · rw [dif_pos h]
+    · rw [dite_eq_left h]
       exact W.buffer_nonempty ⟨e,⟨a,h⟩⟩
-    · rw [dif_neg h]
+    · rw [dite_eq_right h]
       exact Set.univ_nonempty
   | dummy => exact Set.univ_nonempty
 
 theorem setsOfWitness_buffer (W : C.expand.Witness) (e : E) (a : Address r m)
     (ha : ProductAllowed (C.domain e) a) :
     C.setsOfWitness W (.buffer e) a = W.buffer ⟨e,⟨a,ha⟩⟩ := by
-  exact dif_pos ha
+  exact dite_eq_left ha
 
 theorem consistent_of_witness (W : C.expand.Witness) : C.consistency.ArcConsistent := by
   classical
@@ -678,22 +678,22 @@ theorem seed_spec (hm : 0< m) (f : Alphabet) (a : ProductBox.Address (d+(q+1)) m
     | inl x =>
       have hx : x=f := Gate.scalar.inj hs
       obtain ⟨hi,hh⟩ := (input_allowed input x _).mp hp
-      simp only [initialDigit,if_pos hh,← hx,hi]
+      simp only [initialDigit,ite_eq_left hh,← hx,hi]
     | inr i =>
       have hf : blank=f := Gate.scalar.inj hs
       have hi := (blank_allowed input i _).mp hp
       have hh : ¬∀ j : Fin q,(ProductBox.space a j.succ).val=0 := fun h => hi (h i)
-      simp only [initialDigit,if_neg hh,← hf]
+      simp only [initialDigit,ite_eq_right hh,← hf]
   · rintro ⟨ht,hf⟩
     have ht' := (Digits.value_eq_zero_iff hm _).mp ht
     by_cases hh : ∀ j : Fin q,(ProductBox.space a j.succ).val=0
     · refine ⟨.inl f,rfl,(seed_allowed input _ _).mpr ⟨ht',?_⟩⟩
       apply (input_allowed input _ _).mpr
-      exact ⟨by simpa only [initialDigit,if_pos hh] using hf.symm,hh⟩
+      exact ⟨by simpa only [initialDigit,ite_eq_left hh] using hf.symm,hh⟩
     · obtain ⟨i,hi⟩ := not_forall.mp hh
       refine ⟨.inr i,?_,(seed_allowed input _ _).mpr ⟨ht',?_⟩⟩
       · change Gate.scalar blank=.scalar f
-        simpa only [initialDigit,if_neg hh] using congrArg Gate.scalar hf.symm
+        simpa only [initialDigit,ite_eq_right hh] using congrArg Gate.scalar hf.symm
       · exact (blank_allowed input i _).mpr hi
 
 variable (accepting : Alphabet → Prop)

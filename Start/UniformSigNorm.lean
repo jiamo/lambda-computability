@@ -57,18 +57,18 @@ decreasing_by
 theorem cobShape_shapeAt : ∀ (r : ℕ) (v : Cob), CobShape r (shapeAt r v) := by
   intro r v
   induction r, v using shapeAt.induct with
-  | case1 r i h => rw [shapeAt, if_pos h]; exact CobShape.proj h
-  | case2 r i h => rw [shapeAt, if_neg h]; exact CobShape.empty
+  | case1 r i h => rw [shapeAt, ite_eq_left h]; exact CobShape.proj h
+  | case2 r i h => rw [shapeAt, ite_eq_right h]; exact CobShape.empty
   | case3 r => rw [shapeAt]; exact CobShape.empty
-  | case4 r b h => rw [shapeAt, if_pos h]; exact CobShape.app h
+  | case4 r b h => rw [shapeAt, ite_eq_left h]; exact CobShape.app h
   | case5 r b h =>
-      rw [shapeAt, if_neg h]
+      rw [shapeAt, ite_eq_right h]
       exact CobShape.comp (CobShape.app (by simp)) (by
         intro g hg
         rw [List.mem_singleton.1 hg]
         exact CobShape.empty)
-  | case6 r h => rw [shapeAt, if_pos h]; exact CobShape.smash h
-  | case7 r h => rw [shapeAt, if_neg h]; exact CobShape.empty
+  | case6 r h => rw [shapeAt, ite_eq_left h]; exact CobShape.smash h
+  | case7 r h => rw [shapeAt, ite_eq_right h]; exact CobShape.empty
   | case8 r f gs ihf ihgs =>
       rw [shapeAt]
       refine CobShape.comp ?_ ?_
@@ -88,13 +88,13 @@ theorem eval_shapeAt : ∀ (r : ℕ) (v : Cob) (args : List Word), args.length =
     (shapeAt r v).eval args = v.eval args := by
   intro r v
   induction r, v using shapeAt.induct with
-  | case1 r i h => intro args _; rw [shapeAt, if_pos h]
+  | case1 r i h => intro args _; rw [shapeAt, ite_eq_left h]
   | case2 r i h =>
       intro args hargs
-      rw [shapeAt, if_neg h, Cob.eval_empty, Cob.eval_proj,
+      rw [shapeAt, ite_eq_right h, Cob.eval_empty, Cob.eval_proj,
         List.getD_eq_default _ _ (by omega)]
   | case3 r => intro args _; rw [shapeAt]
-  | case4 r b h => intro args _; rw [shapeAt, if_pos h]
+  | case4 r b h => intro args _; rw [shapeAt, ite_eq_left h]
   | case5 r b h =>
       intro args hargs
       have hnil : args = [] := by
@@ -102,12 +102,12 @@ theorem eval_shapeAt : ∀ (r : ℕ) (v : Cob) (args : List Word), args.length =
         | nil => rfl
         | cons u us => exfalso; simp at hargs; omega
       subst hnil
-      rw [shapeAt, if_neg h]
+      rw [shapeAt, ite_eq_right h]
       simp
-  | case6 r h => intro args _; rw [shapeAt, if_pos h]
+  | case6 r h => intro args _; rw [shapeAt, ite_eq_left h]
   | case7 r h =>
       intro args hargs
-      rw [shapeAt, if_neg h, Cob.eval_empty, Cob.eval_smash,
+      rw [shapeAt, ite_eq_right h, Cob.eval_empty, Cob.eval_smash,
         List.getD_eq_default (l := args) (n := 1) [] (by omega)]
       simp
   | case8 r f gs ihf ihgs =>
@@ -145,9 +145,9 @@ theorem eval_shapeAt : ∀ (r : ℕ) (v : Cob) (args : List Word), args.length =
           rw [Cob.eval_bRec_cons, Cob.eval_bRec_cons, ihy,
             ih4 ((b :: y) :: rest) (by simp [hrest])]
           cases b
-          · simp only [Bool.false_eq_true, if_false]
+          · simp only [Bool.false_eq_true, ite_false]
             rw [ih2 (y :: _ :: rest) (by simp [hrest])]
-          · simp only [if_true]
+          · simp only [ite_true]
             rw [ih3 (y :: _ :: rest) (by simp [hrest])]
 
 /-! ### Every language in P -/

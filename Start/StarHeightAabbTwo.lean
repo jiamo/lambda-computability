@@ -40,8 +40,8 @@ lemma prod_aabbRhoM (a : α) (v : List α) :
       simp only [List.map_cons, List.map_nil, List.prod_cons, List.prod_nil, mul_one]
       unfold aabbRhoM
       by_cases hza : z = a
-      · simp only [if_pos hza, ← ofAdd_add]; push_cast; rfl
-      · simp only [if_neg hza, mul_one, Nat.add_zero]
+      · simp only [ite_eq_left hza, ← ofAdd_add]; push_cast; rfl
+      · simp only [ite_eq_right hza, mul_one, Nat.add_zero]
 
 lemma prod_aabbRhoP {a b : α} (hab : a ≠ b) (v : List α) :
     (v.map (aabbRhoP a b)).prod =
@@ -54,11 +54,11 @@ lemma prod_aabbRhoP {a b : α} (hab : a ≠ b) (v : List α) :
       unfold aabbRhoP
       by_cases hza : z = a
       · subst hza
-        simp only [if_true, if_neg hab, ← ofAdd_add]; push_cast; congr 1; ring
+        simp only [ite_true, ite_eq_right hab, ← ofAdd_add]; push_cast; congr 1; ring
       · by_cases hzb : z = b
         · subst hzb
-          simp only [if_neg hza, if_true, ← ofAdd_add]; push_cast; congr 1; ring
-        · simp only [if_neg hza, if_neg hzb, mul_one, Nat.add_zero]
+          simp only [ite_eq_right hza, ite_true, ← ofAdd_add]; push_cast; congr 1; ring
+        · simp only [ite_eq_right hza, ite_eq_right hzb, mul_one, Nat.add_zero]
 
 /-- The step of identity (I) when a `b` is appended, as a function of `A` and `B`. -/
 lemma aabbI_step_b (A B : ℕ) :
@@ -106,7 +106,7 @@ theorem aabb_z4z2_cast_z4 {a b : α} (hab : a ≠ b) (u : List α) :
       have two : ∀ t : ZMod 2, t + t = 0 := by decide
       by_cases hza : z = a
       · subst hza
-        simp only [if_true, if_neg hab, Nat.add_zero]
+        simp only [ite_true, ite_eq_right hab, Nat.add_zero]
         rw [prod_aabbRhoM]
         push_cast at ih ⊢
         rw [ih]
@@ -119,12 +119,12 @@ theorem aabb_z4z2_cast_z4 {a b : α} (hab : a ≠ b) (u : List α) :
         linear_combination (-(if u.count b % 4 = 3 then (1 : ZMod 2) else 0)) * two 1
       · by_cases hzb : z = b
         · subst hzb
-          simp only [if_true, if_neg (Ne.symm hab), Nat.add_zero]
+          simp only [ite_true, ite_eq_right (Ne.symm hab), Nat.add_zero]
           rw [prod_aabbRho hab, prod_aabbRhoM, prod_aabbRhoP hab]
           have hs := aabbI_step_b (u.count a) (u.count z)
           push_cast at ih hs ⊢
           linear_combination ih + hs
-        · simp only [if_neg hza, if_neg hzb, Nat.add_zero]
+        · simp only [ite_eq_right hza, ite_eq_right hzb, Nat.add_zero]
           exact ih
 
 /-- The letter-count term of identity (I). -/

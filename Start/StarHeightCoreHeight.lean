@@ -110,7 +110,7 @@ lemma coreLang_eq_quot (k n : ℕ) :
   have e1 : dsum step3 [1] = 1 := rfl
   rw [e1, e2]
   simp only [show (2 : Fin 3) ≠ 0 by decide, show (1 : Fin 3) ≠ 0 by decide, false_and,
-    if_false, add_zero]
+    ite_false, add_zero]
   constructor
   · intro hc
     rcases zmod3_cases (dsum step3 w) with h | h | h

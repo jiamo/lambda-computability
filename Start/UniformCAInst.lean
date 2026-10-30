@@ -59,21 +59,21 @@ theorem caCell_orCA (W n : ℕ) (bit : ℕ → Bool) : ∀ t j, j < W →
       have hval : CircCode.caCell orCA W n bit 0 j = if j < n ∧ bit j = true then 1 else 0 := by
         rw [CircCode.caCell]
         by_cases hjn : j < n
-        · rw [if_pos hjn]
+        · rw [ite_eq_left hjn]
           cases bit j <;> simp [orCA, hjn]
-        · rw [if_neg hjn]
+        · rw [ite_eq_right hjn]
           simp [orCA, hjn]
       rw [hval]
       constructor
       · intro hc
         by_cases hp : j < n ∧ bit j = true
         · exact ⟨j, hj, hp.1, hp.2, by omega, by omega⟩
-        · rw [if_neg hp] at hc
+        · rw [ite_eq_right hp] at hc
           exact absurd hc (by norm_num)
       · rintro ⟨k, -, hkn, hbk, h1, h2⟩
         have hkj : k = j := by omega
         subst hkj
-        rw [if_pos ⟨hkn, hbk⟩]
+        rw [ite_eq_left ⟨hkn, hbk⟩]
   | succ t ih =>
       intro j hj
       have hstp : ∀ a b c : ℕ, orCA.stp a b c = 1 ↔ (a = 1 ∨ b = 1 ∨ c = 1) := by
@@ -82,16 +82,16 @@ theorem caCell_orCA (W n : ℕ) (bit : ℕ → Bool) : ∀ t j, j < W →
       have hL : (if j = 0 then orCA.blk else CircCode.caCell orCA W n bit t (j - 1)) = 1
           ↔ (j ≠ 0 ∧ ∃ k, k < W ∧ k < n ∧ bit k = true ∧ j - 1 ≤ k + t ∧ k ≤ j - 1 + t) := by
         by_cases h0 : j = 0
-        · rw [if_pos h0]
+        · rw [ite_eq_left h0]
           simp [orCA, h0]
-        · rw [if_neg h0, ih (j - 1) (by omega)]
+        · rw [ite_eq_right h0, ih (j - 1) (by omega)]
           simp [h0]
       have hR : (if j + 1 < W then CircCode.caCell orCA W n bit t (j + 1) else orCA.blk) = 1
           ↔ (j + 1 < W ∧ ∃ k, k < W ∧ k < n ∧ bit k = true ∧ j + 1 ≤ k + t ∧ k ≤ j + 1 + t) := by
         by_cases hw : j + 1 < W
-        · rw [if_pos hw, ih (j + 1) hw]
+        · rw [ite_eq_left hw, ih (j + 1) hw]
           simp [hw]
-        · rw [if_neg hw]
+        · rw [ite_eq_right hw]
           simp [orCA, hw]
       rw [CircCode.caCell, hstp, hL, ih j hj, hR]
       constructor

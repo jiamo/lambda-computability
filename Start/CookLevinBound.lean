@@ -100,7 +100,7 @@ noncomputable def circOf (w : Word) : Circuit :=
 
 theorem circOf_encCirc (C : Circuit) : circOf (encCirc C) = C := by
   have hex : ∃ D : Circuit, encCirc D = encCirc C := ⟨C, rfl⟩
-  rw [circOf, dif_pos hex]
+  rw [circOf, dite_eq_left hex]
   exact encCirc_injective hex.choose_spec
 
 end CircCode
@@ -126,7 +126,7 @@ theorem Cob.eval_pariC (w : Word) (rest : List Word) :
       have hlen : (bw (!decide (w.length % 2 = 1))).length ≤ 1 := by
         cases (decide (w.length % 2 = 1)) <;> simp [bw]
       cases b <;>
-        · simp only [if_pos, Bool.false_eq_true, hbd, hstep]
+        · simp only [ite_eq_left, Bool.false_eq_true, hbd, hstep]
           rw [List.take_of_length_le (by simpa using hlen)]
           rcases Nat.even_or_odd w.length with he | ho
           · have h0 : w.length % 2 = 0 := Nat.even_iff.mp he
@@ -176,7 +176,7 @@ theorem length_inWordAt_replicate (off N M : ℕ) (h : off + 2 * N ≤ M) :
   refine length_inWord_of_all_true N _ (fun i hi => ?_)
   rw [getD_drop_add]
   rw [List.getD_eq_getElem?_getD, List.getElem?_replicate]
-  rw [if_pos (by omega)]
+  rw [ite_eq_left (by omega)]
   rfl
 
 end Tseitin

@@ -28,11 +28,11 @@ variable (M : Machine)
  theorem rawTape_beyond (w : List Bool) (i : ℕ) (hi : w.length ≤ i) :
     M.rawTape w i=.inl 0 := by
   simp only [rawTape,TypedTape.Machine.initial,Nat.cast_nonneg,Int.toNat_natCast,true_and,
-    if_neg (by omega : ¬i<w.length)]
+    ite_eq_right (by omega : ¬i<w.length)]
  theorem mixed_nonneg (u v : List Bool) (z : ℤ) (hz : 0 ≤ z) :
-    M.mixed u v z=M.rawTape u z := if_pos hz
+    M.mixed u v z=M.rawTape u z := ite_eq_left hz
  theorem mixed_neg (u v : List Bool) (z : ℤ) (hz : z<0) :
-    M.mixed u v z=M.storage (M.inputStacks v) z := if_neg (by omega)
+    M.mixed u v z=M.storage (M.inputStacks v) z := ite_eq_right (by omega)
  theorem mixed_bottom (u v : List Bool) (z : ℤ) :
     M.symbolBottom (M.mixed u v z)=decide (z= -1) := by
   by_cases hz : 0 ≤ z
@@ -56,7 +56,7 @@ variable (M : Machine)
     M.storage s z=.inl 0 := by
   have h0 : z≠ -1 := by omega
   have h1 : ¬z< -1 := by omega
-  simp only [storage,decide_eq_false_iff_not.mpr h0,storageTracks,if_neg h1,trackSymbol,and_self,ite_true]
+  simp only [storage,decide_eq_false_iff_not.mpr h0,storageTracks,ite_eq_right h1,trackSymbol,and_self,ite_true]
  theorem mixed_nil (v : List Bool) : M.mixed [] v=M.storage (M.inputStacks v) := by
   funext z
   by_cases hz : 0 ≤ z
@@ -318,7 +318,7 @@ variable (M : Machine)
   simp only [storage,hs]
   by_cases hz : z= -1
   · simp only [hz,decide_true,ite_true]
-  · simp only [decide_eq_false_iff_not.mpr hz,if_neg hz,trackSymbol,and_self,ite_true]
+  · simp only [decide_eq_false_iff_not.mpr hz,ite_eq_right hz,trackSymbol,and_self,ite_true]
 
  theorem mixed_initial (w : List Bool) :
     M.mixed w []=Function.update (M.rawTape w) (-1) (M.trackSymbol true (fun _ => none)) := by
@@ -329,7 +329,7 @@ variable (M : Machine)
   · rw [Function.update_of_ne he]
     by_cases hz : 0 ≤ z
     · exact M.mixed_nonneg w [] z hz
-    · rw [M.mixed_neg _ _ z (by omega),M.storage_empty,if_neg he]
+    · rw [M.mixed_neg _ _ z (by omega),M.storage_empty,ite_eq_right he]
       simp only [rawTape,TypedTape.Machine.initial,hz,false_and,ite_false]
 
  theorem init_mark (w : List Bool) :
@@ -338,7 +338,7 @@ variable (M : Machine)
     have hh : ¬M.sweep.halted (.inl 0) := by simp [TypedTape.Machine.halted]
     have ha : M.sweep.action (.inl 0) (M.rawTape w 0)=
         (.inr .mark,M.rawTape w 0,.left) := by
-      rw [TypedTape.Machine.action,if_neg hh]
+      rw [TypedTape.Machine.action,ite_eq_right hh]
       rfl
     change M.sweep.step ⟨.inl 0,0,M.rawTape w⟩=_
     simp only [TypedTape.Machine.step,ha,Function.update_eq_self]

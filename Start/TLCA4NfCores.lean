@@ -161,11 +161,11 @@ theorem NB.substQ {x j : ℕ} {K : ℤ} {Q : Lambda} (hQ : NG x j Q) {h : ℤ} {
     (hP : NB x h P) : NCore x K (h + (K - tri j - 1)) (Lambda.subst Q 0 P) := by
   cases hP with
   | @q T =>
-    simp only [Lambda.subst, if_pos]
+    simp only [Lambda.subst, ite_eq_left]
     refine .pq hQ (qG_subst hQ T) ?_
     rw [tri_succ_int]; ring
   | @comp i' _ R hR hn =>
-    simp only [Lambda.subst, Lambda.subst_lift, if_pos]
+    simp only [Lambda.subst, Lambda.subst_lift, ite_eq_left]
     refine .pq hR hQ ?_
     subst hn; ring
 

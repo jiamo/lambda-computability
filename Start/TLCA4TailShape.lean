@@ -74,7 +74,7 @@ theorem TC.beta_lift {base : ℤ → Lambda → Prop} {x : ℕ}
     simp only [Lambda.lift, Lambda.subst, subst_lift_lift_one]
     have hx : Lambda.subst T 0 (.var (x + 1 + 1)) = .var (x + 1) := by
       simp [Lambda.subst]
-    rw [if_neg (by omega), hx, xPow_add]
+    rw [ite_eq_right (by omega), hx, xPow_add]
     exact .rq hR' (by push_cast; omega)
 
 /-- **Chains with arbitrary tails are closed under one βη-step**, given closure of the base. -/

@@ -146,7 +146,7 @@ theorem permutation_first_ratio (S M : Finset L) (hS : S.Nonempty) (hMS : M ⊆ 
         apply Finset.sum_congr rfl
         intro π _
         obtain ⟨t, ht⟩ := exists_isFirst S ⟨s, hs⟩ π
-        exact if_pos ⟨t, ht.1, ht⟩
+        exact ite_eq_left ⟨t, ht.1, ht⟩
       _ = (Fintype.card (Equiv.Perm L) : ℝ) := by simp
   have hmass : (S.card : ℝ) * q = (Fintype.card (Equiv.Perm L) : ℝ) :=
     (hsum S (fun _ hx => hx)).symm.trans hone

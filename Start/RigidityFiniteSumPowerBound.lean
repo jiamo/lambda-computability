@@ -52,7 +52,7 @@ theorem padded_final_sum_certificates (M : ZFSet.{u}) (hM : Transitive M)
   intro t ht
   have hc : paddedCode v β = Ordinal.omega0 ^ (β+1)+Ordinal.omega0 ^ vectorCode v := by
     change pairCode β (vectorCode v) = _
-    rw [pairCode,if_pos hv]
+    rw [pairCode,ite_eq_left hv]
   rw [hc]
   exact sum_certificates_below_power_cut M hM hT _ _ t (vectorCode_pos v) ht
 

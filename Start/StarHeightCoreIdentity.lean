@@ -33,7 +33,7 @@ lemma comp_long (x : Fin 3) {m y : W3} (hm : m ≠ []) (hy : y.length = 3) :
     comp (x :: (m ++ y)) = x :: y := by
   have hm' : 1 ≤ m.length := List.length_pos_iff.mpr hm
   unfold comp
-  rw [if_neg (by simp; omega)]
+  rw [ite_eq_right (by simp; omega)]
   simp only [List.length_cons, List.length_append, hy, List.take_succ_cons, List.take_zero,
     List.singleton_append, List.cons.injEq, true_and]
   rw [show m.length + 3 + 1 - 3 = m.length + 1 by omega, List.drop_succ_cons,
@@ -140,7 +140,7 @@ lemma acQ_prev (h s : ZMod 3) {p p' : Option (Fin 3)} (hp : p ≠ some 0) (hp' :
 lemma acCount_eq_cons (u : W3) : acCount u = acCount0 (2 :: u) := by
   unfold acCount acCount0
   rw [acQ, acQ_shift 2 2 u 0 none]
-  simp only [reduceCtorEq, false_and, if_false, zero_add]
+  simp only [reduceCtorEq, false_and, ite_false, zero_add]
   exact acQ_prev _ _ (by simp) (by simp) u
 
 /-! ### The invariant -/
@@ -194,8 +194,8 @@ lemma Ncnt_snoc (i : Fin 12) (u : W3) (a : Fin 3) :
   rw [split_snoc]
   unfold splitStep
   split_ifs with h1 h2 h3
-  · rw [bcount_snoc, if_pos (show _ ∈ Fcls i from ⟨mem_coreX_snoc (split_spec u).2.2 h1, h2.2⟩)]
-  · rw [bcount_snoc, if_neg]
+  · rw [bcount_snoc, ite_eq_left (show _ ∈ Fcls i from ⟨mem_coreX_snoc (split_spec u).2.2 h1, h2.2⟩)]
+  · rw [bcount_snoc, ite_eq_right]
     rintro ⟨-, h⟩
     exact h2 ⟨h1, h⟩
   · exact absurd h3.1 h1
@@ -221,7 +221,7 @@ lemma acQ_snoc_core (h : ZMod 3) (hh : h ≠ 0) (u : W3) (a : Fin 3) :
     simp only [Option.or_none]
     apply if_congr _ rfl rfl
     tauto
-  · rw [if_neg (by tauto), if_neg (by tauto)]
+  · rw [ite_eq_right (by tauto), ite_eq_right (by tauto)]
 
 lemma dval_sum (x : Fin 13) :
     ∑ i : Fin 12, dval i.succ * ((if x = i.succ then 1 else 0 : ℕ) : ℤ) = dval x := by
@@ -243,11 +243,11 @@ lemma idState_snoc (u : W3) (a : Fin 3) : idState (u ++ [a]) = idStep (idState u
     rw [split_snoc]
     unfold splitStep
     by_cases h : dsum step3 ((split u).2 ++ [a]) = 0
-    · simp only [if_pos h]
-      rw [if_pos (by rw [← hs]; exact h)]
+    · simp only [ite_eq_left h]
+      rw [ite_eq_left (by rw [← hs]; exact h)]
       rfl
-    · simp only [if_neg h]
-      rw [if_neg (by rw [← hs]; exact h)]
+    · simp only [ite_eq_right h]
+      rw [ite_eq_right (by rw [← hs]; exact h)]
       exact comp_snoc _ _
   · simp only [Phi]
     rw [coreCount_snoc, List.count_append, acCount, acQ_snoc_core 2 (by decide), ← acCount]

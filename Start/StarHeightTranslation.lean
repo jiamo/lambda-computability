@@ -347,7 +347,7 @@ lemma factors_shift (T : FreeMonoid Alphabet →* M) (f : ℤ → Alphabet)
       (by omega) (by omega),factors_present T f hp hm hs hb]
     simp only [StreamShift.product]
   · have hn := mt (present_shift_iff search s b a).mp hp
-    simp only [factors,dif_neg hp,dif_neg hn]
+    simp only [factors,dite_eq_right hp,dite_eq_right hn]
 
 lemma actual_shift (T : FreeMonoid Alphabet →* M) (f : ℤ → Alphabet)
     (search : Fin (g+1) → Option ℤ) (s b a : ℤ) :

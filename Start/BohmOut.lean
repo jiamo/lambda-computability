@@ -62,7 +62,7 @@ theorem envCons_csubEnv {ρ : ℕ → Lambda} (hρ : ∀ j, Lambda.IsClosed (ρ 
       · have hj' : j + 1 < k + 1 := by omega
         simp [envCons, csubEnv, hj, hj', Lambda.lift]
       · have hj' : ¬ j + 1 < k + 1 := by omega
-        simp only [envCons, csubEnv, hj, hj', if_false]
+        simp only [envCons, csubEnv, hj, hj', ite_false]
         rw [Lambda.lift_closed (hρ _) 1 0]
         congr 1
         omega
@@ -108,9 +108,9 @@ theorem freeBelow_csub {ρ : ℕ → Lambda} (hρ : ∀ j, Lambda.IsClosed (ρ j
   refine freeBelow_substEnv t _ k ?_
   intro j
   by_cases hj : j < k
-  · simp only [csubEnv, if_pos hj]
+  · simp only [csubEnv, ite_eq_left hj]
     exact hj
-  · simp only [csubEnv, hj, if_false]
+  · simp only [csubEnv, hj, ite_false]
     exact freeBelow_mono (Nat.zero_le k) (freeBelow_zero_of_isClosed (hρ _))
 
 theorem isClosed_csub_zero {ρ : ℕ → Lambda} (hρ : ∀ j, Lambda.IsClosed (ρ j)) (t : Lambda) :
@@ -141,7 +141,7 @@ theorem isClosed_consEnv {a : Lambda} {ρ : ℕ → Lambda} (ha : Lambda.IsClose
 theorem isClosed_extendEnv {g ρ : ℕ → Lambda} (hg : ∀ j, Lambda.IsClosed (g j))
     (hρ : ∀ j, Lambda.IsClosed (ρ j)) (b : ℕ) : ∀ j, Lambda.IsClosed (extendEnv g b ρ j) := by
   intro j
-  by_cases hj : j < b <;> simp only [extendEnv, hj, if_true, if_false]
+  by_cases hj : j < b <;> simp only [extendEnv, hj, ite_true, ite_false]
   · exact hg j
   · exact hρ _
 
@@ -208,7 +208,7 @@ theorem reduces_appList_csub {g : ℕ → Lambda} (hg : ∀ j, Lambda.IsClosed (
           · have h1 : ¬ j < b + 1 := by omega
             have h2 : ∃ m, j - b = m + 1 := ⟨j - b - 1, by omega⟩
             obtain ⟨m, hm⟩ := h2
-            simp only [extendEnv, hj, h1, if_false, hm]
+            simp only [extendEnv, hj, h1, ite_false, hm]
             change ρ m = ρ (j - (b + 1))
             congr 1
             omega
@@ -506,7 +506,7 @@ def boolArgs (B t : ℕ) : List Lambda :=
 theorem isClosed_mem_boolArgs {B t : ℕ} {a : Lambda} (ha : a ∈ boolArgs B t) :
     Lambda.IsClosed a := by
   obtain ⟨p, -, rfl⟩ := List.mem_map.1 ha
-  by_cases hp : p = t <;> simp only [hp, if_true, if_false]
+  by_cases hp : p = t <;> simp only [hp, ite_true, ite_false]
   · exact IsClosed_true
   · exact IsClosed_false
 
@@ -588,9 +588,9 @@ theorem separable_tagTuple_of_tag_ne {B K t₁ t₂ : ℕ} (ht₁ : t₁ < B) (h
       · exact absurd ha List.not_mem_nil
   · refine ⟨boolArgs B t₁, fun a ha => isClosed_mem_boolArgs ha, ?_, ?_⟩
     · have h := reduces_projSel_boolArgs (B := B) (t := t₁) (t' := t₁) ht₁
-      rwa [if_pos rfl] at h
+      rwa [ite_eq_left rfl] at h
     · have h := reduces_projSel_boolArgs (B := B) (t := t₂) (t' := t₁) ht₂
-      rwa [if_neg (fun hc => hne hc.symm)] at h
+      rwa [ite_eq_right (fun hc => hne hc.symm)] at h
 
 /-- **Different arities.**  Two tagged tuples with different numbers of stored arguments are
 separable, whatever their tags. -/
@@ -729,14 +729,14 @@ def tagShift (base b : ℕ) (τ : ℕ → ℕ) : ℕ → ℕ :=
 theorem tagShift_lt {B base b : ℕ} {τ : ℕ → ℕ} (hτ : ∀ j, τ j < B) (hb : base + b ≤ B) :
     ∀ j, tagShift base b τ j < B := by
   intro j
-  by_cases hj : j < b <;> simp only [tagShift, hj, if_true, if_false]
+  by_cases hj : j < b <;> simp only [tagShift, hj, ite_true, ite_false]
   · omega
   · exact hτ _
 
 theorem tagShift_lt_base {d base b : ℕ} {τ : ℕ → ℕ} (hτ : ∀ j, j < d → τ j < base) :
     ∀ j, j < b + d → tagShift base b τ j < base + b := by
   intro j hj
-  by_cases hjb : j < b <;> simp only [tagShift, hjb, if_true, if_false]
+  by_cases hjb : j < b <;> simp only [tagShift, hjb, ite_true, ite_false]
   · omega
   · have := hτ (j - b) (by omega)
     omega
@@ -746,7 +746,7 @@ theorem tagShift_inj {d base b : ℕ} {τ : ℕ → ℕ} (hlt : ∀ j, j < d →
     ∀ i j, i < b + d → j < b + d → tagShift base b τ i = tagShift base b τ j → i = j := by
   intro i j hi hj heq
   by_cases hib : i < b <;> by_cases hjb : j < b <;>
-    simp only [tagShift, hib, hjb, if_true, if_false] at heq
+    simp only [tagShift, hib, hjb, ite_true, ite_false] at heq
   · omega
   · have := hlt (j - b) (by omega); omega
   · have := hlt (i - b) (by omega); omega

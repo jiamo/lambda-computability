@@ -190,7 +190,7 @@ theorem detAssoc_sound {F : (ℕ → ℕ) → ℕ → ℕ} {z y : ℕ} {s : List
 /-- If the value is already determined by `s`, the canonical associate answers. -/
 theorem detAssoc_pos {F : (ℕ → ℕ) → ℕ → ℕ} {z y : ℕ} {s : List ℕ} (hz : dec z = y :: s)
     (hdet : ∃ v, ∀ α, Ext α s → F α y = v) : 0 < detAssoc F z := by
-  rw [detAssoc_cons hz, dif_pos hdet]
+  rw [detAssoc_cons hz, dite_eq_left hdet]
   omega
 
 /-- Continuity of an operation on Baire space: every value depends on a finite initial segment
@@ -227,7 +227,7 @@ noncomputable def constAssoc (a : ℕ → ℕ) : ℕ → ℕ := detAssoc (fun _ 
 theorem constAssoc_cons {a : ℕ → ℕ} {z y : ℕ} {s : List ℕ} (hz : dec z = y :: s) :
     constAssoc a z = a y + 1 := by
   have hdet : ∃ v, ∀ α, Ext α s → (fun _ : ℕ → ℕ => a) α y = v := ⟨a y, fun _ _ => rfl⟩
-  rw [constAssoc, detAssoc_cons hz, dif_pos hdet]
+  rw [constAssoc, detAssoc_cons hz, dite_eq_left hdet]
   obtain ⟨α₀, hα₀⟩ := exists_ext s
   have h1 : a y = hdet.choose := hdet.choose_spec α₀ hα₀
   omega

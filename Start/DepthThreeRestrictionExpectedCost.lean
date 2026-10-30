@@ -66,7 +66,7 @@ theorem pathWeight_eq_finiteAvg_supported (C : I → Clause V)
               (fun i => (C i).violation (fill σ x)) P
         else 0) := by
   by_cases hc : pathCompatible C σ P
-  · rw [if_pos hc]
+  · rw [ite_eq_left hc]
     symm
     calc
       _ = finiteAvg (fun x : Cube (Live σ) =>
@@ -75,9 +75,9 @@ theorem pathWeight_eq_finiteAvg_supported (C : I → Clause V)
         apply finiteAvg_congr
         intro x
         by_cases hx : ∀ i ∈ P, (C i).violation (fill σ x) = true
-        · rw [if_pos hx, ← pathWeight_eq_coveredPathWeight_of_support C σ P x hn hx]
+        · rw [ite_eq_left hx, ← pathWeight_eq_coveredPathWeight_of_support C σ P x hn hx]
           rw [decide_eq_true hx, indicator_true, mul_one]
-        · rw [if_neg hx, decide_eq_false hx, indicator_false, mul_zero]
+        · rw [ite_eq_right hx, decide_eq_false hx, indicator_false, mul_zero]
       _ = ((2 : ℝ) ^ (pathFinalSet C σ P).card * pathWeight C σ P) *
           ((2 : ℝ) ^ (pathFinalSet C σ P).card)⁻¹ := by
         rw [finiteAvg_const_mul, path_cylinder_probability C σ P hn hc]
@@ -89,7 +89,7 @@ theorem pathWeight_eq_finiteAvg_supported (C : I → Clause V)
               ((2 : ℝ) ^ (pathFinalSet C σ P).card *
                 ((2 : ℝ) ^ (pathFinalSet C σ P).card)⁻¹) := by ring
           _ = _ := by rw [mul_inv_cancel₀ htwo, mul_one]
-  · rw [if_neg hc]
+  · rw [ite_eq_right hc]
     symm
     calc
       _ = finiteAvg (fun _ : Cube (Live σ) => (0 : ℝ)) := by
@@ -97,7 +97,7 @@ theorem pathWeight_eq_finiteAvg_supported (C : I → Clause V)
         intro x
         have hx : ¬ ∀ i ∈ P, (C i).violation (fill σ x) = true :=
           fun hx => hc ⟨x, hx⟩
-        simp only [if_neg hx]
+        simp only [ite_eq_right hx]
       _ = 0 := finiteAvg_zero
 
 def fullAssignmentPathCost (C : I → Clause V) (b : ℕ) (σ : Restriction V)

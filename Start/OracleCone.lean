@@ -61,7 +61,7 @@ theorem not_countable_turingDegree : ¬ Countable (Antisymmetrization (ℕ →. 
     intro A
     have hex : ∃ B, F B = F A := ⟨A, rfl⟩
     rw [hrep]
-    simp only [dif_pos hex]
+    simp only [dite_eq_left hex]
     exact hex.choose_spec
   have hindex : ∀ A, ∃ e : ℕ, Phi (rep (F A)) e = oracleFun A := by
     intro A

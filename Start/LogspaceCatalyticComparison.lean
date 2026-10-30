@@ -186,7 +186,7 @@ lemma twist (u x y):
     unfold aloft hinge; push_cast
     rw [← sum_add_distrib]
     apply sum_congr rfl; intro i hi
-    rw [p.component _ _ _ (mem_range.1 hi),p.cast_shove,if_pos rfl,add_mul]
+    rw [p.component _ _ _ (mem_range.1 hi),p.cast_shove,ite_eq_left rfl,add_mul]
 
 abbrev Pane := ℕ×ℕ×ℕ
 def proper (v:Pane):=v.1 < p.F ∧ v.2.1 < p.M ∧ v.2.2 < p.Q

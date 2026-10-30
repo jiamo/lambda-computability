@@ -95,7 +95,7 @@ theorem ctxClV_kind_lookup : ∀ {Γ : List (Expr Srt3)} {n : Nat} {D : Expr Srt
   | _, _, _, .zero A Γ, k, h => by
       by_cases hA : A = .sort .box
       · subst hA; rfl
-      · simp only [ctxClV, hA, if_false] at h
+      · simp only [ctxClV, hA, ite_false] at h
         exact (bindV_ne_kind _ _ h).elim
   | _, _, _, .succ B hD, k, h => by
       rw [ctxClV_kind_lookup hD h]; rfl

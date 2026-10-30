@@ -32,9 +32,9 @@ theorem ClfData.subsingleton_of_beta {C : Type} (D : ClfData C)
   have h := hβ a f (D.lamF a f)
   by_cases e : D.appF (D.lamF a f) (D.lamF a f) = a
   · have h' : D.appF (D.lamF a f) (D.lamF a f) = b := by
-      rw [h]; simp only [f, if_pos e]
+      rw [h]; simp only [f, ite_eq_left e]
     rw [← e, h']
-  · exact absurd (by rw [h]; simp only [f, if_neg e]) e
+  · exact absurd (by rw [h]; simp only [f, ite_eq_right e]) e
 
 /-- With two distinct classes, the β-law fails for some abstraction class and argument. -/
 theorem ClfData.not_beta_of_ne {C : Type} (D : ClfData C) {a b : C} (hab : a ≠ b) :

@@ -28,13 +28,13 @@ noncomputable def value (Y : Oracle) (e : ℕ) : Degree := by
 theorem value_eq {Y A : Oracle} {e : ℕ} (h : Represents Y (machine e) A) :
     value Y e = degree A := by
   have hv : Dom Y e := (valid_iff_represents _ _).mpr ⟨A, h⟩
-  simp only [value, dif_pos hv]
+  simp only [value, dite_eq_left hv]
   rw [represents_unique (output_represents _ _) h]
 
 theorem value_below (Y : Oracle) (e : ℕ) : value Y e ≤ degree Y := by
   classical
   by_cases h : Dom Y e
-  · simp only [value, dif_pos h]
+  · simp only [value, dite_eq_left h]
     exact represents_reduces (output_represents _ _)
   · simp [value, h]
 

@@ -111,7 +111,7 @@ theorem raw_spec (B : Oracle) (F : ℕ → Oracle) (x p : ℕ)
       conv_lhs => lhs; rw [hpq]
       exact List.take_append_drop _ _
     have he : condition (EffectiveSplitConditions.update p raw) = r := by
-      simp only [EffectiveSplitConditions.update,if_pos ht,condition_code]
+      simp only [EffectiveSplitConditions.update,ite_eq_left ht,condition_code]
       rfl
     rw [he]
     refine Or.inl (Or.inr ⟨1,item w 0,Or.inl rfl,?_⟩)
@@ -157,14 +157,14 @@ theorem next_exists (B : Oracle) : ∃ g : ℕ → ℕ,
         by_contra hnc
         exact hno ⟨w,(bad_condition_iff hp x w).2 ⟨hw,hnc⟩⟩
       have he : g (encode [codes,x,p]) = EffectiveSplitConditions.update p
-          (UniformSplit.step B (request (Nat.pair x p))) := by simp only [g,tag,if_pos hz,raw,item,encodek,Option.getD_some,List.getD_cons_zero,List.getD_cons_succ]
+          (UniformSplit.step B (request (Nat.pair x p))) := by simp only [g,tag,ite_eq_left hz,raw,item,encodek,Option.getD_some,List.getD_cons_zero,List.getD_cons_succ]
       rw [he]
       rcases raw_spec B F x p hnb with hd | ⟨he,ho⟩
       · exact Or.inl hd
       · exact Or.inr ⟨he,hnb,ho⟩
     · have hz : search (encode [codes,x,p]) ≠ 0 := by omega
       have he : g (encode [codes,x,p]) = EffectiveSplitConditions.update p
-          (Nat.pair 2 (search (encode [codes,x,p])-1)) := by simp only [g,tag,if_neg hz,item,encodek,Option.getD_some,List.getD_cons_zero,List.getD_cons_succ]
+          (Nat.pair 2 (search (encode [codes,x,p])-1)) := by simp only [g,tag,ite_eq_right hz,item,encodek,Option.getD_some,List.getD_cons_zero,List.getD_cons_succ]
       rw [he]
       exact Or.inl (bad_decisive B F x p _ hn ((bad_condition_iff hp x _).1 hbad))
 
@@ -209,7 +209,7 @@ theorem pair_exists (B : Oracle) : ∃ f : ℕ → ℕ,
       exact Or.inl (disagreement_mono hgep.1 hdis)
     · exact Or.inr ⟨hgep.2,hn,hgs F codes x p hp hn⟩
   · have hout : out (encode [codes,x,p]) = d (encode [codes,x,p]) := by
-      simp only [out,hpitem,if_neg he]
+      simp only [out,hpitem,ite_eq_right he]
     rw [hout]
     exact ⟨hdsp.1,Or.inl (hdsp.2.resolve_right (fun h => he h.1))⟩
 

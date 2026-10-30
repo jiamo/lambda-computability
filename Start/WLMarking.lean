@@ -57,12 +57,12 @@ theorem mem_attainable_image (K : ℕ) (t : TypeNode K P E) (a : I.Address)
 theorem matchedAddress_internal (K : ℕ) (l : TypeLink K E) (h : l.2.val ≠ 4*K)
     (a : I.Address) : I.matchedAddress K l a = a := by
   funext i
-  simp only [matchedAddress,linkMatch,if_neg h,Equiv.refl_apply]
+  simp only [matchedAddress,linkMatch,ite_eq_right h,Equiv.refl_apply]
 
 theorem matchedAddress_last (K : ℕ) (l : TypeLink K E) (h : l.2.val = 4*K)
     (a : I.Address) : I.matchedAddress K l a = I.permuteAddress l.1 a := by
   funext i
-  simp only [matchedAddress,linkMatch,if_pos h,permuteAddress]
+  simp only [matchedAddress,linkMatch,ite_eq_left h,permuteAddress]
 
 theorem attainable_first (K : ℕ) (hK : 0 < K) (hr : 1 ≤ r) (e : E) (a : I.Address)
     (ha : I.Allowed e a) :
@@ -84,7 +84,7 @@ theorem attainable_first (K : ℕ) (hK : 0 < K) (hr : 1 ≤ r) (e : E) (a : I.Ad
   have h4' : (0 : ℕ) ≠ 4*K := by omega
   unfold siteRing at hv
   simp only [linkLeft,linkRight,l,linkBias] at hv
-  simp only [dif_neg h4'] at hv
+  simp only [dite_eq_right h4'] at hv
   constructor
   · rintro ⟨x,⟨hh,ys,hys,rfl⟩,heq⟩
     have heq' : I.linearSrc e (I.horizontalSum K (.inl (I.src e)) a ys) = v+I.biasSrc e := by
@@ -111,9 +111,9 @@ theorem attainable_internal (K : ℕ) (hr : 1 ≤ r) (e : E) (a : I.Address)
     I.rightForm_section_internal K l h4 (fun t => I.horizontalSum K t a ys)
   ext v
   have hv := Set.ext_iff.mp he v
-  simp only [I.mem_attainable_image,hl,hr',linkBias,if_neg h0,if_neg h4,add_zero] at hv
+  simp only [I.mem_attainable_image,hl,hr',linkBias,ite_eq_right h0,ite_eq_right h4,add_zero] at hv
   unfold siteRing at hv
-  simp only [linkLeft,dif_neg h0,linkRight,dif_neg h4] at hv
+  simp only [linkLeft,dite_eq_right h0,linkRight,dite_eq_right h4] at hv
   simp only [Attainable,Set.mem_ofPred_eq]
   unfold siteRing
   dsimp only [l] at hv
@@ -135,9 +135,9 @@ theorem attainable_last (K : ℕ) (hK : 0 < K) (hr : 1 ≤ r) (e : E) (a : I.Add
     I.rightForm_section_last K l h4 (fun t => I.horizontalSum K t (I.permuteAddress l.1 a) ys)
   ext v
   have hv := Set.ext_iff.mp he v
-  simp only [I.mem_attainable_image,hl,hr',linkBias,if_neg h0,if_pos h4] at hv
+  simp only [I.mem_attainable_image,hl,hr',linkBias,ite_eq_right h0,ite_eq_left h4] at hv
   unfold siteRing at hv
-  simp only [linkLeft,dif_neg h0,linkRight,dif_pos h4] at hv
+  simp only [linkLeft,dite_eq_right h0,linkRight,dite_eq_left h4] at hv
   rw [I.mem_attainable_image K (.inl (I.dst e)) (I.permuteAddress e a) (I.affineDst e) v]
   simp only [Attainable,Set.mem_ofPred_eq,affineDst]
   unfold siteRing

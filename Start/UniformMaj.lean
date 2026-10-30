@@ -56,56 +56,56 @@ theorem mod_col (n i j : ℕ) (hj : j < n + 1) : ((n + 1) * i + j) % (n + 1) = j
 theorem majF_block (n i j : ℕ) (hj : j < n + 1) : majF n ((n + 1) * i + j) = majT n i j := by
   rw [majF, div_col n i j hj, mod_col n i j hj]
 
-theorem majT_zero (n j : ℕ) : majT n 0 j = .cst (decide (j = 0)) := by rw [majT, if_pos rfl]
+theorem majT_zero (n j : ℕ) : majT n 0 j = .cst (decide (j = 0)) := by rw [majT, ite_eq_left rfl]
 
 theorem majT_bit (n t : ℕ) (j : ℕ) : majT n (3 * t + 1) j = .inp (2 * t + 1) := by
-  rw [majT, if_neg (by omega), if_pos (by omega)]
+  rw [majT, ite_eq_right (by omega), ite_eq_left (by omega)]
   have e : (3 * t + 1) / 3 = t := by omega
   rw [e]
 
 theorem majT_and_zero (n t : ℕ) : majT n (3 * t + 2) 0 = .cst false := by
-  rw [majT, if_neg (by omega), if_neg (by omega), if_pos (by omega), if_pos rfl]
+  rw [majT, ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_left (by omega), ite_eq_left rfl]
 
 theorem majT_and (n t j : ℕ) (hj : 0 < j) :
     majT n (3 * t + 2) j
       = .conj ((n + 1) * (3 * t) + (j - 1)) ((n + 1) * (3 * t + 1) + j) := by
-  rw [majT, if_neg (by omega), if_neg (by omega), if_pos (by omega), if_neg (by omega)]
+  rw [majT, ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_left (by omega), ite_eq_right (by omega)]
   have e1 : 3 * t + 2 - 2 = 3 * t := by omega
   have e2 : 3 * t + 2 - 1 = 3 * t + 1 := by omega
   rw [e1, e2]
 
 theorem majT_cnt_zero (n t : ℕ) :
     majT n (3 * t + 3) 0 = .disj ((n + 1) * (3 * t)) ((n + 1) * (3 * t)) := by
-  rw [majT, if_neg (by omega), if_neg (by omega), if_neg (by omega), if_pos rfl]
+  rw [majT, ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_left rfl]
   have e : 3 * t + 3 - 3 = 3 * t := by omega
   rw [e]
 
 theorem majT_cnt (n t j : ℕ) (hj : 0 < j) :
     majT n (3 * t + 3) j
       = .disj ((n + 1) * (3 * t) + j) ((n + 1) * (3 * t + 2) + j) := by
-  rw [majT, if_neg (by omega), if_neg (by omega), if_neg (by omega), if_neg (by omega)]
+  rw [majT, ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega)]
   have e1 : 3 * t + 3 - 3 = 3 * t := by omega
   have e2 : 3 * t + 3 - 1 = 3 * t + 2 := by omega
   rw [e1, e2]
 
 theorem majT_mod1 (n i j : ℕ) (h0 : i ≠ 0) (h : i % 3 = 1) :
     majT n i j = .inp (2 * (i / 3) + 1) := by
-  rw [majT, if_neg h0, if_pos h]
+  rw [majT, ite_eq_right h0, ite_eq_left h]
 
 theorem majT_mod2_zero (n i : ℕ) (h0 : i ≠ 0) (h : i % 3 = 2) : majT n i 0 = .cst false := by
-  rw [majT, if_neg h0, if_neg (by omega), if_pos h, if_pos rfl]
+  rw [majT, ite_eq_right h0, ite_eq_right (by omega), ite_eq_left h, ite_eq_left rfl]
 
 theorem majT_mod2 (n i j : ℕ) (h0 : i ≠ 0) (h : i % 3 = 2) (hj : j ≠ 0) :
     majT n i j = .conj ((n + 1) * (i - 2) + (j - 1)) ((n + 1) * (i - 1) + j) := by
-  rw [majT, if_neg h0, if_neg (by omega), if_pos h, if_neg hj]
+  rw [majT, ite_eq_right h0, ite_eq_right (by omega), ite_eq_left h, ite_eq_right hj]
 
 theorem majT_mod0_zero (n i : ℕ) (h0 : i ≠ 0) (h : i % 3 = 0) :
     majT n i 0 = .disj ((n + 1) * (i - 3)) ((n + 1) * (i - 3)) := by
-  rw [majT, if_neg h0, if_neg (by omega), if_neg (by omega), if_pos rfl]
+  rw [majT, ite_eq_right h0, ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_left rfl]
 
 theorem majT_mod0 (n i j : ℕ) (h0 : i ≠ 0) (h : i % 3 = 0) (hj : j ≠ 0) :
     majT n i j = .disj ((n + 1) * (i - 3) + j) ((n + 1) * (i - 1) + j) := by
-  rw [majT, if_neg h0, if_neg (by omega), if_neg (by omega), if_neg hj]
+  rw [majT, ite_eq_right h0, ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right hj]
 
 /-! ### Well-formedness -/
 
@@ -339,10 +339,10 @@ theorem eval_majBlk (n i j : ℕ) (y : Word) :
     · subst hj0
       rw [majT_zero]
       exact eval_tokTerm (Gate.cst true) (by simp [fld1]) (by simp [fld2])
-    · simp only [if_neg hj0]
+    · simp only [ite_eq_right hj0]
       rw [majT_zero, decide_eq_false hj0]
       exact eval_tokTerm (Gate.cst false) (by simp [fld1]) (by simp [fld2])
-  · simp only [if_neg h0]
+  · simp only [ite_eq_right h0]
     have hm3 : i % 3 = 0 ∨ i % 3 = 1 ∨ i % 3 = 2 := by omega
     rcases hm3 with hm | hm | hm
     · simp only [hm]
@@ -356,11 +356,11 @@ theorem eval_majBlk (n i j : ℕ) (y : Word) :
           (by
             simpa [CircCode.fld1, CircCode.fld2] using
               eval_majRef 3 (n := n) (i := i) (j := 0) (y := y) (c := 0) (by simp))
-      · simp only [if_neg hj0]
+      · simp only [ite_eq_right hj0]
         rw [majT_mod0 n i j h0 hm hj0]
         exact eval_tokTerm (Gate.disj ((n + 1) * (i - 3) + j) ((n + 1) * (i - 1) + j))
           (eval_majRef 3 hjj) (eval_majRef 1 hjj)
-    · simp only [hm, if_neg (by omega : ¬ (1 : ℕ) = 0)]
+    · simp only [hm, ite_eq_right (by omega : ¬ (1 : ℕ) = 0)]
       rw [majT_mod1 n i j h0 hm]
       refine eval_tokTerm (Gate.inp (2 * (i / 3) + 1)) ?_ (by simp [fld2])
       simp only [Cob.eval_pre, Cob.eval_comp, List.map_cons, List.map_nil, Cob.eval_smash,
@@ -368,12 +368,12 @@ theorem eval_majBlk (n i j : ℕ) (y : Word) :
         List.length_replicate, List.length_cons, List.length_nil, fld1]
       rw [show 2 * (i / 3) + 1 = 1 + i / 3 * 2 by ring, List.replicate_add]
       rfl
-    · simp only [hm, if_neg (by omega : ¬ (2 : ℕ) = 0), if_neg (by omega : ¬ (2 - 1 : ℕ) = 0)]
+    · simp only [hm, ite_eq_right (by omega : ¬ (2 : ℕ) = 0), ite_eq_right (by omega : ¬ (2 - 1 : ℕ) = 0)]
       by_cases hj0 : j = 0
       · subst hj0
         rw [majT_mod2_zero n i h0 hm]
         exact eval_tokTerm (Gate.cst false) (by simp [fld1]) (by simp [fld2])
-      · simp only [if_neg hj0]
+      · simp only [ite_eq_right hj0]
         rw [majT_mod2 n i j h0 hm hj0]
         refine eval_tokTerm (Gate.conj ((n + 1) * (i - 2) + (j - 1)) ((n + 1) * (i - 1) + j))
           (eval_majRef 2 ?_) (eval_majRef 1 hjj)

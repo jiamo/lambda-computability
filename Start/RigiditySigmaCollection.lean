@@ -60,7 +60,7 @@ theorem internal_sigma_request_bound (M : ZFSet.{u}) (hM : Transitive M)
     apply φ.realize_congr; intro i hi
     rcases i with _|i; rfl
     rcases i with _|i; rfl
-    exact (if_pos (show i < φ.scope by omega)).symm
+    exact (ite_eq_left (show i < φ.scope by omega)).symm
   obtain ⟨W,hW,hbound⟩ := FiniteTuple.internal_uniform_sigma_witness_bound M t hM hP hU hPow hS hR hI hAC ht htt h0t
   refine ⟨W,hW,?_⟩
   intro x hx hy

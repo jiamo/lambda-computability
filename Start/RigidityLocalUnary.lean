@@ -33,10 +33,10 @@ theorem predicate_code (C A : Oracle)
     have hs := EffectivePresentation.pick_recursive hP k₀
     have hsel (k : ℕ) : X (select k) = true := by
       by_cases hk : X k = true
-      · simpa only [select,EffectivePresentation.pick,P,if_pos hk] using hk
-      · simpa only [select,EffectivePresentation.pick,P,if_neg hk] using hk₀
+      · simpa only [select,EffectivePresentation.pick,P,ite_eq_left hk] using hk
+      · simpa only [select,EffectivePresentation.pick,P,ite_eq_right hk] using hk₀
     have hfix (k : ℕ) (hk : X k = true) : select k = k := by
-      simp only [select,EffectivePresentation.pick,P,if_pos hk]
+      simp only [select,EffectivePresentation.pick,P,ite_eq_left hk]
     let B := join C A
     let F := EffectiveFamilies.mix C A
     have hF : Reduces F B := EffectiveFamilies.mix_reduces C A

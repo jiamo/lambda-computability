@@ -9,7 +9,6 @@ file `lean/OAI/Computability/DegreeRigidity/Representation/GenericTruth.lean`, f
 paper "Rigidity of the Turing degrees".
 Adapted to this library's Lean v4.33.0 / Mathlib `v4.33.0` pin: the `OAI` namespace was dropped,
 imports were renamed to `Start.Rigidity*`, and proofs were repaired where the pin required it.
-Proof change: `Filter.eventuallyEqSet_iff` (upstream pin) is `Filter.eventuallyEq_set` on this pin.
 See `NOTICE` at the repository root.
 -/
 
@@ -59,7 +58,7 @@ theorem borel_generic_truth (S : Set Oracle) (hS : MeasurableSet S) :
       (∀ n, DenseOpen (D n)) ∧ ∀ G, GenericFor D G → (G ∈ S ↔ G ∈ U) := by
   obtain ⟨U,hU,hSU⟩ := hS.residualEq_isOpen
   obtain ⟨D,hD,hDS⟩ := generic_subset_of_residual {G | G ∈ S ↔ G ∈ U}
-    (Filter.eventuallyEq_set.mp hSU)
+    (Filter.eventuallyEqSet_iff.mp hSU)
   exact ⟨U,hU,D,hD,hDS⟩
 
 def triple (G : Oracle) : Oracle × Oracle × Oracle :=

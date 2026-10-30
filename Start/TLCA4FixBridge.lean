@@ -38,13 +38,13 @@ theorem hd_lift (n : ℕ) : ∀ (t : Lambda) (k : ℕ),
       · rfl
       · by_cases h0 : y = 0
         · subst h0; simp
-        · simp only [Option.map_some, Option.bind_some, h0, if_false]
+        · simp only [Option.map_some, Option.bind_some, h0, ite_false]
           by_cases hk : y < k + 1
           · have : y - 1 < k := by omega
             simp [hk, this, h0]
           · have h1 : ¬ y - 1 < k := by omega
             have h2 : y + n ≠ 0 := by omega
-            simp only [hk, if_false, h2, h1, Option.some.injEq]
+            simp only [hk, ite_false, h2, h1, Option.some.injEq]
             omega
 
 theorem Neutral.of_lift {n k : ℕ} : ∀ {t : Lambda}, Neutral (Lambda.lift n k t) → Neutral t

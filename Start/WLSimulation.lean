@@ -62,7 +62,7 @@ theorem value_lt_base_iff {q m : ℕ} (hm : 0< m) (a : Word (q+1) m) :
     rw [Nat.mod_eq_of_lt hn']
     by_cases hj : j.val+1=n
     · simp [hj]
-    · rw [if_neg hj,Nat.mod_eq_of_lt (by have := j.isLt; omega)]
+    · rw [ite_eq_right hj,Nat.mod_eq_of_lt (by have := j.isLt; omega)]
 
 end WLTime.Digits
 
@@ -87,7 +87,7 @@ open CircuitEncoding
   unfold BoxTableau.initialRing BoxTableau.initialDigit
   by_cases hj : j.val< w.length
   · have ht := (Digits.value_lt_base_iff hm (Digits.encode.symm j)).mp (hval ▸ hj)
-    rw [if_pos ht]
+    rw [ite_eq_left ht]
     have ha : ((Digits.encode.symm j) 0).val=j.val := by
       have hz := (Digits.value_eq_zero_iff hm (fun i => Digits.encode.symm j i.succ)).mpr ht
       rw [Digits.value_succ,hz,Nat.mul_zero,Nat.add_zero] at hval
@@ -96,7 +96,7 @@ open CircuitEncoding
   · have ht : ¬∀ i : Fin q,(Digits.encode.symm j i.succ).val=0 := by
       rw [← Digits.value_lt_base_iff hm,hval]
       exact hj
-    rw [if_neg ht]
+    rw [ite_eq_right ht]
     have hz : j.val≠0 := by omega
     simp [blankCell,snapshot,ringInitial,Digits.finEquiv_val,hj,hzero,hz]
 

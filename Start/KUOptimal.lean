@@ -237,7 +237,7 @@ theorem exists_lamReq_of_isProgramFor {t : Lambda} {m : ℕ} (h : Lambda.IsProgr
         have hle : Nat.find hex ≤ Nat.find hex - 1 := Nat.find_le hb
         omega
   refine ⟨Nat.pair (Lambda.encode t) (Nat.pair m (Nat.find hex)), ?_⟩
-  simp only [lamReq, Nat.unpair_pair, hfirst, cond_true, Lambda.bitsLen_code_correct]
+  simp only [lamReq, Nat.unpair_pair, hfirst, Bool.cond_true, Lambda.bitsLen_code_correct]
 
 ------------------------------------------------------------------------
 -- Optimality

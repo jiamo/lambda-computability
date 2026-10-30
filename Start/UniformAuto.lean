@@ -159,25 +159,25 @@ theorem mod_pair {s t : ℕ} (ht : t < m) : (s * m + t) % m = t := by
   rw [Nat.add_comm, Nat.mul_comm, Nat.add_mul_mod_self_left, Nat.mod_eq_of_lt ht]
 
 theorem autoT_zero (i : ℕ) : autoT m δ ac 0 i = .cst false := by
-  rw [autoT, if_pos rfl]
+  rw [autoT, ite_eq_left rfl]
 
 theorem autoT_one (i : ℕ) : autoT m δ ac 1 i = .cst true := by
-  rw [autoT, if_neg (by omega), if_pos rfl]
+  rw [autoT, ite_eq_right (by omega), ite_eq_left rfl]
 
 theorem autoT_two (i : ℕ) : autoT m δ ac 2 i = .inp (2 * i + 1) := by
-  rw [autoT, if_neg (by omega), if_neg (by omega), if_pos rfl]
+  rw [autoT, ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_left rfl]
 
 theorem autoT_three (i : ℕ) : autoT m δ ac 3 i = .neg (autoK m * i + 2) := by
-  rw [autoT, if_neg (by omega), if_neg (by omega), if_neg (by omega), if_pos rfl]
+  rw [autoT, ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_left rfl]
 
 theorem autoT_cj {s t : ℕ} (hm : 0 < m) (hs : s < m) (ht : t < m) (i : ℕ) :
     autoT m δ ac (cjOff m s t) i
       = .conj (autoPrev m i t) (autoK m * i + autoSel δ s t) := by
   have h4 : cjOff m s t - 4 = 2 * (s * m + t) := by rw [cjOff]; omega
-  rw [autoT, if_neg (by rw [cjOff]; omega), if_neg (by rw [cjOff]; omega),
-    if_neg (by rw [cjOff]; omega), if_neg (by rw [cjOff]; omega),
-    if_pos (cjOff_lt hs ht), h4]
-  rw [Nat.mul_mod_right, if_pos rfl, Nat.mul_div_cancel_left _ (by omega : 0 < 2),
+  rw [autoT, ite_eq_right (by rw [cjOff]; omega), ite_eq_right (by rw [cjOff]; omega),
+    ite_eq_right (by rw [cjOff]; omega), ite_eq_right (by rw [cjOff]; omega),
+    ite_eq_left (cjOff_lt hs ht), h4]
+  rw [Nat.mul_mod_right, ite_eq_left rfl, Nat.mul_div_cancel_left _ (by omega : 0 < 2),
     div_pair hm ht, mod_pair ht]
 
 theorem autoT_ac {s t : ℕ} (hm : 0 < m) (hs : s < m) (ht : t < m) (i : ℕ) :
@@ -185,16 +185,16 @@ theorem autoT_ac {s t : ℕ} (hm : 0 < m) (hs : s < m) (ht : t < m) (i : ℕ) :
   have h4 : acOff m s t - 4 = 2 * (s * m + t) + 1 := by rw [acOff]; omega
   have hodd : (2 * (s * m + t) + 1) % 2 = 1 := by omega
   have hdiv : (2 * (s * m + t) + 1) / 2 = s * m + t := by omega
-  rw [autoT, if_neg (by rw [acOff]; omega), if_neg (by rw [acOff]; omega),
-    if_neg (by rw [acOff]; omega), if_neg (by rw [acOff]; omega),
-    if_pos (acOff_lt hs ht), h4, hodd, if_neg (by omega), hdiv, div_pair hm ht, mod_pair ht]
+  rw [autoT, ite_eq_right (by rw [acOff]; omega), ite_eq_right (by rw [acOff]; omega),
+    ite_eq_right (by rw [acOff]; omega), ite_eq_right (by rw [acOff]; omega),
+    ite_eq_left (acOff_lt hs ht), h4, hodd, ite_eq_right (by omega), hdiv, div_pair hm ht, mod_pair ht]
 
 theorem autoT_fn {s : ℕ} (hs : s < m) (i : ℕ) :
     autoT m δ ac (fnOff m s) i = autoFin m ac i s := by
   have h4 : fnOff m s - 4 - 2 * (m * m) = s := by rw [fnOff]; omega
-  rw [autoT, if_neg (by rw [fnOff]; omega), if_neg (by rw [fnOff]; omega),
-    if_neg (by rw [fnOff]; omega), if_neg (by rw [fnOff]; omega),
-    if_neg (by rw [fnOff]; omega), if_pos (fnOff_lt hs), h4]
+  rw [autoT, ite_eq_right (by rw [fnOff]; omega), ite_eq_right (by rw [fnOff]; omega),
+    ite_eq_right (by rw [fnOff]; omega), ite_eq_right (by rw [fnOff]; omega),
+    ite_eq_right (by rw [fnOff]; omega), ite_eq_left (fnOff_lt hs), h4]
 
 /-- The gate with identifier `autoK m * i + o`, for an offset `o` inside the block. -/
 theorem autoF_block {o : ℕ} (ho : o < autoK m) (i : ℕ) :
@@ -441,7 +441,7 @@ theorem lval_acc (hm : 0 < m) {i : ℕ}
         rw [autoK]
         omega
       have hcj : cjOff m s 0 + 1 = acOff m s 0 := by rw [cjOff, acOff]
-      rw [lval, autoF_block hlt i, autoT_ac hm hs ht, autoAcc, if_pos rfl, gateVal,
+      rw [lval, autoF_block hlt i, autoT_ac hm hs ht, autoAcc, ite_eq_left rfl, gateVal,
         lval_ref (by omega), lval_cj hm hprev hs ht, orUpTo, Bool.or_self]
   | succ t ih =>
       intro ht
@@ -455,7 +455,7 @@ theorem lval_acc (hm : 0 < m) {i : ℕ}
         rw [acOff, acOff]
         have : s * m + (t + 1) = s * m + t + 1 := by omega
         omega
-      rw [lval, autoF_block hlt i, autoT_ac hm hs ht, autoAcc, if_neg (by omega),
+      rw [lval, autoF_block hlt i, autoT_ac hm hs ht, autoAcc, ite_eq_right (by omega),
         show t + 1 - 1 = t from rfl, gateVal, lval_ref (by omega), lval_ref (by omega),
         ih htm, lval_cj hm hprev hs ht, orUpTo]
 
@@ -542,7 +542,7 @@ theorem lval_fin (hm : 0 < m) (hδ : ∀ s b, δ s b < m) (i : ℕ) :
           rw [fnOff]
           omega
         · rw [fnOff]; omega
-      rw [lval, autoF_block (fnOff_lt hs) i, autoT_fn hs, autoFin, if_pos rfl, gateVal,
+      rw [lval, autoF_block (fnOff_lt hs) i, autoT_fn hs, autoFin, ite_eq_left rfl, gateVal,
         lval_ref hX, Bool.or_self, autoX]
       split_ifs with hac
       · rw [lval_state hm hδ i hs, fnUpTo, hac]
@@ -560,7 +560,7 @@ theorem lval_fin (hm : 0 < m) (hδ : ∀ s b, δ s b < m) (i : ℕ) :
           omega
         · rw [fnOff]; omega
       have hfn : fnOff m s < fnOff m (s + 1) := by rw [fnOff, fnOff]; omega
-      rw [lval, autoF_block (fnOff_lt hs) i, autoT_fn hs, autoFin, if_neg (by omega),
+      rw [lval, autoF_block (fnOff_lt hs) i, autoT_fn hs, autoFin, ite_eq_right (by omega),
         show s + 1 - 1 = s from rfl, gateVal, lval_ref (by omega), lval_ref hX, ih hsm,
         fnUpTo, autoX]
       split_ifs with hac
@@ -646,7 +646,7 @@ theorem eval_prevT (m t : ℕ) (y : Word) (c n : ℕ) :
         Cob.eval_proj, List.getD_cons_zero, List.getD_cons_succ, Cob.eval_constT,
         Cob.eval_pre, Cob.eval_smash, Cob.eval_tail, List.tail_replicate,
         List.length_replicate,
-        if_neg (by simp : ¬ (List.replicate (i + 1) true = ([] : Word)))]
+        ite_eq_right (by simp : ¬ (List.replicate (i + 1) true = ([] : Word)))]
       rw [← List.replicate_add, autoPrev]
       congr 1
       have h : i + 1 - 1 = i := by omega
@@ -798,8 +798,8 @@ theorem autoT_fld_le (o c : ℕ) :
       have h1 := hX _ hs
       have h2 := hfn (o - (4 + 2 * (m * m)) - 1) (by omega)
       omega
-  · rw [autoT, if_neg (by omega), if_neg (by omega), if_neg (by omega), if_neg (by omega),
-      if_neg (by omega), if_neg (by omega)]
+  · rw [autoT, ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega),
+      ite_eq_right (by omega), ite_eq_right (by omega)]
     simp [fld1, fld2]
 
 theorem length_encGate_autoT (n o c l : ℕ) (hc : c ≤ l) :

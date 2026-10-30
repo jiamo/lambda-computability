@@ -47,7 +47,7 @@ lemma pcount_two_eq_four {h : ℕ} (hh : h < 4) :
       pcount allMv 4 h true s u + pcount allMv 4 ((h + 2) % 4) true s u
   | [], _ => rfl
   | b :: u, s => by
-      simp only [pcount, if_true]
+      simp only [pcount, ite_true]
       rw [pcount_two_eq_four hh u (s + 1)]
       have : (if b = true ∧ s % 2 = h % 2 then 1 else 0) =
           (if b = true ∧ s % 4 = h then 1 else 0) +
@@ -253,8 +253,8 @@ lemma vcountFrom_eq_pcount (δ : α → ZMod 4) (mv : α → Bool) (d : ZMod 4) 
       by_cases hb : b = x
       · simp only [hb, true_and]
         by_cases h0 : s % p = 0
-        · rw [if_pos ((hd s).mpr h0), if_pos h0]
-        · rw [if_neg (fun h => h0 ((hd s).mp h)), if_neg h0]
+        · rw [ite_eq_left ((hd s).mpr h0), ite_eq_left h0]
+        · rw [ite_eq_right (fun h => h0 ((hd s).mp h)), ite_eq_right h0]
       · simp [hb]
 
 lemma vcount_eq_pcount (δ : α → ZMod 4) (mv : α → Bool) (d : ZMod 4) (p : ℕ)

@@ -113,10 +113,10 @@ theorem mk₁_nth {Γ : Type} [Inhabited Γ] (l : List Γ) (z : ℤ) :
     (Turing.Tape.mk₁ l).nth z = if 0 ≤ z then l.getI z.toNat else default := by
   cases z with
   | ofNat n =>
-      simp only [Int.ofNat_eq_natCast, Int.natCast_nonneg, if_true, Int.toNat_natCast]
+      simp only [Int.ofNat_eq_natCast, Int.natCast_nonneg, ite_true, Int.toNat_natCast]
       exact Turing.Tape.mk'_nth_nat _ _ n
   | negSucc n =>
-      simp only [Int.negSucc_not_nonneg, if_false]
+      simp only [Int.negSucc_not_nonneg, ite_false]
       rfl
 
 theorem getI_eq {Γ : Type} [Inhabited Γ] : ∀ (l : List Γ) (n : ℕ), l.getI n = l[n]?.getD default
@@ -153,14 +153,14 @@ theorem rel_step {C : M.Config} {c : (toHost M S).Cfg} (hR : Rel M S C c)
         fun _ => headMove (M.table C.state (C.tape C.head)).2.2) := by
     simp only [toHost, hR.1, hh, hhead, Bool.false_eq_true, ↓reduceIte, Equiv.symm_apply_apply]
   refine ⟨_, multiTapeStep_eq_some hcode, ?_⟩
-  simp only [step, hh, Bool.false_eq_true, if_false]
+  simp only [step, hh, Bool.false_eq_true, ite_false]
   refine ⟨rfl, fun z => ?_⟩
   simp only [multiTapeUpdate]
   rw [sub_add_eq_sub_sub, apply_nth, Turing.Tape.write_nth]
   by_cases hz : z = C.head
   · subst hz
     simp
-  · rw [if_neg (sub_ne_zero.mpr hz), Function.update_of_ne hz]
+  · rw [ite_eq_right (sub_ne_zero.mpr hz), Function.update_of_ne hz]
     exact hR.2 z
 
 theorem runSteps_succ {σ : Type} (step : σ → Option σ) (n : ℕ) (x : Option σ) :

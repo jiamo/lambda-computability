@@ -73,7 +73,7 @@ theorem lift_add (n m : ℕ) (k : ℕ) (t : Tm) : lift (n + m) k t = lift n k (l
       · simp [lift, hy]
       · have hym : ¬ y + m < k :=
           Nat.not_lt.mpr (le_trans (Nat.le_of_not_lt hy) (Nat.le_add_right y m))
-        simp only [lift, hy, hym, if_false]
+        simp only [lift, hy, hym, ite_false]
         congr 1
         omega
   | app a b iha ihb => simp [lift, iha, ihb]
@@ -97,7 +97,7 @@ theorem lift_lift (t : Tm) (n m k j : ℕ) (h : k ≤ j) :
             Nat.not_lt.mpr (le_trans (Nat.le_of_not_lt hyk) (Nat.le_add_right y m))
           have hynj : ¬ y + n < j + n :=
             Nat.not_lt.mpr (Nat.add_le_add_right (Nat.le_of_not_lt hyj) n)
-          simp only [lift, hyk, hyj, hymk, hynj, if_false]
+          simp only [lift, hyk, hyj, hymk, hynj, ite_false]
           congr 1
           omega
   | app a b iha ihb => simp [lift, iha _ _ h, ihb _ _ h]

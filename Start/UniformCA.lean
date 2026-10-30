@@ -241,8 +241,8 @@ theorem caCell_congr (A : CellAuto) (W n : ℕ) {b₁ b₂ : ℕ → Bool} (h : 
       intro j
       rw [caCell, caCell]
       by_cases hj : j < n
-      · rw [if_pos hj, if_pos hj, h j hj]
-      · rw [if_neg hj, if_neg hj]
+      · rw [ite_eq_left hj, ite_eq_left hj, h j hj]
+      · rw [ite_eq_right hj, ite_eq_right hj]
   | succ t ih => intro j; rw [caCell, caCell, ih, ih, ih]
 
 /-! ### The arithmetic of triples -/
@@ -474,49 +474,49 @@ theorem lval_ca_ref {r c : ℕ} (h : r < c) :
 theorem lval_ca_false (hW : 0 < W) : lval y (caF A W H n) 0 = false := by
   have h : caF A W H n (W * 0 + 0) = caT A W H n 0 0 := caF_block hW 0
   simp only [Nat.mul_zero, Nat.add_zero] at h
-  rw [lval, h, caT, if_pos rfl]
+  rw [lval, h, caT, ite_eq_left rfl]
   rfl
 
 theorem lval_ca_true (hW : 0 < W) : lval y (caF A W H n) W = true := by
   have h : caF A W H n (W * 1 + 0) = caT A W H n 1 0 := caF_block hW 1
   simp only [Nat.mul_one, Nat.add_zero] at h
-  rw [lval, h, caT, if_neg one_ne_zero, if_pos rfl]
+  rw [lval, h, caT, ite_eq_right one_ne_zero, ite_eq_left rfl]
   rfl
 
 theorem lval_ca_bit (hj : j < W) (hjn : j < n) :
     lval y (caF A W H n) (W * 2 + j) = abit y j := by
-  rw [lval, caF_block hj 2, caT, if_neg (by omega), if_neg (by omega), if_pos rfl, caBitG,
-    if_pos hjn]
+  rw [lval, caF_block hj 2, caT, ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_left rfl, caBitG,
+    ite_eq_left hjn]
   rfl
 
 /-! ### The initial rows -/
 
 theorem caT_init (hs : s < A.K) : caT A W H n (3 + s) j = caInitG A.blk A.ini W n s j := by
-  rw [caT, if_neg (by omega), if_neg (by omega), if_neg (by omega), if_pos (by simp [caB]; omega)]
+  rw [caT, ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_left (by simp [caB]; omega)]
   congr 1
   omega
 
 theorem lval_ca_init (hj : j < W) (hs : s < A.K) :
     lval y (caF A W H n) (caStId A.K W 0 s j) = decide (caCell A W n (abit y) 0 j = s) := by
-  have hid : caStId A.K W 0 s j = W * (3 + s) + j := by rw [caStId, caStRow, if_pos rfl]
+  have hid : caStId A.K W 0 s j = W * (3 + s) + j := by rw [caStId, caStRow, ite_eq_left rfl]
   have href : W * 2 + j < W * (3 + s) + j := ca_row_lt (by omega) hj
   rw [hid, lval, caF_block hj, caT_init hs, caInitG, caCell]
   by_cases hjn : j < n
-  · rw [if_pos hjn, if_pos hjn]
+  · rw [ite_eq_left hjn, ite_eq_left hjn]
     have hbit : (vals y (layer (caF A W H n) (W * (3 + s) + j))).getD (W * 2 + j) false
         = abit y j := by rw [lval_ca_ref href, lval_ca_bit hj hjn]
     by_cases h1 : A.ini (decide (j = 0)) true = s
     · by_cases h2 : A.ini (decide (j = 0)) false = s
-      · rw [if_pos h1, if_pos h2]
+      · rw [ite_eq_left h1, ite_eq_left h2]
         cases hb : abit y j <;> simp [gateVal, h1, h2]
-      · rw [if_pos h1, if_neg h2, gateVal, hbit]
+      · rw [ite_eq_left h1, ite_eq_right h2, gateVal, hbit]
         cases hb : abit y j <;> simp [h1, h2]
     · by_cases h2 : A.ini (decide (j = 0)) false = s
-      · rw [if_neg h1, if_pos h2, gateVal, hbit]
+      · rw [ite_eq_right h1, ite_eq_left h2, gateVal, hbit]
         cases hb : abit y j <;> simp [h1, h2]
-      · rw [if_neg h1, if_neg h2]
+      · rw [ite_eq_right h1, ite_eq_right h2]
         cases hb : abit y j <;> simp [gateVal, h1, h2]
-  · rw [if_neg hjn, if_neg hjn]
+  · rw [ite_eq_right hjn, ite_eq_right hjn]
     rfl
 
 /-! ### The rows of a block -/
@@ -536,20 +536,20 @@ theorem caT_block (hp : p < caHb A.K) (ht : t < H) :
   have hm : (caB A.K + caHb A.K * t + p - caB A.K) % caHb A.K = p := by
     have h : caB A.K + caHb A.K * t + p - caB A.K = caHb A.K * t + p := by omega
     rw [h, Nat.mul_add_mod, Nat.mod_eq_of_lt hp]
-  rw [caT, if_neg (by omega), if_neg (by omega), if_neg (by omega), if_neg (by omega),
-    if_pos hlt, hd, hm]
+  rw [caT, ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega),
+    ite_eq_left hlt, hd, hm]
 
 theorem caBlockG_conj1 (hm : m < caTri A.K) :
     caBlockG A.K A.blk A.stp W t (2 * m) j
       = .conj (caRefL A.K W A.blk t (triA A.K m) j) (caStId A.K W t (triB A.K m) j) := by
-  rw [caBlockG, if_pos (by omega), if_pos (by omega),
+  rw [caBlockG, ite_eq_left (by omega), ite_eq_left (by omega),
     show 2 * m / 2 = m from by omega]
 
 theorem caBlockG_conj2 (hm : m < caTri A.K) :
     caBlockG A.K A.blk A.stp W t (2 * m + 1) j
       = .conj (W * (caB A.K + caHb A.K * t + 2 * m) + j)
           (caRefR A.K W A.blk t (triC A.K m) j) := by
-  rw [caBlockG, if_pos (by omega), if_neg (by omega),
+  rw [caBlockG, ite_eq_left (by omega), ite_eq_right (by omega),
     show (2 * m + 1) / 2 = m from by omega,
     show caB A.K + caHb A.K * t + (2 * m + 1) - 1 = caB A.K + caHb A.K * t + 2 * m from by omega]
 
@@ -567,7 +567,7 @@ theorem caBlockG_acc (hm : m < caTri A.K) :
     rw [Nat.mul_comm, Nat.mul_add_div hT, Nat.div_eq_of_lt hm, Nat.add_zero]
   have harg : caB A.K + caHb A.K * t + (2 * caTri A.K + d * caTri A.K + m) - 1
       = caB A.K + caHb A.K * t + 2 * caTri A.K + d * caTri A.K + m - 1 := by omega
-  rw [caBlockG, if_neg (by omega), hq, hmod, hdiv, harg]
+  rw [caBlockG, ite_eq_right (by omega), hq, hmod, hdiv, harg]
 
 /-! ### Reading the previous time step -/
 
@@ -598,13 +598,13 @@ theorem lval_ca_refL (hW : 0 < W) (hj : j < W) (hs : s < A.K)
     omega
   rw [caRefL, caCellL]
   by_cases hj0 : j = 0
-  · rw [if_pos hj0, if_pos hj0]
+  · rw [ite_eq_left hj0, ite_eq_left hj0]
     by_cases hsb : s = A.blk
-    · rw [if_pos hsb, lval_ca_ref hWlt, lval_ca_true hW, hsb]
+    · rw [ite_eq_left hsb, lval_ca_ref hWlt, lval_ca_true hW, hsb]
       simp
-    · rw [if_neg hsb, lval_ca_ref h0, lval_ca_false hW]
+    · rw [ite_eq_right hsb, lval_ca_ref h0, lval_ca_false hW]
       simp [Ne.symm hsb]
-  · rw [if_neg hj0, if_neg hj0]
+  · rw [ite_eq_right hj0, ite_eq_right hj0]
     exact lval_ca_center hs hrow (by omega) hprev
 
 theorem lval_ca_refR (hW : 0 < W) (hs : s < A.K)
@@ -622,13 +622,13 @@ theorem lval_ca_refR (hW : 0 < W) (hs : s < A.K)
     omega
   rw [caRefR, caCellR]
   by_cases hjw : j + 1 < W
-  · rw [if_pos hjw, if_pos hjw]
+  · rw [ite_eq_left hjw, ite_eq_left hjw]
     exact lval_ca_center hs hrow hjw hprev
-  · rw [if_neg hjw, if_neg hjw]
+  · rw [ite_eq_right hjw, ite_eq_right hjw]
     by_cases hsb : s = A.blk
-    · rw [if_pos hsb, lval_ca_ref hWlt, lval_ca_true hW, hsb]
+    · rw [ite_eq_left hsb, lval_ca_ref hWlt, lval_ca_true hW, hsb]
       simp
-    · rw [if_neg hsb, lval_ca_ref h0, lval_ca_false hW]
+    · rw [ite_eq_right hsb, lval_ca_ref h0, lval_ca_false hW]
       simp [Ne.symm hsb]
 
 /-! ### The value of the rows of a block -/
@@ -720,10 +720,10 @@ theorem lval_ca_acc (hW : 0 < W) (hj : j < W) (ht : t < H) (hd : d < A.K) :
       have hY : W * (caB A.K + caHb A.K * t + (2 * 0 + 1)) + j
           < W * (caB A.K + caHb A.K * t + (2 * caTri A.K + d * caTri A.K + 0)) + j :=
         ca_row_lt (by omega) hj
-      rw [lval, caF_block hj, caT_block hp ht, caBlockG_acc hm, gateVal, if_pos rfl,
+      rw [lval, caF_block hj, caT_block hp ht, caBlockG_acc hm, gateVal, ite_eq_left rfl,
         lval_ca_ref h0, lval_ca_false hW]
       by_cases hs : A.stp (triA A.K 0) (triB A.K 0) (triC A.K 0) = d
-      · rw [if_pos hs]
+      · rw [ite_eq_left hs]
         have hrw : W * (caB A.K + caHb A.K * t + 2 * 0 + 1) + j
             = W * (caB A.K + caHb A.K * t + (2 * 0 + 1)) + j := by ring_nf
         rw [hrw, lval_ca_ref hY, lval_ca_conj2 hprev hW hj ht hm, Bool.false_or]
@@ -734,7 +734,7 @@ theorem lval_ca_acc (hW : 0 < W) (hj : j < W) (ht : t < H) (hd : d < A.K) :
           exact ⟨h, by rw [← hidx 0 hm h]; exact hs⟩
         · rintro ⟨h, -⟩
           exact h
-      · rw [if_neg hs, lval_ca_ref h0, lval_ca_false hW, Bool.false_or]
+      · rw [ite_eq_right hs, lval_ca_ref h0, lval_ca_false hW, Bool.false_or]
         rw [Bool.eq_iff_iff]
         simp only [decide_eq_true_eq, Nat.le_zero]
         constructor
@@ -765,10 +765,10 @@ theorem lval_ca_acc (hW : 0 < W) (hj : j < W) (ht : t < H) (hd : d < A.K) :
       have hrw2 : W * (caB A.K + caHb A.K * t + 2 * (m + 1) + 1) + j
           = W * (caB A.K + caHb A.K * t + (2 * (m + 1) + 1)) + j := by
         congr 2
-      rw [lval, caF_block hj, caT_block hp ht, caBlockG_acc hm, gateVal, if_neg (by omega),
+      rw [lval, caF_block hj, caT_block hp ht, caBlockG_acc hm, gateVal, ite_eq_right (by omega),
         hrw1, lval_ca_ref hprevrow, ih hmlt]
       by_cases hs : A.stp (triA A.K (m + 1)) (triB A.K (m + 1)) (triC A.K (m + 1)) = d
-      · rw [if_pos hs, hrw2, lval_ca_ref hY, lval_ca_conj2 hprev hW hj ht hm]
+      · rw [ite_eq_left hs, hrw2, lval_ca_ref hY, lval_ca_conj2 hprev hW hj ht hm]
         rw [Bool.eq_iff_iff]
         simp only [Bool.or_eq_true, decide_eq_true_eq]
         constructor
@@ -780,7 +780,7 @@ theorem lval_ca_acc (hW : 0 < W) (hj : j < W) (ht : t < H) (hd : d < A.K) :
             (caCell A W n (abit y) t j) (caCellR A W n (abit y) t j)) (m + 1) with h | h
           · exact Or.inl ⟨by omega, h2⟩
           · exact Or.inr (by omega)
-      · rw [if_neg hs, lval_ca_ref h0, lval_ca_false hW, Bool.or_false]
+      · rw [ite_eq_right hs, lval_ca_ref h0, lval_ca_false hW, Bool.or_false]
         rw [Bool.eq_iff_iff]
         simp only [decide_eq_true_eq]
         constructor
@@ -808,7 +808,7 @@ theorem lval_ca_step (hW : 0 < W) (hj : j < W) (ht : t < H) (hd : d < A.K) :
       (caCellR A W n (abit y) t j) < caTri A.K := triIdx_lt hL hC hR
   have hid : caStId A.K W (t + 1) d j
       = W * (caB A.K + caHb A.K * t + (2 * caTri A.K + d * caTri A.K + (caTri A.K - 1))) + j := by
-    rw [caStId, caStRow, if_neg (by omega), Nat.add_sub_cancel]
+    rw [caStId, caStRow, ite_eq_right (by omega), Nat.add_sub_cancel]
     congr 2
     omega
   rw [hid, lval_ca_acc hprev hW hj ht hd _ (by omega), caCell_succ]
@@ -844,8 +844,8 @@ theorem caT_fin {e : ℕ} (he : e < A.K) :
   have hle : caB A.K ≤ caP A.K H := by
     have : caP A.K H = caB A.K + caHb A.K * H := rfl
     omega
-  rw [caT, if_neg (by omega), if_neg (by omega), if_neg (by omega), if_neg (by omega),
-    if_neg (by omega), if_pos (by omega)]
+  rw [caT, ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega),
+    ite_eq_right (by omega), ite_eq_left (by omega)]
   congr 1
   omega
 
@@ -855,8 +855,8 @@ theorem caT_last (hi : caP A.K H + A.K ≤ i) :
   have hle : caB A.K ≤ caP A.K H := by
     have : caP A.K H = caB A.K + caHb A.K * H := rfl
     omega
-  rw [caT, if_neg (by omega), if_neg (by omega), if_neg (by omega), if_neg (by omega),
-    if_neg (by omega), if_neg (by omega)]
+  rw [caT, ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega),
+    ite_eq_right (by omega), ite_eq_right (by omega)]
 
 theorem lval_ca_fin (hW : 0 < W) : ∀ e, e < A.K → ∀ j, j < W →
     lval y (caF A W H n) (W * (caP A.K H + e) + j)
@@ -874,15 +874,15 @@ theorem lval_ca_fin (hW : 0 < W) : ∀ e, e < A.K → ∀ j, j < W →
         have hrow := caStRow_lt_caP (K := A.K) (H := H) (t := H) he le_rfl
         rw [caStId]
         exact ca_row_lt (by omega) hj
-      rw [lval, caF_block hj, caT_fin he, caFinG, gateVal, if_pos rfl, lval_ca_ref h0,
+      rw [lval, caF_block hj, caT_fin he, caFinG, gateVal, ite_eq_left rfl, lval_ca_ref h0,
         lval_ca_false hW]
       by_cases hac : A.ac 0
-      · rw [if_pos hac, lval_ca_ref hst, lval_ca_state hW H le_rfl 0 he j hj, Bool.false_or]
+      · rw [ite_eq_left hac, lval_ca_ref hst, lval_ca_state hW H le_rfl 0 he j hj, Bool.false_or]
         cases hc : caCell A W n (abit y) H j with
         | zero => simp [hac]
         | succ k => simp
       · have hac' : A.ac 0 = false := by simpa using hac
-        rw [if_neg hac, lval_ca_ref h0, lval_ca_false hW, Bool.false_or]
+        rw [ite_eq_right hac, lval_ca_ref h0, lval_ca_false hW, Bool.false_or]
         cases hc : caCell A W n (abit y) H j with
         | zero => simp [hac']
         | succ k => simp
@@ -900,10 +900,10 @@ theorem lval_ca_fin (hW : 0 < W) : ∀ e, e < A.K → ∀ j, j < W →
         exact ca_row_lt (by omega) hj
       have hrw : W * (caP A.K H + (e + 1) - 1) + j = W * (caP A.K H + e) + j := by
         congr 2
-      rw [lval, caF_block hj, caT_fin he, caFinG, gateVal, if_neg (by omega), hrw,
+      rw [lval, caF_block hj, caT_fin he, caFinG, gateVal, ite_eq_right (by omega), hrw,
         lval_ca_ref hprevrow, ih (by omega) j hj]
       by_cases hac : A.ac (e + 1)
-      · rw [if_pos hac, lval_ca_ref hst, lval_ca_state hW H le_rfl (e + 1) he j hj]
+      · rw [ite_eq_left hac, lval_ca_ref hst, lval_ca_state hW H le_rfl (e + 1) he j hj]
         rw [Bool.eq_iff_iff]
         simp only [Bool.or_eq_true, Bool.and_eq_true, decide_eq_true_eq]
         constructor
@@ -915,7 +915,7 @@ theorem lval_ca_fin (hW : 0 < W) : ∀ e, e < A.K → ∀ j, j < W →
           · exact Or.inl ⟨by omega, h2⟩
           · exact Or.inr (by omega)
       · have hac' : A.ac (e + 1) = false := by simpa using hac
-        rw [if_neg hac, lval_ca_ref h0, lval_ca_false hW, Bool.or_false]
+        rw [ite_eq_right hac, lval_ca_ref h0, lval_ca_false hW, Bool.or_false]
         rw [Bool.eq_iff_iff]
         simp only [Bool.and_eq_true, decide_eq_true_eq]
         constructor

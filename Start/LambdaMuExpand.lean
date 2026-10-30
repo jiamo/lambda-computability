@@ -58,10 +58,10 @@ theorem sstr_ren_at (r : ℕ → ℕ) (a : ℕ) (hr : ∀ b, r b = r a → b = a
         · intro h; exact hup β h
       by_cases h : β = a + 1
       · have h' : up r β = r a + 1 := hcond.1 h
-        simp only [sstr, ren, if_pos h, if_pos h', ih (up r) (a + 1) hup, hv]
+        simp only [sstr, ren, ite_eq_left h, ite_eq_left h', ih (up r) (a + 1) hup, hv]
         rfl
       · have h' : ¬ up r β = r a + 1 := fun hc => h (hcond.2 hc)
-        simp only [sstr, ren, if_neg h, if_neg h', ih (up r) (a + 1) hup, hv]
+        simp only [sstr, ren, ite_eq_right h, ite_eq_right h', ih (up r) (a + 1) hup, hv]
         rfl
 
 theorem up_eq_zero (r : ℕ → ℕ) : ∀ b, up r b = up r 0 → b = 0
@@ -107,11 +107,11 @@ theorem step_ren_inv : ∀ (t : Tm) (r : ℕ → ℕ) (s : Tm), Step (ren r t) s
               refine ⟨mu β0 (if β0 = 0 then app (sstr 0 (ren Nat.succ u) t0) (ren Nat.succ u)
                 else sstr 0 (ren Nat.succ u) t0), ?_, Step.struct _ _ _⟩
               by_cases h0 : β0 = 0
-              · rw [if_pos (hβ.2 h0)]
-                simp only [ren, if_pos h0, hs, hv]
+              · rw [ite_eq_left (hβ.2 h0)]
+                simp only [ren, ite_eq_left h0, hs, hv]
                 rfl
-              · rw [if_neg (fun h' => h0 (hβ.1 h'))]
-                simp only [ren, if_neg h0, hs]
+              · rw [ite_eq_right (fun h' => h0 (hβ.1 h'))]
+                simp only [ren, ite_eq_right h0, hs]
                 rfl
           | var _ => simp [ren] at hx
           | app _ _ => simp [ren] at hx
@@ -308,9 +308,9 @@ theorem sstr_W (v : Tm) (β : ℕ) (t : Tm) : sstr 0 v (W β t) = W β (sb v β 
   have h := sstr_ren_succ 0 v t
   by_cases h0 : β = 0
   · subst h0
-    simp only [W, sb, sstr, if_true, Tm.ren, h]
+    simp only [W, sb, sstr, ite_true, Tm.ren, h]
   · have h1 : ¬ (β + 1 = 0 + 1) := by omega
-    simp only [W, sb, sstr, if_neg h1, if_neg h0, h]
+    simp only [W, sb, sstr, ite_eq_right h1, ite_eq_right h0, h]
 
 theorem step_mu_shape {β : ℕ} {t M : Tm} (h : Step (mu β t) M) : ∃ β1 t1, M = mu β1 t1 := by
   cases h with

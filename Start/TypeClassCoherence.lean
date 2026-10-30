@@ -91,13 +91,13 @@ theorem appsL_lams_var :
       rw [subst_lams, Nat.zero_add] at h1
       by_cases hik : i = ts.length
       · subst hik
-        simp only [Lambda.subst, if_true] at h1
+        simp only [Lambda.subst, ite_true] at h1
         have h2 := appsL_lams_const u ts
         refine Lambda.reduces_trans h1 ?_
         simpa using h2
       · have hlt : i < ts.length := by simp at hi; omega
         have hne : ¬ i > ts.length := by omega
-        simp only [Lambda.subst, hik, if_false, hne] at h1
+        simp only [Lambda.subst, hik, ite_false, hne] at h1
         refine Lambda.reduces_trans h1 ?_
         have h2 := appsL_lams_var ts i hlt
         have hidx : (u :: ts).length - 1 - i = (ts.length - 1 - i) + 1 := by simp; omega

@@ -71,7 +71,7 @@ theorem subst_var_lift_succ : ∀ (W : Lambda) (k : ℕ),
   | .app a b, k => by
     simp only [Lambda.lift, Lambda.subst, subst_var_lift_succ a k, subst_var_lift_succ b k]
   | .lam b, k => by
-    simp only [Lambda.lift, Lambda.subst, if_neg (Nat.not_lt_zero k)]
+    simp only [Lambda.lift, Lambda.subst, ite_eq_right (Nat.not_lt_zero k)]
     rw [subst_var_lift_succ b (k + 1)]
 
 /-- The reducts of `W q` with `W ∈ WR x` (`q` = variable `0`, `x` at `x + 1`). -/
@@ -121,7 +121,7 @@ theorem SqR.step {x : ℕ} {P P' : Lambda} (h : SqR x P) (hs : betaEtaStep P P')
     rcases betaEtaStep_app_cases hs with ⟨c, hc, rfl⟩ | ⟨f', hf, rfl⟩ | ⟨a', ha, rfl⟩
     · simp only [lamM, Lambda.lam.injEq] at hc
       subst hc
-      simp only [Lambda.subst, if_pos]
+      simp only [Lambda.subst, ite_eq_left]
       exact .ww hW
     · exact (nf_lamM _ hf).elim
     · exact .mw (hW.step ha)

@@ -144,14 +144,14 @@ last residue. -/
 theorem div_succ_eq {K₀ : ℕ} (hK : 0 < K₀) (c : ℕ) :
     (c + 1) / K₀ = (if c % K₀ + 1 = K₀ then 1 else 0) + c / K₀ := by
   by_cases h : c % K₀ + 1 = K₀
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     have h1 : c + 1 = K₀ * (c / K₀ + 1) := by
       calc c + 1 = K₀ * (c / K₀) + c % K₀ + 1 := by rw [Nat.div_add_mod]
         _ = K₀ * (c / K₀) + K₀ := by rw [Nat.add_assoc, h]
         _ = K₀ * (c / K₀ + 1) := by ring
     rw [h1, Nat.mul_div_cancel_left _ hK]
     omega
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     have hlt : c % K₀ < K₀ := Nat.mod_lt _ hK
     have h2 : c + 1 = K₀ * (c / K₀) + (c % K₀ + 1) := by
       rw [← Nat.add_assoc, Nat.div_add_mod]

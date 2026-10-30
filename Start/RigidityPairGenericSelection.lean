@@ -6,7 +6,6 @@ file `lean/OAI/Computability/DegreeRigidity/Representation/PairGenericSelection.
 paper "Rigidity of the Turing degrees".
 Adapted to this library's Lean v4.33.0 / Mathlib `v4.33.0` pin: the `OAI` namespace was dropped,
 imports were renamed to `Start.Rigidity*`, and proofs were repaired where the pin required it.
-Proof change: `Measurable.of_eval` (upstream pin) is `measurable_pi_lambda` on this pin.
 See `NOTICE` at the repository root.
 -/
 
@@ -22,7 +21,7 @@ theorem column_agree (b : Bool) {n : ℕ} {G H : Oracle} (h : Agree (2*n) G H) :
   cases b <;> simp only [column,Bool.false_eq_true,↓reduceIte] <;> apply h <;> omega
 
 theorem column_measurable (b : Bool) : Measurable (column b) := by
-  apply measurable_pi_lambda
+  apply Measurable.of_eval
   intro n
   cases b <;> exact measurable_pi_apply _
 

@@ -35,7 +35,7 @@ def program (w : ℕ) : Code Reg Bool :=
     simpa only [supplyZero,s,List.length_replicate,Nat.add_comm] using he
   · have he := Code.Exec.branch_true (b:=Code.pushList 2 (List.replicate w false)) (p:=Code.nonempty 2)
       (by simp [Code.nonempty,tops,s,state,ho]) (Code.Exec.skip s)
-    exact ⟨2,by omega,by simpa only [supplyZero,s,if_neg ho] using he⟩
+    exact ⟨2,by omega,by simpa only [supplyZero,s,ite_eq_right ho] using he⟩
  theorem program_exec (q : List Bool) (l : List Entry) (hq : 0<q.length) (hw : WellFormed q.length l) :
     ∃u ≤ 60*(q.length+1)*(l.length+1),
       (program q.length).Exec (state (flatten l) q [] [] [] [] [] []) u
@@ -88,9 +88,9 @@ def entries {w : ℕ} (l : Log w) : List SparseLookup.Entry :=
       simp [entries,SparseLookup.answer,SparseLookup.found,he,hne,read]
     · have hb : wordBits e.1≠wordBits q := fun h => he (BitWords.word_injective h)
       change SparseLookup.answer w (wordBits q) ((wordBits e.1,wordBits e.2)::entries l)=wordBits (if e.1=q then e.2 else read q l)
-      rw [if_neg he]
+      rw [ite_eq_right he]
       unfold SparseLookup.answer
-      rw [SparseLookup.found,if_neg hb]
+      rw [SparseLookup.found,ite_eq_right hb]
       exact ih
  theorem lookup_exec {w : ℕ} (hw : 0<w) (q : Word w) (l : Log w) :
     ∃u ≤ 60*(w+1)*(l.length+1),
@@ -202,8 +202,8 @@ def initialLog (w : ℕ) (input : List Bool) : ℕ → Log w
     have hh := ih (by omega)
     simp only [initialLog,read]
     by_cases he : address w a=q
-    · rw [if_pos he,he,if_pos (by have := (address_eq w a q hal).mp he; omega)]
-    · rw [if_neg he,hh]
+    · rw [ite_eq_left he,he,ite_eq_left (by have := (address_eq w a q hal).mp he; omega)]
+    · rw [ite_eq_right he,hh]
       have hne : a≠q.val := fun h => he ((address_eq w a q hal).mpr h)
       have heq : (q.val<a) ↔ (q.val<a+1) := by omega
       simp only [heq]
@@ -416,7 +416,7 @@ def extract (n : ℕ) : Code (Reg M) (Letter M) :=
     (innerState M (M.initial xs).state (TMStack.initialTapes M xs) []) := by
   have he := Code.takeN_exec (port M) (temp M) (by simp [port,temp]) (inputSymbol M) (.inl false) xs.length (inputState M xs)
   have hr : Code.readN (.inl false) (inputState M xs (port M)) xs.length=xs.map Sum.inl := by
-    rw [inputState,if_pos rfl]
+    rw [inputState,ite_eq_left rfl]
     rw [←List.length_map (f:=Sum.inl) (as:=xs)]
     exact Code.readN_all _ _
   have hm : (xs.map Sum.inl).map (inputSymbol M)=(xs.map M.symbol).map (fun a => Sum.inr (Sum.inl a)) := by

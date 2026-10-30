@@ -87,7 +87,7 @@ theorem eval_pi (Γ : List (Expr S)) (D E : Expr S) (σ : Nat → Expr S) (θ : 
 theorem eval_head {Γ : List (Expr S)} {A : Expr S} {σ : Nat → Expr S} {θ : Bits} {i : Nat}
     (hg : Profile P Γ A ∈ C) (ha : Ω.profile (A.subst σ) ∈ C) (hi : head A = some i) :
     eval Ω C Γ A σ θ = if θ i then Top Ω (A.subst σ).normalForm else Bottom Ω (A.subst σ).normalForm := by
-  cases A <;> simp only [eval,if_pos (And.intro hg ha)]
+  cases A <;> simp only [eval,ite_eq_left (And.intro hg ha)]
   all_goals first | (cases hi <;> rfl) | (rw [hi])
 
 theorem eval_sort (Γ : List (Expr S)) (s : S) (σ : Nat → Expr S) (θ : Bits) :
@@ -137,7 +137,7 @@ theorem eval_outside {Γ : List (Expr S)} {A : Expr S} {σ : Nat → Expr S} {θ
     eval Ω C Γ A σ θ = Top Ω (A.subst σ).normalForm := by
   have hn : ¬ (Profile P Γ A ∈ C ∧ Ω.profile (A.subst σ) ∈ C) :=
     fun h => ho.elim (fun hn => hn h.1) (fun hn => hn h.2)
-  cases A <;> simp only [eval,if_neg hn]
+  cases A <;> simp only [eval,ite_eq_right hn]
 
 def dropSupport : Option (Nat × Bool) → Option (Nat × Bool)
   | some (0,_) => none
@@ -344,7 +344,7 @@ theorem product_iff {Γ : List (Expr S)} {D E : Expr S} {s : S}
     h ∈ R Ω C (.pi D E) e ↔
       h ∈ Top Ω ((Expr.pi D E).subst e.images).normalForm ∧
       ∀ n, n ∈ R Ω C D e → ∀ f : Environment Ω (D :: Γ), e.Ext f n → Expr.app h n ∈ R Ω C E f := by
-  rw [R,normal_product Ω C hw hp e.images e.typed e.bits,if_pos ⟨hg,ha⟩]
+  rw [R,normal_product Ω C hw hp e.images e.typed e.bits,ite_eq_left ⟨hg,ha⟩]
   obtain ⟨a,b,c,hD,hE,_,_⟩ := hp.generation_pi
   constructor
   · rintro ⟨ht,hbody⟩
@@ -381,11 +381,11 @@ def CompatibleBits (r : Option (Nat × Bool)) (dir : Bool) (σ : Nat → Expr S)
 def Below {α : Type*} (dir : Bool) (X Y : Set α) : Prop := if dir then Y ⊆ X else X ⊆ Y
 
 theorem support_outside {Γ : List (Expr S)} {A : Expr S} (h : Profile P Γ A ∉ C) :
-    support (P := P) C Γ A = none := by cases A <;> simp only [support,if_neg h]
+    support (P := P) C Γ A = none := by cases A <;> simp only [support,ite_eq_right h]
 
 theorem support_head {Γ : List (Expr S)} {A : Expr S} {i : Nat}
     (hg : Profile P Γ A ∈ C) (hi : head A = some i) : support (P := P) C Γ A = some (i,false) := by
-  cases A <;> simp only [support,if_pos hg]
+  cases A <;> simp only [support,ite_eq_left hg]
   all_goals first | (cases hi <;> rfl) | (rw [hi]; rfl)
 
 theorem bits_domain {Γ : List (Expr S)} {D E : Expr S} {dir : Bool}
@@ -395,7 +395,7 @@ theorem bits_domain {Γ : List (Expr S)} {D E : Expr S} {dir : Bool}
   intro i p hi
   by_cases hd : Profile P Γ D ∈ C
   · have hp : support (P := P) C Γ (.pi D E) = some (i,!p) := by
-      rw [support,if_pos hg,if_pos hd,flipSupport,hi]; rfl
+      rw [support,ite_eq_left hg,ite_eq_left hd,flipSupport,hi]; rfl
     rcases hb i (!p) hp with h | h
     · exact .inl h
     · right
@@ -420,7 +420,7 @@ theorem bits_body (hw : SystemWeaklyNormalizing P)
     | zero => exact .inl ⟨0,rfl,rfl⟩
     | succ i =>
       have hh : support (P := P) C Γ (.pi D E) = some (i,p) := by
-        rw [support,if_pos hg,if_neg hd,hi]; rfl
+        rw [support,ite_eq_left hg,ite_eq_right hd,hi]; rfl
       rcases hb i p hh with ⟨j,hj,he⟩ | he
       · left
         exact ⟨j+1,by rw [Expr.liftSub_succ,hj]; rfl,he⟩
@@ -637,7 +637,7 @@ theorem compare_subst {Γ Δ : List (Expr S)} {A : Expr S} {s : S}
         | succ i => exact Expr.subst_raise_extend (δ i) n e.images
       rw [hei] at hbody
       exact hbody
-    rw [eval_pi,if_pos ⟨hg,ha⟩,R,Expr.subst,normal_product Ω C hw ht _ e.typed e.bits,if_pos ⟨hp,by change Ω.profile (((Expr.pi D E).subst δ).subst e.images) ∈ C; rwa [he]⟩]
+    rw [eval_pi,ite_eq_left ⟨hg,ha⟩,R,Expr.subst,normal_product Ω C hw ht _ e.typed e.bits,ite_eq_left ⟨hp,by change Ω.profile (((Expr.pi D E).subst δ).subst e.images) ∈ C; rwa [he]⟩]
     change Below dir (RawProduct Ω D E _ _ _) (RawProduct Ω (D.subst δ) (E.subst (Expr.liftSub δ)) e.images _ _)
     have hraw : ((Expr.pi (D.subst δ) (E.subst (Expr.liftSub δ))).subst e.images).normalForm =
         ((Expr.pi D E).subst (fun i => (δ i).subst e.images)).normalForm := congrArg Expr.normalForm he

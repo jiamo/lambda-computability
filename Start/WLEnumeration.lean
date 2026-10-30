@@ -31,10 +31,10 @@ theorem link_endpoints_ne {P : Type uP} {E : Type uE} (K : ℕ) (hK : 0<K)
   intro h
   by_cases h0 : l.2.val=0
   · have h4 : l.2.val≠4*K := by omega
-    simp only [linkLeft,linkRight,dif_pos h0,dif_neg h4,reduceCtorEq] at h
+    simp only [linkLeft,linkRight,dite_eq_left h0,dite_eq_right h4,reduceCtorEq] at h
   · by_cases h4 : l.2.val=4*K
-    · simp only [linkLeft,linkRight,dif_neg h0,dif_pos h4,reduceCtorEq] at h
-    · simp only [linkLeft,linkRight,dif_neg h0,dif_neg h4,Sum.inr.injEq,Prod.mk.injEq,
+    · simp only [linkLeft,linkRight,dite_eq_right h0,dite_eq_left h4,reduceCtorEq] at h
+    · simp only [linkLeft,linkRight,dite_eq_right h0,dite_eq_right h4,Sum.inr.injEq,Prod.mk.injEq,
         true_and,Fin.mk.injEq] at h
       omega
 
@@ -111,7 +111,7 @@ theorem encodeTags_supported (K : ℕ)
   intro t ht
   have hn : ¬∃ n ∈ I.footprint K b,ReadoutName.tag n=t := by
     rintro ⟨n,hn,he⟩; exact ht n hn he
-  simp only [encodeTags,dif_neg hn]
+  simp only [encodeTags,dite_eq_right hn]
 
 theorem encodeTags_apply (K : ℕ) (hK : 0<K) (hr : 1≤r)
     (b : RawBlock (r:=r) (m:=m) (P:=P) (E:=E) K) (v : I.blockSpace K b)
@@ -120,7 +120,7 @@ theorem encodeTags_apply (K : ℕ) (hK : 0<K) (hr : 1≤r)
   classical
   let h : ∃ j ∈ I.footprint K b, ReadoutName.tag j=ReadoutName.tag n := ⟨n,hn,rfl⟩
   have he : h.choose=n := I.tag_injective_on_footprint K hK hr b h.choose_spec.1 hn h.choose_spec.2
-  simp only [encodeTags,dif_pos h]
+  simp only [encodeTags,dite_eq_left h]
   have hh : ∀ (j : RawName (r:=r) (m:=m) (P:=P) (E:=E) K) (_ : j=n)
       (ht : ReadoutName.tag j=ReadoutName.tag n),
       ht ▸ I.toTag K j (v.val j)=I.toTag K n (v.val n) := by
@@ -138,7 +138,7 @@ theorem tagRead_encodeTags (K : ℕ) (hK : 0<K) (hr : 1≤r)
     have he := I.encodeTags_apply K hK hr b v n hn
     cases n <;> exact he
   · change (if n∈I.footprint K b then _ else 0)=v.val n
-    rw [if_neg hn,v.property n hn]
+    rw [ite_eq_right hn,v.property n hn]
 
 noncomputable def tagSpaceEquiv (K : ℕ) (hK : 0<K) (hr : 1≤r)
     (b : RawBlock (r:=r) (m:=m) (P:=P) (E:=E) K) :
@@ -417,13 +417,13 @@ noncomputable def decodeSlots (e : {d // p d} ≃ V) (L q : ℕ) :
         rcases u with ⟨a,i⟩
         by_cases ha : p a
         · by_cases hi : i.val=0
-          · simp only [decodeSlots,dif_pos ha,if_pos hi,Option.some.injEq,Sum.inl.injEq] at hu
+          · simp only [decodeSlots,dite_eq_left ha,ite_eq_left hi,Option.some.injEq,Sum.inl.injEq] at hu
             have hd : (⟨a,ha⟩ : {d // p d})=d := e.injective (hu.trans (e.apply_symm_apply v).symm)
             have hj : i=j := Fin.ext hi
             rw [← congrArg Subtype.val hd,← hj]
-          · simp only [decodeSlots,dif_pos ha,if_neg hi] at hu
+          · simp only [decodeSlots,dite_eq_left ha,ite_eq_right hi] at hu
             split at hu <;> simp only [Option.some.injEq,reduceCtorEq] at hu
-        · simp only [decodeSlots,dif_neg ha,reduceCtorEq] at hu
+        · simp only [decodeSlots,dite_eq_right ha,reduceCtorEq] at hu
   | inr v =>
     rcases v with ⟨v,i⟩
     let d := e.symm v
@@ -443,8 +443,8 @@ noncomputable def decodeSlots (e : {d // p d} ≃ V) (L q : ℕ) :
         rcases u with ⟨a,t⟩
         by_cases ha : p a
         · by_cases ht : t.val=0
-          · simp only [decodeSlots,dif_pos ha,if_pos ht,Option.some.injEq,reduceCtorEq] at hu
-          · simp only [decodeSlots,dif_pos ha,if_neg ht] at hu
+          · simp only [decodeSlots,dite_eq_left ha,ite_eq_left ht,Option.some.injEq,reduceCtorEq] at hu
+          · simp only [decodeSlots,dite_eq_left ha,ite_eq_right ht] at hu
             split at hu
             · rename_i hh
               have he : e ⟨a,ha⟩=v := congrArg (fun z : Option (Slot V count) =>
@@ -455,7 +455,7 @@ noncomputable def decodeSlots (e : {d // p d} ≃ V) (L q : ℕ) :
               have hj : t=j := Fin.ext (by dsimp [j]; omega)
               rw [← congrArg Subtype.val hd,← hj]
             · simp only [reduceCtorEq] at hu
-        · simp only [decodeSlots,dif_neg ha,reduceCtorEq] at hu
+        · simp only [decodeSlots,dite_eq_right ha,reduceCtorEq] at hu
 
  theorem raw_holes_eq {W : Type uW} {U : Type uU} [Fintype V] [Fintype W] [Fintype U]
     {count' : W → ℕ} (e : V ≃ W) (he : ∀ v,count v=count' (e v))

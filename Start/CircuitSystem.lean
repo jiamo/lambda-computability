@@ -128,13 +128,13 @@ theorem cnfValF_defsCnf_of_consistent (xi f : ℕ → Bool) :
       have hodd : ∀ j : ℕ, F (2 * j + 1) = f j := by
         intro j
         simp only [hF]
-        rw [if_neg (by omega)]
+        rw [ite_eq_right (by omega)]
         congr 1
         omega
       have heven : ∀ i : ℕ, F (2 * i) = xi i := by
         intro i
         simp only [hF]
-        rw [if_pos (by omega)]
+        rw [ite_eq_left (by omega)]
         congr 1
         omega
       rw [defsCnf, cnfValF_append, ih hC, Bool.and_true]
@@ -228,7 +228,7 @@ theorem esat_iff_sat_toCnf (C : Circuit) :
         rw [cnfVal_map_range (toCnf_vars_varBAll (g :: C)), toCnf, cnfValF_cons]
         have hodd : F (2 * C.length + 1) = f C.length := by
           simp only [hF]
-          rw [if_neg (by omega)]
+          rw [ite_eq_right (by omega)]
           congr 1
           omega
         have h1 : clauseValF F [(true, 2 * C.length + 1)] = true := by

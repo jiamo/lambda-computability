@@ -33,7 +33,7 @@ theorem children_spec (B T U D : ZFSet.{0})
       ZFSet.pair (ZFSet.pair U D) (ZFSet.pair (f false) (f true)) ∈ T := by
     refine ⟨(fun b => if b then W else V),?_,hxy⟩
     intro b; cases b; exact hV; exact hW
-  simp only [children,dif_pos hex]
+  simp only [children,dite_eq_left hex]
   exact hex.choose_spec
 
 theorem children_unique (B T U D V W : ZFSet.{0})

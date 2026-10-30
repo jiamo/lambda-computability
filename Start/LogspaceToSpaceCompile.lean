@@ -269,7 +269,7 @@ theorem nxt_spec (x : Word) (i : ℕ) (H : Config) (hI : Inv M c₀ x (x, i, H))
       (nxt M c₀ x i H).space ≤ spaceB q w h c₀ x.length := by
   have hd := body_exec M c₀ hLS x i H hI
   unfold nxt
-  rw [dif_pos hd]
+  rw [dite_eq_left hd]
   exact Classical.choose_spec hd
 
 theorem reaches_inv {x : Word} {s : Word × ℕ × Config} (hs : (absM M c₀).Reaches x s) :

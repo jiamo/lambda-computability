@@ -94,7 +94,7 @@ theorem Lambda.code_step_beta (t1_body t2 : Lambda) :
     unfold Lambda.step_code
     unfold Lambda.step_code_case1
     simp only [hL, Nat.unpair_pair]
-    rw [if_pos (And.intro h1 h2)]
+    rw [ite_eq_left (And.intro h1 h2)]
   rw [h_join, h_case1 _ (by simp +decide [Lambda.encode])]
   rfl
 

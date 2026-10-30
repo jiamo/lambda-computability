@@ -90,7 +90,7 @@ def cellN (cells : List Sym) (m : ℕ) : Sym := cells.getD m .blank
 
 theorem cellAt_succ (cells : List Sym) (m : ℕ) : cellAt cells ((m : ℤ) + 1) = cellN cells m := by
   unfold cellAt cellN
-  rw [if_neg (by omega), if_pos (by omega), show ((m : ℤ) + 1).toNat - 1 = m by omega]
+  rw [ite_eq_right (by omega), ite_eq_left (by omega), show ((m : ℤ) + 1).toNat - 1 = m by omega]
 
 theorem cellAt_cases (j : ℤ) :
     j = 0 ∨ j < 0 ∨ ∃ m : ℕ, j = (m : ℤ) + 1 := by
@@ -100,7 +100,7 @@ theorem cellAt_cases (j : ℤ) :
   · exact Or.inr (Or.inr ⟨j.toNat - 1, by omega⟩)
 
 theorem cellAt_neg (cells : List Sym) {j : ℤ} (h : j < 0) : cellAt cells j = .blank := by
-  unfold cellAt; rw [if_neg (by omega), if_neg (by omega)]
+  unfold cellAt; rw [ite_eq_right (by omega), ite_eq_right (by omega)]
 
 theorem cellN_set {cells : List Sym} {k : ℕ} (hk : k < cells.length) (a : Sym) (m : ℕ) :
     cellN (cells.set k a) m = if m = k then a else cellN cells m := by
@@ -108,43 +108,43 @@ theorem cellN_set {cells : List Sym} {k : ℕ} (hk : k < cells.length) (a : Sym)
   rw [List.getD_eq_getElem?_getD, List.getD_eq_getElem?_getD, List.getElem?_set]
   by_cases h : m = k
   · subst h; simp [hk]
-  · rw [if_neg (Ne.symm h), if_neg h]
+  · rw [ite_eq_right (Ne.symm h), ite_eq_right h]
 
 theorem cellN_concat (cells : List Sym) (a : Sym) (m : ℕ) :
     cellN (cells ++ [a]) m = if m = cells.length then a else cellN cells m := by
   unfold cellN
   rw [List.getD_eq_getElem?_getD, List.getD_eq_getElem?_getD, List.getElem?_append]
   split
-  · next h => rw [if_neg (by omega)]
+  · next h => rw [ite_eq_right (by omega)]
   · next h =>
       rw [List.getElem?_singleton, List.getElem?_eq_none (by omega)]
       by_cases hm : m = cells.length
       · subst hm; simp
-      · rw [if_neg (by omega), if_neg hm]
+      · rw [ite_eq_right (by omega), ite_eq_right hm]
 
 theorem RepT.write_set {T : Turing.Tape Sym} {cells : List Sym} {i : ℕ} (h : RepT T cells (i + 1))
     (hi : i < cells.length) (a : Sym) : RepT (T.write a) (cells.set i a) (i + 1) := by
   intro j
   rw [Turing.Tape.write_nth]
   rcases cellAt_cases j with rfl | hj | ⟨m, rfl⟩
-  · rw [if_neg (by omega), h 0, cellAt_zero, cellAt_zero]
-  · rw [if_neg (by omega), h j, cellAt_neg _ hj, cellAt_neg _ hj]
+  · rw [ite_eq_right (by omega), h 0, cellAt_zero, cellAt_zero]
+  · rw [ite_eq_right (by omega), h j, cellAt_neg _ hj, cellAt_neg _ hj]
   · rw [cellAt_succ, cellN_set hi]
     by_cases hm : m = i
     · subst hm; simp
-    · rw [if_neg (by push_cast; omega), if_neg hm, h, cellAt_succ]
+    · rw [ite_eq_right (by push_cast; omega), ite_eq_right hm, h, cellAt_succ]
 
 theorem RepT.write_end {T : Turing.Tape Sym} {cells : List Sym} (h : RepT T cells (cells.length + 1))
     (a : Sym) : RepT (T.write a) (cells ++ [a]) (cells.length + 1) := by
   intro j
   rw [Turing.Tape.write_nth]
   rcases cellAt_cases j with rfl | hj | ⟨m, rfl⟩
-  · rw [if_neg (by omega), h 0, cellAt_zero, cellAt_zero]
-  · rw [if_neg (by omega), h j, cellAt_neg _ hj, cellAt_neg _ hj]
+  · rw [ite_eq_right (by omega), h 0, cellAt_zero, cellAt_zero]
+  · rw [ite_eq_right (by omega), h j, cellAt_neg _ hj, cellAt_neg _ hj]
   · rw [cellAt_succ, cellN_concat]
     by_cases hm : m = cells.length
     · subst hm; simp
-    · rw [if_neg (by push_cast; omega), if_neg hm, h, cellAt_succ]
+    · rw [ite_eq_right (by push_cast; omega), ite_eq_right hm, h, cellAt_succ]
 
 theorem cellAt_append_blank (cells : List Sym) (n : ℕ) :
     cellAt (cells ++ List.replicate n .blank) = cellAt cells := by
@@ -527,7 +527,7 @@ theorem run_clearI {a r : ℕ} (ha : prog[a]? = some (.clear r)) (T : Option (Fi
             some ⟨at_ prog a 2, Function.update T' (reg N r)
               (((T' (reg N r)).write .blank).move .left)⟩ := by
           rw [stepAt_one ha (by norm_num) (q := at_ prog a 2) (k := reg N r) (x := .blank)
-            (d := .left) (by simp only [instrStep, hblank, if_true])]
+            (d := .left) (by simp only [instrStep, hblank, ite_true])]
           simp
         refine ⟨((T' (reg N r)).write .blank).move .left, ?_, RunsIn.single hst⟩
         have := (RepT.write_end (cells := List.replicate w.length Sym.blank)
@@ -552,7 +552,7 @@ theorem run_clearI {a r : ℕ} (ha : prog[a]? = some (.clear r)) (T : Option (Fi
             some ⟨at_ prog a 1, Function.update T' (reg N r)
               (((T' (reg N r)).write .blank).move .right)⟩ := by
           rw [stepAt_one ha (by norm_num) (q := at_ prog a 1) (k := reg N r) (x := .blank)
-            (d := .right) (by simp only [instrStep, hnb, if_false])]
+            (d := .right) (by simp only [instrStep, hnb, ite_false])]
           simp
         have hlen : j < (List.replicate j Sym.blank ++ (enc w).drop j).length := by
           simp [enc]; omega
@@ -570,10 +570,10 @@ theorem run_clearI {a r : ℕ} (ha : prog[a]? = some (.clear r)) (T : Option (Fi
   -- rewinding
   obtain ⟨t2, ht2, hrun2⟩ := rewind_runs (q := at_ prog a 2) (X := at_ prog (a + 1) 0)
     (k := reg N r)
-    (fun T' hm => stepAt_stay ha (by norm_num) (by simp only [instrStep, hm, if_true]))
+    (fun T' hm => stepAt_stay ha (by norm_num) (by simp only [instrStep, hm, ite_true]))
     (fun T' hm => by
       rw [stepAt_one ha (by norm_num) (q := at_ prog a 2) (k := reg N r) (x := (T' (reg N r)).head)
-        (d := .left) (by simp only [instrStep, hm, if_false])]
+        (d := .left) (by simp only [instrStep, hm, ite_false])]
       simp [Turing.Tape.write_self])
     (cells := List.replicate w.length .blank) (by intro c hc; rw [List.eq_of_mem_replicate hc]; decide)
     w.length (Function.update (Function.update T (reg N r) ((T (reg N r)).move .right)) (reg N r) t1)
@@ -625,10 +625,10 @@ theorem rewind_at {a m : ℕ} {I : LInstr} (ha : prog[a]? = some I) (hm : m < 5)
     ∃ t, RepT t cells 0 ∧ RunsIn (machine prog N).step ⟨at_ prog a m, T⟩
       ⟨X, Function.update T (reg N r) t⟩ (i + 1) :=
   rewind_runs (q := at_ prog a m) (X := X) (k := reg N r)
-    (fun T' hmk => stepAt_stay ha hm (by rw [hI, if_pos hmk]))
+    (fun T' hmk => stepAt_stay ha hm (by rw [hI, ite_eq_left hmk]))
     (fun T' hmk => by
       rw [stepAt_one ha hm (q := at_ prog a m) (k := reg N r) (x := (T' (reg N r)).head)
-        (d := .left) (by rw [hI, if_neg hmk])]
+        (d := .left) (by rw [hI, ite_eq_right hmk])]
       simp [Turing.Tape.write_self])
     hc i T hT
 
@@ -646,11 +646,11 @@ theorem run_pushI {a r : ℕ} {b : Bool} (ha : prog[a]? = some (.push r b))
     (f := fun t => (t.write (bitSym b)).move .left)
     (fun T' hbl => by
       rw [stepAt_one ha (by norm_num) (q := at_ prog a 2) (k := reg N r) (x := bitSym b)
-        (d := .left) (by simp only [instrStep, hbl, if_true])]
+        (d := .left) (by simp only [instrStep, hbl, ite_true])]
       simp)
     (fun T' hbl => by
       rw [stepAt_one ha (by norm_num) (q := at_ prog a 1) (k := reg N r) (x := (T' (reg N r)).head)
-        (d := .right) (by simp only [instrStep, hbl, if_false])]
+        (d := .right) (by simp only [instrStep, hbl, ite_false])]
       simp [Turing.Tape.write_self])
     w w.length 0 (Function.update T (reg N r) ((T (reg N r)).move .right)) (by omega)
     (by rw [Function.update_self]; simpa using hT.right)
@@ -698,11 +698,11 @@ theorem run_toEndI {a r : ℕ} (ha : prog[a]? = some (.toEnd r))
     (f := fun t => (t.write .blank).move .left)
     (fun T' hbl => by
       rw [stepAt_one ha (by norm_num) (q := at_ prog (a + 1) 0) (k := reg N r) (x := .blank)
-        (d := .left) (by simp only [instrStep, hbl, if_true])]
+        (d := .left) (by simp only [instrStep, hbl, ite_true])]
       simp)
     (fun T' hbl => by
       rw [stepAt_one ha (by norm_num) (q := at_ prog a 1) (k := reg N r) (x := (T' (reg N r)).head)
-        (d := .right) (by simp only [instrStep, hbl, if_false])]
+        (d := .right) (by simp only [instrStep, hbl, ite_false])]
       simp [Turing.Tape.write_self])
     w w.length 0 (Function.update T (reg N r) ((T (reg N r)).move .right)) (by omega)
     (by rw [Function.update_self]; simpa using hT.right)
@@ -816,15 +816,15 @@ theorem run_truncI {a r s : ℕ} (ha : prog[a]? = some (.trunc r s)) (hrs : reg 
         by_cases hle : ws.length ≤ wr.length
         · have hsb : (T' (reg N s)).head = .blank := by
             rw [hs'.head]; push_cast; exact cellAt_enc_end ws _ (by omega)
-          rw [if_pos hle]
-          exact RunsIn.single (stepAt_stay ha (by norm_num) (by simp only [instrStep, hsb, if_true]))
+          rw [ite_eq_left hle]
+          exact RunsIn.single (stepAt_stay ha (by norm_num) (by simp only [instrStep, hsb, ite_true]))
         · have hsn : (T' (reg N s)).head ≠ .blank := by
             rw [hs'.head]; push_cast; rw [cellAt_enc_pos ws _ (by omega)]; exact bitSym_ne_blank' _
           have hrb : (T' (reg N r)).head = .blank := by
             rw [hr'.head]; push_cast; exact cellAt_enc_end wr _ (by omega)
-          rw [if_neg hle]
+          rw [ite_eq_right hle]
           exact RunsIn.single (stepAt_stay ha (by norm_num)
-            (by simp only [instrStep, hsn, hrb, if_true, if_false]))
+            (by simp only [instrStep, hsn, hrb, ite_true, ite_false]))
     | succ d ih =>
         intro j T' hj hr' hs'
         have hsn : (T' (reg N s)).head ≠ .blank := by
@@ -835,7 +835,7 @@ theorem run_truncI {a r s : ℕ} (ha : prog[a]? = some (.trunc r s)) (hrs : reg 
           (reg N s) ((T' (reg N s)).move .right)
         have hst : (machine prog N).step ⟨at_ prog a 1, T'⟩ = some ⟨at_ prog a 1, T2⟩ := by
           rw [stepAt_two ha (by norm_num) (q := at_ prog a 1) (k₁ := reg N r) (k₂ := reg N s)
-            (d₁ := .right) (d₂ := .right) hrs (by simp only [instrStep, hsn, hrn, if_false])]
+            (d₁ := .right) (d₂ := .right) hrs (by simp only [instrStep, hsn, hrn, ite_false])]
           simp [T2]
         obtain ⟨T'', h1, h2, h3, hrun⟩ := ih (j + 1) T2 (by omega)
           (by simp only [T2]; rw [Function.update_of_ne hrs, Function.update_self]; exact hr'.right)
@@ -870,7 +870,7 @@ theorem run_truncI {a r s : ℕ} (ha : prog[a]? = some (.trunc r s)) (hrs : reg 
             unfold cellN
             rw [List.getD_eq_getElem?_getD, List.getElem?_eq_none (by simp [enc])]
             rfl
-          exact RunsIn.single (stepAt_stay ha (by norm_num) (by simp only [instrStep, hb, if_true]))
+          exact RunsIn.single (stepAt_stay ha (by norm_num) (by simp only [instrStep, hb, ite_true]))
     | succ d ih =>
         intro j T' hj1 hj2 hT'
         have hjw : j < wr.length := by omega
@@ -887,7 +887,7 @@ theorem run_truncI {a r s : ℕ} (ha : prog[a]? = some (.trunc r s)) (hrs : reg 
         set T2 := Function.update T' (reg N r) (((T' (reg N r)).write .blank).move .right)
         have hst : (machine prog N).step ⟨at_ prog a 2, T'⟩ = some ⟨at_ prog a 2, T2⟩ := by
           rw [stepAt_one ha (by norm_num) (q := at_ prog a 2) (k := reg N r) (x := .blank)
-            (d := .right) (by simp only [instrStep, hnb, if_false])]
+            (d := .right) (by simp only [instrStep, hnb, ite_false])]
           simp [T2]
         have hlen : j < ((enc wr).take ws.length ++
             (List.replicate (j - ws.length) Sym.blank ++ (enc wr).drop j)).length := by
@@ -907,7 +907,7 @@ theorem run_truncI {a r s : ℕ} (ha : prog[a]? = some (.trunc r s)) (hrs : reg 
       RunsIn (machine prog N).step ⟨at_ prog a 0, T⟩ ⟨at_ prog a 3, T4⟩
         (1 + (m + 1) + (wr.length - ws.length + 1)) := by
     by_cases hle : ws.length ≤ wr.length
-    · rw [if_pos hle] at hrun1
+    · rw [ite_eq_left hle] at hrun1
       have hmw : m = ws.length := by omega
       obtain ⟨T4, h4r, h4x, hrun2⟩ := erase hle (wr.length - ws.length) ws.length T3 le_rfl
         (by omega)
@@ -916,7 +916,7 @@ theorem run_truncI {a r s : ℕ} (ha : prog[a]? = some (.trunc r s)) (hrs : reg 
       refine ⟨T4, h4r, by rw [h4x _ (Ne.symm hrs)]; exact h3s, fun x h1 h2 => ?_,
         (((RunsIn.single s0).trans hrun1).trans hrun2).mono (by omega)⟩
       rw [h4x x h1, h3x x h1 h2, hT1x x h1 h2]
-    · rw [if_neg hle] at hrun1
+    · rw [ite_eq_right hle] at hrun1
       have hmw : m = wr.length := by omega
       refine ⟨T3, ?_, h3s, fun x h1 h2 => by rw [h3x x h1 h2, hT1x x h1 h2],
         ((RunsIn.single s0).trans hrun1).mono (by omega)⟩
@@ -941,10 +941,10 @@ theorem mk₁_nth' (l : List Sym) (z : ℤ) :
     (Turing.Tape.mk₁ l).nth z = if 0 ≤ z then l.getI z.toNat else default := by
   cases z with
   | ofNat n =>
-      simp only [Int.ofNat_eq_natCast, Int.natCast_nonneg, if_true, Int.toNat_natCast]
+      simp only [Int.ofNat_eq_natCast, Int.natCast_nonneg, ite_true, Int.toNat_natCast]
       exact Turing.Tape.mk'_nth_nat _ _ n
   | negSucc n =>
-      simp only [Int.negSucc_not_nonneg, if_false]
+      simp only [Int.negSucc_not_nonneg, ite_false]
       rfl
 
 theorem reg_zero (hN : 0 < N) : reg N 0 = some ⟨0, hN⟩ := by simp [reg, hN]
@@ -970,7 +970,7 @@ theorem run_initI (h0 : prog[0]? = some .init) (hN : 0 < N) (x : Word) :
     simp [T0, FiniteMultiTapeMachine.init, enc]
   have hT0reg : ∀ r, r < N → T0 (reg N r) = Turing.Tape.mk₁ [] := fun r hr => by
     simp only [T0, FiniteMultiTapeMachine.init]
-    rw [if_neg (reg_ne_none hr)]
+    rw [ite_eq_right (reg_ne_none hr)]
   -- marking
   set T1 : Option (Fin N) → Turing.Tape Sym := fun k => match k with
     | none => T0 none
@@ -992,9 +992,9 @@ theorem run_initI (h0 : prog[0]? = some .init) (hN : 0 < N) (x : Word) :
     rw [e, Turing.Tape.write_nth, Nat.cast_zero, sub_zero]
     by_cases hz : z = 0
     · subst hz; simp [cellAt]
-    · rw [if_neg hz, mk₁_nth']
+    · rw [ite_eq_right hz, mk₁_nth']
       unfold cellAt
-      rw [if_neg hz]
+      rw [ite_eq_right hz]
       split <;> split <;> simp_all [default_sym]
   have hT1in : T1 none = Turing.Tape.mk₁ (enc x) := by simp [T1, hT0in]
   -- moving register 0 right
@@ -1018,20 +1018,20 @@ theorem run_initI (h0 : prog[0]? = some .init) (hN : 0 < N) (x : Word) :
         rw [List.take_length] at h0'
         have hblank : (T' none).head = .blank := by
           have := hin x.length
-          rw [sub_self, Turing.Tape.nth_zero, if_pos (by omega)] at this
+          rw [sub_self, Turing.Tape.nth_zero, ite_eq_left (by omega)] at this
           rw [this]; simp [List.getI_eq_default, enc, default_sym]
         refine ⟨Function.update T' (reg N 0) ((T' (reg N 0)).move .left), ?_,
           fun k hk _ => by rw [Function.update_of_ne hk], RunsIn.single ?_⟩
         · rw [Function.update_self]; exact h0'.left
         · rw [stepAt_one h0 (by norm_num) (q := at_ prog 0 3) (k := reg N 0)
-            (x := (T' (reg N 0)).head) (d := .left) (by simp only [instrStep, hblank, if_true])]
+            (x := (T' (reg N 0)).head) (d := .left) (by simp only [instrStep, hblank, ite_true])]
           simp [Turing.Tape.write_self]
     | succ d ih =>
         intro j T' hj h0' hin
         have hjx : j < x.length := by omega
         have hbit : (T' none).head = bitSym x[j] := by
           have := hin j
-          rw [sub_self, Turing.Tape.nth_zero, if_pos (by omega)] at this
+          rw [sub_self, Turing.Tape.nth_zero, ite_eq_left (by omega)] at this
           rw [this]; simp [enc, List.getI_eq_getElem _ (show j < (x.map bitSym).length by simpa)]
         have hnb : (T' none).head ≠ .blank := by rw [hbit]; exact bitSym_ne_blank' _
         have hne : reg N 0 ≠ none := reg_ne_none hN
@@ -1042,7 +1042,7 @@ theorem run_initI (h0 : prog[0]? = some .init) (hN : 0 < N) (x : Word) :
             (k₂ := none) (a := (T' none).head) (d₁ := .right) (d₂ := .right) hne (by
               show code prog N (at_ prog 0 2) _ = _
               rw [code_at prog N h0 (by norm_num)]
-              simp only [instrStep, hnb, if_false])]
+              simp only [instrStep, hnb, ite_false])]
           rw [hbit]
           rfl
         have hcells : enc (x.take j) ++ [bitSym x[j]] = enc (x.take (j + 1)) := by

@@ -67,7 +67,7 @@ theorem Construction.finite_stage_definition (t : Construction.{u}) :
       apply p.finite_support
       intro i hin
       rcases i with _|_|_|_|_|_|i <;> simp only [Construction.singleInputs,cons_zero,cons_succ]
-      rw [tupleEnv,dif_pos (show i < p.bound by omega)]
+      rw [tupleEnv,dite_eq_left (show i < p.bound by omega)]
       exact (t.stageInputs_eq R i).symm
     exact hf.trans (t.singleMembership_spec M R hM hT hR P hP ht hi z hz)
 

@@ -186,7 +186,7 @@ theorem brun_ngBlk (k : ℕ) :
       match k with
       | 0 => rfl
       | m + 1 =>
-          rw [rst_ngState, cfNeg, encCirc, ngBlk, if_neg (by omega)]
+          rw [rst_ngState, cfNeg, encCirc, ngBlk, ite_eq_right (by omega)]
           rfl
 
 theorem eval_negGen (x : Word) : negGen.eval [x] = encCirc (cfNeg x.length) := by

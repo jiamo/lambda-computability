@@ -115,7 +115,7 @@ theorem subst_liftN (s X : Lambda) {k n : ℕ} (hk : k ≤ n) :
       simp [Lambda.lift, Lambda.subst, hy, h1, h2]
     · have h1 : y + (n + 1) ≠ c + k := by omega
       have h2 : y + (n + 1) > c + k := by omega
-      simp only [Lambda.lift, Lambda.subst, if_neg hy, if_neg h1, if_pos h2]
+      simp only [Lambda.lift, Lambda.subst, ite_eq_right hy, ite_eq_right h1, ite_eq_left h2]
       congr 1
   | app f g ihf ihg => intro c; simp [Lambda.lift, Lambda.subst, ihf, ihg]
   | lam b ih =>
@@ -133,7 +133,7 @@ theorem lift_one_lift (n : ℕ) (X : Lambda) :
 
 macro "tlca4_csimp" : tactic =>
   `(tactic| simp only [Lambda.subst, Lambda.lift, Lambda.subst_lift, lift_one_lift,
-    Lambda.lift_zero, subst_liftN0, subst_lamB, subst_lamM, lift_lamB, Nat.lt_irrefl, if_true, if_false, Nat.zero_add,
+    Lambda.lift_zero, subst_liftN0, subst_lamB, subst_lamM, lift_lamB, Nat.lt_irrefl, ite_true, ite_false, Nat.zero_add,
     Nat.reduceAdd, Nat.reduceLT, Nat.reduceSub, Nat.reduceEqDiff, Nat.reduceGT,
     Nat.lt_add_one, Nat.not_lt_zero, reduceIte, gt_iff_lt, Nat.succ_ne_zero,
     Nat.add_one_ne_zero, Nat.reduceLeDiff, Nat.le_refl, Nat.zero_le, Nat.one_le_ofNat])
@@ -283,7 +283,7 @@ theorem xd_bx {x a : ℕ} {n : ℤ} {P : Lambda}
     (h : ∀ b, XDz x a n (.app (Lambda.subst (.var a) 0 P) b)) (b : Lambda) :
     XDz x a (n + 1) (.app (Lambda.subst (.var a) 0 (.app (.app lamB (.var (x + 1))) P)) b) := by
   simp only [Lambda.subst, subst_lamB]
-  simp only [show x + 1 ≠ 0 by omega, if_false, show x + 1 > 0 by omega, if_true,
+  simp only [show x + 1 ≠ 0 by omega, ite_false, show x + 1 > 0 by omega, ite_true,
     Nat.add_sub_cancel]
   exact (h b).x_app.of_conv (law_B _ _ _)
 
@@ -308,7 +308,7 @@ theorem xd_rq {x a : ℕ} {n n' : ℤ} {m : ℕ} {R T : Lambda}
   rw [show x + 2 = x + 1 + 1 by rfl, e]
   refine XDz.beta0 ?_
   simp only [subst_xPow, Lambda.subst, Lambda.subst_lift]
-  simp only [show x + 1 ≠ 0 by omega, if_false, show x + 1 > 0 by omega, if_true,
+  simp only [show x + 1 ≠ 0 by omega, ite_false, show x + 1 > 0 by omega, ite_true,
     Nat.add_sub_cancel]
   rw [← hm]
   exact (h _).xPow m
@@ -358,7 +358,7 @@ theorem YBase.xd {x a n : ℕ} {P : Lambda} (h : YBase x n P) (b : Lambda) :
     XDz x a n (.app (Lambda.subst (.var a) 0 P) b) := by
   match h with
   | .q hR =>
-    simp only [Lambda.subst, if_true]
+    simp only [Lambda.subst, ite_true]
     exact XDz.neutral (.app _ (.app _ (.var a)))
   | .m hR =>
     simp only [Lambda.subst, subst_lamM]
@@ -367,7 +367,7 @@ theorem YBase.xd {x a n : ℕ} {P : Lambda} (h : YBase x n P) (b : Lambda) :
     simp only [Lambda.subst]
     exact xd_qR h1 _ b
   | .comp hR =>
-    simp only [Lambda.subst, Lambda.subst_lift, if_true]
+    simp only [Lambda.subst, Lambda.subst_lift, ite_true]
     push_cast; exact YG.xd (a := a) hR b
 end
 
@@ -420,11 +420,11 @@ theorem TW.xd {base : ℤ → Lambda → Prop} {x a : ℕ}
     rw [e]
     refine XDz.beta1 ?_
     simp only [Lambda.subst, subst_xPow, Nat.zero_add, subst_lift_lift_one1,
-      show x + 2 ≠ 1 by omega, show x + 2 > 1 by omega, if_true, if_false,
+      show x + 2 ≠ 1 by omega, show x + 2 > 1 by omega, ite_true, ite_false,
       show x + 2 - 1 = x + 1 by omega]
     refine XDz.beta0 ?_
     simp only [Lambda.subst, subst_xPow, Lambda.subst_lift,
-      show x + 1 ≠ 0 by omega, show x + 1 > 0 by omega, if_true, if_false, Nat.add_sub_cancel]
+      show x + 1 ≠ 0 by omega, show x + 1 > 0 by omega, ite_true, ite_false, Nat.add_sub_cancel]
     rw [← hm]
     exact (TC.xd hb hR _).xPow m
 
@@ -457,7 +457,7 @@ theorem WqT.xd {x a : ℕ} {W : Lambda} (h : WqT x W) (Y b : Lambda) :
     XDz x a 1 (.app (.app (Lambda.subst (.var a) 0 W) Y) b) := by
   cases h with
   | ap hW =>
-    simp only [Lambda.subst, Lambda.subst_lift, if_true]
+    simp only [Lambda.subst, Lambda.subst_lift, ite_true]
     exact WT.xd hW Y b
   | body hW => exact TW.xd (fun hP b => YB.xd hP b) hW Y b
 
@@ -518,7 +518,7 @@ theorem HB.xd {x a : ℕ} {n : ℤ} {P : Lambda} (h : HB x n P) (b : Lambda) :
     XDz x a n (.app (Lambda.subst (.var a) 0 P) b) := by
   match h with
   | .q hR =>
-    simp only [Lambda.subst, if_true]
+    simp only [Lambda.subst, ite_true]
     exact XDz.neutral (.app _ (.app _ (.var a)))
   | .m hR =>
     simp only [Lambda.subst, subst_lamM]
@@ -527,7 +527,7 @@ theorem HB.xd {x a : ℕ} {n : ℤ} {P : Lambda} (h : HB x n P) (b : Lambda) :
     simp only [Lambda.subst]
     exact xd_qR h1 _ b
   | .comp hR hn =>
-    simp only [Lambda.subst, Lambda.subst_lift, if_true]
+    simp only [Lambda.subst, Lambda.subst_lift, ite_true]
     rw [hn]; exact HG.xd (a := a) hR b
   | .mw hW =>
     simp only [Lambda.subst, subst_lamM]

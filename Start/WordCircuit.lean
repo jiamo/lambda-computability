@@ -131,8 +131,8 @@ theorem exists_resize {C : Circuit} (hC : wf C) {M : ℕ} {ps bs : List ℕ} {f 
     intro ws i hi
     rw [List.getD_eq_getElem?_getD, List.getElem?_take_of_lt hi]
     by_cases hlt : i < ws.length
-    · rw [List.getElem?_append_left hlt, if_pos hlt, List.getD_eq_getElem?_getD]
-    · rw [List.getElem?_append_right (by omega), if_neg hlt]
+    · rw [List.getElem?_append_left hlt, ite_eq_left hlt, List.getD_eq_getElem?_getD]
+    · rw [List.getElem?_append_right (by omega), ite_eq_right hlt]
       have : (List.replicate M' wF)[i - ws.length]? = some wF := by
         apply List.getElem?_replicate_of_lt
         omega
@@ -142,18 +142,18 @@ theorem exists_resize {C : Circuit} (hC : wf C) {M : ℕ} {ps bs : List ℕ} {f 
     e₁, w₁, by omega, by simp [h.lenP], by simp [h.lenB], hM', fun i hi => ?_, fun i hi => ?_⟩
   · rw [hgen ps i hi, h.lenP]
     by_cases hlt : i < M
-    · rw [if_pos hlt]
+    · rw [ite_eq_left hlt]
       exact (h.pres i hlt).mono e₁
-    · rw [if_neg hlt]
+    · rw [ite_eq_right hlt]
       refine h₁.congr fun x => ?_
       have := h.bnd x
       have hfalse : ¬ (i < (f x).length) := by omega
       simp [hfalse]
   · rw [hgen bs i hi, h.lenB]
     by_cases hlt : i < M
-    · rw [if_pos hlt]
+    · rw [ite_eq_left hlt]
       exact (h.bit i hlt).mono e₁
-    · rw [if_neg hlt]
+    · rw [ite_eq_right hlt]
       refine h₁.congr fun x => ?_
       have := h.bnd x
       rw [List.getD_eq_default _ _ (by omega)]
@@ -400,10 +400,10 @@ theorem length_inWord_le : ∀ (N : ℕ) (x : Word), (inWord N x).length ≤ N :
   | succ N ih =>
       intro x
       by_cases h : x.getD 0 false = true
-      · rw [inWord, if_pos h, List.length_cons]
+      · rw [inWord, ite_eq_left h, List.length_cons]
         have := ih (x.drop 2)
         omega
-      · rw [inWord, if_neg h]
+      · rw [inWord, ite_eq_right h]
         simp
 
 theorem inWord_pres : ∀ (N i : ℕ) (x : Word), i < N →
@@ -419,7 +419,7 @@ theorem inWord_pres : ∀ (N i : ℕ) (x : Word), i < N →
         rw [List.range_succ_eq_map, List.all_cons]
         simp [List.all_map, Function.comp_def]
       by_cases h : x.getD 0 false = true
-      · rw [hsplit, h, Bool.true_and, inWord, if_pos h, List.length_cons]
+      · rw [hsplit, h, Bool.true_and, inWord, ite_eq_left h, List.length_cons]
         match i with
         | 0 => simp
         | (i + 1) =>
@@ -428,7 +428,7 @@ theorem inWord_pres : ∀ (N i : ℕ) (x : Word), i < N →
                   = decide (i < (inWord N (x.drop 2)).length) by simp, hrec]
             simp only [getD_drop_two, Nat.mul_succ]
       · simp only [Bool.not_eq_true] at h
-        rw [hsplit, h, inWord, if_neg (by rw [h]; simp)]
+        rw [hsplit, h, inWord, ite_eq_right (by rw [h]; simp)]
         simp
 
 theorem inWord_bit : ∀ (N i : ℕ) (x : Word),
@@ -440,7 +440,7 @@ theorem inWord_bit : ∀ (N i : ℕ) (x : Word),
   | succ N ih =>
       intro i x
       by_cases h : x.getD 0 false = true
-      · rw [inWord, if_pos h]
+      · rw [inWord, ite_eq_left h]
         match i with
         | 0 => simp
         | (i + 1) =>
@@ -448,7 +448,7 @@ theorem inWord_bit : ∀ (N i : ℕ) (x : Word),
               show decide (i + 1 < (inWord N (x.drop 2)).length + 1)
                   = decide (i < (inWord N (x.drop 2)).length) by simp]
             congr 2
-      · rw [inWord, if_neg h]
+      · rw [inWord, ite_eq_right h]
         simp
 
 /-- **Every short enough word is read off some circuit input.** -/
@@ -464,11 +464,11 @@ theorem exists_inWord : ∀ (N : ℕ) (u : Word), u.length ≤ N → ∃ x : Wor
       match u with
       | [] =>
           refine ⟨[false], ?_⟩
-          rw [inWord, if_neg (by simp)]
+          rw [inWord, ite_eq_right (by simp)]
       | (b :: u) =>
           obtain ⟨x, hx⟩ := ih u (by simpa using Nat.le_of_succ_le_succ (by simpa using hu))
           refine ⟨true :: b :: x, ?_⟩
-          rw [inWord, if_pos (by simp)]
+          rw [inWord, ite_eq_left (by simp)]
           simp only [List.getD_cons_succ, List.getD_cons_zero]
           rw [show (true :: b :: x).drop 2 = x from rfl, hx]
 

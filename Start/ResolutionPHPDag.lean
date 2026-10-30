@@ -114,7 +114,7 @@ theorem mem_monoVars_of_flip' {i j l : ℕ} {g : ℕ → Option ℕ} (hi : i ∈
       simp [critAsg, hupd, hkj]
     rw [h1] at hv
     cases b
-    · simp only [Bool.false_eq_true, if_false] at hv hfl
+    · simp only [Bool.false_eq_true, ite_false] at hv hfl
       have h2 : critAsg n g k = true := by simpa using hfl
       simp only [critAsg, hkj, hl, decide_eq_true_eq, Option.some.injEq] at h2
       right
@@ -127,7 +127,7 @@ theorem mem_monoVars_of_flip' {i j l : ℕ} {g : ℕ → Option ℕ} (hi : i ∈
       rw [h1] at hfl
       cases b
       · simp at hfl
-      · simp only [if_true] at hv
+      · simp only [ite_true] at hv
         have hv' : l = k % n := by
           simp [critAsg, hupd, hki] at hv
           exact hv.2
@@ -184,9 +184,9 @@ theorem muR_mul_le_monoVars (C : Clause) :
     rw [ext_moveHole hiP hjP] at htrue
     refine mem_monoVars_of_flip' hiP ((hG i hi).range _ _ hl) ?_ hjP hji ?_ (hGf i hi) htrue
     · show (if i ∈ P then G i i else m i) = none
-      rw [if_pos hiP]; exact (hG i hi).self
+      rw [ite_eq_left hiP]; exact (hG i hi).self
     · show (if j ∈ P then G i j else m j) = _
-      rw [if_pos hjP]; exact hl
+      rw [ite_eq_left hjP]; exact hl
   have hinj : Set.InjOn (fun ij : ℕ × ℕ => (ij.1, (G ij.1 ij.2).getD 0)) ↑(S ×ˢ (P \ S)) := by
     rintro ⟨i, j⟩ hij ⟨i', j'⟩ hij' he
     simp only [Prod.mk.injEq] at he

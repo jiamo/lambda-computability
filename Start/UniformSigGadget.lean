@@ -82,16 +82,16 @@ theorem getD_encSig_headBitW {mm j : ℕ} (a : Word) (hj : j < 2 * mm) :
   rcases lt_or_ge j mm with h | h
   · rw [getD_encSig_lt _ h, hlen]
     by_cases hj0 : j = 0
-    · rw [if_pos (Or.inl hj0), hj0]
+    · rw [ite_eq_left (Or.inl hj0), hj0]
       cases a.getD 0 false <;> simp
-    · rw [if_neg (show ¬ (j = 0 ∨ j = mm) by omega)]
+    · rw [ite_eq_right (show ¬ (j = 0 ∨ j = mm) by omega)]
       have hle1 : (if a.getD 0 false then 1 else 0 : ℕ) ≤ 1 := by split <;> omega
       simp only [decide_eq_false_iff_not, Nat.not_lt]
       omega
   · rw [getD_encSig_ge _ h hj, hget]
     by_cases hjm : j = mm
-    · rw [if_pos (Or.inr hjm), hjm, Nat.sub_self, if_pos rfl]
-    · rw [if_neg (by omega), if_neg (by omega)]
+    · rw [ite_eq_left (Or.inr hjm), hjm, Nat.sub_self, ite_eq_left rfl]
+    · rw [ite_eq_right (by omega), ite_eq_right (by omega)]
 
 theorem and_getD_zero (a : Word) :
     (decide (0 < a.length) && a.getD 0 false) = a.getD 0 false := by
@@ -100,12 +100,12 @@ theorem and_getD_zero (a : Word) :
 theorem getD_take (u : Word) (k p : ℕ) :
     (u.take k).getD p false = if p < k then u.getD p false else false := by
   by_cases h : p < k
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     rcases lt_or_ge p u.length with h2 | h2
     · rw [List.getD_eq_getElem _ _ (by simp; omega), List.getD_eq_getElem _ _ h2]
       simp [List.getElem_take]
     · rw [List.getD_eq_default _ _ (by simp; omega), List.getD_eq_default _ _ h2]
-  · rw [if_neg h, List.getD_eq_default _ _ (by simp; omega)]
+  · rw [ite_eq_right h, List.getD_eq_default _ _ (by simp; omega)]
 
 theorem getD_tail (u : Word) (p : ℕ) : u.tail.getD p false = u.getD (p + 1) false := by
   cases u with
@@ -183,13 +183,13 @@ theorem sigUniform_tail {r : ℕ} {m : ℕ → ℕ} {mT : Cob} (hr : 0 < r)
     · -- a presence wire
       rw [getD_encSig_lt _ hjm]
       by_cases h3 : j + 1 = m n
-      · rw [if_pos h3]
+      · rw [ite_eq_left h3]
         have hnt : ¬ (j < u.tail.length) := by
           simp only [List.length_tail]
           omega
         simp only [gateVal]
         exact (decide_eq_false hnt).symm
-      · rw [if_neg h3, if_neg (by omega)]
+      · rw [ite_eq_right h3, ite_eq_right (by omega)]
         rw [gateVal_inp_arg (i := 0) (p := j + 1) h0 (by omega) (by omega),
           getD_encSig_lt _ (by omega), ← hu]
         simp only [List.length_tail, decide_eq_decide]
@@ -197,13 +197,13 @@ theorem sigUniform_tail {r : ℕ} {m : ℕ → ℕ} {mT : Cob} (hr : 0 < r)
     · -- a value wire
       rw [getD_encSig_ge _ hjm hj, getD_tail]
       by_cases h3 : j + 1 = 2 * m n
-      · rw [if_neg (by omega), if_pos h3]
+      · rw [ite_eq_right (by omega), ite_eq_left h3]
         have : u.getD (j - m n + 1) false = false := by
           rw [List.getD_eq_default]
           omega
         simp only [gateVal]
         exact this.symm
-      · rw [if_neg (by omega), if_neg h3]
+      · rw [ite_eq_right (by omega), ite_eq_right h3]
         rw [gateVal_inp_arg (i := 0) (p := j + 1) h0 (by omega) (by omega),
           getD_encSig_ge _ (by omega) (by omega), ← hu]
         congr 1
@@ -288,22 +288,22 @@ theorem sigUniform_consHead {r : ℕ} {m : ℕ → ℕ} {mT : Cob} (hr : 2 ≤ r
         gateVal_inp_arg (i := 1) (p := j) h1' hj (by ring)]
     rw [hA, hC, gate_consHeadB, consHeadW_eq]
     by_cases hg : args.getD 0 [] = []
-    · rw [if_pos hg, hg]
+    · rw [ite_eq_left hg, hg]
       simp
     · have hpos : 0 < (args.getD 0 []).length := by
         rcases hh : args.getD 0 [] with _ | ⟨c, t⟩
         · exact absurd hh hg
         · simp
-      rw [if_neg hg, decide_eq_true hpos, selBit_true]
+      rw [ite_eq_right hg, decide_eq_true hpos, selBit_true]
       by_cases hj0 : j = 0
-      · rw [if_pos hj0, hj0, getD_encSig_lt _ hmm]
+      · rw [ite_eq_left hj0, hj0, getD_encSig_lt _ hmm]
         simp [gateVal]
-      · rw [if_neg hj0]
+      · rw [ite_eq_right hj0]
         by_cases hjm : j = m n
-        · rw [if_pos hjm, gateVal_inp_arg (i := 0) (p := m n) h0 (by omega) (by omega),
+        · rw [ite_eq_left hjm, gateVal_inp_arg (i := 0) (p := m n) h0 (by omega) (by omega),
             getD_encSig_ge _ (le_refl _) (by omega), getD_encSig_ge _ (by omega) (by omega)]
           simp [hjm]
-        · rw [if_neg hjm, gateVal_inp_arg (i := 1) (p := j - 1) h1' (by omega) (by omega)]
+        · rw [ite_eq_right hjm, gateVal_inp_arg (i := 1) (p := j - 1) h1' (by omega) (by omega)]
           rcases lt_or_ge j (m n) with hlt | hge
           · rw [getD_encSig_lt _ (by omega), getD_encSig_lt _ hlt]
             simp only [List.length_cons, decide_eq_decide]
@@ -385,8 +385,8 @@ theorem sigUniform_headBit {r : ℕ} {m : ℕ → ℕ} {mT : Cob} (hr : 0 < r)
         from rfl]
     rw [getD_encSig_headBitW _ hj]
     by_cases hjc : j = 0 ∨ j = m n
-    · rw [if_pos hjc, if_pos hjc, hBv, selBit_and, and_getD_zero]
-    · rw [if_neg hjc, if_neg hjc,
+    · rw [ite_eq_left hjc, ite_eq_left hjc, hBv, selBit_and, and_getD_zero]
+    · rw [ite_eq_right hjc, ite_eq_right hjc,
         show gateVal (encArgs (m n) args) [] (Gate.cst false) = false from rfl, selBit_and,
         Bool.and_false]
 
@@ -445,13 +445,13 @@ theorem sigUniform_mux {r : ℕ} {m : ℕ → ℕ} {mT : Cob} (hr : 3 ≤ r)
       gateVal_inp_arg (i := 2) (p := j) h2' hj (by ring),
       getD_encSig_lt _ hmm, muxW]
     by_cases hg : args.getD 0 [] = []
-    · rw [if_pos hg, hg]
+    · rw [ite_eq_left hg, hg]
       simp
     · have hpos : 0 < (args.getD 0 []).length := by
         rcases hh : args.getD 0 [] with _ | ⟨c, t⟩
         · exact absurd hh hg
         · simp
-      rw [if_neg hg, decide_eq_true hpos, selBit_true]
+      rw [ite_eq_right hg, decide_eq_true hpos, selBit_true]
 
 /-! ### The truncation -/
 

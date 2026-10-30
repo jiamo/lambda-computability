@@ -179,7 +179,7 @@ theorem YC.subst {x : ℕ} {c : ℕ} {C : Lambda} (h : YC x c C) {j : ℕ} {Q : 
   | .base hb =>
     cases hb with
     | q hR =>
-      simp only [Lambda.subst, if_pos]
+      simp only [Lambda.subst, ite_eq_left]
       refine .base ⟨j, j + 1, .pq hQ (hR.subst hQ), ?_⟩
       push_cast at hK ⊢; omega
     | m hR =>
@@ -192,7 +192,7 @@ theorem YC.subst {x : ℕ} {c : ℕ} {C : Lambda} (h : YC x c C) {j : ℕ} {Q : 
       refine .base ⟨j + 1, j + 1, .pq (h1.subst hQ) (h2.subst hQ), ?_⟩
       push_cast at hK ⊢; omega
     | @comp i' R hR =>
-      simp only [Lambda.subst, Lambda.subst_lift, if_pos]
+      simp only [Lambda.subst, Lambda.subst_lift, ite_eq_left]
       refine .base ⟨i', j, .pq hR hQ, ?_⟩
       simp only [tri] at hK
       push_cast at hK ⊢; omega
@@ -237,7 +237,7 @@ theorem QBase.zcBase (x : ℕ) (K : ℤ) : ZCBase (QBase x K) x where
       rcases betaEtaStep_app_cases hs with ⟨c, hc, rfl⟩ | ⟨f', hf, rfl⟩ | ⟨a', ha, rfl⟩
       · simp only [lamM, Lambda.lam.injEq] at hc
         subst hc
-        simp only [Lambda.subst, if_pos]
+        simp only [Lambda.subst, ite_eq_left]
         exact .base ⟨_, _, .pq hQ hQ, hK⟩
       · exact (nf_lamM _ hf).elim
       · exact .base ⟨_, _, .mq (hQ.step ha), hK⟩
@@ -269,7 +269,7 @@ theorem QShape.step {x : ℕ} {N N' : Lambda} (h : QShape x N) (hs : betaEtaStep
       simp only [Lambda.lam.injEq] at e
       subst e
       rw [subst_xPow_var]
-      simp only [Lambda.subst, Lambda.subst_lift, if_pos]
+      simp only [Lambda.subst, Lambda.subst_lift, ite_eq_left]
       rw [xPow_add]
       refine ⟨k + m, i', R, ρ, rfl, hρ, ?_⟩
       have : ((k + m : ℕ) : ℤ) + i' = (k : ℤ) + hh := by push_cast; omega

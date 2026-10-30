@@ -142,8 +142,8 @@ lemma chamber {a}(he:u.D.active a)(hu:u.D.Heard a)(hz:∀ b,u.D.active b→u.D.W
 
       have H : (uphold 0).1=0:=rfl
       grind
-   unfold who; rw [hh,if_neg hp0]
-   unfold codeRank; rw [if_neg (by omega),if_pos hb]; exact hy
+   unfold who; rw [hh,ite_eq_right hp0]
+   unfold codeRank; rw [ite_eq_right (by omega),ite_eq_left hb]; exact hy
 
 end Chart
 end Line
@@ -236,7 +236,7 @@ lemma distinct_path {x a f b g} (hA:Trace u p x a f)(hB:Trace u p x b g)(i:ℕ)(
      a i=b i := (u.D.identity (hA.next _ hk)).symm.trans (u.D.identity (hB.next _ hk))
 lemma caseM {x a f} (hA:Trace u p x a f)(i:ℕ)(hi:a i≠0)(hk:u.smallQ p.dataN i):
      u.eye.Pond u.torch.p p.visN i (a i) x (f i):=by
-    have ht:=hA.road i hk; rw [if_neg hi] at ht; cases ht
+    have ht:=hA.road i hk; rw [ite_eq_right hi] at ht; cases ht
     assumption
 lemma places {x a f} (hA:Trace u p x a f)(i:ℕ)(hi:a i≠0)(hk:u.smallQ p.dataN i):
     f i∈ u.D.P := by cases hA.caseM i hi hk with
@@ -255,7 +255,7 @@ lemma bootsBasic (i:ℕ):u.D.Streams (Was.atom i) (Was.stopped u.r u.x i):=by
    intro b i j a m hp
    have hl:unitK (Was.packB b i j)=0:=bellU ..
    refine (Line.Chart.assigned (u := u)) h0.e0.stage hl ?_
-   unfold who; rw [if_pos hl]
+   unfold who; rw [ite_eq_left hl]
    exact hp
 
 omit h0 in
@@ -491,8 +491,8 @@ lemma orbit {i x:ℕ}(hi:i<c.m)(hr:x∈u.D.P):
      u.eye.Flora u.torch.p c.visN i x (p.coversF x i) := by
     have ht:= (h0.trace x hr).road i (h0.coil.awake (h0.coil.size0 _ hi))
     unfold coversF; by_cases hz:p.awake x i
-    · rw [if_pos hz]; rwa [if_neg hz] at ht
-    rw [if_neg hz]; rwa [if_pos (show p.tag x i=0 from by simpa only [Producer.awake,ne_eq,not_not] using hz)] at ht
+    · rw [ite_eq_left hz]; rwa [ite_eq_right hz] at ht
+    rw [ite_eq_right hz]; rwa [ite_eq_left (show p.tag x i=0 from by simpa only [Producer.awake,ne_eq,not_not] using hz)] at ht
 lemma lacks {x i}(he:x∈u.D.P)(hi:p.awake x i):i<c.m:=lt_of_not_ge fun e=>hi ((h0.trace _ he).maxm i e)
 end Quote
 namespace Certified
@@ -506,12 +506,12 @@ lemma supply (x y:ℕ)(he:x∈u.D.P):
       unfold Producer.awake; grind
     obtain ⟨i,h,hx⟩:= h0.light.defend x y hp
     rw [sum_eq_single i]
-    · unfold scoreF; rw [if_pos hx,if_pos h,hx]
+    · unfold scoreF; rw [ite_eq_left hx,ite_eq_left h,hx]
     · intro j hj hz
       by_cases hg:p.locate x j=y
-      · rw [if_pos hg]; apply if_neg; intro hh
+      · rw [ite_eq_left hg]; apply ite_eq_right; intro hh
         exact hz (h0.light.fair x j i hh h (hg.trans hx.symm))
-      rw [if_neg hg]
+      rw [ite_eq_right hg]
     intro hi; exact False.elim (hi (mem_range.2 (h0.suit.lacks he h)))
 lemma pixels {x i}(he:x∈S)(hf:S⊆u.D.P):|p.scoreF M x i|  ≤  massB k (u.D.D c.dataN):=by
     by_cases ht:p.awake x i
@@ -520,7 +520,7 @@ lemma pixels {x i}(he:x∈S)(hf:S⊆u.D.P):|p.scoreF M x i|  ≤  massB k (u.D.D
       have he0:=hh.1
       change |_ / massB k (u.D.D c.dataN)| ≤ 1 at he0
       rwa [abs_div,abs_of_pos (mass0 ..),div_le_one (mass0 ..)] at he0
-    unfold scoreF; rw [if_neg ht]; simp only [abs_zero]; positivity
+    unfold scoreF; rw [ite_eq_right ht]; simp only [abs_zero]; positivity
 end Certified
 end Producer
 
@@ -653,10 +653,10 @@ def diva (p:Fabric u) (f:Producer)(κ unitα l v α :ℕ) (cap0:Bool) : Ember:=
 lemma weightEnd (a)(ha:¬ Brole a): u.D.W (v.c a 0)=128*(v.m+1)-(64-a)*1:=by
     change Age.W _=_
     unfold c rowL clr; rw [WI]; unfold act weight slackT
-    rw [if_neg (show ¬Brole a from ha)]
+    rw [ite_eq_right (show ¬Brole a from ha)]
 lemma ageEnd (a)(ha:¬ Brole a):u.D.D (v.c a 0)=1:=by
     unfold c rowL; change Age.D _=_
-    rw [Line.rolff,slackT,if_neg ha]
+    rw [Line.rolff,slackT,ite_eq_right ha]
 lemma parentL {a b}(hi:¬ Brole a)(he:a<b)(hk:b ≤ 64):
     u.D.W (v.c a 0)+1 ≤ u.D.W (v.c b 0):=by
    have hB:¬Brole b:=by unfold Brole at *; omega
@@ -757,9 +757,9 @@ lemma stationed {p:Cog}{a:ℕ} (_:u.Chart)(he:u.D.active a)(hr:a≠0)
     (hx:u.s.scripted (uphold a).1=p):Parcel u a p:=by
    intro v b c0 x y ht hq
    apply (Line.Chart.assigned (u := u)) he ht
-   unfold who; rw [ht,if_neg hr]
+   unfold who; rw [ht,ite_eq_right hr]
    obtain ⟨hI,hY⟩:=hh
-   unfold codeRank; rw [if_neg hI,if_neg (fun e=>hY _ e rfl),hx]
+   unfold codeRank; rw [ite_eq_right hI,ite_eq_right (fun e=>hY _ e rfl),hx]
    exact hq
 
 lemma echoTicket {a x i j c o m:ℕ}{f:ℕ → Cog}(h: u.D.Suite a)
@@ -971,7 +971,7 @@ lemma swell {pay o M}(hs:Certified p u (v.terminal false) M v.S0 v.S1 o pay){y}(
       refine mem_image.2 ⟨pledge a i,List.mem_toFinset.2 ?_,rfl⟩
       change pledge a i∈F.trace y
       exact (ht.trace0 he).2 ⟨a,ha,i,hw,rfl,show (p.coversF a i).map _ = some y by
-                                                        unfold coversF; rw [if_pos hp]; simp [hq]⟩
+                                                        unfold coversF; rw [ite_eq_left hp]; simp [hq]⟩
    have hi : Set.InjOn f (l y).toFinset:= by
       intro c hc g hh hx
       obtain ⟨x,hA,i,hi,hc0,h1⟩:= (ht.trace0 he).1 (show c∈F.trace y from List.mem_toFinset.mp hc)
@@ -1106,7 +1106,7 @@ lemma identityN {x:ℕ}(w:ℕ→ℕ→Tape):
          have hi : f.locate a b=x:=Option.some.inj hs
          refine ⟨(l.insured a b hc).1,hc,hi,?_,True.intro⟩
          change _=M a x/C; unfold Ember.Forest.V0; simp only [g,dec_round]
-         unfold scoreF; rw [if_pos hc,hi]
+         unfold scoreF; rw [ite_eq_left hc,hi]
        contradiction
    have h0(v0:ℝ)(hv:0 ≤ v0) : (S.filter fun i=>v0 < g.V0 i).card =
                                (v.S0.filter fun i=>v0 < F i).card:=by
@@ -1124,7 +1124,7 @@ lemma identityN {x:ℕ}(w:ℕ→ℕ→Tape):
           have hg:i∈u.D.P:=hp.plot.n0 hp.reg.chart hv'
           have h0:c∈S:=mem_image.2 ⟨(i,a),mem_filter.2
                   ⟨mem_product.2 ⟨hg,mem_range.2 (hp.M0.suit.lacks hg hp0)⟩,show (f.coversF i a).map _=some x from by
-                                                unfold coversF; rw [if_pos hp0]; exact congrArg some hb0⟩,rfl⟩
+                                                unfold coversF; rw [ite_eq_left hp0]; exact congrArg some hb0⟩,rfl⟩
           have hq0 := ha c h0
           have hp1 : token c=(i,a):= by unfold c hole token; simp
           rw [hp1] at hq0; dsimp only at hq0
@@ -1200,7 +1200,7 @@ theorem charm {o M pay}(hz:Certified p u (v.terminal false) M v.S0 v.S1 o pay)(h
         have hL: pledge x i∈ l y:= by
           change _ ∈ T.trace y
           exact (hl.traceL hm).2 ⟨hf,hr,show (p.coversF x i).map _=some y by
-                                                  rw [Producer.coversF,if_pos h0]; rfl⟩
+                                                  rw [Producer.coversF,ite_eq_left h0]; rfl⟩
         obtain ⟨a,b,hg⟩:= List.mem_iff_append.mp hL
         let j:=a.length+1
         have hP:F j y:=⟨hm,h1,a,b,hg,rfl⟩
@@ -1217,7 +1217,7 @@ theorem charm {o M pay}(hz:Certified p u (v.terminal false) M v.S0 v.S1 o pay)(h
           | some u=> have hv:=hl.agree hP ((hc i0 u).1 hf)
                      exact False.elim (he0 hv.2)
       refine ⟨0,by simp,fun hw=>iff_of_false (by simp) (fun hf=>hg ⟨hw,hf⟩),fun j hr hi=>?_⟩
-      rw [if_neg (by omega)]
+      rw [ite_eq_right (by omega)]
       cases hk:C.valueOf l K i j true x with
       | none=> rfl
       | some t=>
@@ -1250,7 +1250,7 @@ lemma vocal (o g i t:ℕ)(f:Site):startsP u.r u.x (bell (v.c o g) i t,f)=true �
     simp only [uphold,c,rowL,clr, Wire.eq,decide_eq_true_eq]
     exact v.workR.symm
 lemma rankName (i t o g:ℕ):who (bell (v.c o g) i t)=o:=by
-    unfold who; rw [bellU,if_neg (show v.c o g ≠ 0 from Age.cpos _)]
+    unfold who; rw [bellU,ite_eq_right (show v.c o g ≠ 0 from Age.cpos _)]
     simp [c,uphold,rowL,clr,kit]
 
 theorem tribunal {o M pay}(hz:Certified p u (v.terminal false) M v.S0 v.S1 o pay)(ha:v.Mantle κ)
@@ -1363,7 +1363,7 @@ theorem ardent (hc:s.tollD u  ≤  u.v.slope)(hq:s.a=13∨s.a=16)
        apply (Line.Chart.assigned (u := u)) hp.auth.stage (bellU ..)
        rw [hR]
        unfold codeRank
-       rw [if_neg (by omega),if_neg (by omega)]
+       rw [ite_eq_right (by omega),ite_eq_right (by omega)]
        exact hw
     exact hp.auth.hired _ t (u.Launch hp.auth.stage 0 1 t hlQ (by omega) he)
                                         (by unfold tollD powder; omega) hc hy

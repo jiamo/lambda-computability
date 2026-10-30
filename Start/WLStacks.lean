@@ -85,24 +85,24 @@ theorem contents_push (s : List (Fin M.alphabet)) (h : ℤ) (x : Fin M.alphabet)
   · rw [Function.update_of_ne he]
     by_cases hz : z<h-1
     · have hz' : z<h := by omega
-      simp only [contents,if_pos hz,if_pos hz']
+      simp only [contents,ite_eq_left hz,ite_eq_left hz']
     · have hz' : ¬z<h := by omega
       have hi : (z-(h-1)).toNat=(z-h).toNat+1 := by omega
-      simp only [contents,if_neg hz,if_neg hz',hi,List.getElem?_cons_succ]
+      simp only [contents,ite_eq_right hz,ite_eq_right hz',hi,List.getElem?_cons_succ]
 
 theorem contents_pop (s : List (Fin M.alphabet)) (h : ℤ) :
     M.contents s.tail (h+1)=Function.update (M.contents s h) h 0 := by
   funext z
   by_cases he : z=h
   · subst z
-    simp only [Function.update_self,contents,if_pos (show h<h+1 by omega)]
+    simp only [Function.update_self,contents,ite_eq_left (show h<h+1 by omega)]
   · rw [Function.update_of_ne he]
     by_cases hz : z<h
     · have hz' : z<h+1 := by omega
-      simp only [contents,if_pos hz,if_pos hz']
+      simp only [contents,ite_eq_left hz,ite_eq_left hz']
     · have hz' : ¬z<h+1 := by omega
       have hi : (z-h).toNat=(z-(h+1)).toNat+1 := by omega
-      simp only [contents,if_neg hz,if_neg hz',List.getElem?_tail,hi]
+      simp only [contents,ite_eq_right hz,ite_eq_right hz',List.getElem?_tail,hi]
 
 abbrev Micro := Fin 3 ⊕ (Fin M.states ⊕ (Fin M.count × Fin M.alphabet × Fin M.states))
 
@@ -193,7 +193,7 @@ noncomputable def embed (C : M.Config) (h : Fin M.count → ℤ) : M.compile.Con
        tape:=fun k z => if z=h k then a.2.1 k else tape k z} := by
   have hh : ¬M.compile.halted {state:=M.microEquiv p,head:=h,tape:=tape} := by
     exact fun he => he.elim hp.1 hp.2
-  rw [TM.step,if_neg hh]
+  rw [TM.step,ite_eq_right hh]
   simp only [compile,Equiv.symm_apply_apply]
 
  theorem heads_one (h : Fin M.count → ℤ) (k : Fin M.count) (d : Move) :
@@ -267,14 +267,14 @@ theorem initial_tape (w : List Bool) : (M.compile.initial w).tape=
   · simp only [TM.initial,initialConfig,hk,ite_true,true_and,contents]
     by_cases hz : z<0
     · have hz' : ¬0 ≤ z := by omega
-      simp only [if_pos hz,hz',false_and,ite_false]
+      simp only [ite_eq_left hz,hz',false_and,ite_false]
       rfl
     · have hz' : 0 ≤ z := by omega
-      simp only [if_neg hz,hz',true_and,sub_zero,List.getElem?_map]
+      simp only [ite_eq_right hz,hz',true_and,sub_zero,List.getElem?_map]
       by_cases hi : z.toNat<w.length
-      · rw [if_pos hi,List.getD_eq_getElem?_getD,List.getElem?_eq_getElem hi]
+      · rw [ite_eq_left hi,List.getD_eq_getElem?_getD,List.getElem?_eq_getElem hi]
         cases w[z.toNat] <;> rfl
-      · rw [if_neg hi,List.getElem?_eq_none (by omega)]
+      · rw [ite_eq_right hi,List.getElem?_eq_none (by omega)]
         rfl
   · simp only [TM.initial,initialConfig,hk,false_and,ite_false,M.contents_empty]
     rfl

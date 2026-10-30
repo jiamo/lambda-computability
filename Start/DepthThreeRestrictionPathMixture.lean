@@ -165,7 +165,7 @@ theorem pathMixture_scaled_average (C : I → Clause V) (b : ℕ)
   · have hZ := (path_support_iff_live_cylinder C σ P hn hc x).mp hx
     have hev : (cylinderCNF (pathLiveSet C σ P) (pathCenter C σ P)).eval x = true :=
       (cylinderCNF_eval_eq_true _ _ _).mpr hZ
-    simp only [if_pos hx, hev, indicator_true, mul_one]
+    simp only [ite_eq_left hx, hev, indicator_true, mul_one]
     congr 1
     apply Finset.prod_congr rfl
     intro h hh
@@ -176,7 +176,7 @@ theorem pathMixture_scaled_average (C : I → Clause V) (b : ℕ)
       cases he : (cylinderCNF (pathLiveSet C σ P) (pathCenter C σ P)).eval x
       · rfl
       · exact (hZ ((cylinderCNF_eval_eq_true _ _ _).mp he)).elim
-    simp only [if_neg hx, hev, indicator_false, mul_zero, zero_mul]
+    simp only [ite_eq_right hx, hev, indicator_false, mul_zero, zero_mul]
 
 end DepthThreeLowerBound
 

@@ -665,7 +665,7 @@ lemma lifting {p c H q w R}(h:p.OK)(hv:100≤ c)(hh:Raised p c H q w)(he:Checked
      refine .seq ?_ (.seq hs0 ?_)
      · exact etches _ _ (i:=codeQ (w t)) rfl (((hh t ht).mono hc hb).spots.2) hs0.spots.1
      have hv := safe_d he ht
-     rw [dsign,if_neg hy] at hv
+     rw [dsign,ite_eq_right hy] at hv
      exact etches _ _ (i:=((codeQ (w t),codeQ (w (t-1))):ℕ×ℕ)) ((resolve hv).trans (by simp [dsign,hy]))
                        hs0.spots.2 (hs _ hd)
 
@@ -1301,11 +1301,11 @@ lemma intensity {i t}(hi:i<p.topC a):
    classical
    let Q(j):Prop:= emin (range (p.topC a)) (N w t) (p.targetK a) j
    have hn:p.topC a≠0:=by omega
-   rw [sec0]; unfold totalize; simp only [postcard,dec_round,sec,if_neg hn]
+   rw [sec0]; unfold totalize; simp only [postcard,dec_round,sec,ite_eq_right hn]
    by_cases ht:Q i
    · obtain ⟨h1,h2,h3⟩:=ht
      have he: car p a w t (i+1)=codeQ (N w t i):=by
-         unfold car; rw [if_pos ⟨i,by omega,show Q i from ⟨h1,h2,h3⟩⟩, (earns (show Q i from ⟨h1,h2,h3⟩)).1]
+         unfold car; rw [ite_eq_left ⟨i,by omega,show Q i from ⟨h1,h2,h3⟩⟩, (earns (show Q i from ⟨h1,h2,h3⟩)).1]
      simp only [residue,show N w t i≠0 by omega,ite_false,he]; simp_all [targetK]
    · have he: car p a w t (i+1)=car p a w t i:=by
        have hl : (∃ j < i+1,Q j) ↔ ∃ j < i,Q j:=by

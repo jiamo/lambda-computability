@@ -71,12 +71,12 @@ theorem relative_sigma_parameter_bound (M R : ZFSet.{u}) (hM : Transitive M)
     dsimp [e']; split
     next hn => exact level_mono R (le_max_right i j) (hje n hn)
     next => exact haL
-  · intro n hn; exact if_pos hn
+  · intro n hn; exact ite_eq_left hn
   · intro N x
     apply φ.realize_congr; intro n hn
     cases n with
     | zero => rfl
-    | succ n => exact if_pos (show n < φ.scope by omega)
+    | succ n => exact ite_eq_left (show n < φ.scope by omega)
 
 theorem relativeModel_sigma_collection (M R : ZFSet.{u}) (hM : Transitive M)
     (hT : SourceT M) (hR : R ∈ M) : SigmaCollection (relativeModel M R) := by

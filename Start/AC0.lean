@@ -283,24 +283,24 @@ theorem eval_nnf (x : Word) : ∀ (c : ACCirc) (p : Bool), (nnf p c).eval x = (c
   · intro cs ih p
     rw [nnf_and]
     cases p
-    · simp only [Bool.false_eq_true, if_false, eval_or, eval_and, List.any_map,
+    · simp only [Bool.false_eq_true, ite_false, eval_or, eval_and, List.any_map,
         Function.comp_def]
       rw [any_congr' (g := fun c => !c.eval x) (fun c hc => by
         rw [ih c hc false]; cases c.eval x <;> rfl), any_not_eq]
       cases (cs.all fun c => c.eval x) <;> rfl
-    · simp only [if_true, eval_and, List.all_map, Function.comp_def]
+    · simp only [ite_true, eval_and, List.all_map, Function.comp_def]
       rw [all_congr' (g := fun c => c.eval x) (fun c hc => by
         rw [ih c hc true]; cases c.eval x <;> rfl)]
       cases (cs.all fun c => c.eval x) <;> rfl
   · intro cs ih p
     rw [nnf_or]
     cases p
-    · simp only [Bool.false_eq_true, if_false, eval_or, eval_and, List.all_map,
+    · simp only [Bool.false_eq_true, ite_false, eval_or, eval_and, List.all_map,
         Function.comp_def]
       rw [all_congr' (g := fun c => !c.eval x) (fun c hc => by
         rw [ih c hc false]; cases c.eval x <;> rfl), all_not_eq]
       cases (cs.any fun c => c.eval x) <;> rfl
-    · simp only [if_true, eval_or, List.any_map, Function.comp_def]
+    · simp only [ite_true, eval_or, List.any_map, Function.comp_def]
       rw [any_congr' (g := fun c => c.eval x) (fun c hc => by
         rw [ih c hc true]; cases c.eval x <;> rfl)]
       cases (cs.any fun c => c.eval x) <;> rfl
@@ -329,11 +329,11 @@ theorem depth_nnf : ∀ (c : ACCirc) (p : Bool), (nnf p c).depth = c.depth := by
   · intro c ih p; rw [nnf_not, ih]; simp
   · intro cs ih p
     rw [nnf_and]
-    cases p <;> simp only [Bool.false_eq_true, if_false, if_true, depth_or, depth_and] <;>
+    cases p <;> simp only [Bool.false_eq_true, ite_false, ite_true, depth_or, depth_and] <;>
       rw [lmax_map_congr fun c hc => ih c hc _]
   · intro cs ih p
     rw [nnf_or]
-    cases p <;> simp only [Bool.false_eq_true, if_false, if_true, depth_or, depth_and] <;>
+    cases p <;> simp only [Bool.false_eq_true, ite_false, ite_true, depth_or, depth_and] <;>
       rw [lmax_map_congr fun c hc => ih c hc _]
 
 /-- Pushing negations to the inputs does not increase the size. -/
@@ -344,11 +344,11 @@ theorem size_nnf : ∀ (c : ACCirc) (p : Bool), (nnf p c).size ≤ c.size := by
   · intro c ih p; rw [nnf_not]; simp only [size_not]; exact le_trans (ih _) (by omega)
   · intro cs ih p
     rw [nnf_and]
-    cases p <;> simp only [Bool.false_eq_true, if_false, if_true, size_or, size_and] <;>
+    cases p <;> simp only [Bool.false_eq_true, ite_false, ite_true, size_or, size_and] <;>
       exact Nat.add_le_add_right (sum_map_le fun c hc => ih c hc _) 1
   · intro cs ih p
     rw [nnf_or]
-    cases p <;> simp only [Bool.false_eq_true, if_false, if_true, size_or, size_and] <;>
+    cases p <;> simp only [Bool.false_eq_true, ite_false, ite_true, size_or, size_and] <;>
       exact Nat.add_le_add_right (sum_map_le fun c hc => ih c hc _) 1
 
 /-- The negation normal form has no `NOT` gate. -/
@@ -359,11 +359,11 @@ theorem noNot_nnf : ∀ (c : ACCirc) (p : Bool), NoNot (nnf p c) := by
   · intro c ih p; rw [nnf_not]; exact ih _
   · intro cs ih p
     rw [nnf_and]
-    cases p <;> simp only [Bool.false_eq_true, if_false, if_true, NoNot, List.mem_map] <;>
+    cases p <;> simp only [Bool.false_eq_true, ite_false, ite_true, NoNot, List.mem_map] <;>
       rintro _ ⟨c, hc, rfl⟩ <;> exact ih c hc _
   · intro cs ih p
     rw [nnf_or]
-    cases p <;> simp only [Bool.false_eq_true, if_false, if_true, NoNot, List.mem_map] <;>
+    cases p <;> simp only [Bool.false_eq_true, ite_false, ite_true, NoNot, List.mem_map] <;>
       rintro _ ⟨c, hc, rfl⟩ <;> exact ih c hc _
 
 /-! ### Merging layers -/

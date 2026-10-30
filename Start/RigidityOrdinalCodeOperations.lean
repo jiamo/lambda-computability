@@ -61,7 +61,7 @@ theorem codeScaleAt_sound (M : ZFSet.{u}) (hM : Transitive M)
   cases twice with
   | false => exact fun h => h.trans ha
   | true =>
-    rw [codeScaleAt,if_pos rfl,SentenceForm.sat_rename]
+    rw [codeScaleAt,ite_eq_left rfl,SentenceForm.sat_rename]
     exact doubleSentence_sound M hM _ (fun i => he _) a ha
 
 theorem codeScaleAt_sourceT (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT M)
@@ -71,7 +71,7 @@ theorem codeScaleAt_sourceT (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT M)
   cases twice with
   | false => change e y = e x ↔ _; rw [ha]; rfl
   | true =>
-    rw [codeScaleAt,if_pos rfl,SentenceForm.sat_rename]
+    rw [codeScaleAt,ite_eq_left rfl,SentenceForm.sat_rename]
     exact doubleSentence_sourceT M hM hT _ (fun i => he _) a ha
 
 theorem codeScale_internal (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT M)

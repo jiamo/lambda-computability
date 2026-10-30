@@ -37,7 +37,7 @@ theorem pathCenter_support
     (h : pathCompatible C σ P) :
     ∀ i ∈ P, (C i).violation (fill σ (pathCenter C σ P)) = true := by
   unfold pathCenter
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact Classical.choose_spec h
 
 @[simp] theorem pathCompatible_nil

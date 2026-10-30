@@ -22,7 +22,7 @@ theorem productValue_pair (a : Ordinal.{u}) (s t : ZFSet.{u}) :
     productValue a (ZFSet.pair s t) = (a*s.rank+t.rank).toZFSet := by
   classical
   have h : ∃ v w, ZFSet.pair s t = ZFSet.pair v w := ⟨s,t,rfl⟩
-  simp only [productValue,dif_pos h]
+  simp only [productValue,dite_eq_left h]
   obtain ⟨hs,ht⟩ := ZFSet.pair_inj.mp h.choose_spec.choose_spec
   exact congrArg Ordinal.toZFSet (congrArg₂ (fun c d : ZFSet.{u} => a*c.rank+d.rank) hs ht).symm
 

@@ -90,8 +90,8 @@ theorem source_scan_succ (D : LocalInputs.Data) (p : Condition) (d : Finset ℕ)
       | some i => some i
       | none => if t+(n+1) ∉ d ∧ LocalStage.Changes D (t+(n+1)) p then some (t+(n+1)) else none
     by_cases ht : t ∉ d ∧ LocalStage.Changes D t p
-    · simp only [if_pos ht]
-    · simpa only [if_neg ht,Nat.add_assoc,Nat.add_comm,Nat.add_left_comm] using ih (t+1)
+    · simp only [ite_eq_left ht]
+    · simpa only [ite_eq_right ht,Nat.add_assoc,Nat.add_comm,Nat.add_left_comm] using ih (t+1)
 
 theorem scan_eq (D : LocalInputs.Data) (p d n : ℕ) :
     scan D p d n = actionCode (LocalStage.scan D (condition p) (members d) 0 n) := by

@@ -145,8 +145,8 @@ def execute {R P w : ℕ} : RAMInstruction R P → Config R P w → Config R P w
     simpa only [execute,RAMInstruction.depth,List.length_cons,Nat.add_assoc,Nat.add_comm,Nat.add_left_comm] using h
   | branchZero reg yes no ih ih' =>
     by_cases hz : (C.registers reg).val=0
-    · simpa only [execute,if_pos hz,RAMInstruction.depth] using (ih C).trans (by omega)
-    · simpa only [execute,if_neg hz,RAMInstruction.depth] using (ih' C).trans (by omega)
+    · simpa only [execute,ite_eq_left hz,RAMInstruction.depth] using (ih C).trans (by omega)
+    · simpa only [execute,ite_eq_right hz,RAMInstruction.depth] using (ih' C).trans (by omega)
  def forget (A : RAM) (n : ℕ) (C : Config A.registers A.locations (A.width.bits n)) : A.Config n where
   pc := C.pc
   registers := C.registers
@@ -188,7 +188,7 @@ namespace WLTime.RAM
  theorem time_halted (A : RAM) (n : ℕ) (input : List Bool) (h : A.halts n input) :
     (A.run n input (A.time n input)).answer.isSome=true := by
   unfold time
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact Nat.find_spec h
  theorem answer_stable (A : RAM) {n : ℕ} (C : A.Config n) (b : Bool) (h : C.answer=some b) : A.step C=C := by simp [step,h]
  theorem run_add_halted (A : RAM) (n : ℕ) (input : List Bool) (t s : ℕ) (h : (A.run n input t).answer.isSome=true) :

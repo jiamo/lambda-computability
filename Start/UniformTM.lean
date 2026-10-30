@@ -134,31 +134,31 @@ theorem tmStp_lt (M : TuringMachine) (a b c : ℕ) : tmStp M a b c < 3 + 2 * M.Q
 
 theorem tmStp_of_zero (M : TuringMachine) (a : ℕ) {b c : ℕ} (h : b = 0 ∨ c = 0) :
     tmStp M a b c = 0 := by
-  rw [tmStp, if_pos h]
+  rw [tmStp, ite_eq_left h]
 
 theorem tmStp_of_acc (M : TuringMachine) (a : ℕ) {b c : ℕ} (h : ¬ (b = 0 ∨ c = 0)) (h3 : 3 ≤ b)
     (hacc : M.acc (tmStOf b) = true) : tmStp M a b c = 0 := by
-  rw [tmStp, if_neg h, if_pos ⟨h3, hacc⟩]
+  rw [tmStp, ite_eq_right h, ite_eq_left ⟨h3, hacc⟩]
 
 theorem tmStp_of_left (M : TuringMachine) {a b c : ℕ} (h : ¬ (b = 0 ∨ c = 0))
     (h2 : ¬ (3 ≤ b ∧ M.acc (tmStOf b) = true)) (h3 : 3 ≤ a) (h4 : M.acc (tmStOf a) = false)
     (h5 : M.mv (tmStOf a) (tmBit a) = true) :
     tmStp M a b c = tmH (M.st (tmStOf a) (tmBit a)) (tmWrite M b) := by
-  rw [tmStp, if_neg h, if_neg h2, if_pos ⟨h3, h4, h5⟩]
+  rw [tmStp, ite_eq_right h, ite_eq_right h2, ite_eq_left ⟨h3, h4, h5⟩]
 
 theorem tmStp_of_right (M : TuringMachine) {a b c : ℕ} (h : ¬ (b = 0 ∨ c = 0))
     (h2 : ¬ (3 ≤ b ∧ M.acc (tmStOf b) = true))
     (h3 : ¬ (3 ≤ a ∧ M.acc (tmStOf a) = false ∧ M.mv (tmStOf a) (tmBit a) = true))
     (h4 : 3 ≤ c) (h5 : M.acc (tmStOf c) = false) (h6 : M.mv (tmStOf c) (tmBit c) = false) :
     tmStp M a b c = tmH (M.st (tmStOf c) (tmBit c)) (tmWrite M b) := by
-  rw [tmStp, if_neg h, if_neg h2, if_neg h3, if_pos ⟨h4, h5, h6⟩]
+  rw [tmStp, ite_eq_right h, ite_eq_right h2, ite_eq_right h3, ite_eq_left ⟨h4, h5, h6⟩]
 
 theorem tmStp_of_none (M : TuringMachine) {a b c : ℕ} (h : ¬ (b = 0 ∨ c = 0))
     (h2 : ¬ (3 ≤ b ∧ M.acc (tmStOf b) = true))
     (h3 : ¬ (3 ≤ a ∧ M.acc (tmStOf a) = false ∧ M.mv (tmStOf a) (tmBit a) = true))
     (h4 : ¬ (3 ≤ c ∧ M.acc (tmStOf c) = false ∧ M.mv (tmStOf c) (tmBit c) = false)) :
     tmStp M a b c = tmN (tmWrite M b) := by
-  rw [tmStp, if_neg h, if_neg h2, if_neg h3, if_neg h4]
+  rw [tmStp, ite_eq_right h, ite_eq_right h2, ite_eq_right h3, ite_eq_right h4]
 
 /-- **The cellular automaton simulating the machine.** -/
 def tmCA (M : TuringMachine) : CellAuto where
@@ -210,10 +210,10 @@ theorem tmCell_ne_zero (c : (ℕ → Bool) × ℕ × ℕ) (j : ℕ) : tmCell c j
   split <;> simp
 
 theorem tmCell_of_head {c : (ℕ → Bool) × ℕ × ℕ} {j : ℕ} (h : c.2.1 = j) :
-    tmCell c j = tmH c.2.2 (c.1 j) := if_pos h
+    tmCell c j = tmH c.2.2 (c.1 j) := ite_eq_left h
 
 theorem tmCell_of_ne {c : (ℕ → Bool) × ℕ × ℕ} {j : ℕ} (h : c.2.1 ≠ j) :
-    tmCell c j = tmN (c.1 j) := if_neg h
+    tmCell c j = tmN (c.1 j) := ite_eq_right h
 
 theorem three_le_tmCell {c : (ℕ → Bool) × ℕ × ℕ} {j : ℕ} : 3 ≤ tmCell c j ↔ c.2.1 = j := by
   rw [tmCell]
@@ -223,11 +223,11 @@ theorem three_le_tmCell {c : (ℕ → Bool) × ℕ × ℕ} {j : ℕ} : 3 ≤ tmC
 
 theorem tmWrite_tmCell_of_ne (M : TuringMachine) {c : (ℕ → Bool) × ℕ × ℕ} {j : ℕ}
     (h : c.2.1 ≠ j) : tmWrite M (tmCell c j) = c.1 j := by
-  rw [tmWrite, tmCell_of_ne h, if_neg (not_head_tmN _), tmBit_tmN]
+  rw [tmWrite, tmCell_of_ne h, ite_eq_right (not_head_tmN _), tmBit_tmN]
 
 theorem tmWrite_tmCell_of_head (M : TuringMachine) {c : (ℕ → Bool) × ℕ × ℕ} {j : ℕ}
     (h : c.2.1 = j) : tmWrite M (tmCell c j) = M.wr c.2.2 (c.1 j) := by
-  rw [tmWrite, tmCell_of_head h, if_pos (head_tmH _ _), tmStOf_tmH, tmBit_tmH]
+  rw [tmWrite, tmCell_of_head h, ite_eq_left (head_tmH _ _), tmStOf_tmH, tmBit_tmH]
 
 /-- The machine is alive at time `t` when its head is still on the tape. -/
 def tmAlive (M : TuringMachine) (W n : ℕ) (bit : ℕ → Bool) (t : ℕ) : Prop :=
@@ -240,7 +240,7 @@ def tmAccAt (M : TuringMachine) (W n : ℕ) (bit : ℕ → Bool) (t : ℕ) : Pro
 theorem tmConf_succ_of_accAt {M : TuringMachine} {W n : ℕ} {bit : ℕ → Bool} {t : ℕ}
     (h : tmAccAt M W n bit t) : tmConf M W n bit (t + 1) = tmConf M W n bit t := by
   rw [tmConf]
-  exact if_neg (by simp [h.2])
+  exact ite_eq_right (by simp [h.2])
 
 theorem tmAccAt_succ {M : TuringMachine} {W n : ℕ} {bit : ℕ → Bool} {t : ℕ}
     (h : tmAccAt M W n bit t) : tmAccAt M W n bit (t + 1) := by
@@ -264,13 +264,13 @@ theorem tmConf_succ_of_step {M : TuringMachine} {W n : ℕ} {bit : ℕ → Bool}
         else if (tmConf M W n bit t).2.1 = 0 then W else (tmConf M W n bit t).2.1 - 1),
        M.st (tmConf M W n bit t).2.2 ((tmConf M W n bit t).1 (tmConf M W n bit t).2.1)) := by
   rw [tmConf]
-  exact if_pos ⟨h1, h2⟩
+  exact ite_eq_left ⟨h1, h2⟩
 
 theorem tmConf_succ_of_stop {M : TuringMachine} {W n : ℕ} {bit : ℕ → Bool} {t : ℕ}
     (h : ¬ ((tmConf M W n bit t).2.1 < W ∧ M.acc (tmConf M W n bit t).2.2 = false)) :
     tmConf M W n bit (t + 1) = tmConf M W n bit t := by
   rw [tmConf]
-  exact if_neg h
+  exact ite_eq_right h
 
 /-! ### The accept signal -/
 
@@ -347,13 +347,13 @@ theorem caCell_tmCA_aux (M : TuringMachine) (W n : ℕ) (bit : ℕ → Bool) :
       have hst : (tmConf M W n bit 0).2.2 = 0 := rfl
       rw [htape, hhd, hst]
       by_cases hn : 0 < n
-      · rw [if_pos hn]
+      · rw [ite_eq_left hn]
         by_cases hj0 : j = 0
         · subst hj0
           simp [hn]
-        · rw [if_neg (Ne.symm hj0)]
+        · rw [ite_eq_right (Ne.symm hj0)]
           by_cases hjn : j < n <;> simp [hjn, hj0]
-      · rw [if_neg hn, if_neg (by omega : ¬ W = j)]
+      · rw [ite_eq_right hn, ite_eq_right (by omega : ¬ W = j)]
         simp [show ¬ j < n by omega]
   | succ t ih =>
       intro j hj
@@ -363,7 +363,7 @@ theorem caCell_tmCA_aux (M : TuringMachine) (W n : ℕ) (bit : ℕ → Bool) :
         exact ⟨fun _ => h0, fun hn => absurd (tmZero_succ hz) hn⟩
       by_cases hz' : j + 1 < W ∧ tmZero M W n bit t (j + 1)
       · have h0 : CircCode.caCell (tmCA M) W n bit (t + 1) j = 0 := by
-          rw [caCell_tmCA_succ, if_pos hz'.1, (ih (j + 1) hz'.1).1 hz'.2,
+          rw [caCell_tmCA_succ, ite_eq_left hz'.1, (ih (j + 1) hz'.1).1 hz'.2,
             tmStp_of_zero _ _ (Or.inr rfl)]
         exact ⟨fun _ => h0, fun hn => absurd (tmZero_succ_left hz'.2) hn⟩
       -- the middle cell simulates the machine
@@ -398,9 +398,9 @@ theorem caCell_tmCA_aux (M : TuringMachine) (W n : ℕ) (bit : ℕ → Bool) :
           Lv = tmH (tmConf M W n bit t).2.2 ((tmConf M W n bit t).1 (j - 1)) := by
         intro h3
         by_cases hj0 : j = 0
-        · rw [hLdef, if_pos hj0] at h3
+        · rw [hLdef, ite_eq_left hj0] at h3
           exact absurd h3 (not_head_tmN _)
-        · rw [hLdef, if_neg hj0] at h3 ⊢
+        · rw [hLdef, ite_eq_right hj0] at h3 ⊢
           by_cases hzL : tmZero M W n bit t (j - 1)
           · rw [(ih (j - 1) (by omega)).1 hzL] at h3
             omega
@@ -411,10 +411,10 @@ theorem caCell_tmCA_aux (M : TuringMachine) (W n : ℕ) (bit : ℕ → Bool) :
           Rv = tmH (tmConf M W n bit t).2.2 ((tmConf M W n bit t).1 (j + 1)) := by
         intro h3
         by_cases hjW : j + 1 < W
-        · rw [hRdef, if_pos hjW] at h3 ⊢
+        · rw [hRdef, ite_eq_left hjW] at h3 ⊢
           rw [(ih (j + 1) hjW).2 (fun hzz => hz' ⟨hjW, hzz⟩)] at h3 ⊢
           exact ⟨three_le_tmCell.1 h3, hjW, tmCell_of_head (three_le_tmCell.1 h3)⟩
-        · rw [hRdef, if_neg hjW] at h3
+        · rw [hRdef, ite_eq_right hjW] at h3
           exact absurd h3 (not_head_tmN _)
       have h2 : ¬ (3 ≤ Cv ∧ M.acc (tmStOf Cv) = true) := by
         rintro ⟨h3, hacc⟩
@@ -467,13 +467,13 @@ theorem caCell_tmCA_aux (M : TuringMachine) (W n : ℕ) (bit : ℕ → Bool) :
           · -- the head arrives from the left
             have hLv : Lv = tmH (tmConf M W n bit t).2.2
                 ((tmConf M W n bit t).1 (tmConf M W n bit t).2.1) := by
-              rw [hLdef, if_neg (by omega : ¬ j = 0),
+              rw [hLdef, ite_eq_right (by omega : ¬ j = 0),
                 (ih (j - 1) (by omega)).2 (hnz _),
                 show j - 1 = (tmConf M W n bit t).2.1 by omega]
               exact tmCell_of_head (by omega)
             have h3 : 3 ≤ Lv := by rw [hLv]; exact head_tmH _ _
             have hhd : (tmConf M W n bit (t + 1)).2.1 = j := by
-              rw [hhead', if_pos hA.2]
+              rw [hhead', ite_eq_left hA.2]
               exact hA.1
             rw [tmStp_of_left M hCne h2 h3 (by rw [hLv, tmStOf_tmH]; exact haccF)
                 (by rw [hLv, tmStOf_tmH, tmBit_tmH]; exact hA.2),
@@ -484,7 +484,7 @@ theorem caCell_tmCA_aux (M : TuringMachine) (W n : ℕ) (bit : ℕ → Bool) :
           · -- the head arrives from the right
             have hRv : Rv = tmH (tmConf M W n bit t).2.2
                 ((tmConf M W n bit t).1 (tmConf M W n bit t).2.1) := by
-              rw [hRdef, if_pos (by omega : j + 1 < W),
+              rw [hRdef, ite_eq_left (by omega : j + 1 < W),
                 (ih (j + 1) (by omega)).2 (hnz _),
                 show j + 1 = (tmConf M W n bit t).2.1 by omega]
               exact tmCell_of_head rfl
@@ -496,8 +496,8 @@ theorem caCell_tmCA_aux (M : TuringMachine) (W n : ℕ) (bit : ℕ → Bool) :
               omega
             have hhd : (tmConf M W n bit (t + 1)).2.1 = j := by
               rw [hhead', hB.2]
-              simp only [Bool.false_eq_true, if_false]
-              rw [if_neg (by omega : ¬ (tmConf M W n bit t).2.1 = 0)]
+              simp only [Bool.false_eq_true, ite_false]
+              rw [ite_eq_right (by omega : ¬ (tmConf M W n bit t).2.1 = 0)]
               omega
             rw [tmStp_of_right M hCne h2 h3 h4 (by rw [hRv, tmStOf_tmH]; exact haccF)
                 (by rw [hRv, tmStOf_tmH, tmBit_tmH]; exact hB.2),
@@ -520,13 +520,13 @@ theorem caCell_tmCA_aux (M : TuringMachine) (W n : ℕ) (bit : ℕ → Bool) :
               rw [hhead']
               by_cases hmv : M.mv (tmConf M W n bit t).2.2
                   ((tmConf M W n bit t).1 (tmConf M W n bit t).2.1) = true
-              · rw [if_pos hmv]
+              · rw [ite_eq_left hmv]
                 intro hcon
                 exact hA ⟨hcon, hmv⟩
               · have hmv' : M.mv (tmConf M W n bit t).2.2
                     ((tmConf M W n bit t).1 (tmConf M W n bit t).2.1) = false := by
                   simpa using hmv
-                rw [if_neg hmv]
+                rw [ite_eq_right hmv]
                 split
                 · omega
                 · intro hcon

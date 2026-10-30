@@ -147,7 +147,7 @@ lemma factors_present (T : FreeMonoid Alphabet →* M) (f : ℤ → Alphabet)
     factors T f s b search = some ⟨product T f s (p 0),
       (fun i => product T f (p i.castSucc) (p i.succ)),product T f (p (Fin.last g)) b⟩ := by
   have h : Present search s b := ⟨p,hp,hmono,hs,hb⟩
-  rw [factors,dif_pos h]
+  rw [factors,dite_eq_left h]
   have he := present_unique h.choose_spec.1 hp
   simp only [he]
 
@@ -204,7 +204,7 @@ lemma actual_eq_substitute (T : FreeMonoid Alphabet →* M) (f : ℤ → Alphabe
       simp only [Option.map_some]
       congr 2
       exact product_append T f hsa hh.choose_spec.2.2.1
-    · simp only [factors,dif_neg hh,dif_neg (fun h => hh (hpres.mp h)),Option.map_none]
+    · simp only [factors,dite_eq_right hh,dite_eq_right (fun h => hh (hpres.mp h)),Option.map_none]
 
 end BoundarySnapshot
 

@@ -256,7 +256,7 @@ lemma split_product {K x y p q : ℝ} (hx:0≤x) (_:0≤y)
          (fourth v*x)^4 ≤ K^4*(if v≠0 then x^4 else 0) := by
       by_cases he:v=0
       · simp [he,fourth]
-      · rw [if_pos he, mul_pow]
+      · rw [ite_eq_left he, mul_pow]
         exact mul_le_mul_of_nonneg_right (pow_le_pow_left₀ (fourth_nn _) h _) (by positivity)
    rw [show a*b-c*d=b*(a-c)+c*(b-d) by ring]
    apply le_trans (spliff ..)
@@ -422,7 +422,7 @@ lemma pass_pin {l k} {f g : Pics n} (h: (d.deckY k l).pinned d.a g) :
    apply he
    have hz (i : ℕ) : g (rightP s) i y=0 := by
        conv_lhs=>rw [← show (d.deckY k l).wmask d.a g=g from h]
-       exact if_neg hv
+       exact ite_eq_right hv
    unfold pass; simp_rw [hz]; simp
 
 end Axis
@@ -591,7 +591,7 @@ lemma raid_id {M} (h:0<M) (hh:M<n) (i x : ℕ) (k) (s:Channel n) :
       rw [ZMod.val_natCast] at hh
       simp only [ZMod.val_zero,Nat.mod_eq_of_lt ‹M<n›] at hh; omega
    unfold replica hit
-   rw [dif_neg hs, affine_eval]
+   rw [dite_eq_right hs, affine_eval]
    have hq: (↑(radix M x i):ZMod n)= (i:ZMod n)+(x:ZMod n)*(M:ZMod n) := by unfold radix; push_cast; ring
    rw [hq]
 
@@ -629,7 +629,7 @@ lemma transport {x y i j M : ℕ} (hM:0<M) (hm:M<n) (hx:x%M=i) (hy:y%M=j)
 lemma transportV {x i M:ℕ} (hM:0<M) (hm:M<n) (hx:x%M=i) (p : Paint n) :
    d.vm (vim M i p) x=d.vm p (x/M) := by
    unfold vm vim mint
-   simp_rw [if_pos hx]
+   simp_rw [ite_eq_left hx]
    have hs:= @transport n _ (d.narrowed 0) x 0 i 0 M hM hm hx (Nat.zero_mod _) (fun s=> p s (x/M))
    simpa only [narrowed, Nat.zero_div,Nat.cast_zero] using hs
 
@@ -637,14 +637,14 @@ lemma pep_mean {M i j : ℕ} {p : Pics n} (hM:0<M) (hm:M<n) (x y) :
     (d.nextd M).fm (pep M i j p) x y=markM M i j (d.fm p) x y := by
    unfold pep markM fm
    split
-   · next he=> simp_rw [if_pos he]
+   · next he=> simp_rw [ite_eq_left he]
                exact d.transport hM hm he.1 he.2 (fun s=>p s (x/M) (y/M))
    · next he=> simp [he,Env.cond,av_zero]
 
 lemma vim_mean {M i : ℕ} {p: Paint n} (hM:0<M) (hm:M<n) (x) :
     (d.nextd M).vm (vim M i p) x=mint M i (d.vm p) x := by
    by_cases he:x%M=i
-   · exact (d.transportV hM hm he p).trans (Eq.symm (show mint M i _ x=_ from if_pos he))
+   · exact (d.transportV hM hm he p).trans (Eq.symm (show mint M i _ x=_ from ite_eq_left he))
    unfold vm vim mint; simp [he,Env.cond,av_zero]
 
 lemma pane_ti {M i j : ℕ} {p : Pics n} (hi:i<M) (hj:j<M) (hm:M<n) :
@@ -676,8 +676,8 @@ lemma pane_ti {M i j : ℕ} {p : Pics n} (hi:i<M) (hj:j<M) (hm:M<n) :
    rw [eval_copies]
    congr 1
    apply sum_congr rfl; intro x hx
-   rw [sum_eq_single i,hh x i hi, if_pos rfl]
-   · intro a ha h; rw [hh x a (mem_range.mp ha),if_neg h]
+   rw [sum_eq_single i,hh x i hi, ite_eq_left rfl]
+   · intro a ha h; rw [hh x a (mem_range.mp ha),ite_eq_right h]
    · intro h; exact False.elim (h (mem_range.mpr hi))
 
 lemma pane_vi {M i : ℕ} {p : Paint n} (hi:i<M) (hm:M<n) :
@@ -691,8 +691,8 @@ lemma pane_vi {M i : ℕ} {p : Paint n} (hi:i<M) (hm:M<n) :
    simp_rw [show ({ d with S:=copyZone M d.S }:Axis)=d.nextd M from rfl]
    have hp a (h:a<M) : (d.nextd M).vm (vim M i p) (radix M x a) =
                              if a=i then d.vm p x else 0 := by rw [he,mint,(fromrad M x a h).1,(fromrad M x a h).2]
-   rw [sum_eq_single i,hp i hi,if_pos rfl]
-   · intro j hj hz; rw [hp j (mem_range.mp hj),if_neg hz]; ring
+   rw [sum_eq_single i,hp i hi,ite_eq_left rfl]
+   · intro j hj hz; rw [hp j (mem_range.mp hj),ite_eq_right hz]; ring
    · intro h; exact False.elim (h (mem_range.mpr hi))
 
 lemma pep_terr {M i j : ℕ} {p q : Pics n} (hi:i<M) (hj:j<M) (hm:M<n) :
@@ -726,7 +726,7 @@ lemma pep_pin {M i j : ℕ} {p : Pics n} {k} (hi:i<M) (hm:M<n) (hp: d.pinned k p
          by_contra! hc
          apply he
          conv_lhs=>rw [← show d.wmask k p=p from hp]
-         exact if_neg hc
+         exact ite_eq_right hc
      obtain ⟨hu,hz⟩:=mem_filter.mp hz
      apply mem_filter.mpr ⟨(member_copy hM).2 hu,?_⟩
      have h1:= (raid_id hM hm j (y/M) k s.2.1).1 hz
@@ -859,8 +859,8 @@ lemma focal (u:Fwd n) (v:Paint n) (D : ℕ) (hk:d.a≤d.u)
        unfold k at *; linarith
    have hz x : (if f x then v (crossP s) y else 0)^4 = if f x then b else 0 := by
        by_cases h:f x
-       · rw [if_pos h,if_pos h]
-       · rw [if_neg h,if_neg h]; ring
+       · rw [ite_eq_left h,ite_eq_left h]
+       · rw [ite_eq_right h,ite_eq_right h]; ring
    change ∑ x∈src d.S d.u s,(if f x then v (crossP s) y else 0)^4 ≤ _
    simp_rw [hz]
    rw [← sum_filter]
@@ -955,7 +955,7 @@ lemma sealed (u v : Block n) {C r J : ℝ} (_:0≤r) (w w' : Paint n) (o : Trio)
         have heX : |fourth (m u)-fourth (m v)|≤g t y := by
            have H (v:Block n) : m v=shutoff (d.spout (R v) M t y):= by
                change (f.sess _).incG _ _=_
-               unfold Grid.incG; rw [if_pos (show (f.sess s).sp=true from hh)]; rfl
+               unfold Grid.incG; rw [ite_eq_left (show (f.sess s).sp=true from hh)]; rfl
            unfold g sp; rw [H,H]; exact hz ..
         obtain h1 := (f.tiling u ho ht b).cap s x y
         obtain h2 := (f.tiling v ho ht b).cap s x y
@@ -963,12 +963,12 @@ lemma sealed (u v : Block n) {C r J : ℝ} (_:0≤r) (w w' : Paint n) (o : Trio)
         apply le_trans (multrip h1.1 h2.1 h2.2 ((f.sess s).incG_bounds (u s) y)
                               ((f.sess s).incG_bounds (v s) y) (hw ..) (hw' ..))
         change _ ≤ _+C^3*((if _ then _ else _)+(if _ then _ else _))
-        rw [if_pos hk,if_pos hk]
+        rw [ite_eq_left hk,ite_eq_left hk]
         exact add_le_add le_rfl (mul_le_mul_of_nonneg_left (add_le_add heX le_rfl) hc)
       have ht1 : oP s x y=0:= by_contra (fun e=>hk (Or.inl e))
       have ht2 : vP s x y=0:= by_contra (fun e=>hk (Or.inr e))
       change |fourth (oP s x y)-fourth (vP s x y)| ≤ _+C^3*((if _ then _ else _)+(if _ then _ else _))
-      rw [ht1,ht2,if_neg hk,if_neg hk,sub_self,abs_zero, add_zero,mul_zero,add_zero]
+      rw [ht1,ht2,ite_eq_right hk,ite_eq_right hk,sub_self,abs_zero, add_zero,mul_zero,add_zero]
       exact abs_nonneg _
    have hb1 : d.ton a≤r:=by unfold a; rw [d.ton_subnorm]; exact hy
    let L:=d.startd d.a; let m:=ratioN d.u d.a
@@ -1017,12 +1017,12 @@ lemma rated (v : Spray n 0) {s M : ℝ} (he : v.d=d) (hz : v.K=f.p.K)
     unfold Builder.coins Grid.pre
     by_cases he:b=false∨ y∈(f.sess u).narrow
     · have hp : x∈(f.sess u).src ∧ y∈(f.sess u).dst ∧ (b=false∨_) := ⟨hx,hy,he⟩
-      rw [if_pos hp,if_pos hp]
+      rw [ite_eq_left hp,ite_eq_left hp]
       unfold Spray.diff
       simp only [Spray.go,sess,hz]
       exact le_rfl
     · have hp : ¬ (x∈(f.sess u).src ∧ y∈(f.sess u).dst ∧ (b=false∨_)) := fun h=>he h.2.2
-      rw [if_neg hp,if_neg hp,sub_self,abs_zero]; exact abs_nonneg _
+      rw [ite_eq_right hp,ite_eq_right hp,sub_self,abs_zero]; exact abs_nonneg _
 
 end Builder
 
@@ -1096,8 +1096,8 @@ lemma multiplier_fee {p : Pics n} (u : Paint n) {D : ℕ} (hr: ∀ s i (S : Doma
    let f x:=p s i x
    have he (x) : (if f x≠0 then u s i else 0)^4= if f x≠0 then u s i^4 else 0 := by
       by_cases h:f x≠0
-      · rw [if_pos h,if_pos h]
-      rw [if_neg h,if_neg h]; ring
+      · rw [ite_eq_left h,ite_eq_left h]
+      rw [ite_eq_right h,ite_eq_right h]; ring
    change ∑ j∈T,(if f j≠0 then u s i else 0)^4≤_
    simp_rw [he]
    have hh : (D:ℝ)≤ (D+1:ℝ)^4:=by
@@ -1166,7 +1166,7 @@ lemma pinned_hon {t} {p : Pics n} {u : Paint n} (h:d.pinned t p) : d.pinned t (h
    by_contra! he
    have hh : p s i j=0 := by
       conv_lhs=>rw [← show d.wmask t p=p from h]
-      exact if_neg he
+      exact ite_eq_right he
    exact hv (by unfold honor; rw [hh,zero_mul])
 
 lemma fame_fee {u v p q : Paint n} {C : ℝ} (hC:0≤C) (h:∀ s i,in01 (u s i))
@@ -1241,7 +1241,7 @@ lemma passV_id (k : ℕ) (p:Pics n) (v:Vec) (hp:(deckX d k).BothPin p)
      rw [← show ridge (d.vm (d.passV k p (fun _=>v))) x x=d.vm (d.passV k p (fun _=>v)) x from by simp [ridge],← diagh]
      apply a.eqfm
      intro s hi hz
-     unfold core ridge; rw [if_pos rfl]; rfl
+     unfold core ridge; rw [ite_eq_left rfl]; rfl
   have hs : a.deckX k=d.deckX k:=rfl
   have he : (a.startd k).fm g=fun i j=> v i := (a.startd k).fdet _
   rw [H1,a.pass_id k _ g _ _ hx hx, he,hs]
@@ -1290,7 +1290,7 @@ lemma right_cost {k : ℕ} (f:Pics n) (v:Paint n) (hk:2^k ≤ n) (hl:k≤d.u) {D
        let g:Vec:= fun j=>f (leftP s) i j*v (rightP s) j
        have he (j) : (g j)^4 ≤ (C^4)^4*(if f (leftP s) i j≠0 then v (rightP s) j^4 else 0) := by
           by_cases hn:f (leftP s) i j≠0
-          · unfold g; rw [if_pos hn,mul_pow]
+          · unfold g; rw [ite_eq_left hn,mul_pow]
             obtain ⟨ha,hb⟩:=from_cap h.cap (leftP s) i j
             exact mul_le_mul_of_nonneg_right (pow_le_pow_left₀ ha hb 4) (by positivity)
           simp only [g,hn,↓reduceIte]; rw [not_not.mp hn]; norm_num
@@ -1391,11 +1391,11 @@ lemma pastbound {k D} {p:Pics n} {u:Paint n} {C} (hk:2^k≤n) (h:Tile (deckX d k
       · apply sum_le_sum
         intro j hj
         by_cases hi : f j≠0
-        · rw [if_pos hi]
+        · rw [ite_eq_left hi]
           obtain ⟨hx,hy⟩:=from_cap h.cap (leftP s) i j
           change 0≤f j at hx; change f j≤_ at hy
           nlinarith [(hr (rightP s) j).2]
-        rw [if_neg hi,not_not.mp hi,zero_mul]
+        rw [ite_eq_right hi,not_not.mp hi,zero_mul]
       exact slots _ (by positivity) S _ (h.rows ..)
    change 0≤peeler n k*T∧ peeler n k*T≤_
    exact ⟨mul_nonneg h1 hz,le_trans (by nlinarith) he⟩

@@ -100,8 +100,8 @@ theorem notAllW_bits (m : ℕ) : ∀ k, k < 2 ^ m →
         rw [ih j hj]
         have : (j + 1 < 2 ^ m) ↔ (2 * j + 1 + 1 < 2 ^ (m + 1)) := by rw [pow_succ]; omega
         by_cases h : j + 1 < 2 ^ m
-        · rw [if_pos h, if_pos (this.1 h)]
-        · rw [if_neg h, if_neg (fun h' => h (this.2 h'))]
+        · rw [ite_eq_left h, ite_eq_left (this.1 h)]
+        · rw [ite_eq_right h, ite_eq_right (fun h' => h (this.2 h'))]
 
 /-- Every word of length `m` is a counter value below `2^m`. -/
 theorem exists_bits : ∀ (u : Word), ∃ k, k < 2 ^ u.length ∧ bits u.length k = u
@@ -159,7 +159,7 @@ def notAllC : Cob := .bRec .empty Cob.trueC (.proj 1) (.proj 0)
       cases b
       · simp [notAllW]
       · have := length_notAllW_le u
-        simp only [if_true, Cob.eval_proj, List.getD_cons_succ, List.getD_cons_zero, notAllW,
+        simp only [ite_true, Cob.eval_proj, List.getD_cons_succ, List.getD_cons_zero, notAllW,
           List.length_cons]
         exact List.take_of_length_le (by omega)
 
@@ -174,7 +174,7 @@ def decodeC : Cob := .bRec .empty (.proj 0) (.proj 1) (.proj 0)
       cases b
       · simp [decodeW, List.take_of_length_le]
       · have := length_decodeW_le u
-        simp only [if_true, Cob.eval_proj, List.getD_cons_succ, List.getD_cons_zero, decodeW,
+        simp only [ite_true, Cob.eval_proj, List.getD_cons_succ, List.getD_cons_zero, decodeW,
           List.length_cons]
         exact List.take_of_length_le (by omega)
 
@@ -521,7 +521,7 @@ theorem oruns_npProg (A : Oracle) (v : CobQ) (a k : ℕ) (x : List Bool) :
     (fun j hj => by
       have := oruns_npBody A v K x B N (bits m j) (foundW A v x m j) (contW m j) n
         (by omega) (by omega) (by omega) (by omega) (by simp; omega) (length_foundW_le A v x m j)
-        (by simp only [contW, hj, if_true, List.length_singleton]; omega) (by omega) hBF hBN hBI
+        (by simp only [contW, hj, ite_true, List.length_singleton]; omega) (by omega) hBF hBN hBI
       refine this.of_eq rfl ?_
       rw [incrW_bits, notAllW_bits m j hj]
       rfl)
@@ -530,7 +530,7 @@ theorem oruns_npProg (A : Oracle) (v : CobQ) (a k : ℕ) (x : List Bool) :
     simp [foundW, contW, hpos]
   rw [h0]
   refine ORunsQ.seq hloop ?_
-  simp only [contW, lt_irrefl, if_false]
+  simp only [contW, lt_irrefl, ite_false]
   exact (ORuns.lift (runs_mvR 5 _ 0 n (by omega))).of_eq rfl (by simp)
 
 end NPW

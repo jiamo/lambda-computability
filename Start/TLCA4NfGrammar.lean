@@ -93,7 +93,7 @@ theorem NC.beta_lift {x : ℕ} {n' : ℤ} {R c0 T : Lambda} (hR : NC x n' R) (e 
     simp only [Lambda.lift, Lambda.subst, subst_lift_lift_one]
     have hx : Lambda.subst T 0 (.var (x + 2 + 1)) = .var (x + 2) := by
       simp [Lambda.subst]
-    rw [if_neg (by omega), hx, xPow_add]
+    rw [ite_eq_right (by omega), hx, xPow_add]
     exact .rq hR' (by push_cast; omega)
 
 /-- The η-contractum of a component `λq. c` is a component of the same index. -/

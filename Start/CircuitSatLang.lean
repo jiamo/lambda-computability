@@ -54,9 +54,9 @@ theorem length_gatesOf (x : Word) : (gatesOf x).length = rcnt dstate cinc x := b
   | cons b x ih =>
       rw [gatesOf, rcnt, List.length_append, ih, cinc]
       by_cases h : emits (rst dstate 0 x) b
-      · rw [if_pos h, if_pos h]
+      · rw [ite_eq_left h, ite_eq_left h]
         simp
-      · rw [if_neg h, if_neg h]
+      · rw [ite_eq_right h, ite_eq_right h]
         simp
 
 /-- **The block-emitting recursion translates any word gate by gate.**  This is
@@ -68,9 +68,9 @@ theorem brun_gblk_gatesOf (F : ℕ → Gate → Word) (x : Word) :
   | cons b x ih =>
       rw [brun, ih, gatesOf, gblk]
       by_cases h : emits (rst dstate 0 x) b
-      · rw [if_pos h, if_pos h]
+      · rw [ite_eq_left h, ite_eq_left h]
         simp only [List.singleton_append, gmap, length_gatesOf]
-      · rw [if_neg h, if_neg h]
+      · rw [ite_eq_right h, ite_eq_right h]
         simp
 
 /-- On a code, the reading returns the circuit. -/

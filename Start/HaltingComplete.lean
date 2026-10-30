@@ -49,7 +49,7 @@ theorem rePred_of_valid_test {P : ℕ → Prop} (g : ℕ → ℕ → Bool) (hg :
   refine hpart.dom_re.of_eq fun c => ?_
   rw [h c]
   by_cases hv : is_valid_code c = Bool.true
-  · rw [if_pos hv]
+  · rw [ite_eq_left hv]
     simp only [hv, true_and]
     constructor
     · intro hdom

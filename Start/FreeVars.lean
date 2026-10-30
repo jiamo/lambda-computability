@@ -41,9 +41,9 @@ theorem freeBelow_lift : ∀ {t : Lambda} {k : ℕ}, freeBelow k t → ∀ j,
   | var n =>
       intro k h j
       by_cases hn : n < j
-      · simp only [Lambda.lift, if_pos hn]
+      · simp only [Lambda.lift, ite_eq_left hn]
         exact Nat.lt_succ_of_lt h
-      · simp only [Lambda.lift, if_neg hn]
+      · simp only [Lambda.lift, ite_eq_right hn]
         exact Nat.succ_lt_succ h
   | app a b iha ihb => intro k h j; exact ⟨iha h.1 j, ihb h.2 j⟩
   | lam t ih => intro k h j; exact ih (k := k + 1) h (j + 1)
@@ -112,10 +112,10 @@ theorem freeBelow_subst : ∀ (t : Lambda) (s : Lambda) (x k : ℕ), freeBelow (
       by_cases h1 : m = x
       · simpa [Lambda.subst, h1] using hs
       · by_cases h2 : m > x
-        · simp only [Lambda.subst, h1, h2, if_false, if_true, freeBelow]
+        · simp only [Lambda.subst, h1, h2, ite_false, ite_true, freeBelow]
           simp only [freeBelow] at h
           omega
-        · simp only [Lambda.subst, h1, h2, if_false, freeBelow]
+        · simp only [Lambda.subst, h1, h2, ite_false, freeBelow]
           omega
   | app a b iha ihb =>
       intro s x k h hs hx

@@ -226,7 +226,7 @@ lemma factors_congr (T : FreeMonoid Alphabet →* M) {f f' : ℤ → Alphabet}
     · apply product_congr T hb
       intro z hz hz'
       exact he z ((ha.trans (hm (Fin.zero_le _))).trans hz) hz'
-  · simp only [factors,dif_neg hp]
+  · simp only [factors,dite_eq_right hp]
 
 @[ext] lemma later_ext {D E : ClockAffine.Later M g}
     (hp : D.tailProduct=E.tailProduct) (hb : D.boundaries=E.boundaries) : D=E := by

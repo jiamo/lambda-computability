@@ -125,7 +125,7 @@ theorem jump_reduces_jumpChar (A : ℕ → Bool) : Reduces (OracleJump.jump A) (
   have hdom : ∀ v, (g v).Dom ↔ OracleJump.Halts A (Nat.unpair v).1 (Nat.unpair v).2 := by
     intro v
     have h1 := hPQ v
-    simp only [ArithmeticHierarchy.Quant, if_true] at h1
+    simp only [ArithmeticHierarchy.Quant, ite_true] at h1
     rw [h1]
     simp only [g]
     constructor

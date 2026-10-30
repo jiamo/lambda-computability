@@ -213,7 +213,7 @@ theorem W_complete {e : Expr} :
     | @lam _ _ A B ht =>
       set s'' : ℕ → Ty := fun v => if v = n then A else s' v
       have hctx : ctxSubst s'' (Sch.ofTy (Ty.var n) :: Γ) = Sch.ofTy A :: ctxSubst s' Γ := by
-        simp only [ctxSubst_cons, Sch.ofTy_subst, subst_var', s'', if_true, List.cons.injEq,
+        simp only [ctxSubst_cons, Sch.ofTy_subst, subst_var', s'', ite_true, List.cons.injEq,
           true_and]
         exact ctxSubst_congr fun v hv => by
           have := hfv v hv
@@ -401,7 +401,7 @@ theorem exists_inverse_iff (s : ℕ → Ty) (A : Finset ℕ) :
     cases hs : s v with
     | var w =>
       have hex : ∃ v ∈ A, s v = Ty.var w := ⟨v, hv, hs⟩
-      simp only [subst_var', hex, dif_pos]
+      simp only [subst_var', hex, dite_eq_left]
       obtain ⟨hA, hc⟩ := hex.choose_spec
       rw [hinj _ hA v hv (hc.trans hs.symm)]
     | con c => have := hvar v hv; rw [hs] at this; simp [Ty.isVar] at this

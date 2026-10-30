@@ -7,7 +7,6 @@ file `lean/OAI/Computability/DegreeRigidity/Representation/CommonIdealSelection.
 paper "Rigidity of the Turing degrees".
 Adapted to this library's Lean v4.33.0 / Mathlib `v4.33.0` pin: the `OAI` namespace was dropped,
 imports were renamed to `Start.Rigidity*`, and proofs were repaired where the pin required it.
-Proof change: `Measurable.of_eval` (upstream pin) is `measurable_pi_lambda` on this pin.
 See `NOTICE` at the repository root.
 -/
 
@@ -135,10 +134,10 @@ theorem borel_selected_common_ideal :
         b ≤ degree (join A (G0 A)) ∧ b ≤ degree (join A (G1 A)) := by
   obtain ⟨G,hG,hmeet⟩ := BorelGeneric.borel_generic_selection family family_dense family_measurable
   refine ⟨fun A => even (G A),fun A => odd (G A),?_,?_,?_⟩
-  · apply measurable_pi_lambda
+  · apply Measurable.of_eval
     intro n
     exact (measurable_pi_apply (2*n)).comp hG
-  · apply measurable_pi_lambda
+  · apply Measurable.of_eval
     intro n
     exact (measurable_pi_apply (2*n+1)).comp hG
   · intro A

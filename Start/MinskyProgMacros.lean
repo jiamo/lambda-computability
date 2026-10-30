@@ -223,7 +223,7 @@ theorem exec_pairAdd {x y k b : ℕ} (hxy : x ≠ y) (hxk : x ≠ k) (hyk : y �
     (by simp; omega) r h2 h3 h4
   refine .seq hlt ?_
   by_cases hxy' : r x < r y
-  · rw [if_pos hxy']
+  · rw [ite_eq_left hxy']
     have e₁ := exec_mulAdd (a := y) (b := y) (k := k) (s := b + 5) (t := b + 4)
       (by omega) (by omega) (by omega) (by omega) (by omega) (by omega) (by omega) (by omega)
       (by omega) r h5 h4
@@ -231,11 +231,11 @@ theorem exec_pairAdd {x y k b : ℕ} (hxy : x ≠ y) (hxk : x ≠ k) (hyk : y �
       (update r k (r k + r y * r y)) (by upd_val)
     refine exec_ite_pos (by omega) (by simp) (by upd_val)
       ((Exec.seq e₁ e₂).congr (by upd_tac) ?_) (by upd_val) (by upd_val)
-    rw [Nat.pair, if_pos hxy']
+    rw [Nat.pair, ite_eq_left hxy']
     funext z
     simp only [Function.update_apply]
     split_ifs <;> subst_vars <;> omega
-  · rw [if_neg hxy']
+  · rw [ite_eq_right hxy']
     have e₁ := exec_mulAdd (a := x) (b := x) (k := k) (s := b + 5) (t := b + 4)
       (by omega) (by omega) (by omega) (by omega) (by omega) (by omega) (by omega) (by omega)
       (by omega) r h5 h4
@@ -246,7 +246,7 @@ theorem exec_pairAdd {x y k b : ℕ} (hxy : x ≠ y) (hxk : x ≠ k) (hyk : y �
         (update r k (r k + r x * r x) k + update r k (r k + r x * r x) x)) (by upd_val)
     refine exec_ite_neg (by omega) (by simp [h0]) (by upd_val)
       ((Exec.seq e₁ (Exec.seq e₂ e₃)).congr (by upd_tac) ?_) (by upd_val)
-    rw [Nat.pair, if_neg hxy']
+    rw [Nat.pair, ite_eq_right hxy']
     funext z
     simp only [Function.update_apply]
     split_ifs <;> subst_vars <;> omega

@@ -49,15 +49,15 @@ variable (h w : ℕ) (L Rr : ℕ → ℕ) (c3 c6 : List Bool)
 theorem initFile_rL (k : ℕ) (hk : k < w) :
     initFile h w L Rr c3 c6 (rL h k) = List.replicate (L k) false := by
   simp only [initFile, rL]
-  rw [if_neg (by omega), if_neg (by omega), if_neg (by omega), if_pos (by omega),
-    if_pos (by omega)]
+  rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_left (by omega),
+    ite_eq_left (by omega)]
   congr 2; omega
 
 theorem initFile_rR (k : ℕ) (hk : k < w) :
     initFile h w L Rr c3 c6 (rR h k) = List.replicate (Rr k) false := by
   simp only [initFile, rR]
-  rw [if_neg (by omega), if_neg (by omega), if_neg (by omega), if_pos (by omega),
-    if_neg (by omega)]
+  rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_left (by omega),
+    ite_eq_right (by omega)]
   congr 2; omega
 
 @[simp] theorem initFile_3 : initFile h w L Rr c3 c6 3 = c3 := by simp [initFile]
@@ -264,8 +264,8 @@ theorem encC_initial {q w h : ℕ} (M : ExactDerandomization.Machine q w h) (W :
   · subst h0; simp; congr
   by_cases h2 : r = 2
   · subst h2; simp
-  rw [if_neg h1, if_neg h0, if_neg h2]
-  simp only [h0, h1, h2, if_false]
+  rw [ite_eq_right h1, ite_eq_right h0, ite_eq_right h2]
+  simp only [h0, h1, h2, ite_false]
   simp only [initFile, posOf, tpOf, hpOf]
   split_ifs <;> first
     | rfl
@@ -283,18 +283,18 @@ theorem runs_flagsInit {q w h : ℕ} (M : ExactDerandomization.Machine q w h) (R
   have h1K : 1 < regK h w := by unfold regK; omega
   unfold flagsInit
   rcases ho : M.output M.initialState with _ | b
-  · simp only [if_true, reduceCtorEq, if_false]
+  · simp only [ite_true, reduceCtorEq, ite_false]
     refine (runs_append R 0 h0K true N (by rw [hR0]; simp; omega) hB i).seq ?_
     refine (runs_skip _ 0 i).of_eq rfl ?_
     congr 2; funext r; simp only [Function.update_apply]; split_ifs <;> simp_all
   · cases b with
     | true =>
-        simp only [reduceCtorEq, if_false, if_true]
+        simp only [reduceCtorEq, ite_false, ite_true]
         refine (runs_skip _ 0 i).seq ?_
         refine (runs_append R 1 h1K true N (by rw [hR1]; simp; omega) hB i).of_eq rfl ?_
         congr 2; funext r; simp only [Function.update_apply]; split_ifs <;> simp_all
     | false =>
-        simp only [reduceCtorEq, if_false, Option.some.injEq, Bool.false_eq_true]
+        simp only [reduceCtorEq, ite_false, Option.some.injEq, Bool.false_eq_true]
         refine (runs_skip _ 0 i).seq ((runs_skip _ 0 i).of_eq rfl ?_)
         congr 2; funext r; simp only [Function.update_apply]; split_ifs <;> simp_all
 

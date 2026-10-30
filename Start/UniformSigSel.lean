@@ -235,8 +235,8 @@ theorem eval_sel7 (t : ℕ → Cob) {args : List Word} {i : ℕ}
   | 4 => norm_num
   | 5 => norm_num
   | (k + 6) =>
-      rw [if_neg (by omega), if_neg (by omega), if_neg (by omega), if_neg (by omega),
-        if_neg (by omega), if_neg (by omega)]
+      rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega),
+        ite_eq_right (by omega), ite_eq_right (by omega)]
       norm_num
 
 /-- The branch of the selector layer at row `i`: the three chosen gates, the negation, the two
@@ -374,9 +374,9 @@ theorem eval_selBlk {A B C : ℕ → Gate} {aT bT cT twoT : Cob} {y : Word} {n M
   rw [selBlk, eval_iteT_eval, h2]
   rcases Nat.eq_zero_or_pos M with hM | hM
   · subst hM
-    rw [if_pos (show (List.replicate 0 true : Word) = [] from rfl), selLayerF_zero]
+    rw [ite_eq_left (show (List.replicate 0 true : Word) = [] from rfl), selLayerF_zero]
     exact hA c
-  rw [if_neg (by simp [List.replicate_eq_nil_iff]; omega)]
+  rw [ite_eq_right (by simp [List.replicate_eq_nil_iff]; omega)]
   have harg : (Cob.proj 1).eval [y, List.replicate c true, dmW n M] = List.replicate c true := by
     simp
   simp only [Cob.eval_comp, List.map_cons, List.map_nil, Cob.eval_proj, List.getD_cons_zero,

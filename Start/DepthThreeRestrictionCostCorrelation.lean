@@ -42,7 +42,7 @@ theorem pathTerm_zero_of_incompatible (C : I → Clause V) (b : ℕ)
       (fun i => (C i).violation (fill σ x)) P = 0 := by
   have hs : ¬ ∀ i ∈ P, (C i).violation (fill σ x) = true :=
     fun hx => hc ⟨x, hx⟩
-  rw [pathTerm_eq_support_prod_inv, if_neg hs]
+  rw [pathTerm_eq_support_prod_inv, ite_eq_right hs]
 
 theorem abs_corr_pathTerm_le (C : I → Clause V) (b : ℕ) (σ : Restriction V)
     {n : ℕ} {P : List I}
@@ -54,7 +54,7 @@ theorem abs_corr_pathTerm_le (C : I → Clause V) (b : ℕ) (σ : Restriction V)
         (fun i => (C i).violation (fill σ x)) P))| ≤
       (if pathCompatible C σ P then pathWeight C σ P else 0) * corr b G := by
   by_cases hc : pathCompatible C σ P
-  · rw [if_pos hc]
+  · rw [ite_eq_left hc]
     have hlin :
         finiteAvg (fun x => G x * (indicator (K.eval x) *
           pathTerm (fun i => (C i).scope) (liveSet σ) b

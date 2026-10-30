@@ -180,7 +180,7 @@ def sltAcc (e : Bool) (P S : List (List α)) : Option (List α × List α) → B
 lemma sltState_nil {G : List (List α)} (hG : ∀ g ∈ G, g ≠ []) :
     sltState G ([] : List α) = some ([], []) := by
   unfold sltState
-  rw [if_neg]
+  rw [ite_eq_right]
   · rfl
   · rintro ⟨g, hg, hinf⟩
     exact hG g hg (List.eq_nil_of_infix_nil hinf)
@@ -189,17 +189,17 @@ lemma sltState_snoc {G : List (List α)} (hG : ∀ g ∈ G, g ≠ [] ∧ g.lengt
     (a : α) : sltState G (u ++ [a]) = sltStep G (sltState G u) a := by
   unfold sltState
   by_cases hu : ∃ g ∈ G, g <:+: u
-  · rw [if_pos hu, if_pos]
+  · rw [ite_eq_left hu, ite_eq_left]
     · rfl
     · obtain ⟨g, hg, h⟩ := hu
       exact ⟨g, hg, h.trans (List.infix_append [] u [a])⟩
-  · rw [if_neg hu, sltStep]
+  · rw [ite_eq_right hu, sltStep]
     by_cases hb : G.any (fun g => g.isSuffixOf (last3 u ++ [a])) = true
-    · rw [if_pos hb, if_pos]
+    · rw [ite_eq_left hb, ite_eq_left]
       obtain ⟨g, hg, h⟩ := List.any_eq_true.mp hb
       exact ⟨g, hg, (infix_snoc_iff (hG g hg).2).mpr
         (Or.inr (List.isSuffixOf_iff_suffix.mp h))⟩
-    · rw [if_neg hb, if_neg, take3_snoc, last3_snoc]
+    · rw [ite_eq_right hb, ite_eq_right, take3_snoc, last3_snoc]
       rintro ⟨g, hg, h⟩
       rcases (infix_snoc_iff (hG g hg).2).mp h with h | h
       · exact hu ⟨g, hg, h⟩
@@ -217,13 +217,13 @@ lemma mem_sltLang_iff {e : Bool} {P S G : List (List α)} (hP : ∀ p ∈ P, p.l
   unfold sltState
   show (u = [] ∧ e = true) ∨ _ ↔ _
   by_cases hu : ∃ g ∈ G, g <:+: u
-  · rw [if_pos hu]
+  · rw [ite_eq_left hu]
     obtain ⟨g, hg, h⟩ := hu
     simp only [sltAcc, Bool.false_eq_true, iff_false, not_or, not_and]
     refine ⟨fun hn _ => ?_, fun _ _ _ hall => hall g hg h⟩
     subst hn
     exact (hG g hg).1 (List.eq_nil_of_infix_nil h)
-  · rw [if_neg hu]
+  · rw [ite_eq_right hu]
     simp only [not_exists, not_and] at hu
     simp only [sltAcc]
     by_cases hn : u = []
@@ -232,7 +232,7 @@ lemma mem_sltLang_iff {e : Bool} {P S G : List (List α)} (hP : ∀ p ∈ P, p.l
         intro h
         simp only [List.take_eq_nil_iff, OfNat.ofNat_ne_zero, false_or] at h
         exact hn h
-      rw [if_neg ht]
+      rw [ite_eq_right ht]
       simp only [hn, false_and, false_or, ne_eq, not_false_eq_true, true_and, Bool.and_eq_true,
         List.any_eq_true, List.isPrefixOf_iff_prefix, List.isSuffixOf_iff_suffix]
       constructor
@@ -292,7 +292,7 @@ theorem sltLang_height (e : Bool) (P S G : List (List α)) :
     ext u
     have e1 : (u ∈ (if e then (1 : Language α) else 0)) ↔ (u = [] ∧ e = true) := by
       cases e
-      · simp only [Bool.false_eq_true, if_false, and_false, iff_false]
+      · simp only [Bool.false_eq_true, ite_false, and_false, iff_false]
         exact Language.notMem_zero u
       · simp [Language.mem_one]
     have h1 : u ∈ (1 : Language α)ᶜ ↔ u ≠ [] := by

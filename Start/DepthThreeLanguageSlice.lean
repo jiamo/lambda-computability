@@ -84,7 +84,7 @@ theorem parameterSlice_suffix {n d r t : ℕ}
   have hu : ¬i.val - d < d + r - 1 := by omega
   have hp : ¬i.val - (d + (d + r - 1)) < r := by omega
   by_cases hr : r = 0
-  · simp only [parameterSlice, dif_neg hd, dif_neg hu, dif_neg hp]
+  · simp only [parameterSlice, dite_eq_right hd, dite_eq_right hu, dite_eq_right hp]
     simp [hr]
   · have hr' : 0 < r := Nat.pos_of_ne_zero hr
     have hmul : t * r ≤ i.val - (d + (d + r - 1) + r) := by omega

@@ -77,7 +77,7 @@ def enc {n : ℕ} (p : Ph M.states k) (c : Config) (D : Fin k → Fin (n + 2)) :
 theorem readInput_inPos {i : ℕ} (hi : i ≤ x.length) :
     hostSym (readInput x (inPos x.length i)) = x[i]? := by
   have hmin : min (i + 1) (x.length + 1) = i + 1 := by omega
-  simp only [readInput, inPos, hmin, Nat.add_sub_cancel, Nat.add_one_ne_zero, if_false]
+  simp only [readInput, inPos, hmin, Nat.add_sub_cancel, Nat.add_one_ne_zero, ite_false]
   cases x[i]? <;> rfl
 
 theorem readInput_eq_left (v : Fin (x.length + 2)) :
@@ -85,7 +85,7 @@ theorem readInput_eq_left (v : Fin (x.length + 2)) :
   unfold readInput
   by_cases hv : v.val = 0
   · simp [hv]
-  · simp only [hv, if_false, iff_false]
+  · simp only [hv, ite_false, iff_false]
     cases x[v.val - 1]? <;> simp
 
 theorem readInput_eq_right (v : Fin (x.length + 2)) :
@@ -94,7 +94,7 @@ theorem readInput_eq_right (v : Fin (x.length + 2)) :
   have hv2 := v.isLt
   by_cases hv : v.val = 0
   · simp [hv]
-  · simp only [hv, if_false]
+  · simp only [hv, ite_false]
     rcases h : x[v.val - 1]? with _ | b
     · simp only [true_iff]
       rw [List.getElem?_eq_none_iff] at h
@@ -118,11 +118,11 @@ theorem tapeFn_writeAt (l : List Bool) (w : ℕ) (b : Bool) :
   by_cases hz : z = (w : ℤ)
   · subst hz
     rw [Function.update_self]
-    simp only [tapeFn, Nat.cast_nonneg, if_true, Int.toNat_natCast, getD_writeAt_self]
+    simp only [tapeFn, Nat.cast_nonneg, ite_true, Int.toNat_natCast, getD_writeAt_self]
   · rw [Function.update_of_ne hz]
     unfold tapeFn
     by_cases h0 : 0 ≤ z
-    · simp only [h0, if_true]
+    · simp only [h0, ite_true]
       have : z.toNat ≠ w := by omega
       rw [getD_writeAt_of_ne _ _ _ _ this]
     · simp [h0]
@@ -199,7 +199,7 @@ theorem stp_init (hQ : 0 < M.states) :
     stp M k x ((fcompile M k).initial x.length) =
       enc M k (.run ⟨0, hQ⟩) init (fun _ => ⟨0, by omega⟩) := by
   rw [stp_of_none rfl]
-  simp only [FMachine.initial, fcompile, trans, hQ, dif_pos, enc, encR, init, FConfig.mk.injEq,
+  simp only [FMachine.initial, fcompile, trans, hQ, dite_eq_left, enc, encR, init, FConfig.mk.injEq,
     true_and]
   refine ⟨?_, ?_, ?_⟩
   · funext j
@@ -217,7 +217,7 @@ theorem stp_init (hQ : 0 < M.states) :
 theorem stp_run_acc {q : Fin M.states} {c : Config} {i₀ : Fin (x.length + 2)}
     {D : Fin k → Fin (x.length + 2)} (hacc : M.accept q = true) :
     stp M k x (encR M k (.run q) c i₀ D) = encR M k .acc c i₀ D := by
-  rw [stp_idle (p := .acc) rfl (by simp only [encR, trans, hacc, if_true])]
+  rw [stp_idle (p := .acc) rfl (by simp only [encR, trans, hacc, ite_true])]
   rfl
 
 theorem stp_run_halt {q : Fin M.states} {c : Config} {D : Fin k → Fin (x.length + 2)}
@@ -226,7 +226,7 @@ theorem stp_run_halt {q : Fin M.states} {c : Config} {D : Fin k → Fin (x.lengt
     stp M k x (enc M k (.run q) c D) = enc M k .rej c D := by
   rw [stp_idle (p := .rej) rfl]
   · rfl
-  · simp only [enc, encR, trans, hacc, Bool.false_eq_true, if_false, Fin.cons_zero,
+  · simp only [enc, encR, trans, hacc, Bool.false_eq_true, ite_false, Fin.cons_zero,
       readInput_inPos hi, workOf_zero, tapeFn_wHead, hd]
 
 /-- The host successor of `c` under the instruction `(q', b, dI, dW)`. -/
@@ -242,7 +242,7 @@ theorem move_dirW (w : ℕ) (d : Dir) :
   | left =>
       by_cases hw : w = 0
       · subst hw; simp [dirW, Direction.move, moveWork]
-      · simp only [dirW, hw, decide_false, Bool.false_eq_true, if_false, Direction.move,
+      · simp only [dirW, hw, decide_false, Bool.false_eq_true, ite_false, Direction.move,
           moveWork]
         omega
   | right => simp [dirW, Direction.move, moveWork]
@@ -257,8 +257,8 @@ theorem stp_run {q : Fin M.states} {c : Config} {D : Fin k → Fin (x.length + 2
       encR M k (.fix ⟨q', hq'⟩) (succCfg x.length c q' b dI dW)
         ((dirIn dI).moveInput (inPos x.length c.inHead)) D := by
   rw [stp_of_none rfl]
-  simp only [enc, encR, trans, hacc, Bool.false_eq_true, if_false, Fin.cons_zero,
-    readInput_inPos hi, workOf_zero, workOf_one, tapeFn_wHead, hd, hq', dif_pos, succCfg,
+  simp only [enc, encR, trans, hacc, Bool.false_eq_true, ite_false, Fin.cons_zero,
+    readInput_inPos hi, workOf_zero, workOf_one, tapeFn_wHead, hd, hq', dite_eq_left, succCfg,
     FConfig.mk.injEq, true_and]
   refine ⟨?_, ?_, ?_⟩
   · funext j
@@ -282,7 +282,7 @@ theorem stp_fix {q : Fin M.states} {c : Config} {i₀ : Fin (x.length + 2)}
     · rfl
     · have : readInput x (inPos x.length c.inHead) ≠ .leftMarker := by
         rw [Ne, readInput_eq_left]; exact inPos_ne_zero _ _
-      simp only [encR, trans, Fin.cons_zero, this, if_false, hk, dif_pos]
+      simp only [encR, trans, Fin.cons_zero, this, ite_false, hk, dite_eq_left]
   · rw [stp_moveHead (p := .tick q ⟨0, hk⟩) (i := 0) (d := .right) rfl]
     · simp only [encR, enc, cons_update_zero, Fin.cons_zero]
       congr 2
@@ -290,7 +290,7 @@ theorem stp_fix {q : Fin M.states} {c : Config} {i₀ : Fin (x.length + 2)}
       simp [Direction.moveInput, inPos, h0]
     · have : readInput x (⟨0, by omega⟩ : Fin (x.length + 2)) = .leftMarker := by
         rw [readInput_eq_left]
-      simp only [encR, trans, Fin.cons_zero, this, if_true, hk, dif_pos]
+      simp only [encR, trans, Fin.cons_zero, this, ite_true, hk, dite_eq_left]
 
 theorem stp_tick_inc {q : Fin M.states} {c : Config} {i₀ : Fin (x.length + 2)}
     {D : Fin k → Fin (x.length + 2)} {j : Fin k} (hj : (D j).val < x.length + 1) :
@@ -303,7 +303,7 @@ theorem stp_tick_inc {q : Fin M.states} {c : Config} {i₀ : Fin (x.length + 2)}
     ext
     simp [Direction.moveInput]
     omega
-  · simp only [encR, trans, Fin.cons_succ, hr, if_false]
+  · simp only [encR, trans, Fin.cons_succ, hr, ite_false]
 
 theorem stp_tick_carry {q : Fin M.states} {c : Config} {i₀ : Fin (x.length + 2)}
     {D : Fin k → Fin (x.length + 2)} {j : Fin k} (hj : (D j).val = x.length + 1)
@@ -312,7 +312,7 @@ theorem stp_tick_carry {q : Fin M.states} {c : Config} {i₀ : Fin (x.length + 2
   have hr : readInput x (D j) = .rightMarker := by rw [readInput_eq_right]; exact hj
   rw [stp_idle (p := .sweep q j) rfl]
   · rfl
-  · simp only [encR, trans, Fin.cons_succ, hr, if_true, hjk]
+  · simp only [encR, trans, Fin.cons_succ, hr, ite_true, hjk]
 
 theorem stp_tick_over {q : Fin M.states} {c : Config} {i₀ : Fin (x.length + 2)}
     {D : Fin k → Fin (x.length + 2)} {j : Fin k} (hj : (D j).val = x.length + 1)
@@ -321,7 +321,7 @@ theorem stp_tick_over {q : Fin M.states} {c : Config} {i₀ : Fin (x.length + 2)
   have hr : readInput x (D j) = .rightMarker := by rw [readInput_eq_right]; exact hj
   rw [stp_idle (p := .rej) rfl]
   · rfl
-  · simp only [encR, trans, Fin.cons_succ, hr, if_true, hjk, if_false]
+  · simp only [encR, trans, Fin.cons_succ, hr, ite_true, hjk, ite_false]
 
 theorem stp_sweep_move {q : Fin M.states} {c : Config} {i₀ : Fin (x.length + 2)}
     {D : Fin k → Fin (x.length + 2)} {j : Fin k} (hj : (D j).val ≠ 0) :
@@ -331,7 +331,7 @@ theorem stp_sweep_move {q : Fin M.states} {c : Config} {i₀ : Fin (x.length + 2
   rw [stp_moveHead (p := .sweep q j) (i := j.succ) (d := .left) rfl]
   · simp only [encR, cons_update, Fin.cons_succ]
     rfl
-  · simp only [encR, trans, Fin.cons_succ, hr, if_false]
+  · simp only [encR, trans, Fin.cons_succ, hr, ite_false]
 
 theorem stp_sweep_done {q : Fin M.states} {c : Config} {i₀ : Fin (x.length + 2)}
     {D : Fin k → Fin (x.length + 2)} {j : Fin k} (hj : (D j).val = 0) (hjk : j.val + 1 < k) :
@@ -339,7 +339,7 @@ theorem stp_sweep_done {q : Fin M.states} {c : Config} {i₀ : Fin (x.length + 2
   have hr : readInput x (D j) = .leftMarker := by rw [readInput_eq_left]; exact hj
   rw [stp_idle (p := .tick q ⟨j.val + 1, hjk⟩) rfl]
   · rfl
-  · simp only [encR, trans, Fin.cons_succ, hr, if_true, hjk, dif_pos]
+  · simp only [encR, trans, Fin.cons_succ, hr, ite_true, hjk, dite_eq_left]
 
 /-- Output states are fixed points. -/
 theorem stp_out {u : FConfig (Ph M.states k) 2 (k + 1) x.length} {b : Bool}

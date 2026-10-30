@@ -848,11 +848,11 @@ theorem Lambda.step_code_case1_eq (L : List (Option ℕ)) :
   rcases hm : Nat.unpair (Nat.unpair L.length).2 with ⟨c1, c2⟩
   simp only [hm]
   by_cases hlt : c1 < L.length ∧ c2 < L.length
-  · rw [if_pos hlt, if_pos hlt]
+  · rw [ite_eq_left hlt, ite_eq_left hlt]
     by_cases ha : (Nat.unpair c1).1 = 2
-    · rw [if_pos ha, show Nat.unpair c1 = (2, (Nat.unpair c1).2) from Prod.ext ha rfl]
+    · rw [ite_eq_left ha, show Nat.unpair c1 = (2, (Nat.unpair c1).2) from Prod.ext ha rfl]
       rfl
-    · rw [if_neg ha]
+    · rw [ite_eq_right ha]
       unfold Lambda.step_code_case1_inner
       rcases hc1 : Nat.unpair c1 with ⟨a, b⟩
       obtain _ | _ | _ | k := a
@@ -860,7 +860,7 @@ theorem Lambda.step_code_case1_eq (L : List (Option ℕ)) :
       · rfl
       · exact absurd (by rw [hc1]) ha
       · rfl
-  · rw [if_neg hlt, if_neg hlt]
+  · rw [ite_eq_right hlt, ite_eq_right hlt]
 
 /-
 Helper function combining the inner logic of `step_code_case1` and its Primrec proof.

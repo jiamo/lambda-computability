@@ -43,7 +43,7 @@ theorem sourceT_wellFounded (M : ZFSet.{u}) (hM : Transitive M) (hT : SourceT M)
   obtain ⟨δ,_,_,F,_,_,honto,hrank⟩ := sourceT_internal_ordinal_ranking M hM hT hd hr hw
   let index (x : ZFSet.{u}) : ZFSet.{u} := if hx : x ∈ d then (honto x hx).choose else ∅
   have hi (x : ZFSet.{u}) (hx : x ∈ d) : index x ∈ δ ∧ ZFSet.pair (index x) x ∈ F := by
-    simp only [index,dif_pos hx]
+    simp only [index,dite_eq_left hx]
     exact (honto x hx).choose_spec
   apply (show WellFounded (fun y x => index y ∈ index x) from InvImage.wf index ZFSet.mem_wf).mono
   intro y x hyx

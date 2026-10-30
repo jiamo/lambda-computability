@@ -275,7 +275,7 @@ theorem eval_walkStepT (hp : Heap) (e : Option ℕ) (he : IsEnvPtr hp e) (w : Wo
         simp [encCell, List.append_assoc]
       have hdrop1 : envDrop hp (some p) 1 = t := by simp only [envDrop, hcell]
       rw [walkStepT, Cob.eval_iteW hc rfl rfl]
-      simp only [if_true, eval_catT, htl, hcur, hdrop1]
+      simp only [ite_true, eval_catT, htl, hcur, hdrop1]
 
 /-- **The walk of the term is the walk on pointers.** -/
 theorem eval_walkT (tab : Tab) (hp : Heap) (hwf : HeapWF hp) (hty : HeapTyped tab hp)
@@ -415,7 +415,7 @@ theorem eval_stepT {tab : Tab} {s : HState} (h : Valid tab s) :
         eval_takeUT (eval_dropUT hn2)
       rw [hstep_app_eq hnd]
       rw [stepT, Cob.eval_iteW hb0 rfl rfl]
-      simp only [if_true]
+      simp only [ite_true]
       rw [Cob.eval_iteW hb1 rfl rfl]
       rw [appOutT]
       simp only [eval_catT, Cob.eval_pre, Cob.eval_empty, hf, ha, henv, hLu, hcount, hswh]
@@ -435,9 +435,9 @@ theorem eval_stepT {tab : Tab} {s : HState} (h : Valid tab s) :
             rw [Cob.eval_nthBit, hrest, hst]; simp [unary]
           rw [hstep_lam_nil_eq hnd hst]
           rw [stepT, Cob.eval_iteW hb0 rfl rfl]
-          simp only [if_true]
+          simp only [ite_true]
           rw [Cob.eval_iteW hb1 rfl rfl]
-          simp only [if_true]
+          simp only [ite_true]
           rw [Cob.eval_iteW hcst rfl rfl]
           simp
       | cons p pi =>
@@ -457,11 +457,11 @@ theorem eval_stepT {tab : Tab} {s : HState} (h : Valid tab s) :
             eval_dropUT hswh'
           rw [hstep_lam_cons_eq hnd hst]
           rw [stepT, Cob.eval_iteW hb0 rfl rfl]
-          simp only [if_true]
+          simp only [ite_true]
           rw [Cob.eval_iteW hb1 rfl rfl]
-          simp only [if_true]
+          simp only [ite_true]
           rw [Cob.eval_iteW hcst rfl rfl]
-          simp only [if_true]
+          simp only [ite_true]
           rw [betaOutT]
           simp only [eval_catT, Cob.eval_pre, Cob.eval_empty, hbb, hcount, hLu', hd1, hp1, henv]
           simp [encState, encHeap_append_cell, encCell, encPtr, unary, List.append_assoc]
@@ -532,7 +532,7 @@ theorem eval_stepT {tab : Tab} {s : HState} (h : Valid tab s) :
         rw [hstep_var_eq hnd hnth hcellQ]
         rw [stepT, Cob.eval_iteW hb0 rfl rfl]
         rw [Cob.eval_iteW hcw rfl rfl]
-        simp only [if_true]
+        simp only [ite_true]
         rw [varOutT]
         simp only [eval_catT, hc1, he1, hrest]
         simp [encState, List.append_assoc]

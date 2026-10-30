@@ -106,7 +106,7 @@ theorem boundary_label_recovery {Label : Type uLabel} [DecidableEq Label]
   classical
   by_contra hne
   have h := walkWeight_congr _ _ (balance leftLabel) p
-  simp only [if_neg (Ne.symm hne), add_zero] at h
+  simp only [ite_eq_right (Ne.symm hne), add_zero] at h
   rw [walkWeight_coboundary, CharTwo.add_self_eq_zero] at h
   exact wraps h
 
@@ -226,7 +226,7 @@ def rowMark (i : Fin (r + 1)) (x y : V) : F₂ :=
 
 theorem rowMark_zero_of_boundary_eq (hr : 1 ≤ r) (i : Fin (r + 1))
     {x y : V} (hxy : D.boundary x = D.boundary y) : D.rowMark i x y = 0 := by
-  rw [rowMark, if_neg]
+  rw [rowMark, ite_eq_right]
   rintro (⟨h1, h2⟩ | ⟨h1, h2⟩)
   · exact rotate_ne_self hr i (h2.symm.trans (hxy.symm.trans h1))
   · exact rotate_ne_self hr i (h2.symm.trans (hxy.trans h1))
@@ -276,7 +276,7 @@ theorem row_support_edge (hr : 2 ≤ r) (i : Fin (r + 1)) {b : B} {x y : V}
   rcases h with ⟨s, rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
   · rw [D.rowMark_horizontal hr] at hm
     by_contra hne
-    exact hm (if_neg (Ne.symm hne))
+    exact hm (ite_eq_right (Ne.symm hne))
   · exact (hm (D.rowMark_zero_of_boundary_eq (by omega) _
       ((D.low_boundary b false).trans (D.low_boundary b true).symm))).elim
   · exact (hm (D.rowMark_zero_of_boundary_eq (by omega) _

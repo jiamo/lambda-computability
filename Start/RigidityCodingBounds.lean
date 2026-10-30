@@ -35,7 +35,7 @@ theorem unary_holds (p : SetCode) (x : Degree) : (unary p).Holds (one x) ↔ p.H
     refine ⟨fun _ => c,fun i => ?_,?_⟩
     · fin_cases i
       exact hc
-    · simpa only [Finset.sup_const,Finset.univ_nonempty,if_pos,unary] using hc.2.1
+    · simpa only [Finset.sup_const,Finset.univ_nonempty,ite_eq_left,unary] using hc.2.1
 
 end TuringRigidity.BoundedDecoding
 

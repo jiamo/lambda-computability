@@ -61,7 +61,7 @@ theorem TyInterp.spec {E : GenEq} {l : ℕ} {Δ : Ctx} {A : Tm} {I : Interp} (h 
     TyR E l Δ A (TyInterp E l Δ A) := by
   have hex : ∃ I, TyR E l Δ A I := ⟨I, h⟩
   unfold TyInterp
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   exact Classical.choose_spec hex
 
 /-! ### Introducing semantic judgements -/

@@ -273,7 +273,7 @@ lemma glows (m:Mode) (b:Bool) (i j:ℕ) (hi:(if pivot m then i else j) < f.raw.m
     have hT:= hf.money.found
     have hs:= hf.lamp; have ht:= (Lamp0.moderate (u := u)) m b
     have hk:= hT.road n (hf.fits n hi)
-    rw [if_neg hv] at hk
+    rw [ite_eq_right hv] at hk
     have hc := hs.veil _ _ ht v.x _ hk _ hz
     let f':= pigment D.r m b e c
     have ho:e ≤ u.n:=Nat.le_of_lt_succ (mem_range.1 (hT.places n hv (hf.fits _ hi)))
@@ -327,9 +327,9 @@ lemma equalityP (i j:ℕ)(hi:i < f.raw.m)(hj:j<f.raw.m):
    let l:=glove p v.x
    apply hs.done0 hp (hx i hi h) (hx j hj h')
    · intro hh
-     change (s.seat l).comp 0 _ _ _ (t,l); rw [show t=1 from if_pos hh]
+     change (s.seat l).comp 0 _ _ _ (t,l); rw [show t=1 from ite_eq_left hh]
      exact Flash.pureQ u.D R hf.lamp.hx hc 1 (Pier.seal1 _ R hc (q:=s.info)) l ⟨p,hp,rfl⟩
-   intro hh; change (s.seat l).comp 0 _ _ _ (t,l); rw [show t=0 from if_neg hh]
+   intro hh; change (s.seat l).comp 0 _ _ _ (t,l); rw [show t=0 from ite_eq_right hh]
    exact blankD (R.pit hf.lamp.hx _) hc _ ⟨p,hp,rfl⟩
 
 end Bindq
@@ -484,7 +484,7 @@ lemma beforeK {i:ℕ}(hi:i ≤ v.i): HistoryC.actual v.v (trackQ f b) i=HistoryC
     | zero=>rfl
     | succ i ih=>
       rw [Run.actual_push,Run.actual_push,ih (by omega),trackQ]
-      dsimp only;rw [if_neg (by omega)]
+      dsimp only;rw [ite_eq_right (by omega)]
 lemma earn0 :HistoryC.actual v.v (trackQ f b) (v.i+1)=b.product :=by
    have ht:= he.knows.money; have hd:= (Lamp0.height0 (v := v)); let v0:=v.v.marathon v.x
    change v0.actual _ _ _=_
@@ -608,12 +608,12 @@ lemma pegged(i:ℕ)(hi:u.smallQ v.bud.dataN i):
     have hW:u.D.swears (post v.bud.dataN v.bud.tagop i 0) v.x (b.answer i):=hz
     let p:=v.bud
     by_cases hh:b.answer i=0
-    · rw [if_pos hh]; apply Flora.abs
+    · rw [ite_eq_left hh]; apply Flora.abs
       have hx:=hp.primal.point0 hp.he.chart i (hp.primal.back0 hi)
       refine ⟨hx,hp.hx,?_⟩
       rw [show u.eye.ear u.torch.p _ _ =_ from hp.primal.ear0 i]
       exact (u.D.identity hW).trans hh
-    rw [if_neg hh]
+    rw [ite_eq_right hh]
     let z:=b.who i; have hv:=he.cap.fell
     obtain ⟨hX,hL,hT,hO⟩:= he.cap.fell.locale hh
     have hr:z<f.raw.m:=mem_range.1 (hv.there hL).1
@@ -622,7 +622,7 @@ lemma pegged(i:ℕ)(hi:u.smallQ v.bud.dataN i):
     apply hp.he.chart.Rope hp.primal i v.x (b.answer i) z v.inc.visN (b.spot i) _ hi (he.costed i) hh
             hp.hx _ _ _ _ (Fabric.Good.n1 hp.he.chart hp.he.good (he.harvest0 i hh).2.2) hW hk
     · unfold Mold.offer; dsimp only
-      rw [Stone.roleR, if_neg (by decide:(4:ℕ)≠ 2),if_pos rfl]
+      rw [Stone.roleR, ite_eq_right (by decide:(4:ℕ)≠ 2),ite_eq_left rfl]
       exact congrArg (fun a=>rope a z) (Stone.pointing ..)
     · exact Stone.zeroR ..
     · rw [← hp.primal.grain]
@@ -632,9 +632,9 @@ lemma pegged(i:ℕ)(hi:u.smallQ v.bud.dataN i):
 omit he in
 lemma plates (i:ℕ)(a):b.valueq i a= Reed.sideq ((readP f b).qpoint i) a:=by
    unfold Broom.valueq Stem.Depot.qpoint; split
-   · next h=> rw [if_neg (show ¬(readP f b).live _ from by change ¬b.answer i≠0; rw [h]; simp)]
+   · next h=> rw [ite_eq_right (show ¬(readP f b).live _ from by change ¬b.answer i≠0; rw [h]; simp)]
               rw [←(bare0)]; rfl
-   next h=> rw [if_pos (show (readP f b).live i from h)]; rfl
+   next h=> rw [ite_eq_left (show (readP f b).live i from h)]; rfl
 
 lemma tucked : v.v.HFine v.p v.i v.x (cookP f b):=by
    have hp:= he.knows

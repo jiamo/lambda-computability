@@ -26,7 +26,7 @@ theorem recursive_bounded_all {Y P} (h : RecursivePred Y P) {b : ℕ → ℕ} (h
   have hbin := allBelow_binary f x (b x)
   by_cases hp : ∀ i < b x, P (Nat.pair x i)
   · have hv : allBelow f x (b x) = 1 := hs.mpr (fun i hi => by simp [f,hp i hi])
-    rw [if_pos hp,hv]
+    rw [ite_eq_left hp,hv]
   · have hn : allBelow f x (b x) ≠ 1 := by
       intro h1
       apply hp
@@ -34,7 +34,7 @@ theorem recursive_bounded_all {Y P} (h : RecursivePred Y P) {b : ℕ → ℕ} (h
       have hx := (hs.mp h1) i hi
       simpa [f] using hx
     have hz : allBelow f x (b x) = 0 := hbin.resolve_right hn
-    rw [if_neg hp,hz]
+    rw [ite_eq_right hp,hz]
 
 def item (t i : ℕ) : ℕ := ((decode (α := List ℕ) t).getD []).getD i 0
 

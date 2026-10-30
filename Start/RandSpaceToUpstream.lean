@@ -171,7 +171,7 @@ theorem rstep_idle {u : FConfig (RPh M.states) 2 1 x.length} {p : RPh M.states} 
 
 theorem rstep_init (hQ : 0 < M.states) (b : Bool) :
     rstep M x b ((rfcompile M).initial x.length) = enc (.run ⟨0, hQ⟩) init := by
-  simp only [rstep, FMachine.step, FMachine.initial, rfcompile, rout, rtrans, hQ, dif_pos, enc,
+  simp only [rstep, FMachine.step, FMachine.initial, rfcompile, rout, rtrans, hQ, dite_eq_left, enc,
     encR, init, FConfig.mk.injEq, true_and]
   refine ⟨?_, ?_, ?_⟩
   · funext j; simp [inPos, Direction.moveInput]
@@ -186,7 +186,7 @@ theorem rstep_init (hQ : 0 < M.states) (b : Bool) :
 theorem rstep_run_acc {q : Fin M.states} {c : Config} {i₀ : Fin (x.length + 2)}
     (hacc : M.accept q = true) (b : Bool) :
     rstep M x b (encR (.run q) c i₀) = encR .acc c i₀ := by
-  rw [rstep_idle (p := .acc) rfl (by simp only [encR, rtrans, hacc, if_true])]
+  rw [rstep_idle (p := .acc) rfl (by simp only [encR, rtrans, hacc, ite_true])]
   rfl
 
 theorem rstep_run_halt {q : Fin M.states} {c : Config} {b : Bool}
@@ -195,7 +195,7 @@ theorem rstep_run_halt {q : Fin M.states} {c : Config} {b : Bool}
     rstep M x b (enc (.run q) c) = enc .rej c := by
   rw [rstep_idle (p := .rej) rfl]
   · rfl
-  · simp only [enc, encR, rtrans, hacc, Bool.false_eq_true, if_false, readInput_inPos hi,
+  · simp only [enc, encR, rtrans, hacc, Bool.false_eq_true, ite_false, readInput_inPos hi,
       workOf_zero, tapeFn_wHead, hd, choose]
 
 theorem rstep_run {q : Fin M.states} {c : Config} {b : Bool}
@@ -206,7 +206,7 @@ theorem rstep_run {q : Fin M.states} {c : Config} {b : Bool}
       encR (.fix ⟨q', hq'⟩) (succCfg x.length c q' bw dI dW)
         ((dirIn dI).moveInput (inPos x.length c.inHead)) := by
   simp only [rstep, FMachine.step, rfcompile, enc, encR, rout, rtrans, hacc, Bool.false_eq_true,
-    if_false, readInput_inPos hi, workOf_zero, workOf_one, tapeFn_wHead, hd, hq', dif_pos,
+    ite_false, readInput_inPos hi, workOf_zero, workOf_one, tapeFn_wHead, hd, hq', dite_eq_left,
     succCfg, FConfig.mk.injEq, true_and]
   refine ⟨?_, ?_⟩
   · funext t
@@ -225,10 +225,10 @@ theorem rstep_fix {q : Fin M.states} {c : Config} {i₀ : Fin (x.length + 2)} (b
     · rfl
     · have : readInput x (inPos x.length c.inHead) ≠ .leftMarker := by
         rw [Ne, readInput_eq_left]; exact inPos_ne_zero _ _
-      simp only [encR, rtrans, this, if_false]
+      simp only [encR, rtrans, this, ite_false]
   · have : readInput x (⟨0, by omega⟩ : Fin (x.length + 2)) = .leftMarker := by
       rw [readInput_eq_left]
-    simp only [rstep, FMachine.step, rfcompile, encR, rout, rtrans, this, if_true, enc,
+    simp only [rstep, FMachine.step, rfcompile, encR, rout, rtrans, this, ite_true, enc,
       FConfig.mk.injEq, true_and]
     refine ⟨?_, ?_, ?_⟩
     · funext j; ext; simp [Direction.moveInput, inPos, h0]

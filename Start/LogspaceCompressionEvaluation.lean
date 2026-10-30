@@ -242,7 +242,7 @@ lemma fareC {s:Scene n} {q:Quest}(h:p=green q) (x:ℕ → ℝ)(he:x 3 = rate q.a
    have hv:p.main=q.main:=by rw [h]
    rw [hv]
    by_cases ht : q.main=true
-   · rw [if_pos ht,if_pos ht,h]
+   · rw [ite_eq_left ht,ite_eq_left ht,h]
      rw [show (green q).king=q.tag from rfl]
      cases hl:q.tag
      · exact Folk.excel s.P q.a q.i none (var 3) (var 0) x he
@@ -251,7 +251,7 @@ lemma fareC {s:Scene n} {q:Quest}(h:p=green q) (x:ℕ → ℝ)(he:x 3 = rate q.a
      change (Folk.climate Folk.az2 (var 0)).meanF x = light _
      rw [Folk.town _ _ _ (by decide),hk]; unfold light; rw [← hk]
      congr 1 ; first|rfl|norm_num [Folk.az2]
-   rw [if_neg ht,if_neg ht,Folk.sweetness,Folk.val2,Folk.val3,Folk.val0,Folk.val0,Folk.outV]
+   rw [ite_eq_right ht,ite_eq_right ht,Folk.sweetness,Folk.val2,Folk.val3,Folk.val0,Folk.val0,Folk.outV]
    unfold prep rising
    rw [←hg]
    change fade _ = _
@@ -790,7 +790,7 @@ lemma seats (b:Bool) (i:ℕ):u.smallQ (e.a.terminal b).visN (v.codeS b i):=by
     have hq := Stem.Cage.Style.park (b:=b) (i:=i) hv
     let t:= ColorF.hoot p v.stageT.wt b k
     have hT: v.codeS b i=Seek.bin k (p.tag k):= hq.2.1.trans
-                                       (congrArg (fun n=>Seek.bin k n) (show Cage.Game e.court p v.stageT b k=p.tag k from if_pos hq.1))
+                                       (congrArg (fun n=>Seek.bin k n) (show Cage.Game e.court p v.stageT b k=p.tag k from ite_eq_left hq.1))
     have hp0 : k < capacity 2 u.w0.p.K (Age.L e.a.m) e.g:=
          lt_of_lt_of_le (hlg.position hv).2.2.1 hlg.hp.under0.card0.le
     exact le_trans (by rw [hT]; exact hh.book.saving.office (Ready.now (e := e)) hp0 (hlg.hp.cert0 _)) hh.book.cost0
@@ -803,12 +803,12 @@ lemma journey {i:ℕ}(hi:u.smallQ e.f i)(b:Bool):
    let a:=v.codeS b i; let j:= Relay.mark a
    have hh:=hlg.readout hi b
    by_cases hp:a=0
-   · rw [if_pos hp]; refine Cone.ConeX.Flora.abs ?_
+   · rw [ite_eq_left hp]; refine Cone.ConeX.Flora.abs ?_
      have ha:=hf.point0 he.manager.chart i (hf.back0 hi)
      refine ⟨ha,hlg.hp.inP,?_⟩
      rw [show u.eye.ear u.torch.p c.visN i=_ from hf.ear0 i]
      exact (u.D.identity hh).trans hp
-   rw [if_neg hp]
+   rw [ite_eq_right hp]
    obtain ⟨ht,hP,hJ,hL,hK⟩:=hlg.position hp
    have hz: True:= trivial
    have hF:= hlg.hp.under0
@@ -821,7 +821,7 @@ lemma journey {i:ℕ}(hi:u.smallQ e.f i)(b:Bool):
    · have hL(z:ℕ)(hh:z=10∨z=11):
              offer u.s.pave u.x (Cone.ConeX.stem (e.a.c z 0) i a)=rope e.own.visN j:=by
          unfold Mold.offer; dsimp only
-         rw [Stone.roleR,if_neg (by omega:z≠2),if_neg (by omega:z≠4),if_neg (by omega:z≠15)]
+         rw [Stone.roleR,ite_eq_right (by omega:z≠2),ite_eq_right (by omega:z≠4),ite_eq_right (by omega:z≠15)]
          have he:tailR (uphold (e.a.c z 0))=e.own.visN:=by
                 unfold tailR uphold Fabric.c rowL clr; rw [Wire.eq];rfl
          rw [he]
@@ -843,7 +843,7 @@ lemma synced {y:ℕ}(hg:x∈e.a.S0)(he:y∈e.a.S1)(b:Bool):
       exact v0.T.support _
    have ha:=hp.under0; have hd:=hp.ready0
    have hS:= ha.y0.set e.a (Ready.now (e := e)) hl.tested hT (Kind.highp _) hC (show y∈(e.a.marathon x).S from he)
-   unfold Fabric.aimE At.Grid.pre; rw [if_pos (show x∈e.a.grid.src ∧ y∈e.a.grid.dst∧ (false=false ∨ y∈e.a.grid.narrow) from ⟨hg,he,Or.inl rfl⟩)]
+   unfold Fabric.aimE At.Grid.pre; rw [ite_eq_left (show x∈e.a.grid.src ∧ y∈e.a.grid.dst∧ (false=false ∨ y∈e.a.grid.narrow) from ⟨hg,he,Or.inl rfl⟩)]
    rw [show v.p.y= _ from ha.ton,show v.p.S=e.a.S1 from ha.dst]
    change ((e.a.marathon x).mid _).val _ _ _ _=_
    have hc: (e.a.frame.L) =e.g+1:= (Ready.now (e := e)).symm
@@ -853,9 +853,9 @@ lemma upcoming(b:Bool)(i:ℕ):
      v.chargeE b i=Cage.spice e.court v.p i e.a.trio b v.stageT:=by
     unfold chargeE Cage.spice
     by_cases ht:v.codeS b i=0
-    · rw [if_pos ht]; exact (if_pos ht).symm
-    rw [if_neg ht]; refine (hlg.synced (hlg.position ht).2.2.2.1 (hlg.position ht).2.2.2.2 b).trans ?_
-    exact (if_neg ht).symm
+    · rw [ite_eq_left ht]; exact (ite_eq_left ht).symm
+    rw [ite_eq_right ht]; refine (hlg.synced (hlg.position ht).2.2.2.1 (hlg.position ht).2.2.2.2 b).trans ?_
+    exact (ite_eq_right ht).symm
 
 lemma secure0 {b:Bool} {i:ℕ}(ht:u.smallQ e.f i):
    u.D.Voice e.f x (hole (Fabric.heated b) i) (u.D.high e.f) (Fabric.Tscale e.p b) (v.chargeE b i):=by
@@ -955,14 +955,14 @@ lemma sealed0 (h:e.Ready)(f:stageX (e:=e))(hc:∀ x,∀ h:x∈u.D.P,(f x h).Lens
         split at he <;> first | assumption | contradiction
    have hz(x i)(he:x∈u.D.P)(b):
          (p b).tag x i=(f x he).codeS b i ∧ (p b).locate x i=(f x he).plex b i:=
-             ⟨dif_pos he,dif_pos he⟩
+             ⟨dite_eq_left he,dite_eq_left he⟩
    have hh{b x i}(hi:x∈u.D.P) :
        (p b).scoreF (e.a.aimE b) x i=(f x hi).chargeE b i:=by
      unfold Producer.scoreF Producer.awake; obtain ⟨ht,hq⟩:=hz x i hi b
 
      by_cases he:(p b).tag x i=0
-     · rw [if_neg (not_not_intro he)]; apply Eq.symm (if_pos _); rwa [←ht]
-     rw [if_pos he,hq]; exact (if_neg (fun h=>he (ht.trans h))).symm
+     · rw [ite_eq_right (not_not_intro he)]; apply Eq.symm (ite_eq_left _); rwa [←ht]
+     rw [ite_eq_left he,hq]; exact (ite_eq_right (fun h=>he (ht.trans h))).symm
    have hw:= h.manager
    constructor
    · intro b

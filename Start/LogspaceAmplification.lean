@@ -279,14 +279,14 @@ def splitBits (T : ℕ) : (Fin (2 * T) → Bool) ≃ (Fin T → Bool) × (Fin T 
   left_inv bits := by
     funext j
     by_cases hj : j.val % 2 = 0
-    · simp only [hj, if_true]; exact congrArg _ (Fin.ext (by simp only; omega))
-    · simp only [hj, if_false]; exact congrArg _ (Fin.ext (by simp only; omega))
+    · simp only [hj, ite_true]; exact congrArg _ (Fin.ext (by simp only; omega))
+    · simp only [hj, ite_false]; exact congrArg _ (Fin.ext (by simp only; omega))
   right_inv p := by
     refine Prod.ext (funext fun i => ?_) (funext fun i => ?_)
     · simp only
-      rw [if_pos (by omega)]; exact congrArg _ (Fin.ext (by simp only; omega))
+      rw [ite_eq_left (by omega)]; exact congrArg _ (Fin.ext (by simp only; omega))
     · simp only
-      rw [if_neg (by omega)]; exact congrArg _ (Fin.ext (by simp only; omega))
+      rw [ite_eq_right (by omega)]; exact congrArg _ (Fin.ext (by simp only; omega))
 
 theorem run_evenCoins_extend {x : Word} {T : ℕ} (bits : Fin (2 * T) → Bool) :
     M.run x (evenCoins (extendCoins bits)) T = M.run x (extendCoins (splitBits T bits).1) T := by

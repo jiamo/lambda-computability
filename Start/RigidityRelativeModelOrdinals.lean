@@ -6,7 +6,6 @@ file `lean/OAI/Computability/DegreeRigidity/Constructibility/RelativeModelOrdina
 paper "Rigidity of the Turing degrees".
 Adapted to this library's Lean v4.33.0 / Mathlib `v4.33.0` pin: the `OAI` namespace was dropped,
 imports were renamed to `Start.Rigidity*`, and proofs were repaired where the pin required it.
-Proof change: the case of `Ordinal.lt_wf.induction` is named `h` on this pin (upstream: `ind`).
 See `NOTICE` at the repository root.
 -/
 
@@ -16,7 +15,7 @@ universe u
 
 theorem level_rank_lower_bound (R : ZFSet.{u}) (o : Ordinal.{u}) : o ≤ (level R o).rank := by
   induction o using Ordinal.lt_wf.induction with
-  | h o ih =>
+  | ind o ih =>
     by_contra h
     have hlt : (level R o).rank < o := lt_of_not_ge h
     have hmem := level_mem_level R hlt

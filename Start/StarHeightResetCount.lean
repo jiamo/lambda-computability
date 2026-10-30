@@ -98,7 +98,7 @@ theorem rstate_eq_iff (q q' : Q) (v : List α) :
   | append_singleton v b ih =>
       rw [rstate_snoc]
       by_cases hb : K b
-      · rw [if_pos hb, ih]
+      · rw [ite_eq_left hb, ih]
         constructor
         · rintro (⟨h1, h2⟩ | ⟨x, y, z, rfl, hy, hρ, hz⟩)
           · left
@@ -122,7 +122,7 @@ theorem rstate_eq_iff (q q' : Q) (v : List α) :
                 (show v ++ [b] = (x ++ y :: z') ++ [c] by rw [heq]; simp) rfl
               simp only [List.cons.injEq, and_true] at h
               exact ⟨x, y, z', h.1, hy, hρ, fun d hd => hz d (by simp [hd])⟩
-      · rw [if_neg hb]
+      · rw [ite_eq_right hb]
         constructor
         · intro h
           exact .inr ⟨v, b, [], rfl, hb, h, by simp⟩
@@ -160,8 +160,8 @@ theorem stateIs_eq (q q' : Q) :
   rw [rstate_eq_iff, Language.mem_add]
   apply or_congr
   · by_cases h : q = q'
-    · simp only [h, if_true, true_and]; rfl
-    · simp only [h, if_false, false_and]
+    · simp only [h, ite_true, true_and]; rfl
+    · simp only [h, ite_false, false_and]
       exact iff_of_false id (Language.notMem_zero v)
   · constructor
     · rintro ⟨x, y, z, rfl, hy, hρ, hz⟩

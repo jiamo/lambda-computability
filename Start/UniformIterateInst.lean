@@ -127,13 +127,13 @@ theorem stateC_sreg_zero (x : Word) (n i : ℕ) (hi : i < n + 2) :
   rw [stateC, iterC_zero, sregD, topVals, hlen, Nat.sub_self, List.drop_zero,
     vals_layer_getD x (sregBaseT n) (n + 2) i hi, lval, sregBaseT, sregSpec]
   by_cases hin : i < n
-  · rw [if_pos hin, if_pos (by omega), if_pos (by omega), Nat.zero_add]
+  · rw [ite_eq_left hin, ite_eq_left (by omega), ite_eq_left (by omega), Nat.zero_add]
     rfl
-  · rw [if_neg hin]
+  · rw [ite_eq_right hin]
     by_cases hi' : i ≤ n
-    · rw [if_pos hi', if_neg (by omega)]
+    · rw [ite_eq_left hi', ite_eq_right (by omega)]
       rfl
-    · rw [if_neg hi', sregOr_zero]
+    · rw [ite_eq_right hi', sregOr_zero]
       rfl
 
 theorem stateC_sreg_succ (x : Word) (n t : ℕ) (ht : t < n)
@@ -154,44 +154,44 @@ theorem stateC_sreg_succ (x : Word) (n t : ℕ) (ht : t < n)
   rcases Nat.lt_or_ge i n with hin | hin
   · -- the register shifts down
     have hc : sregT n (2 + i) = .inp (i + 1) := by
-      rw [sregT, if_neg (by omega), if_neg (by omega), if_pos (by omega)]
+      rw [sregT, ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_left (by omega)]
       congr 1
       omega
     rw [hc]
     change s.getD (i + 1) false = _
     rw [ih (i + 1) (by omega)]
     have harg : t + (i + 1) = t + 1 + i := by omega
-    rw [sregSpec, sregSpec, if_pos (show i + 1 ≤ n by omega), if_pos (show i ≤ n by omega), harg]
+    rw [sregSpec, sregSpec, ite_eq_left (show i + 1 ≤ n by omega), ite_eq_left (show i ≤ n by omega), harg]
   · rcases Nat.lt_or_ge i (n + 1) with hin1 | hin1
     · -- the register is refilled with `false`
       have hc : sregT n (2 + i) = .cst false := by
-        rw [sregT, if_neg (show ¬ (2 + i = 0) by omega), if_neg (show ¬ (2 + i = 1) by omega),
-          if_neg (show ¬ (2 + i ≤ n + 1) by omega), if_pos (show 2 + i = n + 2 by omega)]
-      rw [hc, sregSpec, if_pos (show i ≤ n by omega),
-        if_neg (show ¬ (t + 1 + i < n) by omega)]
+        rw [sregT, ite_eq_right (show ¬ (2 + i = 0) by omega), ite_eq_right (show ¬ (2 + i = 1) by omega),
+          ite_eq_right (show ¬ (2 + i ≤ n + 1) by omega), ite_eq_left (show 2 + i = n + 2 by omega)]
+      rw [hc, sregSpec, ite_eq_left (show i ≤ n by omega),
+        ite_eq_right (show ¬ (t + 1 + i < n) by omega)]
       rfl
     · -- the accumulator
       have hieq : i = n + 1 := by omega
       subst hieq
       have hc : sregT n (2 + (n + 1)) = .disj 0 1 := by
-        rw [sregT, if_neg (by omega), if_neg (by omega), if_neg (by omega), if_neg (by omega)]
+        rw [sregT, ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega)]
       rw [hc]
       have h0 : (vals s (layer (sregT n) (2 + (n + 1)))).getD 0 false = lval s (sregT n) 0 :=
         vals_layer_getD s (sregT n) (2 + (n + 1)) 0 (by omega)
       have h1 : (vals s (layer (sregT n) (2 + (n + 1)))).getD 1 false = lval s (sregT n) 1 :=
         vals_layer_getD s (sregT n) (2 + (n + 1)) 1 (by omega)
       have hg0 : lval s (sregT n) 0 = s.getD (n + 1) false := by
-        rw [lval, sregT, if_pos rfl]
+        rw [lval, sregT, ite_eq_left rfl]
         rfl
       have hg1 : lval s (sregT n) 1 = s.getD 0 false := by
-        rw [lval, sregT, if_neg (by omega), if_pos rfl]
+        rw [lval, sregT, ite_eq_right (by omega), ite_eq_left rfl]
         rfl
       have e1 : sregSpec x n t (n + 1) = sregOr x t := by
-        rw [sregSpec, if_neg (show ¬ (n + 1 ≤ n) by omega)]
+        rw [sregSpec, ite_eq_right (show ¬ (n + 1 ≤ n) by omega)]
       have e2 : sregSpec x n t 0 = sregBit x t := by
-        rw [sregSpec, if_pos (show 0 ≤ n by omega), if_pos (show t + 0 < n by omega), Nat.add_zero]
+        rw [sregSpec, ite_eq_left (show 0 ≤ n by omega), ite_eq_left (show t + 0 < n by omega), Nat.add_zero]
       have e3 : sregSpec x n (t + 1) (n + 1) = sregOr x (t + 1) := by
-        rw [sregSpec, if_neg (show ¬ (n + 1 ≤ n) by omega)]
+        rw [sregSpec, ite_eq_right (show ¬ (n + 1 ≤ n) by omega)]
       change ((vals s (layer (sregT n) (2 + (n + 1)))).getD 0 false ||
         (vals s (layer (sregT n) (2 + (n + 1)))).getD 1 false) = _
       rw [h0, h1, hg0, hg1, ih (n + 1) (by omega), ih 0 (by omega), e1, e2, e3, sregOr_succ]
@@ -212,7 +212,7 @@ theorem out_sregC (x : Word) (n : ℕ) : out x (sregC n) = sregOr x n := by
   rw [sregC, out_iterC_state (by omega) (by simp) x n]
   have h := stateC_sreg x n n (le_refl n) (n + 1) (by omega)
   have hi : n + 2 - 1 = n + 1 := by omega
-  rw [hi, h, sregSpec, if_neg (by omega)]
+  rw [hi, h, sregSpec, ite_eq_right (by omega)]
 
 theorem sregC_ne_nil (n : ℕ) : sregC n ≠ [] := by
   intro h
@@ -257,7 +257,7 @@ theorem eval_sregBlk (n : ℕ) (y : Word) (c : ℕ) :
   · rw [sregBlk]
     simp only [Cob.eval_comp, List.map_cons, List.map_nil, Cob.eval_iteC, Cob.eval_proj,
       List.getD_cons_succ, List.getD_cons_zero, List.replicate_zero]
-    have hg : sregT n 0 = Gate.inp (n + 1) := by rw [sregT, if_pos rfl]
+    have hg : sregT n 0 = Gate.inp (n + 1) := by rw [sregT, ite_eq_left rfl]
     rw [hg]
     refine eval_tokTerm (Gate.inp (n + 1)) ?_ ?_
     · simp [fld1, List.replicate_succ]
@@ -273,10 +273,10 @@ theorem eval_sregBlk (n : ℕ) (y : Word) (c : ℕ) :
       subst hc
       rw [sregBlk]
       simp only [Cob.eval_comp, List.map_cons, List.map_nil, Cob.eval_iteC, Cob.eval_proj,
-        Cob.eval_tail, List.getD_cons_succ, List.getD_cons_zero, if_neg hcne,
+        Cob.eval_tail, List.getD_cons_succ, List.getD_cons_zero, ite_eq_right hcne,
         List.tail_replicate]
       have hg : sregT n 1 = Gate.inp 0 := by
-        rw [sregT, if_neg (by omega), if_pos rfl]
+        rw [sregT, ite_eq_right (by omega), ite_eq_left rfl]
       rw [hg]
       exact eval_tokTerm (Gate.inp 0) (by simp [fld1]) (by simp [fld2])
     · -- c ≥ 2
@@ -288,15 +288,15 @@ theorem eval_sregBlk (n : ℕ) (y : Word) (c : ℕ) :
       rw [sregBlk]
       simp only [Cob.eval_comp, List.map_cons, List.map_nil, Cob.eval_iteC, Cob.eval_proj,
         Cob.eval_tail, Cob.eval_dropU, Cob.eval_app, List.getD_cons_succ, List.getD_cons_zero,
-        if_neg hcne, if_neg htne, List.length_cons, List.length_replicate, List.drop_replicate,
+        ite_eq_right hcne, ite_eq_right htne, List.length_cons, List.length_replicate, List.drop_replicate,
         List.tail_replicate]
       by_cases hle : c ≤ n + 1
       · have hdrop : List.replicate (c - (n + 1)) true = [] := by
           rw [show c - (n + 1) = 0 by omega]
           rfl
-        rw [hdrop, if_pos rfl]
+        rw [hdrop, ite_eq_left rfl]
         have hg : sregT n c = Gate.inp (c - 1) := by
-          rw [sregT, if_neg (by omega), if_neg (by omega), if_pos hle]
+          rw [sregT, ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_left hle]
         rw [hg]
         refine eval_tokTerm (Gate.inp (c - 1)) ?_ ?_
         · simp [fld1]
@@ -306,15 +306,15 @@ theorem eval_sregBlk (n : ℕ) (y : Word) (c : ℕ) :
           have := congrArg List.length h
           simp only [List.length_replicate, List.length_nil] at this
           omega
-        rw [if_neg hdrop]
+        rw [ite_eq_right hdrop]
         by_cases hle2 : c ≤ n + 2
         · have hc : c = n + 2 := by omega
           have hdrop2 : List.replicate (c - (n + 1 + 1)) true = [] := by
             rw [show c - (n + 1 + 1) = 0 by omega]
             rfl
-          rw [hdrop2, if_pos rfl]
+          rw [hdrop2, ite_eq_left rfl]
           have hg : sregT n c = Gate.cst false := by
-            rw [sregT, if_neg (by omega), if_neg (by omega), if_neg (by omega), if_pos hc]
+            rw [sregT, ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_left hc]
           rw [hg]
           exact eval_tokTerm (Gate.cst false) (by simp [fld1]) (by simp [fld2])
         · have hdrop2 : List.replicate (c - (n + 1 + 1)) true ≠ [] := by
@@ -322,9 +322,9 @@ theorem eval_sregBlk (n : ℕ) (y : Word) (c : ℕ) :
             have := congrArg List.length h
             simp only [List.length_replicate, List.length_nil] at this
             omega
-          rw [if_neg hdrop2]
+          rw [ite_eq_right hdrop2]
           have hg : sregT n c = Gate.disj 0 1 := by
-            rw [sregT, if_neg (by omega), if_neg (by omega), if_neg (by omega), if_neg (by omega)]
+            rw [sregT, ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega)]
           rw [hg]
           refine eval_tokTerm (Gate.disj 0 1) (by simp [fld1]) ?_
           simp [fld2, List.replicate_succ]
@@ -354,8 +354,8 @@ theorem eval_sregBaseBlk (n : ℕ) (y : Word) (c : ℕ) :
       have := congrArg List.length h
       simp only [List.length_replicate, List.length_nil] at this
       omega
-    rw [if_neg hne]
-    have hg : sregBaseT n c = Gate.inp (2 * c + 1) := by rw [sregBaseT, if_pos hc]
+    rw [ite_eq_right hne]
+    have hg : sregBaseT n c = Gate.inp (2 * c + 1) := by rw [sregBaseT, ite_eq_left hc]
     rw [hg]
     refine eval_tokTerm (Gate.inp (2 * c + 1)) ?_ ?_
     · refine eval_linT (i := c) (by simp) ?_
@@ -365,8 +365,8 @@ theorem eval_sregBaseBlk (n : ℕ) (y : Word) (c : ℕ) :
   · have hnil : List.replicate (n - c) true = [] := by
       rw [show n - c = 0 by omega]
       rfl
-    rw [hnil, if_pos rfl]
-    have hg : sregBaseT n c = Gate.cst false := by rw [sregBaseT, if_neg hc]
+    rw [hnil, ite_eq_left rfl]
+    have hg : sregBaseT n c = Gate.cst false := by rw [sregBaseT, ite_eq_right hc]
     rw [hg]
     exact eval_tokTerm (Gate.cst false) (by simp [fld1]) (by simp [fld2])
 

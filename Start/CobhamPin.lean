@@ -79,7 +79,7 @@ theorem length_blkWord (d : ℕ) (b : Bool) : (blkWord d b).length ≤ 8 * d + 1
   cases b <;>
     simp only [blkWord, encClause, encLit, List.length_append, List.length_cons,
       List.length_nil, List.length_flatMap, List.length_replicate, List.map_cons, List.map_nil,
-      List.sum_cons, List.sum_nil, if_true, if_false, Bool.false_eq_true] <;>
+      List.sum_cons, List.sum_nil, ite_true, ite_false, Bool.false_eq_true] <;>
     omega
 
 theorem length_pinEnc : ∀ (s : Word) (d : ℕ),
@@ -200,9 +200,9 @@ theorem eval_pinRec (x : Word) : ∀ (s : Word) (d : ℕ), d + s.length = x.leng
         nlinarith [Nat.zero_le x.length]
       rw [pinRec, Cob.eval_bRec_cons, ← pinRec, hrec]
       cases b
-      · simp only [Bool.false_eq_true, if_false, hstep false]
+      · simp only [Bool.false_eq_true, ite_false, hstep false]
         rw [← pinEnc, List.take_of_length_le hlen]
-      · simp only [if_true, hstep true]
+      · simp only [ite_true, hstep true]
         rw [← pinEnc, List.take_of_length_le hlen]
 
 /-- **The Cobham term writing the pinning clauses.** -/

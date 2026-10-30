@@ -206,16 +206,16 @@ lemma picks (hu:p.Suite u)(hx:x∈p.P)(hc:2 ≤ c)(a n:ℕ){g:Cog}
     (hg:(p.chord u x q).rite c g a)(hp:StampX q n p u c) :
     (p.chord u x q).rite c (chose g n) (win a n):=by
     apply Seats.steer hg
-    · intro h; unfold win; rw [if_pos h]; exact Seats.blankD (hu.pit hx q) hc
-    intro h; unfold win; rw [if_neg h]; exact pureQ p hu hx hc _ hp
+    · intro h; unfold win; rw [ite_eq_left h]; exact Seats.blankD (hu.pit hx q) hc
+    intro h; unfold win; rw [ite_eq_right h]; exact pureQ p hu hx hc _ hp
 
 abbrev demand (g w:Cog):Cog:=Cargo.choose g Cargo.knock w
 lemma wanted (hu:p.Suite u)(hx:x∈p.P)(hc:2 ≤ c)(a n:ℕ){g w:Cog}
     (hg:(p.chord u x q).rite c g a)(hw:a≠0→(p.chord u x q).rite c w n) :
     (p.chord u x q).rite c (demand g w) (win a n):=by
     apply Seats.steer hg
-    · intro h; unfold win; rw [if_pos h]; exact Seats.blankD (hu.pit hx q) hc
-    intro h; unfold win; rw [if_neg h]; exact hw h
+    · intro h; unfold win; rw [ite_eq_left h]; exact Seats.blankD (hu.pit hx q) hc
+    intro h; unfold win; rw [ite_eq_right h]; exact hw h
 lemma win_stamped (hu:p.Suite u)(hc:2 ≤ c)(a n:ℕ)(he:StampX q n p u c):
      StampX q (win a n) p u c:= by unfold win; split; exact seal0 p hu hc; exact he
 lemma brilliant(p b:Bool) : win (enc p) (enc b)=enc (p&&b):=by cases p <;> cases b <;> rfl
@@ -288,7 +288,7 @@ lemma morning (h:g.Crest p u q c x i)(he:i≠0){t:ℕ}(hc:g.hue.f p.x q=t)
     (hp:(p.chord u y q).rite c g.loyal z):
     (p.chord u x q).rite c (g.garden p.s) (win z i):=by
    apply Iris.rosary h.upper0 h.safe
-   rw [if_neg he]
+   rw [ite_eq_right he]
    apply cups h.east h.tall ht ?_ hz _ (win_stamped p h.east h.tall z i h.nice)
           (picks p h.east (street ht hz).xem h.tall z i hp h.nice)
    exact congrArg (fun m=> (m,i-1)) hc

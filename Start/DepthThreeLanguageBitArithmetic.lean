@@ -55,7 +55,7 @@ theorem wordPoly_cancelStep_mod {r m : ℕ} (p : BitWord r)
   by_cases hk : r ≤ k ∧ k < m
   · by_cases ha : a ⟨k, hk.2⟩ = true
     · have hs : k - r + r < m := by omega
-      simp only [cancelStep, dif_pos hk, if_pos ha, wordFreeze_eq,
+      simp only [cancelStep, dite_eq_left hk, ite_eq_left ha, wordFreeze_eq,
         wordPoly_xor, wordPoly_shiftModulus p (k - r) hs,
         Polynomial.add_modByMonic,
         Polynomial.mul_self_modByMonic (inputPolynomialBits_monic p), add_zero]

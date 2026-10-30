@@ -57,7 +57,7 @@ theorem levinStage_sound {run : ℕ → ℕ → Option α} {V : α → Bool} {b 
   · rw [hrun] at hfp; simp at hfp
   · rw [hrun] at hfp
     by_cases hV : V a'
-    · simp only [Option.bind_some, hV, if_pos] at hfp
+    · simp only [Option.bind_some, hV, ite_eq_left] at hfp
       cases hfp
       exact ⟨hV, p, by omega, hrun⟩
     · simp [hV] at hfp

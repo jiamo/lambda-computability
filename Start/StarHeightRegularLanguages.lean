@@ -194,9 +194,9 @@ lemma eval_isSome (v : ZMod p → Alphabet) (w : List Alphabet) (q : ZMod p) :
     rw [DFA.evalFrom_cons]
     change ((matcher v).evalFrom (if a=v q then some (q+1) else none) w).isSome ↔ _
     by_cases h : a=v q
-    · rw [if_pos h,ih]
+    · rw [ite_eq_left h,ih]
       simp only [Fits,h,true_and]
-    · rw [if_neg h,eval_none]
+    · rw [ite_eq_right h,eval_none]
       simp only [Option.isSome_none,Bool.false_eq_true,Fits,h,false_and]
 
 lemma fits_iff (v : ZMod p → Alphabet) (w : List Alphabet) (q : ZMod p) :
@@ -257,18 +257,18 @@ noncomputable def splice (f : ℤ → Alphabet) (N : ℤ) (x y : List Alphabet) 
     y[(z-N).toNat]'(by omega) else f (z-((y.length:ℤ)-x.length))
 
 lemma splice_left (f : ℤ → Alphabet) (N : ℤ) (x y : List Alphabet) {z : ℤ} (hz : z<N) :
-    splice f N x y z=f z := by simp only [splice,dif_pos hz]
+    splice f N x y z=f z := by simp only [splice,dite_eq_left hz]
 
 lemma splice_right (f : ℤ → Alphabet) (N : ℤ) (x y : List Alphabet) {z : ℤ}
     (hz : N+y.length≤z) : splice f N x y z=f (z-((y.length:ℤ)-x.length)) := by
   have hy : (0:ℤ)≤y.length := Int.natCast_nonneg _
-  simp only [splice,dif_neg (show ¬z<N by omega),dif_neg (show ¬z<N+y.length by omega)]
+  simp only [splice,dite_eq_right (show ¬z<N by omega),dite_eq_right (show ¬z<N+y.length by omega)]
 
 lemma splice_middle (f : ℤ → Alphabet) (N : ℤ) (x y : List Alphabet) :
     Realizes y N (splice f N x y) := by
   intro i
-  rw [splice,dif_neg (show ¬N+(i.val:ℤ)<N by omega),
-    dif_pos (show N+(i.val:ℤ)<N+y.length by omega)]
+  rw [splice,dite_eq_right (show ¬N+(i.val:ℤ)<N by omega),
+    dite_eq_left (show N+(i.val:ℤ)<N+y.length by omega)]
   simp only [add_sub_cancel_left,Int.toNat_natCast]
 
 lemma splice_realizes {f : ℤ → Alphabet} {a b x : List Alphabet}

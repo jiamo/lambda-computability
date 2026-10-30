@@ -145,30 +145,30 @@ lemma fState_snoc (i : Fin 12) (u : W3) (a : Fin 3) :
   unfold splitStep
   by_cases h0 : dsum step3 ((split u).2 ++ [a]) = 0
   · have hs0 : dsum step3 (split u).2 + step3 a = 0 := by rw [← hs]; exact h0
-    simp only [if_pos h0]
+    simp only [ite_eq_left h0]
     by_cases hall : ∀ e ∈ (split u).1, cls (comp e) = i.succ
-    · simp only [if_pos hall, fStep, if_pos hs0, ← comp_snoc]
+    · simp only [ite_eq_left hall, fStep, ite_eq_left hs0, ← comp_snoc]
       by_cases hc : cls (comp ((split u).2 ++ [a])) = i.succ
-      · rw [if_pos hc, if_pos]
+      · rw [ite_eq_left hc, ite_eq_left]
         · rfl
         · intro e he
           simp only [List.mem_append, List.mem_singleton] at he
           rcases he with he | rfl
           · exact hall e he
           · exact hc
-      · rw [if_neg hc, if_neg]
+      · rw [ite_eq_right hc, ite_eq_right]
         intro h
         exact hc (h _ (by simp))
-    · rw [if_neg hall, if_neg]
+    · rw [ite_eq_right hall, ite_eq_right]
       · rfl
       · intro h
         exact hall fun e he => h e (List.mem_append_left _ he)
   · have hs0 : ¬ (dsum step3 (split u).2 + step3 a = 0) := by rw [← hs]; exact h0
-    simp only [if_neg h0]
+    simp only [ite_eq_right h0]
     by_cases hall : ∀ e ∈ (split u).1, cls (comp e) = i.succ
-    · simp only [if_pos hall, fStep, if_neg hs0]
+    · simp only [ite_eq_left hall, fStep, ite_eq_right hs0]
       rw [hs, comp_snoc]
-    · simp only [if_neg hall]
+    · simp only [ite_eq_right hall]
       rfl
 
 lemma fState_eq_foldl (i : Fin 12) (u : W3) : fState i u = u.foldl (fStep i) (some (0, [])) := by
@@ -187,19 +187,19 @@ lemma mem_kstar_Fcls_iff (i : Fin 12) (u : W3) :
     rw [hsp]
     dsimp only
     have hall : ∀ e ∈ es, cls (comp e) = i.succ := fun e he => (hes e he).2
-    rw [if_pos hall]
+    rw [ite_eq_left hall]
     simp [fAcc, dsum]
   · intro h
     unfold fState at h
     by_cases hall : ∀ e ∈ (split u).1, cls (comp e) = i.succ
-    · rw [if_pos hall] at h
+    · rw [ite_eq_left hall] at h
       simp only [fAcc, decide_eq_true_eq] at h
       have ht := NoRet_eq_nil (split_spec u).2.2 h
       refine ⟨(split u).1, ?_, fun e he => ⟨(split_spec u).2.1 e he, hall e he⟩⟩
       have := (split_spec u).1
       rw [ht, List.append_nil] at this
       exact this.symm
-    · rw [if_neg hall] at h
+    · rw [ite_eq_right hall] at h
       exact absurd h (by simp [fAcc])
 
 /-- **The twelve strictly locally testable descriptions.** -/

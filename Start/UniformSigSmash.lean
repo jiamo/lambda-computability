@@ -107,7 +107,7 @@ theorem getD_vals_smashGrid (X : Word) (M : ℕ) :
   | zero =>
       intro _ z hz
       have hz' : z < 4 * M := by omega
-      rw [if_pos hz']
+      rw [ite_eq_left hz']
       have hnil : CircCode.layer (fun c => smashG M (c / (2 * M + 1)) (c % (2 * M + 1))) 0 = [] :=
         rfl
       rw [hnil, List.nil_append]
@@ -123,7 +123,7 @@ theorem getD_vals_smashGrid (X : Word) (M : ℕ) :
       · rw [heq, vals_cons_getD_lt X _ _ (by omega)]
         exact ih (by omega) z hz1
       · have hzeq : z = C.length := by omega
-        rw [heq, hzeq, vals_cons_getD_length, if_neg (by omega), show C.length - 4 * M = k by omega]
+        rw [heq, hzeq, vals_cons_getD_length, ite_eq_right (by omega), show C.length - 4 * M = k by omega]
         have hIH := ih (by omega)
         have hWpos : 0 < W := by omega
         have hjW : k % W < W := Nat.mod_lt _ hWpos
@@ -148,8 +148,8 @@ theorem getD_vals_smashGrid (X : Word) (M : ℕ) :
           have hdivle : ccOf M i / ((j + 1) / 2) ≤ ccOf M i := Nat.div_le_self _ _
           have hr : (j - 1) / 2 < 4 * M := by omega
           have hs : 2 * M + ccOf M i / ((j + 1) / 2) < 4 * M := by omega
-          rw [gateVal, hIH _ (by omega), hIH _ (by omega), if_pos hr, if_pos hs,
-            gridSpec, if_neg h0, if_pos hodd]
+          rw [gateVal, hIH _ (by omega), hIH _ (by omega), ite_eq_left hr, ite_eq_left hs,
+            gridSpec, ite_eq_right h0, ite_eq_left hodd]
         · -- an even column continues the chain of disjunctions
           have hj2 : 2 ≤ j := by omega
           have hr1 : 4 * M + W * i + (j - 2) = 4 * M + (k - 2) := by omega
@@ -164,8 +164,8 @@ theorem getD_vals_smashGrid (X : Word) (M : ℕ) :
             rw [hval]
             exact ⟨by rw [Nat.mul_add_div hWpos, Nat.div_eq_of_lt (by omega), Nat.add_zero],
               by rw [Nat.mul_add_mod, Nat.mod_eq_of_lt (by omega)]⟩
-          rw [gateVal, hr1, hr2, hIH _ (by omega), hIH _ (by omega), if_neg (by omega),
-            if_neg (by omega), hd1.1, hd1.2, hd2.1, hd2.2]
+          rw [gateVal, hr1, hr2, hIH _ (by omega), hIH _ (by omega), ite_eq_right (by omega),
+            ite_eq_right (by omega), hd1.1, hd1.2, hd2.1, hd2.2]
           set a : ℕ := j / 2 with ha
           have hja : j = 2 * a := by omega
           have ha1 : 1 ≤ a := by omega
@@ -180,10 +180,10 @@ theorem getD_vals_smashGrid (X : Word) (M : ℕ) :
               omega
           have hg2 : gridSpec X M i (j - 1)
               = (X.getD (a - 1) false && X.getD (2 * M + ccOf M i / a) false) := by
-            rw [gridSpec, if_neg (by omega), if_pos (by omega),
+            rw [gridSpec, ite_eq_right (by omega), ite_eq_left (by omega),
               show (j - 1 - 1) / 2 = a - 1 by omega, show (j - 1 + 1) / 2 = a by omega]
           have hg3 : gridSpec X M i j = sigOr X M i a := by
-            rw [gridSpec, if_neg h0, if_neg hodd]
+            rw [gridSpec, ite_eq_right h0, ite_eq_right hodd]
           have hrec : sigOr X M i a
               = (sigOr X M i (a - 1) || (X.getD (a - 1) false
                   && X.getD (2 * M + ccOf M i / a) false)) := by
@@ -303,7 +303,7 @@ theorem topVals_smashC_of (M : ℕ) (X : Word) (lx ly : ℕ) (hx : lx ≤ M)
     have hcc : ccOf M c < M := by
       rw [ccOf]; split_ifs with h <;> omega
     rw [hG, smashGrid]
-    rw [hgrid, if_neg (by omega), hdiv, hmod, gridSpec, if_neg (by omega), if_neg (by omega),
+    rw [hgrid, ite_eq_right (by omega), hdiv, hmod, gridSpec, ite_eq_right (by omega), ite_eq_right (by omega),
       show 2 * M / 2 = M by omega]
     exact sigOr_eq_decide X M c lx ly hx hcc hp hq
   have hmapeq : (List.range (2 * M)).map (fun c => (vals X G).getD (4 * M + W * c + 2 * M) false)
@@ -317,10 +317,10 @@ theorem topVals_smashC_of (M : ℕ) (X : Word) (lx ly : ℕ) (hx : lx ≤ M)
   rcases Nat.lt_or_ge j M with hlt | hge
   · rw [List.getElem_append_left (by simpa using hlt)]
     simp only [List.getElem_map, List.getElem_range, List.length_replicate]
-    rw [ccOf, if_pos hlt]
+    rw [ccOf, ite_eq_left hlt]
   · rw [List.getElem_append_right (by simpa using hge)]
     simp only [List.getElem_map, List.getElem_range, List.length_map, List.length_range]
-    rw [ccOf, if_neg (by omega)]
+    rw [ccOf, ite_eq_right (by omega)]
     exact (getD_replicate_true _ _).symm
 
 /-- **The topmost `2 * m` gates of a smash stage carry the signal of the value**, on the word
@@ -514,8 +514,8 @@ theorem eval_smCcT (hm : ∀ x : Word, mT.eval [x] = List.replicate (m x.length)
       List.drop_replicate]
   rw [smCcT, eval_iteT_eval, hcond, Tseitin.ccOf]
   by_cases h : i < m n
-  · rw [if_neg (by simp only [List.replicate_eq_nil_iff]; omega), if_pos h, hi]
-  · rw [if_pos (by simp only [List.replicate_eq_nil_iff]; omega), if_neg h, hsub]
+  · rw [ite_eq_right (by simp only [List.replicate_eq_nil_iff]; omega), ite_eq_left h, hi]
+  · rw [ite_eq_left (by simp only [List.replicate_eq_nil_iff]; omega), ite_eq_right h, hsub]
 
 theorem eval_smConjBT (hm : ∀ x : Word, mT.eval [x] = List.replicate (m x.length) true) :
     (smConjBT mT).eval [y, List.replicate i true, List.replicate j true, dmW n (4 * m n)]
@@ -554,16 +554,16 @@ theorem eval_smBlkT (hm : ∀ x : Word, mT.eval [x] = List.replicate (m x.length
       = List.replicate j true := by simp
   rw [smBlkT, eval_iteT_eval, hj, Tseitin.smashG]
   by_cases h0 : j = 0
-  · rw [if_pos (by simp [h0]), if_pos h0]
+  · rw [ite_eq_left (by simp [h0]), ite_eq_left h0]
     exact eval_tokTerm (Tseitin.Gate.cst false) (by simp [fld1]) (by simp [fld2])
-  · rw [if_neg (by simp only [List.replicate_eq_nil_iff]; omega), if_neg h0, eval_iteT_eval]
+  · rw [ite_eq_right (by simp only [List.replicate_eq_nil_iff]; omega), ite_eq_right h0, eval_iteT_eval]
     have hmod : (Cob.modT (Cob.proj 2) (Cob.constT (List.replicate 2 true))).eval
         [y, List.replicate i true, List.replicate j true, dmW n (4 * m n)]
         = List.replicate (j % 2) true :=
       Cob.eval_modT (by norm_num) hj (by simp [Cob.eval_constT])
     rw [hmod]
     by_cases hodd : j % 2 = 1
-    · rw [if_neg (by simp only [List.replicate_eq_nil_iff]; omega), if_pos hodd]
+    · rw [ite_eq_right (by simp only [List.replicate_eq_nil_iff]; omega), ite_eq_left hodd]
       have hhalf : (j + 1) / 2 = (j - 1) / 2 + 1 := by omega
       refine eval_tokTerm (Tseitin.Gate.conj ((j - 1) / 2)
         (2 * m n + Tseitin.ccOf (m n) i / ((j + 1) / 2))) eval_smHalfT ?_
@@ -571,7 +571,7 @@ theorem eval_smBlkT (hm : ∀ x : Word, mT.eval [x] = List.replicate (m x.length
         (2 * m n + Tseitin.ccOf (m n) i / ((j + 1) / 2)))
           = 2 * m n + Tseitin.ccOf (m n) i / ((j + 1) / 2) from rfl, hhalf]
       exact eval_smConjBT hm
-    · rw [if_pos (by simp only [List.replicate_eq_nil_iff]; omega), if_neg hodd]
+    · rw [ite_eq_left (by simp only [List.replicate_eq_nil_iff]; omega), ite_eq_right hodd]
       have hcat : ∀ d : ℕ, (Cob.catL [smRowT mT, Cob.tailN d (Cob.proj 2)]).eval
           [y, List.replicate i true, List.replicate j true, dmW n (4 * m n)]
           = List.replicate (4 * m n + (2 * m n + 1) * i + (j - d)) true := by

@@ -537,7 +537,7 @@ theorem step_inc {r : Bool} {l : ℕ} (h : DInv M Γ p is q c) (hi : M[c.pc]? = 
   refine ⟨_, _, _, _, cycle2 (is := is) hp h.disp, ?_⟩
   have hsl := sl_lt r
   have hgk : ∀ k, k ≠ sl r → incArgs M.length (sl r) k = pv M.length k := fun k hk => by
-    simp only [incArgs]; rw [if_neg hk]
+    simp only [incArgs]; rw [ite_eq_right hk]
   have hd : Res (ctx2 M.length Γ is (incArgs M.length (sl r))) (M.length + 5 - (M.length + 5))
       (dispT M.length) := by
     have := res_copy (n := M.length) (k := M.length + 5) (k₀ := M.length + 5) (by omega) (by omega)
@@ -563,7 +563,7 @@ theorem step_inc {r : Bool} {l : ℕ} (h : DInv M Γ p is q c) (hi : M[c.pc]? = 
 
 theorem testArgs_eq {n l₁ l₂ k : ℕ} (h2 : k ≠ 2) (h3 : k ≠ 3) :
     testArgs n l₁ l₂ k = pv n k := by
-  simp only [testArgs]; rw [if_neg h2, if_neg h3]
+  simp only [testArgs]; rw [ite_eq_right h2, ite_eq_right h3]
 
 /-- The step lemma for a zero test of a counter equal to zero (four calls). -/
 theorem step_zero {r : Bool} {l₁ l₂ : ℕ} (h : DInv M Γ p is q c)
@@ -645,7 +645,7 @@ theorem step_dec {r : Bool} {l₁ l₂ v : ℕ} (h : DInv M Γ p is q c)
     Ty.lift (M.length + 6) 0 (.var (j + (M.length + 6) + (M.length + 6))) else pv M.length k :=
     ⟨_, rfl⟩
   have hg₂k : ∀ k, k ≠ sl r → g₂ k = pv M.length k := fun k hk => by
-    simp only [hg₂]; rw [if_neg hk]
+    simp only [hg₂]; rw [ite_eq_right hk]
   have c2 := cycle2 (is := fun k => M.length + 5 - k) (g := g₂) (r := 3)
     (by rw [hg₂]; exact hnum) (by simpa using hd)
   refine ⟨_, _, _, _, c1.trans c2, ?_⟩
@@ -942,22 +942,22 @@ theorem enc_inv (M : CM) (a b : ℕ) :
   code l hl := by
     have : initSlots M a b (4 + l) = l + (a + b + 2) := by
       simp only [initSlots]
-      rw [if_neg (by omega), if_neg (by omega), if_pos (by omega)]
+      rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_left (by omega)]
       omega
     rw [this]
     exact res_init_code M a b hl
   dslot := by
     have : initSlots M a b (M.length + 5) = (M.length + 1) + (a + b + 2) := by
       simp only [initSlots]
-      rw [if_neg (by omega), if_neg (by omega), if_neg (by omega)]
+      rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega)]
     rw [this]
     exact res_init_disp M a b
   rep s hs := by
     rcases (by omega : s = 0 ∨ s = 1) with rfl | rfl
-    · simp only [initSlots, cnt, if_pos]
+    · simp only [initSlots, cnt, ite_eq_left]
       rw [initCtx_eq, List.append_assoc]
       exact rep_chain _ _ _ a
-    · simp only [initSlots, cnt, if_neg (by omega : (1 : ℕ) ≠ 0), if_pos]
+    · simp only [initSlots, cnt, ite_eq_right (by omega : (1 : ℕ) ≠ 0), ite_eq_left]
       rw [initCtx_eq, List.append_assoc]
       have := (rep_chain M.length 1 (progCtx M) b).append (chain M.length 0 a)
       rwa [chain_length, Nat.zero_add] at this

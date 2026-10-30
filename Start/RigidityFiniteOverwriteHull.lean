@@ -37,7 +37,7 @@ theorem hull_eq_of_degree (M : ZFSet.{0}) (A B : Oracle)
     exact ⟨fun h N hN => h N ((hc N).mpr hN),fun h N hN => h N ((hc N).mp hN)⟩
   · have hB : ¬ ∃ N, Contains M (realCode B) N := fun h =>
       hA ⟨h.choose,(hc _).mpr h.choose_spec⟩
-    simp only [RealGeneratedModel.hull,dif_neg hA,dif_neg hB]
+    simp only [RealGeneratedModel.hull,dite_eq_right hA,dite_eq_right hB]
 
 theorem overwrite_hull (M : ZFSet.{0}) (s : List Bool) (A : Oracle) :
     RealGeneratedModel.hull M (realCode (overwrite s A)) = RealGeneratedModel.hull M (realCode A) :=

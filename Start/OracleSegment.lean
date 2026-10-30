@@ -71,7 +71,7 @@ theorem segQuery_mono {A : ℕ → Bool} {s t x : ℕ} {b : Bool} (hst : s ≤ t
     (h : segQuery (segNum A s) x = some b) : segQuery (segNum A t) x = some b := by
   rw [segQuery_segNum] at h ⊢
   by_cases hx : x < s
-  · simp only [hx, if_true] at h
+  · simp only [hx, ite_true] at h
     simp [lt_of_lt_of_le hx hst, h]
   · simp [hx] at h
 

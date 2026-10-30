@@ -279,9 +279,9 @@ theorem eval_caStRefT {K t c s : ℕ} {tT jT : Cob}
     eval_iteNe ht (eval_caUid hwT (eval_caRowL h1) hj) (eval_caUid hwT eval_caRowK hj)]
   rcases Nat.eq_zero_or_pos t with h0 | h0
   · subst h0
-    rw [if_pos (by simp), caStRow, if_pos rfl]
-  · rw [if_neg (by simp only [List.replicate_eq_nil_iff]; omega), caStRow,
-      if_neg (by omega),
+    rw [ite_eq_left (by simp), caStRow, ite_eq_left rfl]
+  · rw [ite_eq_right (by simp only [List.replicate_eq_nil_iff]; omega), caStRow,
+      ite_eq_right (by omega),
       show caB K + caHb K * (t - 1) + 2 * caTri K + s * caTri K + (caTri K - 1)
         = caB K + 2 * caTri K + s * caTri K + (caTri K - 1) + caHb K * (t - 1) by omega]
 
@@ -293,14 +293,14 @@ theorem eval_caRefLT {t a : ℕ} {tT : Cob}
   have hb : (if a = A.blk then caWT wT else Cob.empty).eval cargs
       = List.replicate (if a = A.blk then w n else 0) true := by
     by_cases hab : a = A.blk
-    · rw [if_pos hab, if_pos hab, eval_caWT hwT]
-    · rw [if_neg hab, if_neg hab]
+    · rw [ite_eq_left hab, ite_eq_left hab, eval_caWT hwT]
+    · rw [ite_eq_right hab, ite_eq_right hab]
       simp
   rw [caRefLT, eval_iteNe eval_col (eval_caStRefT hwT ht eval_colL) hb, caRefL]
   rcases Nat.eq_zero_or_pos j with h0 | h0
   · subst h0
-    rw [if_pos (by simp), if_pos rfl]
-  · rw [if_neg (by simp only [List.replicate_eq_nil_iff]; omega), if_neg (by omega),
+    rw [ite_eq_left (by simp), ite_eq_left rfl]
+  · rw [ite_eq_right (by simp only [List.replicate_eq_nil_iff]; omega), ite_eq_right (by omega),
       caStId]
 
 theorem eval_caRefRT {t c : ℕ} {tT : Cob}
@@ -311,8 +311,8 @@ theorem eval_caRefRT {t c : ℕ} {tT : Cob}
   have hb : (if c = A.blk then caWT wT else Cob.empty).eval cargs
       = List.replicate (if c = A.blk then w n else 0) true := by
     by_cases hcb : c = A.blk
-    · rw [if_pos hcb, if_pos hcb, eval_caWT hwT]
-    · rw [if_neg hcb, if_neg hcb]
+    · rw [ite_eq_left hcb, ite_eq_left hcb, eval_caWT hwT]
+    · rw [ite_eq_right hcb, ite_eq_right hcb]
       simp
   have hcond : (Cob.comp Cob.dropU [Cob.pre [true] (Cob.proj 2), caWT wT]).eval cargs
       = List.replicate (w n - (j + 1)) true := by
@@ -320,8 +320,8 @@ theorem eval_caRefRT {t c : ℕ} {tT : Cob}
       eval_colR, List.length_replicate, List.drop_replicate]
   rw [caRefRT, eval_iteNe hcond (eval_caStRefT hwT ht eval_colR) hb, caRefR]
   by_cases hjw : j + 1 < w n
-  · rw [if_neg (by simp only [List.replicate_eq_nil_iff]; omega), if_pos hjw, caStId]
-  · rw [if_pos (by simp only [List.replicate_eq_nil_iff]; omega), if_neg hjw]
+  · rw [ite_eq_right (by simp only [List.replicate_eq_nil_iff]; omega), ite_eq_left hjw, caStId]
+  · rw [ite_eq_left (by simp only [List.replicate_eq_nil_iff]; omega), ite_eq_right hjw]
 
 theorem eval_caBitT : (caBitT : Cob).eval cargs = encGate (caBitG n j) := by
   have hcond : (Cob.comp Cob.dropU [Cob.proj 2, Cob.proj 3]).eval cargs
@@ -329,10 +329,10 @@ theorem eval_caBitT : (caBitT : Cob).eval cargs = encGate (caBitG n j) := by
     simp
   rw [caBitT, eval_iteNe hcond rfl rfl, caBitG]
   by_cases hjn : j < n
-  · rw [if_neg (by simp only [List.replicate_eq_nil_iff]; omega), if_pos hjn]
+  · rw [ite_eq_right (by simp only [List.replicate_eq_nil_iff]; omega), ite_eq_left hjn]
     exact eval_tokTerm (Gate.inp (2 * j + 1))
       (eval_linT (i := j) (by simp) (by simp only [fld1]; omega)) eval_empty
-  · rw [if_pos (by simp only [List.replicate_eq_nil_iff]; omega), if_neg hjn]
+  · rw [ite_eq_left (by simp only [List.replicate_eq_nil_iff]; omega), ite_eq_right hjn]
     exact eval_tokTerm (Gate.cst false) eval_empty eval_empty
 
 theorem eval_caInitST {s : ℕ}
@@ -356,23 +356,23 @@ theorem eval_caInitST {s : ℕ}
         else tokTerm 2 Cob.empty Cob.empty).eval cargs
       = encGate (Gate.cst (decide (A.blk = s))) := by
     by_cases hbs : A.blk = s
-    · rw [if_pos hbs, decide_eq_true hbs]
+    · rw [ite_eq_left hbs, decide_eq_true hbs]
       exact eval_tokTerm (Gate.cst true) eval_empty eval_empty
-    · rw [if_neg hbs, decide_eq_false hbs]
+    · rw [ite_eq_right hbs, decide_eq_false hbs]
       exact eval_tokTerm (Gate.cst false) eval_empty eval_empty
   have hcond : (Cob.comp Cob.dropU [Cob.proj 2, Cob.proj 3]).eval cargs
       = List.replicate (n - j) true := by
     simp
   rw [caInitST, eval_iteNe hcond (eval_iteNe eval_col (hb false) (hb true)) hblk, caInitG]
   by_cases hjn : j < n
-  · rw [if_neg (by simp only [List.replicate_eq_nil_iff]; omega), if_pos hjn]
+  · rw [ite_eq_right (by simp only [List.replicate_eq_nil_iff]; omega), ite_eq_left hjn]
     rcases Nat.eq_zero_or_pos j with h0 | h0
     · subst h0
-      rw [if_pos (by simp)]
+      rw [ite_eq_left (by simp)]
       simp
-    · rw [if_neg (by simp only [List.replicate_eq_nil_iff]; omega),
+    · rw [ite_eq_right (by simp only [List.replicate_eq_nil_iff]; omega),
         decide_eq_false (by omega : ¬ (j = 0))]
-  · rw [if_pos (by simp only [List.replicate_eq_nil_iff]; omega), if_neg hjn]
+  · rw [ite_eq_left (by simp only [List.replicate_eq_nil_iff]; omega), ite_eq_right hjn]
 
 theorem eval_caInitSelT
     (hwT : ∀ x : Word, wT.eval [x] = List.replicate (w x.length) true)
@@ -396,16 +396,16 @@ theorem eval_caBlkPT (p : ℕ)
       = List.replicate ((i - caB A.K) / caHb A.K) true := eval_caTT hK
   rw [caBlkPT, caBlockG]
   by_cases h1 : p < 2 * caTri A.K
-  · rw [if_pos h1, if_pos h1]
+  · rw [ite_eq_left h1, ite_eq_left h1]
     by_cases h2 : p % 2 = 0
-    · rw [if_pos h2, if_pos h2]
+    · rw [ite_eq_left h2, ite_eq_left h2]
       exact eval_tokTerm (Gate.conj _ _) (eval_caRefLT hwT ht) (eval_caStRefT hwT ht eval_col)
-    · rw [if_neg h2, if_neg h2,
+    · rw [ite_eq_right h2, ite_eq_right h2,
         show caB A.K + caHb A.K * ((i - caB A.K) / caHb A.K) + p - 1
           = caB A.K + p - 1 + caHb A.K * ((i - caB A.K) / caHb A.K) by omega]
       exact eval_tokTerm (Gate.conj _ _) (eval_caUid hwT (eval_caRowL ht) eval_col)
         (eval_caRefRT hwT ht)
-  · rw [if_neg h1, if_neg h1,
+  · rw [ite_eq_right h1, ite_eq_right h1,
       show caB A.K + caHb A.K * ((i - caB A.K) / caHb A.K) + p - 1
         = caB A.K + p - 1 + caHb A.K * ((i - caB A.K) / caHb A.K) by omega,
       show caB A.K + caHb A.K * ((i - caB A.K) / caHb A.K)
@@ -413,23 +413,23 @@ theorem eval_caBlkPT (p : ℕ)
         = caB A.K + 2 * ((p - 2 * caTri A.K) % caTri A.K) + 1
           + caHb A.K * ((i - caB A.K) / caHb A.K) by omega]
     by_cases h3 : (p - 2 * caTri A.K) % caTri A.K = 0
-    · rw [if_pos h3, if_pos h3]
+    · rw [ite_eq_left h3, ite_eq_left h3]
       by_cases h4 : A.stp (triA A.K ((p - 2 * caTri A.K) % caTri A.K))
           (triB A.K ((p - 2 * caTri A.K) % caTri A.K))
           (triC A.K ((p - 2 * caTri A.K) % caTri A.K)) = (p - 2 * caTri A.K) / caTri A.K
-      · rw [if_pos h4, if_pos h4]
+      · rw [ite_eq_left h4, ite_eq_left h4]
         exact eval_tokTerm (Gate.disj _ _) eval_empty
           (eval_caUid hwT (eval_caRowL ht) eval_col)
-      · rw [if_neg h4, if_neg h4]
+      · rw [ite_eq_right h4, ite_eq_right h4]
         exact eval_tokTerm (Gate.disj _ _) eval_empty eval_empty
-    · rw [if_neg h3, if_neg h3]
+    · rw [ite_eq_right h3, ite_eq_right h3]
       by_cases h4 : A.stp (triA A.K ((p - 2 * caTri A.K) % caTri A.K))
           (triB A.K ((p - 2 * caTri A.K) % caTri A.K))
           (triC A.K ((p - 2 * caTri A.K) % caTri A.K)) = (p - 2 * caTri A.K) / caTri A.K
-      · rw [if_pos h4, if_pos h4]
+      · rw [ite_eq_left h4, ite_eq_left h4]
         exact eval_tokTerm (Gate.disj _ _) (eval_caUid hwT (eval_caRowL ht) eval_col)
           (eval_caUid hwT (eval_caRowL ht) eval_col)
-      · rw [if_neg h4, if_neg h4]
+      · rw [ite_eq_right h4, ite_eq_right h4]
         exact eval_tokTerm (Gate.disj _ _) (eval_caUid hwT (eval_caRowL ht) eval_col)
           eval_empty
 
@@ -451,18 +451,18 @@ theorem eval_caFinET {e : ℕ}
   rw [caFinET, caFinG]
   refine eval_tokTerm (Gate.disj _ _) ?_ ?_
   · by_cases he : e = 0
-    · rw [if_pos he, if_pos he]
+    · rw [ite_eq_left he, ite_eq_left he]
       exact eval_empty
-    · rw [if_neg he, if_neg he, caP,
+    · rw [ite_eq_right he, ite_eq_right he, caP,
         show w n * (caB A.K + caHb A.K * h n + e - 1) + j
           = w n * (caB A.K + e - 1 + caHb A.K * h n) + j from by
             congr 2
             omega]
       exact eval_caUid hwT (eval_caRowL hH) eval_col
   · by_cases hac : A.ac e
-    · rw [if_pos hac, if_pos hac, caStId]
+    · rw [ite_eq_left hac, ite_eq_left hac, caStId]
       exact eval_caStRefT hwT hH eval_col
-    · rw [if_neg hac, if_neg hac]
+    · rw [ite_eq_right hac, ite_eq_right hac]
       exact eval_empty
 
 theorem eval_caFinSelT
@@ -531,30 +531,30 @@ theorem eval_caBlkT
     (eval_iteNe h5 (eval_iteNe h6 rfl rfl) rfl) rfl) rfl) rfl) rfl, caT]
   simp only [List.replicate_eq_nil_iff]
   by_cases e0 : i = 0
-  · rw [if_pos (by omega), if_pos e0]
+  · rw [ite_eq_left (by omega), ite_eq_left e0]
     exact eval_tokTerm (Gate.cst false) eval_empty eval_empty
-  rw [if_neg (by omega), if_neg e0]
+  rw [ite_eq_right (by omega), ite_eq_right e0]
   by_cases e1 : i = 1
-  · rw [if_pos (by omega), if_pos e1]
+  · rw [ite_eq_left (by omega), ite_eq_left e1]
     exact eval_tokTerm (Gate.cst true) eval_empty eval_empty
-  rw [if_neg (by omega), if_neg e1]
+  rw [ite_eq_right (by omega), ite_eq_right e1]
   by_cases e2 : i = 2
-  · rw [if_pos (by omega), if_pos e2]
+  · rw [ite_eq_left (by omega), ite_eq_left e2]
     subst e2
     exact eval_caBitT
-  rw [if_neg (by omega), if_neg e2]
+  rw [ite_eq_right (by omega), ite_eq_right e2]
   by_cases e3 : i < caB A.K
-  · rw [if_pos (by omega), if_pos e3]
+  · rw [ite_eq_left (by omega), ite_eq_left e3]
     exact eval_caInitSelT hwT e3
-  rw [if_neg (by omega), if_neg e3]
+  rw [ite_eq_right (by omega), ite_eq_right e3]
   by_cases e4 : i < caP A.K (h n)
-  · rw [if_pos (by omega), if_pos e4]
+  · rw [ite_eq_left (by omega), ite_eq_left e4]
     exact eval_caBlkSelT hwT
-  rw [if_neg (by omega), if_neg e4]
+  rw [ite_eq_right (by omega), ite_eq_right e4]
   by_cases e5 : i < caP A.K (h n) + A.K
-  · rw [if_pos (by omega), if_pos e5]
+  · rw [ite_eq_left (by omega), ite_eq_left e5]
     exact eval_caFinSelT hwT hhT e5
-  rw [if_neg (by omega), if_neg e5]
+  rw [ite_eq_right (by omega), ite_eq_right e5]
   exact eval_caLastT hwT hhT
 
 end EvalRows

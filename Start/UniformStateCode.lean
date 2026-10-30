@@ -54,9 +54,9 @@ theorem eval_notDropU {a b : Cob} {args : List Word} {p q : ℕ}
   simp only [Cob.eval_comp, List.map_cons, List.map_nil, ha, hb, Cob.eval_dropU,
     List.length_replicate, List.drop_replicate, Cob.eval_notC]
   by_cases h : q ≤ p
-  · rw [if_pos (by simp; omega), decide_eq_true h]
+  · rw [ite_eq_left (by simp; omega), decide_eq_true h]
     rfl
-  · rw [if_neg (by simp; omega), decide_eq_false h]
+  · rw [ite_eq_right (by simp; omega), decide_eq_false h]
     rfl
 
 theorem eval_eqU {a b : Cob} {args : List Word} {p q : ℕ}
@@ -253,8 +253,8 @@ theorem eval_stPrevT (hmT : ∀ x : Word, mT.eval [x] = List.replicate (m x.leng
     [y, List.replicate i true, List.replicate j true, List.replicate n true]
       = List.replicate j true), stPrevId]
   by_cases h0 : t = 0
-  · rw [if_pos h0, if_pos (by simp [h0])]
-  · rw [if_neg h0, if_neg (by simp [h0])]
+  · rw [ite_eq_left h0, ite_eq_left (by simp [h0])]
+  · rw [ite_eq_right h0, ite_eq_right (by simp [h0])]
 
 theorem eval_stSelKT
     (hmT : ∀ x : Word, mT.eval [x] = List.replicate (m x.length) true)
@@ -372,56 +372,56 @@ theorem eval_stBlkT
   rw [stBlkT]
   by_cases h0 : i = 0
   · subst h0
-    rw [eval_iteNe hI rfl rfl, if_pos (by simp), eval_iteNe hJ hcstF hcstT, stT_zero]
+    rw [eval_iteNe hI rfl rfl, ite_eq_left (by simp), eval_iteNe hJ hcstF hcstT, stT_zero]
     by_cases hj0 : j = 0
     · subst hj0
       simp
-    · rw [if_neg (by simp [hj0]), decide_eq_false hj0]
-  · rw [eval_iteNe hI rfl rfl, if_neg (by simp [h0])]
+    · rw [ite_eq_right (by simp [hj0]), decide_eq_false hj0]
+  · rw [eval_iteNe hI rfl rfl, ite_eq_right (by simp [h0])]
     have hfin : (Cob.comp Cob.dropU [stTT mT, Cob.proj 3]).eval
         [y, List.replicate i true, List.replicate j true, List.replicate n true]
         = List.replicate (n - (i - 1) / stH (m n)) true := by
       simp only [Cob.eval_comp, List.map_cons, List.map_nil, hT, hN, Cob.eval_dropU,
         List.length_replicate, List.drop_replicate]
-    rw [eval_iteNe hfin rfl rfl, stT, if_neg h0]
+    rw [eval_iteNe hfin rfl rfl, stT, ite_eq_right h0]
     by_cases hf : n ≤ (i - 1) / stH (m n)
-    · rw [if_pos (by simp; omega), if_pos hf]
+    · rw [ite_eq_left (by simp; omega), ite_eq_left hf]
       have hprevn := eval_stPrevT (m := m) (n := n) (i := i) (j := j) (y := y) hmT (t := n) hN
       rw [stFinT, eval_iteNe hJ rfl rfl]
       by_cases hj0 : j = 0
       · subst hj0
-        rw [if_pos (by simp), if_pos rfl,
+        rw [ite_eq_left (by simp), ite_eq_left rfl,
           Cob.eval_iteW hacj
             (hdisj _ _ _ _ hprevn hprevn) hcstF]
         by_cases hac0 : ac n 0
-        · rw [if_pos hac0, if_pos hac0]
-        · rw [if_neg hac0, if_neg hac0]
-      · rw [if_neg (by simp [hj0]), if_neg hj0,
+        · rw [ite_eq_left hac0, ite_eq_left hac0]
+        · rw [ite_eq_right hac0, ite_eq_right hac0]
+      · rw [ite_eq_right (by simp [hj0]), ite_eq_right hj0,
           Cob.eval_iteW hacj
             (hdisj _ _ _ _ haccJ hprevn) (hdisj _ _ _ _ haccJ haccJ)]
         by_cases hacj' : ac n j
-        · rw [if_pos hacj', if_pos hacj']
-        · rw [if_neg hacj', if_neg hacj']
-    · rw [if_neg (by simp; omega), if_neg hf]
+        · rw [ite_eq_left hacj', ite_eq_left hacj']
+        · rw [ite_eq_right hacj', ite_eq_right hacj']
+    · rw [ite_eq_right (by simp; omega), ite_eq_right hf]
       rw [eval_iteNe hP rfl rfl]
       by_cases hp0 : (i - 1) % stH (m n) = 0
-      · rw [if_pos (by simp [hp0]), if_pos hp0, hcstF]
-      · rw [if_neg (by simp [hp0]), if_neg hp0]
+      · rw [ite_eq_left (by simp [hp0]), ite_eq_left hp0, hcstF]
+      · rw [ite_eq_right (by simp [hp0]), ite_eq_right hp0]
         have hP1 : (Cob.tailN 1 (stPT mT)).eval
             [y, List.replicate i true, List.replicate j true, List.replicate n true]
             = List.replicate ((i - 1) % stH (m n) - 1) true := by
           rw [Cob.eval_tailN, hP, List.drop_replicate]
         rw [eval_iteNe hP1 rfl rfl]
         by_cases hp1 : (i - 1) % stH (m n) = 1
-        · rw [if_pos (by simp [hp1]), if_pos hp1, hcstT]
-        · rw [if_neg (by simp; omega), if_neg hp1]
+        · rw [ite_eq_left (by simp [hp1]), ite_eq_left hp1, hcstT]
+        · rw [ite_eq_right (by simp; omega), ite_eq_right hp1]
           have hP2 : (Cob.tailN 2 (stPT mT)).eval
               [y, List.replicate i true, List.replicate j true, List.replicate n true]
               = List.replicate ((i - 1) % stH (m n) - 2) true := by
             rw [Cob.eval_tailN, hP, List.drop_replicate]
           rw [eval_iteNe hP2 rfl rfl]
           by_cases hp2 : (i - 1) % stH (m n) = 2
-          · rw [if_pos (by simp [hp2]), if_pos hp2]
+          · rw [ite_eq_left (by simp [hp2]), ite_eq_left hp2]
             refine eval_tokTerm (Gate.inp (2 * ((i - 1) / stH (m n)) + 1)) ?_ (by simp [fld2])
             simp only [Cob.eval_pre, Cob.eval_comp, List.map_cons, List.map_nil,
               Cob.eval_smash, hT, Cob.eval_constT, List.getD_cons_zero, List.getD_cons_succ,
@@ -429,28 +429,28 @@ theorem eval_stBlkT
             rw [show ([true] : Word) = List.replicate 1 true from rfl, ← List.replicate_add]
             congr 1
             ring
-          · rw [if_neg (by simp; omega), if_neg hp2]
+          · rw [ite_eq_right (by simp; omega), ite_eq_right hp2]
             have hP3 : (Cob.tailN 3 (stPT mT)).eval
                 [y, List.replicate i true, List.replicate j true, List.replicate n true]
                 = List.replicate ((i - 1) % stH (m n) - 3) true := by
               rw [Cob.eval_tailN, hP, List.drop_replicate]
             rw [eval_iteNe hP3 rfl rfl]
             by_cases hp3 : (i - 1) % stH (m n) = 3
-            · rw [if_pos (by simp [hp3]), if_pos hp3, stNegT]
+            · rw [ite_eq_left (by simp [hp3]), ite_eq_left hp3, stNegT]
               exact eval_tokTerm (Gate.neg (m n * (i - 1))) hid1 (by simp [fld2])
-            · rw [if_neg (by simp; omega), if_neg hp3, eval_iteNe hR rfl rfl]
+            · rw [ite_eq_right (by simp; omega), ite_eq_right hp3, eval_iteNe hR rfl rfl]
               by_cases hr : ((i - 1) % stH (m n) - 4) % 2 = 0
-              · rw [if_pos (by simp [hr]), if_pos hr, stConjT]
+              · rw [ite_eq_left (by simp [hr]), ite_eq_left hr, stConjT]
                 exact eval_tokTerm
                   (Gate.conj (stPrevId (m n) ((i - 1) / stH (m n)) j)
                     (m n * (1 + stH (m n) * ((i - 1) / stH (m n))
                       + stSelK δ n (((i - 1) % stH (m n) - 4) / 2) j)))
                   (eval_stPrevT hmT hT) (eval_stSelRefT hmT hdf hdt)
-              · rw [if_neg (by simp [hr]), if_neg hr, stAccT,
+              · rw [ite_eq_right (by simp [hr]), ite_eq_right hr, stAccT,
                   eval_iteNe hJ (hdisj _ _ _ _ haccJ hconjJ) (hdisj _ _ _ _ hid1 hid1)]
                 by_cases hj0 : j = 0
-                · rw [if_pos (by simp [hj0]), if_pos hj0]
-                · rw [if_neg (by simp [hj0]), if_neg hj0]
+                · rw [ite_eq_left (by simp [hj0]), ite_eq_left hj0]
+                · rw [ite_eq_right (by simp [hj0]), ite_eq_right hj0]
 
 end Eval
 

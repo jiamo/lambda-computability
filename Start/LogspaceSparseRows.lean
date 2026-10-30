@@ -62,8 +62,8 @@ lemma coast_true (K): p.y.rk p.S K=coast p K:= by
       let l:=(range p.n).filter (fun i=>x<f i); let w:=p.S.filter (fun i=> x< g i)
       have hh (i)(hi:i∈l):p.live i ∧ f i=g (p.pos i):=by
          by_cases ht:p.live i
-         · exact ⟨ht,congrArg Prod.fst (if_pos ht)⟩
-         have hh:f i=b:=congrArg Prod.fst (show p.qpoint i=line p.y.base from if_neg ht)
+         · exact ⟨ht,congrArg Prod.fst (ite_eq_left ht)⟩
+         have hh:f i=b:=congrArg Prod.fst (show p.qpoint i=line p.y.base from ite_eq_right ht)
          have hl:x<f i:=(mem_filter.1 hi).2; linarith
       have he: l.image p.pos=w:=by
           ext i; constructor
@@ -73,7 +73,7 @@ lemma coast_true (K): p.y.rk p.S K=coast p K:= by
           have he:p.y.ts i ≠ line p.y.base:=fun hg=> (not_lt_of_ge hx)
                                                         (hb.trans_eq (congrArg Prod.fst hg))
           obtain ⟨j,h1,h2⟩:=h.snatch ha he
-          have hs:f j=g (p.pos j):=congrArg Prod.fst (show p.qpoint j=p.y.ts (p.pos j) from if_pos h1)
+          have hs:f j=g (p.pos j):=congrArg Prod.fst (show p.qpoint j=p.y.ts (p.pos j) from ite_eq_left h1)
           rw [h2] at hs
           exact mem_image.2 ⟨j,mem_filter.2 ⟨mem_range.2 (h.card0 j h1),hb.trans_eq hs.symm⟩,h2⟩
       rw [← show l.image p.pos=p.S.filter _ from he]
@@ -108,7 +108,7 @@ def ColorF.hoot (p:Depot)(v:ColorF p) (b:Bool)(i:ℕ):Prop:=p.live i ∧
 
 lemma restates {i}(he:p.live i): (ColorF.mapG p z).first (p.pos i)=z.pts i:=by
    have hh:∃ j,p.live j∧p.pos j=p.pos i:=⟨i,he,rfl⟩
-   simp only [ColorF.mapG,dif_pos hh]
+   simp only [ColorF.mapG,dite_eq_left hh]
    obtain ⟨ht,hz⟩:= Classical.choose_spec hh; rw [h.uniq (Classical.choose hh) _ ht he hz]
 
 lemma region (c:GoodS z)(he:0< z.tau):
@@ -119,7 +119,7 @@ lemma region (c:GoodS z)(he:0< z.tau):
    · next hp=>
      obtain ⟨ha,hb⟩:= Classical.choose_spec hp
      have hu:=c.1 _ ha
-     unfold qpoint at hu; rw [if_pos ha,hb] at hu
+     unfold qpoint at hu; rw [ite_eq_left ha,hb] at hu
      exact hu
    simp only [sub_self,abs_zero]; positivity
 
@@ -256,7 +256,7 @@ lemma crowny {i} (he:i=0∨i<p.m):Chor (campk p.kn) c T (film s i 0) p.crown (d.
 lemma sculpt {i} (hi:d.live i) (b):
     Chor (campk p.kn) c T (film s i 0) (p.figure b) (d.y.val d.S p.k (o b) (d.pos i)) := by
    have hn:i<p.m:=(h.ok.card0 i hi).trans_eq h.mp
-   have ht : d.qpoint i=d.y.ts (d.pos i):= if_pos hi
+   have ht : d.qpoint i=d.y.ts (d.pos i):= ite_eq_left hi
    apply h.composition hn hi b _ (h.crowny (Or.inr hn)) _
    · rw [← ht]; exact .byear (h.hues i hn true)
    rw [← ht]; exact .byear (h.hues i hn false)
@@ -430,8 +430,8 @@ lemma markers {o T} (hx:p.Ink s d θ o c T)(b): Seek.part (Game p _ u b) p.m=
    unfold Seek.part; rw [hx.mp]; ext i; simp only [mem_filter]
    by_cases hp:ColorF.hoot d u.wt b i
    · have hs:d.tag i≠0:=hp.1
-     unfold Game; rw [if_pos hp]; simp only [hp]; tauto
-   unfold Game; rw [if_neg hp]; simp only [hp]; simp
+     unfold Game; rw [ite_eq_left hp]; simp only [hp]; tauto
+   unfold Game; rw [ite_eq_right hp]; simp only [hp]; simp
 lemma ck {o T} (hx:p.Ink s d θ o c T)(b):(Seek.part (Game p _ u b) p.m).card ≤ p.k:=by
     rw [(markers (u := u)) hx,← h.rightP]; exact hx.ok.amount0 h.legally (h.height.symm ▸ hx.ht0) b
 
@@ -455,7 +455,7 @@ lemma many {b i}(hi:listed p d u b i){T o}(hx:p.Ink s d θ o c T):i<p.k:=by
 omit h in
 lemma hears {T o b i} (hx:p.Ink s d θ o c T)(he:ColorF.hoot d u.wt b i):∃ j,listed p d u b j∧child p d u b j=i:=by
     let v:=Game p d u b; let u0:=(Seek.part v i).card
-    have ha : v i≠0:=by unfold v Game; rw [if_pos he]; exact he.1
+    have ha : v i≠0:=by unfold v Game; rw [ite_eq_left he]; exact he.1
     have hg:valN p d u b u0=Seek.bin i (v i):=Seek.order ((hx.ok.card0 i he.1).trans_eq hx.mp) ha rfl
     refine ⟨u0,?_,?_⟩
     · unfold listed; rw [hg]; exact ne_of_gt (Seek.binpos ..)
@@ -515,7 +515,7 @@ theorem fruitage {u:Ballot d}(hs:Style p s d θ c u)(i b) (H:ℕ)
        exact (Nat.add_le_add_left (Nat.mul_le_mul_right s.d he) H).trans hk
    apply Seats.avis (higher hj hc hH)
    · intro hz
-     unfold spice; rw [if_pos hz]
+     unfold spice; rw [ite_eq_left hz]
      let f:=p.zbase b
      have hf: Chor (campk p.kn) c T (film s i 0) f 0:=by
         have ht:Lu.Standard (film s i 0) (campk p.kn) T:=⟨hp,spanFilm h.expire i 0⟩
@@ -531,7 +531,7 @@ theorem fruitage {u:Ballot d}(hs:Style p s d θ c u)(i b) (H:ℕ)
        simp only [berth,j,a,film,info,panelx,Style.child,rearmM,stairs,Reed.V,dec_round,ite_true]
    apply advises (rocks hp) (punct_up hu.2 hD) hc hj
    rw [ha]
-   unfold spice; rw [if_neg hj0,←h.seats0 b]
+   unfold spice; rw [ite_eq_right hj0,←h.seats0 b]
    apply flex (sing (h.sculpt hh b) hm hA) (cost_hi hm) _ le_rfl
    change p.exitP c b  ≤  C; unfold C lastP; cases b <;> omega
 end Ink

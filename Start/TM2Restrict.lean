@@ -80,7 +80,7 @@ theorem mapCfg_stepAux (S : Finset Λ) (q₀ : {x // x ∈ S}) :
   | goto l =>
       intro hq v T
       simp only [restrictStmt, TM2.stepAux, mapCfg, Option.map_some]
-      rw [dif_pos (hq v)]
+      rw [dite_eq_left (hq v)]
   | halt => intro _ v T; rfl
 
 /-- One step of the restricted machine is one step of the original machine. -/

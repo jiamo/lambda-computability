@@ -41,9 +41,9 @@ lemma hcount_eq_psum [Monoid H] [DecidableEq H] (ρ : α → H) (g : H) (x : α)
   refine Finset.sum_congr rfl fun i _ => ?_
   by_cases h1 : u[i]? = some x
   · by_cases h2 : ((u.take i).map ρ).prod = g
-    · rw [if_pos ⟨h1, h2⟩, if_pos h1]; exact (if_pos h2).symm
-    · rw [if_neg (fun h => h2 h.2), if_pos h1]; exact (if_neg h2).symm
-  · rw [if_neg (fun h => h1 h.1), if_neg h1]
+    · rw [ite_eq_left ⟨h1, h2⟩, ite_eq_left h1]; exact (ite_eq_left h2).symm
+    · rw [ite_eq_right (fun h => h2 h.2), ite_eq_left h1]; exact (ite_eq_right h2).symm
+  · rw [ite_eq_right (fun h => h1 h.1), ite_eq_right h1]
 
 lemma hcount_snoc [Monoid H] [DecidableEq H] (ρ : α → H) (g : H) (x : α) (u : List α) (z : α) :
     hcount ρ g x (u ++ [z]) =
@@ -56,8 +56,8 @@ lemma psum_congr_at (x : α) (g h : List α → ℕ) (u : List α)
   unfold psum
   refine Finset.sum_congr rfl fun i _ => ?_
   by_cases hi : u[i]? = some x
-  · rw [if_pos hi, if_pos hi, hgh i hi]
-  · rw [if_neg hi, if_neg hi]
+  · rw [ite_eq_left hi, ite_eq_left hi, hgh i hi]
+  · rw [ite_eq_right hi, ite_eq_right hi]
 
 lemma count_take_lt_of_getElem? {x : α} {u : List α} {i : ℕ} (hi : u[i]? = some x) :
     (u.take i).count x < u.count x := by
@@ -92,7 +92,7 @@ theorem scount_aabb_eq_psum {a b : α} (hab : a ≠ b) (u : List α) :
       rw [e1, psum_snoc, count_snoc_ite]
       by_cases hz : z = b
       · subst hz
-        simp only [if_true, Nat.add_sub_cancel, Nat.sub_self, Nat.mul_zero, Nat.add_zero]
+        simp only [ite_true, Nat.add_sub_cancel, Nat.sub_self, Nat.mul_zero, Nat.add_zero]
         have h3 : scount [a, a, z] u = psum z (fun v => (v.count a).choose 2) u := by
           rw [show [a, a, z] = [a, a] ++ [z] from rfl, scount_snoc_eq_psum]
           exact psum_congr _ _ _ _ fun j _ => scount_aa a _
@@ -102,7 +102,7 @@ theorem scount_aabb_eq_psum {a b : α} (hab : a ≠ b) (u : List α) :
         rw [← Nat.mul_succ]
         congr 1
         omega
-      · simp only [if_neg hz, Nat.add_zero]
+      · simp only [ite_eq_right hz, Nat.add_zero]
         exact ih
 
 /-- The letter map `a ↦ (1, 0)`, `b ↦ (0, 1)`, other letters `↦ 1`, into `Z₄ × Z₂`. -/
@@ -125,13 +125,13 @@ lemma prod_aabbRho {a b : α} (hab : a ≠ b) (v : List α) :
       unfold aabbRho
       by_cases hza : z = a
       · subst hza
-        simp only [if_true, if_neg hab]
+        simp only [ite_true, ite_eq_right hab]
         rw [← ofAdd_add]; congr 1; simp only [Prod.mk_add_mk, add_zero]; push_cast; rfl
       · by_cases hzb : z = b
         · subst hzb
-          simp only [if_neg hza, if_true]
+          simp only [ite_eq_right hza, ite_true]
           rw [← ofAdd_add]; congr 1; simp only [Prod.mk_add_mk, add_zero]; push_cast; rfl
-        · simp only [if_neg hza, if_neg hzb, mul_one]
+        · simp only [ite_eq_right hza, ite_eq_right hzb, mul_one]
           congr 1
 
 lemma z4z2_indicator (A B : ℕ) :
@@ -161,14 +161,14 @@ theorem scount_aabb_cast_z4z2 {a b : α} (hab : a ≠ b) (u : List α) :
       rw [e1, e2, hcount_snoc, hcount_snoc, count_snoc_ite]
       by_cases hz : z = b
       · subst hz
-        simp only [if_true]
+        simp only [ite_true]
         rw [prod_aabbRho hab, scount_aa]
         have hi := z4z2_indicator (u.count a) (u.count z)
         push_cast at ih hi ⊢
         rw [ih]
         have two : ∀ t : ZMod 2, t + t = 0 := by decide
         linear_combination -hi - ((u.count z : ZMod 2) + 1) * two (((u.count a).choose 2 : ℕ) : ZMod 2)
-      · simp only [if_neg hz, Nat.add_zero]
+      · simp only [ite_eq_right hz, Nat.add_zero]
         exact ih
 
 /-- `(|u|_b + 1) · scount [a,a,b] u` is good modulo every `n`. -/
@@ -297,14 +297,14 @@ lemma prod_abacRho {a b : α} (hab : a ≠ b) (v : List α) :
       unfold abacRho
       by_cases hza : z = a
       · subst hza
-        simp only [if_true, if_neg hab]
+        simp only [ite_true, ite_eq_right hab]
         refine SemidirectProduct.ext ?_ ?_
         · simp
         · simp only [SemidirectProduct.mul_right]
           rw [← ofAdd_add]; congr 1; simp
       · by_cases hzb : z = b
         · subst hzb
-          simp only [if_neg hza, if_true]
+          simp only [ite_eq_right hza, ite_true]
           refine SemidirectProduct.ext ?_ ?_
           · simp only [SemidirectProduct.mul_left]
             funext i
@@ -317,7 +317,7 @@ lemma prod_abacRho {a b : α} (hab : a ≠ b) (v : List α) :
             push_cast
             rfl
           · simp
-        · simp only [if_neg hza, if_neg hzb, mul_one]
+        · simp only [ite_eq_right hza, ite_eq_right hzb, mul_one]
           refine SemidirectProduct.ext ?_ ?_
           · simp
           · simp
@@ -347,25 +347,25 @@ theorem cpair_abac_cast_wreath {a b : α} (hab : a ≠ b) (c : α) (u : List α)
       rw [cpair, wpair] at ih
       by_cases hz : z = c
       · subst hz
-        simp only [if_true]
+        simp only [ite_true]
         rw [prod_abacRho hab]
         have hi := wreath_indicator (fun i => (bAt a b i u : ZMod 2)) (u.count a : ZMod 2)
         have hin : (psum b (fun v' => if parCol a v' = 1 ∧ parCol a u = 0 then 1 else 0) u : ZMod 2) =
             if (u.count a : ZMod 2) = 0 then (bAt a b 1 u : ZMod 2) else 0 := by
           by_cases h0 : (u.count a : ZMod 2) = 0
           · have h0' : parCol a u = 0 := h0
-            rw [if_pos h0]
+            rw [ite_eq_left h0]
             unfold bAt
             congr 1
             exact psum_congr _ _ _ _ fun i _ => by simp [h0']
           · have h0' : ¬ parCol a u = 0 := h0
-            rw [if_neg h0, (psum_congr _ _ (fun _ => 0) _ fun i _ => by simp [h0']).trans
+            rw [ite_eq_right h0, (psum_congr _ _ (fun _ => 0) _ fun i _ => by simp [h0']).trans
               (psum_zero _ _)]
             simp
         push_cast at ih hi hin ⊢
         rw [ih, hin, ← hi]
         ring
-      · simp only [if_neg hz, Nat.add_zero]
+      · simp only [ite_eq_right hz, Nat.add_zero]
         exact ih
 
 /-- **`abac` modulo `2` as a count on `Z₂ ≀ Z₂`** (letters `a = 0`, `b = 1`, `c = 2` of

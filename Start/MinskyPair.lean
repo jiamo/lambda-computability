@@ -235,7 +235,7 @@ theorem pair_run {M : KM} {o e i j k x y t : ℕ} (hnd : [i, j, k, x, y, t].Nodu
     have hj₇ : r₇ j = r j := by rw [hag₇.get (by simp; omega), hj₆]
     refine ⟨r₈, hrun₁.trans (hrun₂.trans (hrun₃.trans (hrun₄.trans (hrun₅.trans
       (hrun₆.trans (hrun₇.trans hrun₈)))))), ?_, ?_, ?_, ?_, ?_, ht₈, ?_⟩
-    · rw [hk₈, hk₇', hj₇, Nat.pair, if_neg (by omega)]; ring
+    · rw [hk₈, hk₇', hj₇, Nat.pair, ite_eq_right (by omega)]; ring
     · rw [hag₈.get (by simp; omega), hi₇, hi₆']
     · rw [hj₈, hj₇]
     · rw [hag₈.get (by simp; omega), hag₇.get (by simp; omega), hx₆]
@@ -285,7 +285,7 @@ theorem pair_run {M : KM} {o e i j k x y t : ℕ} (hnd : [i, j, k, x, y, t].Nodu
     have hy₆ : r₆ y = 0 := by rw [hag₆.get (by simp; omega), hy₅]
     refine ⟨r₇, hrun₁.trans (hrun₂.trans (hrun₃.trans (hrun₄.trans (hrun₅.trans
       (hrun₆.trans hrun₇))))), ?_, ?_, ?_, ?_, ?_, ht₇, ?_⟩
-    · rw [hk₇, hk₆', hi₆, Nat.pair, if_pos hlt]; ring
+    · rw [hk₇, hk₆', hi₆, Nat.pair, ite_eq_left hlt]; ring
     · rw [hi₇, hi₆]
     · rw [hag₇.get (by simp; omega), hj₆']
     · rw [hag₇.get (by simp; omega), hx₆]

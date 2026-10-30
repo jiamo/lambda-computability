@@ -191,7 +191,7 @@ lemma search_some {S : Set ℤ} {l r m : ℤ} :
       (F.min'_le m (Finset.mem_filter.mpr ⟨Finset.mem_Icc.mpr ⟨h.2.1, hr⟩, h.1⟩))
       (h.2.2 _ hS hl)
     dsimp only [search]
-    rw [dif_pos hf]
+    rw [dite_eq_left hf]
     exact congrArg some he
 
 lemma search_some_or_none (S : Set ℤ) (l r : ℤ) :

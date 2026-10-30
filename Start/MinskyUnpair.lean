@@ -40,14 +40,14 @@ theorem unpair_succ (k : ℕ) : Nat.unpair (k + 1) = unpairNext (Nat.unpair k) :
   unfold unpairNext
   simp only
   split_ifs with h₁ h₂ h₃
-  · simp only [Nat.pair, if_pos h₂, if_pos h₁]; ring
+  · simp only [Nat.pair, ite_eq_left h₂, ite_eq_left h₁]; ring
   · have : a + 1 = b := by omega
     subst this
-    simp only [Nat.pair, if_pos h₁, Nat.not_lt_zero, if_false]; ring
-  · simp only [Nat.pair, if_neg h₁, if_neg (show ¬ a < b + 1 by omega)]; ring
+    simp only [Nat.pair, ite_eq_left h₁, Nat.not_lt_zero, ite_false]; ring
+  · simp only [Nat.pair, ite_eq_right h₁, ite_eq_right (show ¬ a < b + 1 by omega)]; ring
   · have : a = b := by omega
     subst this
-    simp only [Nat.pair, if_neg h₁, if_pos (show 0 < a + 1 by omega)]; ring
+    simp only [Nat.pair, ite_eq_right h₁, ite_eq_left (show 0 < a + 1 by omega)]; ring
 
 /-- The branch `r a < r b` of a step. -/
 def unpairLT (a b s : ℕ) : Prog :=
@@ -89,20 +89,20 @@ theorem exec_unpairLT {a b s : ℕ} (hab : a ≠ b) (ha : a < s) (hb : b < s) (r
   refine .seq e₁ (.seq e₂ (.seq e₃ (.seq e₄ ?_)))
   by_cases h₂ : r a + 1 < r b
   · have v6 : r₄ (s + 6) = 1 := by
-      simp only [hr₄, hr₃, v5, vb, v62, if_pos h₂]; upd_val
+      simp only [hr₄, hr₃, v5, vb, v62, ite_eq_left h₂]; upd_val
     have e₅ : Exec (.inc a) (update r₄ (s + 6) 0)
         (update (update r₄ (s + 6) 0) a (update r₄ (s + 6) 0 a + 1)) := .inc
     refine (exec_ite_pos (by omega) (by omega) (by simp only [hr₄, hr₃, hr₂, hr₁]; upd_val) e₅
       (by upd_val) (by simp only [hr₄, hr₃, hr₂, hr₁]; upd_val)).congr rfl ?_
-    simp only [unpairNext, if_pos hlt, if_pos h₂, hr₄, hr₃, hr₂, hr₁]
+    simp only [unpairNext, ite_eq_left hlt, ite_eq_left h₂, hr₄, hr₃, hr₂, hr₁]
     upd_tac
   · have v6 : r₄ (s + 6) = 0 := by
-      simp only [hr₄, hr₃, v5, vb, v62, if_neg h₂]; upd_val
+      simp only [hr₄, hr₃, v5, vb, v62, ite_eq_right h₂]; upd_val
     have e₅ := exec_clear a r₄
     have e₆ := exec_addTo (i := b) (j := a) (Ne.symm hab) (update r₄ a 0)
     refine (exec_ite_neg (by omega) v6 (by simp only [hr₄, hr₃, hr₂, hr₁]; upd_val) (.seq e₅ e₆)
       (by simp only [hr₄, hr₃, hr₂, hr₁]; upd_val)).congr rfl ?_
-    simp only [unpairNext, if_pos hlt, if_neg h₂, hr₄, hr₃, hr₂, hr₁]
+    simp only [unpairNext, ite_eq_left hlt, ite_eq_right h₂, hr₄, hr₃, hr₂, hr₁]
     upd_tac
 
 theorem exec_unpairGE {a b s : ℕ} (hab : a ≠ b) (ha : a < s) (hb : b < s) (r : ℕ → ℕ)
@@ -118,16 +118,16 @@ theorem exec_unpairGE {a b s : ℕ} (hab : a ≠ b) (ha : a < s) (hb : b < s) (r
     (by simp; omega) r h2 h3 h0
   refine .seq e₁ ?_
   by_cases h₂ : r b < r a
-  · rw [if_pos h₂]
+  · rw [ite_eq_left h₂]
     have e₅ : Exec (.inc b) (update (update r (s + 8) (r (s + 8) + 1)) (s + 8) 0)
         (update (update (update r (s + 8) (r (s + 8) + 1)) (s + 8) 0) b (r b + 1)) := by
       refine Exec.congr .inc rfl ?_
       congr 1; simp only [update_apply]; split_ifs <;> omega
     refine (exec_ite_pos (by omega) (by simp) (by upd_val) e₅ (by upd_val) (by upd_val)).congr
       rfl ?_
-    simp only [unpairNext, if_neg hge, if_pos h₂]
+    simp only [unpairNext, ite_eq_right hge, ite_eq_left h₂]
     upd_tac
-  · rw [if_neg h₂]
+  · rw [ite_eq_right h₂]
     have e₅ := exec_clear b (update r (s + 8) (r (s + 8) + 0))
     have e₆ := exec_addTo (i := a) (j := b) hab (update (update r (s + 8) (r (s + 8) + 0)) b 0)
     have e₇ : Exec (.inc b) (update (update (update (update r (s + 8) (r (s + 8) + 0)) b 0) b
@@ -138,7 +138,7 @@ theorem exec_unpairGE {a b s : ℕ} (hab : a ≠ b) (ha : a < s) (hb : b < s) (r
     refine (exec_ite_neg (by omega) (by upd_val) (by upd_val)
       (.seq e₅ (.seq (e₆.congr rfl ?_) e₇)) (by upd_val)).congr rfl ?_
     · upd_tac
-    · simp only [unpairNext, if_neg hge, if_neg h₂]
+    · simp only [unpairNext, ite_eq_right hge, ite_eq_right h₂]
       upd_tac
 
 theorem exec_unpairStep {a b s : ℕ} (hab : a ≠ b) (ha : a < s) (hb : b < s) (r : ℕ → ℕ)
@@ -154,7 +154,7 @@ theorem exec_unpairStep {a b s : ℕ} (hab : a ≠ b) (ha : a < s) (hb : b < s) 
     (by simp; omega) r h2 h3 h0
   refine .seq e₁ ?_
   by_cases hlt : r a < r b
-  · rw [if_pos hlt]
+  · rw [ite_eq_left hlt]
     have e := exec_unpairLT hab ha hb (update (update r (s + 1) (r (s + 1) + 1)) (s + 1) 0)
       (by intro j hj; simp only [update_apply]; split_ifs <;> simp [hr j hj]) (by upd_val)
     refine (exec_ite_pos (by omega) (by simp) (by upd_val) e (by upd_val) (by upd_val)).congr
@@ -163,7 +163,7 @@ theorem exec_unpairStep {a b s : ℕ} (hab : a ≠ b) (ha : a < s) (hb : b < s) 
     have eb : update (update r (s + 1) (r (s + 1) + 1)) (s + 1) 0 b = r b := by upd_val
     rw [ea, eb]
     upd_tac
-  · rw [if_neg hlt]
+  · rw [ite_eq_right hlt]
     have e := exec_unpairGE hab ha hb (update r (s + 1) (r (s + 1) + 0))
       (by intro j hj; simp only [update_apply]; split_ifs <;> simp [hr j hj, h1]) (by upd_val)
     refine (exec_ite_neg (by omega) (by upd_val) (by upd_val) e (by upd_val)).congr rfl ?_

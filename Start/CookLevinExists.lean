@@ -136,9 +136,9 @@ theorem not_uniform_diagFam (enc : Circuit → Word) {φ : ℕ → Cob} (hφ : F
   have h := hgen (List.replicate n true)
   rw [hx, diagFam, diagPad] at h
   by_cases hc : (φ n).eval [List.replicate n true] = enc (falseC 0)
-  · rw [if_pos hc] at h
+  · rw [ite_eq_left hc] at h
     exact hne (hc.symm.trans h)
-  · rw [if_neg hc] at h
+  · rw [ite_eq_right hc] at h
     exact hc h
 
 end Tseitin
@@ -259,7 +259,7 @@ theorem polyManyOne_SAT_of_acceptFamily {L : Language} {v : Cob} {p : ℕ → �
       refine ⟨?_, ?_⟩
       · rw [hyget _ h₁, hget _ h₁]
         simp [Nat.mul_mod_right]
-      · rw [hyget _ h₂, hget _ h₂, if_neg (by omega)]
+      · rw [hyget _ h₂, hget _ h₂, ite_eq_right (by omega)]
         congr 1
         omega
     refine ⟨y, ?_, hpin⟩

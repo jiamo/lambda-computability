@@ -170,7 +170,7 @@ theorem dyadic_le_one_iff (w : ℕ × ℕ) : dyadic w ≤ 1 ↔ w.1 ≤ 2 ^ w.2 
 theorem dyadic_addPow (w : ℕ × ℕ) (r : ℕ) : dyadic (addPow w r) = dyadic w + wt r := by
   unfold addPow dyadic wt
   by_cases h : r ≤ w.2
-  · simp only [h, if_pos]
+  · simp only [h, ite_eq_left]
     push_cast
     rw [add_div]
     congr 1
@@ -178,7 +178,7 @@ theorem dyadic_addPow (w : ℕ × ℕ) (r : ℕ) : dyadic (addPow w r) = dyadic 
       rw [← pow_add]; congr 1; omega
     rw [hsplit, inv_pow]
     field_simp
-  · simp only [h, if_neg, not_false_iff]
+  · simp only [h, ite_eq_right, not_false_iff]
     push_cast
     rw [add_div]
     congr 1
@@ -211,7 +211,7 @@ theorem dyadic_accW_eq_sum (e J : ℕ) :
       | none => simp [wtOpt]
       | some p =>
           by_cases hle : (addPow (accW e J) p.1).1 ≤ 2 ^ (addPow (accW e J) p.1).2
-          · simp only [hle, if_pos]
+          · simp only [hle, ite_eq_left]
             rw [dyadic_addPow]
             rfl
           · simp [hle, wtOpt]
@@ -298,10 +298,10 @@ theorem ceil_div_ge (a k : ℕ) (hk : 0 < k) : a ≤ (a + k - 1) / k * k := by
 theorem ceilAt_nat_lower (st : ℕ × ℕ) (L : ℕ) : st.1 * 2 ^ L ≤ ceilAt st L * 2 ^ st.2 := by
   unfold ceilAt
   by_cases h : st.2 ≤ L
-  · rw [if_pos h, mul_assoc, ← pow_add]
+  · rw [ite_eq_left h, mul_assoc, ← pow_add]
     have hL : L - st.2 + st.2 = L := by omega
     rw [hL]
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     have hd : st.2 = st.2 - L + L := by omega
     have hsplit : (2 : ℕ) ^ st.2 = 2 ^ (st.2 - L) * 2 ^ L := by rw [← pow_add, ← hd]
     rw [hsplit, ← mul_assoc]
@@ -312,11 +312,11 @@ theorem ceilAt_nat_upper (st : ℕ × ℕ) (L : ℕ) :
     ceilAt st L * 2 ^ st.2 ≤ st.1 * 2 ^ L + 2 ^ st.2 := by
   unfold ceilAt
   by_cases h : st.2 ≤ L
-  · rw [if_pos h, mul_assoc, ← pow_add]
+  · rw [ite_eq_left h, mul_assoc, ← pow_add]
     have hL : L - st.2 + st.2 = L := by omega
     rw [hL]
     exact Nat.le_add_right _ _
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     have hd : st.2 = st.2 - L + L := by omega
     have hsplit : (2 : ℕ) ^ st.2 = 2 ^ (st.2 - L) * 2 ^ L := by rw [← pow_add, ← hd]
     have h1 : (st.1 + 2 ^ (st.2 - L) - 1) / 2 ^ (st.2 - L) * 2 ^ (st.2 - L)
@@ -493,7 +493,7 @@ theorem mem_Ustep_iff {σ : List Bool} {t y : ℕ} :
         subst hm
         subst hL
         simp [eq_comm]
-      · simp only [if_neg hc, Option.mem_def]
+      · simp only [ite_eq_right hc, Option.mem_def]
         constructor
         · intro hy
           exact absurd hy (by simp)

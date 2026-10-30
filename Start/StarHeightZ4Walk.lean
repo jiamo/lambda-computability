@@ -63,8 +63,8 @@ lemma zc_eq_vcountFrom : ∀ (s : ZMod 4) (w : List (Fin 3)), zc σ s w = vcount
   | s, b :: w => by
       rw [zc, vcountFrom_cons, zc_eq_vcountFrom _ w]
       by_cases h : b = 0 ∧ s = 0
-      · rw [if_pos h, if_pos h]
-      · rw [if_neg h, if_neg h]
+      · rw [ite_eq_left h, ite_eq_left h]
+      · rw [ite_eq_right h, ite_eq_right h]
 
 lemma zc_append (s : ZMod 4) (u w : List (Fin 3)) :
     zc σ s (u ++ w) = zc σ s u + zc σ (s + dsum4 σ u) w := by
@@ -232,7 +232,7 @@ lemma zc_zero_of_avoid : ∀ (w : List (Fin 3)) (s : ZMod 4),
       have h1 : ¬ (b = 0 ∧ s = 0) := by
         rintro ⟨-, rfl⟩
         exact hs [] (List.nil_prefix) (by simp) (by simp)
-      rw [if_neg h1, zero_add]
+      rw [ite_eq_right h1, zero_add]
       apply zc_zero_of_avoid w
       intro p hp hpw
       have := hs (b :: p) (List.cons_prefix_cons.mpr ⟨rfl, hp⟩) (by simpa using hpw)
@@ -314,32 +314,32 @@ lemma walk4State_snoc (u : List (Fin 3)) (a : Fin 3) :
     walk4State σ (u ++ [a]) = walk4St σ (walk4State σ u) a := by
   have hs : dsum4 σ (u ++ [a]) = dsum4 σ u + σ a := by rw [dsum4_append, dsum4_single]
   unfold walk4State
-  rw [if_neg (by simp)]
+  rw [ite_eq_right (by simp)]
   by_cases hu : u = []
   · subst hu
-    rw [if_pos rfl, if_pos]
+    rw [ite_eq_left rfl, ite_eq_left]
     · simp [walk4St, dsum4_single]
     · intro p hp hne hpe
       rcases List.prefix_concat_iff.mp hp with h | h
       · exact absurd h hpe
       · exact absurd (List.prefix_nil.mp h) hne
-  rw [if_neg hu]
+  rw [ite_eq_right hu]
   by_cases hc : ∀ p, p <+: u → p ≠ [] → p ≠ u → dsum4 σ p ≠ 0
-  · rw [if_pos hc]
+  · rw [ite_eq_left hc]
     by_cases h0 : dsum4 σ u = 0
-    · rw [if_pos h0, if_neg]
+    · rw [ite_eq_left h0, ite_eq_right]
       · simp [walk4St]
       · intro h
         exact h u (List.prefix_append _ _) hu (by simp) h0
-    · rw [if_neg h0, if_pos]
-      · simp only [walk4St, encS_lt, if_true, encS_val, hs]
+    · rw [ite_eq_right h0, ite_eq_left]
+      · simp only [walk4St, encS_lt, ite_true, encS_val, hs]
       · intro p hp hne hpe
         rcases List.prefix_concat_iff.mp hp with h | h
         · exact absurd h hpe
         · by_cases hpu : p = u
           · rw [hpu]; exact h0
           · exact hc p h hne hpu
-  · rw [if_neg hc, if_neg]
+  · rw [ite_eq_right hc, ite_eq_right]
     · simp [walk4St]
     · intro h
       apply hc
@@ -362,17 +362,17 @@ lemma Xc_eq_walk : Xc σ = {u | u.foldl (walk4St σ) 0 = 4} := by
   unfold walk4State
   constructor
   · rintro ⟨hne, h0, hpre⟩
-    rw [if_neg hne, if_pos hpre, if_pos h0]
+    rw [ite_eq_right hne, ite_eq_left hpre, ite_eq_left h0]
   · intro h
     by_cases hne : u = []
-    · rw [if_pos hne] at h; exact absurd h (by decide)
-    rw [if_neg hne] at h
+    · rw [ite_eq_left hne] at h; exact absurd h (by decide)
+    rw [ite_eq_right hne] at h
     by_cases hc : ∀ p, p <+: u → p ≠ [] → p ≠ u → dsum4 σ p ≠ 0
-    · rw [if_pos hc] at h
+    · rw [ite_eq_left hc] at h
       by_cases h0 : dsum4 σ u = 0
       · exact ⟨hne, h0, hc⟩
-      · rw [if_neg h0] at h; exact absurd h (encS_ne_four _)
-    · rw [if_neg hc] at h; exact absurd h (by decide)
+      · rw [ite_eq_right h0] at h; exact absurd h (encS_ne_four _)
+    · rw [ite_eq_right hc] at h; exact absurd h (by decide)
 
 lemma NR_eq_walk : NR σ = {u | (u.foldl (walk4St σ) 0).val < 4} := by
   ext u
@@ -382,22 +382,22 @@ lemma NR_eq_walk : NR σ = {u | (u.foldl (walk4St σ) 0).val < 4} := by
   constructor
   · intro h
     by_cases hne : u = []
-    · rw [if_pos hne]; decide
-    rw [if_neg hne, if_pos (fun p hp hne' _ => h p hp hne'),
-      if_neg (h u List.prefix_rfl hne)]
+    · rw [ite_eq_left hne]; decide
+    rw [ite_eq_right hne, ite_eq_left (fun p hp hne' _ => h p hp hne'),
+      ite_eq_right (h u List.prefix_rfl hne)]
     exact encS_lt _
   · intro h p hp hne
     by_cases hu : u = []
     · subst hu; exact absurd (List.prefix_nil.mp hp) hne
-    rw [if_neg hu] at h
+    rw [ite_eq_right hu] at h
     by_cases hc : ∀ p, p <+: u → p ≠ [] → p ≠ u → dsum4 σ p ≠ 0
-    · rw [if_pos hc] at h
+    · rw [ite_eq_left hc] at h
       by_cases h0 : dsum4 σ u = 0
-      · rw [if_pos h0] at h; exact absurd h (by decide)
+      · rw [ite_eq_left h0] at h; exact absurd h (by decide)
       · by_cases hpu : p = u
         · rw [hpu]; exact h0
         · exact hc p hp hne hpu
-    · rw [if_neg hc] at h; exact absurd h (by decide)
+    · rw [ite_eq_right hc] at h; exact absurd h (by decide)
 
 lemma letters3' : ∀ a : Fin 3, a ∈ ([0, 1, 2] : List (Fin 3)) := by decide
 

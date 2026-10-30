@@ -453,13 +453,13 @@ lemma tally_cond {S: Domain} (h:legal n S) {j k : ℕ} (e : 2^k≤n)
   have he (i) (hi : i∈S) :
       atP j (x:ZMod n) (ind k i)≤ 32*rate k+(if i=x then 1 else 0) := by
     rcases eq_or_ne i x with h'|h'
-    · rw [h',if_pos rfl]
+    · rw [h',ite_eq_left rfl]
       unfold atP
       have H : 1 ≤ 32*rate k+1 := by have:=rate_pos k; linarith
       refine le_trans (b:=av (fun _ : pc n j=>1)) (av_mono (fun i=>?_)) ?_
       · dsimp only [ind]; split <;> linarith
       rw [av_const]; exact H
-    · rw [if_neg h',add_zero]
+    · rw [ite_eq_right h',add_zero]
       have hk : (i:ZMod n)≠x := fun he=> h' (injNat (range n) (subset_refl _) (h hi) (mem_range.2 hx) he)
       have hu := (pairMean (k:=j) (j:=k) hk).1
       linarith [(pct_bounds e).2]
@@ -1056,9 +1056,9 @@ lemma nonprimary (h : Step P.S P.f P.C) (x y j) (hj:j≠0)
     dsimp [share,slice]
     rw [rising_bot (by norm_num)
           ((div_le_iff₀ (rate_pos P.i)).mpr (le_trans hu (by
-             change good*rate P.i ≤ bound0*rate P.i; exact mul_le_mul_of_nonneg_right (by norm_num [good,bound0]) (le_of_lt (rate_pos _))))),if_neg hj]
+             change good*rate P.i ≤ bound0*rate P.i; exact mul_le_mul_of_nonneg_right (by norm_num [good,bound0]) (le_of_lt (rate_pos _))))),ite_eq_right hj]
     simp
-  refine ⟨hp,?_⟩; unfold fac boost; rw [if_neg hj,rising_top (by norm_num) hp.le]
+  refine ⟨hp,?_⟩; unfold fac boost; rw [ite_eq_right hj,rising_top (by norm_num) hp.le]
 
 lemma commute (h : Step P.S P.f P.C) (v : Vec) (x) :
     mv (P.next n).S (P.next n).C (P.project n v) x =
@@ -1118,7 +1118,7 @@ lemma few_nodes (h : Step P.S P.f P.C) (hl: 2^P.i ≤ n) :
        · exact mem_union_left _ (mem_image.mpr ⟨_,(he.loc _ _ h1).1,(hs ▸ hu)⟩)
        · refine mem_union_right _ ((member_copy P.mpos).mpr (mem_filter.2 ⟨hk,?_⟩))
          by_contra! en
-         exact h2 (by unfold fac boost; rw [if_neg hs]; exact rising_bot (by norm_num) en)
+         exact h2 (by unfold fac boost; rw [ite_eq_right hs]; exact rising_bot (by norm_num) en)
      · obtain ⟨h1,-,h2⟩:=hz y i hp
        by_cases hs:i%M=0
        · exact mem_union_left _ (mem_image.mpr ⟨_,(he.loc _ _ h1).2.1,(hs ▸ hu)⟩)

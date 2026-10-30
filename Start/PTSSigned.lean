@@ -74,7 +74,7 @@ theorem step_monotone : Monotone (step Ω hC hw) := by
   | pi D E =>
     dsimp only [stepCandidate]
     by_cases H : Normal (.pi D E) ∧ (∃ s, Ω.HasType (.pi D E) (.sort s)) ∧ Ω.profile (.pi D E) ∈ C
-    · simp only [if_pos H]
+    · simp only [ite_eq_left H]
       obtain ⟨hn,⟨s,ht⟩,hpC⟩ := H
       have hd : ∀ hD : Ω.profile D ∈ C,
           hC.signing (Ω.profile (.pi D E)) = Bool.xor (hC.signing (Ω.profile D)) true := by
@@ -118,7 +118,7 @@ theorem step_monotone : Monotone (step Ω hC hw) := by
           simpa only [hs,Bool.not_false,Bool.not_true] using flip _ _ (hd hc)) hn
         have hout := hh.2 n hn' _ (Set.mem_singleton _)
         exact value_backward Ω hC hv (fun hc => (he n (value_candidate Ω hC v D |>.upper hn).1 hc).trans hs) hout
-    · simp only [if_neg H]
+    · simp only [ite_eq_right H]
       cases hC.signing (Ω.profile (.pi D E)) <;> exact Set.Subset.rfl
 
 noncomputable def operator : Vector Ω hC →o Vector Ω hC :=
@@ -141,7 +141,7 @@ theorem actual_product {D E : Expr S} {s : S} (hn : Normal (.pi D E))
   have he := congrArg (fun v : Vector Ω hC => (v (.pi D E)).set) (operator Ω hC hw hno).map_lfp
   change (step Ω hC hw (fixed Ω hC hw hno) (.pi D E)).set = _ at he
   dsimp only [step,SignedCandidate.set_wrap,stepCandidate] at he
-  rw [if_pos (show Normal (.pi D E) ∧ (∃ s, Ω.HasType (.pi D E) (.sort s)) ∧
+  rw [ite_eq_left (show Normal (.pi D E) ∧ (∃ s, Ω.HasType (.pi D E) (.sort s)) ∧
     Ω.profile (.pi D E) ∈ C from ⟨hn,⟨s,ht⟩,hc⟩)] at he
   simpa only [actual,value,hc,ite_true,SignedCandidate.set_wrap,fixed] using he.symm
 end

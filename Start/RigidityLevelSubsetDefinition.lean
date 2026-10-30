@@ -32,7 +32,7 @@ theorem Construction.subset_at_level (t : Construction.{u}) (M : ZFSet.{u})
       cases i with
       | zero => rfl
       | succ i =>
-        simp only [cons_succ,tupleEnv,dif_pos (show i < t.singleMembership.bound by omega)])
+        simp only [cons_succ,tupleEnv,dite_eq_left (show i < t.singleMembership.bound by omega)])
   constructor
   · intro hz
     have hzL := level_transitive _ γ _ hv z hz

@@ -332,14 +332,14 @@ def one (w : ℕ) : Code Reg Bool := .seq (first w) finish
       (Code.branch (fun v : Tops Reg Bool => (v 5).getD false) (.transfer 6 2 false) (.clear 6)).Exec s u mid := by
     cases hh : fs.headD false
     · have he := Code.clear_exec (6 : Reg) s
-      have ho : out=[] := if_neg (by rw [hh]; decide)
+      have ho : out=[] := ite_eq_right (by rw [hh]; decide)
       have hm : Function.update s 6 []=mid := by
         funext i; fin_cases i <;> simp [s,mid,state,ho]
       rw [hm] at he
       refine ⟨_,?_,Code.Exec.branch_false (by simpa [tops,s,state] using hh) he⟩
       simp [s,state]; omega
     · have he := Code.transfer_exec (6 : Reg) 2 (by decide) false s
-      have ho : out=value := if_pos hh
+      have ho : out=value := ite_eq_left hh
       have hm : Function.update (Function.update s 6 []) 2 ((s 6).reverse++s 2)=mid := by
         funext i; fin_cases i <;> simp [s,mid,state,ho]
       rw [hm] at he
@@ -449,7 +449,7 @@ def search (w : ℕ) : Code Reg Bool := .loop keepGoing (one w)
     obtain ⟨a,ha,hstep⟩ := one_exec e.1 e.2 q (flatten l) hist he.1 he.2
     by_cases h : e.1=q
     · have hval : e.2≠[] := by intro hh; rw [hh,List.length_nil] at he; omega
-      simp only [if_pos h] at hstep
+      simp only [ite_eq_left h] at hstep
       have hstop : (search q.length).Exec
           (state (flatten l) q e.2 (e.2.reverse++e.1.reverse++hist) [] [] [] []) 1
           (state (flatten l) q e.2 (e.2.reverse++e.1.reverse++hist) [] [] [] []) :=
@@ -457,13 +457,13 @@ def search (w : ℕ) : Code Reg Bool := .loop keepGoing (one w)
       have hex := Code.Exec.loop_true (p:=keepGoing) (by simp [keepGoing,Code.nonempty,tops,state,hkne]) hstep hstop
       refine ⟨a+1+1,?_,?_⟩
       · simp only [List.length_cons]; nlinarith
-      · simpa only [search,flatten,List.flatMap_cons,consumed,remaining,found,if_pos h,List.flatMap_nil,List.append_nil,
+      · simpa only [search,flatten,List.flatMap_cons,consumed,remaining,found,ite_eq_left h,List.flatMap_nil,List.append_nil,
           List.reverse_append,List.append_assoc] using hex
-    · simp only [if_neg h] at hstep
+    · simp only [ite_eq_right h] at hstep
       obtain ⟨b,hb,hrest⟩ := ih (e.2.reverse++e.1.reverse++hist) hl
       have hex := Code.Exec.loop_true (p:=keepGoing) (by simp [keepGoing,Code.nonempty,tops,state,hkne]) hstep hrest
       refine ⟨a+b+1,?_,?_⟩
       · simp only [List.length_cons]; nlinarith
-      · simpa only [search,flatten,List.flatMap_cons,consumed,remaining,found,if_neg h,List.reverse_append,List.append_assoc] using hex
+      · simpa only [search,flatten,List.flatMap_cons,consumed,remaining,found,ite_eq_right h,List.reverse_append,List.append_assoc] using hex
 end WLTime.SparseLookup
 

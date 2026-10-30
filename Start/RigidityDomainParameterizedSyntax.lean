@@ -40,7 +40,7 @@ theorem Definable.toDomain {P : (ℕ → ZFSet.{u}) → Prop} (h : Definable M P
     split
     · rfl
     · dsimp [d']
-      rw [if_pos (show i / 2 < b by dsimp [b]; omega)]
+      rw [ite_eq_left (show i / 2 < b by dsimp [b]; omega)]
   refine ⟨fromBounded p,d',b,hn,fun i => hd _,?_⟩
   intro N hN hdN e he
   rw [bounded_sat,Formula.absolute p N hN _ (by
@@ -63,11 +63,11 @@ theorem DomainDefinable.and (hP : DomainDefinable M P) (hQ : DomainDefinable M Q
     · obtain ⟨j,hj,heq⟩ := hk (i/2)
       refine ⟨2*j,by omega,?_⟩
       rw [mix_even]
-      simpa only [mix,if_pos hi] using heq
+      simpa only [mix,ite_eq_left hi] using heq
     · obtain ⟨j,hj,heq⟩ := hl (i/2)
       refine ⟨2*j+1,by omega,?_⟩
       rw [mix_odd]
-      simpa only [mix,if_neg hi] using heq
+      simpa only [mix,ite_eq_right hi] using heq
   · intro i; unfold mix; split <;> first | exact hd _ | exact hc _
   · intro N hN hdc e he
     have hdN (i : ℕ) : d i ∈ N := by simpa only [mix_even] using hdc (2*i)

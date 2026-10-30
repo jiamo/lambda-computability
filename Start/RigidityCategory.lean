@@ -9,7 +9,6 @@ file `lean/OAI/Computability/DegreeRigidity/Representation/Category.lean`, famil
 paper "Rigidity of the Turing degrees".
 Adapted to this library's Lean v4.33.0 / Mathlib `v4.33.0` pin: the `OAI` namespace was dropped,
 imports were renamed to `Start.Rigidity*`, and proofs were repaired where the pin required it.
-Proof change: `Filter.eventuallyEqSet_iff` (upstream pin) is `Filter.eventuallyEq_set` on this pin.
 See `NOTICE` at the repository root.
 -/
 
@@ -30,7 +29,7 @@ theorem measurable_continuousOn_residual {X Y : Type*}
   have hD : D ∈ residual X := by
     apply eventually_countable_forall.mpr
     intro n
-    exact Filter.eventuallyEq_set.mp (hVeq n)
+    exact Filter.eventuallyEqSet_iff.mp (hVeq n)
   refine ⟨D, hD, hb.continuousOn_iff.mpr ?_⟩
   rintro s ⟨n, rfl⟩
   refine ⟨V n, hVo n, ?_⟩

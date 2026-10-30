@@ -153,9 +153,9 @@ theorem vars_subst_single {a : ℕ} {t x : Ty} (ha : a ∉ t.vars) :
   obtain ⟨v, hv, hw⟩ := mem_vars_subst.1 hw
   by_cases hva : v = a
   · subst hva
-    simp only [single, if_true] at hw
+    simp only [single, ite_true] at hw
     exact Finset.mem_erase.2 ⟨fun h => ha (h ▸ hw), Finset.mem_union_right _ hw⟩
-  · simp only [single, hva, if_false, vars_var, Finset.mem_singleton] at hw
+  · simp only [single, hva, ite_false, vars_var, Finset.mem_singleton] at hw
     subst hw
     exact Finset.mem_erase.2 ⟨hva, Finset.mem_union_left _ hv⟩
 
@@ -337,7 +337,7 @@ theorem unifySpec_elim {a : ℕ} {t : Ty} {E E₀ : Eqs} (ha : a ∉ t.vars)
       have hsub := eqsVars_substEqs_single ha E
       by_cases hva : v = a
       · subst hva
-        simp only [single, if_true] at hx
+        simp only [single, ite_true] at hx
         obtain ⟨y, hy, hxy⟩ := mem_vars_subst.1 hx
         have := hu3 y hxy
         rcases Finset.mem_insert.1 this with rfl | h
@@ -346,7 +346,7 @@ theorem unifySpec_elim {a : ℕ} {t : Ty} {E E₀ : Eqs} (ha : a ∉ t.vars)
           simp only [Finset.mem_erase, Finset.mem_union] at this
           simp only [Finset.mem_insert, eqsVars_cons, vars_var, Finset.mem_union,
             Finset.mem_singleton]; tauto
-      · simp only [single, hva, if_false, subst_var'] at hx
+      · simp only [single, hva, ite_false, subst_var'] at hx
         have := hu3 v hx
         rcases Finset.mem_insert.1 this with rfl | h
         · simp
@@ -386,14 +386,14 @@ theorem unifySpec (E : Eqs) : UnifySpec E := by
     · simp only [eqsVars_cons]; ext w; simp only [Finset.mem_union]; tauto
   | case6 x y a E hocc =>
     refine ⟨fun u hu => ?_, fun _ s hs => ?_⟩
-    · simp only [unify, hocc, if_true] at hu
+    · simp only [unify, hocc, ite_true] at hu
       cases hu
     have h := (unifies_cons.1 hs).1
     simp only [subst_var'] at h
     have := Ty.size_lt_subst s hocc (by simp)
     rw [← h] at this; exact lt_irrefl _ this
   | case7 x y a E hocc ih =>
-    refine unifySpec_elim hocc ih (fun s => ?_) ?_ (by simp only [unify, hocc, if_false])
+    refine unifySpec_elim hocc ih (fun s => ?_) ?_ (by simp only [unify, hocc, ite_false])
     · simp only [unifies_cons]; constructor <;> rintro ⟨h1, h2⟩ <;> exact ⟨h1.symm, h2⟩
     · simp only [eqsVars_cons]; ext w; simp only [Finset.mem_union]; tauto
   | case8 d E ih =>
