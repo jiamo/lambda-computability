@@ -93,3 +93,43 @@ at `ea40824`. Aristotle is asked to restate what it implements, verbatim, in `c/
   When the budget runs low, Aristotle is to stop and report which parts are done, partly done or not
   started. It is asked again to export the proofs, and in any case to give the Lean statement of
   every property under `proofs/statements/`.
+
+## Round 2 result (task 56a7f0de, COMPLETE_WITH_ERRORS after 1 h 11 min)
+
+The user sent two messages to the task from the Aristotle web page, and the task log shows both:
+"credit 快用网了。尽量多写c代码，少证明吧。" and "把要求你写的c语言写完". Following them,
+Aristotle put writing C ahead of proving, and stopped in part F.
+
+**Delivered (merged here)**
+- Seven modules, each with a header, a source and a test program: `krivine`, `cbv`, `lazy`,
+  `leftmost`, `multitape`, `minsky`, `spacemachine`. Together they are about 1,700 lines of C.
+- `PROOFS.md` covers rounds 1 and 2. It gives the status of each part, the round-2 properties
+  F1–F32, and the definitions that are not implemented, each with its reason.
+- `proofs/README.md` and `proofs/statements/README.md` state that neither the proofs nor the Lean
+  statements can be exported.
+
+**Not taken from the result**
+- `spec/Machines.lean`, which was delivered empty. Aristotle says it restated the definitions and
+  type-checked them, but kept the restatement internal.
+- The uploaded archive and the top-level copy of `test_base.c`.
+- `README.md` came back as the version we uploaded; the repository keeps its newer wording.
+
+**Status**
+- Part F is partly done:
+  - written and tested: KrivineHeap, KrivineDecode, CbvMachine and CbvStepFn, LazyStepFn,
+    DepthThreeModel, Minsky and SpaceMachine;
+  - LeftmostRun is partial (`nstep` and `closure` only);
+  - not started: MinskyCompile, KCMachine, the WL RAM model, BLC, Combinators and PCA.
+- Parts G–K are not started.
+- Of the 32 round-2 properties, F1–F2 (`ct_kclos_mk`, `ct_kenv_cons`) are proved and F3–F32 are open.
+  None is refuted. The 64 round-1 properties are unchanged.
+
+**Checked here**
+- `make -C c test` with Apple clang on arm64 passes all eleven test programs under
+  `-Wall -Wextra -Werror -pedantic`. The same eleven also pass under
+  `-fsanitize=address,undefined -fno-sanitize-recover=all`.
+- The code makes no system, file or network calls, and includes only standard headers.
+- A spot check against Lean: `ct_leftmost_step_normal`, `nstep` and `closure` agree with
+  `Lambda.step_normal` (Start/EvalSound.lean), `nstep` and `closure` (Start/LeftmostRun.lean).
+- The other six modules were not read line by line against Lean. Their agreement with Lean rests on
+  their tests until F3–F32 are proved or independently checked.

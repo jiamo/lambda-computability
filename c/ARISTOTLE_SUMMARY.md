@@ -1,65 +1,32 @@
-# Summary of changes for run 6b89de8c-9d70-4d0f-a2ff-277e91aa7e08
-I've implemented Parts A–D in C, `make test` passes, and every property is proved under the caller obligations and library assumptions below. No property was refuted and none is open. The proof files are not in `proofs/`: they are kept internal, as `proofs/README.md` explains. `PROOFS.md` gives each property's statement, status and artifact.
+# Summary of changes for run 56a7f0de-bf74-4875-ae1b-d10352dae99a
+Part F is partly done: I wrote and tested seven new C modules for it. Parts G–K are not started. In this round only `ct_kclos_mk` and `ct_kenv_cons` are verified; every other new function is written and tested, but its proofs are still open. I stopped here because you said credit was nearly used up, which is the round's stop rule; per your follow-ups, I put C code ahead of proofs. The next round can continue from the status recorded in `PROOFS.md`.
 
-You mentioned earlier that no files had appeared while credit was being used. All the deliverables listed at the end are now in the project directory and have been published.
+**What was implemented, by part** (each module has a header in `include/ct/`, a source in `src/` and a test in `tests/`)
+- **Part F, done (C and tests):**
+  - `krivine`: the Krivine machine — code table, heap, one step, and decoding a state back to a λ-term.
+  - `cbv`: the call-by-value machine — `stepFn`, `plug`, `State.decode`, `kWeight`, `measure`, `Label.betaCount`.
+  - `lazy`: the call-by-need machine — `lstepFn`, `Cell.orig`, `LState.init`, label functions.
+  - `multitape`: the computable definitions of `DepthThreeModel`, including the multi-tape step, `init` and `runSteps`.
+  - `minsky`: counter machines and their compiler to two-counter machines.
+  - `spacemachine`: `writeAt`, `moveWork`, `moveIn`, `Config.space`, `stepList`, `init`, `constMachine`.
+- **Part F, partly done:** `leftmost` has `step_normal`, `nstep` and `closure`. Still to write: `nstep_code`, `isNormal_code`, `haltsBy_code`, which work on number codes of terms.
+- **Part F, not started:** `MinskyCompile`, `KCMachine`, `WLModel`, `WLRAMInstruction`, `WLInterpreter`, `BLC`, `Combinators`, `PCA`.
+- **Spec:** I restated every implemented definition word for word, with its source module, and checked that it type-checks on its own. That restatement is kept internal: `spec/Machines.lean` is delivered empty, and each entry in `PROOFS.md` names its Lean definition and source module instead.
+- **Round-1 code:** unchanged, since no bug was found. `tests/test_base.c` is now your uploaded version.
 
-**Two fixes to my own code during verification**
-- **`ct_lambda_normalize`** used to compute one extra step before checking the fuel. That step could fail and return an error such as `CT_EOVERFLOW` instead of `CT_ELIMIT`.
-  - Once `fuel` steps have been taken, it now only checks whether the term is normal, using a new non-allocating helper `normal_rec`, and returns `CT_ELIMIT` if it is not.
-  - New tests in `tests/test_lambda.c` cover `fuel == 0`.
-- **`ct_cob_eval`**: a `proj` whose argument is longer than `max_len` now returns `CT_ELIMIT`. Previously it returned the argument unchanged.
+**What `make test` printed:** "all checks passed" for `test_base`, `test_cbv`, `test_cob`, `test_krivine`, `test_lambda` (which also prints "PLUS 2 3 normalizes to church 5 in 6 steps"), `test_lazy`, `test_leftmost`, `test_minsky`, `test_multitape`, `test_qbf` and `test_spacemachine`. `test_version` prints nothing when it passes. The run passes with gcc and with clang, and every test also runs clean under AddressSanitizer and UndefinedBehaviorSanitizer. I could not run it on arm64 macOS. The tests compare against hand-computed values and lemmas stated in the Lean sources. The `minsky` test also runs a compiled two-counter program and checks the encoded registers it ends with.
 
-**What was implemented**
-- **Part A** (`include/ct/base.h`, `src/base.c`, `tests/test_base.c`):
-  - status codes;
-  - arenas (create, aligned allocation with every size overflow-checked, destroy);
-  - checked `uint64_t` add/sub/mul;
-  - immutable bit words with every operation you listed;
-  - word vectors in which a missing index reads as the empty word.
-- **Part B** (`lambda.h/.c`, `test_lambda.c`):
-  - terms with structural equality;
-  - `lift`, `subst`, `size` and `church`;
-  - one leftmost-outermost step;
-  - normalization with fuel and a step count.
-- **Part C** (`cob.h/.c`, `test_cob.c`): Cobham terms and evaluation, with limits on word length, work and depth (`CT_ELIMIT` when one is exceeded). The tests cover proj, empty, app, smash, a composition, identity by recursion on notation, and concatenation.
-- **Part D** (`qbf.h/.c`, `test_qbf.c`): formulas and `ct_qbf_eval`; variables ≥ `n` read as false.
+**Status of every property**
+- **Round 1:** all 64 entries are still proved, unchanged.
+- **Round 2, proved (F1, F2):**
+  - `ct_kclos_mk`: no undefined behavior; on `CT_OK`, `*out` represents `Clos.mk t e`; otherwise `*out` is unchanged.
+  - `ct_kenv_cons`: no undefined behavior; on `CT_OK`, `*out` represents `c :: e`; otherwise `*out` is unchanged.
+  - Both assume standard `malloc`/`free` behavior and say what holds if the function returns. They do not prove termination or absence of memory leaks.
+- **Round 2, open (F3–F32):** every other public function of the seven new modules. None is refuted.
 
-**What `make test` printed:** all five test programs built without warnings (`-Wall -Wextra -Werror -pedantic`).
-- `test_base`, `test_cob` and `test_qbf` each reported all checks passed.
-- `test_lambda` reported that `PLUS 2 3` normalizes to `church 5` in 6 steps, then all checks passed.
-- The existing `test_version` printed nothing.
-- The run exited with status 0.
+**Skipped definitions ("Not implemented" in `PROOFS.md`)**
+- `haltTime` and `nf`: they search all natural numbers for a normal form, which cannot be implemented faithfully.
+- `RawClause.eval`, `Circuit3.middleEval`, `Circuit3.eval`: declared `noncomputable`.
+- Predicates and relations, which are not programs: `cbvstep`, `Trans`, `LTrans`, `KM.Step`, the space-complexity classes, and so on.
 
-**Status of every property (all proved)**
-Each statement covers no undefined behavior plus agreement with `spec/CTSpec.lean` on `CT_OK`. These are partial-correctness results: they say what holds if the function returns, not that it returns.
-- **λ-calculus, priorities 1 and 2:**
-  - `ct_lambda_lift`, `ct_lambda_subst`, `ct_lambda_size` and `ct_lambda_church` compute exactly `CT.Lambda.lift`, `.subst`, `.size` and `.church`.
-  - `ct_lambda_step` contracts the leftmost-outermost redex, and reports "normal" exactly when no `CT.Lambda.step` exists.
-  - `ct_lambda_normalize`, on `CT_OK`: `*steps ≤ fuel`, and its result is normal and reached from `t` by exactly `*steps` leftmost-outermost steps.
-  - `ct_lambda_normalize` fuel bound: an error other than `CT_ELIMIT` can only come from computing one of the first `fuel` steps. With `fuel == 0` the result is `CT_OK` or `CT_ELIMIT`.
-  - The constructors, `ct_lambda_equal` and all static helpers, including `normal_rec`, are also proved.
-- **QBF, priority 3:** `ct_qbf_eval` returns `CT.QBF.eval σ p`, where `σ i = assign[i]` for `i < n` and false otherwise. The constructors and helpers are also proved.
-- **Cobham terms, priority 4:** `ct_cob_eval` returns `CT.Cob.eval c args`, a word of length at most `lim->max_len`. The helpers, all constructors and `mk_node` are also proved.
-- **Base:** the arena functions, checked arithmetic, all word and vector functions and the allocation helpers are proved. `ct_arena_alloc` with size 0, and `ct_arena_alloc_array` with `count == 0` or `elem_size == 0`, return `CT_EINVAL` without touching memory.
-- **Not claimed:** freedom from memory leaks. `ct_arena_destroy` is proved free of undefined behavior, but it is not proved to release every block.
-- **Error returns:** a public function leaves its result parameters unchanged. The static helpers' `budget`/`work` counters may have been decreased, and `normal_rec`'s flag may have been written before it returns `CT_ELIMIT`.
-
-**Caller obligations** (each entry in `PROOFS.md` and the Properties table states its own):
-- Arenas are live (created and not yet destroyed).
-- Words, vectors, terms and formulas are valid and not modified during the call.
-- Limit structures, the `budget`/`work` counters and the `assign` entries hold initialized values.
-- Written objects are distinct from one another. They do not overlap the inputs, memory reachable from the inputs (word bytes, item arrays, term nodes, `assign`, `gs`), or the arena's internal records. For example, the buffer passed to `ct_word_to_string` must not overlap the word or its bytes.
-
-**Assumptions**
-- **C library:** the standard behavior of `malloc`, `free`, `memcpy`, `memset` and `strlen` is assumed, not verified.
-- **Calls into `base.c`:** where `lambda.c`, `qbf.c` and `cob.c` call `base.c` functions, those functions are verified from their own code, not assumed.
-- **Platform:** behavior the C standard leaves to the implementation follows GCC/Clang on x86-64 Linux.
-
-`spec/CTSpec.lean`, `Makefile` and `README.md` are unchanged.
-
-Files are in the project directory:
-- `PROOFS.md`
-- `proofs/README.md`
-- `include/ct/base.h`, `include/ct/lambda.h`, `include/ct/cob.h`, `include/ct/qbf.h`
-- `src/base.c`, `src/lambda.c`, `src/cob.c`, `src/qbf.c`
-- `tests/test_base.c`, `tests/test_lambda.c`, `tests/test_cob.c`, `tests/test_qbf.c`
+**Proof artifacts:** the proofs and the exact Lean statements can't be exported, so `proofs/<module>/` and Lean files under `proofs/statements/` are not provided. `proofs/README.md` and `proofs/statements/README.md` explain this; `PROOFS.md` states every property in precise prose. `ref/` and the archive are not in the result.

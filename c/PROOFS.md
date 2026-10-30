@@ -1,4 +1,4 @@
-# PROOFS.md — verified properties (round 1)
+# PROOFS.md — verified properties (rounds 1 and 2)
 
 This file lists every property of Part E: its statement, its status (**proved** / **refuted** /
 **open**) and its artifact. For the nature of the artifacts, see `proofs/README.md`.
@@ -137,3 +137,153 @@ arithmetic and the non-allocating word/vector functions use no library function.
 | A9 | `ct_vec_get`, `ct_vec_tail`, `ct_vec_cons` | No UB; produce `v.getD i []` (missing index reads as the empty word), `v.tail`, `w :: v`. | **proved** |
 | A10 | `ct_vec_make`, `ct_vec_length` | No UB; produce `[ws[0], …, ws[n-1]]`; return `v.length`. | **proved** |
 | A11 | static helpers `bits_alloc`, `items_alloc` | No UB for positive sizes; fresh arrays from the arena. | **proved** |
+
+---
+
+# Round 2
+
+## Status of the parts
+
+| part | status | C modules written (header, source, test) |
+|---|---|---|
+| F machines | **partly done** | `krivine`, `cbv`, `lazy`, `leftmost`, `multitape`, `minsky`, `spacemachine` |
+| G programs and compilers | not started | — |
+| H type checkers and normalizers | not started | — |
+| I logic and complexity | not started | — |
+| J automata and star height | not started | — |
+| K further programs | not started | — |
+
+Part F, in the order of its table:
+
+| Lean source | status | C module |
+|---|---|---|
+| `KrivineHeap` (with the definitions of `KrivineTable` and `Krivine` it uses) | done (C and tests) | `krivine` |
+| `KrivineDecode` | done (C and tests) | `krivine` |
+| `CbvMachine`, `CbvStepFn` | done (C and tests) | `cbv` |
+| `LazyStepFn` (with the definitions of `LazyMachine` it uses) | done (C and tests) | `lazy` |
+| `LeftmostRun` (with `Lambda.step_normal` of `EvalSound`) | partly done: `nstep`, `closure`; the code-level functions `nstep_code`, `isNormal_code`, `haltsBy_code` are not yet written | `leftmost` |
+| `DepthThreeModel` | done (C and tests) for every computable definition | `multitape` |
+| `Minsky` (with `CMInstr`, `CM`, `CMConf` of `FsubGhelli`) | done (C and tests) | `minsky` |
+| `MinskyCompile` | not started | — |
+| `SpaceMachine` | done (C and tests) | `spacemachine` |
+| `KCMachine` | not started | — |
+| `WLModel`, `WLRAMInstruction`, `WLInterpreter` | not started | — |
+| `BLC`, `Combinators`, `PCA` | not started | — |
+
+Every definition implemented in round 2 was restated verbatim from `ref/Start/` (namespace `CT`,
+`import Mathlib` only, a comment naming the source module before each one) and type-checked on its
+own. That formal restatement is kept internal by Aristotle and is not delivered in this
+directory (`spec/Machines.lean` is left empty); each entry below names the Lean definition and its
+source module in `Start/`, which fix the meaning of the statement.
+
+**Round-1 code.** No round-1 source file was changed in round 2 (no bug was found).
+`tests/test_base.c` was replaced by the uploaded version (line 55 requests
+`_Alignof(max_align_t)` instead of 16).
+
+## Verification status of round 2
+
+Verification goals (README.md): for every public function, (1) no undefined behavior on every input
+satisfying the documented preconditions, and (2) whenever it returns `CT_OK`, its output encodes the
+value of the corresponding Lean definition of `Start/` (named in each entry) on the encoded input. For a step function this
+means: the reported successor is the Lean successor, and "halted"/"stuck" is reported exactly when
+the Lean step function returns `none`.
+
+The caller obligations of round 1 apply (live arenas, terms built in a live arena and not
+modified, initialized limit structures, written objects distinct from each other and from the
+inputs). In addition, for round 2: arrays passed with a length or capacity have at least that many
+elements; enumeration fields (`kind`, moves, labels) hold one of the documented values; the indices
+stored in tables, heaps and stacks are in range where the header says so. Assumptions: those of
+round 1 (standard behavior of `malloc` and `free`; the same platform).
+
+Proofs were started in the order of the parts. Two properties are **proved**; every other
+round-2 property is **open** (not yet proved and not refuted). No round-2 property is refuted.
+
+Artifact for every **proved** entry: *internal machine-checked proof (see `proofs/README.md`)*.
+Open entries have no artifact yet.
+
+### Part F — `krivine` (`src/krivine.c`)
+
+| # | Function | Lean definition | Statement (both goals) | Status |
+|---|---|---|---|---|
+| F1 | `ct_kclos_mk(a, code, env, out)` | `Krivine.Clos.mk` | For a live arena `a`, a term `code` representing `t` and an environment `env` representing `e` (NULL, or nodes built by `ct_kenv_cons` whose closures were built by `ct_kclos_mk`): no UB; on `CT_OK`, `*out` points to a new closure representing `Krivine.Clos.mk t e`; otherwise an error code and `*out` unchanged. | **proved** |
+| F2 | `ct_kenv_cons(a, head, tail, out)` | `List.cons` on `Krivine.Env` | For a live arena, a closure `head` representing `c` and an environment `tail` representing `e`: no UB; on `CT_OK`, `*out` points to a new list node representing `c :: e`; otherwise an error code and `*out` unchanged. | **proved** |
+| F3 | `ct_krivine_flatten`, `ct_krivine_tab_of` | `Impl.flatten`, `Impl.tabOf`, `Impl.rootOf` | No UB; on `CT_OK` the new table and root are `flatten t tab` (resp. `tabOf t`, `rootOf t`). | open |
+| F4 | `ct_krivine_dec_term_f`, `ct_krivine_dec_term` | `Impl.decTermF`, `Impl.decTerm` | No UB; on `CT_OK` the term built is `decTermF tab fuel p` (resp. `decTerm tab p`). | open |
+| F5 | `ct_krivine_dec_clos_f`, `ct_krivine_dec_env_f`, `ct_krivine_dec_clos`, `ct_krivine_dec_env` | `Impl.decClF`, `Impl.decEnvF`, `Impl.decClos`, `Impl.decEnvP` | No UB; on `CT_OK` the closure/environment built is the value of the definition. | open |
+| F6 | `ct_krivine_env_nth` | `Impl.envNth` | No UB; returns true with `*out = q` iff `envNth heap e n = some q`. | open |
+| F7 | `ct_krivine_dec_state`, `ct_krivine_init_state` | `Impl.decState`, `Impl.initState` | No UB; on `CT_OK` the state written is `decState tab s` (resp. `initState t`). | open |
+| F8 | `ct_krivine_hstep` | `Impl.hstep` | No UB; on `CT_OK`, `*stuck` is true and the state unchanged iff `hstep tab s = none`; otherwise the label and the new state are those of `hstep tab s = some (l, s')`. `CT_ELIMIT` only when the heap or the stack is full. | open |
+| F9 | `ct_krivine_unfold`, `ct_krivine_unfold_env`, `ct_krivine_spine`, `ct_krivine_state_decode` | `Clos.unfold`, `unfoldEnv`, `spine`, `State.decode` | No UB; on `CT_OK` the term built is the value of the definition. | open |
+
+### Part F — `cbv` (`src/cbv.c`)
+
+| # | Function | Lean definition | Statement (both goals) | Status |
+|---|---|---|---|---|
+| F10 | `ct_cek_cont_arg`, `ct_cek_cont_fn` | `Frame.arg u e :: k`, `Frame.fn c :: k` | No UB; on `CT_OK` the new continuation represents the list. | open |
+| F11 | `ct_cek_init` | `CEK.State.init` | No UB; writes `eval t [] []`. | open |
+| F12 | `ct_cek_step` | `CEK.stepFn` | No UB; on `CT_OK`, `*halted` iff `stepFn s = none`; otherwise `*out` represents `s'` with `stepFn s = some s'`. | open |
+| F13 | `ct_cek_beta_count` | `CEK.Label.betaCount` | No UB; returns the value of the definition. | open |
+| F14 | `ct_cek_plug`, `ct_cek_decode` | `CEK.plug`, `CEK.State.decode` | No UB; on `CT_OK` the term built is the value of the definition. | open |
+| F15 | `ct_cek_kweight`, `ct_cek_measure` | `CEK.kWeight`, `CEK.measure` | No UB; on `CT_OK` the value is the Lean value (`CT_EOVERFLOW` if it does not fit). | open |
+
+### Part F — `lazy` (`src/lazy.c`)
+
+| # | Function | Lean definition | Statement (both goals) | Status |
+|---|---|---|---|---|
+| F16 | `ct_lenv_cons`, `ct_lazy_cell_orig`, `ct_lazy_init` | `List.cons`, `Lazy.Cell.orig`, `Lazy.LState.init` | No UB; the result represents the value of the definition. | open |
+| F17 | `ct_lazy_beta_count`, `ct_lazy_forced` | `Lazy.LLabel.betaCount`, `Lazy.LLabel.forced` | No UB; the result is the value of the definition. | open |
+| F18 | `ct_lazy_step` | `Lazy.lstepFn` | No UB; on `CT_OK`, `*halted` (state unchanged) iff `lstepFn s = none`; otherwise the state now represents `s'` with `lstepFn s = some s'`. `CT_ELIMIT` only when the stack or the heap is full. | open |
+
+### Part F — `leftmost` (`src/leftmost.c`)
+
+| # | Function | Lean definition | Statement (both goals) | Status |
+|---|---|---|---|---|
+| F19 | `ct_leftmost_step_normal` | `Lambda.step_normal` | No UB; on `CT_OK`, `*none` iff `step_normal t = none`, otherwise `*out` is `t'` with `step_normal t = some t'`. | open |
+| F20 | `ct_leftmost_nstep`, `ct_leftmost_closure` | `Lambda.nstep`, `Lambda.closure` | No UB; on `CT_OK` the term is the value of the definition. | open |
+
+### Part F — `multitape` (`src/multitape.c`)
+
+| # | Function | Lean definition | Statement (both goals) | Status |
+|---|---|---|---|---|
+| F21 | `ct_mt_literal_eval`, `ct_mt_gate_input_eval`, `ct_mt_gate_count` | `Literal.eval`, `GateInput.eval`, `Circuit3.gateCount` | No UB; on `CT_OK` the value is the Lean value (cube `Fin nv → Bool`). | open |
+| F22 | `ct_mt_headmove_apply`, `ct_mt_update` | `HeadMove.apply`, `multiTapeUpdate` | No UB; on `CT_OK` the tapes represent the Lean result; `CT_ELIMIT` only when a head would leave its window. | open |
+| F23 | `ct_mt_step`, `ct_mt_run_steps` | `FiniteMultiTapeMachine.step` (`multiTapeStep`), `runSteps` | No UB; on `CT_OK`, "halted"/`none` is reported exactly when the Lean result is `none`; otherwise the configuration represents the Lean result. | open |
+| F24 | `ct_mt_init` | `FiniteMultiTapeMachine.init` | No UB; on `CT_OK` the configuration represents `M.init input`. | open |
+
+### Part F — `minsky` (`src/minsky.c`)
+
+| # | Function | Lean definition | Statement (both goals) | Status |
+|---|---|---|---|---|
+| F25 | `ct_minsky_reg`, `ct_minsky_base`, `ct_minsky_godel` | `KInstr.reg`, `base`, `godel` | No UB; on `CT_OK` the value is the Lean value (`CT_EOVERFLOW` when it does not fit). | open |
+| F26 | `ct_minsky_inc_f`, `ct_minsky_test_f`, `ct_minsky_exit_l` | `incF`, `testF`, `exitL` | No UB; on `CT_OK` the instruction/label is the Lean value. | open |
+| F27 | `ct_minsky_isize`, `ct_minsky_off`, `ct_minsky_block_f` | `isize`, `off`, `blockF` | No UB; on `CT_OK` the value is the Lean value. | open |
+| F28 | `ct_minsky_compile`, `ct_minsky_compile_aux` | `compile`, `compileAux` | No UB; on `CT_OK` the output array encodes the two-counter program `compile M` (resp. `compileAux M (M.drop s) s`). | open |
+| F29 | `ct_minsky_enc_c` | `encC` | No UB; on `CT_OK` the configuration is `encC M k ⟨pc, r⟩`. | open |
+
+### Part F — `spacemachine` (`src/spacemachine.c`)
+
+| # | Function | Lean definition | Statement (both goals) | Status |
+|---|---|---|---|---|
+| F30 | `ct_sp_config_space`, `ct_sp_write_at`, `ct_sp_move_work`, `ct_sp_move_in` | `Config.space`, `writeAt`, `moveWork`, `moveIn` | No UB; on `CT_OK` the value is the Lean value (`CT_ELIMIT` if a tape does not fit its buffer). | open |
+| F31 | `ct_sp_accept`, `ct_sp_step_list` | `Machine.accept`, `Machine.stepList` | No UB; on `CT_OK` the successors written are, in order, the elements of `M.stepList x c`. | open |
+| F32 | `ct_sp_init`, `ct_sp_const_machine` | `init`, `Machine.constMachine` | No UB; the result represents the Lean value. | open |
+
+## Not implemented
+
+Definitions of the round-2 scope that are skipped because they cannot be implemented faithfully
+in C (README.md: noncomputable definitions, predicates, unbounded searches):
+
+| Lean source | definitions | reason |
+|---|---|---|
+| `LeftmostRun` | `haltTime`, `nf` | defined with `sInf` over all natural numbers (an unbounded search for a normal form; noncomputable) |
+| `DepthThreeModel` | `RawClause.eval`, `Circuit3.middleEval`, `Circuit3.eval` | `noncomputable` (classical decision over finite sets) |
+| `DepthThreeModel` | `Circuit3.Computes`, `MultiTapeHaltsIn` | predicates |
+| `CbvMachine` | `IsValue`, `cbvstep`, `CbvNormal`, `cbvIn`, `Trans`, `IsFinal`, `Run`, `Good`, `Frame.Good`, `State.Good`, `Stuck` | predicates and relations |
+| `LazyMachine` | `LTrans`, `LStep`, `LFinal`, `LRun` | relations |
+| `Minsky` | `KM.Step`, `KM.HaltsFrom`, `KM.Halts`, `RegsBelow` | relations and predicates |
+| `SpaceMachine` | `Machine.Deterministic`, `Machine.WellFormed`, `Machine.Step`, `Accepts`, `SpaceBoundedOn`, `SpaceBounded`, `NSPACE`, `DSPACE`, `LOGSPACE`, `PSPACE`, `NPSPACE` | predicates and complexity classes |
+
+Definitions of round-2 sources that are computable but not yet written (remaining work, not
+skipped): `nstep_code`, `isNormal_code`, `haltsBy_code` of `LeftmostRun` (they work on the Gödel
+codes `Lambda.code_step'` of `EvalSound`), and every definition of the sources marked "not
+started" above.

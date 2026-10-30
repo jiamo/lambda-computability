@@ -9395,7 +9395,7 @@ tasks:
     track: impl/c
     title: "C implementation, machines: the Krivine machine with a heap, multi-tape machines, space-bounded machines"
     latest_evidence: "docs/goal/evidence/M32-C-IMPL.md"
-    open_boundary: "Submitted in round 2 (c/README.md part F) through aristotle continue 19976abc; the Lean sources go with the prompt as ref/Start/."
+    open_boundary: "Round 2 (task 56a7f0de of project 19976abc) wrote and tested krivine, cbv, lazy, leftmost, multitape, minsky and spacemachine. leftmost still lacks nstep_code, isNormal_code and haltsBy_code. MinskyCompile, KCMachine, WLModel, WLRAMInstruction, WLInterpreter, BLC, Combinators and PCA are not started. Of the properties F1-F32 only F1-F2 are proved; F3-F32 are open. Aristotle kept its proofs and its restatement of the definitions internal, so c/spec/Machines.lean does not exist."
     milestone: M32
     depends_on:
       - M32-C-ROUND1
@@ -9409,11 +9409,11 @@ tasks:
 
   - id: M32-C-COBMT
     priority: P2
-    status: IN_PROGRESS
+    status: TODO_READY
     track: impl/c
     title: "C implementation, register programs and oracle terms: RProg, the LInstr interpreter, CobQ with an oracle callback"
     latest_evidence: "docs/goal/evidence/M32-C-IMPL.md"
-    open_boundary: "Submitted in round 2 (c/README.md part G) through aristotle continue 19976abc; the Lean sources go with the prompt as ref/Start/."
+    open_boundary: "Not started: round 2 (task 56a7f0de) stopped in part F when the credit ran low; part G is next after F in c/README.md."
     milestone: M32
     depends_on:
       - M32-C-ROUND1
@@ -9443,11 +9443,11 @@ tasks:
 
   - id: M32-C-TYPES
     priority: P2
-    status: IN_PROGRESS
+    status: TODO_READY
     track: impl/c
     title: "C implementation, type checkers and normalizers: STLC NbE, System F, System T, algorithm W, F<:, λΠ/LF, CoC, PTS, MLTT"
     latest_evidence: "docs/goal/evidence/M32-C-IMPL.md"
-    open_boundary: "Submitted in round 2 (c/README.md part H) through aristotle continue 19976abc; the Lean sources go with the prompt as ref/Start/."
+    open_boundary: "Not started: round 2 (task 56a7f0de) stopped in part F when the credit ran low; part H is next after F in c/README.md."
     milestone: M32
     depends_on:
       - M32-C-ROUND1
@@ -9461,11 +9461,11 @@ tasks:
 
   - id: M32-C-COMPLEXITY
     priority: P2
-    status: IN_PROGRESS
+    status: TODO_READY
     track: impl/c
     title: "C implementation, logic and complexity: SAT, Tseitin, resolution, Cook-Levin, QBF machine, Savitch, sum-check, circuits, tree evaluation"
     latest_evidence: "docs/goal/evidence/M32-C-IMPL.md"
-    open_boundary: "Submitted in round 2 (c/README.md part I) through aristotle continue 19976abc; the Lean sources go with the prompt as ref/Start/."
+    open_boundary: "Not started: round 2 (task 56a7f0de) stopped in part F when the credit ran low; part I is next after F in c/README.md."
     milestone: M32
     depends_on:
       - M32-C-ROUND1
@@ -9479,11 +9479,11 @@ tasks:
 
   - id: M32-C-AUTOMATA
     priority: P2
-    status: IN_PROGRESS
+    status: TODO_READY
     track: impl/c
     title: "C implementation, automata and star height: local DFAs, returns, the PST recognizer, translation, core class check"
     latest_evidence: "docs/goal/evidence/M32-C-IMPL.md"
-    open_boundary: "Submitted in round 2 (c/README.md part J) through aristotle continue 19976abc; the Lean sources go with the prompt as ref/Start/."
+    open_boundary: "Not started: round 2 (task 56a7f0de) stopped in part F when the credit ran low; part J is next after F in c/README.md."
     milestone: M32
     depends_on:
       - M32-C-ROUND1
@@ -9497,11 +9497,11 @@ tasks:
 
   - id: M32-C-FURTHER
     priority: P2
-    status: IN_PROGRESS
+    status: TODO_READY
     track: impl/c
     title: "C implementation, further programs: logspace and space programs, oracle and Shamir machines, uniform automata, Levin search, size change, Kleene two, TM2, Gödel-Kleene evaluation"
     latest_evidence: "docs/goal/evidence/M32-C-IMPL.md"
-    open_boundary: "Submitted in round 2 (c/README.md part K) through aristotle continue 19976abc; the Lean sources go with the prompt as ref/Start/."
+    open_boundary: "Not started: round 2 (task 56a7f0de) stopped in part F when the credit ran low; part K is next after F in c/README.md."
     milestone: M32
     depends_on:
       - M32-C-ROUND1

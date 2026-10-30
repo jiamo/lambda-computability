@@ -79,6 +79,12 @@ A spec file must type-check on its own.
 The module names in the C column are suggestions; one C module may implement several Lean
 modules. The rest of `ref/Start/` is there because the listed modules import it.
 
+Status after round 2 (task `56a7f0de`): part F is partly done, with `krivine`, `cbv`, `lazy`,
+`leftmost`, `multitape`, `minsky` and `spacemachine` written and tested; parts G–K are not
+started. Of the 32 round-2 properties, 2 are proved and 30 are open (`PROOFS.md`). Aristotle kept
+its restatement of the round-2 definitions internal, so `spec/Machines.lean` was delivered empty
+and is not kept; each entry of `PROOFS.md` names its Lean definition and source module instead.
+
 Outside the scope of any round, because they are not programs: `noncomputable` definitions,
 predicates, sets, measures and category-theoretic constructions, and functions that the
 development proves uncomputable (the halting set, Kolmogorov complexity, Chaitin's Ω, the busy
