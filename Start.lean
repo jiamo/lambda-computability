@@ -957,4 +957,7 @@ import Start.CobRegCost
 import Start.CobMultiTape
 import Start.CobMultiTapeSim
 import Start.CobMultiTapeMain
+import Start.OracleElimSpace
+import Start.OracleElimGadget
+import Start.BgsTqbf
 import Start.Capstones

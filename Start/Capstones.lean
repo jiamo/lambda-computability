@@ -559,6 +559,9 @@ import Start.CobRegCost
 import Start.CobMultiTape
 import Start.CobMultiTapeSim
 import Start.CobMultiTapeMain
+import Start.OracleElimSpace
+import Start.OracleElimGadget
+import Start.BgsTqbf
 
 /-! ## Interfaces of the untyped calculus
 
@@ -6665,3 +6668,15 @@ machines. -/
 #check @Complexity.CobMT.multiTape_of_inP
 #check @Complexity.CobMT.multiTape_decide_of_inP
 #check @Complexity.CobMT.inP_iff_multiTape
+
+/-! `Start/OracleElimSpace.lean`, `Start/OracleElimGadget.lean`, `Start/BgsTqbf.lean`
+(M15-BGS-EQUAL): oracle Cobham terms compiled into plain tape programs with the query replaced by a
+polynomial-space gadget; `TQBF` has one (its evaluator run on scratch registers), so
+`NP^TQBF ⊆ PSPACE ⊆ P^TQBF`, i.e. `P^TQBF = NP^TQBF = PSPACE`. -/
+
+#check @Complexity.Space.Elim.compileTOK
+#check @Complexity.Space.Elim.gadgetOK_iter
+#check @Complexity.Space.Elim.pspace_of_inNP_rel_gadget
+#check @Complexity.Space.Elim.inP_rel_tqbf_of_pspace
+#check @Complexity.bgs_equal_tqbf
+#check @Complexity.peqNP_rel_tqbf

@@ -4234,20 +4234,21 @@ tasks:
 
   - id: M15-BGS-EQUAL
     priority: P1
-    status: TODO_READY
+    status: DONE_STRONG
+    terminal_statement: "Complexity.bgs_equal_tqbf (L : Language) : (InP_rel tqbfOracle L ↔ InNP_rel tqbfOracle L) ∧ (InNP_rel tqbfOracle L ↔ Space.PSPACE L), with Complexity.Space.Elim.tqbfOracle w = decide (Qbf.tqbfLang w); Complexity.peqNP_rel_tqbf : PeqNP_rel tqbfOracle; from Complexity.Space.Elim.pspace_of_inNP_rel_gadget (NP^A ⊆ PSPACE for an oracle with a polynomial-space gadget: the witness loop of OracleNPSpace with the verifier compiled by Elim.compileT, Elim.compileTOK), Elim.tqbf_gadget (the TQBF evaluator iteration run on scratch registers, Elim.gadgetOK_iter) and Elim.inP_rel_tqbf_of_pspace (one query on the Cobham reduction pspaceHard_tqbfLang') (Start/OracleElimSpace.lean, Start/OracleElimGadget.lean, Start/BgsTqbf.lean)"
     track: theory/complexity
     title: "An oracle that collapses: P^A = NP^A for A a PSPACE-complete language"
-    latest_evidence: "docs/goal/evidence/M13-SAVITCH-SPACE.md"
-    open_boundary: "Both named ingredients are proved: NP^A in PSPACE^A for every oracle (Complexity.Space.inPSPACE_rel_of_inNP_rel) and TQBF in PSPACE (Complexity.Qbf.tqbf_pspace, M14-TQBF-IN-PSPACE). Missing: PSPACE^TQBF in PSPACE. Big round 2 run 9 (not type-checked, no toolchain): first missing lemma, the oracle-elimination step on the model of Start/OracleSpace.lean (queries are written on the query tape, whose length the space bound counts): theorem Complexity.Space.pspace_of_inPSPACE_rel {A : Oracle} {L : Language} (hA : PSPACE (fun w => A w = true)) (hL : InPSPACE_rel A L) : PSPACE L; instance A := fun w => decide (tqbfLang w) with tqbf_pspace, then Complexity.bgs_equal from inPSPACE_rel_of_inNP_rel and the one-query reduction."
+    latest_evidence: "docs/goal/evidence/M15-BGS-EQUAL.md"
+    open_boundary: ""
     milestone: M15
     depends_on:
       - M15-ORACLE-CLASSES
       - M14-TQBF-PSPACE-HARD
     rank: 1010
     exit_criteria:
-      - "A nondeterministic polynomial-time machine with a PSPACE-complete oracle is simulated in polynomial space, using Savitch."
+      - "A nondeterministic polynomial-time machine with a PSPACE-complete oracle is simulated in polynomial space (corrected: in Cobham's model the deterministic enumeration of the witnesses suffices, Savitch is not needed)."
       - "Every language of PSPACE is decided in polynomial time with that oracle by a single query."
-      - "Complexity.bgs_equal : P^TQBF = NP^TQBF (= PSPACE)."
+      - "Complexity.bgs_equal_tqbf : P^TQBF = NP^TQBF (= PSPACE) (the name Complexity.bgs_equal is taken by the self-referential collapsing oracle of Start/CollapsingOracle.lean)."
     required_gates:
       - "python3 scripts/goal_state.py validate"
       - "python3 scripts/check_closure.py"
