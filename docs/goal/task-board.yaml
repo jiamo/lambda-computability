@@ -9355,15 +9355,31 @@ tasks:
       - "python3 scripts/check_sorry.py"
       - "lake build --wfail"
 
-  - id: M32-C-ROUND1
+  - id: M32-C-ROUND1-ARTIFACTS
     priority: P1
     status: TODO_READY
     track: impl/c
-    title: "C implementation, round 1, written and verified by Aristotle: the base runtime, the λ-calculus, Cobham terms, QBF"
+    title: "Checkable evidence for the round-1 C properties: the proof artifacts, or an independent check"
     latest_evidence: "docs/goal/evidence/M32-C-IMPL.md"
-    open_boundary: "Specification in place: c/README.md (layout, conventions, verification goals) and c/spec/CTSpec.lean (the reference definitions copied verbatim from Start/, type-checked with import Mathlib). The C code is to be written by Aristotle (aristotlelib 3.1, C projects)."
+    open_boundary: "Aristotle (project 19976abc, run 6b89de8c) reports all 64 round-1 properties proved, but returned no proof file: c/proofs/README.md says it keeps its formal encoding of C and the proofs internal, and every property's artifact_paths is empty. The claims in c/PROOFS.md therefore rest on Aristotle's report alone. Missing: either the artifacts (if Aristotle can export them) or an independent check of the same statements, for instance the no-UB half with a C model checker or Frama-C/WP and the agreement half by differential tests against the Lean definitions."
     milestone: M32
     depends_on: []
+    rank: 989
+    exit_criteria:
+      - "For every property in c/PROOFS.md, the repository holds evidence that someone other than the original prover can re-run: a proof artifact that checks, or a tool run that establishes the same statement."
+    required_gates:
+      - "make -C c test"
+      - "python3 scripts/goal_state.py validate"
+
+  - id: M32-C-ROUND1
+    priority: P1
+    status: DONE_WEAK
+    track: impl/c
+    title: "C implementation, round 1, written and verified by Aristotle: the base runtime, the λ-calculus, Cobham terms, QBF"
+    latest_evidence: "docs/goal/evidence/M32-C-IMPL.md"
+    open_boundary: "Code and claims delivered (Aristotle run 6b89de8c): c/include/ct/{base,lambda,cob,qbf}.h, c/src/*.c, c/tests/test_*.c; make -C c test passes (with one test line made portable: it asked for 16-byte alignment, above max_align_t on arm64). c/PROOFS.md lists 64 properties, all reported proved: no UB plus agreement with c/spec/CTSpec.lean on CT_OK, partial correctness. The third exit criterion is not met: no Lean artifact was returned, so the verification cannot be re-checked; the gap is the row M32-C-ROUND1-ARTIFACTS."
+    milestone: M32
+    depends_on: ["M32-C-ROUND1-ARTIFACTS"]
     rank: 990
     exit_criteria:
       - "c/include/ct/{base,lambda,cob,qbf}.h and c/src/*.c implement the modules of c/README.md round 1; make -C c test passes with -std=c11 -Wall -Wextra -Werror -pedantic."

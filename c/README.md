@@ -18,7 +18,7 @@ repository module each one comes from.
 | `include/ct/*.h` | the public headers, one per module |
 | `src/*.c` | the implementation |
 | `tests/test_*.c` | executable tests, one program per module, exit status 0 on success |
-| `proofs/` | the Lean artifacts of Aristotle's verification, as returned |
+| `proofs/` | Aristotle's note on its proof artifacts (kept internal by Aristotle; see PROOFS.md) |
 | `PROOFS.md` | every verified property: its statement, status and artifact |
 | `Makefile` | `make` builds `build/libct.a`; `make test` builds and runs every test |
 
